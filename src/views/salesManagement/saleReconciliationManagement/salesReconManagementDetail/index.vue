@@ -195,13 +195,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'drawingNo',
-          label: '品名规格',
+          prop: 'productCode',
+          label: '产品编码',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
+          prop: 'drawingNo',
+          label: '品名规格',
           type: 'input'
         },
         {
@@ -294,15 +294,15 @@ export default {
     ...mapGetters(['userInfo'])
   },
  async created() {
-    this.superForm = this.listQuery
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch == 1) {
-          this.superQueryJson.splice(4, 0, {
+          this.superQueryJson.splice(6, 0, {
             prop: 'productName',
             label: '产品名称',
             type: 'input'
           })
     }
+    this.superForm = this.listQuery
     this.search('basic')
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag=true

@@ -168,7 +168,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
       },
 
 

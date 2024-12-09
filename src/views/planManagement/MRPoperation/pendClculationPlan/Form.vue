@@ -135,14 +135,19 @@
               <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" />
               <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="120" />
               <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" />
-              <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" />
-              <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" />
-              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
-              <el-table-column prop="oil" label="油脂" min-width="100" />
-              <el-table-column prop="oilQuantity" label="油脂量" min-width="120" />
-              <el-table-column prop="clearance" label="游隙" min-width="100" />
-              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" />
-              <el-table-column prop="specialRequire" label="特殊要求" min-width="120" />
+              <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" 
+              v-if="sealingCoverTypingFlag == 1" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" 
+              v-if="accuracyLevelFlag == 1" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" 
+              v-if="vibrationLevelFlag == 1" />
+            <el-table-column prop="oil" label="油脂" width="100"  v-if="oilFlag == 1" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120"  v-if="oilQuantityFlag == 1" />
+            <el-table-column prop="clearance" label="游隙" width="100"  v-if="clearanceFlag == 1" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" 
+              v-if="packagingMethodFlag == 1" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" 
+              v-if="specialRequireFlag == 1" />
               <el-table-column prop="createTime" label="创建时间" min-width="180" />
 
 
@@ -200,14 +205,19 @@
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-                  <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-                  <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-                  <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-                  <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-                  <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-                  <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+              v-if="sealingCoverTypingFlag == 1" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+              v-if="accuracyLevelFlag == 1" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+              v-if="vibrationLevelFlag == 1" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+              v-if="packagingMethodFlag == 1" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+              v-if="specialRequireFlag == 1" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
@@ -558,14 +568,19 @@
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-                  <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-                  <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-                  <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-                  <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-                  <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-                  <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+              v-if="sealingCoverTypingFlag == 1" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+              v-if="accuracyLevelFlag == 1" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+              v-if="vibrationLevelFlag == 1" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+              v-if="packagingMethodFlag == 1" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+              v-if="specialRequireFlag == 1" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
@@ -939,14 +954,19 @@
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+              v-if="sealingCoverTypingFlag == 1" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+              v-if="accuracyLevelFlag == 1" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+              v-if="vibrationLevelFlag == 1" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+              v-if="packagingMethodFlag == 1" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+              v-if="specialRequireFlag == 1" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="total" :page.sync="planForm.pageNum" :limit.sync="planForm.pageSize"
@@ -1013,6 +1033,11 @@ import ComplateSetForm from './complateSetForm.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import DBForm from './dbForm.vue'
+
+import {
+  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+} from "@/api/masterDataManagement/index";
+import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
 export default {
   components: {
     PlanForm, ComplateSetForm, DBForm
@@ -1246,12 +1271,24 @@ export default {
       planIdList: [],
       selectDateDialogVisible: false,
       isProductNameSwitch: "",
+            // 属性字段  控制属性字段显示隐藏
+            accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   async created() {
+    await this.getProductClassFun()
+    await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -1268,6 +1305,51 @@ export default {
     this.fetchData("AMDH")
   },
   methods: {
+           // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+           getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    
+    },
+    
+      // 获取业务参数中 属性字段动态显示
+      getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res,this.bimProductAttributesList);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+         
+        this.clearanceFlag = res.data.clearance
+    
+        console.log("this.list6", this.list6);
+        this.oilFlag = res.data.oil
+         
+        this.oilQuantityFlag = res.data.oilQuantity
+         
+        this.packagingMethodFlag = res.data.packagingMethod
+         
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+         
+        this.specialRequireFlag = res.data.specialRequire
+        
+        this.vibrationLevelFlag = res.data.vibrationLevel
+         
+          console.log(this.list3);
+        
+    
+       
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

@@ -109,21 +109,21 @@
               <h5>产品信息</h5>
             </div>
             <div v-if="btnType == 'add' || btnType == 'edit'">
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus"
                 :disabled="btnType == 'look'" @click="addtable()">添加产品</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus"
                 :disabled="btnType == 'look'" @click="addtable('product')">导入产品</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus"
                 :disabled="btnType == 'look'" @click="addtable('price')">导入获取牌价</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 icon="el-icon-download" :disabled="btnType == 'look'" @click="downLoadTemplate">下载模板</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 :disabled="btnType == 'look'" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-download"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-download"
                 :disabled="btnType == 'look'" @click="exportPrice()">导出无价格</el-button>|
             </div>
             <el-button v-else-if="btnType == 'custom'" type="text"
-              style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look'"
+              style="margin-right:8px;margin-left:8px ;font-size:14px!important" :disabled="btnType == 'look'"
               icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
@@ -341,7 +341,6 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-
       <!-- 上传产品 -->
       <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
         :http-request="UploadProduct" />
@@ -352,7 +351,6 @@
     </div>
   </transition>
 </template>
-
 <script>
 import { addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData,calculatequotationSpecData, saleUploadData, saleUploadAmountsCount ,exportNoProduct } from "@/api/salesManagement/index";
 import { getCounryData, getPrivateList, deletePrivate, getcategoryTree, privateDetail } from '@/api/basicData/index'
@@ -390,7 +388,6 @@ export default {
         { prop: 'mobilePhone', label: '手机号' },
         { prop: 'nameEn', label: '英文名称' }
       ], // 意向客户列表字段
-
       getcategoryTrees, // 客户列表
       getCooperativeData, // 客户列表
       partnerRequestObj: {
@@ -413,7 +410,6 @@ export default {
         { prop: 'name', label: '客户名称' },
         { prop: 'taxId', label: '税号' },
       ], // 客户列表字段
-
       datafilelist: [],
       iszt: true,
       status: false,
@@ -669,7 +665,6 @@ export default {
     batchDelete() {
       if (!this.selectRows.length) return this.$message('请选择要删除的产品')
       if (this.dataFormTwo.lines.length === this.selectRows.length && this.btnType === 'custom') return this.$message.error('至少需要保留一条产品数据')
-
       for (let i = 0; i < this.selectRows.length; i++) {
         const row = this.selectRows[i];
         const index = this.dataFormTwo.lines.indexOf(row);
@@ -754,7 +749,6 @@ export default {
       saleUploadData(formData).then(res => {
         this.$message.success(`数据更新成功`)
         this.dataFormTwo.lines = res.data
-       
         this.formLoading = false
         this.loadingText = ''
       }).catch(err => {
@@ -863,7 +857,6 @@ export default {
         this.$nextTick(() => { this.getApproverData() })
       }
       row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
-
       // 单价处理
       if (row.unitPrice.length == 1 && row.unitPrice == '.') {
         // 如果第一位是小数点，则清空输入框
@@ -903,7 +896,6 @@ export default {
           row.unitPrice = row.unitPrice.substring(0, 20);
         }
       }
-
       // 折扣率处理
       if (row.unitPrice && row.listPrice && row.unitPrice != '0' && row.listPrice != '0') {
         let a = this.jnpf.math('multiply',[this.jnpf.numberFormat(row.unitPrice / row.listPrice),100])
@@ -918,7 +910,6 @@ export default {
       } else {
         row.excludingTaxUnitPrice = ''
       }
-
       if (!row.num || !row.unitPrice) {
         row.amounts = ''
         row.totalTaxAmount = ''
@@ -966,7 +957,6 @@ export default {
         originalDate.setFullYear(originalDate.getFullYear() + 20);
         var newDate = originalDate.toISOString().slice(0, 10);
         this.dataForm.validEnd = newDate
-
         this.dataForm.bidder = this.userInfo.userName
         this.dataForm.quotationType = 'latest'
         // 审批
@@ -984,7 +974,6 @@ export default {
         originalDate.setFullYear(originalDate.getFullYear() + 20);
         var newDate = originalDate.toISOString().slice(0, 10);
         this.dataForm.validEnd = newDate
-
         this.dataForm.bidder = this.userInfo.userName
         this.dataForm.quotationType = 'latest'
         this.formLoading = true
@@ -993,7 +982,6 @@ export default {
           this.dataForm = res.data.sale
           this.dataForm.yxCooperativePartnerIdText = this.dataForm.cooperativePartnerIdText
           this.dataFormTwo.lines = res.data.lines
-          
           this.dataForm.totalAmount = 0
           this.dataForm.approvalStatus = ''
           this.dataForm.submitDate = ''
@@ -1025,7 +1013,6 @@ export default {
         }).catch(err => {
           this.formLoading = false
         })
-
       }
       if (this.dataForm.id && this.btnType !== 'add') {
         this.formLoading = true
@@ -1034,7 +1021,6 @@ export default {
             this.dataForm = res.data.sale
             this.dataForm.yxCooperativePartnerIdText = this.dataForm.cooperativePartnerIdText
             this.dataFormTwo.lines = res.data.lines
-           
             this.dataForm.totalAmount = 0
             if (this.btnType === 'custom') {
               this.dataForm.cooperativePartnerIdText = ''
@@ -1069,7 +1055,6 @@ export default {
             let data = res.data.formNodeTree.childNode
             if (data) {
               this.addNodeTypeAndNodeName(data)
-
               this.busNodeConfig.childNode = data
               this.workVisible = true
               // this.$nextTick(() => {
@@ -1088,7 +1073,6 @@ export default {
             this.busNodeConfig.childNode = null
           }
         })
-
       }
     },
     async handleConfirm(value) {
@@ -1121,12 +1105,10 @@ export default {
           templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
           // 抄送人节点数组 ccList
           ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
-
           for (var i = 0; i < ccList.length; i++) {
             var nodeUserList = ccList[i].nodeUserList;
             ccLists = ccLists.concat(nodeUserList);
           }
-
           if (templateLineList.length && value === 'submit') {
             submitFlag = templateLineList.every(item=>item.nodeUserList.length)
             if (!submitFlag) { 
@@ -1285,7 +1267,6 @@ export default {
           })
         }
       }
-
       // 校验主表
       const form_1 = this.$refs['dataForm']
       const valid_1 = await form_1.validate().catch(err => false)
@@ -1300,7 +1281,6 @@ export default {
           }
         });
       }
-
       // 校验子表
       if (!this.dataFormTwo.lines.length && submitFlag) {
         submitFlag = false
@@ -1319,7 +1299,6 @@ export default {
           }
         });
       }
-
       if (submitFlag) {
         this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice
@@ -1435,7 +1414,6 @@ export default {
                   columnId: item.approvalBusinessId,
                   options: resultArr,
                   optType: item.dataType == 'number' ? (item.operationalFormula == 'lt' ? '1' : item.operationalFormula == 'gt' ? '2' : item.operationalFormula == 'eq' ? '4' : item.operationalFormula == 'ge' ? '5' : item.operationalFormula == 'le' ? '3' : '') : ''
-
                 }
               })
               this.addNodeTypeAndNodeName(obj.conditionNodes[i].childNode);
@@ -1450,7 +1428,6 @@ export default {
         console.log(node, '提交数1');
         if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null });
         if (node.type === 'node') {
-
           if (node.childNode) {
             node.previousCode = previousCode
             this.flattenNodes(node.childNode, flattenedNodes, node.code);
@@ -1459,7 +1436,6 @@ export default {
         } else if (node.type === 'condition' && node.name === '路由') {
           if (node.conditionNodes) {
             for (let i = 0; i < node.conditionNodes.length; i++) {
-
               // let previousCode = node.conditionNodes[i].code
               node.conditionNodes[i].previousCode = previousCode
               this.flattenNodes(node.conditionNodes[i], flattenedNodes, node.conditionNodes[i].code);
@@ -1486,7 +1462,6 @@ export default {
       let foundSymbol = ''  // 条件符号
       let result = null     // 判断条件是否成立
       let condList = []
-      
         getBusDetail('b001').then(res => {
           console.log(res);
           state = res.data.business.state
@@ -1585,9 +1560,7 @@ export default {
             this.busNodeConfig.childNode = null
           }
         })
-    
     },
-
     async switchStyle(type) {
       await this.$nextTick();
       const mainRegion = this.$refs.main // 可用区域
@@ -1601,18 +1574,14 @@ export default {
         bortherItems.forEach(item => {
           if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
         })
-
         // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
         let maxHeight = mainHeight - bortherHeight - 112
-
         // 计算高度最低500
         maxHeight = maxHeight > 500 ? maxHeight : 500
-
         this.customStyleData = {
           height: 10000,
           maxHeight
         }
-
         // 附带防抖的监听适配模式屏幕缩放
         window.onresize = () => {
           clearTimeout(this.timeout)
@@ -1689,7 +1658,6 @@ export default {
             if (res.data){
               this.jnpf.downloadFile(res.data.url, res.data.name)
             }
-
         } else{
           this.$message.warning('暂无产品导出!')
         } 
@@ -1709,19 +1677,15 @@ export default {
     margin-bottom: 0 !important;
   }
 }
-
 ::v-deep .el-tabs__header {
   padding: 0 !important;
 }
-
 ::v-deep .el-tabs__header {
   padding-left: 0 !important;
 }
-
 ::v-deep .workNode {
   background-color: #f5f5f7 !important;
 }
-
 //.el-button--small {
 // padding: 1;
 //}
@@ -1736,7 +1700,6 @@ export default {
   overflow:auto!important;
   padding: 0 20px;
 }
-
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
@@ -1749,19 +1712,15 @@ export default {
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;
 }
-
 .el-button span {
   font-size: 14px !important;
 }
-
 .pagination-container {
   background-color: #f5f7fa;
 }
-
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
-
 ::v-deep .el-input-group__append {
   background-color: #48a2ff;
   color: #fff;
@@ -1769,46 +1728,36 @@ export default {
 </style>
 <style lang="scss" scoped>
 $footerPadding: '10px';
-
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
   padding: 0;
 }
-
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 10px !important;
 }
-
 ::v-deep .el-dialog__body {
   margin-bottom: 10px;
 }
-
 ::v-deep .el-dialog__footer {
   padding: 0 20px 10px;
 }
-
 ::v-deep .even-row,
 ::v-deep .odd-row {
   cursor: pointer;
 }
-
 .killPadding {
   padding: 0;
 }
-
 .killPaddingLeft {
   padding-left: 0 !important;
 }
-
 .pagination-container {
   background-color: #f5f7fa;
   margin-top: 0px;
   padding: 2px 10px 2px 0;
 }
-
 ::v-deep .JNPF-common-search-box.noSearchList {
   padding: 3px 0;
 }
-
 ::v-deep .has-gutter .el-table__cell.gutter {
   border-bottom: 1px solid #ebeef5;
   background-color: #f5f7fa;

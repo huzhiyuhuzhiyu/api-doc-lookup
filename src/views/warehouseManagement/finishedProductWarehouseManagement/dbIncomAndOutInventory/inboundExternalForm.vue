@@ -1445,8 +1445,10 @@ export default {
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)
                 })
+              }else{
+                // this.goBack()
+                this.tipsvisible = true
               }
-              // this.tipsvisible = true
 
 
               this.btnLoading = false

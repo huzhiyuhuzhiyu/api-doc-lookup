@@ -1300,7 +1300,8 @@ export default {
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
+        this.isProjectSwitchFlag = true
+        if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
   },
   mounted() {
@@ -1452,7 +1453,6 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.isProjectSwitchFlag = true
       } catch (error) { }
     },
     async getMainUnitFun(code, type) {

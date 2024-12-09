@@ -78,7 +78,6 @@
                         <el-input v-model="dataForm.fax" placeholder="输入传真" maxlength="20" :disabled="status" />
                       </el-form-item>
                     </el-col>
-
                     <el-col :sm="6" :xs="24" v-if="dataForm.approvalStatus == 'review_failed'">
                       <el-form-item label="驳回理由" prop="reasonRejection">
                         <el-input v-model="dataForm.reasonRejection" placeholder="输入驳回理由" :disabled="status"
@@ -94,12 +93,8 @@
                   </el-row>
                 </el-form>
               </el-collapse-item>
-
-
-
               <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                 <div v-if="btnType != 'look'">
-
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
                     icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
@@ -107,7 +102,6 @@
                   <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                     icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
                 </div>
-
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
                     v-if="tableFlag" v-bind="customStyleData">
@@ -144,7 +138,6 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="num" label="数量" width="120">
                       <template slot="header">
@@ -159,7 +152,6 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-
                     <el-table-column prop="unitPrice" label="单价(含税)" width="120">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
@@ -191,7 +183,6 @@
                             :value="item.taxRate"></el-option>
                         </el-select>
                       </template>
-
                     </el-table-column>
                     <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
@@ -201,87 +192,86 @@
                     </el-table-column>
                     <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
+                      v-if="sealingCoverTypingFlag == 1" :key="211">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable :disabled="status"
                           style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
+                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
+                      :key="123">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                          <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable :disabled="status">
+                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
+                      :key="17">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                    <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-
+                    <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
+                      :key="101">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
+                      :key="101">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;" :disabled="status"> 
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-
-
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" />
                       </template>
                     </el-table-column>
-
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
                       <template slot-scope="scope">
                         <el-button type="text" @click="deltable(scope)" style=" color: #ff3a3a">删除</el-button>
                       </template>
                     </el-table-column>
-
                   </el-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin:0 10px">总数量：{{ totalNum }}</span>
@@ -289,9 +279,7 @@
                   </div>
                 </el-form>
               </el-collapse-item>
-
             </el-collapse>
-
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
@@ -383,12 +371,8 @@
               </el-row>
             </el-form>
           </el-collapse-item>
-
-
-
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType == 'add' || btnType == 'edit'">
-
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
@@ -396,7 +380,6 @@
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
             </div>
-
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
                 v-if="tableFlag" v-bind="customStyleData">
@@ -447,7 +430,6 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-
                 <el-table-column prop="unitPrice" label="单价(含税)" width="160">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
@@ -491,86 +473,84 @@
                 </el-table-column>
                 <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag == 1"
+                  :key="211">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in list1" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1" :key="123">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                      <el-option v-for="(item, index) in list2" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
+                  :key="17">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in list3" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in list4" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in list5" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-
+                <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in list6" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
+                  :key="101">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in list7" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
+                  :key="101">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in list8" :key="index" :disabled="status" :label="item.name"
+                      <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-
-
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" />
                   </template>
                 </el-table-column>
-
                 <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
                   <template slot-scope="scope">
                     <el-button type="text" @click="deltable(scope)" style=" color: #ff3a3a">删除</el-button>
                   </template>
                 </el-table-column>
-
               </el-table>
               <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                 <span style="font-weight:500;margin:0 10px">总数量：{{ totalNum }}</span>
@@ -578,7 +558,6 @@
               </div>
             </el-form>
           </el-collapse-item>
-
         </el-collapse>
       </div>
       <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
@@ -589,9 +568,7 @@
           <div class="el-upload__text"><em>点击选取文件上传</em></div>
           <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
               icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
-
         </el-upload>
-
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
           <el-button type="primary" @click="submit()">
@@ -602,10 +579,8 @@
         :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
         <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
             {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
-
         <!-- <div>
             <el-button type="text" @click="continueImport">继续导入</el-button>
-
           </div> -->
         <span slot="footer" class="dialog-footer">
           <el-button @click="goBack">返回列表</el-button>
@@ -613,13 +588,10 @@
           <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
       </el-dialog>
-
       <el-dialog title="历史价格" :close-on-click-modal="false" :close-on-press-escape="false"
         :visible.sync="historyVisiblt" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
         append-to-body>
-
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
               <el-form @submit.native.prevent>
@@ -638,7 +610,6 @@
                     <el-input v-model="historyPriceRequestObj.ask" placeholder="请输入要求" clearable />
                   </el-form-item>
                 </el-col>
-
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="getHistoryPriceFun()">
@@ -649,7 +620,6 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -678,28 +648,25 @@
                 <el-table-column prop="bidder" label="报价人" width="180" sortable="custom" />
                 <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
                 <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
-
               </JNPF-table>
               <pagination :total="historyPriceTotal" :page.sync="historyPriceRequestObj.pageNum"
                 :limit.sync="historyPriceRequestObj.pageSize" @pagination="getHistoryPriceFun" />
             </div>
           </div>
         </div>
-
       </el-dialog>
       <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     </div>
   </transition>
 </template>
-
 <script>
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index"
 import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct } from "@/api/salesManagement/index";
-import { getCounryData, getPrivateList, deletePrivate, getcategoryTree, privateDetail } from '@/api/basicData/index'
+import { getCounryData, getPrivateList, deletePrivate, getcategoryTree } from '@/api/basicData/index'
 import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData,getOrderFiledMap } from '@/api/basicData/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
 import { mapGetters, mapState } from 'vuex'
@@ -715,10 +682,9 @@ import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { ExportForm, Process, recordList },
   mixins: [busFlow, flowMixin, getProjectList],
-
   data() {
     return {
-      isProductNameSwitch:"",
+      isProductNameSwitch: "",
       isProjectSwitch: '',
       list1: [],
       list2: [],
@@ -749,7 +715,6 @@ export default {
       getcategoryTree, // 意向客户分类
       submitmethodsTitle: "",
       historyVisiblt: false,
-
       getcategoryTrees, // 客户列表
       getCooperativeData, // 客户列表
       partnerRequestObj: {
@@ -772,7 +737,6 @@ export default {
         { prop: 'name', label: '客户名称' },
         { prop: 'taxId', label: '税号' },
       ], // 客户列表字段
-
       datafilelist: [],
       iszt: true,
       status: false,
@@ -827,7 +791,6 @@ export default {
         phone: [{ required: true, message: '电话不能为空', trigger: 'blur' }],
       },
       productRules: {
-
         // 客户物料号
         customerDrawingNumber: [
           { validator: this.formValidate({ type: 'noEmtry', params: [" 客户料号不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
@@ -846,8 +809,6 @@ export default {
           { validator: this.formValidate('positiveNumber', '单价(含税)必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' },
           { validator: this.formValidate({ type: 'decimal', params: [18, 6, "", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：单价(含税)${errMsg}`) }] }), trigger: 'blur' }
         ],
-
-
       },
       activeNames: ["productInfo", "basicInfo"],
       customStyleData: {},
@@ -885,7 +846,17 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
-      tableFlag:false,
+      tableFlag: false,
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
   },
   watch: {
@@ -915,176 +886,128 @@ export default {
     },
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
-
   },
   mounted() {
     this.getTaxRateFun()
     this.getBimBusinessDetail()
-
   },
   async created() {
+    await this.getProductClassFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    
   },
   methods: {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.tableFlag=true
+        this.tableFlag = true
       } catch (error) { }
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+       this.getProductAttributeFun()
+        console.log(this.bimProductAttributesList);
+      })
+    },
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
 
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        this.list8 = res.data.records
-      })
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        if (this.accuracyLevelFlag == 1) {
+          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.clearanceFlag = res.data.clearance
+        if (this.clearanceFlag == 1) {
+          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        } 
+        this.oilFlag = res.data.oil
+        if (this.oilFlag == 1) {
+          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.oilQuantityFlag = res.data.oilQuantity
+        if (this.oilQuantityFlag == 1) {
+          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.packagingMethodFlag = res.data.packagingMethod
+        if (this.packagingMethodFlag == 1) {
+          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        if (this.sealingCoverTypingFlag == 1) {
+          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.specialRequireFlag = res.data.specialRequire
+        if (this.specialRequireFlag == 1) {
+          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.vibrationLevelFlag == 1) {
+          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+          console.log(this.list3);
+        }
 
 
+        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
+          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
+          this.selectProductClassFlag = true
+        } else {
+          this.selectProductClassFlag = false
 
+        }
+      })
     },
     getBimBusinessDetail() {
       let obj = {
@@ -1197,7 +1120,6 @@ export default {
               queryString = ""
               cb(air)
             }
-
           })
             .catch(res => {
               this.$message({
@@ -1206,16 +1128,11 @@ export default {
               })
             })
         }, 500)
-
       } else {
         let air = []
         cb(air)
-
       }
       // }
-
-
-
     },
     handleSelect(row, index, item) {
       console.log(666, item);
@@ -1223,7 +1140,6 @@ export default {
       let customerDrawingNumber
       let obj = JSON.parse(JSON.stringify(this.createdData))
       obj.taxRate = this.taxRate * 1
-
       if (this.dataFormTwo.lines[index].customerDrawingNumber) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerDrawingNumber))
       if (item.value) {
         let objs = {
@@ -1241,7 +1157,6 @@ export default {
           if (res.data.records.length) {
             console.log('有值', res.data.records[0]);
             let data = res.data.records[0]
-
             // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
             this.$set(this.dataFormTwo.lines, index, res.data.records[0])
@@ -1257,13 +1172,11 @@ export default {
               this.taxRateList.push(obj)
             }
           } else {
-
             item.data.taxRate = this.taxRate * 1
             this.$set(item.data, 'productDrawingNo', item.value)
             this.$set(item.data, 'unitPrice', "")
             this.$set(item.data, 'customerProductDrawingNo', customerDrawingNumber)
             item.data.productsId = item.data.id
-
             this.$set(this.dataFormTwo.lines, index, item.data)
             // this.$set(this.dataFormTwo.lines, index, item.data)
             this.watchPrice(this.dataFormTwo.lines[index], index)
@@ -1273,11 +1186,6 @@ export default {
         })
       }
     },
-
-
-
-
-
     changeTaxRate(row, index) {
       console.log(row, index);
       let productArr = [...this.dataFormTwo.lines]
@@ -1287,7 +1195,6 @@ export default {
       this.dataFormTwo.lines = productArr
     },
     getTaxRateFun() {
-
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
         res.data.list.forEach(item => {
@@ -1296,7 +1203,6 @@ export default {
         this.taxRateList = res.data.list
         console.log("税率", this.taxRateList);
       })
-
     },
     // 输入品名规格  查找对应得产品数据 按下enter键 自动新增一行空白数据
     searchDrawingNoProduct(data, idx) {
@@ -1328,8 +1234,6 @@ export default {
           this.$message.error("您输入的品名规格未匹配到对应的产品，请重新输入")
           data.productDrawingNo = ""
         }
-
-
       })
     },
     goBack() {
@@ -1351,7 +1255,6 @@ export default {
       console.log(this.fileList);
       this.UploadProduct(this.file)
     },
-
     handleFileChange(file) {
       console.log("所选文件:", file);
       this.file = file.raw
@@ -1371,7 +1274,6 @@ export default {
       if (this.dataFormTwo.lines.length) {
         this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
           this.uploadVisib = true
-
           // this.$refs.UploadProduct.$el.querySelector('input').click()
         }).catch(() => { })
       } else {
@@ -1390,7 +1292,6 @@ export default {
           this.$message.success(`导入成功`)
           if (res.data.length > 0) {
             this.dataFormTwo.lines = res.data
-
           }
           this.formLoading = false
           this.loadingText = ''
@@ -1399,7 +1300,6 @@ export default {
           this.handleMessage(res.data)
         }
         // this.tipsvisible=true
-
       }).catch(err => {
         this.$message.error(`文件上传失败`)
         this.formLoading = false
@@ -1453,7 +1353,6 @@ export default {
       listQuery.partnerCategoryId = data.id
       return listQuery
     },
-
     // 客户选框传值
     partnerChange(val, data, paramsObj) {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerIdText') }) // 校验操作的元素(name是组件绑定的value)
@@ -1483,13 +1382,10 @@ export default {
         this.dataForm.cooperativePartnerIdText = ""
       }
     },
-
-
     // 批量删除
     batchDelete() {
       if (!this.selectRows.length) return this.$message('请选择要删除的产品')
       if (this.dataFormTwo.lines.length === this.selectRows.length) return this.$message.error('至少需要保留一条产品数据')
-
       for (let i = 0; i < this.selectRows.length; i++) {
         const row = this.selectRows[i];
         const index = this.dataFormTwo.lines.indexOf(row);
@@ -1503,11 +1399,8 @@ export default {
     addtable(type, data) {
       if (!type) {
         this.dataFormTwo.lines.push(this.createdData)
-
       }
     },
-
-
     // 下载模板
     downLoadTemplate() {
       const a = document.createElement('a')
@@ -1523,7 +1416,6 @@ export default {
     // 监听单价(含税)输入
     watchPrice(row, index) {
       let productArr = [...this.dataFormTwo.lines]
-
       row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
       // 单价处理
       if (row.unitPrice.length == 1 && row.unitPrice == '.') {
@@ -1571,14 +1463,11 @@ export default {
       } else {
         row.excludingTaxUnitPrice = ''
       }
-
-
       let a = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.unitPrice, row.num]), 2)
       console.log("aaa", a);
       row.amounts = a ? a : '' // 含税金额 
       productArr[index].amounts = a ? a : 0
       console.log(this.dataFormTwo.lines);
-
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.excludingTaxUnitPrice, row.num]), 2)
         row.excludingTaxAmounts = c ? c : ''
@@ -1641,16 +1530,12 @@ export default {
       //   // 数量变化 更新审批流程
       //   // this.$nextTick(() => { this.getApproverData() })//暂时注释
       // }
-
-
-
       if (row.unitPrice && row.unitPrice != '0') {
         let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 2)
         row.excludingTaxUnitPrice = b ? b : 0
       } else {
         row.excludingTaxUnitPrice = ''
       }
-
       if (!row.num || !row.unitPrice) {
         row.amounts = ''
         row.totalTaxAmount = ''
@@ -1687,7 +1572,6 @@ export default {
         this.codeConfig = data
         if (flag) {
           this.dataForm.quotationNo = data.number
-
         }
       } catch (error) {
       }
@@ -1697,7 +1581,6 @@ export default {
       this.$nextTick(() => { this.switchStyle('onresize') });
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
-
       // this.oldId = JSON.parse(JSON.stringify(id)) || ""
       // this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
@@ -1705,14 +1588,12 @@ export default {
         this.iszt = false
         this.status = true
       } else {
-        this.getProductClassFun()
         this.iszt = true
         this.status = false
         let obj = JSON.parse(JSON.stringify(this.createdData))
         this.dataFormTwo.lines.push(obj)
       }
       console.log('status', this.status);
-
       // 新建
       if ((this.btnType == 'add' && !this.dataForm.id) || this.btnType == 'copy') {
         const end = new Date();//获取当前的日期
@@ -1726,7 +1607,6 @@ export default {
         originalDate.setFullYear(originalDate.getFullYear() + 20);
         var newDate = originalDate.toISOString().slice(0, 10);
         this.dataForm.validEnd = newDate
-
         this.dataForm.bidder = this.userInfo.userName
         this.dataForm.quotationType = 'latest'
         if (this.btnType == 'copy') {
@@ -1735,14 +1615,12 @@ export default {
             // this.$nextTick(() => {
             this.dataForm = res.data.sale
             this.dataFormTwo.lines = res.data.lines
-
             this.dataForm.totalAmount = 0
             this.dataForm.approvalStatus = ''
             this.dataForm.submitDate = ''
             this.dataForm.approvalCompletionDate = ''
             this.dataForm.id = ''
             this.dataForm.reasonRejection = ''
-
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push(
@@ -1769,10 +1647,8 @@ export default {
         } else {
           this.fetchData("XSBJ", true)
           this.getBusInfo('b001')
-
         }
       }
-
       // 重新提交
       if (this.btnType == 'add' && this.dataForm.id) {
         const end = new Date();//获取当前的日期
@@ -1786,7 +1662,6 @@ export default {
         originalDate.setFullYear(originalDate.getFullYear() + 20);
         var newDate = originalDate.toISOString().slice(0, 10);
         this.dataForm.validEnd = newDate
-
         this.dataForm.bidder = this.userInfo.userName
         this.dataForm.quotationType = 'latest'
         this.formLoading = true
@@ -1794,14 +1669,12 @@ export default {
           // this.$nextTick(() => {
           this.dataForm = res.data.sale
           this.dataFormTwo.lines = res.data.lines
-
           this.dataForm.totalAmount = 0
           this.dataForm.approvalStatus = ''
           this.dataForm.submitDate = ''
           this.dataForm.approvalCompletionDate = ''
           this.dataForm.id = ''
           this.dataForm.reasonRejection = ''
-
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push(
@@ -1825,7 +1698,6 @@ export default {
         }).catch(err => {
           this.formLoading = false
         })
-
       }
       if (this.btnType !== 'add' && this.btnType !== 'copy') {
         this.formLoading = true
@@ -1838,7 +1710,6 @@ export default {
             });
             this.dataFormTwo.lines = res.data.lines
             this.dataForm.totalAmount = 0
-
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push(
@@ -1863,14 +1734,11 @@ export default {
         }).catch(err => {
           this.formLoading = false
         })
-
       }
     },
     async handleConfirm(value) {
       this.dataForm.documentStatus = value
       let submitFlag = true
-
-
       // 校验主表
       const form_1 = this.$refs['dataForm']
       const valid_1 = await form_1.validate().catch(err => false)
@@ -1885,7 +1753,6 @@ export default {
           }
         });
       }
-
       // 校验子表
       if (!this.dataFormTwo.lines.length && submitFlag) {
         submitFlag = false
@@ -1904,9 +1771,7 @@ export default {
           }
         });
       }
-
       if (this.dataFormTwo.lines.length) {
-
         for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
           const item = this.dataFormTwo.lines[index];
           if (!item.productDrawingNo) {
@@ -1925,7 +1790,6 @@ export default {
           }
         }
       }
-
       if (submitFlag) {
         if (this.dataFormTwo.lines.length) {
           let index = this.dataFormTwo.lines.findIndex(item =>
@@ -1973,7 +1837,6 @@ export default {
             this.submitmethodsTitle = "保存成功"
           } else {
             this.submitmethodsTitle = "提交成功"
-
           }
           if (this.btnType == 'edit') {
             msg = "提交成功"
@@ -1989,8 +1852,6 @@ export default {
             }
           }
           this.tipsvisible = true
-
-
         }).catch(() => {
           this.btnLoading = false
         })
@@ -1998,7 +1859,6 @@ export default {
         this.btnLoading = false
       }
     },
-
     async switchStyle(type) {
       await this.$nextTick();
       const mainRegion = this.$refs.main // 可用区域
@@ -2012,18 +1872,14 @@ export default {
         bortherItems.forEach(item => {
           if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
         })
-
         // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
         let maxHeight = mainHeight - bortherHeight - 112
-
         // 计算高度最低500
         maxHeight = maxHeight > 500 ? maxHeight : 500
-
         this.customStyleData = {
           height: 10000,
           maxHeight
         }
-
         // 附带防抖的监听适配模式屏幕缩放
         window.onresize = () => {
           clearTimeout(this.timeout)
@@ -2037,7 +1893,7 @@ export default {
         this.customStyleData = {}
         // 重新加载表格
         this.tableVisible = false
-        this.$nextTick(() => {  })
+        this.$nextTick(() => { })
       }
     },
     // 生成客户产品  下载无产品档案列表
@@ -2145,7 +2001,6 @@ export default {
   padding: 0 !important;
   margin-bottom: 5px !important;
 }
-
 
 ::v-deep .workNode {
   background-color: #f5f5f7 !important;
@@ -2287,13 +2142,11 @@ $footerPadding: '10px';
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
-
 
 .import_t {
   font-size: 22px;

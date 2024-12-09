@@ -129,11 +129,10 @@
                         <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                        show-overflow-tooltip></el-table-column>
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="projectName" label="所属项目" min-width="120"  
-                        v-if="isProjectSwitch == 1" />
+                        <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" min-width="150"
@@ -146,7 +145,7 @@
                               :rules='productRules.deliveryQuantity'>
                               <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
                                 :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
-                                @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)" >
+                                @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)">
                               </el-input>
                             </el-form-item>
                           </template>
@@ -352,22 +351,31 @@
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                     <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                    show-overflow-tooltip></el-table-column>
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120"  
-                    v-if="isProjectSwitch == 1" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                     </el-table-column>
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
+                      v-if="accuracyLevelFlag == 1"></el-table-column>
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="clearanceFlag == 1">
+                    </el-table-column>
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
+                      v-if="oilFlag == 1"></el-table-column>
+                    <el-table-column prop="oil" label="油脂" width="120" :key="61"
+                      v-if="oilQuantityFlag == 1"></el-table-column>
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
+                      v-if="packagingMethodFlag == 1"></el-table-column>
+                    <el-table-column prop="clearance" label="游隙" width="120" :key="100"
+                      v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
+                      v-if="specialRequireFlag == 1">
+                    </el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
+                      v-if="vibrationLevelFlag == 1"></el-table-column>
                     <el-table-column prop="remark" label="备注" width="160" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                   </JNPF-table>
@@ -459,11 +467,10 @@
                     @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                     <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                    show-overflow-tooltip></el-table-column>
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" />
                     <el-table-column prop="productCategoryName" label="所属分类" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                    v-if="isProjectSwitch == 1" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="inventoryQuantity" label="库存数量">
                       <template slot-scope="scope">
@@ -498,7 +505,7 @@ import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData,getOrderFiledMap } from '@/api/basicData/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { editSwitch, getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
@@ -774,7 +781,16 @@ export default {
       tableDataFlag: false,
       mainUnitFlag: null,
       isProjectSwitch: '',
-      isProductNameSwitch:"",
+      isProductNameSwitch: "",
+            // 属性字段  控制属性字段显示隐藏
+            accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
     }
   },
   computed: {
@@ -795,9 +811,10 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
- async created() {
+  async created() {
     // this.handleChange()
     // this.getProvinceList()
+    await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
 
@@ -812,6 +829,28 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        this.clearanceFlag = res.data.clearance
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.specialRequireFlag = res.data.specialRequire
+        this.vibrationLevelFlag = res.data.vibrationLevel
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1062,12 +1101,12 @@ export default {
         console.log("产品", res);
         res.data.records.forEach(item => {
           if (this.mainUnitFlag == 1) {
-          if (item.calculationDirection == 'multiplication') {
-            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
-          } else {
-            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            if (item.calculationDirection == 'multiplication') {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+            } else {
+              this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+            }
           }
-        }
         });
         this.productList = res.data.records
         this.productTotal = res.data.total

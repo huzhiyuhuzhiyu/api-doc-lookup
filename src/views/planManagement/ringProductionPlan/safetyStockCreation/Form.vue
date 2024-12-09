@@ -28,10 +28,10 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="isProjectSwitch==1">
+                    <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                       <el-form-item label="所属项目" prop="projectId">
-                        <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;" :disabled="userInfo.projectId!='1'"
-                          >
+                        <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                          :disabled="userInfo.projectId != '1'">
                           <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                             :value="item.value"></el-option>
                         </el-select>
@@ -62,7 +62,7 @@
                     icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                 </div>
 
-                <JNPF-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData"
+                <JNPF-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" v-if="isProjectSwitchFlag"
                   border height="660" :key="165" style="width: 100%;" hasC>
 
                   <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
@@ -72,15 +72,14 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                  show-overflow-tooltip></el-table-column>
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
                   <el-table-column prop="bomId" label="BOM" width="140" :key="444">
                     <template slot-scope="scope">
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                  v-if="isProjectSwitch == 1" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                   <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
                   <el-table-column prop="planQuantity" label="计划数量" width="140" :key="7">
@@ -93,9 +92,8 @@
                       </el-input>
                     </template>
                   </el-table-column>
-
-
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag == 1"
+                    :key="211">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                         style="width: 100%;">
@@ -104,7 +102,8 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
+                    :key="123">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                         <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -112,8 +111,8 @@
                       </el-select>
                     </template>
                   </el-table-column>
-
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
+                    :key="17">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
@@ -121,8 +120,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="oil" label="油脂" width="120" :key="61">
-
+                  <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -130,8 +128,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-
+                  <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -139,9 +136,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-
-                  <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-
+                  <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -149,8 +144,8 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-
+                  <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
+                    :key="101">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
@@ -158,8 +153,8 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
-
+                  <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
+                    :key="101">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
@@ -184,7 +179,7 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex"  v-if="isattachmentswitch == '1'">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :detailed="false"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -202,12 +197,12 @@
                     <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6"  v-if="isProductNameSwitch === '1'">
+                <el-col :span="6" v-if="isProductNameSwitch === '1'">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6" >
+                <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
                   </el-form-item>
@@ -229,10 +224,9 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
                 <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                show-overflow-tooltip></el-table-column>
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
-                <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                v-if="isProjectSwitch == 1" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                 <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
                 <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
@@ -275,11 +269,11 @@ import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeli
 import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import { log } from 'mathjs'
 
@@ -301,7 +295,7 @@ export default {
         planDate: [],
         planStartDate: "",
         planEndDate: "",
-        projectId:"",
+        projectId: "",
       },
       codeConfig: {},//单据规则配置
       list1: [],
@@ -370,11 +364,21 @@ export default {
       selectRows: [],
       selectArr: [],
       customStyleData: 0,
-      isProjectSwitch:"",
-      isProjectSwitchFlag:null,
-      projectIdDataList:[],
-      originalData:[],
-      isProductNameSwitch:"",
+      isProjectSwitch: "",
+      isProjectSwitchFlag: null,
+      projectIdDataList: [],
+      originalData: [],
+      isProductNameSwitch: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
   },
   computed: {
@@ -384,34 +388,141 @@ export default {
   },
 
   async created() {
+    await this.getProductClassFun()
+    await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
 
     await this.getProjectList()
-    this.isProjectSwitchFlag=true
-    if(this.isProjectSwitch==1){
+    this.isProjectSwitchFlag = true
+    if (this.isProjectSwitch == 1) {
       console.log(this.projectIdDataList);
-      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId
+      this.planForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
 
     }
   },
-  mounted() {
-    this.getProductClassFun()
+  mounted() { 
     this.getBimBusinessDetail()
 
   },
   beforeDestroy() {
   },
   methods: {
+        // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+        getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    
+    },
+      // 获取业务参数中 属性字段动态显示
+      getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res,this.bimProductAttributesList);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        if (this.accuracyLevelFlag == 1) {
+          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.clearanceFlag = res.data.clearance
+        if (this.clearanceFlag == 1) {
+          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        console.log("this.list6", this.list6);
+        this.oilFlag = res.data.oil
+        if (this.oilFlag == 1) {
+          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.oilQuantityFlag = res.data.oilQuantity
+        if (this.oilQuantityFlag == 1) {
+          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.packagingMethodFlag = res.data.packagingMethod
+        if (this.packagingMethodFlag == 1) {
+          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        if (this.sealingCoverTypingFlag == 1) {
+          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.specialRequireFlag = res.data.specialRequire
+        if (this.specialRequireFlag == 1) {
+          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.vibrationLevelFlag == 1) {
+          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+          console.log(this.list3);
+        }
+        
+    
+        if(this.sealingCoverTypingFlag!=1&&this.accuracyLevelFlag!=1&&this.vibrationLevelFlag!=1&&this.oilFlag!=1&&this.oilQuantityFlag!=1
+        &&this.clearanceFlag!=1&&this.packagingMethodFlag!=1&&this.specialRequireFlag!=1){
+          this.selectProductClassFlag=true
+        }else{
+          this.selectProductClassFlag=false
+
+        }
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.isProjectSwitchFlag = true
       } catch (error) { }
     },
-    changeProject(){
+    changeProject() {
       console.log(this.dataForm.projectId);
-      this.productData=this.originalData.filter(item => item.id === this.planForm.projectId); 
+      this.productData = this.originalData.filter(item => item.id === this.planForm.projectId);
     },
     getBimBusinessDetail() {
       let obj = {
@@ -422,158 +533,7 @@ export default {
         this.isattachmentswitch = res.data.configValue1
       })
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
 
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        this.list8 = res.data.records
-      })
-
-
-    },
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop === 'productCode') {
@@ -655,8 +615,8 @@ export default {
 
 
     // 根据订单类型  打开不同的选择产品弹框
-    openSeleceProductDialog() { 
-      if(!this.planForm.projectId&&this.isProjectSwitch==1) return this.$message.error("请先选择所属项目")
+    openSeleceProductDialog() {
+      if (!this.planForm.projectId && this.isProjectSwitch == 1) return this.$message.error("请先选择所属项目")
 
       this.allProVisible = true
       this.allproductData = []
@@ -666,9 +626,9 @@ export default {
     },
     // 获取所有产品列表数据
     initData() {
-      this.listLoading = true  
-     this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
-     getProducts(this.ProductListRequestObj).then(listRes => {
+      this.listLoading = true
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
+      getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
         } else {
@@ -798,15 +758,15 @@ export default {
       setTimeout(() => {
         data.forEach(item => {
           item.productsId = item.id
-          let num=this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))<0?0:this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))
-          this.$set(item,'planQuantity',num)
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity])) < 0 ? 0 : this.jnpf.numberFormat(this.jnpf.math('subtract', [item.maxInventory, item.availableQuantity]))
+          this.$set(item, 'planQuantity', num)
           item.planType = 'safety_stock_plan'
           if (this.codeConfig.codeWay != 'auto') {
             item.planNo = null
           }
         })
         this.productData = data
-        this.originalData=JSON.parse(JSON.stringify(data))
+        this.originalData = JSON.parse(JSON.stringify(data))
 
       }, 500);
       this.fetchData("JHDH")

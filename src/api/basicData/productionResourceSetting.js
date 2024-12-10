@@ -77,3 +77,11 @@ export function errordatalist(data) {
   })
 }
 
+//批量清空工艺
+export function deleteresourcebatch(data) {
+  return request({
+    url: `/api/mes/production/resource/del/batch`,
+    method: 'put',
+    data
+  })
+}

@@ -81,7 +81,6 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
-                    <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
                     <el-table-column prop="fileCount" label="文件数量" width="120" />
                     <template v-if="!isNoProductPage">
                         <el-table-column prop="versionCount" label="关联版本" width="120"  v-if="(isFileManagementPage || isFileCheckPage)">

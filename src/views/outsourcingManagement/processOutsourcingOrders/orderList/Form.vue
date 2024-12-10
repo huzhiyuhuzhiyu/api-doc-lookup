@@ -648,6 +648,8 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 export default {
   components: { Process, recordList, SourceArea },
   mixins: [busFlow, getProjectList],
@@ -685,6 +687,47 @@ export default {
         type: 'outsourcing_suppliers'
       },
       oldData: [],
+      // 产品选择
+      getProductList, // 产品选择弹出框树状列表请求api
+      ProductMethodArr: [
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: { classAttribute: '', type: 'material' }
+        }
+        // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
+      ], // 产品选择弹出框树状列表
+      ProductListRequestObj: {
+        classAttribute: '',
+        productCategoryId: '',
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        productStatus: 'enable',
+        productSource: 'out',
+        pageNum: 1,
+        pageSize: 20
+        // queryType: 3
+      }, // 产品选择弹出框列表请求参数
+      ProductTableItems: [
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        // { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+      ], // 产品选择弹出框表单展示字段
+      ProductTableSearchList: [
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        // { prop: 'name', label: '产品名称', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' }
+      ], // 产品选择弹出框搜索条件
       title: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -699,6 +742,7 @@ export default {
       },
       sourceVisibled: false,
       dataForm: {
+        id: '',
         cooperativePartnerName: '', //供应商名称
         deliveryDate: '', //交货日期.
         orderNo: '',

@@ -192,6 +192,7 @@ export default {
         productCode: "",
         superQuery: {},
         classAttribute: "",
+        inventoryFlag :1,
       },
       selectedNodeKey: "",
       totalData: {
@@ -223,7 +224,12 @@ export default {
           label: "单位",
           type: 'input'
         },
-
+        {
+          prop: 'inventoryQuantity',
+          label: "库存数量",
+          type: 'input'
+        },
+        
         {
           prop: 'availableQuantity',
           label: "可用数量",
@@ -357,7 +363,7 @@ export default {
     superQuerySearch(query) {
       this.tableQuery.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     // 查看产品明细
     viewFun(id, type, warehouseId) {
@@ -445,10 +451,7 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]
-      if (this.productNameFlag == '1') {
-
-        this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
-      }
+      
       this.getConfig()
       this.initData()
     },

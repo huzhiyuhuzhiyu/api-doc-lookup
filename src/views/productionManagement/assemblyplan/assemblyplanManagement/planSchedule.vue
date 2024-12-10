@@ -17,14 +17,12 @@
                 <el-descriptions :column="1" class="orderNo">
                   <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo
                     }}</el-descriptions-item>
-
                 </el-descriptions>
                 <el-descriptions :column="1" class="box">
                   <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productsDrawingNo
                     }} <img v-if="dataForm.urgentFlag" src="@/assets/images/emergency1.png" alt=""
                       style="width: 30px;vertical-align: top;"> </el-descriptions-item>
                 </el-descriptions>
-
                 <el-descriptions class="margin-top" :column="4">
                   <el-descriptions-item label="产品编码">{{ dataForm.productsCode }}</el-descriptions-item>
                   <el-descriptions-item label="计划生产数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
@@ -33,73 +31,52 @@
                     }}{{
                       dataForm.mainUnit
                     }}</el-descriptions-item>
-                  <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                  <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
-                  <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
-                  <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
-                  <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
-                  <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
-                  <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                  <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
-                  <el-descriptions-item label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
+                  <el-descriptions-item v-if="sealingCoverTypingFlag==1" label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                  <el-descriptions-item v-if="accuracyLevelFlag==1" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                  <el-descriptions-item v-if="vibrationLevelFlag==1" label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
+                  <el-descriptions-item v-if="oilFlag==1" label="油脂">{{ dataForm.oil }}</el-descriptions-item>
+                  <el-descriptions-item v-if="oilQuantityFlag==1" label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
+                  <el-descriptions-item v-if="clearanceFlag==1" label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
+                  <el-descriptions-item v-if="packagingMethodFlag==1" label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
+                  <el-descriptions-item v-if="specialRequireFlag==1" label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item   label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
                     }}</el-descriptions-item>
                 </el-descriptions>
-
               </div>
+ 
             </el-collapse-item>
             <el-collapse-item title="生产进度" name="info">
-
               <div ref='ganttRef'></div>
               <section style='display: flex;justify-content: start;'>
-
               </section>
             </el-collapse-item>
           </el-collapse>
         </div>
       </div>
-
-
     </transition>
-
   </div>
 </template>
 <script>
 import { detailordershengchan, getWorkReportList, getPlanSchedule } from '@/api/productOrdes/index.js'
 import { gantt } from 'dhtmlx-gantt' // 引入dhtmlx-gantt
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
+import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 export default {
   data() {
     return {
       relatedTaskVisible: false,
-
-
-
-
-
-
       recoredsData: [],
-
       activeNames1: ["basicInfo", 'info'],
-
-
       activeName: 'orderInfo',
-
       feedData: [],
-
       workOrderData: [],
-
       dataForm: {},
-
       formLoading: false,
-
       btnType: "",
-
       title: "",
-
       prodOrderId: "",
       gantttt: {
         data: [
-
           /**
            *
            id：任务标识，可用来标识父子关系、连接links等
@@ -117,17 +94,12 @@ export default {
           { id: 12, parent: 1, text: '前后端开发', type: 'task', progress: 0.1, color: '#00ff00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-08'), open: true },
           { id: 13, parent: 1, text: '测试', type: 'task', progress: 0.1, color: '#0000ff', start_date: new Date('2023-10-08'), end_date: new Date('2023-10-10') },
           { id: 14, parent: 1, text: '上线', type: 'task', progress: 0.1, color: '#00ffff', start_date: new Date('2023-10-10'), end_date: new Date('2023-10-12') },
-
           { id: 111, parent: 11, text: '创建git仓库', type: 'task', progress: 1, color: '#880000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-03') },
           { id: 112, parent: 11, text: '搭建脚手架', type: 'task', progress: 0.5, color: '#550000', start_date: new Date('2023-10-03'), end_date: new Date('2023-10-04') },
           { id: 113, parent: 11, text: '完成初始化', type: 'task', progress: 0.1, color: '#330000', start_date: new Date('2023-10-04'), end_date: new Date('2023-10-05') },
-
-
           { id: 121, parent: 12, text: '前端开发', person: '甲', type: 'task', progress: 0, color: '#00aa00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
           { id: 122, parent: 12, text: '后端开发', person: '已', type: 'task', progress: 0, color: '#007700', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
           { id: 123, parent: 12, text: '前后端对接', person: '甲、已', type: 'task', progress: 0, color: '#003300', start_date: new Date('2023-10-07'), end_date: new Date('2023-10-08') },
-
-
           // { id: 3, text: 'Team', type: 'milestone', start_date: '14-07-2023' },
           // { id: 1, text: '1222', start_date: '25-04-2023', end_date: '01-07-2023', open: true },
           // {
@@ -189,13 +161,10 @@ export default {
           { id: 1, source: 11, target: 12, type: '0' },
           { id: 2, source: 12, target: 13, type: '0' },
           { id: 3, source: 13, target: 14, type: '0' },
-
           { id: 4, source: 111, target: 112, type: '0' },
           { id: 5, source: 112, target: 113, type: '0' },
-
           { id: 6, source: 121, target: 123, type: '0' },
           { id: 7, source: 122, target: 123, type: '0' },
-
           // { id: 1, source: 1, target: 3, type: '0' },
           // { id: 2, source: 1232354422, target: 1232354421, type: '0' },
           // { id: 3, source: 12345453, target: 12345437, type: '0' }
@@ -213,12 +182,19 @@ export default {
         // { align: 'center', name: 'person', label: '负责人', width: '120' },
         // { align: 'right', name: 'time', label: '时间节点', width: '80' },
         { align: 'center', name: 'progress', label: '进度', width: '120', template: (task) => task.progress * 100 + '%' },
-      ]
+      ],
+            // 属性字段  控制属性字段显示隐藏
+            accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
-
   },
-
-
   mounted() {
     // 清空之前的配置
     gantt.clearAll();
@@ -247,7 +223,6 @@ export default {
         return "" + task.text + "<span style='margin-left:20px;'></span>" + task
           .qualifiedQuantity + "/" + task.productionQuantity;
       }
-
     };
     gantt.config.autofit = false;
     gantt.config.column_width = 50;
@@ -278,7 +253,6 @@ export default {
     ];
     // gantt.getMarker(markerId);
     // 初始化甘特图
-
     gantt.templates.task_class = (start, end, task) => {
       console.log(task.progress);
       if (task.progress == 0) return 'Noproduc'
@@ -306,36 +280,40 @@ export default {
       }  
       `;
     document.head.appendChild(style);
-
-
   },
-  created() {
+ async created() {
     gantt.clearAll() // 先清空，再添加，就不会有缓存
+    await this.getOrderFiledMap()
   },
   methods: {
-    monthScaleTemplate (date) {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
+    monthScaleTemplate(date) {
       const dateToStrss = gantt.date.date_to_str("%Y年");
       const dateToStrs = gantt.date.date_to_str("%M");
       // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
-      return dateToStrss(date) +  dateToStrs(date);
+      return dateToStrss(date) + dateToStrs(date);
     },
     formatWeekday(date) { //1号 周一
       const dateToStr = gantt.date.date_to_str("%d");
       const dateToStrss = gantt.date.date_to_str("%Y年");
       const dateToStrs = gantt.date.date_to_str("%M");
       // return dateToStrss(date)+dateToStrs(date)+dateToStr(date)+'日';
-      return  dateToStr(date) + '日';
+      return dateToStr(date) + '日';
     },
-
-
-
-
-
-
     goBack() {
       this.$emit('close')
     },
-
     associationTaskFun() {
       this.relatedTaskVisible = true
       console.log(666);
@@ -369,22 +347,18 @@ export default {
           }
           console.log(6666);
           arr.push(obj)
-
-
           // 2. 拆分成单个项目
           const list = item.processSchedule.split(',');
-
           // 3. 将每个项目转换为对象格式
           const result = list.map(item => {
             const [name, progress] = item.split(':');
             return { name: name, progress: progress };
           });
-
           console.log(123, result);
           if (item.workOrderList.length) {
             console.log("item.workOrderList", item.workOrderList);
             item.workOrderList.forEach((itemss, index) => {
-              if (!itemss.actualStartDate||!item.actualEndDate) {
+              if (!itemss.actualStartDate || !item.actualEndDate) {
                 itemss.actualStartDate = itemss.planStartDate
                 itemss.actualEndDate = itemss.planEndDate
               } else {
@@ -433,357 +407,187 @@ export default {
         });
       })
     },
-
-
-
-
   }
-
 }
-
 </script>
-
 <style lang="scss" scoped>
-::v-deep .gantt_cell_tree{
+::v-deep .gantt_cell_tree {
   border-right: 0.5px solid #e0e0e0;
 }
+
 // .main {
-
 //   padding: 10px 30px 0;
-
 // }
-
 ::v-deep .data-form {
-
   .el-form-item--small.el-form-item {
-
     margin-bottom: 0 !important;
-
   }
-
 }
-
-
 
 ::v-deep .JNPF-common-page-header.noButtons {
-
   padding: 11px 10px;
-
 }
-
-
 
 .required {
-
   color: red;
-
   margin-right: 4px;
-
 }
-
-
 
 ::v-deep .el-tabs__header {
-
   padding: 0 !important;
-
   padding-bottom: 0px !important;
-
   margin-bottom: 0;
-
 }
 </style>
-
 <style scoped>
 ::v-deep .el-tabs__content {
-
   height: auto !important;
-
   padding: 0;
-
 }
-
-
 
 ::v-deep .JNPF-common-page-header {
-
   padding: 5px 10px;
-
 }
 </style>
-
 <style scoped>
 .required {
-
   color: red;
-
   margin-right: 4px;
-
 }
-
-
 
 .el-dialog .el-dialog__body {
-
   padding: 20px 0px 2px !important;
-
 }
-
-
 
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-
   padding: 0 5px 0 10px !important;
-
 }
-
-
 
 .el-button span {
-
   font-size: 14px !important;
-
 }
-
-
 
 .pagination-container {
-
   background-color: #f5f7fa;
-
 }
-
-
 
 ::v-deep .el-input-group__append {
-
   background-color: #48a2ff;
-
   color: #fff;
-
 }
 </style>
-
 <style lang="scss" scoped>
 $footerPadding: '10px';
 
-
-
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
-
   padding: 0;
-
 }
-
-
 
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-
   padding: 0 10px !important;
-
 }
-
-
 
 ::v-deep .el-dialog__body {
-
   margin-bottom: 10px;
-
 }
-
-
 
 ::v-deep .el-dialog__footer {
-
   padding: 0 20px 10px;
-
 }
-
-
 
 ::v-deep .even-row,
-
 ::v-deep .odd-row {
-
   cursor: pointer;
-
 }
-
-
 
 .killPadding {
-
   padding: 0;
-
 }
-
-
 
 .killPaddingLeft {
-
   padding-left: 0 !important;
-
 }
-
-
 
 .pagination-container {
-
   background-color: #f5f7fa;
-
   margin-top: 0px;
-
   padding: 2px 10px 2px 0;
-
 }
-
-
 
 ::v-deep .JNPF-common-search-box.noSearchList {
-
   padding: 3px 0;
-
 }
-
-
 
 ::v-deep .has-gutter .el-table__cell.gutter {
-
   border-bottom: 1px solid #ebeef5;
-
   background-color: #f5f7fa;
-
 }
 
-
-
 .JNPF-common-search-box {
-
   padding: 8px 0px 0;
-
 }
 
 ::v-deep .el-tabs__item {
-
   padding: 0 10px !important
 }
 
-
-
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-
   padding-left: 0px !important
 }
 
-
-
 ::v-deep .el-collapse-item__header {
-
   line-height: 33px;
-
   font-size: 18px;
-
   border-top: 1px solid rgb(220, 223, 230);
-
   // background: #dcdfe6;
-
   background: rgb(250, 250, 250);
-
   padding-left: 5px;
-
   font-weight: 700;
-
   // border-bottom:none;
-
   border-right: 1px solid #dcdfe6;
-
   border-left: 1px solid #dcdfe6;
-
 }
-
-
 
 ::v-deep .el-collapse-item__wrap {
-
   border: 1px solid #dcdfe6 !important;
-
   margin-bottom: 0;
-
-
-
 }
 
-
-
 ::v-deep .el-collapse-item__content {
-
   padding-bottom: 0px
 }
 
-
-
-
-
 .import_t {
-
   font-size: 22px;
-
   color: rgb(103, 194, 58);
-
   vertical-align: top;
-
   margin-top: 40px;
-
   display: inline-block;
-
   margin-left: 20px;
-
 }
-
-
 
 .import_b {
-
   font-size: 18px;
-
   /* color: #67c23a; */
-
   vertical-align: top;
-
   margin-top: 43px;
-
   display: inline-block;
-
 }
 
-
-
 .orderInfo {
-
   margin-top: 5px;
-
 }
 
 ::v-deep.routingProRes .el-dialog__body {
-
   height: 500px;
-
 }
-
-
 
 ::v-deep .applySelect .el-icon-arrow-up:before {
-
   content: "";
-
 }
 
-
-
 .underline-button {
-
   text-decoration: underline;
-
 }
 
 .personBox p {
@@ -791,70 +595,37 @@ $footerPadding: '10px';
 }
 
 .personBox:nth-child(n + 6) {
-
   margin-top: 12px;
-
 }
-
-
 
 ::v-deep .elbutton span {
   font-size: 14px !important;
 }
 
-
-
 .personBox {
-
   border: 1px solid #dcdfe6;
-
   background-color: #f5f7fa;
-
   /* background-color: #1890ff; */
-
   margin-left: 26px;
-
   height: 150px;
-
   border-radius: 5px;
-
 }
-
-
 
 .active {
-
   background-color: #5d9bd5;
-
   color: #fff;
-
 }
-
-
 
 .feedInfoForm ::v-deep.el-collapse-item__wrap,
-
 .workOrderInfoForm ::v-deep.el-collapse-item__wrap {
-
   padding: 0 !important;
-
   border-top: 1px solid #dcdfe6;
-
   border-right: 0 !important;
-
 }
-
-
-
-
 
 ::v-deep .el-table__body-wrapper {
   height: auto !important;
 }
-
-
-
-
 
 ::v-deep .el-descriptions-item__label {
   font-size: 16px;
@@ -908,6 +679,7 @@ $footerPadding: '10px';
   font-size: 20px;
   font-weight: bold;
 }
+
 ::v-deep .gantt_cell_tree {
   border-right: 0.5px solid #e0e0e0;
 }

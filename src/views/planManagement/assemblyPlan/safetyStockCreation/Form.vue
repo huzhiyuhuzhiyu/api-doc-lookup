@@ -275,10 +275,10 @@ import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import { log } from 'mathjs'
-import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 
 export default {
   mixins: [getProjectList],
@@ -372,8 +372,8 @@ export default {
       projectIdDataList: [],
       originalData: [],
       isProductNameSwitch: "",
-         // 属性字段  控制属性字段显示隐藏
-         accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -409,18 +409,18 @@ export default {
   beforeDestroy() {
   },
   methods: {
-         // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-         getProductClassFun() {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
-    
+
     },
-      // 获取业务参数中 属性字段动态显示
-      getProductAttributeFun() {
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
       getOrderFiledMap('sale').then(res => {
-        console.log("产品属性", res,this.bimProductAttributesList);
+        console.log("产品属性", res, this.bimProductAttributesList);
         // sealingCoverTypingFlag list1  pa007
         // accuracyLevelFlag list2  pa006
         // vibrationLevelFlag list3 pa005
@@ -504,13 +504,13 @@ export default {
           })
           console.log(this.list3);
         }
-        
-    
-        if(this.sealingCoverTypingFlag!=1&&this.accuracyLevelFlag!=1&&this.vibrationLevelFlag!=1&&this.oilFlag!=1&&this.oilQuantityFlag!=1
-        &&this.clearanceFlag!=1&&this.packagingMethodFlag!=1&&this.specialRequireFlag!=1){
-          this.selectProductClassFlag=true
-        }else{
-          this.selectProductClassFlag=false
+
+
+        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
+          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
+          this.selectProductClassFlag = true
+        } else {
+          this.selectProductClassFlag = false
 
         }
       })
@@ -534,7 +534,7 @@ export default {
         this.attachmentData = res.data
       })
     },
- 
+
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop === 'productCode') {

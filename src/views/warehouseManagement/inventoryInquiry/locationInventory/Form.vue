@@ -57,18 +57,31 @@
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-              <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-              <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-              <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-              <el-table-column prop="clearance" label="游隙值" min-width="120" :key="100" sortable="custom"></el-table-column> 
-              <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom" />
+              <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
+                v-if="standardValueFlag == 1" />
+              <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" v-if="colourFlag == 1" />
+              <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag == 1"
+                sortable="custom"></el-table-column>
               <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
                 <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
                   </template>
-                </el-table-column> -->
+</el-table-column> -->
               </el-table-column>
               <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" /> -->
               <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom" />
@@ -96,7 +109,7 @@
 
 <script>
 import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
-import { getWarehouseList } from '@/api/basicData/index' // 仓库树
+import { getWarehouseList,getOrderFiledMap } from '@/api/basicData/index' // 仓库树
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -119,9 +132,9 @@ export default {
       originalListQuery: {},
       total: 0,
       totalData: {
-        totalInventory:0,
-        totalAvailable:0,
-        totalOccupancy:0,
+        totalInventory: 0,
+        totalAvailable: 0,
+        totalOccupancy: 0,
       },
 
       listQuery: {
@@ -143,15 +156,46 @@ export default {
         vibrationLevel: '',
         standardValue: '',
       },
-      isProjectSwitch:"",
+      isProjectSwitch: "",
+             // 属性字段  控制属性字段显示隐藏
+             accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      standardValueFlag: "",
+      colourFlag: "",
+      processFlag: "",  
     }
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
-    
-    
+
+
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     // 导出
     exportForm(exportTableRef) {
       console.log("object,", exportTableRef);
@@ -289,11 +333,11 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if(!res.data.whPage.records.length) return
+        if (!res.data.whPage.records.length) return
         this.tableData = res.data.whPage.records
         this.total = res.data.whPage.total
-        this.totalData = res.data.stockSts||{}
-        
+        this.totalData = res.data.stockSts || {}
+
       }).catch(err => {
         this.treeLoading = false
         this.listLoading = false

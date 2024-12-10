@@ -74,6 +74,8 @@
         </el-col>
 
         <el-col :span="24">
+          <topOpts @add="addtable()" :addText="'添加'" style="margin-bottom: 10px;">
+          </topOpts>
           <el-table :data="lines" height="300" highlight-current-row>
             <el-table-column prop="personnelIdText" label="人员名称" width="120">
               <template slot="header">
@@ -137,9 +139,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="table-actions" @click="addtable()" v-if="!btntype">
+          <!-- <div class="table-actions" @click="addtable()" v-if="!btntype">
             <el-button type="text" icon="el-icon-plus">添加</el-button>
-          </div>
+          </div> -->
         </el-col>
       </el-row>
 

@@ -1477,8 +1477,7 @@ export default {
         item.drawingNo === "" &&
         item.productsId === "" &&
         item.num === "" &&
-        item.price === "" &&
-        item.deliveryDate === ""
+        item.price === ""  
       )
       if (index !== -1) {
         console.log(6666);
@@ -1986,14 +1985,15 @@ export default {
         if (this.btnType == 'edit') {
           item.id = ""
         }
+        if(this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
+       
       });
       if (this.productData.length) {
         let index = this.productData.findIndex(item =>
           item.drawingNo === "" &&
           item.productsId === "" &&
           item.num === "" &&
-          item.price === "" &&
-          item.deliveryDate === ""
+          item.price === ""  
         )
         console.log(5555, index);
         if (index !== -1) {
@@ -2122,7 +2122,9 @@ export default {
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
+        
         this.$set(item, 'price', item.salesPrice)
+        if(this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
         item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
@@ -2135,8 +2137,8 @@ export default {
           item.drawingNo === "" &&
           item.productsId === "" &&
           item.num === "" &&
-          item.price === "" &&
-          item.deliveryDate === ""
+          item.price === ""  
+          
         )
         if (index !== -1) {
           // 使用 splice 插入 newDataArray
@@ -2169,8 +2171,7 @@ export default {
         item.drawingNo === "" &&
         item.productsId === "" &&
         item.num === "" &&
-        item.price === "" &&
-        item.deliveryDate === ""
+        item.price === ""  
       )
       if (index !== -1) {
         console.log(6666);
@@ -2669,8 +2670,7 @@ export default {
               item.drawingNo === "" &&
               item.productsId === "" &&
               item.num === "" &&
-              item.price === "" &&
-              item.deliveryDate === ""
+              item.price === ""  
             )
             if (index !== -1) {
               console.log(6666);

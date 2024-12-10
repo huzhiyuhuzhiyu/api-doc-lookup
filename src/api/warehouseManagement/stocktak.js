@@ -10,7 +10,7 @@ export function getStocktak(data) {
 
 // 盘点单新建——选择产品
 
-export function getProduct(data) {
+export function getInventProduct(data) {
   return request({
     url: `/api/zgt/stockTaking/products/list`,
     method: 'POST',

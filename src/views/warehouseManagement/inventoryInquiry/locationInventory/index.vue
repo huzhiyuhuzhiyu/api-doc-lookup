@@ -138,7 +138,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
-          <el-table-column prop="warehouseName" label="仓库名称/货位名称" min-width="200" sortable="custom">
+          <el-table-column prop="warehouseName" label="仓库名称/库位名称" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
             </template>
@@ -187,7 +187,7 @@ export default {
       searchList: [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'shelfSpaceName', fieldValue: '', label: '货位名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'shelfSpaceName', fieldValue: '', label: '库位名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
       superQueryVisible: false,

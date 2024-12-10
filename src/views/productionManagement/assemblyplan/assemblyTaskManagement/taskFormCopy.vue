@@ -40,16 +40,15 @@
                     }}</el-descriptions-item>
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
-                  <el-descriptions-item label="工艺路线名称">{{ dataForm.routingName }}</el-descriptions-item>
-                  <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                  <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
-                  <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
-                  <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
-                  <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
-                  <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
-                  <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                  <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
-                  <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo }}</el-descriptions-item>
+                  <el-descriptions-item  label="工艺路线名称">{{ dataForm.routingName }}</el-descriptions-item>
+                  <el-descriptions-item v-if="sealingCoverTypingFlag==1" label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                  <el-descriptions-item v-if="accuracyLevelFlag==1" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                  <el-descriptions-item v-if="vibrationLevelFlag==1" label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
+                  <el-descriptions-item v-if="oilFlag==1" label="油脂">{{ dataForm.oil }}</el-descriptions-item>
+                  <el-descriptions-item v-if="oilQuantityFlag==1" label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
+                  <el-descriptions-item v-if="clearanceFlag==1" label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
+                  <el-descriptions-item v-if="packagingMethodFlag==1" label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
+                  <el-descriptions-item v-if="specialRequireFlag==1" label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
                   <!-- <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'normal'">进行中</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'closed'">关闭</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'finish'">已完成</el-descriptions-item> -->
@@ -290,14 +289,14 @@
   </div>
 </template>
 <script>
-import { detailordershengchan } from '@/api/productOrdes/index.js'
-import { getWorkReportList } from "@/api/productOrdes/index.js"
+import { detailordershengchan,getWorkReportList} from '@/api/productOrdes/index.js'
 import RelatedTasksForm from "./relatedTaskForm.vue";
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
 import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
 import Inspec from '@/views/inspectionManagement/components/inspectionFormManagementDetail.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
+import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import {
   ApplicationType,
@@ -371,14 +370,24 @@ export default {
       prodOrderId: "",
       inspectData: [],
       isProjectSwitch: '',
-
+            // 属性字段  控制属性字段显示隐藏
+            accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
 
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
-   
   },
+
   watch: {
     'categoryType': function (newVal) {
       this.getTabdataList()
@@ -388,6 +397,18 @@ export default {
     this.switchStyle()
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
     // 查看检验详情
     viewInspectionFun(id, type) {
       this.detailFormVisible = true

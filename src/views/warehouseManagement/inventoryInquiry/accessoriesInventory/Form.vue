@@ -160,7 +160,6 @@ export default {
       })
     },
     init(id, type) {
-      this.getProductClassFun()
       if (type === 'inventoryFlag') { this.title = '库存数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }

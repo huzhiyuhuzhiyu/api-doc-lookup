@@ -77,14 +77,15 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px;">
+                    <el-form-item label="计划生产开始—结束日期" prop="planDate"
+                      :style="dataForm.taskMethod != 'appoint' ? 'margin-bottom: 20px;' : ''">
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="工艺路线名称" prop="routingName" >
+                    <el-form-item label="工艺路线名称" prop="routingName">
                       <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>
@@ -97,7 +98,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col> -->
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
                     <el-form-item label="打字内容" prop="sealingCoverTyping">
                       <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                         style="width: 100%;">
@@ -106,7 +107,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="6" :xs="24" v-if="accuracyLevelFlag == 1">
                     <el-form-item label="精度等级" prop="accuracyLevel">
                       <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -114,7 +115,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="6" :xs="24" v-if="vibrationLevelFlag == 1">
                     <el-form-item label="振动等级" prop="vibrationLevel">
                       <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
@@ -122,7 +123,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="6" :xs="24" v-if="oilFlag == 1">
                     <el-form-item label="油脂" prop="oil">
                       <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -130,7 +131,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="6" :xs="24" v-if="oilQuantityFlag == 1">
                     <el-form-item label="油脂量" prop="oilQuantity">
                       <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -138,7 +139,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24">
+                  <el-col :sm="6" :xs="24" v-if="clearanceFlag == 1">
                     <el-form-item label="游隙" prop="clearance">
                       <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -147,7 +148,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="包装方式" prop="packagingMethod">
+                    <el-form-item label="包装方式" v-if="packagingMethodFlag == 1">
                       <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                           :value="item.name"></el-option>
@@ -155,7 +156,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="特殊要求" prop="specialRequire">
+                    <el-form-item label="特殊要求" v-if="specialRequireFlag == 1">
                       <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                           :value="item.name"></el-option>
@@ -524,11 +525,11 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import SelectProductForm from './selectProductForm.vue'
-import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-import { getWarehouseList } from '@/api/basicData/index'
+import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -657,6 +658,16 @@ export default {
       isProjectSwitch: "",
       projectIdData: [],
       isProductNameSwitch: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
   },
   computed: {
@@ -685,6 +696,8 @@ export default {
     },
   },
   async created() {
+    await this.getProductClassFun()
+    await this.getProductAttributeFun()
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -693,149 +706,103 @@ export default {
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
       })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        this.list8 = res.data.records
+    },
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res, this.bimProductAttributesList);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        if (this.accuracyLevelFlag == 1) {
+          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.clearanceFlag = res.data.clearance
+        if (this.clearanceFlag == 1) {
+          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        console.log("this.list6", this.list6);
+        this.oilFlag = res.data.oil
+        if (this.oilFlag == 1) {
+          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.oilQuantityFlag = res.data.oilQuantity
+        if (this.oilQuantityFlag == 1) {
+          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.packagingMethodFlag = res.data.packagingMethod
+        if (this.packagingMethodFlag == 1) {
+          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        if (this.sealingCoverTypingFlag == 1) {
+          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.specialRequireFlag = res.data.specialRequire
+        if (this.specialRequireFlag == 1) {
+          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.vibrationLevelFlag == 1) {
+          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+          console.log(this.list3);
+        }
+        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
+          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
+          this.selectProductClassFlag = true
+        } else {
+          this.selectProductClassFlag = false
+        }
       })
     },
     async getProductNameSwitch(code, type) {
@@ -855,7 +822,7 @@ export default {
     },
     // 选择产品
     selectProductFun(data) {
-      this.$set(data,'orderNo',this.dataForm.orderNo)
+      this.$set(data, 'orderNo', this.dataForm.orderNo)
       console.log("所选返工产品", data);
       this.dataForm = data
       this.$set(this.dataForm, 'orderType', 'manually')
@@ -1245,7 +1212,6 @@ export default {
       })
     },
     init() {
-      this.getProductClassFun()
       this.getProductionLineListFun()
       this.fetchData("PROD")
     },

@@ -20,7 +20,6 @@
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
@@ -46,7 +45,6 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 17px;">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
@@ -69,8 +67,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag==1">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                             style="width: 100%;">
@@ -79,7 +76,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24"  v-if="accuracyLevelFlag==1">
                         <el-form-item label="精度等级" prop="accuracyLevel">
                           <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -87,8 +84,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24"  v-if="vibrationLevelFlag==1">
                         <el-form-item label="振动等级" prop="vibrationLevel">
                           <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
                             style="width: 100%;">
@@ -97,7 +93,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24" v-if="oilFlag==1">
                         <el-form-item label="油脂" prop="oil">
                           <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -105,7 +101,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24"  v-if="oilQuantityFlag==1">
                         <el-form-item label="油脂量" prop="oilQuantity">
                           <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -113,8 +109,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24" v-if="clearanceFlag==1">
                         <el-form-item label="游隙" prop="clearance">
                           <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -123,7 +118,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="包装方式" prop="packagingMethod">
+                        <el-form-item label="包装方式" v-if="packagingMethodFlag==1">
                           <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
                             style="width: 100%;">
                             <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
@@ -132,7 +127,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="特殊要求" prop="specialRequire">
+                        <el-form-item label="特殊要求" v-if="specialRequireFlag==1">
                           <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
                             style="width: 100%;">
                             <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
@@ -173,7 +168,6 @@
                       </el-table-column>
                       <el-table-column prop="personId" label="人员" min-width="150"
                         v-if="dataForm.taskMethod != 'not_appoint'">
-
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.personId" placeholder="" clearable
                             style="width: 60%; display: none" class="applySelect" disabled>
@@ -204,7 +198,6 @@
                       </el-table-column>
                       <el-table-column prop="equipmentId" label="设备" min-width="150"
                         v-if="dataForm.taskMethod != 'not_appoint'">
-
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
                             style="width:70%;display:none" class="applySelect" disabled>
@@ -218,13 +211,10 @@
                             {{ scope.row.equipmentId ? scope.row.equipmentCode ?
                               scope.row.equipmentName + "(" + scope.row.equipmentCode + ")" : scope.row.equipmentName :
                               "请选择设备" }}
-
                           </el-button>
                         </template>
                       </el-table-column>
-
                       <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
-
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable
                             :disabled="scope.row.processingType != 'self_produced'">
@@ -273,7 +263,6 @@
                         </template>
                       </el-table-column>
                     </JNPF-table>
-
                   </el-form>
                 </el-collapse-item>
               </el-collapse>
@@ -304,7 +293,6 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-
                     </el-row>
                   </el-form>
                 </el-collapse-item>
@@ -319,14 +307,13 @@
                       @click="batchDelete">批量删除</el-button>|
                   </div>
                   <el-form :model="dataFormOne" v-bind="dataFormOne" ref="processRef" class="data-form">
-
                     <el-table ref="product" :data="dataFormOne.collectData" fixedNo v-loading="tableloading"
                       v-bind="dataFormOne.collectData" @selection-change="handeleProductInfoData">
                       <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="productCode" label="产品编码"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                        v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" />
                       <el-table-column prop="processName" label="工序名称">
                         <template slot="header">
@@ -398,7 +385,6 @@
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
-
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
                   工单截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
                     .replace("-", ".")
@@ -447,7 +433,6 @@
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
-
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
                   工单截止：{{ totalData[item][totalData[item].length -
                     1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
@@ -475,7 +460,6 @@
                       .replace('-', '.') }}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
                     }}个
-
                   </p>
                   <p style="margin-top:4px; font-size:12px">
                     {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}-
@@ -494,7 +478,6 @@
                     }}个
                   </p>
                 </div>
-
                 <p v-if="totalData[item].length" style="margin-top:4px; font-size:12px">工单截止：{{
                   totalData[item][totalData[item].length -
                     1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }} <el-button class="elbutton" type="text"
@@ -503,9 +486,6 @@
                 </p>
               </div>
             </el-col>
-
-
-
           </el-row>
         </el-dialog>
         <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
@@ -519,7 +499,6 @@
                     placeholder="工单号" clearable />
                 </el-form-item>
               </el-col>
-
               <el-col :span="4">
                 <el-form-item>
                   <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
@@ -532,7 +511,6 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-
               <el-col :span="5">
                 <el-form-item>
                   <el-button type="primary" size="mini" icon="el-icon-search" @click="dataFormSubmit()">
@@ -568,12 +546,6 @@
             <span style="font-weight:500;margin-right:10px">不合格数量：{{ totalUnqualifiedQuantity }}</span>
           </div>
         </el-dialog>
-
-
-
-
-
-
         <RoutingForm v-if="routingVisible" ref="routingForm" @selectRouting="selectRoutingFun"> </RoutingForm>
         <SelectProductForm v-if="productVisible" ref="productForm" @selectProduct="selectProductFun">
         </SelectProductForm>
@@ -590,7 +562,6 @@
     </transition>
   </div>
 </template>
-
 <script>
 import {
   getprodOrderList,
@@ -605,9 +576,9 @@ import RoutingForm from "./RoutingForm.vue"
 import SelectProductForm from './selectProductForm.vue'
 import SelectProcrssForm from './processForm.vue'
 import CollectProductForm from './CollectProductForm.vue'
-import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList,getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -620,7 +591,6 @@ export default {
     CollectProductForm,
   },
   mixins: [getProjectList],
-
   data() {
     return {
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
@@ -678,7 +648,6 @@ export default {
         processName: [{ validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：工序${errMsg}`) }] }), trigger: ['blur'] },]
       },
       collectConfig: {
-
       },
       pickDataRule: {
         orderNo: [
@@ -687,7 +656,6 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-       
       },
       activeNames2: [],
       collect: {
@@ -734,7 +702,6 @@ export default {
       },
       dataFormOne: {
         collectData: [],
-
       },
       listLoading: false,
       activeName: "orderInfo",
@@ -800,18 +767,25 @@ export default {
       detailDiaFlag: false,
       naturalResourcesFlag: true,
       isProjectSwitch: "",
-      isProductNameSwitch:"",
-
+      isProductNameSwitch: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
     }
   },
-
-
   async created() {
+    await this.getProductClassFun()
+    await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-
     this.getPickingConfig()
-
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -837,14 +811,113 @@ export default {
       return totalNums
     },
   },
-
   mounted() {
-
   },
   methods: {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    },
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res, this.bimProductAttributesList);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        if (this.accuracyLevelFlag == 1) {
+          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.clearanceFlag = res.data.clearance
+        if (this.clearanceFlag == 1) {
+          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        console.log("this.list6", this.list6);
+        this.oilFlag = res.data.oil
+        if (this.oilFlag == 1) {
+          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.oilQuantityFlag = res.data.oilQuantity
+        if (this.oilQuantityFlag == 1) {
+          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.packagingMethodFlag = res.data.packagingMethod
+        if (this.packagingMethodFlag == 1) {
+          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        if (this.sealingCoverTypingFlag == 1) {
+          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.specialRequireFlag = res.data.specialRequire
+        if (this.specialRequireFlag == 1) {
+          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.vibrationLevelFlag == 1) {
+          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+          console.log(this.list3);
+        }
+        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
+          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
+          this.selectProductClassFlag = true
+        } else {
+          this.selectProductClassFlag = false
+        }
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     selectTaskMethod() {
@@ -883,7 +956,6 @@ export default {
         } else if (item.processingType == 'external_production') {
           item.processingTypeName = '外协'
         }
-
         if (item.processType == 'normal') {
           item.processTypeName = '正常工序'
         } else if (item.processType == 'wait_assemble') {
@@ -892,7 +964,6 @@ export default {
           item.processTypeName = '测震工序'
         }
         console.log("item", item)
-
         return item
       })
       return treeData
@@ -909,7 +980,6 @@ export default {
       this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processName', datas.name)
       this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processId', datas.id)
     },
-
     // 打开选择领料清单选择产品弹框
     openselectcollectProductFun() {
       if (!this.dataForm.drawingNo) return this.$message.error("请先选择返工产品")
@@ -923,7 +993,6 @@ export default {
           this.$refs.collectProductForm.init("")
         })
       }
-
     },
     // 选择的领料清单产品
     selectCollectProductFun(data) {
@@ -942,7 +1011,6 @@ export default {
     },
     // 获取领料设置 领料是否自动生成领料单
     getPickingConfig() {
-
       let obj = { "pageSize": -1, "businessCode": "produce" }
       getBimBusinessSwitchConfigList(obj).then(res => {
         this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
@@ -950,7 +1018,6 @@ export default {
           this.activeNames2 = ['pickInfo', 'pickbasicInfo']
         } else {
           this.activeNames2 = ['pickInfo']
-
         }
       })
     },
@@ -1016,10 +1083,8 @@ export default {
       this.$nextTick(() => {
         if (this.isProjectSwitch == 1) {
           this.$refs.productForm.init(this.userInfo.projectId || '')
-
         } else {
           this.$refs.productForm.init('')
-
         }
       })
       console.log(6666);
@@ -1033,11 +1098,6 @@ export default {
       this.$set(this.dataForm, 'orderType', 'rework')
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
     },
-
-
-
-
-
     // 通过查询条件查询未完成的派工单
     dataFormSubmit() {
       if (this.daterangeList.length) {
@@ -1101,10 +1161,8 @@ export default {
       this.$nextTick(() => {
         if (this.isProjectSwitch == 1) {
           this.$refs.routingForm.init(this.dataForm.projectId)
-
         } else {
           this.$refs.routingForm.init("")
-
         }
       })
     },
@@ -1117,9 +1175,7 @@ export default {
       if (!this.isSame) {
         console.log(666);
         this.dataFormTwo.data = []
-
       }
-
       detailProcess(data.id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
       })
@@ -1183,7 +1239,6 @@ export default {
           })
         } else {
           this.$message.error("当前工序没有配置设备资源")
-
         }
       } else {
         this.$message.error("当前工序没有配置设备资源")
@@ -1192,7 +1247,6 @@ export default {
     //  选择人员
     selectPersonnelFun(scope) {
       console.log(scope.row);
-
       this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.personnel) {
@@ -1211,7 +1265,6 @@ export default {
           };
           getWorkListMap(obj).then((res) => {
             console.log("人员数据", res);
-
             this.personnelData = Object.keys(res.data).sort();
             this.totalData = res.data;
           });
@@ -1244,7 +1297,6 @@ export default {
         this.dataFormTwo.data[this.index].equipmentId = item.split("_")[0];
         this.dataFormTwo.data[this.index].equipmentName = item.split("_")[1];
         this.dataFormTwo.data[this.index].equipmentCode = item.split("_")[2];
-
         // this.dataFormTwo.data[this.index].routingProResMap.device.forEach((item) => {
         //     if (item.resourceId == this.dataFormTwo.data[this.index].equipmentId) {
         //         this.dataFormTwo.data[this.index].equipmentName =
@@ -1253,7 +1305,6 @@ export default {
         // });
       }
       console.log("'this.dataFormTwo.data'", this.dataFormTwo.data);
-
       this.routingProResMapDiaFlag = false;
     },
     // 选择工位
@@ -1264,190 +1315,13 @@ export default {
         console.log("工位", res);
         this.workstationList = res.data.returnList;
         console.log(this.workstationList);
-
         this.$forceUpdate();
       });
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        this.list8 = res.data.records
-      })
-
-
-
-    },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     search() {
       this.form.pageNum = 1
       this.initData()
     },
-
     initData() {
       this.listLoading = true
       getCooperativeData(this.form).then(res => {
@@ -1482,7 +1356,6 @@ export default {
         this.lineList = res.data.records;
       });
     },
-
     // 获取工艺详情
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
@@ -1490,7 +1363,6 @@ export default {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
-
           if (item.routingProResMap) {
             if (item.routingProResMap.personnel) {
               this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
@@ -1501,10 +1373,8 @@ export default {
               this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
             }
             if (item.routingProResMap.device) {
-
               this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
               this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
-
             }
           } else {
           }
@@ -1516,8 +1386,7 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.$set(this.dataForm, 'planDate', [])
-      this.$refs.dataForm.clearValidate('planDate');
-      this.getProductClassFun()
+      this.$refs.dataForm.clearValidate('planDate'); 
       await this.getProjectSwitch('system', 'project')
       this.getPickingConfig()
       if (btnType == 'edit') {
@@ -1525,7 +1394,6 @@ export default {
         this.fetchData("PODH", false)
       }
       if (btnType == 'add') {
-
         this.fetchData("PROD", true)
         this.fetchData("PODH", true)
       }
@@ -1545,23 +1413,18 @@ export default {
         if (code == 'PROD') {
           this.codeConfig = data
           if (flag) this.dataForm.orderNo = data.number
-
         }
         if (code == 'PODH') {
           this.collectConfig = data
           if (flag) this.collect.orderNo = data.number
-
         }
-
       } catch (error) {
       }
     },
-
     goBack() {
       this.$emit('close', true)
     },
     handleConfirm(value) {
-
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
@@ -1574,19 +1437,15 @@ export default {
             submitFlag = false;
             return
           }
-
           if (this.allocationFlag) {
             this.dataForm.materialFlag = true
           } else {
             this.dataForm.materialFlag = false
-
           }
           if (this.naturalResourcesFlag) {
-
             for (let index = 0; index < this.dataFormTwo.data.length; index++) {
               const item = this.dataFormTwo.data[index];
               if (item.reportFlag) {
-
                 if (
                   !item.workGroupId &&
                   !item.personId && item.processingType == "self_produced"
@@ -1616,13 +1475,11 @@ export default {
               item.workGroupId = ""
             });
           }
-
           this.dataFormTwo.data.forEach(item => {
             this.$set(item, 'productionQuantity', this.dataForm.productionQuantity)
             this.$set(item, 'planEndDate', this.dataForm.planEndDate)
             this.$set(item, 'planStartDate', this.dataForm.planStartDate)
           });
-
           if (submitFlag === false) return
           this.btnLoading = true;
           this.dataFormTwo.data.forEach(item => {
@@ -1641,7 +1498,6 @@ export default {
           console.log("dataFormTwo.data", this.dataFormTwo.data);
           console.log("coll", this.collect);
           console.log("dataFormOne.collectData", this.dataFormOne.collectData);
-
           addProdOrder(obj).then(res => {
             this.btnLoading = false
             this.$message.success("新建返工任务成功")
@@ -1650,9 +1506,7 @@ export default {
             }, 1500);
           }).catch(error => {
             this.btnLoading = false
-
           })
-
         }
       })
     }
@@ -1668,21 +1522,17 @@ export default {
     margin-bottom: 0 !important;
   }
 }
-
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
-
 .required {
   color: red;
   margin-right: 4px;
 }
-
 ::v-deep .el-tabs__header {
   padding: 0 !important;
   padding-bottom: 10px !important;
 }
-
 ::v-deep .el-tabs__header {
   padding-left: 0 !important;
 }
@@ -1692,7 +1542,6 @@ export default {
   height: auto !important;
   padding: 0;
 }
-
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
@@ -1702,23 +1551,18 @@ export default {
   color: red;
   margin-right: 4px;
 }
-
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;
 }
-
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 5px 0 10px !important;
 }
-
 .el-button span {
   font-size: 14px !important;
 }
-
 .pagination-container {
   background-color: #f5f7fa;
 }
-
 ::v-deep .el-input-group__append {
   background-color: #48a2ff;
   color: #fff;
@@ -1726,67 +1570,52 @@ export default {
 </style>
 <style lang="scss" scoped>
 $footerPadding: '10px';
-
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
   padding: 0;
 }
-
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 10px !important;
 }
-
 ::v-deep .el-dialog__body {
   margin-bottom: 10px;
 }
-
 ::v-deep .el-dialog__footer {
   padding: 0 20px 10px;
 }
-
 ::v-deep .even-row,
 ::v-deep .odd-row {
   cursor: pointer;
 }
-
 .killPadding {
   padding: 0;
 }
-
 .killPaddingLeft {
   padding-left: 0 !important;
 }
-
 .pagination-container {
   background-color: #f5f7fa;
   margin-top: 0px;
   padding: 2px 10px 2px 0;
 }
-
 ::v-deep .JNPF-common-search-box.noSearchList {
   padding: 3px 0;
 }
-
 ::v-deep .has-gutter .el-table__cell.gutter {
   border-bottom: 1px solid #ebeef5;
   background-color: #f5f7fa;
 }
-
 .JNPF-common-search-box {
   padding: 8px 0px 0;
 }
-
 .JNPF-preview-main .main {
   padding-top: 0;
 }
-
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }
-
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
-
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1799,25 +1628,19 @@ $footerPadding: '10px';
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
-
 ::v-deep .el-collapse-item__wrap {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
   padding: 0px;
   border-top: none !important;
-
 }
-
 .orderInfo ::v-deep.el-collapse-item__wrap {
   padding: 0 10px;
 }
-
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
-
-
 .import_t {
   font-size: 22px;
   color: rgb(103, 194, 58);
@@ -1826,7 +1649,6 @@ $footerPadding: '10px';
   display: inline-block;
   margin-left: 20px;
 }
-
 .import_b {
   font-size: 18px;
   /* color: #67c23a; */
@@ -1834,42 +1656,31 @@ $footerPadding: '10px';
   margin-top: 43px;
   display: inline-block;
 }
-
 .orderInfo {
   margin-top: 5px;
   border-top: 0;
 }
-
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }
-
 ::v-deep.routingProRes .el-dialog__body {
   height: 500px;
 }
-
 ::v-deep .applySelect .el-icon-arrow-up:before {
   content: "";
 }
-
 .underline-button {
   text-decoration: underline;
 }
-
-
-
 .personBox p {
   text-align: center;
 }
-
 .personBox:nth-child(n + 6) {
   margin-top: 12px;
 }
-
 ::v-deep .elbutton span {
   font-size: 14px !important;
 }
-
 .personBox {
   border: 1px solid #dcdfe6;
   background-color: #f5f7fa;
@@ -1878,12 +1689,10 @@ $footerPadding: '10px';
   height: 150px;
   border-radius: 5px;
 }
-
 .active {
   background-color: #5d9bd5;
   color: #fff;
 }
-
 ::v-deep .el-range-editor {
   height: 34px !important;
 }

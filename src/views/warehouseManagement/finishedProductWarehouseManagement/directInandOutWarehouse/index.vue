@@ -271,7 +271,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="standardValue" label="规值" width="120" key="211">
+                      <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120"
+                        key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -280,7 +281,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" width="120" key="210">
+                      <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -292,7 +293,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" key="2111">
+                      <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
+                        width="120" key="2111">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -304,7 +306,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" key="123">
+                      <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                        key="123">
                         <!-- <template slot="header">
                             <span class="required">*</span>精度等级
                           </template> -->
@@ -316,7 +319,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" key="17">
+                      <el-table-column prop="vibrationLevel" v-if="vibrationLevelFlag == 1" label="振动等级" width="120"
+                        key="17">
                         <!-- <template slot="header">
                             <span class="required">*</span>振动等级
                           </template> -->
@@ -328,10 +332,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="oil" label="油脂" width="120" key="61">
-                        <!-- <template slot="header">
-                            <span class="required">*</span>油脂
-                          </template> -->
+                      <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
+
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -340,7 +342,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="clearance" label="游隙" width="120" key="1055">
+                      <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -349,7 +351,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="aperture" label="孔径" width="120" key="106">
+                      <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -358,7 +360,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="packagingMethod" label="包装方式" width="120" key="101">
+                      <el-table-column prop="packagingMethod" label="包装方式" v-if="packagingMethodFlag == 1" width="120"
+                        key="101">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
                             :disabled="btnType == 'look'" style="width: 100%;">
@@ -367,7 +370,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="specialRequire" label="特殊要求" width="160" key="202">
+                      <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                        key="202">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
                             :disabled="btnType == 'look'" style="width: 100%;">
@@ -376,7 +380,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="processName" label="工序" width="160" key="103">
+                      <el-table-column prop="processName" label="工序" v-if="processNameFlag == 1" width="160" key="103">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -474,7 +478,7 @@
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="code" />
-                <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
+              <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'" />
               <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'" />
@@ -482,8 +486,8 @@
                 v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
-          
-         
+
+
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="120" sortable="custom"
@@ -499,25 +503,25 @@
               <el-table-column prop="batchNumber" label="批次号" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="batchNumber" />
               <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="standardValue" />
+                v-if="dataForm.documentType == 'outbound' && standardValueFlag == 1" key="standardValue" />
               <el-table-column prop="colour" label="颜色" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="colour" />
+                v-if="dataForm.documentType == 'outbound' && colourFlag == 1" key="colour" />
               <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="sealingCoverTyping" />
+                v-if="dataForm.documentType == 'outbound' && sealingCoverTypingFlag == 1" key="sealingCoverTyping" />
               <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="accuracyLevel" />
+                v-if="dataForm.documentType == 'outbound' && accuracyLevelFlag == 1" key="accuracyLevel" />
               <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="vibrationLevel" />
+                v-if="dataForm.documentType == 'outbound' && vibrationLevelFlag == 1" key="vibrationLevel" />
               <el-table-column prop="oil" label="油脂" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="oil" />
+                v-if="dataForm.documentType == 'outbound' && oilFlag == 1" key="oil" />
               <el-table-column prop="clearance" label="游隙" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="clearance" />
+                v-if="dataForm.documentType == 'outbound' && clearanceFlag == 1" key="clearance" />
               <el-table-column prop="aperture" label="孔径" width="80" :key="102" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="aperture"></el-table-column>
+                v-if="dataForm.documentType == 'outbound' && apertureFlag == 1" key="aperture"></el-table-column>
               <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="packagingMethod" />
+                v-if="dataForm.documentType == 'outbound' && packagingMethodFlag == 1" key="packagingMethod" />
               <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" key="specialRequire" />
+                v-if="dataForm.documentType == 'outbound' && specialRequireFlag == 1" key="specialRequire" />
               <el-table-column prop="remark" label="备注" width="100" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="remark" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
@@ -582,7 +586,7 @@ import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData,getOrderFiledMap  } from '@/api/basicData/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import flowMixin from '@/mixins/generator/flowMixin'
 import PrintBrowse from '@/components/PrintBrowse'
@@ -823,6 +827,20 @@ export default {
         },
       ],
       calculateQuantityFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      standardValueFlag: "",
+      apertureFlag:"",
+      colourFlag: "",
+      processFlag: "", 
     }
   },
   computed: {
@@ -836,6 +854,8 @@ export default {
     },
   },
   async created() {
+    await this.getProductClassFun()
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     this.getProductClassFun()
     this.getprocessList()
@@ -858,6 +878,138 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+      // 工序
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      }
+      getBimProcessList(obj8).then((res) => {
+        this.processList = res.data.records
+      })
+    },
+    advancedQueryFuns(prop) {
+      // sealingCoverTyping //打字内容
+      //     accuracyLevel //精度等级
+      //     vibrationLevel //振动等级
+      //     oil //油脂
+      //     oilQuantity //油脂量
+      //     clearance //游隙
+      //     packagingMethod //包装方式          
+      //     specialRequire //特殊要求
+      console.log(this.categoryType);
+      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === prop)
+      if (this.categoryType == 'inbound_purchase') {
+        if (this.colourFlag === '1') {
+          this.list11 = this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+
+        }
+        if (this.standardValueFlag === '1') {
+          this.list8 = this.bimProductAttributesList.pa008.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        }
+
+      }
+      if (this.specialRequireFlag === '1') {
+        this.list9 = this.bimProductAttributesList.pa016.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      }
+      if (this.packagingMethodFlag === '1') {
+        this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      }
+      if (this.clearanceFlag === '1') {
+        this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+
+      }
+
+      if (this.oilFlag === '1') {
+        this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      }
+      if (this.vibrationLevelFlag === '1') {
+        this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      }
+      if (this.accuracyLevelFlag === '1') {
+        this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      }
+      if (this.sealingCoverTypingFlag === '1') {
+        this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      }
+
+    },
     async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
@@ -1920,23 +2072,29 @@ export default {
   height: calc(100% - 47px);
   overflow-y: auto;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   padding: 10px 10px;
   padding-top: 0;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   overflow: auto;
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
+
 .required {
   color: red;
   margin-right: 4px;
 }
+
 .subtitle {
   line-height: 33px;
   font-size: 18px;
@@ -1944,21 +2102,27 @@ export default {
   background: #fafafa;
   padding-left: 5px;
 }
+
 ::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 !important;
 }
+
 ::v-deep.pintDevLog.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 10px 20px 10px !important;
 }
+
 .JNPF-preview-main .main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }
+
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1971,6 +2135,7 @@ export default {
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
+
 ::v-deep .el-collapse-item__wrap {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
@@ -1978,9 +2143,11 @@ export default {
   padding: 0 10px 0px;
   border-top: none !important;
 }
+
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
+
 .import_t {
   font-size: 22px;
   color: rgb(103, 194, 58);
@@ -1989,6 +2156,7 @@ export default {
   display: inline-block;
   margin-left: 20px;
 }
+
 .import_b {
   font-size: 18px;
   /* color: #67c23a; */
@@ -1996,19 +2164,23 @@ export default {
   margin-top: 43px;
   display: inline-block;
 }
+
 .JNPF-common-search-box {
   margin-bottom: 5px;
 }
+
 // .orderInfo ::v-deep .el-collapse-item__wrap {
 //   border-bottom: none !important
 // }
 .JNPF-common-table {
   border: 1px solid #ebeef5 !important;
 }
+
 .options {
   display: inline-block;
   float: right;
 }
+
 .pageTitle {
   display: inline-block;
   font-size: 18px;
@@ -2017,12 +2189,15 @@ export default {
   line-height: 36px;
   font-weight: 700;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }
+
 .productInfo {
   padding: 0;
 }
+
 .scand ::v-deep.el-input__inner {
   height: 60px;
   line-height: 60px;
@@ -2030,9 +2205,11 @@ export default {
   font-weight: 600;
   border-color: #3fb9f8;
 }
+
 .scand .box {
   padding: 40px 20px;
 }
+
 .scand .tip {
   margin-top: 10px;
   font-size: 18px;

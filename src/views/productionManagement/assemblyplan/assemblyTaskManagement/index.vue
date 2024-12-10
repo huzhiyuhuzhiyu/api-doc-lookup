@@ -509,14 +509,14 @@ export default {
         label: '产品名称',
         type: 'input'
       })
-    } 
+    }
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
-  mounted() { 
+  mounted() {
   },
   methods: {
     advanceFun(){
@@ -610,7 +610,7 @@ export default {
     // 关单
     Cancelshipment() {
       if (!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
-      this.$confirm('您确认关闭选中的任务吗？', this.$t('common.tipTitle'), {
+      this.$confirm('关闭任务将会把领料单一起关闭，您确认关闭吗？', this.$t('common.tipTitle'), {
         type: 'warning',
         customClass: 'custom-confirm',
       }).then(() => {
@@ -655,7 +655,7 @@ export default {
           });
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
-            // 将options赋值为5  
+            // 将options赋值为5
             oilObj.options = JSON.parse(JSON.stringify(arr));
           }
         })

@@ -442,7 +442,7 @@ export default {
           }
         ],
         productStatus: 'enable',
-        productSource: 'out',
+        productSource: 'produce',
         pageNum: 1,
         pageSize: 20
         // queryType: 3

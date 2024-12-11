@@ -148,14 +148,14 @@
                           <template v-if="scope.row.processType == 'normal'">
                             正常工序
                           </template>
-                          <template v-if="scope.row.processType == 'wait_assemble'">
-                            待装配工序
-                          </template>
                           <template v-if="scope.row.processType == 'vibrate'">
                             测振工序
                           </template>
                           <template v-if="scope.row.processType == 'heat_treatment'">
-                            热处理工序
+                            热工工序
+                          </template>
+                          <template v-if="scope.row.processType == 'packing'">
+                            包装工序
                           </template>
                         </template>
                       </el-table-column>
@@ -429,14 +429,14 @@
                       <template v-if="scope.row.processType == 'normal'">
                         正常工序
                       </template>
-                      <template v-if="scope.row.processType == 'wait_assemble'">
-                        待装配工序
-                      </template>
                       <template v-if="scope.row.processType == 'vibrate'">
                         测振工序
                       </template>
                       <template v-if="scope.row.processType == 'heat_treatment'">
-                        热处理工序
+                        热工工序
+                      </template>
+                      <template v-if="scope.row.processType == 'packing'">
+                        包装工序
                       </template>
                     </template>
                   </el-table-column>
@@ -871,12 +871,12 @@ export default {
         }
         if (item.processType == 'normal') {
           item.processTypeName = '正常工序'
-        } else if (item.processType == 'wait_assemble') {
-          item.processTypeName = '待装配工序'
         } else if (item.processType == 'vibrate') {
           item.processTypeName = '测振工序'
         } else if (item.processType == 'heat_treatment') {
-          item.processTypeName = '热处理工序'
+          item.processTypeName = '热工工序'
+        } else if (item.processType == 'packing') {
+          item.processTypeName = '包装工序'
         }
         return item
       })

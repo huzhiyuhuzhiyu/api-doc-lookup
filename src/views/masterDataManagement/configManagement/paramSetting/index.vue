@@ -1,8 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="tag-group JNPF-common-search-box treeBox_bot"
-        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
+      <div class="tag-group JNPF-common-search-box treeBox_bot" style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="activeName">
           <el-radio-button label="product">产品设置</el-radio-button>
           <el-radio-button label="orderField">订单设置</el-radio-button>
@@ -14,20 +13,14 @@
           <el-radio-button label="customersupplier">客户供应商管理</el-radio-button>
           <el-radio-button label="deputyUnit">副单位设置</el-radio-button>
           <el-radio-button label="maintenance">维修设置</el-radio-button>
+          <el-radio-button label="departmentalset">人力资源设置</el-radio-button>
         </el-radio-group>
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
         <div style="margin: 10px -6px 0 10px;overflow: scroll;">
-          <el-table v-if="tableRerender"
-            :span-method="['attachment', 'orderField'].includes(activeName) ? arraySpanMethod : undefined"
-            :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
-            :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-            <el-table-column align="left" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块"
-              width="135" />
-            <el-table-column align="left" v-if="activeName === 'orderField'" prop="mainModule" label="所属模块"
-              width="135" />
-
-
+          <el-table v-if="tableRerender" :span-method="['attachment', 'orderField'].includes(activeName) ? arraySpanMethod : undefined" :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }" :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
+            <el-table-column align="left" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="135" />
+            <el-table-column align="left" v-if="activeName === 'orderField'" prop="mainModule" label="所属模块" width="135" />
 
             <el-table-column prop="configKeyLabel" label="功能" width="230">
               <template v-slot:default="{ row }">
@@ -59,14 +52,10 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column class-name="pointer" prop="configValue3" label="文件分类" width="150"
-              v-if="activeName === 'attachment'">
+            <el-table-column class-name="pointer" prop="configValue3" label="文件分类" width="150" v-if="activeName === 'attachment'">
               <template v-slot:default="{ row }">
                 <div @click="fileCategoryClick(row)" style="width: 100%">
-                  <ComSelect2 v-if="row.editFlag" :currOrgId="row.configValue2" v-model="row.configValue2"
-                    :ref="row.configKey" placeholder="请选择所属分类" auth :closeHandler="() => closeHandler(row)"
-                    @change="(...args) => onOrganizeChange(...args, row)"
-                    :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT" />
+                  <ComSelect2 v-if="row.editFlag" :currOrgId="row.configValue2" v-model="row.configValue2" :ref="row.configKey" placeholder="请选择所属分类" auth :closeHandler="() => closeHandler(row)" @change="(...args) => onOrganizeChange(...args, row)" :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT" />
                   <div v-else>
                     <div style="width: 100%" v-if="row.configValue3">
                       <el-link type="primary" :underline="false">{{ row.configValue3 }}</el-link>
@@ -268,6 +257,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'orderField'
         this.getData(9)
+      } else if (this.activeName === 'departmentalset') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'departmentalset'
+        this.getData(10)
       }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -311,6 +304,8 @@ export default {
             list = res.data.deputyUnit
           } else if (this.activeName === 'maintenance') {
             list = res.data.maintenance
+          } else if (this.activeName === 'departmentalset') {
+            list = res.data.departmentalset
           } else if (this.activeName === 'orderField') {
             list = res.data.orderField
             list.forEach(item => {

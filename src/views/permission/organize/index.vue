@@ -121,8 +121,6 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item @click.native="checkMembers(scope.row.id,scope.row.fullName)">
-                      复制</el-dropdown-item>
-                    <el-dropdown-item @click.native="checkMembers(scope.row.id,scope.row.fullName)">
                       查看成员</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>

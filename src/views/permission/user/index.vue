@@ -131,7 +131,8 @@
           <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom" v-if="isProjectSwitch === '1'">
           </el-table-column>
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />
-          <el-table-column prop="organizeName" label="所属组织" min-width="280" />
+          <el-table-column prop="departmentName" v-if="isApprovalwitch" label="所属部门" min-width="160" />
+          <el-table-column prop="organizeName" v-else label="所属部门" min-width="280" />
           <el-table-column prop="roleName" label="角色" min-width="140" />
           <!-- <el-table-column prop="employeeStatus" label="员工状态" width="120" align="center" sortable="custom">
             <template slot-scope="{row}">
@@ -248,7 +249,7 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { excelExport, salecooperativeUsers,getBimBusinessSwitchConfigList  } from '@/api/basicData/index'
+import { getBimBusinessDetail,excelExport, salecooperativeUsers,getBimBusinessSwitchConfigList  } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import {
   updateUserState,
@@ -293,6 +294,7 @@ export default {
   },
   data() {
     return {
+      isApprovalwitch: '',
       isProjectSwitch:'',
       importProjectId:'',
       tableFlag:false,
@@ -413,17 +415,26 @@ export default {
   },
  async created() {
     await this.getProjectSwitch()
+    this.getSwitch()
     await this.getProjectList()
     this.getOrganizeList(true)
     if (localStorage.getItem("userFlag")) {
       let userFlag = JSON.parse(localStorage.getItem('userFlag'))
       this.expands = userFlag
-      console.log("userFlag", userFlag);
       this.toggleExpand(userFlag)
 
     }
   },
   methods: {
+    getSwitch() {
+      let obj = {
+        businessCode: 'departmentalset',
+        configKey: `bmzz_departmentalset`
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isApprovalwitch = res.data.configValue1 == '1' ? true : false
+      })
+    },
     async getProjectSwitch() {
       let obj = {
         businessCode: 'system',

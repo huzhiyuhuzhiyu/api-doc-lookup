@@ -2455,7 +2455,7 @@ export default {
         classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
-      getStockMovelist(obj.classAttributeList, obj.projectId).then(res => {
+      getStockMovelist(obj.classAttributeList, obj.projectId,this.warehouseCode).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {

@@ -133,6 +133,9 @@
                     查看二维码
                   </el-button>
                 </el-popover> -->
+                  <el-button type="text" size="mini" @click="setBusinessType(scope.row)">
+                      设置业务类型
+                  </el-button>
                 <el-button v-if="scope.row.warehouseManagementStatus == 'disabled'"
                   :disabled=" scope.row.type == 'scrap' || scope.row.type == 'virtually'"
                   type="text" size="mini" @click="enableWareFun(scope.row)">
@@ -220,6 +223,30 @@
           确定</el-button>
       </span>
     </el-dialog>
+      <!-- 选择业务类型 -->
+      <el-dialog title="选择业务类型" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
+                 v-if="chooseBusinessTypeVisible"
+                 :visible.sync="chooseBusinessTypeVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%"
+                 append-to-body>
+          <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+
+              <div class="JNPF-common-layout-center JNPF-flex-main productClass">
+
+                  <div class="JNPF-common-layout-main JNPF-flex-main">
+                      <JNPF-table v-loading="businessTypeTableLoading" :data="businessTypeData" hasC :fixedNO="true"
+                                   ref="chooseBusinessType">
+                          <el-table-column prop="label" label="业务类型名称" />
+                          <el-table-column prop="value" label="业务类型编码"></el-table-column>
+                      </JNPF-table>
+                  </div>
+              </div>
+          </div>
+          <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelChooseBusinessType">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="confirmBusinessType">
+          确定</el-button>
+      </span>
+      </el-dialog>
     <!-- 选择打印模版弹窗 -->
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
@@ -238,6 +265,11 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import {getPromise} from "@/utils";
+import {
+    stockWarehouseBusinessTypeBatchAdd,
+    stockWarehouseBusinessTypeList
+} from "@/api/warehouseManagement/inboundAndOutbound";
 export default {
   name: 'warehouseArchives',
   components: { Form, SuperQuery, VueQr, PrintBrowse, PrintDialog },
@@ -253,6 +285,24 @@ export default {
       ],
       fullName: '',
       productClassAttribute: false,
+      chooseBusinessTypeVisible:false,
+      chooseBusinessTypeResolve:null,
+      businessTypeTableLoading:false,
+      chooseBusinessTypeReject:null,
+      businessTypeData:[ //业务类型
+            { label: "销售发货", value: "outbound_sale_send" },
+            { label: "销售退货", value: "inbound_sale_return" },
+            { label: "采购收货", value: "inbound_purchase" },
+            { label: "采购退货", value: "outbound_purchase" },
+            { label: "生产领料", value: "outbound_pick_out" },
+            { label: "生产退料", value: "inbound_return_materials" },
+            { label: "外协发料", value: "outbound_external_send" },
+            { label: "外协退料", value: "inbound_external_return" },
+            { label: "外协收货", value: "inbound_external" },
+            { label: "外协退货", value: "outbound_external" },
+            { label: "生产入库", value: "inbound_mock_production" },
+      ],
+      chooseBusinessTypeRow:null,
       dialogVisible: false,
       printVisible: false,
       superQueryVisible: false,
@@ -380,6 +430,50 @@ export default {
       })
 
     },
+      cancelChooseBusinessType() {
+        this.chooseBusinessTypeReject()
+        this.closeChooseBusinessTypeModel()
+      },
+      async chooseBusinessTypeHandler(row){
+        const {id} = row
+        this.chooseBusinessTypeVisible = true
+          this.businessTypeTableLoading = true
+        this.chooseBusinessTypeRow=row
+        const {promise,resolve,reject}=getPromise()
+        const res = await stockWarehouseBusinessTypeList(id)
+        if(res.data.records.length){
+          await this.$refs.chooseBusinessType.toggleSelection(
+                res.data.records.map(
+                    item=>this.businessTypeData
+                        .find(item2=>item2.value===item.businessType))
+          )
+        }
+        this.businessTypeTableLoading = false
+        this.chooseBusinessTypeResolve=resolve
+        this.chooseBusinessTypeReject=reject
+        return promise
+      },
+      closeChooseBusinessTypeModel(){
+          this.chooseBusinessTypeVisible = false
+
+      },
+      confirmBusinessType(){
+          const arr =  this.$refs.chooseBusinessType.getCurrentSelection()
+          this.closeChooseBusinessTypeModel()
+          return this.chooseBusinessTypeResolve(arr)
+      },
+      async setBusinessType(row){
+        try {
+            const res =  await this.chooseBusinessTypeHandler(row)
+            console.log(res,'------await')
+           const resp =  await stockWarehouseBusinessTypeBatchAdd(row.id,res.map(item=>item.value))
+            console.log(resp)
+            this.$message.success('设置成功')
+        }catch (e) {
+
+        }
+
+      },
     // 开启仓库菜单
     enableWareFun(row) {
 

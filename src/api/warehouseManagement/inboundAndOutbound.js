@@ -240,3 +240,35 @@ export function getlistOutBatchStock(id) {
     
   })
 }
+
+/**
+ * 获取业务类型设置
+ * @param warehouseId
+ * @returns {*}
+ */
+export function stockWarehouseBusinessTypeList(warehouseId){
+    return request({
+        url:`/api/zgt/stockWarehouseBusinessType/page`,
+        method:'post',
+        data:{
+            warehouseId
+        }
+    })
+}
+
+/**
+ * 根据仓库id增加业务类型
+ * @param warehouseId
+ * @param businessTypes
+ * @returns {*}
+ */
+export function stockWarehouseBusinessTypeBatchAdd(warehouseId,businessTypes){
+    return request({
+        url:`/api/zgt/stockWarehouseBusinessType/batchAdd`,
+        method:'post',
+        data:{
+            businessTypes,
+            warehouseIds:[warehouseId]
+        }
+    })
+}

@@ -577,7 +577,7 @@
   </div>
 </template>
 <script>
-import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
+import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList,stockWarehouseBusinessTypeList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { getBimProcessList } from '@/api/bimProcess/index'
@@ -626,21 +626,20 @@ export default {
         { label: "直接出库", value: "outbound", },
         { label: "直接入库", value: "inbound", },
       ],
-      list: [
-        { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产产品入库", value: "inbound_order_production" },
-        { label: "生产工单入库", value: "inbound_production" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        // { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "直接入库", value: "inbound_other" },
-        { label: "直接出库", value: "outbound_other" },
-      ],
+      businessType2Title: Object.freeze(new Map([
+            ["outbound_sale_send", "销售发货"],
+            ["inbound_sale_return", "销售退货"],
+            ["inbound_purchase", "采购收货"],
+            ["outbound_purchase", "采购退货"],
+            ["outbound_pick_out", "生产领料"],
+            ["inbound_return_materials", "生产退料"],
+            ["outbound_external_send", "外协发料"],
+            ["inbound_external_return", "外协退料"],
+            ["inbound_external", "外协收货"],
+            ["outbound_external", "外协退货"],
+            ["inbound_mock_production", "生产入库"],
+        ])),
+      list: [],
       batchNumVisible: false,
       wareHouseVisible: false,
       // 选择批次号请求条件
@@ -876,7 +875,7 @@ export default {
   watch: {
     "dataForm.warehouseId": {
       handler: function (newVal, oldVal) {
-        // this.getBusinessTypeList();
+        this.getBusinessTypeList();
         if (oldVal) this.spaceLines = []
       },
     }
@@ -886,6 +885,14 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
+    async getBusinessTypeList(){
+        const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
+        const list =[{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
+        this.list = res.data.records.length ? res.data.records.map(item=>({
+            label: this.businessType2Title.get(item.businessType),
+            value: item.businessType
+        })).concat(list) : list
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

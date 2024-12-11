@@ -907,12 +907,7 @@ export default {
           })
           console.log(this.list3);
         }
-        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
-          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
-          this.selectProductClassFlag = true
-        } else {
-          this.selectProductClassFlag = false
-        }
+     
       })
     },
     async getProductNameSwitch(code, type) {

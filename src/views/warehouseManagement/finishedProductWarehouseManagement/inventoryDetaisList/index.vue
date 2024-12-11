@@ -553,7 +553,7 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
-    this.getWarehouseListFun()
+    await this.getWarehouseListFun()
     this.isProjectSwitchFlag = true
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getclassAttributeList()

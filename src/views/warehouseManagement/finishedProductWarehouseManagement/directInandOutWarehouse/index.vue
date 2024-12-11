@@ -1365,7 +1365,7 @@ export default {
         }
         if (this.dataForm.businessType == 'inbound_purchase') {
           if (item.productCategoryName == '保持架') {
-            let arr = ['pa017', 'pa019', 'pa020', 'pa021']
+            let arr = ['pa017', 'pa021']
             arr.forEach(items => {
               let obj1 = {
                 pageNum: -1,
@@ -1373,13 +1373,13 @@ export default {
                 typeCode: items,//保持架尺寸
               };
               getbimProductAttributesList(obj1).then(res => {
-                let list = items == 'pa017' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
+                let list = items == 'pa017' ? 'spaceSizeList' :  'materialList'
                 this.$set(item, list, res.data.records)
               })
             });
           }
           if (item.productCategoryName == '防尘盖') {
-            let arr = ['pa018', 'pa019', 'pa020', 'pa022']
+            let arr = ['pa018', 'pa022']
             arr.forEach(items => {
               let obj1 = {
                 pageNum: -1,
@@ -1391,6 +1391,21 @@ export default {
                 this.$set(item, list, res.data.records)
               })
             });
+          }
+          if(item.productCategoryName != '防尘盖'&&item.productCategoryName != '防尘盖'){
+            let arr=[ 'pa019', 'pa020', ]
+            arr.forEach(items => {
+              let obj1 = {
+                pageNum: -1,
+                pageSize: 20,
+                typeCode: items,
+              };
+              getbimProductAttributesList(obj1).then(res => {
+                let list = items == 'pa019' ? 'logoList' : 'divideEquallyList' 
+                this.$set(item, list, res.data.records)
+              })
+            });
+
           }
         }
         this.productData.push(item)

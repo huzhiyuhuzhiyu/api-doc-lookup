@@ -89,7 +89,7 @@
                           <template v-if="scope.row.processType == 'heat_treatment'">
                             热工工序
                           </template>
-                          <template v-if="scope.row.processType == 'packing'">
+                          <template v-if="scope.row.processType == 'packaging_method'">
                             包装工序
                           </template>
                         </template>

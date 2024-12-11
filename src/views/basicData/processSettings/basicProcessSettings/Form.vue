@@ -267,7 +267,7 @@ export default {
         { label: '正常工序', value: 'normal' },
         { label: '测振工序', value: 'vibrate' },
         { label: '热工工序', value: 'heat_treatment' },
-        { label: '包装工序', value: 'packing' }
+        { label: '包装工序', value: 'packaging_method' }
       ],
       getcategoryTree,
       configurationName: '',

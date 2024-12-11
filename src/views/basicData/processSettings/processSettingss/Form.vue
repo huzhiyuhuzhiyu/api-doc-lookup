@@ -154,7 +154,7 @@
                           <template v-if="scope.row.processType == 'heat_treatment'">
                             热工工序
                           </template>
-                          <template v-if="scope.row.processType == 'packing'">
+                          <template v-if="scope.row.processType == 'packaging_method'">
                             包装工序
                           </template>
                         </template>
@@ -435,7 +435,7 @@
                       <template v-if="scope.row.processType == 'heat_treatment'">
                         热工工序
                       </template>
-                      <template v-if="scope.row.processType == 'packing'">
+                      <template v-if="scope.row.processType == 'packaging_method'">
                         包装工序
                       </template>
                     </template>
@@ -875,7 +875,7 @@ export default {
           item.processTypeName = '测振工序'
         } else if (item.processType == 'heat_treatment') {
           item.processTypeName = '热工工序'
-        } else if (item.processType == 'packing') {
+        } else if (item.processType == 'packaging_method') {
           item.processTypeName = '包装工序'
         }
         return item

@@ -140,7 +140,7 @@
               <div v-if="scope.row.processType == 'normal'">正常工序</div>
               <div v-if="scope.row.processType == 'vibrate'">测振工序</div>
               <div v-if="scope.row.processType == 'heat_treatment'">热工工序</div>
-              <div v-if="scope.row.processType == 'packing'">包装工序</div>
+              <div v-if="scope.row.processType == 'packaging_method'">包装工序</div>
             </template>
           </el-table-column>
           <el-table-column prop="createByName" label="创建人" width="180" />

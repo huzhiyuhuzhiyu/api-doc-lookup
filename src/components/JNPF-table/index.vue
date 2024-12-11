@@ -38,7 +38,7 @@
 import JnpfTableColumn from './Column'
 import ColumnSettings from './ColumnSettings'
 import Sortable from 'sortablejs'
-import {deepClone} from "@/utils";
+import {deepClone, getPromise} from "@/utils";
 export default {
   name: 'JNPF-table',
   components: { JnpfTableColumn, ColumnSettings },
@@ -114,7 +114,10 @@ export default {
       headerCellStyle: {
         backgroundColor: '#f5f7fa',
         fontWeight: 'bold'
-      }
+      },
+      tableRealRef:null,
+      tableRealRefPromise:null,
+      tableRealRefResolve:null,
     }
   },
   watch: {
@@ -130,15 +133,18 @@ export default {
     menuId() {
       return this.$route.meta.modelId || ''
     },
-    tableRef(){
-        return this.$refs.JNPFTable
-    },
     selection(){
-        return this.tableRef.selection
+        return  this.$refs.JNPFTable.selection
     }
 
   },
+    created() {
+      const {promise,resolve} =getPromise()
+      this.tableRealRefPromise=promise
+      this.tableRealRefResolve=resolve
+    },
   mounted() {
+    this.tableRealRefResolve(this.$refs.JNPFTable)
     this.getColumns()
     if (this.hasMove) {
       this.rowDrop(); //声明表格拖动排序方法
@@ -152,7 +158,13 @@ export default {
     if (this.refreshTable) this.refreshTable = false
   },
   methods: {
-
+  /**
+   * 获取表格实例 在此promise后可以获取到表格实例
+   * @returns {null}
+   */
+    getTableRef(){
+        return this.tableRealRefPromise
+    },
 
   /**
    * 以下为复选框增强方法
@@ -169,23 +181,26 @@ export default {
        * 切换所有行的状态
        * @returns {*|void}
        */
-    toggleAllSelection(){
-        return this.tableRef.toggleAllSelection()
+   async toggleAllSelection(){
+       const tableRef = await this.getTableRef()
+        return tableRef.toggleAllSelection()
     },
       /**
        * 全选
        * @returns {Promise<void>}
        */
     async allRowCheck(){
-        this.tableRef.clearSelection()
+        const tableRef = await this.getTableRef()
+        tableRef.clearSelection()
         await this.$nextTick()
         this.toggleAllSelection()
     },
       /**
        * 取消全选
        */
-    allRowCancelCheck(){
-        this.tableRef.clearSelection()
+   async allRowCancelCheck(){
+         const tableRef = await this.getTableRef()
+        tableRef.clearSelection()
     },
       /**
        * 当前是否有被选中的
@@ -193,6 +208,21 @@ export default {
        */
     hasSelection(){
       return this.selection.length > 0
+    },
+      /**
+       * 切换选中行
+       * @param rows
+       * @param checked
+       */
+    async toggleSelection(rows,checked=true){
+        const tableRef = await this.getTableRef()
+          if (rows) {
+              rows.forEach(row => {
+                  tableRef.toggleRowSelection(row,checked);
+              });
+          } else {
+              tableRef.clearSelection();
+          }
     },
   /**
    *

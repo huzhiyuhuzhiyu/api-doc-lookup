@@ -198,7 +198,7 @@
                           <span class="required">*</span>数量
                         </template>
                         <template slot-scope="scope">
-                          <el-input :disabled="btnType == 'look'" 
+                          <el-input :disabled="btnType == 'look'"
                             v-model="scope.row.num" placeholder="数量"></el-input>
                         </template>
                       </el-table-column> -->
@@ -482,8 +482,8 @@
                 v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
-          
-         
+
+
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="120" sortable="custom"
@@ -569,7 +569,14 @@
   </div>
 </template>
 <script>
-import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
+import {
+    addWarehouseData,
+    updateWarehouseData,
+    detailWarehouseData,
+    autoDistribute,
+    getProductRoutingList,
+    stockWarehouseBusinessTypeList
+} from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { getBimProcessList } from '@/api/bimProcess/index'
@@ -615,20 +622,20 @@ export default {
         { label: "直接出库", value: "outbound", },
         { label: "直接入库", value: "inbound", },
       ],
+     businessType2Title: Object.freeze(new Map([
+            ["outbound_sale_send", "销售发货"],
+            ["inbound_sale_return", "销售退货"],
+            ["inbound_purchase", "采购收货"],
+            ["outbound_purchase", "采购退货"],
+            ["outbound_pick_out", "生产领料"],
+            ["inbound_return_materials", "生产退料"],
+            ["outbound_external_send", "外协发料"],
+            ["inbound_external_return", "外协退料"],
+            ["inbound_external", "外协收货"],
+            ["outbound_external", "外协退货"],
+            ["inbound_mock_production", "生产入库"],
+        ])),
       list: [
-        { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产产品入库", value: "inbound_order_production" },
-        { label: "生产工单入库", value: "inbound_production" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        // { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "直接入库", value: "inbound_other" },
-        { label: "直接出库", value: "outbound_other" },
       ],
       batchNumVisible: false,
       wareHouseVisible: false,
@@ -699,7 +706,7 @@ export default {
           { required: true, message: '领(退)料人不能为空', trigger: 'change' }
         ],
       },
-      orderForm: { //获取产品数据 
+      orderForm: { //获取产品数据
         productDrawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
@@ -850,6 +857,7 @@ export default {
   watch: {
     "dataForm.warehouseId": {
       handler: function (newVal, oldVal) {
+        this.getBusinessTypeList()
         if (oldVal) this.spaceLines = []
       },
     }
@@ -858,6 +866,17 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
+     async getBusinessTypeList(){
+          const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
+         const list =[{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
+
+            this.list = res.data.records.length ? res.data.records.map(item=>({
+                label: this.businessType2Title.get(item.businessType),
+                value: item.businessType
+            })).concat(list) : list
+
+
+      },
     async getMainUnitFun(code, type, flag) {
       this.listLoading = true
       try {
@@ -1025,7 +1044,7 @@ export default {
       let data = JSON.parse(JSON.stringify(row))
       this.productData.splice(index + 1, 0, data);
     },
-    // 点击选择产品 
+    // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
@@ -1633,12 +1652,12 @@ export default {
               this.$message.success(msg)
               if (type) {
                 let codes = this.arr
-                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项  
-                  .map(item => item.code); // 提取满足条件的 code 值  
+                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项
+                  .map(item => item.code); // 提取满足条件的 code 值
                 this.enCode = codes
                 this.formId = res.data.id
                 this.fullName = this.arr
-                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项  
+                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项
                   .map(item => item.fullName);
                 this.printVisible = true
                 this.$nextTick(() => {

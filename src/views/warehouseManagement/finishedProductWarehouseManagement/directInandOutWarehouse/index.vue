@@ -857,7 +857,7 @@ export default {
   watch: {
     "dataForm.warehouseId": {
       handler: function (newVal, oldVal) {
-        this.getBusinessTypeList()
+        this.getBusinessTypeList();
         if (oldVal) this.spaceLines = []
       },
     }

@@ -130,6 +130,13 @@
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                      <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132" v-if="dataForm.documentType=='inbound'">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
+                              placeholder="批次号">
+                            </el-input>
+                          </template>
+                        </el-table-column>
                       <el-table-column prop="batchNumber" label="批次号" width="200" key="batchNumber"
                         v-if="dataForm.documentType == 'outbound'">
                         <template slot="header">
@@ -1135,7 +1142,7 @@ export default {
         "pageSize": 20,
         "productCategoryId": ""
       };
-      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      obj.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
       getBimProcessList(obj).then(res => {
         this.processList = res.data.records
       })
@@ -1217,7 +1224,7 @@ export default {
         this.orderForm.classAttributeList = this.classAttributeList
         this.orderForm.warehouseId = this.dataForm.warehouseId
         this.orderForm.availableBatch = true
-        this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
         getBatchNumber(this.orderForm).then(res => {
           this.productList = res.data.records
           this.productTotal = res.data.total
@@ -1234,7 +1241,7 @@ export default {
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
         this.listQuery.classAttributeList = this.classAttributeList
-        this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.listQuery.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
         getProductList(this.listQuery)
           .then((res) => {
             this.productList = res.data.records

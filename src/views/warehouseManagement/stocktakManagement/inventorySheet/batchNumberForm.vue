@@ -15,6 +15,11 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
+                <el-input v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
                 <el-input v-model="form.shelfSpaceName" placeholder="请输入库位" clearable />
               </el-form-item>
             </el-col>
@@ -30,8 +35,19 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+          <div class="JNPF-common-head">
+            <div></div>
+            <div></div>
+          <div class="JNPF-common-head-right">
+        
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
+          </div>
+        </div>
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"  v-if="showflag"  :setColumnDisplayList="columnList"  custom-column ref="dataTable">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
+            <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180"></el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120"/>
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120"/>
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120"/>
@@ -98,6 +114,7 @@ export default {
         },],
         shelfSpaceName: "",
         batchNumber: "",
+        partnerName:"",
         warehouseId: "",
         vibrationLevel: "",
         sealingCoverTyping: "",
@@ -130,6 +147,8 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",  
+      columnList:[],
+      showflag:false,
     }
   },
   async created () {
@@ -137,6 +156,21 @@ export default {
     
   },
   methods: {
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop == 'warehouseName' || prop == 'shelfSpaceName' ) {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order === 'ascending'
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.search()
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -147,6 +181,7 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.showflag=true
       })
       getOrderFiledMap('purchase').then(res => {
         this.standardValueFlag = res.data.standardValue

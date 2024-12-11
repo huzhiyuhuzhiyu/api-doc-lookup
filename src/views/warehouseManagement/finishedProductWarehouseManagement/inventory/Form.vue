@@ -12,20 +12,18 @@
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-input v-model="listQuery.partnerName" placeholder="请输入供应商名称" clearable />
+                </el-form-item>
+              </el-col>
               <el-col :span="6" v-if="productNameFlag == 1">
                 <el-form-item>
                   <el-input v-model="listQuery.productName" placeholder="产品名称" clearable
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-select v-model="listQuery.vibrationLevel" placeholder="振动等级" clearable>
-                    <el-option v-for="(item, index) in vibrationLevelList" :key="index" :label="item.label"
-                      :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
+
 
               <el-col :span="6">
                 <el-form-item>
@@ -43,14 +41,21 @@
             <div class="JNPF-common-head">
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTables')">导出</el-button>
+                <div class="JNPF-common-head-right">
+    
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun()" />
+                  </el-tooltip>
+                </div>
             </div>
-            <JNPF-table v-if="tableDataFlag" :data="tableData" hasNO fixedNO @sort-change="sortChange" ref="dataTables">
+            <JNPF-table v-if="tableDataFlag" :data="tableData" hasNO fixedNO @sort-change="sortChange"     :setColumnDisplayList="columnList"  custom-column ref="dataTable">
 
-              <el-table-column prop="partnerName" label="供应商名称" min-width="200" />
-              <el-table-column prop="partnerCode" label="供应商编码" min-width="200" />
-              <el-table-column prop="productCode" label="产品编码" width="120" />
-              <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" />
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
+              <el-table-column prop="partnerName" label="供应商名称" min-width="200" sortable="custom" />
+              <el-table-column prop="partnerCode" label="供应商编码" min-width="200" sortable="custom" />
+              <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+              <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" sortable="custom" />
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
               <el-table-column prop="weight" label="重量(KG)" min-width="120" sortable="custom" />
               <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
               <el-table-column prop="processName" label="工序名称" min-width="120" />
@@ -144,6 +149,7 @@ export default {
   components: { ExportForm },
   data() {
     return {
+      columnList:[],
       exportFormVisible: false,
       title: "明细",
       tableData: [],
@@ -169,7 +175,7 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-
+        partnerName:"",
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
@@ -183,19 +189,19 @@ export default {
         mainUnitFlag: null,
         isProjectSwitch: '',
         productNameFlag: null,
-               // 属性字段  控制属性字段显示隐藏
-      accuracyLevelFlag: "",
-      clearanceFlag: "",
-      oilFlag: "",
-      oilQuantityFlag: "",
-      packagingMethodFlag: "",
-      sealingCoverTypingFlag: "",
-      specialRequireFlag: "",
-      vibrationLevelFlag: "",
-      bimProductAttributesList: [],
-      standardValueFlag: "",
-      colourFlag: "",
-      processFlag: "",
+        // 属性字段  控制属性字段显示隐藏
+        accuracyLevelFlag: "",
+        clearanceFlag: "",
+        oilFlag: "",
+        oilQuantityFlag: "",
+        packagingMethodFlag: "",
+        sealingCoverTypingFlag: "",
+        specialRequireFlag: "",
+        vibrationLevelFlag: "",
+        bimProductAttributesList: [],
+        standardValueFlag: "",
+        colourFlag: "",
+        processFlag: "",
       }
     }
   },
@@ -214,6 +220,10 @@ export default {
 
   },
   methods: {
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -386,7 +396,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productCode' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'shelfSpaceName' || prop == 'warehouseName') { newProp = prop }
+      if (prop === 'productCode'||prop=='partnerCode'||prop=='partnerName' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'shelfSpaceName' || prop == 'warehouseName') { newProp = prop }
       else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp

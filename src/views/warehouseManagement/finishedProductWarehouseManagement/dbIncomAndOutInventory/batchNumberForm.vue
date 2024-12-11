@@ -15,6 +15,11 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
+                <el-input v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
                 <el-input v-model="form.shelfSpaceName" placeholder="请输入库位" clearable />
               </el-form-item>
             </el-col>
@@ -30,8 +35,21 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+          <div class="JNPF-common-head">
+            <div></div>
+            <div></div>
+            <div class="JNPF-common-head-right">
+
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+            </div>
+          </div>
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"  v-if="showflag"  :setColumnDisplayList="columnList"  custom-column ref="dataTable">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
+            <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180"></el-table-column>
+            <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
             <el-table-column prop="weight" label="重量(KG)" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
@@ -84,10 +102,12 @@
 </template>
 <script>
 import { getlistOutBatchStock } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getBatchNumber,getOrderFiledMap } from '@/api/basicData/index'
+import { getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
 export default {
   data() {
     return {
+      showflag:false,
+      columnList:[],
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -102,6 +122,7 @@ export default {
           asc: false,
           column: ""
         },],
+        partnerName: "",
         shelfSpaceName: "",
         batchNumber: "",
         warehouseId: "",
@@ -126,8 +147,8 @@ export default {
       type: "",
       dataForm: {},
       requestFlag: "",
-         // 属性字段  控制属性字段显示隐藏
-         accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -139,14 +160,30 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",
+
     }
   },
   async created() {
     await this.getOrderFiledMap()
-    
+
 
   },
   methods: {
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop == 'warehouseName' || prop == 'shelfSpaceName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order === 'ascending'
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.search()
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping

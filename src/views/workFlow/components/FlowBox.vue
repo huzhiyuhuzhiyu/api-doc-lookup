@@ -354,6 +354,9 @@ export default {
         'b060': 'toolclampmeasuring/scrapManagement/announceInvalidated/Form',
         'b061': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
         'b008': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b062': 'warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly/Form.vue',
+        'b063': 'warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly/Form.vue',
+        'b064': 'warehouseManagement/finishedProductWarehouseManagement/modalShift/Form.vue',
       },
       inspectionTypeList: [
         // 不良品

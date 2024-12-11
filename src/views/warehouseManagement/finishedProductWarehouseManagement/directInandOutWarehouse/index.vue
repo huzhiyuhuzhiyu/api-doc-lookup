@@ -876,6 +876,10 @@ export default {
   watch: {
     "dataForm.warehouseId": {
       handler: function (newVal, oldVal) {
+<<<<<<< HEAD
+=======
+        this.getBusinessTypeList();
+>>>>>>> 中亚、倍宁需求
         if (oldVal) this.spaceLines = []
       },
     }

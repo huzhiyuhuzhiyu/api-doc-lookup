@@ -888,10 +888,29 @@ export default {
     async getBusinessTypeList(){
         const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
         const list =[{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
-        this.list = res.data.records.length ? res.data.records.map(item=>({
-            label: this.businessType2Title.get(item.businessType),
-            value: item.businessType
-        })).concat(list) : list
+        // inbound_mock_production
+        let resList = list
+        if( res.data.records.length){
+            const temp =res.data.records.map(item=>{
+                return {
+                    label: this.businessType2Title.get(item.businessType),
+                    value: item.businessType
+                }
+            })
+            const tempFilter =temp.filter(item=>item.value !== 'inbound_mock_production')
+            if(temp.length === tempFilter.length){
+                resList = [...temp,...list]
+            }else{
+                resList = [
+                    ...tempFilter,
+                    { label: "生产产品入库", value: "inbound_order_production" },
+                    { label: "生产工单入库", value: "inbound_production" },
+                    ...list
+                ]
+            }
+
+        }
+        this.list = resList
     },
     getBimBusinessDetail() {
       let obj = {

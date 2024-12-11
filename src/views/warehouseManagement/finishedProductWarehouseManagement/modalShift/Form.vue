@@ -755,7 +755,7 @@ export default {
       this.warehouseInfo = obj.warehouseInfo
       this.formLoading = true
       if (this.btnType === 'add' || this.btnType === 'edit') {
-        this.getBusInfo('b060')
+        this.getBusInfo('b064')
         this.fetchData('MSDH')
       }
       if (this.dataForm.id) {

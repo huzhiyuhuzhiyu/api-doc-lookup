@@ -67,7 +67,7 @@
                     <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center">
+                <el-table-column prop="approvalStatus" label="审批状态" width="120" fixed="right" align="center" v-if="showAppCodeFlag">
                   <template slot-scope="scope">
                     <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
                       <el-tag>审批中</el-tag>
@@ -458,7 +458,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-    const res = await this.jnpf.getBusInfo('b060')
+    const res = await this.jnpf.getBusInfo('b064')
     if (res) {
       this.showAppCodeFlag = res.enabledMark
     } else {

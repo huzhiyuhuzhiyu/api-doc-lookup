@@ -912,7 +912,7 @@ export default {
       this.listQuery.projectId = this.warehouseInfo.projectId
       this.ProductListRequestObj.projectId = this.warehouseInfo.projectId
       if (this.btnType === 'add' || this.btnType === 'edit') {
-        this.getBusInfo('b062')
+        this.getBusInfo('b063')
         this.fetchData('SPSD')
       }
       if (this.dataForm.id) {

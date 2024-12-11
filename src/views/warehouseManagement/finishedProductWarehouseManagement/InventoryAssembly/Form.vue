@@ -804,7 +804,7 @@ export default {
       this.ProductListRequestObj2.projectId = this.warehouseInfo.projectId
       this.ProductListRequestObj.projectId = this.warehouseInfo.projectId
       if (this.btnType === 'add' || this.btnType === 'edit') {
-        this.getBusInfo('b061')
+        this.getBusInfo('b062')
         this.fetchData('MSSD')
       }
       if (this.dataForm.id) {

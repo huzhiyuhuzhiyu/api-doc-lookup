@@ -31,9 +31,8 @@
             </div>
             <JNPF-table v-loading="listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange"
               ref="dataTables">
-
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
-              <el-table-column prop="productCode" label="产品编码" width="120" />
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
+              <el-table-column prop="productCode" label="产品编码" width="160" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />

@@ -178,6 +178,10 @@
 
                   </el-collapse>
                 </el-tab-pane>
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+                  <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
+                  </UploadWj>
+                </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                   <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
                 </el-tab-pane>
@@ -463,7 +467,7 @@
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelvesgetBimBusinessDetail } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -487,7 +491,9 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-
+      datafilelist: [],
+      isattachmentswitch: '',
+      attachmentData: {},
 
       batchNumVisible: false,
       wareHouseVisible: false,
@@ -644,9 +650,20 @@ export default {
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+    this.getBimBusinessDetail()
 
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_outAndInWarehouse'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.attachmentData = res.data
+      })
+    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -1023,7 +1040,19 @@ export default {
             this.$set(item, 'price', item.costPrice)
             item.taxRates = item.taxRate + "%"
           });
-
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
           this.dataForm = res.data.stockMove
           this.productData = res.data.spaceLines
           // 流程信息和流转记录
@@ -1035,6 +1064,8 @@ export default {
         this.fetchData("CKDH", true)
         this.getBusInfo('b045')
         this.title = '新建出库单'
+        this.datafilelist = []
+
         // this.refeshDataFormItems()
         setTimeout(() => {
           data.forEach((item, index) => {
@@ -1206,7 +1237,21 @@ export default {
             });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'
+            if (this.datafilelist.length) {
+              this.datafilelist.map((item, index) => {
+                item.bimAttachments = {
+                  businessType: "system_attachment",
+                  categoryId: this.attachmentData.configValue2,
+                  configKey: this.attachmentData.configKey,
+                  documentId: item.id,
+                  fileFlag: '',
+                  sort: index
+                }
+              })
+            }
             let dataObj = {
+              attachmentList: this.datafilelist,
+
               stockMove: this.dataForm,
               lines: this.productData,
               spaceLines: this.copyLinesData,

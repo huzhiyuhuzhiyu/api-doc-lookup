@@ -174,6 +174,10 @@
 
                   </el-collapse>
                 </el-tab-pane>
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+                <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
+                </UploadWj>
+              </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                   <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
                 </el-tab-pane>
@@ -449,7 +453,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getBimBusinessDetail } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import WareHouseForm from './wareHouseForm.vue'
@@ -471,6 +475,9 @@ export default {
   mixins: [flowMixin, busFlow,getProjectList],
   data() {
     return {
+      datafilelist: [],
+      isattachmentswitch: '',
+      attachmentData: {},
       isProjectSwitch: "",
 
       setcodeVisible: false,
@@ -614,6 +621,8 @@ export default {
     }
   },
   mounted() {
+    this.getBimBusinessDetail()
+
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
   },
@@ -637,6 +646,16 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_outAndInWarehouse'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.attachmentData = res.data
+      })
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
@@ -993,12 +1012,27 @@ export default {
           });
           this.dataForm = res.data.stockMove
           this.productData = res.data.spaceLines
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         })
       } else {
         this.$set(this.dataForm, 'sourceNo', data.orderNo)
         this.title = '新建出库单'
+        this.datafilelist = []
+
         this.fetchData("CKDH", true)
         this.getBusInfo('b045')
         detailCollectionandreturn(data.id).then(res => {
@@ -1119,7 +1153,21 @@ export default {
             });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'
+            if (this.datafilelist.length) {
+              this.datafilelist.map((item, index) => {
+                item.bimAttachments = {
+                  businessType: "system_attachment",
+                  categoryId: this.attachmentData.configValue2,
+                  configKey: this.attachmentData.configKey,
+                  documentId: item.id,
+                  fileFlag: '',
+                  sort: index
+                }
+              })
+            }
             let dataObj = {
+              attachmentList: this.datafilelist,
+
               stockMove: this.dataForm,
               lines: this.productData,
               spaceLines: this.copyLinesData,

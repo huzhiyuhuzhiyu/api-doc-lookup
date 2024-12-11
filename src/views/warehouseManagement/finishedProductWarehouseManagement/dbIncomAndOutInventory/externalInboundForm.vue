@@ -238,6 +238,10 @@
 
                   </el-collapse>
                 </el-tab-pane>
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+                <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
+                </UploadWj>
+              </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                   <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
                 </el-tab-pane>
@@ -555,7 +559,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList, getlistOutBatchStock } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getBimBusinessDetail } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import { purPurchaseReceiptReturnGoodsList, detailpurchaseOrderList } from "@/api/purchasingAndOutsourcingOrders/index"
 
@@ -580,6 +584,9 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
+      datafilelist: [],
+      isattachmentswitch: '',
+      attachmentData: {},
       calculateQuantityFlag: "",
       weightFlagList: [
         { label: "是", value: true },
@@ -739,6 +746,8 @@ export default {
   },
 
   mounted() {
+    this.getBimBusinessDetail()
+
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
     this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
 
@@ -751,6 +760,16 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_outAndInWarehouse'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.attachmentData = res.data
+      })
+    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -1209,6 +1228,19 @@ export default {
             this.$set(item, 'price', item.costPrice)
             item.taxRates = item.taxRate + "%"
           });
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
           this.dataForm = res.data.stockMove
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           this.productData = res.data.spaceLines
@@ -1218,6 +1250,7 @@ export default {
       } else {
         this.getBusInfo('b045')
 
+        this.datafilelist = []
 
 
 
@@ -1397,8 +1430,22 @@ export default {
               element.warehouseType = this.dataForm.warehouseType
             });
             this.dataForm.classAttribute = this.classAttribute
+            if (this.datafilelist.length) {
+              this.datafilelist.map((item, index) => {
+                item.bimAttachments = {
+                  businessType: "system_attachment",
+                  categoryId: this.attachmentData.configValue2,
+                  configKey: this.attachmentData.configKey,
+                  documentId: item.id,
+                  fileFlag: '',
+                  sort: index
+                }
+              })
+            }
             this.dataForm.sourceType = 'order'
             let dataObj = {
+              attachmentList: this.datafilelist,
+
               stockMove: this.dataForm,
               lines: this.productData,
               spaceLines: this.copyLinesData,

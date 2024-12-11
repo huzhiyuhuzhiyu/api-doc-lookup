@@ -408,6 +408,10 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+                <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
+                </UploadWj>
+              </el-tab-pane>
               <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                 <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
               </el-tab-pane>
@@ -578,7 +582,7 @@ import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProduc
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import WareHouseForm from './wareHouseForm.vue'
 import CustomerForm from './customerForm.vue'
@@ -586,7 +590,7 @@ import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
-import { getCooperativeData,getOrderFiledMap  } from '@/api/basicData/index'
+import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import flowMixin from '@/mixins/generator/flowMixin'
 import PrintBrowse from '@/components/PrintBrowse'
@@ -603,6 +607,9 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
+      datafilelist: [],
+      isattachmentswitch: '',
+      attachmentData: {},
       printVisible: false,
       isProjectSwitch: '',
       prindId: '',
@@ -838,9 +845,9 @@ export default {
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
       standardValueFlag: "",
-      apertureFlag:"",
+      apertureFlag: "",
       colourFlag: "",
-      processFlag: "", 
+      processFlag: "",
     }
   },
   computed: {
@@ -857,7 +864,6 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
-    this.getProductClassFun()
     this.getprocessList()
     this.getWarehouseListFun()
     this.getclassAttributeList()
@@ -875,9 +881,20 @@ export default {
     }
   },
   mounted() {
+    this.getBimBusinessDetail()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_outAndInWarehouse'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.attachmentData = res.data
+      })
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -1676,6 +1693,19 @@ export default {
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
           });
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
           this.productData = res.data.spaceLines
           this.spaceLines = res.data.spaceLines
           this.formLoading = false
@@ -1696,6 +1726,7 @@ export default {
       } else {
         this.title = '新建出入库单'
         this.formLoading = false
+        this.datafilelist = []
       }
     },
     // 继续新增
@@ -1772,8 +1803,21 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
+            if (this.datafilelist.length) {
+              this.datafilelist.map((item, index) => {
+                item.bimAttachments = {
+                  businessType: "system_attachment",
+                  categoryId: this.attachmentData.configValue2,
+                  configKey: this.attachmentData.configKey,
+                  documentId: item.id,
+                  fileFlag: '',
+                  sort: index
+                }
+              })
+            }
             this.dataForm.classAttributeList = this.classAttributeList
             let dataObj = {
+              attachmentList: this.datafilelist,
               stockMove: this.dataForm,
               lines: this.productData,
               spaceLines: this.copyLinesData,
@@ -1834,216 +1878,7 @@ export default {
         }
       })
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-      // 孔径
-      let objO = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa009",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(objO).then(res => {
-        this.list10 = res.data.records
-      })
-      // 颜色
-      let objT = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa010",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(objT).then(res => {
-        this.list11 = res.data.records
-      })
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        this.list9 = res.data.records
-      })
-      let obj0 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa008",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj0).then(res => {
-        this.list8 = res.data.records
-      })
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-      // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
-          item.taxRate = item.enCode.replace('%', '') * 1
-        })
-        this.taxRateList = res.data.list
-      })
-    },
+
     // 意向客户分类节点点击
     yxPartnerTreeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery

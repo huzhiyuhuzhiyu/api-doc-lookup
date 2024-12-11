@@ -104,8 +104,8 @@
           @sort-change="sortChange">
 
 
-          <el-table-column prop="productDrawingNo" label="品名规格" width="200" sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" width="330" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
@@ -227,6 +227,7 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
+        inventoryFlag :1,
       },
       selectedNodeKey: "",
       totalData: {},

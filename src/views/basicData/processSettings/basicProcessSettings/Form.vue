@@ -65,6 +65,12 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="报工排序" prop="reportingSort">
+                        <el-input v-model="dataForm.reportingSort" placeholder="请输入报工排序" maxlength="20"
+                          :disabled="disabled"></el-input>
+                      </el-form-item>
+                    </el-col>
                     <el-col :span="24">
                       <el-form-item label="备注">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" show-word-limit
@@ -242,15 +248,26 @@ export default {
   },
   mixins: [getProjectList],
   data() {
+    var checkReportingSort = (rule, value, callback) => {
+      console.log(value, 'kkkk')
+      console.log(Number.isInteger(value), 'jjjj')
+      if (/^(?:[0-9]\d*)$/.test(value) == false) {
+        callback(new Error('请输入整数'))
+      } else if (Number(value) == 0) {
+        callback(new Error('报工排序不能为0'))
+      } else {
+        callback()
+      }
+    };
     return {
       isProjectSwitch: '',
       tableFlag: false,
       projectIdData: [],
       process_typeList: [
         { label: '正常工序', value: 'normal' },
-        { label: '待装配工序', value: 'wait_assemble' },
         { label: '测振工序', value: 'vibrate' },
-        { label: '热处理工序', value: 'heat_treatment' }
+        { label: '热工工序', value: 'heat_treatment' },
+        { label: '包装工序', value: 'packing' }
       ],
       getcategoryTree,
       configurationName: '',
@@ -326,7 +343,15 @@ export default {
             message: '请选择加工类型',
             trigger: ['change']
           }
-        ]
+        ],
+        reportingSort: [
+          {
+            required: true,
+            message: '请输入报工排序',
+            trigger: ['blur']
+          },
+          { validator: checkReportingSort, trigger: 'blur' }
+        ],
       },
       processingTypeOptions: [
         { label: '自制', value: 'self_produced' },

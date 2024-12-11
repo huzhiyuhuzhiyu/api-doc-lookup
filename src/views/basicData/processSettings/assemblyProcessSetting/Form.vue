@@ -83,14 +83,14 @@
                           <template v-if="scope.row.processType == 'normal'">
                             正常工序
                           </template>
-                          <template v-if="scope.row.processType == 'wait_assemble'">
-                            待装配工序
-                          </template>
                           <template v-if="scope.row.processType == 'vibrate'">
                             测振工序
                           </template>
                           <template v-if="scope.row.processType == 'heat_treatment'">
-                            热处理工序
+                            热工工序
+                          </template>
+                          <template v-if="scope.row.processType == 'packing'">
+                            包装工序
                           </template>
                         </template>
                       </el-table-column>

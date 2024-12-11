@@ -17,10 +17,13 @@
         </span>
       </div>
       <div v-if="!leftFlag">
-        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable></el-input>
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
             <i :class="[
               data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
@@ -42,25 +45,32 @@
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.routingFlag" placeholder="请选择">
-                <el-option v-for="item in routingFlagOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in routingFlagOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
+
+
+
 
           <el-col :span="6">
             <el-form-item>
@@ -80,16 +90,17 @@
           </el-button> -->
           <div>
             <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
-            <el-button type="danger" size="mini" @click="handleBatchdelete" v-if="listQuery.routingFlag">批量清空工艺</el-button>
             <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button>
             <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">
+            <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
               导出
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -100,7 +111,9 @@
           </div>
         </div>
 
-        <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" border @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" hasC @selection-change="currentChange">
+        <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
+          border @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" hasC
+          @selection-change="currentChange">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
@@ -111,22 +124,26 @@
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" :disabled="!scope.row.routingFlag" @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
+              <el-button type="text" :disabled="!scope.row.routingFlag"
+                @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :background="background" :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
+          :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
     <!-- 批量设置工艺 -->
-    <el-dialog v-if="analyseDialog" title="批量设置工艺" :close-on-click-modal="false" append-to-body :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+    <el-dialog v-if="analyseDialog" title="批量设置工艺" :close-on-click-modal="false" append-to-body
+      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
       <el-row :gutter="15" style="margin-top: 0px;">
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
             <el-col :sm="24">
               <el-form-item prop="routingId" label="工艺路线">
                 <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable style="width: 100%;">
-                  <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name" :value="item.id"></el-option>
+                  <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
+                    :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -141,10 +158,14 @@
       </span>
     </el-dialog>
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1" :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
+      :http-request="UploadProduct" />
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
+        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
         <div class="el-upload__tip" slot="tip">
@@ -174,8 +195,7 @@ import {
   deleteProductionResource,
   saleUploadroutingModel,
   importRoutingModel,
-  errordatalist,
-  deleteresourcebatch
+  errordatalist
 } from '@/api/basicData/productionResourceSetting'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -320,15 +340,6 @@ export default {
     this.initData()
   },
   methods: {
-    handleBatchdelete() {
-      if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
-      if (this.selectedData.some(item => !item.id)) return this.$message.error('所选数据没有工艺路线')
-      let idList = this.selectedData.map(item => item.id)
-      deleteresourcebatch(idList).then(res => {
-        this.$message.success('清空成功')
-        this.initData()
-      })
-    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

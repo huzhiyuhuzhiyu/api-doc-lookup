@@ -118,15 +118,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="unitPrice" label="计件单价(元)" width="130">
-            <template slot-scope="scope">
-              <div>{{ scope.row.unitPrice ? scope.row.unitPrice : 0 }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="timePrice" label="计时单价(元)" width="130">
-            <template slot-scope="scope">
-              <div>{{ scope.row.timePrice ? scope.row.timePrice : 0 }}</div>
-            </template>
+          <el-table-column prop="price" label="单价(元)" width="130">
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" />
@@ -213,18 +205,6 @@ export default {
           type: 'select',
           options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
         },
-
-        {
-          prop: 'unitPrice',
-          label: '计件单价(元)',
-          type: 'input'
-        },
-        {
-          prop: 'timePrice',
-          label: '计时单价(元)',
-          type: 'input'
-        },
-
         {
           prop: 'createTime',
           label: '创建时间',
@@ -379,6 +359,13 @@ export default {
       getBimProcessList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
+          this.tableData.forEach(item => {
+            if (item.pricingType === 'by_time') {
+              item.price = item.timePrice
+            } else if (item.pricingType === 'by_piece') {
+              item.price = item.unitPrice
+            }
+          })
           this.total = res.data.total
           this.listLoading = false
         })

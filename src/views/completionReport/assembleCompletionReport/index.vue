@@ -531,7 +531,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: "reporting_sort"
         }],
 
       },

@@ -347,6 +347,7 @@ export default {
       let idList = this.selectedData.map(item => item.productsId)
       deleteresourcebatch({ idList: idList }).then(res => {
         this.$message.success('清空成功')
+        this.initData()
       })
     },
     superQuerySearch(query) {

@@ -343,6 +343,7 @@ export default {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
       let idList = this.selectedData.map(item => item.productsId)
       deleteresourcebatch({ idList: idList }).then(res => {
+        this.initData()
         this.$message.success('清空成功')
       })
     },

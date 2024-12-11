@@ -87,7 +87,7 @@
           </el-button> -->
           <div>
             <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
-            <el-button type="danger" size="mini" @click="handleBatchdelete">批量清空工艺</el-button>
+            <el-button type="danger" size="mini" @click="handleBatchdelete" v-if="listQuery.routingFlag">批量清空工艺</el-button>
             <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button>
             <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
@@ -341,7 +341,8 @@ export default {
   methods: {
     handleBatchdelete() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
-      let idList = this.selectedData.map(item => item.productsId)
+      if (this.selectedData.some(item => !item.id)) return this.$message.error('所选数据没有工艺路线')
+      let idList = this.selectedData.map(item => item.id)
       deleteresourcebatch(idList).then(res => {
         this.initData()
         this.$message.success('清空成功')

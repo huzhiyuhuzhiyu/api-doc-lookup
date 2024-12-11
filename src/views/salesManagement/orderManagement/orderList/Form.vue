@@ -2631,14 +2631,6 @@ export default {
           this.dataForm.totalAmount = this.totalAmount
           this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount, 2)
           if (this.datafilelist.length) {
-            // this.datafilelist.map((item, index) => {
-            //   item.bimAttachments = {
-            //     businessType: '',
-            //     documentId: item.id,
-            //     fileFlag: '',
-            //     sort: index
-            //   }
-            // })
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
                 businessType: "system_attachment",

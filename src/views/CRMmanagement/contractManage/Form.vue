@@ -103,8 +103,6 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                     <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip />
-                    <el-table-column prop="productUnit" label="单位" width="110" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="purchasePrice" label="价格" width="160" show-overflow-tooltip />
                     <el-table-column prop="costPrice" label="成本价" width="160" show-overflow-tooltip />
                     <el-table-column prop="num" label="数量" width="160">
                       <template slot="header">
@@ -117,18 +115,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-
-                    <el-table-column prop="price" label="售价" width="160">
-                      <template slot="header">
-                        <span class="required">*</span>售价
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
-                          <el-input v-model="scope.row.price" placeholder="请输入售价" :disabled="btntype == 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                    <el-table-column prop="productUnit" label="单位" width="110" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="discount" label="折扣(%)" width="160">
                       <template slot="header">
                         <span class="required">*</span>折扣(%)
@@ -142,6 +129,19 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="purchasePrice" label="价格" width="160" show-overflow-tooltip />
+                    <el-table-column prop="price" label="售价" width="160">
+                      <template slot="header">
+                        <span class="required">*</span>售价
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
+                          <el-input v-model="scope.row.price" placeholder="请输入售价" :disabled="btntype == 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    
                     <!-- <el-table-column prop="excludingTaxUnitPrice" label="售价(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>

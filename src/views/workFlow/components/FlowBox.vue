@@ -353,6 +353,7 @@ export default {
         'b059': 'dailyManagement/scrapManagement/announceInvalidated/Form',
         'b060': 'toolclampmeasuring/scrapManagement/announceInvalidated/Form',
         'b061': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b065': 'esop/fileUpload/workinginstruction/Form.vue',
         'b008': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
       },
       inspectionTypeList: [

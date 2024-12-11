@@ -32,6 +32,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
+            <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120"/>
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120"/>
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120"/>
             <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
@@ -45,13 +46,23 @@
                 </el-table-column>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" sortable="custom" min-width="120"/>
-            <el-table-column prop="accuracyLevel" label="精度等级" sortable="custom" min-width="120"/>
-            <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120"/>
-            <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120"/>
-            <el-table-column prop="clearance" label="游隙" sortable="custom" min-width="120"/>
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" ></el-table-column>
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" ></el-table-column>
+            <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" v-if="colourFlag == 1" />
+              <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag == 1"
+                sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope" >
                 <el-button type="text" @click="selectBatchNum(scope.row)">选择</el-button>
@@ -67,7 +78,7 @@
   </el-dialog>
 </template>
 <script>
-import { getBatchNumber } from '@/api/basicData/index'
+import { getBatchNumber,getOrderFiledMap } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -106,10 +117,43 @@ export default {
       tableDataList: [],
       cpData: {},
       cpIndex: "",
-
+       // 属性字段  控制属性字段显示隐藏
+       accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      standardValueFlag: "",
+      colourFlag: "",
+      processFlag: "",  
     }
   },
+  async created () {
+    await this.getOrderFiledMap()
+    
+  },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     init(data, index) {
       console.log(data,index);
       this.customerVisible = true

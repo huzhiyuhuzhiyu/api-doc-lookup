@@ -33,6 +33,10 @@
                       sortable="custom"></el-table-column>
                     <el-table-column prop="processCode" label="工序编码" min-width="160"
                       sortable="custom"></el-table-column>
+                      <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="160"
+                      sortable="custom"></el-table-column>
+                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
+                      sortable="custom"></el-table-column>
                     <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
                       <template slot-scope="scope">
                         <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>

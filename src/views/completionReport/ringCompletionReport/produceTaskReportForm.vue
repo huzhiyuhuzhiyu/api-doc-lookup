@@ -196,7 +196,13 @@
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="料废数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur3"
+                      <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur2"
+                        class="ipt" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24">
+                    <el-form-item label="利用数量:" class="iptLabel">
+                      <el-input v-model="currentProcess.utilizeQuantity" placeholder="料废数量" @blur="handleBlur2"
                         class="ipt" />
                     </el-form-item>
                   </el-col>
@@ -210,7 +216,7 @@
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="返工数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" />
+                      <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" @blur="handleBlur2"/>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel">
@@ -395,6 +401,7 @@ export default {
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
+        this.$set(this.currentProcess, 'utilizeQuantity', 0)
 
         this.commonFun()
         // this.getRoutingDetailFun(this.dataForm.routingId)
@@ -409,6 +416,7 @@ export default {
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
       this.$set(this.currentProcess, 'reworkQuantity', 0)
+      this.$set(this.currentProcess, 'utilizeQuantity', 0)
       console.log("当前current", item);
       this.targetHeight = ""
       this.targetHeight2 = ""
@@ -418,19 +426,9 @@ export default {
     handleBlur(item, data) {
 
 
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,this.currentProcess.utilizeQuantity,this.currentProcess.reworkQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
-        // if(!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0){
-        //   this.iptLabelMargin='38px'
-        // }else{
-        //   this.iptLabelMargin='18px'
-        //   if (!this.currentProcess.producerId) {
-        //     this.producerMargin = '38px'
-        //     console.log(1);
-        //   } else {
-        //     this.producerMargin = '18px'
-        //   }
-        // },
+   
         this.$nextTick(() => {
         const height = this.$refs.mycol.$el.clientHeight
         console.log('el-col的高度是1：', height);
@@ -440,16 +438,10 @@ export default {
     handleBlur2() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
 
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,this.currentProcess.utilizeQuantity,this.currentProcess.reworkQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
-    handleBlur3() {
-      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
-
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
-      this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
-    },
+    
     commonFun() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
 
@@ -547,7 +539,7 @@ export default {
           let submitFlag = null
           if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
             this.submitFlag = false
-            this.$message.error("合格数量加上不合格数量不能超过可报工数量")
+            this.$message.error("合格数量+不合格数量+利用数量+返工数量不能超过可报工数量")
             return
           }
           if (submitFlag === false) return

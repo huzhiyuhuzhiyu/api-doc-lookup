@@ -68,6 +68,9 @@
                       <div v-if="btnType !== 'look'">
                         <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
                           :disabled="btnType == 'look' ? true : false"
+                          @click="openSeleceIventOProductDialog()">选择库存产品</el-button>|
+                        <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                          :disabled="btnType == 'look' ? true : false"
                           @click="openSeleceProductDialog()">选择产品</el-button>|
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
@@ -200,6 +203,9 @@
                 <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                   <div v-if="btnType !== 'look'">
                     <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                          :disabled="btnType == 'look' ? true : false"
+                          @click="openSeleceIventOProductDialog()">选择库存产品</el-button>|
+                    <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
                       :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择产品</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
@@ -308,14 +314,14 @@
                     <el-input v-model="productForm.productName" placeholder="产品名称" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="6" >
                   <el-form-item>
                     <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun(type)">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
                       $t('common.reset') }}
@@ -332,19 +338,21 @@
 
 
 
-                <el-table-column prop="drawingNo" label="品名规格" />
-                <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" sortable="custom" />
-                <el-table-column prop="productCategoryName" label="所属分类" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                <el-table-column prop="code" label="产品编码" show-overflow-tooltip min-width="160"></el-table-column>
+                <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160"  />
+                <el-table-column prop="drawingNo" label="品名规格" min-width="330"/>
+                <el-table-column prop="productCategoryName" label="所属分类" v-if="type=='all'"/>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" 
                   v-if="isProjectSwitch == 1" />
-                <el-table-column prop="mainUnit" label="单位" />
-                <el-table-column prop="inventoryQuantity" label="库存数量">
-                </el-table-column>
+                <el-table-column prop="mainUnit" label="单位" width="80"/>
+                <el-table-column prop="batchNumber" label="批次号" v-if="type=='invent'" min-width="180"></el-table-column>
+                <el-table-column prop="stockNum" label="库存数量" v-if="type=='invent'" min-width="120"></el-table-column>
+                <el-table-column prop="warehouseName" label="仓库名称" v-if="type=='invent'" min-width="120"></el-table-column>
+                <el-table-column prop="shelfSpaceName" label="库位名称" v-if="type=='invent'" min-width="120"></el-table-column>
 
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
-                @pagination="searchProductFun" />
+                @pagination="searchProductFun(type)" />
             </div>
           </div>
         </div>
@@ -406,9 +414,9 @@ import WareHouseForm from './wareHouseForm.vue'
 import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import { mapGetters, mapState } from 'vuex'
-import { excelExport } from '@/api/basicData/index'
+import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
 import Adjust from '../inventoryAdjustmentSheet/Form.vue'
-import { getProduct, addStocktak, detailStocktak, editStocktak, deleteStocktak, productExport, productImport, stockTakingToAdjus } from '@/api/warehouseManagement/stocktak.js'
+import { getInventProduct, addStocktak, detailStocktak, editStocktak, deleteStocktak, productExport, productImport, stockTakingToAdjus } from '@/api/warehouseManagement/stocktak.js'
 import Process from '@/components/Process/Preview'
 import flowMixin from '@/mixins/generator/flowMixin'
 import recordList from '@/views/workFlow/components/RecordList.vue'
@@ -510,10 +518,25 @@ export default {
       productNameFlag: null,
       uploadVisib: false,
       isProjectSwitch: '',
+ 
+             // 属性字段  控制属性字段显示隐藏
+             accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      standardValueFlag: "",
+      colourFlag: "",
+      processFlag: "",  
     }
   },
 
   async created() {
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
 
   },
@@ -541,6 +564,23 @@ export default {
   },
 
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     closeForm() {
       this.adjustVisible = false
     },
@@ -815,25 +855,51 @@ export default {
     // 点击选择产品 
     openSeleceProductDialog() {
       this.productVisible = true
-      this.searchProductFun()
+      this.productForm.productName = ''
+        this.productForm.productCode = ''
+        this.productForm.productDrawingNo = ''
+        this.productForm.pageNum = 1
+        this.productForm.pageSize = 20
+      this.searchProductFun('all')
     },
-    searchProductFun() {
+    // 点击选择库存产品
+    openSeleceIventOProductDialog() {
+      this.productVisible = true
+      this.productForm.productName = ''
+        this.productForm.productCode = ''
+        this.productForm.productDrawingNo = ''
+        this.productForm.pageNum = 1
+        this.productForm.pageSize = 20
+      this.searchProductFun('invent')
+    },
+    searchProductFun(type) {
+      this.type = type
       this.productForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      getProducts(this.productForm).then(res => {
-        // this.productList = [...this.selectSaleProductArr,...res.data.records]
-        this.productList = res.data.records
-        this.productTotal = res.data.total
-        if (this.selectSaleProductArr.length) {
-          this.selectSaleProductArr.forEach(row => {
-            this.$refs.form.toggleRowSelection(row, true);
-          });
-        } else {
-          this.$refs.multipleTable.clearSelection();
-        }
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+      if (type == 'all') {
+  
+        getProducts(this.productForm).then(res => {
+          // this.productList = [...this.selectSaleProductArr,...res.data.records]
+          this.productList = res.data.records
+          this.productTotal = res.data.total
+          if (this.selectSaleProductArr.length) {
+            this.selectSaleProductArr.forEach(row => {
+              this.$refs.form.toggleRowSelection(row, true);
+            });
+          } else {
+            this.$refs.multipleTable.clearSelection();
+          }
+          this.listLoading = false
+        }).catch(() => {
+          this.listLoading = false
+        })
+      } else { 
+
+        getInventProduct(this.productForm).then(res => {
+          this.productList = res.data.records
+          this.productTotal = res.data.total
+          this.listLoading = false
+        })
+      }
 
 
 
@@ -861,7 +927,7 @@ export default {
           column: ""
         }],
       }
-      this.searchProductFun()
+      this.searchProductFun(type)
 
     },
     // 选完产品后  渲染在产品信息列表
@@ -872,7 +938,12 @@ export default {
 
 
       arr.forEach(item => {
-        this.$set(item, 'stockNum', 0)
+        if(this.type=='all'){
+          this.$set(item, 'stockNum', 0)
+        }else{
+          this.$set(item, 'stockNum', item.stockNum)
+
+        }    
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
@@ -1035,6 +1106,11 @@ export default {
                 if (!item.num) {
                   submitFlag = false
                   this.$message.error("产品信息第" + (index + 1) + "行盘点数量不能为空")
+                  break
+                }
+                if (!item.shelfSpaceId && item.allocationFlag) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
                   break
                 }
               }

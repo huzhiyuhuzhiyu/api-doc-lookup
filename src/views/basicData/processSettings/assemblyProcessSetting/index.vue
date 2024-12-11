@@ -87,7 +87,6 @@
           </el-button> -->
           <div>
             <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
-            <el-button type="danger" size="mini" @click="handleBatchdelete" v-if="listQuery.routingFlag">批量清空工艺</el-button>
             <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button>
             <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
@@ -193,8 +192,7 @@ import {
   deleteProductionResource,
   saleUploadroutingModel,
   importRoutingModel,
-  errordatalist,
-  deleteresourcebatch
+  errordatalist
 } from '@/api/basicData/productionResourceSetting'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -339,15 +337,6 @@ export default {
     this.initData()
   },
   methods: {
-    handleBatchdelete() {
-      if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
-      if (this.selectedData.some(item => !item.id)) return this.$message.error('所选数据没有工艺路线')
-      let idList = this.selectedData.map(item => item.id)
-      deleteresourcebatch(idList).then(res => {
-        this.initData()
-        this.$message.success('清空成功')
-      })
-    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

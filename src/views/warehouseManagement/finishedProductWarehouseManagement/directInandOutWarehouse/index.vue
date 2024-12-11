@@ -638,13 +638,13 @@ export default {
             ["inbound_sale_return", "销售退货"],
             ["inbound_purchase", "采购收货"],
             ["outbound_purchase", "采购退货"],
+            ["outbound_external_send", "外协发料"],
+            ["inbound_external", "外协收货"],
             ["outbound_pick_out", "生产领料"],
             ["inbound_return_materials", "生产退料"],
-            ["outbound_external_send", "外协发料"],
-            ["inbound_external_return", "外协退料"],
-            ["inbound_external", "外协收货"],
-            ["outbound_external", "外协退货"],
             ["inbound_mock_production", "生产入库"],
+            ["outbound_use", "资产领用"],
+            ["inbound_return", "资产归还"],
         ])),
       list: [],
       batchNumVisible: false,
@@ -895,10 +895,29 @@ export default {
     async getBusinessTypeList(){
         const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
         const list =[{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
-        this.list = res.data.records.length ? res.data.records.map(item=>({
-            label: this.businessType2Title.get(item.businessType),
-            value: item.businessType
-        })).concat(list) : list
+        // inbound_mock_production
+        let resList = list
+        if( res.data.records.length){
+            const temp =res.data.records.map(item=>{
+                return {
+                    label: this.businessType2Title.get(item.businessType),
+                    value: item.businessType
+                }
+            })
+            const tempFilter =temp.filter(item=>item.value !== 'inbound_mock_production')
+            if(temp.length === tempFilter.length){
+                resList = [...temp,...list]
+            }else{
+                resList = [
+                    ...tempFilter,
+                    { label: "生产产品入库", value: "inbound_order_production" },
+                    { label: "生产工单入库", value: "inbound_production" },
+                    ...list
+                ]
+            }
+
+        }
+        this.list = resList
     },
     getBimBusinessDetail() {
       let obj = {

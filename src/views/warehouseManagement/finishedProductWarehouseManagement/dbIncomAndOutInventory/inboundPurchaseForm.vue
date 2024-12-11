@@ -10,7 +10,8 @@
             @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
-            <el-button  v-if="btnType !== 'look'" type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
+          <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -223,6 +224,10 @@
                     </el-collapse-item>
 
                   </el-collapse>
+                </el-tab-pane>
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+                  <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
+                  </UploadWj>
                 </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                   <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
@@ -518,8 +523,9 @@
       <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
       </WareHouseForm>
       <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"   @closePrintPage="closePrintPage"/>
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+        @closePrintPage="closePrintPage" />
     </div>
   </transition>
 </template>
@@ -527,7 +533,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves, getBimBusinessDetail } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -546,11 +552,13 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { CustomerForm, WareHouseForm, Process, recordList, PrintBrowse, PrintDialog  },
+  components: { CustomerForm, WareHouseForm, Process, recordList, PrintBrowse, PrintDialog },
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
-
+      datafilelist: [],
+      isattachmentswitch: '',
+      attachmentData: {},
       isProjectSwitch: '',
       weightFlagList: [
         { label: "是", value: true },
@@ -703,7 +711,7 @@ export default {
       formId: '',
       enCode: "",
       printBrowseVisible: false,
-      printVisible:false,
+      printVisible: false,
     }
   },
 
@@ -726,10 +734,21 @@ export default {
     }
   },
   mounted() {
+    this.getBimBusinessDetail()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
     this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_outAndInWarehouse'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.attachmentData = res.data
+      })
+    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -746,8 +765,8 @@ export default {
     closePrint() {
       this.printVisible = false
     },
-    closePrintPage(){
-      this.$emit('close',true)
+    closePrintPage() {
+      this.$emit('close', true)
     },
     computedNumFun(data, index) {
       if (data.discount && data.proportion && data.weight) {
@@ -830,7 +849,7 @@ export default {
       this.orderForm.orderNo = this.dataForm.sourceNo
       if (this.deliveryDateArr.length) {
         this.orderForm.
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
+          this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
         this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
         this.orderForm.deliveryStartDate = ""
@@ -1157,6 +1176,19 @@ export default {
           });
           this.dataForm = res.data.stockMove
           this.productData = res.data.spaceLines
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         })
@@ -1168,6 +1200,7 @@ export default {
         this.fetchData("RKDH", true)
         this.getBusInfo('b045')
         this.title = '新建入库单'
+        this.datafilelist = []
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
           let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.qualifiedQuantity > item.receiptQuantity);
 
@@ -1251,7 +1284,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel,type) {
+    async handleConfirm(submitModel, type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1282,7 +1315,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")
                 break
               }
-       
+
 
 
               if (Number(item.num) > Number(item.requiredReceivedQuantity)) {
@@ -1330,7 +1363,20 @@ export default {
             });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
+            if (this.datafilelist.length) {
+              this.datafilelist.map((item, index) => {
+                item.bimAttachments = {
+                  businessType: "system_attachment",
+                  categoryId: this.attachmentData.configValue2,
+                  configKey: this.attachmentData.configKey,
+                  documentId: item.id,
+                  fileFlag: '',
+                  sort: index
+                }
+              })
+            }
             let dataObj = {
+              attachmentList: this.datafilelist,
               stockMove: this.dataForm,
               lines: this.productData,
               spaceLines: this.copyLinesData,
@@ -1355,13 +1401,13 @@ export default {
                 this.submitmethodsTitle = "提交成功"
 
               }
-             
+
               if (type) {
-           
+
                 this.enCode = 'p017'
                 this.formId = res.data.id
                 this.fullName = '采购收货单'
-            
+
                 this.printVisible = true
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)

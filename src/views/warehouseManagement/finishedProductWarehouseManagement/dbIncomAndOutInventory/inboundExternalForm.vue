@@ -233,6 +233,10 @@
 
                   </el-collapse>
                 </el-tab-pane>
+                <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+                <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
+                </UploadWj>
+              </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                   <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
                 </el-tab-pane>
@@ -561,7 +565,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getBimBusinessDetail } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -585,6 +589,9 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
+      datafilelist: [],
+      isattachmentswitch: '',
+      attachmentData: {},
       isProjectSwitch: '',
       weightFlagList: [
         { label: "是", value: true },
@@ -751,6 +758,7 @@ export default {
   },
 
   mounted() {
+    this.getBimBusinessDetail()
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
     this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
 
@@ -763,6 +771,16 @@ export default {
     }
   },
   methods: {
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_outAndInWarehouse'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+        this.attachmentData = res.data
+      })
+    },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -1216,7 +1234,19 @@ export default {
             item.taxRates = item.taxRate + "%"
 
           });
-
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
           this.dataForm = res.data.stockMove
           this.productData = res.data.spaceLines
           // 流程信息和流转记录
@@ -1227,6 +1257,7 @@ export default {
         this.dataForm.partnerName = data.partnerName
         this.$set(this.dataForm, 'sourceNo', data.orderNo)
         this.title = '新建入库单'
+        this.datafilelist = []
         this.fetchData("RKDH", true)
         this.getWarehouseListFun()
         this.getBusInfo('b045')
@@ -1409,7 +1440,20 @@ export default {
             });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
+            if (this.datafilelist.length) {
+              this.datafilelist.map((item, index) => {
+                item.bimAttachments = {
+                  businessType: "system_attachment",
+                  categoryId: this.attachmentData.configValue2,
+                  configKey: this.attachmentData.configKey,
+                  documentId: item.id,
+                  fileFlag: '',
+                  sort: index
+                }
+              })
+            }
             let dataObj = {
+              attachmentList: this.datafilelist,
               stockMove: this.dataForm,
               lines: this.productData,
               spaceLines: this.copyLinesData,

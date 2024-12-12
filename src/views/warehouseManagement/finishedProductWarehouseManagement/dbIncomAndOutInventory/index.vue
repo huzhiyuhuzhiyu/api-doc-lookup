@@ -395,6 +395,81 @@
             </el-form-item>
           </el-col>
         </el-form>
+        <!-- 生产产品入库 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'inbound_order_production'">
+
+
+          <template v-for="item in searchList7">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="productForm.orderType" placeholder="任务类型" style="width: 100%;">
+                <el-option v-for="item in orderTypeList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductData('basic')">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('product')">{{
+                $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+
+        </el-form>
+        <!-- 生产工单单条入库 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'inbound_production'">
+          <template v-for="item in searchList8">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="searchWorkDta('basic')">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('work')">{{
+                $t('common.reset')
+              }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+        <!-- { label: "翻库入库", value: "inbound_flip" }, -->
+
         <!-- 设备领用 查询 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_use'">
           <template v-for="item in searchList13">
@@ -469,8 +544,7 @@
         </el-form>
       </el-row>
 
-      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading"
-        v-if="categoryType != 'inbound_mock_production'">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
@@ -496,6 +570,10 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_sale_return'" @click="columnSetFun('thtabForm')" />
 
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" v-if="categoryType=='inbound_order_production'"
+                  @click="columnSetFun('dataTableProductRef')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"  v-if="categoryType=='inbound_production'"
+                  @click="columnSetFun('dataTableWorkRef')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_purchase'" @click="columnSetFun('cgthtabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -524,9 +602,20 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_return'" @click="columnSetFun('inboundReturnForm')" />
             </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top"
+              v-if="categoryType != 'inbound_order_production' && categoryType != 'inbound_production'">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="getTabdataList()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top"
+              v-if="categoryType == 'inbound_order_production'">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                @click="searchProductData()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top"
+              v-if="categoryType == 'inbound_production'">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                @click="searchWorkDta()" />
             </el-tooltip>
           </div>
         </div>
@@ -779,10 +868,11 @@
           <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-          <el-table-column prop="standardValue" v-if="standardValueFlag==1" label="规值" min-width="160" sortable="custom" />
+          <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" min-width="160"
+            sortable="custom" />
 
-          <el-table-column prop="colour" v-if="colourFlag==1" label="颜色" min-width="160" sortable="custom" />
-          <el-table-column prop="processName" v-if="processFlag==1" label="工序" min-width="160" sortable="custom" />
+          <el-table-column prop="colour" v-if="colourFlag == 1" label="颜色" min-width="160" sortable="custom" />
+          <el-table-column prop="processName" v-if="processFlag == 1" label="工序" min-width="160" sortable="custom" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
             v-if="sealingCoverTypingFlag == 1" />
           <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
@@ -1046,6 +1136,74 @@
             </template>
           </el-table-column>
         </JNPF-table>
+        <!-- 生产产品入库 -->
+        <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"
+          v-if="isProjectSwitchFlag" :data="productData" :fixedNO="true" custom-column
+          :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_order_production'">
+          <el-table-column prop="orderNo" label="任务单号" width="180" />
+          <el-table-column prop="orderType" label="任务类型" width="120">
+            <template slot-scope="scope">
+              <div v-for="(item, index) in orderTypeList" :key="index">
+                <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
+            sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
+          <el-table-column prop="mainUnit" label="单位" width="80" />
+          <el-table-column prop="productionQuantity" label="生产数量" width="120" />
+          <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
+          <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
+          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+            v-if="sealingCoverTypingFlag == 1" />
+          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+            v-if="accuracyLevelFlag == 1" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+            v-if="vibrationLevelFlag == 1" />
+          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+            v-if="packagingMethodFlag == 1" />
+          <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+            v-if="specialRequireFlag == 1" />
+          <el-table-column v-if="classAttribute == 'finish_product'" prop="createTime" label="创建时间" width="180" />
+          <el-table-column v-if="classAttribute == 'semi_finished'" prop="createByName" label="创建人" width="180" />
+
+          <el-table-column label="操作" width="100" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text" @click="productInbound(scope.row,)">入库</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+        <!-- 生产工单入库 -->
+        <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"
+          v-if="isProjectSwitchFlag" :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
+          :setColumnDisplayList="workColumns" v-show="categoryType=='inbound_production'">
+          <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
+          <el-table-column prop="orderNo" label="工单号" width="200" />
+          <el-table-column prop="productCode" label="产品编码" min-width="160" />
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
+            sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
+          <el-table-column prop="processName" label="工序名称" min-width="160" />
+          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <el-table-column prop="productionQuantity" label="生产数量" min-width="120" />
+          <el-table-column prop="qualifiedQuantity" label="已完成数量" min-width="120" />
+          <el-table-column prop="waitReceivedQuantity" label="待入库数量" min-width="120" />
+
+          <el-table-column prop="createTime" label="创建时间" min-width="180" />
+          <el-table-column label="操作" width="100" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text" @click="workInbound(scope.row)">入库</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
         <!-- 设备领用 outbound_use -->
         <JNPF-table :partentOrChild="'outboundUseForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="outboundUseTableList" v-show="categoryType == 'outbound_use'" custom-column ref="outboundUseForm"
@@ -1133,218 +1291,73 @@
           :limit.sync="returnMaterForm.pageSize" @pagination="getTabdataList"
           v-if="categoryType == 'inbound_return_materials'">
         </pagination>
-
+        <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
+          v-if="categoryType == 'inbound_order_production'" @pagination="searchProductData" />
+        <pagination :total="workTotal" :page.sync="workForm.pageNum" :limit.sync="workForm.pageSize"
+          v-if="categoryType == 'inbound_production'" @pagination="searchWorkDta" />
         <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum"
           :limit.sync="outboundUseForm.pageSize" @pagination="getTabdataList" v-if="categoryType == 'outbound_use'">
         </pagination>
         <pagination :total="inboundReturnTotal" :page.sync="inboundReturnForm.pageNum"
-          :limit.sync="inboundReturnForm.pageSize" @pagination="getTabdataList" v-if="categoryType == 'inbound_return'">
+          :limit.sync="inboundReturnForm.pageSize" @pagination="searchWorkDta" v-if="categoryType == 'inbound_return'">
         </pagination>
       </div>
 
-      <el-tabs v-model="activeName" @tab-click="handleClick" v-show="categoryType == 'inbound_mock_production'"
+      <!-- <el-tabs v-model="activeName" @tab-click="handleClick" v-show="categoryType == 'inbound_mock_production'"
         class="produce">
         <el-tab-pane label="生产产品入库" name="product">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
-              <el-form @submit.native.prevent>
 
-
-                <template v-for="item in searchList7">
-                  <el-col :span="item.searchType === 3 ? 6 : 4">
-                    <el-form-item>
-                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
-                        clearable @keyup.enter.native="getTabdataList('basic')" />
-
-                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                        clearable>
-                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                          :value="item2.value"></el-option>
-                      </el-select>
-                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                        :type="item.dateType"
-                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-                    </el-form-item>
-                  </el-col>
-                </template>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-select v-model="productForm.orderType" placeholder="任务类型" style="width: 100%;">
-                      <el-option v-for="item in orderTypeList" :key="item.value" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductData('basic')">
-                      {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('product')">{{
-                      $t('common.reset') }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-
-              </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
 
               <div class="JNPF-common-head">
-                <div>
-                  <!-- <el-button  size="mini" type="primary"
-                    icon="el-icon-plus" @click="batchInbound('product')">批量入库</el-button> -->
+                <div> 
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                       @click="advancedQueryFun" />
                   </el-tooltip>
-                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                      @click="columnSetFun('dataTableProductRef')" />
-                  </el-tooltip>
-                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="searchProductData()" />
-                  </el-tooltip>
+
+
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"
-                v-if="isProjectSwitchFlag" :data="productData" :fixedNO="true" custom-column
-                :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_mock_production'">
-                <el-table-column prop="orderNo" label="任务单号" width="180" />
-                <el-table-column prop="orderType" label="任务类型" width="120">
-                  <template slot-scope="scope">
-                    <div v-for="(item, index) in orderTypeList" :key="index">
-                      <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
-                  sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                  v-if="isProjectSwitch == 1" />
-                <el-table-column prop="mainUnit" label="单位" width="80" />
-                <el-table-column prop="productionQuantity" label="生产数量" width="120" />
-                <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
-                <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
-                  v-if="sealingCoverTypingFlag == 1" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
-                  v-if="accuracyLevelFlag == 1" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-                  v-if="vibrationLevelFlag == 1" />
-                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
-                  v-if="oilQuantityFlag == 1" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-                  v-if="packagingMethodFlag == 1" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
-                  v-if="specialRequireFlag == 1" />
-                <el-table-column v-if="classAttribute == 'finish_product'" prop="createTime" label="创建时间" width="180" />
-                <el-table-column v-if="classAttribute == 'semi_finished'" prop="createByName" label="创建人" width="180" />
 
-                <el-table-column label="操作" width="100" fixed="right">
-                  <template slot-scope="scope">
-                    <el-button size="mini" type="text" @click="productInbound(scope.row,)">入库</el-button>
-                  </template>
-                </el-table-column>
-              </JNPF-table>
-              <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
-                @pagination="searchProductData" />
+
             </div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="生产工单入库" name="work">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
-                <template v-for="item in searchList8">
-                  <el-col :span="item.searchType === 3 ? 6 : 4">
-                    <el-form-item>
-                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
-                        clearable @keyup.enter.native="getTabdataList('basic')" />
 
-                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                        clearable>
-                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                          :value="item2.value"></el-option>
-                      </el-select>
-                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                        :type="item.dateType"
-                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-                    </el-form-item>
-                  </el-col>
-                </template>
-
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchWorkDta('basic')">
-                      {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('work')">{{
-                      $t('common.reset')
-                    }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-              </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <div>
-                  <!-- <el-button size="mini" type="primary" icon="el-icon-plus"
-                    @click="batchInbound('work')">批量入库</el-button> -->
+                <div> 
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                       @click="advancedQueryFun" />
                   </el-tooltip>
-                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                      @click="columnSetFun('dataTableWorkRef')" />
-                  </el-tooltip>
+
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                       @click="searchWorkDta()" />
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"
-                v-if="isProjectSwitchFlag" :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
-                :setColumnDisplayList="workColumns">
-                <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
-                <el-table-column prop="orderNo" label="工单号" width="200" />
-                <el-table-column prop="productCode" label="产品编码" min-width="160" />
-                <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
-                  sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                  v-if="isProjectSwitch == 1" />
-                <el-table-column prop="processName" label="工序名称" min-width="160" />
-                <el-table-column prop="mainUnit" label="单位" min-width="80" />
-                <el-table-column prop="productionQuantity" label="生产数量" min-width="120" />
-                <el-table-column prop="qualifiedQuantity" label="已完成数量" min-width="120" />
-                <el-table-column prop="waitReceivedQuantity" label="待入库数量" min-width="120" />
 
-                <el-table-column prop="createTime" label="创建时间" min-width="180" />
-                <el-table-column label="操作" width="100" fixed="right">
-                  <template slot-scope="scope">
-                    <el-button size="mini" type="text" @click="workInbound(scope.row)">入库</el-button>
-                  </template>
-                </el-table-column>
-              </JNPF-table>
               <pagination :total="workTotal" :page.sync="workForm.pageNum" :limit.sync="workForm.pageSize"
                 @pagination="searchWorkDta" />
             </div>
           </div>
         </el-tab-pane>
 
-      </el-tabs>
+      </el-tabs> -->
     </div>
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
@@ -1988,7 +2001,7 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",
-      processList:[],
+      processList: [],
     }
   },
   watch: {
@@ -2128,7 +2141,7 @@ export default {
             })
           })
         }
-   
+
       }
       if (this.specialRequireFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
@@ -2455,7 +2468,7 @@ export default {
         classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
-      getStockMovelist(obj.classAttributeList, obj.projectId,this.warehouseCode).then(res => {
+      getStockMovelist(obj.classAttributeList, obj.projectId, this.warehouseCode).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {
@@ -2491,8 +2504,20 @@ export default {
               item.fullName = '生产退料'
 
             }
-            if (item.businessType == 'inbound_mock_production') {
-              item.fullName = '生产入库'
+            // if (item.businessType == 'inbound_mock_production') {
+            //   item.fullName = '生产入库'
+
+            // }
+            if (item.businessType == 'inbound_order_production') {
+              item.fullName = '生产产品入库'
+
+            }
+            if (item.businessType == 'inbound_production') {
+              item.fullName = '生产工单入库'
+
+            }
+            if (item.businessType == 'inbound_flip') {
+              item.fullName = '翻库入库'
 
             }
             if (item.businessType == 'outbound_use') {
@@ -3201,13 +3226,24 @@ export default {
           this.listLoading = false
         })
       }
-      // 生产入库
-      if (this.categoryType == 'inbound_mock_production') {
-        if (this.activeName == 'product') {
+      // 生产产品入库
+      if (this.categoryType == 'inbound_order_production') {
           this.searchProductData(type)
-        } else {
+        //   if (this.activeName == 'product') {
+        //   this.searchProductData(type)
+        // } else {
+        //   this.searchWorkDta(type)
+        // }
+      }
+      // 生产工单入库
+      if (this.categoryType == 'inbound_production') {
           this.searchWorkDta(type)
-        }
+          // this.searchProductData(type)
+        //   if (this.activeName == 'product') {
+        //   this.searchProductData(type)
+        // } else {
+        //   this.searchWorkDta(type)
+        // }
       }
       // 资产领用 
       if (this.categoryType == 'outbound_use') {
@@ -4345,115 +4381,115 @@ export default {
         ]
       }
 
-      // 生产入库  
-      if (this.categoryType == 'inbound_mock_production') {
-        if (this.activeName == 'product') {
-          this.superQueryJson = [
-            {
-              prop: 'orderNo',
-              label: "任务单号",
-              type: 'input'
-            },
-            {
-              prop: 'orderType',
-              label: "任务类型",
-              type: 'select',
-              options: [
-                {
-                  label: "正常任务", value: "normal",
-                },
-                {
-                  label: "返工任务", value: "rework",
-                }
-              ]
-            },
-            {
-              prop: 'productDrawingNo',
-              label: "品名规格",
-              type: 'input'
-            },
-            {
-              prop: 'mainUnit',
-              label: "单位",
-              type: 'input'
-            },
-            {
-              prop: 'productionPlanNo',
-              label: "计划单号",
-              type: 'input'
-            },
+      // 生产产品入库  
+      if (this.categoryType == 'inbound_order_production') {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "任务单号",
+            type: 'input'
+          },
+          {
+            prop: 'orderType',
+            label: "任务类型",
+            type: 'select',
+            options: [
+              {
+                label: "正常任务", value: "normal",
+              },
+              {
+                label: "返工任务", value: "rework",
+              }
+            ]
+          },
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+          {
+            prop: 'productionPlanNo',
+            label: "计划单号",
+            type: 'input'
+          },
 
 
 
 
-          ]
-          this.advancedQueryFuns('productionPlanNo')
+        ]
+        this.advancedQueryFuns('productionPlanNo')
 
-          if (this.isProductNameSwitch == 1) {
-            this.superQueryJson.splice(2, 0, {
-              prop: 'productName',
-              label: '产品名称',
-              type: 'input'
-            })
-          }
-          this.getProductClassFun()
-        } else {
-          this.superQueryJson = [
-            {
-              prop: 'productionOrderNo',
-              label: "任务单号",
-              type: 'input'
-            },
-            {
-              prop: 'orderNo',
-              label: "工单号",
-              type: 'input'
-            },
-            {
-              prop: 'productCode',
-              label: "产品编码",
-              type: 'input'
-            },
-            {
-              prop: 'productDrawingNo',
-              label: "品名规格",
-              type: 'input'
-            },
-            {
-              prop: 'processName',
-              label: "工序名称",
-              type: 'input'
-            },
-            {
-              prop: 'mainUnit',
-              label: "单位",
-              type: 'input'
-            },
-
-            {
-              prop: 'createTime',
-              label: '创建时间',
-              type: 'daterange',
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-              startPlaceholder: '开始日期',
-              endPlaceholder: '结束日期',
-              pickerOptions: this.global.timePickerOptions
-            },
-
-
-
-
-
-          ]
-          if (this.isProductNameSwitch == 1) {
-            this.superQueryJson.splice(3, 0, {
-              prop: 'productName',
-              label: '产品名称',
-              type: 'input'
-            })
-          }
-
+        if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(2, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
         }
+        this.getProductClassFun()
+      }
+      if (this.categoryType == 'inbound_production') {
+
+        this.superQueryJson = [
+          {
+            prop: 'productionOrderNo',
+            label: "任务单号",
+            type: 'input'
+          },
+          {
+            prop: 'orderNo',
+            label: "工单号",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'processName',
+            label: "工序名称",
+            type: 'input'
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input'
+          },
+
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+
+
+
+
+
+        ]
+        if (this.isProductNameSwitch == 1) {
+          this.superQueryJson.splice(3, 0, {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          })
+        }
+
       }
 
 

@@ -1239,7 +1239,7 @@ export default {
     exportForm() {
       console.log(this.productData);
       if (!this.productData.length) return this.$message.error("暂无数据可导出")
-      let productsIds = this.productData.map(item => item.id)
+      let productsIds = this.productData.map(item => item.productsId)
       console.log("productsIds", productsIds);
       productExport(productsIds).then(res => {
         console.log("导出结果", res);

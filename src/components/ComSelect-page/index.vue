@@ -450,6 +450,10 @@ export default {
       type: String,
       default: '70%'
     },
+    index:{
+      type: String,
+      default: ""
+    },
   },
   data() {
     return {
@@ -830,7 +834,7 @@ export default {
           // this.innerValue = ''
           // this.tagsList = ""
           this.$emit('input', "")
-          this.$emit('change', [], [], this.paramsObj)
+          this.$emit('change', [], [], this.paramsObj,index)
         } else if (this.multiple) {
           // this.innerValue = ''
           this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
@@ -848,7 +852,7 @@ export default {
           if (!submitFlag) return this.btnLoading = false
           // this.innerValue = this.selectedData[0]
           this.$emit('input', this.selectedIds[0])
-          this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj)
+          this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj,this.index)
         }
         this.$nextTick(() => { this.btnLoading = false })
         this.visible = false

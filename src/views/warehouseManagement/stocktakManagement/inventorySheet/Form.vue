@@ -113,7 +113,7 @@
                             <ComSelect-list
                               :requestObj="{ type: '', virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                               :dialogTitle="'选择盘点仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.warehouseName"
-                              :method="getWarehouseList" :currentIndex="scope.$index" placeholder="请选择仓库"
+                              :method="getWarehouseList" placeholder="请选择仓库" :currentIndex="scope.$index"
                               @change="changeCurrentWarehousex"></ComSelect-list>
 
                           </template>
@@ -126,7 +126,6 @@
                             </el-input>
 
                           </template>
-
                         </el-table-column>
 
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
@@ -136,6 +135,163 @@
                               @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
                               {{ scope.row.batchNumber }}
                             </el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="cooperativePartnerName" label="供应商" width="200" :key="10111">
+                          <template slot-scope="scope">
+                            <ComSelect-page key="partner" ref="ComSelect-page"
+                              v-model="scope.row.cooperativePartnerName" @change="partnerChange"
+                              :tableItems="partnerTableItems" :dialogTitle="scope.row.partnerDialogTitle"
+                              :treeTitle="scope.row.partnerTreeTitle" :placeholder="scope.row.partnerPlaceholder"
+                              :methodArr="scope.row.getCooperativeMethodArr" :listMethod="getCooperativeData"
+                              :listRequestObj="scope.row.partnerRequestObj" :searchList="scope.row.partnerSearchList"
+                              :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'"
+                              :index="scope.$index" />
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in scope.row.spaceSizeList" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="logo" label="Logo" width="120" key="2116">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in scope.row.logoList" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable
+                              style="width: 100%;" :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in scope.row.divideEquallyList" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120" key="2118">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in scope.row.materialList" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120"
+                          key="211">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
+                              style="width: 100%;" :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
+                          <!-- <template slot="header">
+                            <span class="required">*</span>打字内容
+                          </template> -->
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in list11" key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
+                          width="120" key="2111">
+                          <!-- <template slot="header">
+                            <span class="required">*</span>打字内容
+                          </template> -->
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
+                              <el-option v-for="(item, index) in list1" key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                          key="123">
+                          <!-- <template slot="header">
+                            <span class="required">*</span>精度等级
+                          </template> -->
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in list2" key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="vibrationLevel" v-if="vibrationLevelFlag == 1" label="振动等级" width="120"
+                          key="17">
+                          <!-- <template slot="header">
+                            <span class="required">*</span>振动等级
+                          </template> -->
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
+                              <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
+
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="packagingMethod" label="包装方式" v-if="packagingMethodFlag == 1" width="120"
+                          key="101">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
+                              <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                          key="202">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
+                              <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
                           </template>
                         </el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
@@ -203,8 +359,8 @@
                 <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                   <div v-if="btnType !== 'look'">
                     <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
-                          :disabled="btnType == 'look' ? true : false"
-                          @click="openSeleceIventOProductDialog()">选择库存产品</el-button>|
+                      :disabled="btnType == 'look' ? true : false"
+                      @click="openSeleceIventOProductDialog()">选择库存产品</el-button>|
                     <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
                       :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择产品</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
@@ -262,7 +418,6 @@
 
                       </template>
                     </el-table-column>
-
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
 
                       <template slot-scope="scope">
@@ -270,6 +425,163 @@
                           @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
                           {{ scope.row.batchNumber }}
                         </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="cooperativePartnerName" label="供应商" width="200" :key="10111">
+                      <template slot-scope="scope">
+                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="scope.row.cooperativePartnerName"
+                          @change="partnerChange" :tableItems="partnerTableItems"
+                          :dialogTitle="scope.row.partnerDialogTitle" :treeTitle="scope.row.partnerTreeTitle"
+                          :placeholder="scope.row.partnerPlaceholder" :methodArr="scope.row.getCooperativeMethodArr"
+                          :listMethod="getCooperativeData" :listRequestObj="scope.row.partnerRequestObj"
+                          :searchList="scope.row.partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
+                          :isdisabled="btnType === 'look'||(scope.row.productSource!='out'&&scope.row.productSource!='purchase')" :index="scope.$index" />
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in scope.row.spaceSizeList" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="logo" label="Logo" width="120" key="2116">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in scope.row.logoList" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in scope.row.divideEquallyList" :key="index"
+                            :label="item.name" :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="material" label="材质" width="120" key="2118">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in scope.row.materialList" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120"
+                      key="211">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
+                      <!-- <template slot="header">
+                            <span class="required">*</span>打字内容
+                          </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list11" key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
+                      width="120" key="2111">
+                      <!-- <template slot="header">
+                            <span class="required">*</span>打字内容
+                          </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                      key="123">
+                      <!-- <template slot="header">
+                            <span class="required">*</span>精度等级
+                          </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list2" key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="vibrationLevel" v-if="vibrationLevelFlag == 1" label="振动等级" width="120"
+                      key="17">
+                      <!-- <template slot="header">
+                            <span class="required">*</span>振动等级
+                          </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
+
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" v-if="packagingMethodFlag == 1" width="120"
+                      key="101">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                      key="202">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
@@ -314,7 +626,7 @@
                     <el-input v-model="productForm.productName" placeholder="产品名称" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6" >
+                <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
                   </el-form-item>
@@ -339,16 +651,67 @@
 
 
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip min-width="160"></el-table-column>
-                <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160"  />
-                <el-table-column prop="drawingNo" label="品名规格" min-width="330"/>
-                <el-table-column prop="productCategoryName" label="所属分类" v-if="type=='all'"/>
-                <el-table-column prop="projectName" label="所属项目" min-width="120" 
-                  v-if="isProjectSwitch == 1" />
-                <el-table-column prop="mainUnit" label="单位" width="80"/>
-                <el-table-column prop="batchNumber" label="批次号" v-if="type=='invent'" min-width="180"></el-table-column>
-                <el-table-column prop="stockNum" label="库存数量" v-if="type=='invent'" min-width="120"></el-table-column>
-                <el-table-column prop="warehouseName" label="仓库名称" v-if="type=='invent'" min-width="120"></el-table-column>
-                <el-table-column prop="shelfSpaceName" label="库位名称" v-if="type=='invent'" min-width="120"></el-table-column>
+                <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" />
+                <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
+                <el-table-column prop="productCategoryName" label="所属分类" v-if="type == 'all'" min-width="120" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="batchNumber" label="批次号" v-if="type == 'invent'"
+                  min-width="180"></el-table-column>
+                <el-table-column prop="stockNum" label="库存数量" v-if="type == 'invent'" min-width="120"></el-table-column>
+                <el-table-column prop="warehouseName" label="仓库名称" v-if="type == 'invent'"
+                  min-width="120"></el-table-column>
+                <el-table-column prop="shelfSpaceName" label="库位名称" v-if="type == 'invent'"
+                  min-width="120"></el-table-column>
+                <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+
+                </el-table-column>
+                <el-table-column prop="logo" label="Logo" width="120" key="2116">
+
+                </el-table-column>
+                <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+
+                </el-table-column>
+                <el-table-column prop="material" label="材质" width="120" key="2118">
+
+                </el-table-column>
+                <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120" key="211">
+
+                </el-table-column>
+                <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
+
+                </el-table-column>
+                <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容" width="120"
+                  key="2111">
+
+                </el-table-column>
+                <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120" key="123">
+                  <!-- <template slot="header">
+                            <span class="required">*</span>精度等级
+                          </template> -->
+
+                </el-table-column>
+                <el-table-column prop="vibrationLevel" v-if="vibrationLevelFlag == 1" label="振动等级" width="120" key="17">
+
+                </el-table-column>
+                <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
+
+                </el-table-column>
+                <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
+
+                </el-table-column>
+                <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
+
+                </el-table-column>
+                <el-table-column prop="packagingMethod" label="包装方式" v-if="packagingMethodFlag == 1" width="120"
+                  key="101">
+
+                </el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                  key="202">
+
+                </el-table-column>
+
 
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
@@ -407,14 +770,14 @@
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
-import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
+import { getProducts, getDetailByDrawNo, getbimProductAttributesListMap, getbimProductAttributesList } from '@/api/masterDataManagement/index.js' // 产品列表
 
 // import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
 import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import { mapGetters, mapState } from 'vuex'
-import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
+import { excelExport } from '@/api/basicData/index'
 import Adjust from '../inventoryAdjustmentSheet/Form.vue'
 import { getInventProduct, addStocktak, detailStocktak, editStocktak, deleteStocktak, productExport, productImport, stockTakingToAdjus } from '@/api/warehouseManagement/stocktak.js'
 import Process from '@/components/Process/Preview'
@@ -422,12 +785,40 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
+import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
+import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   // components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
   components: { Process, recordList, WareHouseForm, BatchNumberForm, Adjust },
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
+
+      partnerRequestObj: {
+        code: "",
+        name: "",
+        taxId: "",
+        mobilePhone: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: "",
+        type: "supplier",
+      },
+      getCooperativeData,
+      getCooperativeMethodArr: { method: getcategoryTrees, requestObj: { type: 'supplier' } },
+      partnerTreeTitle: "采购供应商分类",
+      partnerDialogTitle: '选择供应商',
+      partnerPlaceholder: '请选择采购供应商',
+      partnerSearchList: [
+        { prop: 'code', label: '供应商编码', type: 'input' },
+        { prop: 'name', label: '供应商名称', type: 'input' },
+        { prop: 'taxId', label: '税号', type: 'input' }
+      ], // 客户搜索条件
+      partnerTableItems: [
+        { prop: 'code', label: '供应商编码' },
+        { prop: 'name', label: '供应商名称' },
+        { prop: 'taxId', label: '税号' },
+      ], // 客户列表字段
       adjustVisible: false,
       pickerOptions: {
         disabledDate(time) {
@@ -518,9 +909,9 @@ export default {
       productNameFlag: null,
       uploadVisib: false,
       isProjectSwitch: '',
- 
-             // 属性字段  控制属性字段显示隐藏
-             accuracyLevelFlag: "",
+
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -531,11 +922,24 @@ export default {
       bimProductAttributesList: [],
       standardValueFlag: "",
       colourFlag: "",
-      processFlag: "",  
+      processFlag: "",
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
+      list5: [],
+      list6: [],
+      list7: [],
+      list8: [],
+      list9: [],
+      list10: [],
+      list11: [],
+      partnerInfo: {},
     }
   },
 
   async created() {
+    await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
 
@@ -555,6 +959,8 @@ export default {
     ...mapState('user', ['token']),
 
   },
+  mounted() {
+  },
   watch: {
     "dataForm.warehouseId": {
       handler: function (newVal, oldVal) {
@@ -564,6 +970,133 @@ export default {
   },
 
   methods: {
+    // 意向客户分类节点点击
+    yxPartnerTreeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.id
+      return listQuery
+    },
+    partnerChange(id,data , is, index) {
+      console.log(data,id,is,index);
+
+      if (data && data.length) { // 数据有效，进行更新
+        const partnerInfo = data[0].all
+        this.partnerInfo = data[0].all
+        console.log(partnerInfo);
+        this.$set(this.productData[index], 'cooperativePartnerId', partnerInfo.id)
+        this.$set(this.productData[index], 'cooperativePartnerName', partnerInfo.name)
+
+      } else { // 不选择任何内容，置空绑定的值
+        this.$set(this.productData[index], 'cooperativePartnerId', '')
+        this.$set(this.productData[index], 'cooperativePartnerName', '')
+      }
+      console.log(this.productData);
+    },
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+        console.log(66, this.bimProductAttributesList);
+      })
+
+    },
+    advancedQueryFuns() {
+      // sealingCoverTyping //打字内容
+      //     accuracyLevel //精度等级
+      //     vibrationLevel //振动等级
+      //     oil //油脂
+      //     oilQuantity //油脂量
+      //     clearance //游隙
+      //     packagingMethod //包装方式          
+      //     specialRequire //特殊要求
+
+      if (this.colourFlag === '1') {
+        this.list11 = this.bimProductAttributesList.pa010.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+
+      }
+      console.log(555, this.bimProductAttributesList);
+      this.list10 = this.bimProductAttributesList.pa009.map((item) => {
+        return {
+          label: item.name,
+          name: item.name
+        }
+      })
+
+      if (this.standardValueFlag === '1') {
+        this.list8 = this.bimProductAttributesList.pa008.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+
+      if (this.specialRequireFlag === '1') {
+        this.list9 = this.bimProductAttributesList.pa016.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+      if (this.packagingMethodFlag === '1') {
+        this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+      if (this.clearanceFlag === '1') {
+        this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+
+      }
+
+      if (this.oilFlag === '1') {
+        this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+      if (this.vibrationLevelFlag === '1') {
+        this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+      console.log("list3", this.list3);
+      if (this.accuracyLevelFlag === '1') {
+        this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+      if (this.sealingCoverTypingFlag === '1') {
+        this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -856,27 +1389,28 @@ export default {
     openSeleceProductDialog() {
       this.productVisible = true
       this.productForm.productName = ''
-        this.productForm.productCode = ''
-        this.productForm.productDrawingNo = ''
-        this.productForm.pageNum = 1
-        this.productForm.pageSize = 20
+      this.productForm.productCode = ''
+      this.productForm.productDrawingNo = ''
+      this.productForm.pageNum = 1
+      this.productForm.pageSize = 20
       this.searchProductFun('all')
     },
     // 点击选择库存产品
     openSeleceIventOProductDialog() {
       this.productVisible = true
       this.productForm.productName = ''
-        this.productForm.productCode = ''
-        this.productForm.productDrawingNo = ''
-        this.productForm.pageNum = 1
-        this.productForm.pageSize = 20
+      this.productForm.productCode = ''
+      this.productForm.productDrawingNo = ''
+      this.productForm.pageNum = 1
+      this.productForm.pageSize = 20
       this.searchProductFun('invent')
     },
     searchProductFun(type) {
+      this.advancedQueryFuns()
       this.type = type
       this.productForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       if (type == 'all') {
-  
+
         getProducts(this.productForm).then(res => {
           // this.productList = [...this.selectSaleProductArr,...res.data.records]
           this.productList = res.data.records
@@ -892,7 +1426,7 @@ export default {
         }).catch(() => {
           this.listLoading = false
         })
-      } else { 
+      } else {
 
         getInventProduct(this.productForm).then(res => {
           this.productList = res.data.records
@@ -938,12 +1472,51 @@ export default {
 
 
       arr.forEach(item => {
-        if(this.type=='all'){
+        if (this.type == 'all') {
           this.$set(item, 'stockNum', 0)
-        }else{
+        } else {
           this.$set(item, 'stockNum', item.stockNum)
 
-        }    
+        }
+
+        if (item.productSource == 'purchase') {
+          this.$set(item, 'partnerTitle', '采购供应商')
+          this.$set(item, 'partnerDialogTitle', '选择采购供应商')
+          this.$set(item, 'partnerTreeTitle', '采购供应商分类')
+          this.$set(item, 'partnerPlaceholder', '请选择采购供应商')
+          this.$set(item, 'getCooperativeMethodArr', { method: getcategoryTrees, requestObj: { type: 'supplier' } })
+          this.$set(item, 'partnerRequestObj', {
+            code: "",
+            name: "",
+            taxId: "",
+            mobilePhone: '',
+            pageNum: 1,
+            pageSize: 20,
+            partnerCategoryId: "",
+            type: "supplier",
+          })
+        } else if (item.productSource == 'out') {
+          this.$set(item, 'partnerTitle', '外协供应商')
+          this.$set(item, 'partnerDialogTitle', '选择外协供应商')
+          this.$set(item, 'partnerTreeTitle', '外协供应商分类')
+          this.$set(item, 'partnerPlaceholder', '请选择外协供应商')
+          this.$set(item, 'getCooperativeMethodArr', { method: getcategoryTrees, requestObj: { type: 'outsourcing_suppliers' } })
+          this.$set(item, 'partnerRequestObj', {
+            code: "",
+            name: "",
+            taxId: "",
+            mobilePhone: '',
+            pageNum: 1,
+            pageSize: 20,
+            partnerCategoryId: "",
+            type: "outsourcing_suppliers",
+          })
+
+
+        }
+
+
+
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
@@ -951,6 +1524,21 @@ export default {
         this.$set(item, 'batchNumber', item.batchNumber)
         this.$set(item, 'productsId', item.id)
         this.$set(item, 'allocationFlag', item.locationStatus == 'disabled' ? false : true)
+        this.$set(item, 'specSize', '')
+        this.$set(item, 'logo', '')
+        this.$set(item, 'divideEqually', '')
+        this.$set(item, 'material', '')
+        this.$set(item, 'standardValue', '')
+        this.$set(item, 'colour', '')
+        this.$set(item, 'sealingCoverTyping', '')
+        this.$set(item, 'accuracyLevel', '')
+        this.$set(item, 'vibrationLevel', '')
+        this.$set(item, 'oil', '')
+        this.$set(item, 'clearance', '')
+        this.$set(item, 'aperture', '')
+        this.$set(item, 'packagingMethod', '')
+        this.$set(item, 'specialRequire', '')
+
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
@@ -959,6 +1547,49 @@ export default {
           this.$set(item, 'warehouseName', item.warehouseName)
           this.$set(item, 'allocationFlag', item.allocationFlag)
           this.$set(item, 'warehouseId', item.warehouseId)
+        }
+        if (item.productCategoryName == '保持架') {
+          let arr = ['pa017', 'pa021']
+          arr.forEach(items => {
+            let obj1 = {
+              pageNum: -1,
+              pageSize: 20,
+              typeCode: items,//保持架尺寸
+            };
+            getbimProductAttributesList(obj1).then(res => {
+              let list = items == 'pa017' ? 'spaceSizeList' : 'materialList'
+              this.$set(item, list, res.data.records)
+            })
+          });
+        }
+        if (item.productCategoryName == '防尘盖') {
+          let arr = ['pa018', 'pa022']
+          arr.forEach(items => {
+            let obj1 = {
+              pageNum: -1,
+              pageSize: 20,
+              typeCode: items,//保持架尺寸
+            };
+            getbimProductAttributesList(obj1).then(res => {
+              let list = items == 'pa018' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
+              this.$set(item, list, res.data.records)
+            })
+          });
+        }
+        if (item.productCategoryName != '防尘盖' && item.productCategoryName != '防尘盖') {
+          let arr = ['pa019', 'pa020',]
+          arr.forEach(items => {
+            let obj1 = {
+              pageNum: -1,
+              pageSize: 20,
+              typeCode: items,
+            };
+            getbimProductAttributesList(obj1).then(res => {
+              let list = items == 'pa019' ? 'logoList' : 'divideEquallyList'
+              this.$set(item, list, res.data.records)
+            })
+          });
+
         }
       });
       this.productData = [...this.productData, ...arr]
@@ -1134,7 +1765,27 @@ export default {
                   productsId: item.productsId,
                   shelfSpaceId: item.shelfSpaceId,
                   stockNum: item.stockNum,
-                  warehouseId: item.warehouseId
+                  warehouseId: item.warehouseId,
+                  
+                  specSize: item.specSize,
+                  logo: item.logo,
+                  divideEqually: item.divideEqually,
+                  material: item.material,
+                  standardValue: item.standardValue,
+                  colour: item.colour,
+                  sealingCoverTyping: item.sealingCoverTyping,
+                  accuracyLevel: item.accuracyLevel,
+                  vibrationLevel: item.vibrationLevel,
+                  oil: item.oil,
+
+                  clearance: item.clearance,
+                  aperture: item.aperture,
+                  packagingMethod: item.packagingMethod,
+                  specialRequire: item.specialRequire,
+                  cooperativePartnerName: item.cooperativePartnerName,
+                  cooperativePartnerId: item.cooperativePartnerId,
+              
+                  
                 }
                 arr.push(obj)
               });

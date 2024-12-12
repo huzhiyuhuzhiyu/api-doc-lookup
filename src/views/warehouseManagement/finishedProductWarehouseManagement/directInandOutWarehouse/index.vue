@@ -970,7 +970,7 @@ export default {
         this.processList = res.data.records
       })
     },
-    advancedQueryFuns(prop) {
+    advancedQueryFuns() {
       // sealingCoverTyping //打字内容
       //     accuracyLevel //精度等级
       //     vibrationLevel //振动等级
@@ -980,13 +980,12 @@ export default {
       //     packagingMethod //包装方式          
       //     specialRequire //特殊要求
       console.log(this.categoryType);
-      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === prop)
       if (this.categoryType == 'inbound_purchase') {
         if (this.colourFlag === '1') {
           this.list11 = this.bimProductAttributesList.pa010.map((item) => {
             return {
               label: item.name,
-              value: item.name
+              name: item.name
             }
           })
 
@@ -995,7 +994,7 @@ export default {
           this.list8 = this.bimProductAttributesList.pa008.map((item) => {
             return {
               label: item.name,
-              value: item.name
+              name: item.name
             }
           })
         }
@@ -1005,7 +1004,7 @@ export default {
         this.list9 = this.bimProductAttributesList.pa016.map((item) => {
           return {
             label: item.name,
-            value: item.name
+            name: item.name
           }
         })
       }
@@ -1013,7 +1012,7 @@ export default {
         this.list7 = this.bimProductAttributesList.pa015.map((item) => {
           return {
             label: item.name,
-            value: item.name
+            name: item.name
           }
         })
       }
@@ -1021,7 +1020,7 @@ export default {
         this.list6 = this.bimProductAttributesList.pa001.map((item) => {
           return {
             label: item.name,
-            value: item.name
+            name: item.name
           }
         })
 
@@ -1031,7 +1030,7 @@ export default {
         this.list4 = this.bimProductAttributesList.pa002.map((item) => {
           return {
             label: item.name,
-            value: item.name
+            name: item.name
           }
         })
       }
@@ -1039,7 +1038,7 @@ export default {
         this.list3 = this.bimProductAttributesList.pa005.map((item) => {
           return {
             label: item.name,
-            value: item.name
+            name: item.name
           }
         })
       }
@@ -1047,7 +1046,7 @@ export default {
         this.list2 = this.bimProductAttributesList.pa006.map((item) => {
           return {
             label: item.name,
-            value: item.name
+            name: item.name
           }
         })
       }
@@ -1055,7 +1054,7 @@ export default {
         this.list1 = this.bimProductAttributesList.pa007.map((item) => {
           return {
             label: item.name,
-            value: item.name
+            name: item.name
           }
         })
       }
@@ -1235,6 +1234,7 @@ export default {
       this.productVisible = true
       this.orderForm.productName = ""
       this.listQuery.productName = ""
+      this.advancedQueryFuns()
       this.searchProductFun()
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量

@@ -34,7 +34,14 @@
                 :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
             </el-form-item>
           </el-col>
-
+          <el-col :span="12">
+            <el-form-item label="密封圈" prop="steelBall" ref="steelBall">
+              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.steelBall"
+                placeholder="请选择产品" auth @change="onOrganizeChangeThree4" :title="'选择产品'" :listMethod="getProductList"
+                :requestObj="requestObj" :methodArr="ProductMethodArr" :listRequestObj="ProductListRequestObj"
+                :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="钢球用量" prop="steelBallNum" ref="steelBallNum">
               <el-input placeholder="请输入钢球用量" :disabled="btnType == 'look' ? true : false"
@@ -50,6 +57,12 @@
           <el-col :span="12">
             <el-form-item label="保持架用量" prop="holderNum" ref="holderNum">
               <el-input placeholder="请输入保持架用量" :disabled="btnType == 'look' ? true : false"
+                v-model="dataForm.holderNum"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="密封圈用量" prop="sealingRingNum" ref="holderNum">
+              <el-input placeholder="请输入密封圈用量" :disabled="btnType == 'look' ? true : false"
                 v-model="dataForm.holderNum"></el-input>
             </el-form-item>
           </el-col>
@@ -266,6 +279,17 @@ export default {
       if (data[0].all) {
         this.dataForm.steelBallId = data[0].all.id
         this.dataForm.steelBall = data[0].all.drawingNo
+      } else {
+      }
+    },
+    onOrganizeChangeThree4(val, data) {
+      // this.$refs['elForm'].validateField('steelBallName')
+
+      if (!data || !data.length) return
+      console.log(data, '产品产品')
+      if (data[0].all) {
+        this.dataForm.sealingRingId = data[0].all.id
+        this.dataForm.sealingRing = data[0].all.drawingNo
       } else {
       }
     },

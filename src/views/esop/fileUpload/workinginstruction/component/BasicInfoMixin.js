@@ -56,6 +56,10 @@ export default {
             type:Boolean,
             required:false,
         },
+        isCustomerProductPage:{
+            type:Boolean,
+            required:false,
+        },
         pageType:{
             type:String,
             required:false,

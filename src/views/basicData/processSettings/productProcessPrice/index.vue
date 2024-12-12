@@ -3,7 +3,18 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <template v-for="item in searchList">
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="listQuery.priceStatus" placeholder="计价类型" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in [
+                  { label: '无单价', value: '0' },
+                  { label: '有单价', value: '1' },
+                  { label: '所有', value: '2' }
+                ]" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
@@ -20,14 +31,15 @@
                   :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
               </el-form-item>
             </el-col>
-          </template>
+          </template> -->
           <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.pricingType" placeholder="计价类型" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+            <el-form-item label="">
+              <el-input v-model="listQuery.drawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="">
+              <el-input v-model="listQuery.processName" placeholder="工序名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -52,10 +64,10 @@
           </div>
 
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
+            <!-- <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -66,9 +78,14 @@
         </div>
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
-          <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
-          <el-table-column prop="code" label="工序编码" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productsName" label="产品名称" min-width="180" sortable="custom"
+            v-if="isProductNameSwitch === '1'" />
+          <el-table-column prop="productsCode" label="产品编码" min-width="160" sortable="custom"></el-table-column>
+          <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
+          <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
+
           <el-table-column prop="pricingType" label="计价类型" width="120" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.pricingType == 'by_time'">
@@ -79,12 +96,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="price" label="单价(元)" width="130">
-            <template slot-scope="scope">
-              <el-input @change="switchShow(scope.row, 'price')" @blur="sortCodeBlur(scope.row)"
-                v-model="scope.row.price"></el-input>
-            </template>
-          </el-table-column>
+          <el-table-column prop="price" label="单价(元)" width="130"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" />
         </JNPF-table>
@@ -99,8 +111,22 @@
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
             <el-col :sm="24">
-              <el-form-item prop="unitPrice" label="单价">
-                <el-input v-model="dataForm.unitPrice" placeholder="请输入单价" />
+              <el-form-item prop="pricingType" label="计价类型">
+                <el-select v-model="dataForm.pricingType" placeholder="请选择计价类型" clearable style="width: 100%;">
+                  <el-option
+                    v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
+                    :key="index" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :sm="24" v-if="dataForm.pricingType == 'by_time'">
+              <el-form-item prop="timePrice" label="计时单价">
+                <el-input v-model="dataForm.timePrice" placeholder="请输入计时单价" />
+              </el-form-item>
+            </el-col>
+            <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
+              <el-form-item prop="unitPrice" label="计件单价">
+                <el-input v-model="dataForm.unitPrice" placeholder="请输入计件单价" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -155,7 +181,7 @@
 </template>
 
 <script>
-import { getBimProcessList, updatebimProcessPrice } from '@/api/bimProcess/index'
+import { getBimProductProcessPrice, batchAddBimProductProcessPrice, uploadBimProductProcessPrice } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
@@ -168,12 +194,13 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       uploadVisib: false,
       exportFormVisible: false,
       searchList: [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }
       ],
       leftFlag: false,
       filterText: '',
@@ -210,30 +237,24 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['createByName', 'createTime'],
+      columnList: ['productsCode', 'processCode'],
       treeData: [],
       tableData: [],
       treeLoading: false,
       listLoading: false,
       listQuery: {},
       initListQuery: {
-        code: '',
-        name: '',
-        pricingType: '',
+        priceStatus: '2',
+        drawingNo: '',
+        processName: '',
         orderItems: [
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
+            column: 'processName'
           }
         ],
         pageNum: 1,
-        pageSize: 20,
-        processingType: '',
-        productCategoryId: ''
+        pageSize: 20
       },
       defaultProps: {
         children: 'childrenList',
@@ -275,6 +296,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -282,26 +304,10 @@ export default {
     this.getcategoryTree()
   },
   methods: {
-    switchShow(row) {
-      if (!row.price) return this.$message.error('请修改单价')
-      let obj = row
-      updateCategory(obj)
-        .then((response) => {
-          this.$message({
-            message: '修改成功',
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.initData()
-            }
-          })
-        })
-        .catch(() => {
-          this.btnLoading = false
-        })
-    },
-    sortCodeBlur(row) {
-      if (!row.price) this.initData()
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
     },
     superQuerySearch(query) {
       this.superQuery = query
@@ -332,8 +338,8 @@ export default {
         }
         let _data = {
           ...this.listQuery,
-          exportType: '1200',
-          exportName: '成品信息',
+          exportType: '1230',
+          exportName: '产品工序价格信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }
@@ -366,11 +372,9 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      if (this.configFlag) {
-        a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
-      } else {
-        a.setAttribute('href', location.origin + '/static/成品(没有型号)导入模板.xlsx')
-      }
+
+      a.setAttribute('href', location.origin + '/static/产品工序单价导入模板.xlsx')
+
 
       a.click()
     },
@@ -380,59 +384,33 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
-      // formData.append('productCategoryId', this.listQuery.productCategoryId)
-      formData.append('classAttribute', this.listQuery.classAttribute)
       if (this.isProjectSwitch === '1') {
         formData.append('projectId', this.importProjectId)
       }
       //调用上传文件接口
-      if (this.configFlag) {
-        uploadCpProductData(formData)
-          .then((res) => {
-            if (!res.data) {
-              this.$message.success(`导入成功`)
-              this.uploadVisib = false
-              this.$refs['UploadProduct']
-              this.initData()
-            } else {
-              this.uploadVisib = false
-              this.handleMessage(res.data)
-            }
-
-            this.formLoading = false
-            this.loadingText = ''
-          })
-          .catch((err) => {
+      uploadBimProductProcessPrice(formData)
+        .then((res) => {
+          if (!res.data) {
+            this.$message.success(`导入成功`)
             this.uploadVisib = false
-            // this.$message.error(`导入数据超过最大限制：500`)
-            this.$message.error(`导入失败`)
-            this.formLoading = false
-            this.loadingText = ''
-          })
-      } else {
-        uploadUnCpProductData(formData)
-          .then((res) => {
-            if (!res.data) {
-              this.$message.success(`导入成功`)
-              this.uploadVisib = false
-              this.$refs['UploadProduct']
-              this.initData()
-            } else {
-              this.uploadVisib = false
-              this.handleMessage(res.data)
-            }
-
-            this.formLoading = false
-            this.loadingText = ''
-          })
-          .catch((err) => {
+            this.$refs['UploadProduct']
+            this.initData()
+          } else {
             this.uploadVisib = false
-            // this.$message.error(`导入数据超过最大限制：500`)
-            this.$message.error(`导入失败`)
-            this.formLoading = false
-            this.loadingText = ''
-          })
-      }
+            this.handleMessage(res.data)
+          }
+
+          this.formLoading = false
+          this.loadingText = ''
+        })
+        .catch((err) => {
+          this.uploadVisib = false
+          // this.$message.error(`导入数据超过最大限制：500`)
+          this.$message.error(`导入失败`)
+          this.formLoading = false
+          this.loadingText = ''
+        })
+
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
@@ -446,9 +424,9 @@ export default {
     },
     saveSubmit() {
       if (this.isProjectSwitch === '1') {
-        if (!this.importProjectId) return this.$message.error('请选择所属项目');
+        if (!this.importProjectId) return this.$message.error('请选择所属项目')
       }
-      if (!this.file) return this.$message.error('请上传文件');
+      if (!this.file) return this.$message.error('请上传文件')
       this.UploadProduct(this.file)
     },
     // 提示
@@ -465,7 +443,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在产品工序单价导入相关错误！'),
             h(
               'el-button',
               {
@@ -495,7 +473,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productCategoryIdText') {
+      if (['productsName', ].includes(prop)) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -547,19 +525,19 @@ export default {
     },
     initData() {
       this.listLoading = true
-      if (this.isProjectSwitch === '1') {
-        this.listQuery.projectId = this.userInfo.projectId
-      }
-      getBimProcessList(this.listQuery)
+      // if (this.isProjectSwitch === '1') {
+      //   this.listQuery.projectId = this.userInfo.projectId
+      // }
+      getBimProductProcessPrice(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
-          // this.tableData.forEach(item => {
-          //   if (item.pricingType === 'by_time') {
-          //     item.price = item.timePrice
-          //   } else if (item.pricingType === 'by_piece') {
-          //     item.price = item.unitPrice
-          //   }
-          // })
+          this.tableData.forEach((item) => {
+            if (item.pricingType === 'by_time') {
+              item.price = item.timePrice
+            } else if (item.pricingType === 'by_piece') {
+              item.price = item.unitPrice
+            }
+          })
           this.total = res.data.total
           this.listLoading = false
         })
@@ -597,17 +575,8 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.searchList = [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        // {
-        //   field: 'pricingType',
-        //   fieldValue: 'by_time',
-        //   label: '计价类型',
-        //   symbol: 'like',
-        //   searchType: 4,
-        //   width: 120,
-        //   options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
-        // }
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }
       ]
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.initData()
@@ -652,14 +621,15 @@ export default {
       }
 
       if (submitFlag) {
-        let idList = this.selectedData.map((item) => {
-          return item.id
+        this.selectedData.forEach((item) => {
+          if (item.pricingType === 'by_time') {
+            item.timePrice = this.dataForm.timePrice
+          } else if (item.pricingType === 'by_piece') {
+            item.unitPrice = this.dataForm.unitPrice
+          }
         })
-        let _data = {
-          idList: idList,
-          ...this.dataForm
-        }
-        updatebimProcessPrice(_data)
+
+        batchAddBimProductProcessPrice(this.selectedData)
           .then((res) => {
             this.$message.success('单价设置成功')
             this.selectedData = []

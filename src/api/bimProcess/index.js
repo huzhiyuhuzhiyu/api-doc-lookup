@@ -97,3 +97,57 @@ export function importProcessList (data) {
     data
   })
 }
+
+// 产品工序价格API-列表
+export function getBimProductProcessPrice (data) {
+  return request({
+    url: '/api/zgt/bimProductProcessPrice/page',
+    method: 'post',
+    data
+  })
+}
+
+// 产品工序价格API-列表
+export function batchAddBimProductProcessPrice (data) {
+  return request({
+    url: '/api/zgt/bimProductProcessPrice/batchAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 产品包装价格-导入
+export function uploadBimProductProcessPrice (data) {
+  return request({
+    url: '/api/zgt/bimProductProcessPrice/upload',
+    method: 'post',
+    data
+  })
+}
+
+// 产品工序价格API-列表
+export function getBimProductPackagingPrice (data) {
+  return request({
+    url: '/api/zgt/bimProductPackagingPrice/page',
+    method: 'post',
+    data
+  })
+}
+
+// 产品包装价格-批量新增
+export function batchAddBimProductPackagingPrice (data) {
+  return request({
+    url: '/api/zgt/bimProductPackagingPrice/batchAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 产品包装价格-导入
+export function uploadBimProductPackagingPrice (data) {
+  return request({
+    url: '/api/zgt/bimProductPackagingPrice/upload',
+    method: 'post',
+    data
+  })
+}

@@ -192,40 +192,20 @@ const Status2TagTypeMap =new Map([
 
 
 export function getUploadFileSaveData(data) {
-   const  { applicationType,
-            documentStatus,
-            openProcess,
-            productsId,
-            routingId,
-            orderNo,
-            id,
-            approvalFlag,
-            version,
-            categoryId,
-            bimFileUploadLineList,
-            flowData,
-            projectId,
-            categoryName} = data
+   const bimFileUploadLineList = data.bimFileUploadLineList;
+   const flowData = data.flowData;
+   delete data.bimFileUploadLineList
+   delete data.flowData
+    console.log(data);
    return {
-        bimFileUpload:{
-                applicationType,
-                documentStatus,
-                openProcess,
-                productsId,
-                routingId,
-                orderNo,
-                projectId,
-                id,
-                approvalFlag,
-                version,
-                categoryId,
-                categoryName
-        },
+        bimFileUpload:data,
         bimFileUploadLineList,
         flowData,
     }
 }
-
+export function filterArr(arr){
+    return arr.filter(item => item.visible !== false)
+}
 
 export function isNoProductPage(applicationType) {
     return [ApplicationType.OFFICE,ApplicationType.IMAGE].includes(applicationType)

@@ -1,14 +1,15 @@
 <script>
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
 import {ApprovalStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
-import {isEmpty, notEmpty} from "@/utils";
+import { isEmpty, notEmpty} from '@/utils';
 import {detailProcess} from "@/api/basicData/processSettingss";
-import {getFilePreviewUrl} from "@/views/esop/utils/utils";
+import {getFilePreviewUrl,filterArr} from "@/views/esop/utils/utils";
 import {detailBimFileUpload, switchEnableMark} from "@/api/esop/fileUpload/workinginstruction";
 import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/utils/chooseProductParams";
 import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
 import CheckVersionCountDialog from "@/views/esop/fileUpload/workinginstruction/component/CheckVersionCountDialog .vue";
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
+import {getcategoryTree, getCooperativeData, getPartnerOrProductData} from '@/api/basicData';
 
 function getOriginActiveNames(){
     return ['basicInfo']
@@ -24,6 +25,9 @@ export default {
             dataForm:{
                 projectId:"",
                 applicationType:'',
+                cooperativePartnerName:'',
+                cooperativePartnerId:'',
+                cooperativePartnerCode:'',
                 approvalStatus:'',
                 enabledMark:false,
                 orderNo:'',
@@ -49,6 +53,12 @@ export default {
                 drawingNo: [
                     { required: true, message: '请选择产品信息', trigger: 'change' },
                 ],
+                cooperativePartnerName:[
+                    { required: this.isCustomerProductPage, message: '请选择客户', trigger: 'change' }
+                ],
+                projectId:[
+                    { required: true, message: '请选择所属项目', trigger: 'change' }
+                ]
             }),
             routingName:'',
             routingLineList:[],
@@ -57,6 +67,54 @@ export default {
             processUploadVOMap:new Map(),
             processUploadProcessId2ItemsMap:new Map(),
             codeConfig:{},
+            PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'customer' } },
+            // 供应商 列表
+            PartnerTableItems: [
+                { prop: 'name', label: '客户名称' },
+                { prop: 'code', label: '客户编码' },
+                { prop: 'partnerCategoryIdText', label: '所属分类' }
+            ],
+            // 供应商搜索条件
+            PartnerTableSearchList: [
+                { prop: 'name', label: '客户名称', type: 'input' },
+                { prop: 'code', label: '客户编码', type: 'input' },
+                { prop: 'taxId', label: '税号', type: 'input' }
+            ],
+            // 供应商请求参数
+            PartnerListRequestObj: {
+                code: '',
+                name: '',
+                taxId: '',
+                pageNum: 1,
+                pageSize: 20,
+                partnerCategoryId: '',
+                type: 'customer',
+                orderItems: [
+                    {
+                        asc: false,
+                        column: 'code'
+                    }
+                ]
+            },
+            customerProductListRequestObj: {
+                partnerType: "customer",
+                orderItems: [{
+                    asc: false,
+                    column: ""
+                }, {
+                    asc: false,
+                    column: "create_time"
+                }],
+                customerProductNo: "",
+                drawingNo: "",
+                partnerName: "",
+                partnerId:"",
+                pageNum: 1,
+                pageSize: 20,
+            },
+            customerProductListMethod:getPartnerOrProductData,
+            customerProductProductTableItems:[],
+            customerProductSearchList:[],
             ...chooseProductParams()
         }
     },
@@ -75,6 +133,26 @@ export default {
     },
     mixins:[BasicInfoMixin],
     methods:{
+        treeNodeClick(data, node, listQuery) {
+            if (listQuery.partnerCategoryId === data.id) return listQuery
+            listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+            listQuery.classAttribute = data.classAttribute
+            return listQuery
+        },
+        supplierdata(id, data) {
+            this.$nextTick(() => {
+                this.$refs['dataForm'].validateField('cooperativePartnerName')
+            })
+            if (data.length === 0) {
+                this.dataForm.cooperativePartnerName = ''
+                this.dataForm.cooperativePartnerCode = ''
+                this.dataForm.cooperativePartnerId = ''
+            } else {
+                this.dataForm.cooperativePartnerName = data[0].name
+                this.dataForm.cooperativePartnerCode = data[0].all.code
+                this.dataForm.cooperativePartnerId = data[0].id
+            }
+        },
         toggleProcessHandler(val){
             if(!val){
                 return  this.normalUploadShow()
@@ -224,6 +302,71 @@ export default {
             }
             return this.normalFileList
         },
+        async beforeChooseProduct(){
+            if(this.isCustomerProductPage   ){
+                if(isEmpty(this.dataForm.cooperativePartnerId)){
+                    this.$refs.dataForm.validateField('cooperativePartnerName')
+                    this.$message.warning('请先选择客户')
+                    return false
+                }
+
+              const [projectNameFlag,abProjectFlag]=await Promise.all(
+                  [
+                      this.jnpf.getMainUnitFun('product', 'enable_productName'),
+                      this.jnpf.getMainUnitFun( 'system', 'project'),
+                  ])
+                const nameFlag = projectNameFlag === '1'
+                const projectFlag = abProjectFlag === '1'
+                this.customerProductListRequestObj ={
+                    partnerType: "customer",
+                    orderItems: [{
+                        asc: false,
+                        column: ""
+                    }, {
+                        asc: false,
+                        column: "create_time"
+                    }],
+                    customerProductNo: "",
+                    drawingNo: "",
+                    partnerName: "",
+                    partnerId:this.dataForm.cooperativePartnerId,
+                    pageNum: 1,
+                    pageSize: 20,
+                }
+                this.customerProductSearchList = filterArr(  [
+                     { prop: 'partnerName', label: '客户名称',type: 'input' },
+                     { prop: 'customerProductNo', label: '客户料号' ,type: 'input'},
+                     { prop: 'productName', label: '产品名称',type: 'input',visible:nameFlag },
+                     { prop: 'drawingNo', label: '品名规格',type: 'input' }
+                 ])
+                this.customerProductProductTableItems = filterArr( [
+                        { prop: 'partnerName', label: '客户名称', fixed: 'left' },
+                        { prop: 'partnerCode', label: '客户编码', fixed: 'left' },
+                        { prop: 'customerProductNo', label: '客户料号', },
+                        { prop: 'productCode', label: '产品编码' },
+                        { prop: 'productName', label: '产品名称',visible:nameFlag },
+                        { prop: 'drawingNo', label: '品名规格' },
+                        { prop: 'projectName', label: '所属项目',visible:projectFlag },
+                        { prop: 'price', label: '销售单价(含税)',width:160 },
+                        { prop: 'excludingTaxPrice', label: '销售单价(不含税)',width:160 },
+                        { prop: 'dateOrderStart', label: '有效日期起' ,width:160},
+                        { prop: 'dateOrderStop', label: '有效日期止' ,width:160},
+                        {prop: 'sealingCoverTyping', label: "打字内容"},
+                        {prop: 'accuracyLevel', label: "精度等级"},
+                        {prop: 'vibrationLevel', label: "振动等级"},
+                        {prop: 'oil', label: "油脂"},
+                        {prop: 'oilQuantity', label: "油脂量"},
+                        {prop: 'clearance', label: "游隙"},
+                        {prop: 'packagingMethod', label: "包装方式"},
+                        {prop: 'specialRequire', label: "特殊要求"},
+                        {prop: 'remark', label: "备注"},
+                        {prop: 'createTime', label: '创建时间'},
+                    ])
+
+            }
+            return true
+        },
+        getCooperativeData,
         submitCustomerProduct(selectedIds, [{all:{id,code,drawingNo,productCategoryId,productCategoryName,routingId,routingName}}]){
             this.normalFileList = []
             this.processFileList = {}
@@ -235,6 +378,13 @@ export default {
             this.changeRoutingName(routingName)
             this.changeProductsCode(code)
         },
+        customerProductSubmitCustomerProduct(selectedIds, [{all}]){
+            this.dataForm.productsId = all.productsId
+            this.dataForm.drawingNo = all.drawingNo
+            this.dataForm.productsCode = all.productCode
+            this.dataForm.productCategoryId = ""
+            this.dataForm.productsCategoryName =  all.productsCategoryName
+        }
     },
 
 }
@@ -256,7 +406,7 @@ export default {
                                         </el-form-item>
                                     </el-col>
 
-                                    <el-col :span="6">
+                                    <el-col :span="6" v-if="isNotCustomerProductPage">
                                         <el-form-item label="工艺路线名称">
                                             <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                         </el-form-item>
@@ -267,7 +417,17 @@ export default {
                                                 <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                             </el-form-item>
                                         </el-col>
-                                        <el-col :span="hasEnableMark ? 2 : 6">
+                                        <el-col :span="6" v-if="isCustomerProductPage">
+                                                <el-form-item label="客户名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                                                    <ComSelect-page clearable :treeNodeClick="treeNodeClick" :isdisabled="isView"
+                                                                    :value="dataForm.cooperativePartnerName" ref="ComSelect-page" @change="supplierdata"
+                                                                    :tableItems="PartnerTableItems" :placeholder="'请选择客戶'" title="选择客戶" treeTitle="客戶分类"
+                                                                    :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                                                                    :listRequestObj="PartnerListRequestObj" :paramsObj="{}"
+                                                                    :searchList="PartnerTableSearchList" />
+                                                </el-form-item>
+                                        </el-col>
+                                        <el-col v-else :span="hasEnableMark ? 2 : 6" >
                                             <el-form-item label="按工序上传">
                                                 <div style="height: 32px;display: flex;align-items: center">
                                                     <el-tooltip :content="hasRoutingLine ? '开启后可为每一道工序上传作业指导书':'该产品未设置工艺路线，请设置工艺路线后再开启'" placement="top-start">
@@ -304,8 +464,8 @@ export default {
                                     <el-col :span="6">
                                         <el-form-item label="品名规格" prop="drawingNo">
                                                 <ComSelect-page
+                                                    v-if="isNotCustomerProductPage"
                                                     placeholder="请选择品名规格"
-
                                                     ref="ComSelect-page"
                                                     v-model="dataForm.drawingNo"
                                                     @change="submitCustomerProduct"
@@ -317,6 +477,21 @@ export default {
                                                     :listMethod="listMethod"
                                                     :listRequestObj="listRequestObj"
                                                     :searchList="searchList"
+                                                    :elementShow="true"  />
+                                                <ComSelect-page
+                                                    v-else
+                                                    placeholder="请选择品名规格"
+                                                    :before-open="beforeChooseProduct"
+                                                    ref="ComSelect-page"
+                                                    v-model="dataForm.drawingNo"
+                                                    @change="customerProductSubmitCustomerProduct"
+                                                    :tableItems="customerProductProductTableItems"
+                                                    :renderTree="false"
+                                                    dialogTitle="选择产品"
+                                                    title="选择产品"
+                                                    :listMethod="customerProductListMethod"
+                                                    :listRequestObj="customerProductListRequestObj"
+                                                    :searchList="customerProductSearchList"
                                                     :elementShow="true"  />
                                         </el-form-item>
                                     </el-col>

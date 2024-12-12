@@ -66,6 +66,18 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="12" :xs="24">
+                      <el-form-item label="技术要求" v-if="isTechnicalSwitch === '1'">
+                        <el-input v-model="dataForm.name" placeholder="请输入技术要求" maxlength="20"
+                          :disabled="disabled"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="检验信息" v-if="isCheckingSwitch === '1'">
+                        <el-input v-model="dataForm.name" placeholder="请输入检验信息" maxlength="20"
+                          :disabled="disabled"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
                       <el-form-item label="报工排序" prop="reportingSort">
                         <el-input v-model="dataForm.reportingSort" placeholder="请输入报工排序" maxlength="20"
                           :disabled="disabled"></el-input>
@@ -261,13 +273,16 @@ export default {
     };
     return {
       isProjectSwitch: '',
+      isTechnicalSwitch: '',
+      isCheckingSwitch: '',
       tableFlag: false,
       projectIdData: [],
       process_typeList: [
         { label: '正常工序', value: 'normal' },
         { label: '测振工序', value: 'vibrate' },
         { label: '热工工序', value: 'heat_treatment' },
-        { label: '包装工序', value: 'packaging_method' }
+        { label: '包装工序', value: 'packing' },
+        { label: '配对工序', value: 'pairs' }
       ],
       getcategoryTree,
       configurationName: '',
@@ -498,6 +513,8 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
     await this.getProjectList()
     console.log(this.isProjectSwitch)
     if (this.userInfo.projectId === '1') {
@@ -509,6 +526,16 @@ export default {
     // this.getBusinessType()
   },
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     projectIdChange(e) {
       console.log(e, 'e')
 

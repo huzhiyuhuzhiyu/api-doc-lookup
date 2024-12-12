@@ -91,7 +91,8 @@ export default {
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
-          itemRules: [{ required: true, trigger: 'blur' }]
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 120
         },
         {
           prop: 'outerCircle',
@@ -99,11 +100,21 @@ export default {
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
-          itemRules: [{ required: true, trigger: 'blur' }]
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 120
         },
         {
           prop: 'steelBall',
           label: '钢球型号',
+          value: '',
+          type: 'custom',
+          customComponent: 'ComSelect-page',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 120
+        },
+        {
+          prop: 'sealingRing',
+          label: '密封圈',
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
@@ -146,6 +157,14 @@ export default {
           value: 0,
           type: 'input',
           itemRules: [{ required: true, message: '保持架用量不能为空', trigger: 'blur' }],
+          minWidth: 150
+        },
+        {
+          prop: 'sealingRingNum',
+          label: '密封圈用量(个)',
+          value: 0,
+          type: 'input',
+          itemRules: [{ required: true, message: '密封圈用量不能为空', trigger: 'blur' }],
           minWidth: 150
         }
       ],
@@ -259,6 +278,7 @@ export default {
         holderNum: 1,
         oilNum: 1,
         steelBallNum: 1,
+        sealingRingNum: 2,
         steelBall: '',
         outerCircle: '',
         innerCircle: ''
@@ -306,6 +326,9 @@ export default {
         } else if (!item.holderNum) {
           submitFlag = false
           this.$message.error(`第${index + 1}行保持架用量为空`)
+        } else if (!item.sealingRingNum) {
+          submitFlag = false
+          this.$message.error(`第${index + 1}行密封圈用量为空`)
         }
       })
 
@@ -391,6 +414,16 @@ export default {
       this.sleeveList[index].steelBallId = data[0].id
       this.sleeveList[index].steelBall = data[0].all.drawingNo
     },
+    sleeveNameChange4(val, data, paramsObj) {
+      let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      this.$nextTick(() => {
+        this.$refs['sleeveForm'].$children[0].validateField(prop)
+      })
+      if (!data || !data.length) return
+      let index = paramsObj.scope.$index
+      this.sleeveList[index].sealingRingId = data[0].id
+      this.sleeveList[index].sealingRing = data[0].all.drawingNo
+    },
     init(data, type) {
       this.btnType = type
       this.visible = true
@@ -410,6 +443,7 @@ export default {
           holderNum: 1,
           oilNum: 1,
           steelBallNum: 1,
+          sealingRingNum: 2,
           steelBall: '',
           outerCircle: '',
           innerCircle: ''
@@ -448,6 +482,16 @@ export default {
           tc.tableItems = this.ProductTableItems
           tc.searchList = this.ProductTableSearchList
           tc.change = this.sleeveNameChange3
+          // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
+        } else if (tc.prop === 'sealingRing') {
+          tc.dialogTitle = '选择产品'
+          tc.treeTitle = '产品分类'
+          tc.methodArr = this.ProductMethodArr
+          tc.listMethod = getProductList
+          tc.listRequestObj = this.ProductListRequestObj
+          tc.tableItems = this.ProductTableItems
+          tc.searchList = this.ProductTableSearchList
+          tc.change = this.sleeveNameChange4
           // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
         } else {
           console.log(666)

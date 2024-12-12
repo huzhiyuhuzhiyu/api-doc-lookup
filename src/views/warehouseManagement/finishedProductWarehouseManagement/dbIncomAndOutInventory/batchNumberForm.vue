@@ -46,8 +46,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"  v-if="showflag"  :setColumnDisplayList="columnList"  custom-column ref="dataTable">
-            <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"   :setColumnDisplayList="columnList"  custom-column ref="dataTable">
+            <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"  key="batchNumber"></el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180"></el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
@@ -106,7 +106,6 @@ import { getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
 export default {
   data() {
     return {
-      showflag:false,
       columnList:[],
       defaultProps: {
         children: 'childrenList',
@@ -185,7 +184,7 @@ export default {
       this.search()
     },
     getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
+      return getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel

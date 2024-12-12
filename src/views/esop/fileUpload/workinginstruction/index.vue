@@ -1,5 +1,5 @@
 <template>
-    <div class="JNPF-common-layout" v-loading="!tableFlag">
+    <div class="JNPF-common-layout" v-loading="tableLoading">
         <div v-if="!formVisible" class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
@@ -253,6 +253,7 @@ export default {
     mixins:[RecreateMixin,AbProjectMixin],
     data() {
         return {
+            tableLoading: false,
             tableFlag:false,
             recreateFlag: true,
             ModelType,
@@ -366,11 +367,13 @@ export default {
             return
         }
         try {
+            this.tableLoading = true
             this.initData()
             await this.awaitAbProject()
         }catch (e) {
 
         }finally {
+            this.tableLoading = false
             this.tableFlag = true
         }
 

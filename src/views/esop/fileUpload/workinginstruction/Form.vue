@@ -62,7 +62,7 @@
 
 import {getQueryConfirm, getSuccessInfo, isEmpty, notEmpty} from "@/utils";
 import FileUploadDrop from "@/views/esop/fileUpload/workinginstruction/component/FileUploadDrop.vue";
-import {DocumentStatus, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {ApplicationType, DocumentStatus, ModelType} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 import {
     addBimFileUpload, backBimFileUpload,
     deleteBimFileUpload,
@@ -119,10 +119,7 @@ export default {
             type:Boolean,
             required:false,
         },
-        isCustomerProductPage:{
-            type:Boolean,
-            required:false,
-        },
+
         pageType:{
             type:String,
             required:false
@@ -245,53 +242,15 @@ export default {
             }
         },
         getSaveData(documentStatus){
-          const {
-                openProcess,
-                productsId,
-                routingId,
-                orderNo,
-                id,
-                approvalFlag,
-                version,
-                bimFileUploadLineList,
-                categoryId,
-                projectId,
-                categoryName
-          } =  this.basicInfoRef.getSaveData()
+            console.log(this.basicInfoRef.getSaveData(),'this.basicInfoRef.getSaveData()');
 
             return getUploadFileSaveData({
+                    ...this.basicInfoRef.getSaveData(),
                     documentStatus,
-                    openProcess,
-                    productsId,
-                    routingId,
-                    orderNo,
-                    id,
-                    projectId,
                     approvalFlag:this.dataForm.approvalFlag,
-                    version,
-                    bimFileUploadLineList,
-                    categoryId,
-                    categoryName,
                     applicationType:this.applicationType,
                     flowData:this.flowData
                 })
-            // return {
-            //     bimFileUpload:{
-            //         applicationType:this.applicationType,
-            //         documentStatus,
-            //         openProcess,
-            //         productsId,
-            //         routingId,
-            //         orderNo,
-            //         id,
-            //         approvalFlag,
-            //         version,
-            //         categoryId,
-            //         categoryName
-            //     },
-            //     bimFileUploadLineList,
-            //     flowData:this.flowData,
-            // }
         },
         init(id, btnType, approvalFlag){
             this.approvalFlag = approvalFlag
@@ -330,6 +289,9 @@ export default {
     },
 
     computed:{
+        isCustomerProductPage(){
+            return this.applicationType === ApplicationType.CUSTOMER_PRODUCT || this.detailApplicationType === ApplicationType.CUSTOMER_PRODUCT
+        },
         getDetailFn(){
             if(this.isFileTrashPage){
                 return detailBimRecycleBin

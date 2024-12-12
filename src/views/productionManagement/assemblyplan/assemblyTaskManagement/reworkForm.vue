@@ -67,6 +67,15 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="算计件工资" prop="pieceworkFlag">
+                          <el-select v-model="dataForm.pieceworkFlag" placeholder="请选择业务类型" style="width: 100%;"
+                            @change="selectTaskMethod">
+                            <el-option v-for="(item, index) in pieceworkFlagList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag==1">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
@@ -696,7 +705,12 @@ export default {
         drawingNo: "",
         productionLineId: "",
         projectName: "",
+        pieceworkFlag:false,
       },
+      pieceworkFlagList:[
+        {label:"否",value:false,},
+        {label:"是",value:true,},
+      ],
       dataFormTwo: {
         data: [],
       },
@@ -817,13 +831,13 @@ export default {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
+    return  getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
     },
     // 获取业务参数中 属性字段动态显示
     getProductAttributeFun() {
-      getOrderFiledMap('sale').then(res => {
+      return getOrderFiledMap('sale').then(res => {
         console.log("产品属性", res, this.bimProductAttributesList);
         // sealingCoverTypingFlag list1  pa007
         // accuracyLevelFlag list2  pa006

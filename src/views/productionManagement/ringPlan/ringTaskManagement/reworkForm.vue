@@ -67,6 +67,15 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="算计件工资" prop="pieceworkFlag">
+                          <el-select v-model="dataForm.pieceworkFlag" placeholder="请选择业务类型" style="width: 100%;"
+                            @change="selectTaskMethod">
+                            <el-option v-for="(item, index) in pieceworkFlagList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -609,7 +618,13 @@ export default {
         bomId: "",
         drawingNo: "",
         productionLineId: "",
+        pieceworkFlag:false,
       },
+      
+      pieceworkFlagList:[
+        {label:"否",value:false,},
+        {label:"是",value:true,},
+      ],
       dataFormTwo: {
         data: [],
       },

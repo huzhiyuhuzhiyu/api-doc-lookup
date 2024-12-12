@@ -698,15 +698,15 @@ export default {
   },
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
+    async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
+      await getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
     },
     // 获取业务参数中 属性字段动态显示
-    getProductAttributeFun() {
-      getOrderFiledMap('sale').then(res => {
+   async getProductAttributeFun() {
+      await getOrderFiledMap('sale').then(res => {
         console.log("产品属性", res, this.bimProductAttributesList);
         // sealingCoverTypingFlag list1  pa007
         // accuracyLevelFlag list2  pa006
@@ -790,7 +790,7 @@ export default {
           })
           console.log(this.list3);
         }
-     
+
       })
     },
     async getProductNameSwitch(code, type) {

@@ -87,6 +87,7 @@
           </el-button> -->
           <div>
             <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
+            <el-button type="primary" size="mini" @click="handleBatchDelete">批量清空工艺</el-button>
             <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button>
             <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
@@ -195,7 +196,8 @@ import {
   deleteProductionResource,
   saleUploadroutingModel,
   importRoutingModel,
-  errordatalist
+  errordatalist,
+  deleteresourcebatch
 } from '@/api/basicData/productionResourceSetting'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -574,6 +576,15 @@ export default {
       console.log(this.selectedData, 'selectedData')
       this.getProcessList()
       this.analyseDialog = true
+    },
+    handleBatchDelete() {
+      if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
+      if (this.selectedData.some(item => !item.id)) return this.$message.error('所选数据没有工艺路线')
+      let idList = this.selectedData.map(item => item.id)
+      deleteresourcebatch(idList).then(res => {
+        this.$message.success('清空成功')
+        this.initData()
+      })
     },
     hasDifferentProjectId(arr) {
       const codes = new Set()

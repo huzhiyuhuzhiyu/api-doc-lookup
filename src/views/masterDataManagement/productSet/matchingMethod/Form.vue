@@ -1,5 +1,5 @@
 <template>
-  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建类别属性' : '编辑类别属性'" :wrapperClosable="false"
+  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建配对方式' : '编辑配对方式'" :wrapperClosable="false"
     :close-on-press-escape="false" :visible.sync="visible" lock-scroll width="500px" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">
@@ -9,17 +9,17 @@
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="类别名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <template slot="label">
-            类别名称<span class="required">*</span>
+            名称<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.name" placeholder="请输入类别名称" maxlength="20" />
+          <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
         </el-form-item>
-        <el-form-item label="配对数量" prop="reportingSort">
+        <el-form-item label="配对数量" prop="quantity">
           <template slot="label">
             配对数量<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.reportingSort" placeholder="请输入配对数量" maxlength="20" />
+          <el-input v-model="dataForm.quantity" placeholder="请输入配对数量" maxlength="20" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
@@ -38,16 +38,16 @@
 <script>
 import {
   getClassAttributeInfo,
-  updataClassAttribute,
+  updataBimPairingMode,
   delBimProductAttributes,
-  addClassAttributes,
+  addBimPairingMode,
   getbimProductAttributesList,
   checkClassAttributeCode
 } from '@/api/masterDataManagement/index'
 export default {
-  components: { },
+  components: {},
   data() {
-    var checkReportingSort = (rule, value, callback) => {
+    var checkQuantity = (rule, value, callback) => {
       if (/^(?:[0-9]\d*)$/.test(value) == false) {
         callback(new Error('请输入整数'))
       } else if (Number(value) == 0) {
@@ -64,14 +64,8 @@ export default {
       dataForm: {
         name: '',
         remark: '',
-        code: '',
-        propertyJson: {
-          moduleId: '',
-          iconBackgroundColor: '',
-          isTree: 0
-        },
-        icon: '',
-        sortCode: 0
+        quantity: '',
+
       },
       title: '',
       isdisabled: false,
@@ -118,13 +112,13 @@ export default {
             trigger: 'blur'
           }
         ],
-        reportingSort: [
+        quantity: [
           {
             required: true,
-            message: '请输入报工排序',
+            message: '请输入配对数量',
             trigger: ['blur']
           },
-          { validator: checkReportingSort, trigger: 'blur' }
+          { validator: checkQuantity, trigger: 'blur' }
         ],
       }
     }
@@ -134,26 +128,17 @@ export default {
     choiceIcon(value) {
       this.dataForm.icon = value
     },
-    init(id, btntype) {
+    init(row, btntype) {
       this.visible = true
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
           remark: '',
-          code: '',
-          sortCode: 0,
+          quantity: ''
         }
-        this.title = '新建类别属性'
+        this.title = '新建配对方式'
       } else if (btntype == 'edit') {
-        getClassAttributeInfo(id).then((res) => {
-          this.dataForm.code = res.data.code
-          this.autoCode = res.data.code
-
-          this.dataForm.name = res.data.name
-          this.dataForm.remark = res.data.remark
-          this.dataForm.id = res.data.id
-          this.title = '编辑类别属性'
-        })
+        this.dataForm = { ...row }
       }
       this.btntype = btntype
     },
@@ -167,36 +152,13 @@ export default {
     },
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
-        let obj = {
-          classAttribute: this.dataForm,
-          menuList: [
-            {
-              category: 'Web',
-              description: '',
-              enCode: this.dataForm.code,
-              enabledMark: 1,
-              fullName: this.dataForm.name,
-              icon: this.dataForm.icon,
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '568432565338243269',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress: 'masterDataManagement/productManagement/${{' + this.dataForm.code + '}}'
-            }
-          ]
-        }
+        this.dataForm.quantity = Number(this.dataForm.quantity)
         if (valid) {
           this.btnLoading = true
 
-          let formMethod = this.btntype == 'edit' ? updataClassAttribute : addClassAttributes
+          let formMethod = this.btntype == 'edit' ? updataBimPairingMode : addBimPairingMode
 
-          if (formMethod == updataClassAttribute) {
+          if (formMethod == updataBimPairingMode) {
             formMethod(this.dataForm)
               .then((response) => {
                 this.$message({
@@ -207,7 +169,7 @@ export default {
                     this.visible = false
                     this.btnLoading = false
                     this.$emit('close', true)
-                    location.reload()
+
                   }
                 })
               })
@@ -215,7 +177,7 @@ export default {
                 this.btnLoading = false
               })
           } else {
-            formMethod(obj)
+            formMethod(this.dataForm)
               .then((res) => {
                 this.$message({
                   message: '新建成功',
@@ -225,7 +187,7 @@ export default {
                     this.visible = false
                     this.btnLoading = false
                     this.$emit('close', true)
-                    location.reload()
+
                   }
                 })
               })

@@ -35,8 +35,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="密封圈" prop="steelBall" ref="steelBall">
-              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.steelBall"
+            <el-form-item label="密封圈" prop="sealingRing" ref="sealingRing">
+              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.sealingRing"
                 placeholder="请选择产品" auth @change="onOrganizeChangeThree4" :title="'选择产品'" :listMethod="getProductList"
                 :requestObj="requestObj" :methodArr="ProductMethodArr" :listRequestObj="ProductListRequestObj"
                 :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
@@ -63,7 +63,7 @@
           <el-col :span="12">
             <el-form-item label="密封圈用量" prop="sealingRingNum" ref="holderNum">
               <el-input placeholder="请输入密封圈用量" :disabled="btnType == 'look' ? true : false"
-                v-model="dataForm.holderNum"></el-input>
+                v-model="dataForm.sealingRingNum"></el-input>
             </el-form-item>
           </el-col>
         </template>

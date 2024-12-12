@@ -19,7 +19,7 @@
             <span class="required">*</span>
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20"
-            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+            :disabled="btntype ? true : codeConfig.modifyFlag == true ? false : true" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <template slot="label">

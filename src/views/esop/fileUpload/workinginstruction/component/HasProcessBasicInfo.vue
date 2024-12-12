@@ -322,12 +322,12 @@ export default {
                                     </el-col>
                                     <el-col :span="6">
                                         <el-form-item label="产品编码">
-                                            <el-input @click.native="chooseProduct" placeholder="请选择产品编码" :value="dataForm.productsCode" readonly/>
+                                            <el-input  placeholder="请选择产品编码" :value="dataForm.productsCode" readonly/>
                                         </el-form-item>
                                     </el-col>
                                     <el-col :span="6">
                                         <el-form-item label="产品分类">
-                                            <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
+                                            <el-input  :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
                                         </el-form-item>
                                     </el-col>
                                     <el-col :span="6" v-if="!isFileUploadPage && !isNoProductPage">

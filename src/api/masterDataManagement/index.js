@@ -513,4 +513,45 @@ export const getclassAttributelistByCode = (data) => {
   })
 }
 
+// 配对方式列表
+export function getBimPairingModeList(data) {
+  return request({
+      url: '/api/zgt/bimPairingMode/list',
+      method: 'post',
+      data: data
+  })
+}
 
+// // 类别属性-检查编码是否存在
+// export function  checkClassAttributeCode(code,id) {
+//   return request({
+//     url: '/api/zgt/product/classAttribute/check/code/exist?code='+code+"&id="+id,
+//     method: 'GET'
+//   })
+// }
+
+// 配对方式——新增
+export function addBimPairingMode(data) {
+  return request({
+      url: '/api/zgt/bimPairingMode/add',
+      method: 'post',
+      data: data
+  })
+}
+
+// 配对方式——修改
+export function updataBimPairingMode(data) {
+  return request({
+      url: '/api/zgt/bimPairingMode/update',
+      method: 'put',
+      data: data
+  })
+}
+
+// 配对方式——删除
+export function delBimPairingMode(id) {
+  return request({
+      url: '/api/zgt/bimPairingMode/del/'+id,
+      method: 'delete',
+  })
+}

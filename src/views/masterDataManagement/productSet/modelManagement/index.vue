@@ -72,9 +72,11 @@
           <el-table-column prop="innerCircle" label="内圈" min-width="150" />
           <el-table-column prop="outerCircle" label="外圈" min-width="150" />
           <el-table-column prop="steelBall" label="钢球型号" min-width="150" />
+          <el-table-column prop="sealingRing" label="密封圈" min-width="150" />
           <el-table-column prop="steelBallNum" label="钢球用量(粒)" width="120" />
           <el-table-column prop="oilNum" label="油脂用量(毫克)" width="140" />
           <el-table-column prop="holderNum" label="保持架用量(个)" width="140" />
+          <el-table-column prop="sealingRingNum" label="密封圈用量(个)" width="140" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" width="100" />
 

@@ -3,7 +3,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent :rules="rules">
-          <template v-for="(item, index) in searchList">
+          <!-- <template v-for="(item, index) in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
@@ -20,11 +20,10 @@
                   :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
               </el-form-item>
             </el-col>
-          </template>
-          <el-col :span="8">
-            <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
-                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
+          </template> -->
+          <el-col :span="4">
+            <el-form-item label="">
+              <el-input v-model="form.name" placeholder="名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -56,14 +55,12 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" @changeMove="changeMove">
-          <el-table-column prop="name" label="类别名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="类别编码" min-width="150" sortable="custom" />
+          <el-table-column prop="name" label="名称" width="250" sortable="custom" />
+          <el-table-column prop="code" label="编码" min-width="150" sortable="custom" />
           <el-table-column prop="remark" label="备注" width="250" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
+              <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)">
               </tableOpts>
             </template>
           </el-table-column>
@@ -82,10 +79,9 @@
 
 <script>
 import {
-  updataClassAttribute,
-  delClassAttribute,
-  getclassAttributeList,
-  disabledClassAttributeState
+  delBimPairingMode,
+  getBimPairingModeList,
+
 } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import moment from 'moment'
@@ -97,8 +93,7 @@ export default {
   data() {
     return {
       searchList: [
-        { field: 'code', fieldValue: '', label: '类别编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '类别名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       superQueryVisible: false,
       title: '更多查询',
@@ -122,13 +117,11 @@ export default {
 
         orderItems: [
           {
-            asc: true,
-            column: 'sort'
+            asc: false,
+            column: ''
           }
         ]
       },
-
-      gradeList: [],
       defaultProps: {
         children: 'childrenList',
         label: 'fullName'
@@ -185,13 +178,12 @@ export default {
   },
 
   created() {
-    this.superForm = this.form
+    this.form = this.form
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
     changeMove(data) {
-      console.log(data, 'iiiiii')
       data.forEach(item => {
         item.sort = item.sortCode
       })
@@ -234,14 +226,14 @@ export default {
     },
     initData() {
       if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.superForm.endTime = this.createTimeArr[1] + ' 23:59:59'
+        this.form.startTime = this.createTimeArr[0] + ' 00:00:00'
+        this.form.endTime = this.createTimeArr[1] + ' 23:59:59'
       } else {
-        this.superForm.startTime = ''
-        this.superForm.endTime = ''
+        this.form.startTime = ''
+        this.form.endTime = ''
       }
       this.listLoading = true
-      getclassAttributeList(this.superForm)
+      getBimPairingModeList(this.form)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -271,10 +263,10 @@ export default {
               }
             })
         }
-        this.superForm.superQuery = this.basicQuery
+        this.form.superQuery = this.basicQuery
       }
       if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
+        this.form.superQuery = this.superQuery
       }
       this.initData()
     },
@@ -298,8 +290,7 @@ export default {
         ]
       }
       this.searchList = [
-        { field: 'code', fieldValue: '', label: '类别编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '类别名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '名称', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
 
@@ -316,11 +307,11 @@ export default {
         this.$refs.Form.init('', 'add')
       })
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(row) {
       this.formVisible = true
-      if (id) {
+      if (row) {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
+          this.$refs.Form.init(row, 'edit')
         })
       }
     },
@@ -329,14 +320,13 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          delClassAttribute(id).then((res) => {
+          delBimPairingMode(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',
               message: '删除成功',
               duration: 1500
             })
-            location.reload()
           })
         })
         .catch(() => { })

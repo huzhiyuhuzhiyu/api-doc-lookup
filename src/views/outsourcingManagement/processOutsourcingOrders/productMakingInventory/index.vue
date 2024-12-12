@@ -160,7 +160,21 @@ export default {
           label: '单位',
           type: 'input'
         },
-
+        {
+          prop: 'batchNumber',
+          label: '批次号',
+          type: 'input'
+        },
+        {
+          prop: 'warehouseName',
+          label: '仓库',
+          type: 'input'
+        },
+        {
+          prop: 'shelfSpaceName',
+          label: '库位',
+          type: 'input'
+        }, 
         {
           prop: 'latestStorageTime',
           label: '入库日期',

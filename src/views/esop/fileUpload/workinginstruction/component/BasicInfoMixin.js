@@ -106,6 +106,9 @@ export default {
         }
     },
     computed:{
+        isNotCustomerProductPage(){
+            return !this.isCustomerProductPage
+        },
         orderNoDisabled(){
             return this.codeConfig.codeWay === 'auto' && !this.codeConfig.modifyFlag
         },

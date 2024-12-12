@@ -46,6 +46,9 @@ export default {
                 categoryName: [
                     { required: true, message: '请选择图文档分类', trigger: 'change' },
                 ],
+                projectId:[
+                    { required: true, message: '请选择所属项目', trigger: 'change' }
+                ]
             }),
             normalFileList:[],
             codeConfig:{},

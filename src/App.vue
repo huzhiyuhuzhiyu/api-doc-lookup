@@ -10,7 +10,7 @@ import { editBimBusinessData, getBimBusinessSwitchConfigList } from '@/api/basic
 export default {
   name: 'App',
   mounted() {
-    let fontSizeValue = localStorage.getItem('fontSizeValue') ? localStorage.getItem('fontSizeValue') : 16
+    let fontSizeValue = localStorage.getItem('fontSizeValue') ? localStorage.getItem('fontSizeValue') : 14
     document.getElementsByTagName('body')[0].style.setProperty('--fSize', fontSizeValue + 'px')
 
     // if (process.env.NODE_ENV === 'development') return

@@ -21,7 +21,7 @@
             项目编码
             <span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.code" placeholder="请输入项目编码" maxlength="20" :disabled="btntype" />
+          <el-input v-model="dataForm.code" placeholder="请输入项目编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag? false : true" />
         </el-form-item>
         <el-form-item label="项目描述">
           <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入项目描述" />

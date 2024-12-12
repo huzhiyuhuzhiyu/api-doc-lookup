@@ -209,6 +209,9 @@ export default {
       this.dataForm.example = prefix + dateVal + digitVal
     },
     dataFormSubmit() {
+      if (this.dataForm.codeWay === 'input') {
+        this.dataForm.modifyFlag = true
+      }
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true

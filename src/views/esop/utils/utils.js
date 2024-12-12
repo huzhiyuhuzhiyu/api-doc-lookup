@@ -1,5 +1,9 @@
 import {formatDate, getWeekFirstDay, isEmpty, notEmpty} from "@/utils";
-import {ApplicationType, ModelType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import {
+    ApplicationType,
+    ApplicationType2Chinese,
+    ModelType,
+} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 import {getMenuList} from "@/api/system/menu";
 import {createButton} from "@/api/system/buttonAuthorize";
 import {SearchTimeType} from "@/views/esop/utils/constants";
@@ -42,14 +46,7 @@ export function downloadFile(filePath = '/static/销售订单导入模板.xlsx')
 
 export function getTitleForType(applicationType, pageType) {
 
-    let name = ''
-    if (applicationType === ApplicationType.INSPECT) {
-        name = '检查指导书'
-    } else if (applicationType === ApplicationType.WORK) {
-        name = '作业指导书'
-    } else if (applicationType === ApplicationType.IMAGE) {
-        name = '图文档'
-    }
+    let name = ApplicationType2Chinese[applicationType] || '未知类型'
 
     if (pageType === ModelType.ADD) {
         return `新增${name}`
@@ -61,7 +58,7 @@ export function getTitleForType(applicationType, pageType) {
 }
 
 export function isHasProcessApplicationType(applicationType) {
-    return [ApplicationType.INSPECT, ApplicationType.WORK].includes(applicationType)
+    return [ApplicationType.INSPECT, ApplicationType.WORK,ApplicationType.CUSTOMER_PRODUCT].includes(applicationType)
 }
 
 

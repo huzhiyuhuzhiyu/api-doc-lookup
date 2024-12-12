@@ -89,8 +89,11 @@
                           <template v-if="scope.row.processType == 'heat_treatment'">
                             热工工序
                           </template>
-                          <template v-if="scope.row.processType == 'packaging_method'">
+                          <template v-if="scope.row.processType == 'packing'">
                             包装工序
+                          </template>
+                          <template v-if="scope.row.processType == 'pairs'">
+                            配对工序
                           </template>
                         </template>
                       </el-table-column>
@@ -104,32 +107,7 @@
                           </template>
                         </template>
                       </el-table-column>
-
-                      <!-- <el-table-column prop="departmentId" label="组织管理" width="340" fixed="left">
-                            <template slot-scope="{row}" v-if="row.processingType == 'self_produced'">
-                              <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
-                                <el-form-item prop="departmentId" ref="departmentId">
-                                  <ComSelect ref="department" v-model="row.departmentName" placeholder="请选择所属组织" auth
-                                    @change="onOrganizeChangeHandle" :currOrgId="row.departmentId || '0'"
-                                    :disabled="type == 'look' ? true : false" />
-
-                                </el-form-item>
-                              </el-form>
-                            </template>
-                          </el-table-column>
-                          <el-table-column prop="cooperativePartnerName" label="外协供应商"  width="120" fixed="left">
-                            <template slot-scope="{row}" v-if="row.processingType == 'external_production'">
-                              <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
-                                <el-form-item prop="cooperativePartnerName" ref="cooperativePartnerName">
-                                  <ComSelect-list :isdisabled="type == 'look' ? true : false"
-                                    v-model="row.cooperativePartnerName" placeholder="请选择外协供应商" auth
-                                    @change="onOrganizeChangeThree" :title="'选择外协供应商'" :method="getCooperativeData"
-                                    :requestObj="requestObj2" :paramsObj="{ row }" />
-                                </el-form-item>
-                              </el-form>
-                            </template>
-                          </el-table-column> -->
-                      <el-table-column prop="firstFlag" label="是否首道工序" width="120">
+                      <!-- <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                             <el-form-item prop="firstFlag" ref="firstFlag">
@@ -194,17 +172,6 @@
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column prop="checkFlag" label="是否检验工序" min-width="140">
-                          <template slot-scope="{row}">
-                            <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
-                              <el-form-item prop="checkFlag" ref="checkFlag">
-                                <el-checkbox v-model="row.checkFlag" :true-label="1" :disabled="type == 'look'"
-                                  :false-label="0"></el-checkbox>
-                              </el-form-item>
-                            </el-form>
-                          </template>
-                        </el-table-column> -->
-
                       <el-table-column prop="stockFlag" label="是否入库" width="90">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
@@ -241,8 +208,8 @@
                             </el-form-item>
                           </el-form>
                         </template>
-                      </el-table-column>
-                      <el-table-column label="操作" min-width="180" fixed="right">
+                      </el-table-column> -->
+                      <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                           <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
                             查看资源配置
@@ -489,7 +456,7 @@ export default {
       this.dataForm.id = rowData.routingId || ''
 
       this.visible = true
-      this.dialogTitle = `查看`
+
       this.type = type
       this.$nextTick(() => {
         this.$refs['elForm'].resetFields()
@@ -499,6 +466,11 @@ export default {
           this.dataForm = rowData
           // this.fetchData('bm_gy_gylx', true)
         } else {
+          if (this.type === 'edit') {
+            this.dialogTitle = `编辑`
+          } else if (this.type === 'look') {
+            this.dialogTitle = `查看`
+          }
           this.loading = true
           // this.dataForm = rowData
           // 获取当前项详情

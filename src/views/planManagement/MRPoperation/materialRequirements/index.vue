@@ -1595,6 +1595,8 @@ export default {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planProductionQuantity', item.outputQuantity)
             this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+
           });
           this.produceData = tableData
           this.total2 = res.data.page.total
@@ -1685,6 +1687,7 @@ export default {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planDemandQuantity', item.outputQuantity)
             this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
           });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
@@ -1778,6 +1781,7 @@ export default {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planDemandQuantity', item.outputQuantity)
             this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
           });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity

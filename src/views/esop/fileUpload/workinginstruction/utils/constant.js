@@ -53,8 +53,24 @@ export const ApplicationType = {
     "INSPECT":"inspect",
     "IMAGE":"image",
     "OFFICE":"office",
-    "SYSTEM":"system"
+    "SYSTEM":"system",
+    "CUSTOMER_PRODUCT":"customer_product",
 }
+export const ApplicationType2Chinese = {
+    [ApplicationType.WORK]:'作业指导书',
+    [ApplicationType.IMAGE]:'图文档',
+    [ApplicationType.OFFICE]:'办公文档',
+    [ApplicationType.INSPECT]:'检验指导书',
+    [ApplicationType.CUSTOMER_PRODUCT]:'客户产品工艺',
+}
+const ApplicationType2PathSuffix={
+    [ApplicationType.WORK]:'workinginstruction',
+    [ApplicationType.IMAGE]:'docment',
+    [ApplicationType.OFFICE]:'office',
+    [ApplicationType.INSPECT]:'checkinstruction',
+    [ApplicationType.CUSTOMER_PRODUCT]:'customerProduct',
+}
+
 /**
  *  审批状态
  *  @readonly
@@ -79,6 +95,7 @@ export const ApprovalStatus ={
 
 export const FileManagementPageType={
     FileManagementWork:'FileManagementWork',
+    FileManagementCustomerProduct:'FileManagementCustomerProduct',
     FileManagementImage:'FileManagementImage',
     FileManagementOffice:'FileManagementOffice',
     FileManagementInspect:'FileManagementInspect',
@@ -90,6 +107,7 @@ export const FileTrashPageType={
     FileTrashOffice:'FileTrashOffice',
     FileTrashInspect:'FileTrashInspect',
     FileTrashAttachment:'FileTrashAttachment',
+    FileTrashCustomerProduct:'FileTrashCustomerProduct',
 }
 export const FileCheckPageType={
     FileCheckWork:'FileCheckWork',
@@ -97,6 +115,7 @@ export const FileCheckPageType={
     FileCheckOffice:'FileCheckOffice',
     FileCheckInspect:'FileCheckInspect',
     FileCheckAttachment:'FileCheckAttachment',
+    FileCheckCustomerProduct:'FileCheckCustomerProduct',
 }
 
 export const FileUploadPageType={
@@ -104,6 +123,7 @@ export const FileUploadPageType={
     FileUploadImage:'FileUploadImage',
     FileUploadOffice:'FileUploadOffice',
     FileUploadInspect:'FileUploadInspect',
+    FileUploadCustomerProduct:'FileUploadCustomerProduct',
 }
 
 export const FileAuditPageType={
@@ -111,6 +131,7 @@ export const FileAuditPageType={
     FileAuditImage:'FileAuditImage',
     FileAuditOffice:'FileAuditOffice',
     FileAuditInspect:'FileAuditInspect',
+    FileAuditCustomerProduct:'FileAuditCustomerProduct',
 }
 
 
@@ -120,12 +141,6 @@ function getESOPUploadPath(type){
 function getESOPManagementPath(type){
      return `/esop/fileManagement/${type}`
 }
-const ApplicationType2PathSuffix={
-    [ApplicationType.WORK]:'workinginstruction',
-    [ApplicationType.IMAGE]:'docment',
-    [ApplicationType.OFFICE]:'office',
-    [ApplicationType.INSPECT]:'checkinstruction',
-}
 
 
 
@@ -133,12 +148,14 @@ const WorkUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationT
 const ImageUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.IMAGE])
 const OfficeUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.OFFICE])
 const InspectUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.INSPECT])
+const CustomerProductUploadPath = getESOPUploadPath(ApplicationType2PathSuffix[ApplicationType.CUSTOMER_PRODUCT])
 
 export const FileManagementPageType2FileUploadUrl={
     [FileManagementPageType.FileManagementWork]: WorkUploadPath,
     [FileManagementPageType.FileManagementImage]:ImageUploadPath,
     [FileManagementPageType.FileManagementOffice]:OfficeUploadPath,
     [FileManagementPageType.FileManagementInspect]:InspectUploadPath,
+    [FileManagementPageType.FileManagementCustomerProduct]:CustomerProductUploadPath,
 }
 
 export const ApplicationType2FileManagementUrl={
@@ -146,6 +163,7 @@ export const ApplicationType2FileManagementUrl={
     [ApplicationType.IMAGE]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.IMAGE]),
     [ApplicationType.OFFICE]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.OFFICE]),
     [ApplicationType.INSPECT]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.INSPECT]),
+    [ApplicationType.CUSTOMER_PRODUCT]:getESOPManagementPath(ApplicationType2PathSuffix[ApplicationType.CUSTOMER_PRODUCT]),
 }
 /**
  * 文件管理作业页面类型

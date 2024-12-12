@@ -11,6 +11,7 @@ export const FlowCode={
     "INSPECT":'b049',
     "IMAGE":'b050',
     "OFFICE":'b052',
+    "CUSTOMER_PRODUCT":'b065',
 }
 
 export const FlowId={

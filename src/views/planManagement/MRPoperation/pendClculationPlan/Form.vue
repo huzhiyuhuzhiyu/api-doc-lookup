@@ -1483,7 +1483,7 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
 
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
           });
 
         }
@@ -1509,6 +1509,13 @@ export default {
         let totalData = res.data.total || 0
         let tableData = res.data.page.records || []
         this.total1Iss = res.data.page.total || 0
+        if (tableData.length) {
+          tableData.forEach(item => {
+
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+          });
+
+        }
         this.produceDataIss = tableData || []
         this.totalDemandQuantityIss = totalData.demandQuantity || 0
         this.outputQuantityIss = totalData.outputQuantity || 0
@@ -1522,6 +1529,13 @@ export default {
         console.log("采购res", res);
         let totalData = res.data.total || 0
         let tableData = res.data.page.records || []
+        if (tableData.length) {
+          tableData.forEach(item => {
+
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+          });
+
+        }
         this.purchaseData = tableData || 0
         this.total3 = res.data.page.total || 0
 
@@ -1543,6 +1557,13 @@ export default {
         console.log("采购res", res);
         let totalData = res.data.total || 0
         let tableData = res.data.page.records || []
+        if (tableData.length) {
+          tableData.forEach(item => {
+
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+          });
+
+        }
         this.purchaseDataIss = tableData || 0
         this.total3Iss = res.data.page.total || 0
 
@@ -1563,6 +1584,13 @@ export default {
         console.log("外协res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
+        if (tableData.length) {
+          tableData.forEach(item => {
+
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+          });
+
+        }
         this.outData = tableData || []
         this.total4 = res.data.page.total || 0
 
@@ -1584,6 +1612,13 @@ export default {
         console.log("外协res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
+        if (tableData.length) {
+          tableData.forEach(item => {
+
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+          });
+
+        }
         this.outDataIss = tableData || []
         this.total4Iss = res.data.page.total || 0
 

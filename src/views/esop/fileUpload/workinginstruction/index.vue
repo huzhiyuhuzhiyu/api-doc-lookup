@@ -64,6 +64,7 @@
                     :hasC="hasTableTopOpts"
                     ref="dataTable" :setColumnDisplayList="columnList">
                     <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
+                    <el-table-column prop="cooperativePartnerName" label="客户名称" width="120"  v-if="isCustomerProductPage" />
                     <template v-if="!isNoProductPage || isImage">
                         <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                         <el-table-column prop="productsCode" label="产品编码" min-width="120" />
@@ -73,6 +74,7 @@
                         <el-table-column prop="categoryName" label="文件分类" min-width="120" />
                     </template>
                     <el-table-column prop="projectName" label="所属项目" width="120"  v-if="abProjectSwitchVisible" />
+
                     <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
                         <template slot-scope="{row}">
                             <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
@@ -152,6 +154,7 @@
                 :page-type="pageType"
                 :isFileCheckPage="isFileCheckPage"
                 :isNoProductPage="isNoProductPage"
+                :isCustomerProductPage="isCustomerProductPage"
                 @back="editBack" />
         </slot>
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -303,6 +306,9 @@ export default {
         },
         isNoProductPage(){
             return isNoProductPage(this.applicationType)
+        },
+        isCustomerProductPage(){
+            return this.applicationType === ApplicationType.CUSTOMER_PRODUCT
         },
         getListFn(){
             if(this.isFileTrashPage){

@@ -119,6 +119,10 @@ export default {
             type:Boolean,
             required:false,
         },
+        isCustomerProductPage:{
+            type:Boolean,
+            required:false,
+        },
         pageType:{
             type:String,
             required:false
@@ -346,6 +350,7 @@ export default {
                 applicationType: this.applicationType,
                 pageType:this.pageType,
                 isNoProductPage:this.isNoProductPage,
+                isCustomerProductPage:this.isCustomerProductPage,
             }
         },
         basicInfoComName(){

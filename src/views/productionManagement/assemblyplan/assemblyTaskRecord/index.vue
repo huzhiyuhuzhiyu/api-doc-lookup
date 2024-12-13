@@ -347,8 +347,8 @@ export default {
     this.getProductClassFun()
   },
   methods: {
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
+    async getOrderFiledMap() {
+      await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel
@@ -359,9 +359,9 @@ export default {
         this.specialRequireFlag = res.data.specialRequire
       })
     },
-    getProductClassFun() {
+    async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
+      await  getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
 

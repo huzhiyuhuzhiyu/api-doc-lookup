@@ -415,10 +415,7 @@ export default {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
-    if (this.isProjectSwitch == 1) {
-
-      this.planForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
-    }
+   
   },
   mounted() {
     this.getBimBusinessDetail()
@@ -760,6 +757,10 @@ export default {
       this.planForm.id = id || ''
       this.btnType = btnType
       this.planForm.planType = planType
+      if (this.isProjectSwitch == 1) {
+
+this.planForm.projectId = productData[0].projectId
+}
       if (this.btnType == 'add') {
 
         this.fetchData("JHDH")

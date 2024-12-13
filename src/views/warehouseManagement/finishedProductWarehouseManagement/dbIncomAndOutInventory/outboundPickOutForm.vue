@@ -1207,23 +1207,23 @@ export default {
               const item = this.productData[index];
               if (!item.num) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
+                this.$message.error("产品信息第" + (index + 1) + "行领料数量不能为空")
                 break
               }
 
 
 
-              if (Number(item.num) > Number(item.ordersNum)) {
+              if (Number(item.num) > Number(item.unReceiveQuantity)) {
                 console.log(item.num);
                 console.log(item.ordersNum);
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待领料数量")
+                this.$message.error("产品信息第" + (index + 1) + "行领料数量不能超过待领料数量")
                 break
               }
 
               if (Number(item.num) > Number(item.availableBatchNumber)) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
+                this.$message.error("产品信息第" + (index + 1) + "行领料数量不能超过批次库存数量")
                 break
               }
               // if (!totals[item.ordersLineId]) {

@@ -71,7 +71,7 @@
               <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
               <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入客户档案</el-button>
               <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入客户联系人</el-button>
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入客户联系人</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入客户收货地址</el-button>
               <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">

@@ -69,9 +69,6 @@
             </el-form-item>
           </el-col>
 
-
-
-
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -84,14 +81,12 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main" :element-loading-text="loadingText" v-loading="listLoading">
         <div class="JNPF-common-head">
-          <!-- <el-dropdown> -->
-          <!-- <el-button type="primary" icon="el-icon-plus" @click.native="addSupplier('','add')">
-            新建
-          </el-button> -->
           <div>
             <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
+            <el-button type="danger" size="mini" @click="handleBatchDelete" v-if="listQuery.routingFlag">
+              批量清空工艺
+            </el-button>
             <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button>
-            <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -122,12 +117,14 @@
           <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-          <el-table-column label="操作" width="100" fixed="right">
+          <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="handleUserRelation(scope.row, 'edit')" :hasDel="false"
                 :editDisabled="!scope.row.routingFlag">
                 <el-button type="text" :disabled="!scope.row.routingFlag"
-                  @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
+                  @click="handleUserRelation(scope.row, 'look')">
+                  查看详情
+                </el-button>
               </tableOpts>
             </template>
           </el-table-column>
@@ -138,18 +135,68 @@
     </div>
     <!-- 批量设置工艺 -->
     <el-dialog v-if="analyseDialog" title="批量设置工艺" :close-on-click-modal="false" append-to-body
-      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll :width="analyseDialogWidth">
       <el-row :gutter="15" style="margin-top: 0px;">
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
             <el-col :sm="24">
               <el-form-item prop="routingId" label="工艺路线">
-                <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable style="width: 100%;">
+                <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable style="width: 100%;"
+                  @change="routingChange">
                   <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
+            <JNPF-table hasNO style="border: 1px solid #e3e7ee;" ref="processRef" v-loading="responseLoading"
+              :data="routingLineList" size="mini" id="table" row-key="code">
+              <el-table-column prop="projectName" label="所属项目" width="120"
+                v-if="isProjectSwitch === '1'"></el-table-column>
+              <el-table-column prop="processCode" label="工序编码" min-width="140" />
+              <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip></el-table-column>
+
+              <el-table-column prop="processType" label="工序类型" width="120">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.processType == 'normal'">
+                    正常工序
+                  </template>
+                  <template v-if="scope.row.processType == 'vibrate'">
+                    测振工序
+                  </template>
+                  <template v-if="scope.row.processType == 'heat_treatment'">
+                    热工工序
+                  </template>
+                  <template v-if="scope.row.processType == 'packing'">
+                    包装工序
+                  </template>
+                  <template v-if="scope.row.processType == 'pairs'">
+                    配对工序
+                  </template>
+                </template>
+              </el-table-column>
+              <el-table-column prop="processingType" label="加工类型" width="100">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.processingType === 'self_produced'">
+                    自制
+                  </template>
+                  <template v-if="scope.row.processingType === 'external_production'">
+                    外协
+                  </template>
+                </template>
+              </el-table-column>
+              <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                v-if="isTechnicalSwitch === '1'">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求" maxlength="20"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                v-if="isCheckingSwitch === '1'">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息" maxlength="20"></el-input>
+                </template>
+              </el-table-column>
+            </JNPF-table>
           </el-row>
         </el-form>
       </el-row>
@@ -198,7 +245,8 @@ import {
   deleteProductionResource,
   saleUploadroutingModel,
   importRoutingModel,
-  errordatalist
+  errordatalist,
+  deleteresourcebatch
 } from '@/api/basicData/productionResourceSetting'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -207,7 +255,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import JNPFForm from '../assemblyProcessSetting/Form.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { getProcessList } from '@/api/basicData/processSettingss'
+import { getProcessList, detailProcess } from '@/api/basicData/processSettingss'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'ProductionResource',
@@ -217,6 +265,8 @@ export default {
     return {
       isProjectSwitch: '',
       tableDataFlag: false,
+      routingLineList: [],
+      analyseDialogWidth: '',
       btnLoading: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -230,7 +280,6 @@ export default {
           label: '产品编码',
           type: 'input'
         },
-
 
         {
           prop: 'productName',
@@ -331,18 +380,55 @@ export default {
     }
   },
   async created() {
-    if (localStorage.getItem("ringProcessSettingFlag")) {
+    if (localStorage.getItem('ringProcessSettingFlag')) {
       let roleFlag = JSON.parse(localStorage.getItem('ringProcessSettingFlag'))
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
+    if (this.isTechnicalSwitch === '1' || this.isCheckingSwitch === '1') {
+      this.analyseDialogWidth = '60%'
+    } else {
+      this.analyseDialogWidth = '30%'
+    }
     this.tableDataFlag = true
     this.getcategoryTree()
     this.initData()
   },
   methods: {
+    handleBatchDelete() {
+      if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
+      if (this.selectedData.some((item) => !item.routingFlag)) return this.$message.error('所选数据没有工艺路线')
+      let idList = this.selectedData.map((item) => item.id)
+      deleteresourcebatch(idList).then((res) => {
+        this.$message.success('清空成功')
+        this.initData()
+      })
+    },
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    routingChange(val) {
+      this.dataForm.routingId = val
+      if (this.dataForm.routingId) {
+        detailProcess(val).then((res) => {
+          console.log(res, 'kkk')
+          this.routingLineList = res.data.routingLineList
+        })
+      } else {
+        this.routingLineList = []
+      }
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -375,7 +461,7 @@ export default {
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
-        localStorage.setItem("ringProcessSettingFlag", expands)
+        localStorage.setItem('ringProcessSettingFlag', expands)
       })
     },
     // 获取指定树状列表
@@ -473,7 +559,6 @@ export default {
 
       a.setAttribute('href', location.origin + '/static/产品工艺导入模板.xlsx')
 
-
       a.click()
     },
     // 上传产品
@@ -506,8 +591,6 @@ export default {
           this.formLoading = false
           this.loadingText = ''
         })
-
-
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
@@ -520,7 +603,7 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
-      if (!this.file) return this.$message.error('请上传文件');
+      if (!this.file) return this.$message.error('请上传文件')
       this.UploadProduct(this.file)
     },
     // 提示
@@ -598,16 +681,20 @@ export default {
       }
 
       if (submitFlag) {
-        let _data = this.selectedData.map((item) => {
+        this.selectedData.forEach((item) => {
           return {
             classAttribute: item.classAttribute,
             id: item.id,
             productsId: item.productsId,
-            routingId: this.dataForm.routingId
+            routingId: this.dataForm.routingId,
           }
         })
+        let obj = {
+          prodResList: this.selectedData,
+          routingLineList: this.routingLineList
+        }
 
-        batchProductionResource(_data)
+        batchProductionResource(obj)
           .then((res) => {
             this.$message.success('工艺设置成功')
             this.selectedData = []

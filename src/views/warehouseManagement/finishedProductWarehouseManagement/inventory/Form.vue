@@ -184,7 +184,9 @@ export default {
         batchNumber: "",
         vibrationLevel: '',
         standardValue: '',
-        fieldFlag: true,
+        
+      },
+      fieldFlag: true,
         tableDataFlag: false,
         mainUnitFlag: null,
         isProjectSwitch: '',
@@ -202,12 +204,14 @@ export default {
         standardValueFlag: "",
         colourFlag: "",
         processFlag: "",
-      }
+        projectId:"",
     }
   },
   async created() {
-    await this.getOrderFiledMap()
+
     await this.getProjectSwitch('system', 'project')
+
+    await this.getOrderFiledMap()
     this.getConfig()
     this.isProjectSwitchFlag = true
 
@@ -326,9 +330,12 @@ export default {
         this.vibrationLevelList = arr
       })
     },
-    init(id, type, flag) {
+    init(id, type, flag,projectId) {
+      console.log(id, type, flag,projectId);
       this.getProductClassFun()
       this.fieldFlag = flag || true
+      this.projectId=projectId
+      console.log("projecty",this.projectId);
       if (type === 'inventoryFlag') { this.title = '库存数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
@@ -353,11 +360,16 @@ export default {
         pageSize: 20,
         vibrationLevel: '',
         standardValue: '',
+        projectId:this.projectId,
       }
+      console.log("object",tempListQuery);
       tempListQuery[type] = 1
       this.originalListQuery = tempListQuery
       this.listQuery = JSON.parse(JSON.stringify(this.originalListQuery))
-      this.initData()
+      console.log("list",this.listQuery);
+      setTimeout(() => {
+        this.initData()
+      }, 500);
     },
     search() {
       Object.keys(this.listQuery).forEach(key => {
@@ -365,6 +377,7 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.pageNum = 1
+      this.listQuery.projectId=this.isProjectSwitch===1?this.projectId:""
       this.initData()
     },
     reset() {
@@ -373,6 +386,8 @@ export default {
     },
     initData() {
       this.listLoading = true
+      console.log("this.",this.isProjectSwitch);
+      this.listQuery.projectId=this.isProjectSwitch==1?this.projectId:""
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false

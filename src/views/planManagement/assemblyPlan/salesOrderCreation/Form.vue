@@ -100,7 +100,7 @@
 
 
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="单位" prop="mainUnit"  style="margin-bottom: 20px;">
+                        <el-form-item label="单位" prop="mainUnit">
 
                           <el-input v-model="planForm.mainUnit" placeholder="请输入单位" disabled>
                           </el-input>
@@ -427,7 +427,7 @@ export default {
     viewAvailableQuantity() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false,)
+        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false,this.productData[0].projectId)
       })
     },
     getBimBusinessDetail() {

@@ -59,15 +59,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
-                        <el-form-item label="所属项目" prop="projectId">
-                          <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
-                            disabled @change="changeProject">
-                            <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
+                
 
 
 
@@ -315,7 +307,6 @@ export default {
         finalPlanQuantity: "",
         remark: "",
         id: "",
-        projectId: "",
       },
       codeConfig: {},//单据规则配置
       activeName: "orderInfo",
@@ -377,9 +368,7 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
-        projectId: [
-          { required: true, message: '所属项目不能为空', trigger: 'change' }
-        ],
+       
         qualificationRate: [
           { required: true, message: '合格率不能为空', trigger: 'blur' }
         ],
@@ -433,19 +422,7 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    changeProject() {
-      console.log(this.originalData);
-      console.log(this.planForm.projectId);
-      this.$nextTick(() => {
-        this.productData = this.originalData.filter(item => item.projectId === this.planForm.projectId);
-        console.log(55, this.productData);
-        this.planForm.planQuantity = this.productData.reduce((acc, item) => {
-          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
-        }, 0);
-        this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
-      })
 
-    },
     // 查看库存信息
     viewAvailableQuantity() {
       this.formVisible = true
@@ -767,10 +744,7 @@ export default {
       this.planForm.id = id || ''
       this.btnType = btnType
       this.planForm.planType = planType
-      if (this.isProjectSwitch == 1) {
-
-        this.planForm.projectId = productData[0].projectId
-      }
+ 
       if (this.btnType == 'add') {
 
         this.fetchData("JHDH")
@@ -972,7 +946,6 @@ export default {
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
-            obj.plan.projectId = this.planForm.projectId
           } else {
             obj.plan = this.planForm
           }

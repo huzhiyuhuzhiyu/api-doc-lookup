@@ -584,7 +584,7 @@ export default {
             style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在潜在客户信息错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在客户信息错误！'),
             h('el-button', {
               props: {
                 type: 'text',

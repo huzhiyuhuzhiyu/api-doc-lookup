@@ -550,7 +550,7 @@ export default {
             style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在信息错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在外协供应商信息错误！'),
             h('el-button', {
               props: {
                 type: 'text',

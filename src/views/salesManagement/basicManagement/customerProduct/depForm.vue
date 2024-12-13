@@ -1674,7 +1674,7 @@ export default {
       saleUploadProductData(formData).then(res => {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
-          if (res.data.length > 0) {
+          if (res.data) {
             this.dataFormTwo.lines =  [...res.data.list,...this.dataFormTwo.lines]
 
           }

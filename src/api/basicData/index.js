@@ -61,7 +61,7 @@ export function getbimInspectionTypelist(data) {
     method: 'GET'
   })
 }
-// 供应商、客户、外协、承运商类别  新建级别 
+// 供应商、客户、外协、承运商类别  新建级别
 export function addCategory(data) {
   return request({
     url: `/api/erp/partner/category/insert`,
@@ -70,7 +70,7 @@ export function addCategory(data) {
   })
 }
 
-// 供应商、客户、外协、承运商类别  属树形图 
+// 供应商、客户、外协、承运商类别  属树形图
 export function getcategoryTree(data) {
   return request({
     url: `/api/erp/partner/category/tree`,
@@ -1516,6 +1516,23 @@ export function addPartnerOrProductData(data) {
     url: `/api/erp/cooperative/partner/product/insert`,
     method: 'post',
     data
+  })
+}
+// 修改客户产品/供应商产品
+
+export function updatePartnerOrProductData(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/update`,
+    method: 'put',
+    data
+  })
+}
+// 删除客户产品/供应商产品
+
+export function delPartnerOrProductData(id) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/del/${id}`,
+    method: 'DELETE',
   })
 }
 

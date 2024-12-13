@@ -157,8 +157,20 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-                        <el-table-column prop="standardValue" label="规值" width="100" />
-                        <el-table-column prop="aperture" label="孔径" width="100" />
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+
+                        </el-table-column>
+                        <el-table-column prop="logo" label="Logo" width="120" key="2116">
+
+                        </el-table-column>
+                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120" key="2118">
+
+                        </el-table-column>
+                        <!-- <el-table-column prop="standardValue" label="规值" width="100" />
+                        <el-table-column prop="aperture" label="孔径" width="100" /> -->
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
@@ -283,7 +295,8 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                          show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
@@ -330,8 +343,19 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-                        <el-table-column prop="standardValue" label="规值" width="100" />
-                        <el-table-column prop="aperture" label="孔径" width="100" />
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+
+                        </el-table-column>
+                        <el-table-column prop="logo" label="Logo" width="120" key="2116">
+
+                        </el-table-column>
+                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120" key="2118">
+
+                        </el-table-column>
+
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
@@ -357,7 +381,7 @@
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                   </UploadWj>
                 </el-tab-pane>
-                
+
               </el-tabs>
             </div>
           </div>
@@ -481,7 +505,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getBimBusinessDetail } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves, getBimBusinessDetail } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -544,7 +568,7 @@ export default {
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
         projectId: "",
-        recipientBy:"",
+        recipientBy: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -673,10 +697,10 @@ export default {
         this.attachmentData = res.data
       })
     },
-      //领料人
-      hangleSelectSales(e, r) {
-      
-      this.dataForm.recipientBy = e 
+    //领料人
+    hangleSelectSales(e, r) {
+
+      this.dataForm.recipientBy = e
 
     },
     async getMainUnitFun(code, type) {
@@ -707,6 +731,12 @@ export default {
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
       this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
+
+      this.$set(this.productData[index], 'specSize', data.specSize)
+      this.$set(this.productData[index], 'logo', data.logo)
+      this.$set(this.productData[index], 'divideEqually', data.divideEqually)
+      this.$set(this.productData[index], 'material', data.material)
+
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
@@ -746,22 +776,22 @@ export default {
       this.searchProductFun()
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
-    searchProductFun() { 
-      this.orderForm.productClassAttributeList= this.productClassAttributeList,
-      this.orderForm.orderNo= this.dataForm.sourceNo,
+    searchProductFun() {
+      this.orderForm.productClassAttributeList = this.productClassAttributeList,
+        this.orderForm.orderNo = this.dataForm.sourceNo,
 
-      // { label: "销售发货", value: "outbound_sale_send" },
-      //   { label: "销售退货", value: "inbound_sale_return" },
-      //   { label: "采购收货", value: "inbound_purchase" },
-      //   { label: "采购退货", value: "outbound_purchase" },
-      //   { label: "生产领料", value: "outbound_pick_out" },
-      //   { label: "生产退料", value: "inbound_return_materials" },
-      //   { label: "外协发料", value: "outbound_external_send" },
-      //   { label: "外协退料", value: "inbound_external_return" },
-      //   { label: "外协收货", value: "inbound_external" },
-      //   { label: "外协退货", value: "outbound_external" },  
-      
-      this.orderForm.pickingFlag = true
+        // { label: "销售发货", value: "outbound_sale_send" },
+        //   { label: "销售退货", value: "inbound_sale_return" },
+        //   { label: "采购收货", value: "inbound_purchase" },
+        //   { label: "采购退货", value: "outbound_purchase" },
+        //   { label: "生产领料", value: "outbound_pick_out" },
+        //   { label: "生产退料", value: "inbound_return_materials" },
+        //   { label: "外协发料", value: "outbound_external_send" },
+        //   { label: "外协退料", value: "inbound_external_return" },
+        //   { label: "外协收货", value: "inbound_external" },
+        //   { label: "外协退货", value: "outbound_external" },  
+
+        this.orderForm.pickingFlag = true
 
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
       WithdrawalmxList(this.orderForm).then(res => {

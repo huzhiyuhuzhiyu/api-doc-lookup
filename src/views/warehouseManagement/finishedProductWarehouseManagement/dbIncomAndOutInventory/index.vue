@@ -620,7 +620,7 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table :partentOrChild="'fhtabForm'" v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
           v-show="categoryType == 'outbound_sale_send' && !saleFlag" custom-column ref="fhtabForm" :fixedNO="true"
           :setColumnDisplayList="fhcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -738,7 +738,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售退货货通知单列表 -->
-        <JNPF-table :partentOrChild="'thtabForm'" v-loading="listLoading" :data="thTableList" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" :data="thTableList" @sort-change="sortChange"
           v-show="categoryType == 'inbound_sale_return'" custom-column ref="thtabForm" :fixedNo="true"
           :setColumnDisplayList="thcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -778,7 +778,7 @@
 
 
         <!-- 采购 退货 通知单-->
-        <JNPF-table :partentOrChild="'cgthtabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           :data="cgTableList" v-show="categoryType == 'outbound_purchase'" custom-column ref="cgthtabForm"
           :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -810,7 +810,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货通知单 -->
-        <JNPF-table :partentOrChild="'cgshtabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           :data="cgTableList" v-show="categoryType == 'inbound_purchase' && !purchaseFlag" custom-column
           ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -841,7 +841,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货 订单 -->
-        <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           v-if="purchorderFlag" :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag"
           custom-column ref="purchasetabForm" :fixedNo="true" hasC @selection-change="handeleselectPurchase"
           :setColumnDisplayList="purchasecolumnList">
@@ -899,7 +899,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 -->
-        <JNPF-table :partentOrChild="'wxshtabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           :data="wxshTableList" v-show="categoryType == 'inbound_external' && !externalFlag" custom-column
           ref="wxshtabForm" :fixedNo="true" :setColumnDisplayList="wxshthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -935,7 +935,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 订单 -->
-        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           v-if="tableDataFlag" :data="externalList" v-show="categoryType == 'inbound_external' && externalFlag" hasC
           custom-column ref="externaltabForm" fixedNO :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
@@ -979,7 +979,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 -->
-        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange" :key="3"
           :data="wxflTableList" v-show="categoryType == 'outbound_external_send' && !outboundExternalSendFlag"
           custom-column ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -1032,7 +1032,7 @@
         </JNPF-table>
 
         <!-- 外协发料 订单-->
-        <JNPF-table :partentOrChild="'wxflOrdertabForm'" v-loading="listLoading" @sort-change="sortChange" key="3"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange" key="3"
           v-if="isProjectSwitchFlag" :data="exterMaterList"
           v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag" custom-column
           ref="wxflOrdertabForm" hasC @selection-change="handeleselectExternalMter" fixedNO
@@ -1075,7 +1075,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 装配/套圈领料 outbound_pick_out -->
-        <JNPF-table :partentOrChild="'picktabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'" custom-column ref="picktabForm"
           :fixedNo="true" :setColumnDisplayList="pickcolumnList">
           <el-table-column prop="orderNo" label="领料单号" min-width="160" sortable="custom">
@@ -1107,7 +1107,7 @@
 
 
         <!-- 装配/套圈退料 outbound_pick_out -->
-        <JNPF-table :partentOrChild="'returnMatertabForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           :data="returnMaterTableList" v-show="categoryType == 'inbound_return_materials'" custom-column
           ref="returnMatertabForm" :fixedNo="true" :setColumnDisplayList="returnMatercolumnList">
           <el-table-column prop="orderNo" label="退料单号" min-width="160" sortable="custom">
@@ -1137,7 +1137,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 生产产品入库 -->
-        <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"
+        <JNPF-table :partentOrChild="'child'" ref="dataTableProductRef" v-loading="listLoading"
           v-if="isProjectSwitchFlag" :data="productData" :fixedNO="true" custom-column
           :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_order_production'">
           <el-table-column prop="orderNo" label="任务单号" width="180" />
@@ -1180,7 +1180,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 生产工单入库 -->
-        <JNPF-table :partentOrChild="'dataTableWorkRef'" ref="dataTableWorkRef" v-loading="listLoading"
+        <JNPF-table :partentOrChild="'child'" ref="dataTableWorkRef" v-loading="listLoading"
           v-if="isProjectSwitchFlag" :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
           :setColumnDisplayList="workColumns" v-show="categoryType=='inbound_production'">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
@@ -1205,7 +1205,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 设备领用 outbound_use -->
-        <JNPF-table :partentOrChild="'outboundUseForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           :data="outboundUseTableList" v-show="categoryType == 'outbound_use'" custom-column ref="outboundUseForm"
           :fixedNo="true" :setColumnDisplayList="equipmentOutboundList">
           <el-table-column prop="orderNo" label="领用单号" min-width="160" sortable="custom">
@@ -1236,7 +1236,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 设备归还 inbound_return -->
-        <JNPF-table :partentOrChild="'inboundReturnForm'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
           :data="inboundReturnData" v-show="categoryType == 'inbound_return'" custom-column ref="inboundReturnForm"
           :fixedNo="true" :setColumnDisplayList="inboundReturnList">
           <el-table-column prop="orderNo" label="归还单号" min-width="160" sortable="custom">

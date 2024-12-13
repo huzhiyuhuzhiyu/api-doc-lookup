@@ -165,7 +165,13 @@ import programme from "../components/programme.vue";
 import { deletePartner, uploadPartner } from '@/api/customerManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import RecordForm from '@/views/CRMmanagement/punter/RecordForm1.vue'
-import { excelExport, getCooperativeData, getcategoryTree } from '@/api/basicData/index'
+import {
+    excelExport,
+    getCooperativeData,
+    getcategoryTree,
+    supplierContactsupload,
+    supplierAddressupload
+} from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
 import Form from './Form'
 import { mapGetters, mapState } from 'vuex'
@@ -554,7 +560,8 @@ export default {
       formData.append("file", data)
       formData.append("type", "customer")
       //调用上传文件接口
-      uploadPartner(formData).then(res => {
+      const uploadMethod = this.downType === 'parter' ?   uploadPartner : this.downType === 'parterContacts' ? supplierContactsupload : supplierAddressupload
+      uploadMethod(formData,'customer').then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.initData()

@@ -209,7 +209,13 @@
 </template>
 
 <script>
-import { getcategoryTree, getCooperativeData, deleteCooperative, supplierupload } from '@/api/basicData/index'
+import {
+    getcategoryTree,
+    getCooperativeData,
+    deleteCooperative,
+    supplierupload,
+    supplierContactsupload, supplierAddressupload
+} from '@/api/basicData/index'
 import Form from './Form'
 import UserRelationList from './userRelation'
 import moment from 'moment'
@@ -519,8 +525,9 @@ export default {
       this.listLoading = true
       var formData = new FormData()
       formData.append("file", data)
+      const uploadMethod = this.downType === 'parter' ?   supplierupload : this.downType === 'parterContacts' ? supplierContactsupload : supplierAddressupload
       //调用上传文件接口
-      supplierupload(formData, 'outsourcing_suppliers').then(res => {
+      uploadMethod(formData, 'outsourcing_suppliers').then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.listLoading = false

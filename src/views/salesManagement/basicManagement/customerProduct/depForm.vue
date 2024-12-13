@@ -1675,13 +1675,14 @@ export default {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
           if (res.data.length > 0) {
-            this.dataFormTwo.lines =  [...res.data,...this.dataFormTwo.lines]
+            this.dataFormTwo.lines =  [...res.data.list,...this.dataFormTwo.lines]
 
           }
           this.formLoading = false
           this.loadingText = ''
           this.uploadVisib = false
         } else {
+          this.formLoading = false
           this.handleMessage(res.data)
         }
         // this.tipsvisible=true

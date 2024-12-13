@@ -299,7 +299,7 @@ export default {
           { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
         ],
       },
-      maxWidth: "",
+      maxWidth: "180",
       isProjectSwitch: '',
       showFlag:true,
       isProductNameSwitch:"",

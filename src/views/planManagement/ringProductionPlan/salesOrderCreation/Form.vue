@@ -21,7 +21,8 @@
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top" key="555">
+                  <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top"
+                    key="555">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划单号" prop="planNo">
@@ -40,14 +41,13 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                  
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="产品编码" prop="productCode">
                           <el-input v-model="planForm.productCode" placeholder="请输入产品编码" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch==1">
+                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
                         <el-form-item label="产品名称" prop="productName">
                           <el-input v-model="planForm.productName" placeholder="请输入产品名称" disabled>
                           </el-input>
@@ -59,6 +59,8 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                
+
 
 
                       <el-col :sm="6" :xs="24">
@@ -156,7 +158,7 @@
                             <span class="lab_t" v-if="btnType != 'look'">可用库存数量</span>
                             <span v-if="btnType != 'look'" class="pointer" @click="viewAvailableQuantity()">{{
                               planForm.availableQuantity
-                              }}</span>
+                            }}</span>
 
                             <span
                               :style="planForm.productSource == 'assemble' || planForm.productSource == 'produce' ? 'background:#3fb9f8;color:#fff' : ''"
@@ -201,8 +203,8 @@
                       <el-table-column prop="cooperativePartnerName" show-overflow-tooltip label="客户名称" min-width="180"
                         v-if="planForm.planType == 'order_plan'" :key="6">
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"
                         show-overflow-tooltip />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
@@ -227,7 +229,7 @@
                           <div v-else>{{ scope.row.planQuantity }}</div>
                         </template>
                       </el-table-column>
-           
+
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>
@@ -366,7 +368,7 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
-      
+       
         qualificationRate: [
           { required: true, message: '合格率不能为空', trigger: 'blur' }
         ],
@@ -388,6 +390,7 @@ export default {
       isProjectSwitch: "",
       isProjectSwitchFlag: null,
       projectIdDataList: [],
+      isProductNameSwitch: '',
 
       originalData: [],
     }
@@ -403,8 +406,10 @@ export default {
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+
     this.isProjectSwitchFlag = true
-   
+
   },
   mounted() {
     this.getBimBusinessDetail()
@@ -412,12 +417,17 @@ export default {
   beforeDestroy() {
   },
   methods: {
-  
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+
     // 查看库存信息
     viewAvailableQuantity() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false,)
+        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false,this.productData[0].projectId)
       })
     },
     getBimBusinessDetail() {
@@ -734,7 +744,7 @@ export default {
       this.planForm.id = id || ''
       this.btnType = btnType
       this.planForm.planType = planType
-   
+ 
       if (this.btnType == 'add') {
 
         this.fetchData("JHDH")
@@ -888,7 +898,7 @@ export default {
             plan: {},
           }
           let arr = []
-          if(!this.productData.length) return this.$message.error("产品信息至少需要一条数据")
+          if (!this.productData.length) return this.$message.error("产品信息至少需要一条数据")
           this.productData.forEach(item => {
             let objs = {
               cooperativePartnerId: item.cooperativePartnerId,
@@ -903,7 +913,7 @@ export default {
             arr.push(objs)
           });
           obj.planLineList = arr
-          if(!obj.planLineList.length) return  
+          if (!obj.planLineList.length) return
           if (this.btnType == 'add') {
             obj.plan.documentStatus = value
             obj.plan.finalPlanQuantity = this.planForm.productionQuantity
@@ -935,7 +945,7 @@ export default {
             obj.plan.classAttribute = this.productData[0].classAttribute
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
-            obj.plan.mainUnit = this.productData[0].mainUnit 
+            obj.plan.mainUnit = this.productData[0].mainUnit
           } else {
             obj.plan = this.planForm
           }

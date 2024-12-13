@@ -77,7 +77,7 @@
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'inventoryFlag', scope.row.warehouseId)">
+                @click.native="viewFun(scope.row.productsId, 'inventoryFlag', scope.row.warehouseId, scope.row.projectId)">
                 {{ scope.row.inventoryQuantity }}
               </el-link>
             </template>
@@ -86,7 +86,7 @@
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId)">
+                @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId, scope.row.projectId)">
                 {{ scope.row.availableQuantity }}
               </el-link>
             </template>
@@ -94,7 +94,7 @@
           <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'occupancyFlag', scope.row.warehouseId)">
+                @click.native="viewFun(scope.row.productsId, 'occupancyFlag', scope.row.warehouseId, scope.row.projectId)">
                 {{ scope.row.occupancyQuantity }}
               </el-link>
             </template>
@@ -133,6 +133,8 @@ import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
+
 import Form from './Form'
 
 export default {
@@ -192,7 +194,8 @@ export default {
         productCode: "",
         superQuery: {},
         classAttribute: "",
-        inventoryFlag :1,
+        inventoryFlag: 1,
+        projectId:"",
       },
       selectedNodeKey: "",
       totalData: {
@@ -229,7 +232,7 @@ export default {
           label: "库存数量",
           type: 'input'
         },
-        
+
         {
           prop: 'availableQuantity',
           label: "可用数量",
@@ -268,7 +271,7 @@ export default {
       productNameFlag: null,
       tableDataFlag: false,
       isProjectSwitch: '',
-
+      projectId:"",
     }
   },
   watch: {
@@ -278,9 +281,10 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getWarehouseListFun()
     this.superForm = this.tableQuery
     this.getConfig()
-    this.getclassAttributeList()
+    
 
   },
   computed: {
@@ -292,6 +296,14 @@ export default {
 
   },
   methods: {
+    // 获取仓库
+    getWarehouseListFun() {
+      getWarehouseTree({ code: this.warehouseCode }).then(res => {
+        // 获取仓库详情信息
+        this.projectId= this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+        this.getclassAttributeList()
+      })
+    },
     getConfig() {
       let objs = { "pageSize": -1, "businessCode": "product" }
       getBimBusinessSwitchConfigList(objs).then(res => {
@@ -366,10 +378,10 @@ export default {
       this.search()
     },
     // 查看产品明细
-    viewFun(id, type, warehouseId) {
+    viewFun(id, type, warehouseId, projectId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, warehouseId)
+        this.$refs.Form.init(id, type, warehouseId, projectId)
       })
     },
 
@@ -382,9 +394,8 @@ export default {
 
     initData() {
       this.tableQuery.classAttributeList = this.classAttributeList
-      this.listLoading = true
-      this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-
+      this.listLoading = true 
+      this.tableQuery.projectId=this.projectId
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         this.tableData = res.data.whPage.records || []
@@ -451,7 +462,7 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]
-      
+
       this.getConfig()
       this.initData()
     },

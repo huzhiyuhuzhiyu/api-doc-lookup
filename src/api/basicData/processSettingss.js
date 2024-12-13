@@ -35,6 +35,14 @@ export function detailProcess(id) {
     })
 }
 
+// 工艺路线管理-详情(实际资源)
+export function detailResourceProcess(productsId,id) {
+    return request({
+        url: `/api/mes/bimRouting/detail/resource/?productsId=` + productsId + '&routingId=' + id,
+        method: 'GET'
+    })
+}
+
 // 删除工艺路线
 export function deleteProcess(id) {
     return request({

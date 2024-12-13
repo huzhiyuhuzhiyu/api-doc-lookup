@@ -152,7 +152,7 @@
                       <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
                         show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="150"
+                      <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发货数量(主)' : '发货数量'" min-width="160"
                         v-if="!dataForm.exchangeGoodsFlag">
                         <template slot="header">
                           <span class="required">*</span>发货数量(主)

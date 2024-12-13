@@ -161,6 +161,14 @@ export function saleUploadData(data) {
     data
   })
 }
+// 销售报价-导入产品
+export function saleUploadProductData(data) {
+  return request({
+    url: `/api/erp/sale/quotation/upload/product/data`,
+    method: 'post',
+    data
+  })
+}
 // 销售报价-导入获取牌价
 export function saleUploadAmountsCount(data) {
   return request({

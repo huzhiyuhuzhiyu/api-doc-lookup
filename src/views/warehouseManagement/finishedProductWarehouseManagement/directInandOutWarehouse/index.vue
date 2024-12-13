@@ -897,7 +897,6 @@ export default {
     async getBusinessTypeList() {
       const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
       const list = [{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
-      // inbound_mock_production
       let resList = list
       if (res.data.records.length) {
         const temp = res.data.records.map(item => {
@@ -906,16 +905,7 @@ export default {
             value: item.businessType
           }
         })
-        const tempFilter = temp.filter(item => item.value !== 'inbound_mock_production'&&item.value!=='inbound_flip')
-        if (temp.length === tempFilter.length) {
-          resList = [...temp, ...list]
-        } else {
-          resList = [
-            ...tempFilter,
-            ...list
-          ]
-        }
-
+       resList = temp.filter(item =>item.value!=='inbound_flip').concat(list)
       }
       this.list = resList
     },

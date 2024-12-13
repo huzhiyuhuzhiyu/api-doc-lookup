@@ -70,20 +70,20 @@
             <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"
               :key="603"></el-table-column>
             <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
+            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" 
               sortable="custom"></el-table-column>
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
+            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 
               sortable="custom"></el-table-column>
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
               sortable="custom"></el-table-column>
-            <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
+            <el-table-column prop="oil" label="油脂" min-width="120"
               sortable="custom"></el-table-column>
-            <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
+            <el-table-column prop="clearance" label="游隙" min-width="120" 
               sortable="custom"></el-table-column>
             <el-table-column prop="aperture" label="孔径" min-width="120"  sortable="custom"></el-table-column>
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
               sortable="custom"></el-table-column>
-            <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag == 1"
+            <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
               sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
@@ -216,6 +216,7 @@ export default {
       this.form.warehouseId = data.warehouseId
       this.form.packagingMethod = data.packagingMethod
       this.form.specialRequire = data.specialRequire
+
       this.dataForm = data
       if (!requestFlag) {
 
@@ -276,6 +277,8 @@ export default {
         packagingMethod: "",
         specialRequire: "",
         inspectStockFlag: true,
+        availableBatch:true,
+        partnerName:"",
       }
       if (this.requestFlag) {
         this.getlistOutBatchStockFun()

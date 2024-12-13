@@ -21,7 +21,8 @@
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top" key="555">
+                  <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top"
+                    key="555">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划单号" prop="planNo">
@@ -46,7 +47,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch==1">
+                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
                         <el-form-item label="产品名称" prop="productName">
                           <el-input v-model="planForm.productName" placeholder="请输入产品名称" disabled>
                           </el-input>
@@ -61,7 +62,7 @@
                       <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                         <el-form-item label="所属项目" prop="projectId">
                           <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
-                            :disabled="userInfo.projectId != '1'" @change="changeProject">
+                            disabled @change="changeProject">
                             <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -69,7 +70,7 @@
                       </el-col>
 
 
-                      
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="产品来源" prop="productSource">
                           <el-select v-model="planForm.productSource" placeholder="产品来源" clearable style="width: 100%;"
@@ -165,7 +166,7 @@
                             <span class="lab_t" v-if="btnType != 'look'">可用库存数量</span>
                             <span v-if="btnType != 'look'" class="pointer" @click="viewAvailableQuantity()">{{
                               planForm.availableQuantity
-                              }}</span>
+                            }}</span>
 
                             <span
                               :style="planForm.productSource == 'assemble' || planForm.productSource == 'produce' ? 'background:#3fb9f8;color:#fff' : ''"
@@ -210,8 +211,8 @@
                       <el-table-column prop="cooperativePartnerName" show-overflow-tooltip label="客户名称" min-width="180"
                         v-if="planForm.planType == 'order_plan'" :key="6">
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"
                         show-overflow-tooltip />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
@@ -236,7 +237,7 @@
                           <div v-else>{{ scope.row.planQuantity }}</div>
                         </template>
                       </el-table-column>
-           
+
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>
@@ -314,7 +315,7 @@ export default {
         finalPlanQuantity: "",
         remark: "",
         id: "",
-        projectId:"",
+        projectId: "",
       },
       codeConfig: {},//单据规则配置
       activeName: "orderInfo",
@@ -417,12 +418,9 @@ export default {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-  
-    this.isProjectSwitchFlag = true
-    if (this.isProjectSwitch == 1) {
 
-      this.planForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
-    }
+    this.isProjectSwitchFlag = true
+
   },
   mounted() {
     this.getBimBusinessDetail()
@@ -432,20 +430,20 @@ export default {
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     changeProject() {
       console.log(this.originalData);
       console.log(this.planForm.projectId);
-   this.$nextTick(()=>{
-    this.productData = this.originalData.filter(item => item.projectId === this.planForm.projectId);
-    console.log(55,this.productData);
-      this.planForm.planQuantity = this.productData.reduce((acc, item) => {
-        return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
-      }, 0);
-      this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
-   })
+      this.$nextTick(() => {
+        this.productData = this.originalData.filter(item => item.projectId === this.planForm.projectId);
+        console.log(55, this.productData);
+        this.planForm.planQuantity = this.productData.reduce((acc, item) => {
+          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+        }, 0);
+        this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
+      })
 
     },
     // 查看库存信息
@@ -769,6 +767,10 @@ export default {
       this.planForm.id = id || ''
       this.btnType = btnType
       this.planForm.planType = planType
+      if (this.isProjectSwitch == 1) {
+
+        this.planForm.projectId = productData[0].projectId
+      }
       if (this.btnType == 'add') {
 
         this.fetchData("JHDH")
@@ -922,7 +924,7 @@ export default {
             plan: {},
           }
           let arr = []
-          if(!this.productData.length) return this.$message.error("产品信息至少需要一条数据")
+          if (!this.productData.length) return this.$message.error("产品信息至少需要一条数据")
           this.productData.forEach(item => {
             let objs = {
               cooperativePartnerId: item.cooperativePartnerId,
@@ -937,7 +939,7 @@ export default {
             arr.push(objs)
           });
           obj.planLineList = arr
-          if(!obj.planLineList.length) return  
+          if (!obj.planLineList.length) return
           if (this.btnType == 'add') {
             obj.plan.documentStatus = value
             obj.plan.finalPlanQuantity = this.planForm.productionQuantity

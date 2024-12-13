@@ -252,7 +252,7 @@ import ReworkForm from './reworkForm.vue'
 import BatchDispatchForm from './batchDispatchForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
@@ -432,8 +432,8 @@ export default {
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       isProductNameSwitch: "",
-    // 属性字段  控制属性字段显示隐藏
-    accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -466,8 +466,8 @@ export default {
   mounted() {
   },
   methods: {
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
+    async getOrderFiledMap() {
+      await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel
@@ -478,9 +478,9 @@ export default {
         this.specialRequireFlag = res.data.specialRequire
       })
     },
-    getProductClassFun() {
+    async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
+      await getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
 
@@ -600,7 +600,7 @@ export default {
         })
       }
     },
-    advanceFun() { 
+    advanceFun() {
       this.superQueryVisible = true
     },
     async getProductNameSwitch(code, type) {
@@ -706,7 +706,7 @@ export default {
         })
       }).catch(() => { })
     },
-    
+
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false

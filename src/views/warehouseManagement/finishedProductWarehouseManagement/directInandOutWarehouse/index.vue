@@ -223,7 +223,7 @@
                       </el-table-column>
                       <el-table-column prop="taxRate" label="税率" width="120" key="171">
                         <template slot="header">
-                          <span class="required">*</span>税率(%)
+                          <span class="required">*</span>税率
                         </template>
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
@@ -940,6 +940,14 @@ export default {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
+      })
+       // 获取税率(数据字典)
+       getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log("税率", this.taxRateList);
       })
       // 工序
       let obj8 = {

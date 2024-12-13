@@ -3353,6 +3353,9 @@ export default {
         //   this.searchWorkDta(type)
         // }
       }
+      if(this.categoryType=='inbound_flip'){
+        this.searchFilpData(type)
+      }
       // 资产领用 
       if (this.categoryType == 'outbound_use') {
         if (this.useDateArr.length) {
@@ -3437,7 +3440,7 @@ export default {
       }
     },
     // 生产翻库入库
-    searchFilpData() {
+    searchFilpData(type) {
       this.listLoading = true
       this.filpForm.classAttributeList = this.classAttributeList
       this.filpForm.approvalStatus = 'ok'
@@ -4944,7 +4947,7 @@ export default {
           { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
           { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         ]
-
+        
         this.searchProductData('basic')
       }
       if (this.categoryType == 'inbound_production') {
@@ -4974,7 +4977,7 @@ export default {
           { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
           { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         ]
-        this.searchWorkDta()
+        this.searchWorkDta('basic')
       }
       if (this.categoryType == 'inbound_flip') {
 
@@ -5001,7 +5004,7 @@ export default {
           { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         ]
 
-        this.searchFilpData()
+        this.searchFilpData('basic')
       }
       if (this.categoryType == 'outbound_use') {
         this.useDateArr = []

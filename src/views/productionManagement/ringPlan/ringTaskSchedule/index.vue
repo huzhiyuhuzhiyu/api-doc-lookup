@@ -173,7 +173,7 @@ export default {
   data() {
     return {
       taskScheduleVisible:false,
-      maxWidth: "",
+      maxWidth: "180",
       showFlag:true,
       superQuery: {},
       superForm: {},

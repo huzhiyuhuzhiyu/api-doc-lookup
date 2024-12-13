@@ -244,7 +244,7 @@
                   <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-model="activeName" v-if="!approvalFlag && dataForm.approvalFlag">
+              <el-tabs v-model="activeName" v-else>
                 <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">

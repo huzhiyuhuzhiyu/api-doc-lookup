@@ -263,7 +263,9 @@ import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/re
 export default {
   name: 'ComSelect-page',
   props: {
-    value: {},
+    value: {
+        type:String,
+    },
     ids: {
       type: Array | Function
     },
@@ -299,7 +301,7 @@ export default {
     listRequestObj: {
       type: Object | Function,
       required: true
-      /* 
+      /*
         对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
         函数写法：(rowIndex) => {
           let id = this.linesList[rowIndex].id

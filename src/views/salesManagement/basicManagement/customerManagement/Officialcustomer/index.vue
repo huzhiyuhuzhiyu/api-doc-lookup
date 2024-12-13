@@ -69,7 +69,9 @@
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'">
               <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入客户档案</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入客户联系人</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入客户联系人</el-button>
               <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
@@ -295,6 +297,7 @@ export default {
       ],
       expands: true,
       refreshTree: true,
+      downType:''
     }
   },
   watch: {
@@ -362,7 +365,8 @@ export default {
       this.file = file.raw
     },
     // 导入产品
-    importProductFun() {
+    importProductFun(type) {
+      this.downType = type
       this.uploadVisib = true
     },
     actionreverse(item) {
@@ -533,7 +537,13 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/客户导入模板.xlsx')
+       if (this.downType === 'parter'){
+            a.setAttribute('href', location.origin + '/static/客户导入模板.xlsx')
+       } else if (this.downType === 'parterContacts'){
+           a.setAttribute('href', location.origin + '/static/客户联系人导入模板.xlsx')
+       } else{
+           a.setAttribute('href', location.origin + '/static/客户收货地址导入模板.xlsx')
+       }
       a.click()
     },
     // 上传产品
@@ -542,7 +552,7 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append("file", data)
-      formData.append("customerSea", "formal")
+      formData.append("type", "customer")
       //调用上传文件接口
       uploadPartner(formData).then(res => {
         if (!res.data) {

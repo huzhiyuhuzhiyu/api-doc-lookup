@@ -13,8 +13,7 @@
           </el-badge>
         </el-radio-group>
       </div>
-      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16" style="margin-top: 5px;"
-        v-if="categoryType != 'inbound_mock_production'">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16" style="margin-top: 5px;">
         <!-- 销售待发/退货查询条件 通知单 -->
         <el-form @submit.native.prevent
           v-if="(categoryType == 'outbound_sale_send' && !saleFlag) || categoryType == 'inbound_sale_return'">
@@ -429,7 +428,7 @@
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductData('basic')">
                 {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('product')">{{
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{
                 $t('common.reset') }}
               </el-button>
             </el-form-item>
@@ -468,8 +467,47 @@
             </el-form-item>
           </el-col>
         </el-form>
-        <!-- { label: "翻库入库", value: "inbound_flip" }, -->
+        <!-- 翻库入库 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'inbound_flip'">
 
+
+          <template v-for="item in searchList20">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="getTabdataList('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="filpForm.orderType" placeholder="任务类型" style="width: 100%;">
+                <el-option v-for="item in filpOrderTypeList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="searchFilpData('basic')">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('product')">{{
+                $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+
+        </el-form>
         <!-- 设备领用 查询 -->
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_use'">
           <template v-for="item in searchList13">
@@ -570,10 +608,12 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'inbound_sale_return'" @click="columnSetFun('thtabForm')" />
 
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" v-if="categoryType=='inbound_order_production'"
-                  @click="columnSetFun('dataTableProductRef')" />
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"  v-if="categoryType=='inbound_production'"
-                  @click="columnSetFun('dataTableWorkRef')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_order_production'" @click="columnSetFun('dataTableProductRef')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_flip'" @click="columnSetFun('dataTableFilpRef')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_production'" @click="columnSetFun('dataTableWorkRef')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                 v-if="categoryType == 'outbound_purchase'" @click="columnSetFun('cgthtabForm')" />
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -613,6 +653,11 @@
                 @click="searchProductData()" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top"
+              v-if="categoryType == 'inbound_flip'">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                @click="searchFilpData()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top"
               v-if="categoryType == 'inbound_production'">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="searchWorkDta()" />
@@ -620,7 +665,7 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'fhtabForm'" v-loading="listLoading" :data="fhTableList" @sort-change="sortChange"
           v-show="categoryType == 'outbound_sale_send' && !saleFlag" custom-column ref="fhtabForm" :fixedNO="true"
           :setColumnDisplayList="fhcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -684,9 +729,10 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售发货 订单列表 -->
-        <JNPF-table :key='1' :data="saleList" @sort-change="sortChange" v-if="tableDataFlag"
-          v-show="categoryType == 'outbound_sale_send' && saleFlag" custom-column ref="salestabForm" :fixedNO="true"
-          :setColumnDisplayList="salecolumnList" hasC @selection-change="handeleselectSale">
+        <JNPF-table :partentOrChild="'salestabForm'" :key='1' :data="saleList" @sort-change="sortChange"
+          v-if="tableDataFlag" v-show="categoryType == 'outbound_sale_send' && saleFlag" custom-column
+          ref="salestabForm" :fixedNO="true" :setColumnDisplayList="salecolumnList" hasC
+          @selection-change="handeleselectSale">
           <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -738,7 +784,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售退货货通知单列表 -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" :data="thTableList" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'thtabForm'" v-loading="listLoading" :data="thTableList" @sort-change="sortChange"
           v-show="categoryType == 'inbound_sale_return'" custom-column ref="thtabForm" :fixedNo="true"
           :setColumnDisplayList="thcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -778,7 +824,7 @@
 
 
         <!-- 采购 退货 通知单-->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'cgthtabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="cgTableList" v-show="categoryType == 'outbound_purchase'" custom-column ref="cgthtabForm"
           :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -810,7 +856,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货通知单 -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'cgshtabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="cgTableList" v-show="categoryType == 'inbound_purchase' && !purchaseFlag" custom-column
           ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -841,7 +887,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货 订单 -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'purchasetabForm'" v-loading="listLoading" @sort-change="sortChange"
           v-if="purchorderFlag" :data="purchaseList" v-show="categoryType == 'inbound_purchase' && purchaseFlag"
           custom-column ref="purchasetabForm" :fixedNo="true" hasC @selection-change="handeleselectPurchase"
           :setColumnDisplayList="purchasecolumnList">
@@ -899,7 +945,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'wxshtabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="wxshTableList" v-show="categoryType == 'inbound_external' && !externalFlag" custom-column
           ref="wxshtabForm" :fixedNo="true" :setColumnDisplayList="wxshthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -935,7 +981,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协收货 订单 -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'externaltabForm'" v-loading="listLoading" @sort-change="sortChange"
           v-if="tableDataFlag" :data="externalList" v-show="categoryType == 'inbound_external' && externalFlag" hasC
           custom-column ref="externaltabForm" fixedNO :setColumnDisplayList="externalcolumnList"
           @selection-change="handeleselectExternal">
@@ -979,7 +1025,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange" :key="3"
+        <JNPF-table :partentOrChild="'wxfltabForm'" v-loading="listLoading" @sort-change="sortChange" :key="3"
           :data="wxflTableList" v-show="categoryType == 'outbound_external_send' && !outboundExternalSendFlag"
           custom-column ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
@@ -1032,7 +1078,7 @@
         </JNPF-table>
 
         <!-- 外协发料 订单-->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange" key="3"
+        <JNPF-table :partentOrChild="'wxflOrdertabForm'" v-loading="listLoading" @sort-change="sortChange" key="3"
           v-if="isProjectSwitchFlag" :data="exterMaterList"
           v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag" custom-column
           ref="wxflOrdertabForm" hasC @selection-change="handeleselectExternalMter" fixedNO
@@ -1075,7 +1121,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 装配/套圈领料 outbound_pick_out -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'picktabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'" custom-column ref="picktabForm"
           :fixedNo="true" :setColumnDisplayList="pickcolumnList">
           <el-table-column prop="orderNo" label="领料单号" min-width="160" sortable="custom">
@@ -1107,7 +1153,7 @@
 
 
         <!-- 装配/套圈退料 outbound_pick_out -->
-        <JNPF-table :partentOrChild="'child'" v-loading="listLoading" @sort-change="sortChange"
+        <JNPF-table :partentOrChild="'returnMatertabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="returnMaterTableList" v-show="categoryType == 'inbound_return_materials'" custom-column
           ref="returnMatertabForm" :fixedNo="true" :setColumnDisplayList="returnMatercolumnList">
           <el-table-column prop="orderNo" label="退料单号" min-width="160" sortable="custom">
@@ -1137,7 +1183,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 生产产品入库 -->
-        <JNPF-table :partentOrChild="'child'" ref="dataTableProductRef" v-loading="listLoading"
+        <JNPF-table :partentOrChild="'dataTableProductRef'" ref="dataTableProductRef" v-loading="listLoading"
           v-if="isProjectSwitchFlag" :data="productData" :fixedNO="true" custom-column
           :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_order_production'">
           <el-table-column prop="orderNo" label="任务单号" width="180" />
@@ -1179,10 +1225,54 @@
             </template>
           </el-table-column>
         </JNPF-table>
+
+        <!-- 翻库入库 -->
+        <JNPF-table :partentOrChild="'dataTableFilpRef'" ref="dataTableFilpRef" v-loading="listLoading" v-if="isProjectSwitchFlag"
+          :data="filpData" :fixedNO="true" custom-column :setColumnDisplayList="filpColumns"
+          v-show="categoryType == 'inbound_flip'">
+          <el-table-column prop="orderNo" label="任务单号" width="180" />
+          <el-table-column prop="orderType" label="任务类型" width="120">
+            <template slot-scope="scope">
+              <div v-for="(item, index) in orderTypeList" :key="index">
+                <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
+            sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+            v-if="isProjectSwitch == 1" />
+          <el-table-column prop="mainUnit" label="单位" width="80" />
+          <el-table-column prop="productionQuantity" label="生产数量" width="120" />
+          <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
+          <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
+          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+            v-if="sealingCoverTypingFlag == 1" />
+          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+            v-if="accuracyLevelFlag == 1" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+            v-if="vibrationLevelFlag == 1" />
+          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+            v-if="packagingMethodFlag == 1" />
+          <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+            v-if="specialRequireFlag == 1" />
+          <el-table-column v-if="classAttribute == 'finish_product'" prop="createTime" label="创建时间" width="180" />
+          <el-table-column v-if="classAttribute == 'semi_finished'" prop="createByName" label="创建人" width="180" />
+
+          <el-table-column label="操作" width="100" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text" @click="productInbound(scope.row,)">入库</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
         <!-- 生产工单入库 -->
-        <JNPF-table :partentOrChild="'child'" ref="dataTableWorkRef" v-loading="listLoading"
-          v-if="isProjectSwitchFlag" :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column
-          :setColumnDisplayList="workColumns" v-show="categoryType=='inbound_production'">
+        <JNPF-table :partentOrChild="'child'" ref="dataTableWorkRef" v-loading="listLoading" v-if="isProjectSwitchFlag"
+          :data="workData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="workColumns"
+          v-show="categoryType == 'inbound_production'">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" />
           <el-table-column prop="orderNo" label="工单号" width="200" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" />
@@ -1293,6 +1383,8 @@
         </pagination>
         <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
           v-if="categoryType == 'inbound_order_production'" @pagination="searchProductData" />
+        <pagination :total="filpTotal" :page.sync="filpForm.pageNum" :limit.sync="filpForm.pageSize"
+          v-if="categoryType == 'inbound_flip'" @pagination="searchFilpData" />
         <pagination :total="workTotal" :page.sync="workForm.pageNum" :limit.sync="workForm.pageSize"
           v-if="categoryType == 'inbound_production'" @pagination="searchWorkDta" />
         <pagination :total="outboundUseTotal" :page.sync="outboundUseForm.pageNum"
@@ -1565,6 +1657,10 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
+      searchList20: [
+        { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
       searchList8: [
         { field: 'productionOrderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '工单号', symbol: 'like', searchType: 1, width: 120 },
@@ -1675,6 +1771,11 @@ export default {
         { label: "正常任务", value: "normal", },
         { label: "返工任务", value: "rework", },
       ],
+      filpOrderTypeList: [
+        { label: "在制任务", value: "transit", },
+        { label: "翻库任务", value: "flipping", },
+      ],
+
       saleOutboundFormVisible: false,
       saleOrderDateArr: [],
       saleTotal: 0,
@@ -1741,6 +1842,8 @@ export default {
       productForm: {
         orderNo: "",
         orderType: "",
+        orderTypeList: ['normal', 'rework'],
+
         productDrawingNo: "",
         stockFlag: true,
         orderItems: [{
@@ -1753,6 +1856,28 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
+      filpColumns: ["productCode", 'createByName'],
+
+      filpTotal: 0,
+      filpData: [],
+      filpForm: {
+        orderNo: "",
+        orderType: "",
+        productDrawingNo: "",
+        orderTypeList: ['flipping', 'transit'],
+
+        stockFlag: true,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+
 
       workColumns: ['productCode',],
       workTotal: 0,
@@ -2084,24 +2209,7 @@ export default {
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
-      // 工序
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getBimProcessList(obj8).then((res) => {
-        this.processList = res.data.records
-      })
+     
     },
     advancedQueryFuns(prop) {
       // sealingCoverTyping //打字内容
@@ -3228,7 +3336,7 @@ export default {
       }
       // 生产产品入库
       if (this.categoryType == 'inbound_order_production') {
-          this.searchProductData(type)
+        this.searchProductData(type)
         //   if (this.activeName == 'product') {
         //   this.searchProductData(type)
         // } else {
@@ -3237,8 +3345,8 @@ export default {
       }
       // 生产工单入库
       if (this.categoryType == 'inbound_production') {
-          this.searchWorkDta(type)
-          // this.searchProductData(type)
+        this.searchWorkDta(type)
+        // this.searchProductData(type)
         //   if (this.activeName == 'product') {
         //   this.searchProductData(type)
         // } else {
@@ -3327,6 +3435,39 @@ export default {
           this.listLoading = false
         })
       }
+    },
+    // 生产翻库入库
+    searchFilpData() {
+      this.listLoading = true
+      this.filpForm.classAttributeList = this.classAttributeList
+      this.filpForm.approvalStatus = 'ok'
+      this.superForm = this.filpForm
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList20
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      this.filpForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
+      ordershengchanList(this.filpForm).then(res => {
+        console.log("生产产品", res);
+        this.filpData = res.data.records
+        this.filpTotal = res.data.total
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+      })
     },
     // 生产产品数据
     searchProductData(type) {
@@ -4779,60 +4920,88 @@ export default {
         ]
         this.getTabdataList()
       }
-      if (this.categoryType == 'inbound_mock_production') {
-        if (type == 'product') {
-          this.superForm = this.productForm = {
-            orderNo: "",
-            orderType: "",
-            productDrawingNo: "",
-            classAttributeList: this.classAttributeList,
-            stockFlag: true,
-            orderItems: [{
-              asc: false,
-              column: ""
-            }, {
-              asc: false,
-              column: "create_time"
-            }],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20,
-          }
-          this.$refs.SuperQuery.conditionList = []
-          this.searchList7 = [
-            { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
-            { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-          ]
+      if (this.categoryType == 'inbound_order_production') {
 
-          this.searchProductData()
-        } else {
-          this.superForm = this.workForm = {
-            productionOrderNo: "",
-            orderNo: "",
-            processName: "",
-            productDrawingNo: "",
-            classAttributeList: this.classAttributeList,
-            stockFlag: true,
-            orderItems: [{
-              asc: false,
-              column: ""
-            }, {
-              asc: false,
-              column: "create_time"
-            }],
-            superQuery: {},
-            pageNum: 1,
-            pageSize: 20,
-          }
-          this.$refs.SuperQuery.conditionList = []
-          this.searchList8 = [
-            { field: 'productionOrderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
-            { field: 'orderNo', fieldValue: '', label: '工单号', symbol: 'like', searchType: 1, width: 120 },
-            { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-            { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-          ]
-          this.searchWorkDta()
+        this.superForm = this.productForm = {
+          orderNo: "",
+          orderType: "",
+          productDrawingNo: "",
+          classAttributeList: this.classAttributeList,
+          stockFlag: true,
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+          superQuery: {},
+          pageNum: 1,
+          pageSize: 20,
         }
+        this.$refs.SuperQuery.conditionList = []
+        this.searchList7 = [
+          { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        ]
+
+        this.searchProductData('basic')
+      }
+      if (this.categoryType == 'inbound_production') {
+
+        this.superForm = this.workForm = {
+          productionOrderNo: "",
+          orderNo: "",
+          processName: "",
+          productDrawingNo: "",
+          classAttributeList: this.classAttributeList,
+          stockFlag: true,
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+          superQuery: {},
+          pageNum: 1,
+          pageSize: 20,
+        }
+        this.$refs.SuperQuery.conditionList = []
+        this.searchList8 = [
+          { field: 'productionOrderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'orderNo', fieldValue: '', label: '工单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        ]
+        this.searchWorkDta()
+      }
+      if (this.categoryType == 'inbound_flip') {
+
+        this.superForm = this.filpForm = {
+          orderNo: "",
+          orderType: "",
+          productDrawingNo: "",
+          classAttributeList: this.classAttributeList,
+          stockFlag: true,
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+          superQuery: {},
+          pageNum: 1,
+          pageSize: 20,
+        }
+        this.$refs.SuperQuery.conditionList = []
+        this.searchList20 = [
+          { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        ]
+
+        this.searchFilpData()
       }
       if (this.categoryType == 'outbound_use') {
         this.useDateArr = []

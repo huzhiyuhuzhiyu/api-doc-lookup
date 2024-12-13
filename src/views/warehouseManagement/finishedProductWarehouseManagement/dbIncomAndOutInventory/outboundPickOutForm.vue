@@ -106,7 +106,7 @@
                       </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        :partentOrChild="'child'" :setColumnDisplayList="columnList"  custom-column
+                        :partentOrChild="'product'" :setColumnDisplayList="columnList"  custom-column
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -117,6 +117,7 @@
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
+                          <el-table-column prop="partnerName" label="供应商名称"  min-width="160" />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
 
@@ -295,7 +296,7 @@
                       </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        :partentOrChild="'child'" :setColumnDisplayList="columnList"  custom-column
+                        :partentOrChild="'product'" :setColumnDisplayList="columnList"  custom-column
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -306,6 +307,8 @@
                           show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                          min-width="160" />
+                          <el-table-column prop="partnerName" label="供应商名称" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
@@ -422,17 +425,7 @@
                   <el-form-item>
                     <el-input v-model="orderForm.processName" placeholder="工序名称" clearable />
                   </el-form-item>
-                </el-col>
-                <!-- { label: "销售发货", value: "outbound_sale_send" },
-{ label: "销售退货", value: "inbound_sale_return" },
-{ label: "采购收货", value: "inbound_purchase" },
-{ label: "采购退货", value: "outbound_purchase" },
-{ label: "生产领料", value: "outbound_pick_out" },
-{ label: "生产退料", value: "inbound_return_materials" },
-{ label: "外协发料", value: "outbound_external_send" },
-{ label: "外协退料", value: "inbound_external_return" },
-{ label: "外协收货", value: "inbound_external" },
-{ label: "外协退货", value: "outbound_external" }, -->
+                </el-col> 
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
@@ -747,7 +740,8 @@ export default {
       this.$set(this.productData[index], 'logo', data.logo)
       this.$set(this.productData[index], 'divideEqually', data.divideEqually)
       this.$set(this.productData[index], 'material', data.material)
-
+      this.$set(this.productData[index], 'partnerName', data.partnerName)
+      
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },

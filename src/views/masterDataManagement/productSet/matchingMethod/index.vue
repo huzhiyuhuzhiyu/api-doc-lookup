@@ -41,10 +41,10 @@
           <topOpts @add="addSupplier()" />
 
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
+            <!-- <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -56,7 +56,7 @@
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" @changeMove="changeMove">
           <el-table-column prop="name" label="名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="编码" min-width="150" sortable="custom" />
+          <el-table-column prop="quantity" label="配对数量" min-width="150" sortable="custom" />
           <el-table-column prop="remark" label="备注" width="250" />
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
@@ -118,7 +118,7 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: ''
+            column: 'create_time'
           }
         ]
       },
@@ -135,7 +135,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      columnList: ['remark', 'createTime', 'createByName'],
+      columnList: [],
       createTimeArr: [],
 
       superQueryJson: [
@@ -145,8 +145,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '类别编码',
+          prop: 'quantity',
+          label: '配对数量',
           type: 'input'
         },
         {
@@ -281,11 +281,11 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: ''
+            column: 'create_time'
           },
           {
             asc: false,
-            column: 'code'
+            column: ''
           }
         ]
       }

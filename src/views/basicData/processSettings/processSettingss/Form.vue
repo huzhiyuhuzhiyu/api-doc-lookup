@@ -172,7 +172,18 @@
                           </template>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="name" label="技术要求" width="180" show-overflow-tooltip
+                        v-if="isTechnicalSwitch === '1'">
+                        <template slot-scope="scope">
+                          {{ scope.row.name }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="name" label="检验信息" width="180" show-overflow-tooltip
+                        v-if="isCheckingSwitch === '1'">
+                        <template slot-scope="scope">
+                          {{ scope.row.name }}
+                        </template>
+                      </el-table-column>
                       <!-- <el-table-column prop="departmentId" label="组织管理" width="340" fixed="left">
                             <template slot-scope="{row}" v-if="row.processingType == 'self_produced'">
                               <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
@@ -456,6 +467,18 @@
                       </template>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="name" label="技术要求" width="180" show-overflow-tooltip
+                    v-if="isTechnicalSwitch === '1'">
+                    <template slot-scope="scope">
+                      {{ scope.row.name }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="name" label="检验信息" width="180" show-overflow-tooltip
+                    v-if="isCheckingSwitch === '1'">
+                    <template slot-scope="scope">
+                      {{ scope.row.name }}
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                     <template slot-scope="scope">
                       <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
@@ -601,6 +624,8 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isTechnicalSwitch: '',
+      isCheckingSwitch: '',
       projectIdData: [],
       activeName: 'jcInfo',
       activeNames: ['modelInfo', 'processInfo'],
@@ -779,6 +804,8 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
     console.log(this.isProjectSwitch)
     if (this.userInfo.projectId === '1') {
       console.log(this.projectIdData, 'lllljj')
@@ -796,6 +823,16 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     projectIdChange(val) {
       this.dataForm.projectId = val
       if (this.isProjectSwitch === '1') {

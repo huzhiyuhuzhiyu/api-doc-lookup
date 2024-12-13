@@ -136,18 +136,73 @@
     </div>
     <!-- 批量设置工艺 -->
     <el-dialog v-if="analyseDialog" title="批量设置工艺" :close-on-click-modal="false" append-to-body
-      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll :width="analyseDialogWidth">
       <el-row :gutter="15" style="margin-top: 0px;">
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
             <el-col :sm="24">
               <el-form-item prop="routingId" label="工艺路线">
-                <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable style="width: 100%;">
+                <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable style="width: 100%;"
+                  @change="routingChange">
                   <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
+            <JNPF-table hasNO style="border: 1px solid #e3e7ee;" ref="processRef" v-loading="responseLoading"
+              :data="routingLineList" size="mini" id="table" row-key="code">
+              <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+              <el-table-column prop="projectName" label="所属项目" width="120"
+                v-if="isProjectSwitch === '1'"></el-table-column>
+              <el-table-column prop="processCode" label="工序编码" min-width="140" />
+              <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
+              </el-table-column>
+
+              <el-table-column prop="processType" label="工序类型" width="120">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.processType == 'normal'">
+                    正常工序
+                  </template>
+                  <template v-if="scope.row.processType == 'vibrate'">
+                    测振工序
+                  </template>
+                  <template v-if="scope.row.processType == 'heat_treatment'">
+                    热工工序
+                  </template>
+                  <template v-if="scope.row.processType == 'packing'">
+                    包装工序
+                  </template>
+                  <template v-if="scope.row.processType == 'pairs'">
+                    配对工序
+                  </template>
+                </template>
+              </el-table-column>
+              <el-table-column prop="processingType" label="加工类型" width="100">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.processingType === 'self_produced'">
+                    自制
+                  </template>
+                  <template v-if="scope.row.processingType === 'external_production'">
+                    外协
+                  </template>
+                </template>
+              </el-table-column>
+              <el-table-column prop="name" label="技术要求" width="180" show-overflow-tooltip
+                v-if="isTechnicalSwitch === '1'">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.name" placeholder="请输入技术要求" maxlength="20"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="name" label="检验信息" width="180" show-overflow-tooltip
+                v-if="isCheckingSwitch === '1'">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.name" placeholder="请输入检验信息" maxlength="20"></el-input>
+                </template>
+              </el-table-column>
+
+
+            </JNPF-table>
           </el-row>
         </el-form>
       </el-row>
@@ -206,7 +261,7 @@ import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { getProcessList } from '@/api/basicData/processSettingss'
+import { getProcessList, detailProcess } from '@/api/basicData/processSettingss'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'ProductionResource',
@@ -215,7 +270,11 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isTechnicalSwitch: '',
+      isCheckingSwitch: '',
       tableDataFlag: false,
+      routingLineList: [],
+      analyseDialogWidth: '',
       btnLoading: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -337,11 +396,40 @@ export default {
     }
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
+    if (this.isTechnicalSwitch === '1' || this.isCheckingSwitch === '1') {
+      this.analyseDialogWidth = '60%'
+    } else {
+      this.analyseDialogWidth = '30%'
+    }
     this.tableDataFlag = true
     this.getcategoryTree()
     this.initData()
   },
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    routingChange(val) {
+      this.dataForm.routingId = val
+      if (this.dataForm.routingId) {
+        detailProcess(val).then(res => {
+          console.log(res, 'kkk')
+          this.routingLineList = res.data.routingLineList
+        })
+      } else {
+        this.routingLineList = []
+      }
+
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

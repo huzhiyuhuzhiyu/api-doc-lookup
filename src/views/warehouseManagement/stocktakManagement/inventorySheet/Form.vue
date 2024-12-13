@@ -1239,9 +1239,8 @@ export default {
     exportForm() {
       console.log(this.productData);
       if (!this.productData.length) return this.$message.error("暂无数据可导出")
-      let productsIds = this.productData.map(item => item.productsId)
-      console.log("productsIds", productsIds);
-      productExport(productsIds).then(res => {
+  
+      productExport(this.productData).then(res => {
         console.log("导出结果", res);
         this.jnpf.downloadFile(res.data.url)
       })
@@ -1338,10 +1337,12 @@ export default {
     },
     // 表单切换仓库
     changeWarehousex(val, data) {
+      console.log("data",data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
         this.dataForm.warehouseType = ""
+        this.dataForm.warehouseCode = ""
         return
       }
       this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
@@ -1349,13 +1350,16 @@ export default {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
-      if (this.productData.length) {
+        this.dataForm.warehouseCode = data[0].all.code
+        if (this.productData.length) {
         this.productData.forEach(item => {
           this.$set(item, 'allocationFlag', data[0].all.locationStatus == 'disabled' ? false : true)
           item.warehouseId = data[0].id
           item.warehouseName = data[0].name
+          item.warehouseCode = data[0].all.code
           item.shelfSpaceName = ""
           item.shelfSpaceId = ""
+          item.shelfSpaceCode = ""
           item.batchNumber = ""
         });
       }
@@ -1367,11 +1371,13 @@ export default {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
         this.dataForm.warehouseType = ""
+        this.dataForm.warehouseCode = ""
         return
       }
       this.productData[index].warehouseId = data[0].id
       this.productData[index].warehouseName = data[0].name
-      this.$set(this.productData[index], 'allocationFlag', data[0].all.locationStatus == 'disabled' ? false : true)
+      this.productData[index].warehouseCode = data[0].all.code
+        this.$set(this.productData[index], 'allocationFlag', data[0].all.locationStatus == 'disabled' ? false : true)
 
 
     },
@@ -1521,6 +1527,7 @@ export default {
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
         this.$set(item, 'shelfSpaceName', item.shelfSpaceName)
+        this.$set(item, 'shelfSpaceCode', item.shelfSpaceCode)
         this.$set(item, 'batchNumber', item.batchNumber)
         this.$set(item, 'productsId', item.id)
         this.$set(item, 'allocationFlag', item.locationStatus == 'disabled' ? false : true)
@@ -1542,11 +1549,12 @@ export default {
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
-          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+          this.$set(item, 'warehouseCode', this.dataForm.warehouseCode)
         } else {
           this.$set(item, 'warehouseName', item.warehouseName)
           this.$set(item, 'allocationFlag', item.allocationFlag)
           this.$set(item, 'warehouseId', item.warehouseId)
+          this.$set(item, 'warehouseCode', item.warehouseCode)
         }
         if (item.productCategoryName == '保持架') {
           let arr = ['pa017', 'pa021']

@@ -556,7 +556,6 @@ export default {
     await this.getWarehouseListFun()
     this.isProjectSwitchFlag = true
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.getclassAttributeList()
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -742,7 +741,8 @@ export default {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
         this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
-      })
+    this.getclassAttributeList()
+  })
     },
     async getMainUnitFun(code, type) {
       this.listLoading = true

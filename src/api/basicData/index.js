@@ -1801,6 +1801,22 @@ export function supplierupload(data, type) {
     data
   })
 }
+// 供应商、客户联系人 导入
+export function supplierContactsupload(data, type) {
+  return request({
+    url: `/api/erp/cooperative/partner/upload/contacts/${type}`,
+    method: 'post',
+    data
+  })
+}
+// 供应商、客户联系人 导入
+export function supplierAddressupload(data, type) {
+  return request({
+    url: `/api/erp/cooperative/partner/upload/deliveryAddress/${type}`,
+    method: 'post',
+    data
+  })
+}
 // 线索转客户
 export function Transfercustomer(data) {
   return request({

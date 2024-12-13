@@ -97,8 +97,9 @@
         <div class="JNPF-common-head" style="padding:10px">
           <div style="display:flex;">
             <topOpts @add="addSupplier()">
-              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
-                @click="importProductFun">导入</el-button>
+                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入客户档案</el-button>
+                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入客户联系人</el-button>
+                <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入客户联系人</el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
@@ -222,7 +223,13 @@
 </template>
 
 <script>
-import { getcategoryTree, getCooperativeData, deleteCooperative, supplierupload } from '@/api/basicData/index'
+import {
+    getcategoryTree,
+    getCooperativeData,
+    deleteCooperative,
+    supplierupload,
+    supplierContactsupload, supplierAddressupload
+} from '@/api/basicData/index'
 import Form from './Form'
 import UserRelationList from './userRelation'
 import moment from 'moment'
@@ -237,6 +244,7 @@ export default {
   components: { Form, UserRelationList, ExportForm, SuperQuery },
   data() {
     return {
+      downType:'',
       fileList: [],
       loadingText: '',
       file: {},
@@ -527,14 +535,21 @@ export default {
       })
     },
     // 导入产品
-    importProductFun() {
+    importProductFun(type) {
+      this.downType = type
       this.uploadVisib = true
     },
     // 下载模板
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/供应商导入模板.xlsx')
+        if (this.downType === 'parter'){
+            a.setAttribute('href', location.origin + '/static/供应商导入模板.xlsx')
+        } else if (this.downType === 'parterContacts'){
+            a.setAttribute('href', location.origin + '/static/供应商导入模板.xlsx')
+        } else{
+            a.setAttribute('href', location.origin + '/static/供应商收货地址导入模板.xlsx')
+        }
       a.click()
     },
     UploadProduct(data) {
@@ -542,8 +557,10 @@ export default {
       this.listLoading = true
       var formData = new FormData()
       formData.append("file", data)
+        //调用上传文件接口
+        const uploadMethod = this.downType === 'parter' ?   supplierupload : this.downType === 'parterContacts' ? supplierContactsupload : supplierAddressupload
       //调用上传文件接口
-      supplierupload(formData, 'supplier').then(res => {
+        uploadMethod(formData, 'supplier').then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.listLoading = false
@@ -573,7 +590,7 @@ export default {
             style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在信息错误！'),
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在供应商信息错误！'),
             h('el-button', {
               props: {
                 type: 'text',

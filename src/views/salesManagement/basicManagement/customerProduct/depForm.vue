@@ -874,6 +874,7 @@ export default {
         partnerType: "customer",
         dateOrderStart: "",
         cooperativePartnerId: '',
+        cooperativePartnerIdText:"",
         validDateArr: [],
       },
       taxRateList: [],

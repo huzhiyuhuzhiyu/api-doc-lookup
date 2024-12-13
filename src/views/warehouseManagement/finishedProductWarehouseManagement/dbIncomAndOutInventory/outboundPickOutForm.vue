@@ -295,8 +295,7 @@
                         </el-tooltip>
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        :partentOrChild="'product'" :setColumnDisplayList="columnList"  custom-column
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" :setColumnDisplayList="columnList"  custom-column :partentOrChild="'product'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -308,7 +307,7 @@
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="partnerName" label="供应商名称" v-if="isProjectSwitch == '1'"
+                          <el-table-column prop="partnerName" label="供应商名称" 
                           min-width="160" />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
@@ -374,7 +373,7 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                        <el-table-column label="操作" min-width="100" v-show="productData.length && btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
                             <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>

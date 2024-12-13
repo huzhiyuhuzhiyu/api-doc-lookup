@@ -81,9 +81,9 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <topOpts @add="addSupplier()">
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入客户档案</el-button>
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入客户联系人</el-button>
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入客户联系人</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parter')">导入供应商档案</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterContacts')">导入供应商联系人</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun('parterAddress')">导入供应商收货地址</el-button>
           </topOpts>
 
           <!-- <div>
@@ -514,7 +514,7 @@ export default {
         if (this.downType === 'parter'){
             a.setAttribute('href', location.origin + '/static/供应商导入模板.xlsx')
         } else if (this.downType === 'parterContacts'){
-            a.setAttribute('href', location.origin + '/static/供应商导入模板.xlsx')
+            a.setAttribute('href', location.origin + '/static/供应商联系人导入模板.xlsx')
         } else{
             a.setAttribute('href', location.origin + '/static/供应商收货地址导入模板.xlsx')
         }

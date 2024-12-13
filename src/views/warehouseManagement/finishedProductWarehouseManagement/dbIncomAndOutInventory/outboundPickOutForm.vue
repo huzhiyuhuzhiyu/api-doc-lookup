@@ -99,10 +99,14 @@
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
-
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top"  style="float: right;margin-right: 10px">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun('product')" />
+                        </el-tooltip>
                       </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                        :partentOrChild="'child'" :setColumnDisplayList="columnList"  custom-column
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -284,10 +288,14 @@
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
-
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top" style="float: right;margin-right: 10px">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun('product')" />
+                        </el-tooltip>
                       </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                        :partentOrChild="'child'" :setColumnDisplayList="columnList"  custom-column
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -657,7 +665,7 @@ export default {
       endTime: 0,
       productNameFlag: null,
       tableDataFlag: false,
-
+      columnList: [],
     }
   },
 
@@ -687,6 +695,9 @@ export default {
 
   },
   methods: {
+    columnSetFun(refForm) {
+      this.$refs[refForm].showDrawer()
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -841,7 +852,7 @@ export default {
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.num = item.unReceiveQuantity
-        item.classAttribute = this.classAttribute
+        item.classAttribute = item.classAttribute
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
         if (this.mainUnitFlag == 1) {
@@ -1108,7 +1119,7 @@ export default {
           let filteredArray = res.data.collectLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.unReceiveQuantity);
           if (filteredArray.length) {
             filteredArray.forEach(item => {
-              item.classAttribute = this.classAttribute
+              item.classAttribute = item.classAttribute
               item.noticeId = item.materialCollectId
               item.noticeLineId = item.id
               item.sourceNo = this.dataForm.sourceNo

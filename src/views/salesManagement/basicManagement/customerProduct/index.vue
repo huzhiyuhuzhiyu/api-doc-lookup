@@ -102,7 +102,26 @@
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"  v-if="specialRequireFlag==1"/>
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-
+                  <el-table-column label="操作" width="180" fixed="right">
+                      <template slot-scope="scope">
+                          <el-button size="mini" type="text"
+                                     @click="addSupplier(scope.row, 'edit')">编辑</el-button>
+                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                                     @click="handleDel(scope.row.id)">删除</el-button>
+                          <el-dropdown hide-on-click>
+                                  <span class="el-dropdown-link">
+                                    <el-button type="text" size="mini">
+                                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                                    </el-button>
+                                  </span>
+                              <el-dropdown-menu slot="dropdown">
+                                  <el-dropdown-item @click.native="addSupplier(scope.row, 'look')">
+                                      查看详情
+                                  </el-dropdown-item>
+                              </el-dropdown-menu>
+                          </el-dropdown>
+                      </template>
+                  </el-table-column>
               </JNPF-table>
               <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
                 :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -191,6 +210,14 @@
                 <el-table-column prop="excludingTaxUnitPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="validEnd" label="有效日期止" sortable="custom" min-width="160" />
                 <el-table-column prop="ask" label="要求" sortable="custom" min-width="160" />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"  v-if="sealingCoverTypingFlag==1"/>
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"  v-if="accuracyLevelFlag==1"/>
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"  v-if="vibrationLevelFlag==1"/>
+                  <el-table-column prop="oil" label="油脂" width="100" sortable="custom"  v-if="oilFlag==1"/>
+                  <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"  v-if="oilQuantityFlag==1"/>
+                  <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"  v-if="clearanceFlag==1"/>
+                  <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"  v-if="packagingMethodFlag==1"/>
+                  <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"  v-if="specialRequireFlag==1"/>
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
 
@@ -504,7 +531,7 @@ export default {
       }
       let classIndex = this.superQueryJson1.findIndex((obj) => obj.prop === 'dateOrderStop')
       console.log("clas",classIndex);
-      
+
       if (this.specialRequireFlag === '1') {
         this.superQueryJson1.splice(classIndex + 1, 0, {
           prop: 'specialRequire',
@@ -730,7 +757,7 @@ export default {
         this.superQueryJson = this.superQueryJson1
 
       }
-   
+
       this.superQueryVisible = true
     },
     viewProduct(row, type) {
@@ -996,11 +1023,11 @@ export default {
       }
 
     },
-    addSupplier(type) {
+    addSupplier(row,type) {
 
       this.depFormVisible = true
       this.$nextTick(() => {
-        this.$refs.depForm.init("", type)
+        this.$refs.depForm.init(row, type)
       })
     },
     addOrUpdateHandle(id, type) {
@@ -1019,7 +1046,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteBimVehicleType(id).then(res => {
+          deleteBimVehicleType(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -1029,12 +1056,6 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(id, type) {
-      this.depFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.depForm.init(id, type)
-      })
-    }
   }
 }
 </script>

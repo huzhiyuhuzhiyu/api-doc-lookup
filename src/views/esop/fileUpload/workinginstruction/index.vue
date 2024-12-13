@@ -567,6 +567,7 @@ export default {
         },
         editBack() {
             this.formVisible = false
+            this.tableFlag = true
             this.search()
         },
         superQuerySearch(query) {

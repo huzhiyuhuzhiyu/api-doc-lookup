@@ -100,6 +100,10 @@
                 <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"  v-if="clearanceFlag==1"/>
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"  v-if="packagingMethodFlag==1"/>
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"  v-if="specialRequireFlag==1"/>
+                <el-table-column prop="material" label="保持架材质" width="120"  v-if="materialFlag === '1'" />
+                <el-table-column prop="colour" label="密封盖颜色" width="120"  v-if="colourFlag === '1'" />
+                <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom"  v-if="protrusionFlag==1"/>
+                <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                   <el-table-column label="操作" width="180" fixed="right">
@@ -218,6 +222,10 @@
                   <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"  v-if="clearanceFlag==1"/>
                   <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"  v-if="packagingMethodFlag==1"/>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"  v-if="specialRequireFlag==1"/>
+                  <el-table-column prop="material" label="保持架材质" width="120"  v-if="materialFlag === '1'" />
+                  <el-table-column prop="colour" label="密封盖颜色" width="120"  v-if="colourFlag === '1'" />
+<!--                  <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom"  v-if="protrusionFlag==1"/>-->
+<!--                  <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>-->
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
 
@@ -478,6 +486,10 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
+      protrusionFlag:'',
+      preloadFlag:'',
+      materialFlag:'',
+      colourFlag:'',
 
     }
   },
@@ -519,21 +531,27 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.colourFlag = res.data.colour
+        this.materialFlag = res.data.material
       })
+        getOrderFiledMap('gobal').then(res => {
+            this.protrusionFlag = res.data.protrusion //list1
+            this.preloadFlag = res.data.preload
+        }).catch(err => {})
     },
-    advancedQueryFun() {
+    advancedQueryFun(superQuery,needFlag) {
       if (this.isProductNameSwitch === '1') {
-        this.superQueryJson1.splice(4, 0, {
+          superQuery.splice(4, 0, {
           prop: 'productName',
           label: '产品名称',
           type: 'input'
         })
       }
-      let classIndex = this.superQueryJson1.findIndex((obj) => obj.prop === 'dateOrderStop')
+      let classIndex = superQuery.findIndex((obj) => obj.prop === 'remark')
       console.log("clas",classIndex);
 
       if (this.specialRequireFlag === '1') {
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'specialRequire',
           label: '特殊要求',
           type: 'select',
@@ -545,11 +563,66 @@ export default {
           })
         })
       }
+      if (this.colourFlag === '1') {
+          superQuery.splice(classIndex + 1, 0, {
+          prop: 'colour',
+          label: '密封盖颜色',
+          type: 'select',
+          options: this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.materialFlag === '1') {
+          superQuery.splice(classIndex + 1, 0, {
+          prop: 'material',
+          label: '保持架材质',
+          type: 'select',
+          options: this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (needFlag){
+          if (this.preloadFlag === '1') {
+              superQuery.splice(classIndex + 1, 0, {
+                  prop: 'preload',
+                  label: '预负荷',
+                  type: 'select',
+                  options: this.bimProductAttributesList.pa024.map((item) => {
+                      return {
+                          label: item.name,
+                          value: item.name
+                      }
+                  })
+              })
+          }
+          if (this.protrusionFlag === '1') {
+              superQuery.splice(classIndex + 1, 0, {
+                  prop: 'protrusion',
+                  label: '凸出量',
+                  type: 'select',
+                  options: this.bimProductAttributesList.pa023.map((item) => {
+                      return {
+                          label: item.name,
+                          value: item.name
+                      }
+                  })
+              })
+          }
+      }
+
       console.log("this.packagingMethodFlag",this.packagingMethodFlag);
       if (this.packagingMethodFlag === '1') {
         console.log(555);
 
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'packagingMethod',
           label: '包装方式',
           type: 'select',
@@ -562,7 +635,7 @@ export default {
         })
       }
       if (this.clearanceFlag === '1') {
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'clearance',
           label: '游隙',
           type: 'select',
@@ -575,7 +648,7 @@ export default {
         })
       }
       if (this.oilQuantityFlag === '1') {
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'oilQuantity',
           label: '油脂量',
           type: 'select',
@@ -588,7 +661,7 @@ export default {
         })
       }
       if (this.oilFlag === '1') {
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'oil',
           label: '油脂',
           type: 'select',
@@ -602,7 +675,7 @@ export default {
       }
 
       if (this.vibrationLevelFlag === '1') {
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'vibrationLevel',
           label: '振动等级',
           type: 'select',
@@ -615,7 +688,7 @@ export default {
         })
       }
       if (this.accuracyLevelFlag === '1') {
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'accuracyLevel',
           label: '精度等级',
           type: 'select',
@@ -628,7 +701,7 @@ export default {
         })
       }
       if (this.sealingCoverTypingFlag === '1') {
-        this.superQueryJson1.splice(classIndex + 1, 0, {
+          superQuery.splice(classIndex + 1, 0, {
           prop: 'sealingCoverTyping',
           label: '打字内容',
           type: 'select',
@@ -640,7 +713,6 @@ export default {
           })
         })
       }
-      console.log(this.superQueryJson1);
     },
     async getProductNameSwitch(code, type) {
       try {
@@ -749,11 +821,12 @@ export default {
     },
     seniorFun() {
       if (this.activeName == 'historicalprice') {
+        this.advancedQueryFun(this.superQueryJson2,false)
         this.superQueryJson = this.superQueryJson2
 
       } else {
         console.log("this.superQueryJson1",this.superQueryJson1);
-        this.advancedQueryFun()
+        this.advancedQueryFun(this.superQueryJson1,true)
         this.superQueryJson = this.superQueryJson1
 
       }

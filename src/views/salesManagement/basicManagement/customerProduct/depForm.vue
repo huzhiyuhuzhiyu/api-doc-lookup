@@ -768,7 +768,7 @@
 import {
     getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from '@/api/masterDataManagement/index'
-import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct } from "@/api/salesManagement/index";
+import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct,saleUploadProductData } from "@/api/salesManagement/index";
 import {
     getCounryData,
     getPrivateList,
@@ -1671,7 +1671,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      saleUploadData(formData).then(res => {
+      saleUploadProductData(formData).then(res => {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
           if (res.data.length > 0) {

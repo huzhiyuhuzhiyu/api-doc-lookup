@@ -1153,8 +1153,9 @@ export default {
           if (res.data.list.length > 0) {
             console.log(111, res.data);
             res.data.list.forEach(item => {
-              this.$set(item, 'code', item.productsCode)
-              this.$set(item, 'name', item.productsName)
+              this.$set(item, 'productCode', item.productsCode)
+              this.$set(item, 'productName', item.productsName)
+              this.$set(item, 'allocationFlag', item.locationStatus == 'disabled' ? false : true)
               this.$set(item, 'diffNum', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.num, item.stockNum]), 2))
 
             });
@@ -1239,7 +1240,7 @@ export default {
     exportForm() {
       console.log(this.productData);
       if (!this.productData.length) return this.$message.error("暂无数据可导出")
-  
+      console.log(this.productData);
       productExport(this.productData).then(res => {
         console.log("导出结果", res);
         this.jnpf.downloadFile(res.data.url)
@@ -1333,6 +1334,7 @@ export default {
       let index = this.currentProductIndex
       this.productData[index].shelfSpaceName = data.name
       this.productData[index].shelfSpaceId = data.id
+      this.productData[index].shelfSpaceCode=data.code
       this.index = ""
     },
     // 表单切换仓库

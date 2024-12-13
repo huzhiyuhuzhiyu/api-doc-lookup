@@ -5,10 +5,10 @@
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
           <el-page-header @back="goBack" :content="dialogTitle + `工艺`" />
           <div class="options" v-if="type != 'look'">
-            <el-button type="success" :disabled="dataForm.documentStatus == 'submit'" :loading="btnLoading"
+            <!-- <el-button type="success" :disabled="dataForm.documentStatus == 'submit'" :loading="btnLoading"
               @click="dataFormSubmit('draft')">
               保存草稿
-            </el-button>
+            </el-button> -->
             <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
               保存并提交
             </el-button>
@@ -38,14 +38,14 @@
                           </el-form-item>
                         </el-col>
                         <el-col :span="12" v-if="dataForm.id">
-                          <el-form-item label="工艺路线编码" prop="code" ref="code">
-                            <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
+                          <el-form-item label="工艺路线编码" prop="routingCode" ref="routingCode">
+                            <el-input v-model="dataForm.routingCode" placeholder="请输入工艺路线编码" clearable
                               :style="{ width: '100%' }" maxlength="20" disabled></el-input>
                           </el-form-item>
                         </el-col>
                         <el-col :span="12">
-                          <el-form-item label="工艺路线名称" prop="name" ref="name" v-if="dataForm.id">
-                            <el-input v-model="dataForm.name" placeholder="请输入工艺路线名称" clearable
+                          <el-form-item label="工艺路线名称" prop="routingName" ref="routingName" v-if="dataForm.id">
+                            <el-input v-model="dataForm.routingName" placeholder="请输入工艺路线名称" clearable
                               :style="{ width: '100%' }" maxlength="20" disabled></el-input>
                           </el-form-item>
                         </el-col>
@@ -67,17 +67,11 @@
                       size="mini" id="table">
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
-                        <template slot="header">
-                          <span class="required">*</span>
-                          工序名称
-                        </template>
-                        <template slot-scope="scope">
-                          {{ scope.row.name }}
-                        </template>
+                      <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="isProjectSwitch === '1'"></el-table-column>
+                      <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="code" label="工序编码" min-width="140" />
-
+                      <el-table-column prop="processCode" label="工序编码" min-width="140" />
                       <el-table-column prop="processType" label="工序类型" width="120">
                         <template slot-scope="scope">
                           <template v-if="scope.row.processType == 'normal'">
@@ -105,6 +99,20 @@
                           <template v-if="scope.row.processingType === 'external_production'">
                             外协
                           </template>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                        v-if="isTechnicalSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
+                            maxlength="20"></el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                        v-if="isCheckingSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
+                            maxlength="20"></el-input>
                         </template>
                       </el-table-column>
                       <!-- <el-table-column prop="firstFlag" label="是否首道工序" width="120">
@@ -211,7 +219,7 @@
                       </el-table-column> -->
                       <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
+                          <el-button type="text" @click="handlerOpenSource(scope.$index, 'look')">
                             查看资源配置
                           </el-button>
                         </template>
@@ -219,7 +227,7 @@
                     </el-table>
                   </el-col>
                   <el-col :span="24" v-else>
-                    <div style="color:#aaa" :style="{ 'textAlign': 'center', 'padding': '10%' }">
+                    <div style="color:#aaa" :style="{ textAlign: 'center', padding: '10%' }">
                       请先设置工艺
                     </div>
                   </el-col>
@@ -243,19 +251,25 @@
 </template>
 <script>
 import { updateApproval } from '@/api/basicData/approvalBusinessConditions'
-import { addProcess, detailProcess, checkBimRoutingCode, updateProcess } from '@/api/basicData/processSettingss'
+import { addProcess, detailResourceProcess, checkBimRoutingCode, updateProcess } from '@/api/basicData/processSettingss'
 import SourceArea from '../processSettingss/source.vue'
 import { getOrganizeInfo, getOrganizeList } from '@/api/permission/organize'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
+import getProjectList from '@/mixins/generator/getProjectList'
+import { editProductionResource, detailProductionResourceData } from '@/api/basicData/productionResourceSetting'
 export default {
   components: {
     SourceArea
   },
   props: [],
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      isTechnicalSwitch: '',
+      isCheckingSwitch: '',
       activeName: 'jcInfo',
       activeNames: ['modelInfo', 'processInfo'],
       datafilelist: [],
@@ -408,16 +422,29 @@ export default {
       isattachmentswitch: ''
     }
   },
-  created() {
-    this.getBimBusinessDetail()
+  async created() {
+    await this.getProjectSwitch('system', 'project')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
+    await this.getBimBusinessDetail()
   },
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
         configKey: 'fj_gylx'
       }
-      getBimBusinessDetail(obj).then(res => {
+      getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -453,8 +480,7 @@ export default {
       console.log(rowData, 'ddd')
       // rowData = JSON.parse(rowData)
       // 此处判断用户选择新增还是编辑
-      this.dataForm.id = rowData.routingId || ''
-
+      this.dataForm.id = rowData.id || ''
       this.visible = true
 
       this.type = type
@@ -475,19 +501,11 @@ export default {
           // this.dataForm = rowData
           // 获取当前项详情
           // this.fetchData('bm_gy_gylx', false)
-          detailProcess(this.dataForm.id).then((res) => {
-            this.dataForm = {
-              ...this.dataForm,
-              ...res.data.routing
-            }
-            this.dataForm.productDrawingNo = rowData.productDrawingNo
-            this.dataForm.productCode = rowData.productCode
+          detailProductionResourceData(this.dataForm.id).then((res) => {
+            this.dataForm = res.data.prodRes
+
             console.log(this.dataForm, 'foe')
-            res.data.routingLineList.forEach((item) => {
-              item.name = item.processName
-              item.code = item.processCode
-              item.processType = item.processType
-            })
+
             this.dataFormTwo = res.data.routingLineList
             this.dataFormTwo = this.dataFormTwo.map((item) => {
               return {
@@ -500,35 +518,9 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
-            this.dataFormTwo.sort((a, b) => a.sort - b.sort);
+            this.dataFormTwo.sort((a, b) => a.sort - b.sort)
             console.log(this.dataFormTwo, 'tttt')
-            // this.dataFormTwo.forEach((item, index) => {
-            //   if (item.departmentName) {
-            //     this.dataFormTwo[index].departmentName = [
-            //       item.departmentName
-            //         .replace('[', '')
-            //         .replace(']', '')
-            //         .replace(/, /g, '/')
-            //     ]
-            //   }
-            //   if (item.supplierName) {
-            //     this.dataFormTwo[index].cooperativePartnerName = item.supplierName
-            //   }
-            //   if (item.processingType === 'external_production') {
-            //     if (index != 0 && this.dataFormTwo[index - 1].processingType != 'external_production') {
-            //       this.dataFormTwo[index - 1].defaultFlag = true
-            //     }
-            //     this.dataFormTwo[index].defaultReport = true
-            //   } else {
-            //     item.defaultReport = false
-            //     item.defaultFlag = false
-            //   }
-            // })
 
-            // let ind = 0
-            // this.dataFormTwo.forEach((item) => {
-            //   item.index = ind++
-            // })
             this.loading = false
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
@@ -630,12 +622,12 @@ export default {
           }
         }
       }
-      if (this.dataFormTwo.length == 1 && this.dataFormTwo[0].processingType === 'external_production') {
-        this.$message.error('至少添加一道自制工序')
-        this.btnLoading = false
-        flag = false
-        return
-      }
+      // if (this.dataFormTwo.length == 1 && this.dataFormTwo[0].processingType === 'external_production') {
+      //   this.$message.error('至少添加一道自制工序')
+      //   this.btnLoading = false
+      //   flag = false
+      //   return
+      // }
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
@@ -666,282 +658,46 @@ export default {
       let newArr = []
       if (this.dataForm.id) {
         newArr = this.dataFormTwo.map((item) => {
+          console.log(item, 'item')
+          
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
           return {
-            routingLine: {
-              checkFlag: item.checkFlag,
-              customColumn: item.customColumn,
-              firstFlag: item.firstFlag,
-              firstInspection: item.firstInspection,
+            prodResLine: {
+              customColumn: {},
               id: item.id,
-              lastFlag: item.lastFlag,
-              nextId: item.nextId,
-              pickingFlag: item.pickingFlag,
-              previousId: item.previousId,
+              inspectionInformation: item.inspectionInformation,
               processId: item.processId,
-              processType: item.processType,
-              processingType: item.processingType,
-              remark: item.remark,
-              reportFlag: item.reportFlag,
+              productsId: this.dataForm.productsId,
               routingId: item.routingId,
-              sort: item.sort,
-              stockFlag: item.stockFlag
+              technicalRequirement: item.technicalRequirement
             },
-            routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
+           
           }
         })
+        console.log(newArr,'kk')
+        // return
       } else {
         newArr = this.dataFormTwo.map((item) => {
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
           return {
-            routingLine: {
-              index: item.index,
-              name: item.name,
-              code: item.code,
-              processType: item.processType,
+            prodResLine: {
+              customColumn: {},
+              id: item.id,
+              inspectionInformation: item.inspectionInformation,
               processId: item.processId,
-              reportFlag: item.reportFlag,
-              checkFlag: item.checkFlag,
-              processingType: item.processingType,
-              cooperativePartnerId: item.cooperativePartnerId,
-              cooperativePartnerName: item.cooperativePartnerName,
-              departmentId: item.departmentId,
-              stockFlag: item.stockFlag,
-              firstInspection: item.firstInspection,
-              firstFlag: item.firstFlag,
-              lastFlag: item.lastFlag,
-              defaultFlag: item.defaultFlag,
-              defaultReport: item.defaultReport,
-              sort: item.sort,
-              nextId: item.nextId,
-              previousId: item.previousId
+              productsId: this.dataForm.productsId,
+              routingId: item.routingId,
+              technicalRequirement: item.technicalRequirement
             },
-            routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
           }
         })
       }
 
-      // Filter out the routingLine information if no bimRoutingProcessResourceDTOList exists
-      // newArr = newArr.map((item) => {
-      //   if (item.routingProcResList.length === 0) {
-      //     delete item.routingLine // Optional step to clean up
-      //   }
-      //   return item
-      // })
-
-      // let arr = [
-      //   {
-      //     index: 0,
-      //     name: '工序3',
-      //     code: '工序3',
-      //     processType: 'normal',
-      //     processId: '1816731039093555202',
-      //     reportFlag: false,
-      //     checkFlag: 0,
-      //     processingType: 'self_produced',
-      //     cooperativePartnerId: null,
-      //     cooperativePartnerName: '',
-      //     departmentId: null,
-      //     stockFlag: false,
-      //     firstInspection: 0,
-      //     firstFlag: true,
-      //     lastFlag: false,
-      //     defaultFlag: false,
-      //     defaultReport: false,
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ],
-      //     sort: 0,
-      //     nextId: '1816730955354275842'
-      //   },
-      //   {
-      //     index: 1,
-      //     name: '工序2',
-      //     code: 'gongxu2',
-      //     processType: 'normal',
-      //     processId: '1816730955354275842',
-      //     reportFlag: false,
-      //     checkFlag: 0,
-      //     processingType: 'self_produced',
-      //     cooperativePartnerId: null,
-      //     cooperativePartnerName: '',
-      //     departmentId: null,
-      //     stockFlag: false,
-      //     firstInspection: 0,
-      //     firstFlag: false,
-      //     lastFlag: false,
-      //     defaultFlag: false,
-      //     defaultReport: false,
-      //     sort: 1,
-      //     nextId: '1816439653391728641',
-      //     previousId: '1816731039093555202',
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     index: 2,
-      //     name: '工序',
-      //     code: 'gongxu',
-      //     processType: 'normal',
-      //     processId: '1816439653391728641',
-      //     reportFlag: true,
-      //     checkFlag: 0,
-      //     processingType: 'self_produced',
-      //     cooperativePartnerId: null,
-      //     cooperativePartnerName: '',
-      //     departmentId: null,
-      //     stockFlag: true,
-      //     firstInspection: 0,
-      //     firstFlag: false,
-      //     lastFlag: true,
-      //     defaultFlag: false,
-      //     defaultReport: false,
-      //     sort: 2,
-      //     previousId: '1816730955354275842'
-      //   }
-      // ]
-      // 变成 newArr = [
-      //   {
-      //     routingLine: {
-      //       index: 0,
-      //       name: '工序3',
-      //       code: '工序3',
-      //       processType: 'normal',
-      //       processId: '1816731039093555202',
-      //       reportFlag: false,
-      //       checkFlag: 0,
-      //       processingType: 'self_produced',
-      //       cooperativePartnerId: null,
-      //       cooperativePartnerName: '',
-      //       departmentId: null,
-      //       stockFlag: false,
-      //       firstInspection: 0,
-      //       firstFlag: true,
-      //       lastFlag: false,
-      //       defaultFlag: false,
-      //       defaultReport: false,
-
-      //       sort: 0,
-      //       nextId: '1816730955354275842'
-      //     },
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     routingLine: {
-      //       index: 1,
-      //       name: '工序2',
-      //       code: 'gongxu2',
-      //       processType: 'normal',
-      //       processId: '1816730955354275842',
-      //       reportFlag: false,
-      //       checkFlag: 0,
-      //       processingType: 'self_produced',
-      //       cooperativePartnerId: null,
-      //       cooperativePartnerName: '',
-      //       departmentId: null,
-      //       stockFlag: false,
-      //       firstInspection: 0,
-      //       firstFlag: false,
-      //       lastFlag: false,
-      //       defaultFlag: false,
-      //       defaultReport: false,
-      //       sort: 1,
-      //       nextId: '1816439653391728641',
-      //       previousId: '1816731039093555202'
-      //     },
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     routingLine: {
-      //       index: 2,
-      //       name: '工序',
-      //       code: 'gongxu',
-      //       processType: 'normal',
-      //       processId: '1816439653391728641',
-      //       reportFlag: true,
-      //       checkFlag: 0,
-      //       processingType: 'self_produced',
-      //       cooperativePartnerId: null,
-      //       cooperativePartnerName: '',
-      //       departmentId: null,
-      //       stockFlag: true,
-      //       firstInspection: 0,
-      //       firstFlag: false,
-      //       lastFlag: true,
-      //       defaultFlag: false,
-      //       defaultReport: false,
-      //       sort: 2,
-      //       previousId: '1816730955354275842'
-      //     }
-      //   }
-      // ]
       this.dataForm.documentStatus = type
       let _data = {
-        routing: this.dataForm,
+        prodRes: this.dataForm,
         // documentStatus: type,
-        routingLineList: newArr,
-        attachmentList: this.datafilelist
+        prodResLineList: newArr,
       }
 
       let msgs = ''
@@ -978,7 +734,7 @@ export default {
                     this.btnLoading = false
                   })
               } else {
-                updateProcess(_data)
+                editProductionResource(_data)
                   .then((res) => {
                     if (res.msg === 'Success') res.msg = '修改成功'
                     this.$message({

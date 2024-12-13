@@ -4,7 +4,7 @@
       <div class="tag-group JNPF-common-search-box treeBox_bot" style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="activeName">
           <el-radio-button label="product">产品设置</el-radio-button>
-          <el-radio-button label="orderField">订单设置</el-radio-button>
+          <el-radio-button label="orderField">产品属性设置</el-radio-button>
           <el-radio-button label="produce">生产设置</el-radio-button>
           <el-radio-button label="warehouse">仓库设置</el-radio-button>
           <el-radio-button label="return">退货设置</el-radio-button>

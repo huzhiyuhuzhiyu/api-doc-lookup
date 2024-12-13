@@ -522,13 +522,13 @@ export function getBimPairingModeList(data) {
   })
 }
 
-// // 类别属性-检查编码是否存在
-// export function  checkClassAttributeCode(code,id) {
-//   return request({
-//     url: '/api/zgt/product/classAttribute/check/code/exist?code='+code+"&id="+id,
-//     method: 'GET'
-//   })
-// }
+// 配对方式-检查项目编码是否存在
+export function  checkBimPairingModeCode(code,id) {
+  return request({
+    url: '/api/zgt/bimPairingMode/check/code/exist?code='+code+"&id="+id,
+    method: 'GET'
+  })
+}
 
 // 配对方式——新增
 export function addBimPairingMode(data) {

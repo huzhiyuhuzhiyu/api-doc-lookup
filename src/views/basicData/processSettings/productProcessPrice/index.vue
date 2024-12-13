@@ -525,9 +525,9 @@ export default {
     },
     initData() {
       this.listLoading = true
-      // if (this.isProjectSwitch === '1') {
-      //   this.listQuery.projectId = this.userInfo.projectId
-      // }
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       getBimProductProcessPrice(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

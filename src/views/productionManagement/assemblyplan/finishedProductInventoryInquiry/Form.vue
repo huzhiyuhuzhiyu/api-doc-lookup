@@ -32,8 +32,7 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
-                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" readonly
-                        @focus="openSelectProductFun">
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled >
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -58,6 +57,7 @@
                       </el-input>
                     </el-form-item>
                   </el-col>
+           
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="编排任务方式" prop="taskMethod">
                       <el-select v-model="dataForm.taskMethod" placeholder="请选择编排任务方式" style="width: 100%;"
@@ -590,6 +590,9 @@ export default {
         bomId: "",
         projectId: "",
         orderType: "manually",
+        stockInventoryLineId:"",
+        classAttribute:"finish_product",
+        productsId:"",
       },
       dataFormTwo: {
         data: [],
@@ -817,8 +820,7 @@ export default {
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
-      if (!data.routingId) return
-      this.getRoutingDetail(data.routingId)
+   
     },
     getWarehouseListFun() {
       let obj = {
@@ -1198,10 +1200,19 @@ export default {
         this.dataFormTwo.data = res.data.routingLineList
         this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
       })
-    },
-    init() {
+    },  
+    init(data,btnType) {
+      console.log(data);
       this.getProductionLineListFun()
       this.fetchData("PROD")
+      this.dataForm.productsName=data[0].productName
+      this.dataForm.productsDrawingNo=data[0].productDrawingNo
+      this.dataForm.projectId=data[0].projectId
+      this.dataForm.mainUnit=data[0].mainUnit
+      this.dataForm.productionQuantity=data[0].inventoryQuantity 
+      this.dataForm.stockInventoryLineId=data[0].id 
+      this.$set(this.dataForm, 'orderType', 'flipping')
+      this.dataForm.productsId=data[0].productsId
     },
     async fetchData(code) {
       try {
@@ -1221,8 +1232,7 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
-      let submitFlag = null;
-      this.dataForm.productsId = this.dataForm.id
+      let submitFlag = null; 
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
       if (this.naturalResourcesFlag) {
@@ -1290,9 +1300,9 @@ export default {
       this.btnLoading = true
       addProdOrder(obj).then(res => {
         this.btnLoading = false
-        this.$message.success("手动新建任务成功")
+        this.$message.success("新建任务成功")
         setTimeout(() => {
-          this.$emit('close')
+          this.$emit('close',true)
         }, 1500);
       }).catch(error => {
         this.btnLoading = false

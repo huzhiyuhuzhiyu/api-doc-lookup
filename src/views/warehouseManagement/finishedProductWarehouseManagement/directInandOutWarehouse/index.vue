@@ -130,13 +130,13 @@
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                      <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132" v-if="dataForm.documentType=='inbound'">
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
-                              placeholder="批次号">
-                            </el-input>
-                          </template>
-                        </el-table-column>
+                      <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132"
+                        v-if="dataForm.documentType == 'inbound'">
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
+                          </el-input>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="batchNumber" label="批次号" width="200" key="batchNumber"
                         v-if="dataForm.documentType == 'outbound'">
                         <template slot="header">
@@ -584,7 +584,7 @@
   </div>
 </template>
 <script>
-import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList,stockWarehouseBusinessTypeList } from "@/api/warehouseManagement/inboundAndOutbound"
+import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList, stockWarehouseBusinessTypeList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { getBimProcessList } from '@/api/bimProcess/index'
@@ -634,18 +634,20 @@ export default {
         { label: "直接入库", value: "inbound", },
       ],
       businessType2Title: Object.freeze(new Map([
-            ["outbound_sale_send", "销售发货"],
-            ["inbound_sale_return", "销售退货"],
-            ["inbound_purchase", "采购收货"],
-            ["outbound_purchase", "采购退货"],
-            ["outbound_external_send", "外协发料"],
-            ["inbound_external", "外协收货"],
-            ["outbound_pick_out", "生产领料"],
-            ["inbound_return_materials", "生产退料"],
-            ["inbound_mock_production", "生产入库"],
-            ["outbound_use", "资产领用"],
-            ["inbound_return", "资产归还"],
-        ])),
+        ["outbound_sale_send", "销售发货"],
+        ["inbound_sale_return", "销售退货"],
+        ["inbound_purchase", "采购收货"],
+        ["outbound_purchase", "采购退货"],
+        ["outbound_external_send", "外协发料"],
+        ["inbound_external", "外协收货"], 
+        ["inbound_order_production", "生产产品入库"],
+        ["inbound_production", "生产工单入库"],
+        ["outbound_pick_out", "生产领料"],
+        ["inbound_return_materials", "生产退料"],
+        ["inbound_mock_production", "生产入库"],
+        ["outbound_use", "资产领用"],
+        ["inbound_return", "资产归还"],
+      ])),
       list: [],
       batchNumVisible: false,
       wareHouseVisible: false,
@@ -892,32 +894,30 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
-    async getBusinessTypeList(){
-        const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
-        const list =[{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
-        // inbound_mock_production
-        let resList = list
-        if( res.data.records.length){
-            const temp =res.data.records.map(item=>{
-                return {
-                    label: this.businessType2Title.get(item.businessType),
-                    value: item.businessType
-                }
-            })
-            const tempFilter =temp.filter(item=>item.value !== 'inbound_mock_production')
-            if(temp.length === tempFilter.length){
-                resList = [...temp,...list]
-            }else{
-                resList = [
-                    ...tempFilter,
-                    { label: "生产产品入库", value: "inbound_order_production" },
-                    { label: "生产工单入库", value: "inbound_production" },
-                    ...list
-                ]
-            }
-
+    async getBusinessTypeList() {
+      const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
+      const list = [{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
+      // inbound_mock_production
+      let resList = list
+      if (res.data.records.length) {
+        const temp = res.data.records.map(item => {
+          return {
+            label: this.businessType2Title.get(item.businessType),
+            value: item.businessType
+          }
+        })
+        const tempFilter = temp.filter(item => item.value !== 'inbound_mock_production'&&item.value!=='inbound_flip')
+        if (temp.length === tempFilter.length) {
+          resList = [...temp, ...list]
+        } else {
+          resList = [
+            ...tempFilter,
+            ...list
+          ]
         }
-        this.list = resList
+
+      }
+      this.list = resList
     },
     getBimBusinessDetail() {
       let obj = {
@@ -1373,7 +1373,7 @@ export default {
                 typeCode: items,//保持架尺寸
               };
               getbimProductAttributesList(obj1).then(res => {
-                let list = items == 'pa017' ? 'spaceSizeList' :  'materialList'
+                let list = items == 'pa017' ? 'spaceSizeList' : 'materialList'
                 this.$set(item, list, res.data.records)
               })
             });
@@ -1392,21 +1392,19 @@ export default {
               })
             });
           }
-          if(item.productCategoryName != '防尘盖'&&item.productCategoryName != '防尘盖'){
-            let arr=[ 'pa019', 'pa020', ]
-            arr.forEach(items => {
-              let obj1 = {
-                pageNum: -1,
-                pageSize: 20,
-                typeCode: items,
-              };
-              getbimProductAttributesList(obj1).then(res => {
-                let list = items == 'pa019' ? 'logoList' : 'divideEquallyList' 
-                this.$set(item, list, res.data.records)
-              })
-            });
+          let arr = ['pa019', 'pa020']
+          arr.forEach(items => {
+            let obj1 = {
+              pageNum: -1,
+              pageSize: 20,
+              typeCode: items,
+            };
+            getbimProductAttributesList(obj1).then(res => {
+              let list = items == 'pa019' ? 'logoList' : 'divideEquallyList'
+              this.$set(item, list, res.data.records)
+            })
+          });
 
-          }
         }
         this.productData.push(item)
         console.log("this.productData", this.productData);

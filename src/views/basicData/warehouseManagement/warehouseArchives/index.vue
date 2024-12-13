@@ -298,7 +298,10 @@ export default {
           { label: "外协收货", value: "inbound_external" },
           { label: "生产领料", value: "outbound_pick_out" },
           { label: "生产退料", value: "inbound_return_materials" },
-          { label: "生产入库", value: "inbound_mock_production" },
+          // { label: "生产入库", value: "inbound_mock_production" },
+          { label: "生产产品入库", value: "inbound_order_production" },
+          { label: "生产工单入库", value: "inbound_production" },
+          { label: "翻库入库", value: "inbound_flip" },
           { label: "资产领用", value: "outbound_use" },
           { label: "资产归还", value: "inbound_return" },
       ],
@@ -466,11 +469,11 @@ export default {
         try {
             const res =  await this.chooseBusinessTypeHandler(row)
             console.log(res,'------await')
-           const resp =  await stockWarehouseBusinessTypeBatchAdd(row.id,res.map(item=>item.value))
+           const resp =  await stockWarehouseBusinessTypeBatchAdd(row.id,res.filter(Boolean).map(item=>item.value))
             console.log(resp)
             this.$message.success('设置成功')
         }catch (e) {
-
+          console.log("e",e);
         }
 
       },

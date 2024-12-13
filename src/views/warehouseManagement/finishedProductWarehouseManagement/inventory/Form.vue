@@ -40,7 +40,7 @@
           <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
             <div class="JNPF-common-head">
               <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTables')">导出</el-button>
+                @click="exportForm('dataTable')">导出</el-button>
                 <div class="JNPF-common-head-right">
     
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -49,7 +49,7 @@
                   </el-tooltip>
                 </div>
             </div>
-            <JNPF-table v-if="tableDataFlag" :data="tableData" hasNO fixedNO @sort-change="sortChange"     :setColumnDisplayList="columnList"  custom-column ref="dataTable">
+            <JNPF-table v-if="tableDataFlag" :partentOrChild="'child'" :data="tableData" hasNO fixedNO @sort-change="sortChange"     :setColumnDisplayList="columnList"  custom-column ref="dataTable">
 
               <el-table-column prop="partnerName" label="供应商名称" min-width="200" sortable="custom" />
               <el-table-column prop="partnerCode" label="供应商编码" min-width="200" sortable="custom" />

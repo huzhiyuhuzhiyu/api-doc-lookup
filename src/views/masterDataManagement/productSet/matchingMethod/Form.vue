@@ -42,7 +42,7 @@ import {
   delBimProductAttributes,
   addBimPairingMode,
   getbimProductAttributesList,
-  checkClassAttributeCode
+  checkBimPairingModeCode
 } from '@/api/masterDataManagement/index'
 export default {
   components: {},
@@ -83,7 +83,7 @@ export default {
                 callback()
               } else {
                 if (this.dataForm.id) {
-                  checkClassAttributeCode(value, this.dataForm.id)
+                  checkBimPairingModeCode(value, this.dataForm.id)
                     .then((res) => {
                       if (!res.data) {
                         callback()
@@ -95,7 +95,7 @@ export default {
                       callback(new Error(' '))
                     })
                 } else {
-                  checkClassAttributeCode(value, '')
+                  checkBimPairingModeCode(value, '')
                     .then((res) => {
                       if (!res.data) {
                         callback()

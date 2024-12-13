@@ -1256,7 +1256,7 @@ export default {
               for (let id in totalNum) {
                 if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
                   submitFlag = false
-                  this.$message.error("同产品的总数量不能批次可用数量")
+                  this.$message.error("同产品的总数量不能超过批次可用数量")
                   break
                 }
               }

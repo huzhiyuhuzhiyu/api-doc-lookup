@@ -21,7 +21,7 @@
 
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="客户" prop="cooperativePartnerIdText">
-                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
+                        <ComSelect-page key="partner" ref="ComSelect-page" :value="dataForm.cooperativePartnerIdText"
                           @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类"
                           placeholder="请选择客户"
                           :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }"
@@ -874,7 +874,7 @@ export default {
         partnerType: "customer",
         dateOrderStart: "",
         cooperativePartnerId: '',
-        cooperativePartnerIdText:"",
+        cooperativePartnerIdText: '',
         validDateArr: [],
       },
       taxRateList: [],
@@ -1882,7 +1882,7 @@ export default {
       this.row = row ?  {...row,productDrawingNo:row.drawingNo,cooperativePartnerIdText: row.partnerName} || '' : ''
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
-      this.dataForm = this.row
+      this.row && (this.dataForm =  this.row)
       this.approvalFlag = approvalFlag
       this.btnType = btnType
 

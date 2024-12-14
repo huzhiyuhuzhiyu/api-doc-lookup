@@ -2,7 +2,7 @@
   <div @keyup.native="close">
     <div class="international" v-if="selectFlag">
       <span @click="showSystem" style="cursor:pointer;">
-        <span style="display: flex;color: aliceblue;">{{ projectName }}</span>
+        <span class="ym yc">{{ projectName }}</span>
       </span>
     </div>
     <transition name="fade">
@@ -251,6 +251,7 @@ export default {
 .international {
   float: left;
   padding: 22px 8px;
+  line-height: 1.15;
   // height: 100vh;
 
   .icon-caidan {

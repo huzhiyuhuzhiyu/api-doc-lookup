@@ -1023,16 +1023,20 @@ export default {
     window.onresize = null
   },
 
-  mounted() {
-    this.getBimBusinessDetail()
+  async mounted() {
+      try {
+          await Promise.all([
+              this.getProductClassFun(),
+              this.getProjectSwitch('system', 'project'),
+              this.getProductNameSwitch('product', 'enable_productName'),
+              this.getProductAttributeFun(),
+              this.getBimBusinessDetail()
+          ])
 
-  },
-  async created() {
-    await this.getProductClassFun()
-    await this.getProductAttributeFun()
-    await this.getProjectSwitch('system', 'project')
-    await this.getProductNameSwitch('product', 'enable_productName')
-
+      }catch (e) {console.log(e)}
+      finally {
+          this.$refs.product.doLayout()
+      }
   },
   methods: {
     async getProductNameSwitch(code, type) {
@@ -1208,156 +1212,166 @@ export default {
       })
     },
       // 获取业务参数中 属性字段动态显示
-      getProductAttributeFun() {
-          getOrderFiledMap('sale').then(res => {
-              console.log("产品属性", res);
-              // sealingCoverTypingFlag list1  pa007
-              // accuracyLevelFlag list2  pa006
-              // vibrationLevelFlag list3 pa005
-              // oilFlag list4 pa002
-              // oilQuantityFlag list5 pa003
-              // clearanceFlag list6 pa001
-              // packagingMethodFlag list7 pa015
-              // specialRequireFlag list8 pa016
+    async getProductAttributeFun() {
 
-              this.accuracyLevelFlag = res.data.accuracyLevel //list1
-              if (this.accuracyLevelFlag === '1') {
-                  this.list2 = this.bimProductAttributesList.pa006.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.clearanceFlag = res.data.clearance
-              if (this.clearanceFlag === '1') {
-                  this.list6 = this.bimProductAttributesList.pa001.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              console.log("this.list6", this.list6);
-              this.oilFlag = res.data.oil
-              if (this.oilFlag === '1') {
-                  this.list4 = this.bimProductAttributesList.pa002.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.oilQuantityFlag = res.data.oilQuantity
-              if (this.oilQuantityFlag === '1') {
-                  this.list5 = this.bimProductAttributesList.pa003.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.packagingMethodFlag = res.data.packagingMethod
-              if (this.packagingMethodFlag === '1') {
-                  this.list7 = this.bimProductAttributesList.pa015.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-              if (this.sealingCoverTypingFlag === '1') {
-                  this.list1 = this.bimProductAttributesList.pa007.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.specialRequireFlag = res.data.specialRequire
-              if (this.specialRequireFlag === '1') {
-                  this.list8 = this.bimProductAttributesList.pa016.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.vibrationLevelFlag = res.data.vibrationLevel
-              if (this.vibrationLevelFlag === '1') {
-                  this.list3 = this.bimProductAttributesList.pa005.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-                  console.log(this.list3);
-              }
-              this.materialFlag = res.data.material
-              if (this.materialFlag === '1') {
-                  this.list9 = this.bimProductAttributesList.pa021.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.colourFlag = res.data.colour
-              if (this.colourFlag === '1') {
-                  this.list10 = this.bimProductAttributesList.pa010.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.formLoading = false
-      }).catch(err => this.formLoading = false)
-          getOrderFiledMap('gobal').then(res => {
-              this.protrusionFlag = res.data.protrusion //list1
-              if (this.protrusionFlag === '1') {
-                  this.list11 = this.bimProductAttributesList.pa023.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.preloadFlag = res.data.preload
-              if (this.preloadFlag === '1') {
-                  this.list12 = this.bimProductAttributesList.pa024.map((item) => {
-                      return {
-                          label: item.name,
-                          name: item.name
-                      }
-                  })
-              }
-              this.formLoading = false
-        this.tableVisible=true
-      }).catch(err => this.formLoading = false)
+            await Promise.all([
+                getOrderFiledMap('sale').then(res => {
+                    console.log("产品属性", res);
+                    // sealingCoverTypingFlag list1  pa007
+                    // accuracyLevelFlag list2  pa006
+                    // vibrationLevelFlag list3 pa005
+                    // oilFlag list4 pa002
+                    // oilQuantityFlag list5 pa003
+                    // clearanceFlag list6 pa001
+                    // packagingMethodFlag list7 pa015
+                    // specialRequireFlag list8 pa016
+
+                    this.accuracyLevelFlag = res.data.accuracyLevel //list1
+                    if (this.accuracyLevelFlag === '1') {
+                        this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.clearanceFlag = res.data.clearance
+                    if (this.clearanceFlag === '1') {
+                        this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    console.log("this.list6", this.list6);
+                    this.oilFlag = res.data.oil
+                    if (this.oilFlag === '1') {
+                        this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.oilQuantityFlag = res.data.oilQuantity
+                    if (this.oilQuantityFlag === '1') {
+                        this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.packagingMethodFlag = res.data.packagingMethod
+                    if (this.packagingMethodFlag === '1') {
+                        this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+                    if (this.sealingCoverTypingFlag === '1') {
+                        this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.specialRequireFlag = res.data.specialRequire
+                    if (this.specialRequireFlag === '1') {
+                        this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.vibrationLevelFlag = res.data.vibrationLevel
+                    if (this.vibrationLevelFlag === '1') {
+                        this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                        console.log(this.list3);
+                    }
+                    this.materialFlag = res.data.material
+                    if (this.materialFlag === '1') {
+                        this.list9 = this.bimProductAttributesList.pa021.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.colourFlag = res.data.colour
+                    if (this.colourFlag === '1') {
+                        this.list10 = this.bimProductAttributesList.pa010.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.formLoading = false
+                }).catch(err => this.formLoading = false),
+                getOrderFiledMap('gobal').then(res => {
+                    this.protrusionFlag = res.data.protrusion //list1
+                    if (this.protrusionFlag === '1') {
+                        this.list11 = this.bimProductAttributesList.pa023.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.preloadFlag = res.data.preload
+                    if (this.preloadFlag === '1') {
+                        this.list12 = this.bimProductAttributesList.pa024.map((item) => {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        })
+                    }
+                    this.formLoading = false
+                    this.tableVisible=true
+                }).catch(err => this.formLoading = false)
+            ])
+
+
+
+
       },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7) 保持架材质（list9）、密封盖颜色(10)
-      getProductClassFun() {
-          // 产品属性
-          getbimProductAttributesListMap().then((res) => {
-              this.bimProductAttributesList = res.data
-          })
-          // 获取税率(数据字典)
-          getbimProductAttributes("585438081021126405").then(res => {
-              res.data.list.forEach(item => {
-                  item.taxRate = item.enCode.replace('%', '') * 1
-              })
-              this.taxRateList = res.data.list
-              console.log("税率", this.taxRateList);
-          })
+      async getProductClassFun() {
+        await Promise.all([
+            // 产品属性
+            getbimProductAttributesListMap().then((res) => {
+                this.bimProductAttributesList = res.data
+            }),
+            // 获取税率(数据字典)
+            getbimProductAttributes("585438081021126405").then(res => {
+                res.data.list.forEach(item => {
+                    item.taxRate = item.enCode.replace('%', '') * 1
+                })
+                this.taxRateList = res.data.list
+                console.log("税率", this.taxRateList);
+            })
+        ])
+
       },
-    getBimBusinessDetail() {
+     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
         configKey: 'fj_quotation'
       }
-      getBimBusinessDetail(obj).then(res => {
+     return getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
@@ -1553,7 +1567,7 @@ export default {
       productArr[index].totalTaxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 2)
       this.dataFormTwo.lines = productArr
     },
- 
+
     // 输入品名规格  查找对应得产品数据 按下enter键 自动新增一行空白数据
     searchDrawingNoProduct(data, idx) {
       console.log(data, idx);
@@ -1666,7 +1680,7 @@ export default {
             let lineArr = []
             if (res.data.list && res.data.list.length){
               lineArr = res.data.list.map(item=>{
-                return {...item, 
+                return {...item,
                   productDrawingNo: item.drawingNo,
                   productName:item.productsName || ''
                 }

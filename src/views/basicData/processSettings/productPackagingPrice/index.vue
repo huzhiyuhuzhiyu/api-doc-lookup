@@ -58,7 +58,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <div>
-            <el-button type="primary" @click="handleBatch">批量设置价格</el-button>
+            <el-button size="mini" type="primary" @click="handleBatch">批量设置价格</el-button>
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
@@ -83,9 +83,9 @@
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="productsName" label="产品名称" min-width="180" sortable="custom"
+          <el-table-column prop="productsName" label="产品名称" min-width="180" 
             v-if="isProductNameSwitch === '1'" />
-          <el-table-column prop="productsCode" label="产品编码" min-width="160" sortable="custom"></el-table-column>
+          <el-table-column prop="productsCode" label="产品编码" min-width="160" ></el-table-column>
           <el-table-column prop="packagingMethod" label="包装方式" min-width="180" sortable="custom" />
           <el-table-column prop="unitPrice" label="计价单价(元)" width="140" sortable="custom"></el-table-column>
         </JNPF-table>

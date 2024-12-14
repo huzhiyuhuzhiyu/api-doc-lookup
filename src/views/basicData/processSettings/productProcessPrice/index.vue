@@ -55,7 +55,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <div>
-            <el-button type="primary" @click="handleBatch">批量设置价格</el-button>
+            <el-button size="mini" type="primary" @click="handleBatch">批量设置价格</el-button>
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">

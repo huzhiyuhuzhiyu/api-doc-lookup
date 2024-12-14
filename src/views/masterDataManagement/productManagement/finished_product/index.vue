@@ -269,7 +269,7 @@
                 产品编码
                 <span class="required">*</span>
               </template>
-              <el-input v-model="quickForm.code" placeholder="请输入产品编码" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
+              <el-input v-model="quickForm.code" placeholder="请输入产品编码" :disabled="codeConfig.modifyFlag == true ? false : true
                 "></el-input>
             </el-form-item>
           </el-col>
@@ -354,7 +354,8 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList,
   getbimProductAttributes,
-  getbimProductsModelList
+  getbimProductsModelList,
+  getbimProductAttributesListMap
 } from '@/api/masterDataManagement/index'
 import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getCooperativeData } from '@/api/basicData/index'
@@ -368,6 +369,7 @@ export default {
     return {
       importProjectId: '',
       isProductNameSwitch: '',
+      bimProductAttributesObj: {},
       exportFormVisible: false,
       quickVisible: false,
       quickForm: {
@@ -817,233 +819,170 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    // 获取产品属性
     getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesObj = res.data
+        let sealingCoverTypingObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverTyping')
+        if (sealingCoverTypingObj) {
+          sealingCoverTypingObj.options = this.bimProductAttributesObj.pa007.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        }
+        this.superQueryJson.forEach((item) => {
+          if (item.prop === 'sealingCoverTyping') {
+            let arr = []
+            this.bimProductAttributesObj.pa007.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'accuracyLevel') {
+            let arr = []
+            this.bimProductAttributesObj.pa006.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'vibrationLevel') {
+            let arr = []
+            this.bimProductAttributesObj.pa005.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'oil') {
+            let arr = []
+            this.bimProductAttributesObj.pa002.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'oilQuantity') {
+            let arr = []
+            this.bimProductAttributesObj.pa003.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'clearance') {
+            let arr = []
+            this.bimProductAttributesObj.pa001.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'packagingMethod') {
+            let arr = []
+            this.bimProductAttributesObj.pa015.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'brand') {
+            let arr = []
+            this.bimProductAttributesObj.pa011.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'structureType') {
+            let arr = []
+            this.bimProductAttributesObj.pa013.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'sealingCoverStructure') {
+            let arr = []
+            this.bimProductAttributesObj.pa012.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'noise') {
+            let arr = []
+            this.bimProductAttributesObj.pa014.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'holder') {
+            let arr = []
+            this.bimProductAttributesObj.pa004.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'colour') {
+            let arr = []
+            this.bimProductAttributesObj.pa010.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          } else if (item.prop === 'aperture') {
+            let arr = []
+            this.bimProductAttributesObj.pa009.forEach((item) => {
+              let obj = {
+                label: item.name,
+                value: item.name
+              }
+              arr.push(obj)
+            })
+            item.options = arr
+          }
+        })
+      })
+      // 单位
       let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa007',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj1).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverTyping')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa006',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj2).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'accuracyLevel')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa005',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj3).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'vibrationLevel')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa002',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj4).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'oil')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa003',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj5).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'oilQuantity')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa001',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj6).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'clearance')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa015',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj7).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'packagingMethod')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj8 = {
         pageNum: 1,
         pageSize: 100
       }
-      getUnitData(obj8).then((res) => {
+      getUnitData(obj1).then((res) => {
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -1053,18 +992,19 @@ export default {
           arr.push(obj)
         })
         this.unitOptions = arr
-        // let oilObj = this.superQueryJson.find((item) => item.prop === 'mainUnit')
+
         this.superQueryJson.forEach((tc) => {
           if (tc.prop === 'mainUnit') {
             tc.options = arr
           }
         })
       })
-      let obj9 = {
+      // 型号
+      let obj2 = {
         pageNum: -1,
         pageSize: 20
       }
-      getbimProductsModelList(obj9).then((res) => {
+      getbimProductsModelList(obj2).then((res) => {
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -1076,111 +1016,16 @@ export default {
         let modelObj = this.superQueryJson.find((item) => item.prop === 'model')
 
         if (modelObj) {
-          // 将options赋值为5
           modelObj.options = arr
         }
       })
-
-      let obj10 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa011',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj10).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let brandObj = this.superQueryJson.find((item) => item.prop === 'brand')
-
-        if (brandObj) {
-          // 将options赋值为5
-          brandObj.options = arr
-        }
-      })
-
-      let obj11 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa013',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj11).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'structureType')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-      let obj12 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa012',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj12).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverStructure')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-      let obj13 = {
+      // 钢球厂商
+      let obj3 = {
         pageNum: -1,
         pageSize: 20,
         type: 'supplier'
       }
-      getCooperativeData(obj13).then((res) => {
+      getCooperativeData(obj3).then((res) => {
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -1192,150 +1037,15 @@ export default {
         let tcObj = this.superQueryJson.find((item) => item.prop === 'steelBallManufacturer')
 
         if (tcObj) {
-          // 将options赋值为5
           tcObj.options = arr
         }
-      })
-      let obj14 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa014',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj14).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'noise')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-      let obj15 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa004',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj15).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'holder')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-
-      let obj16 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa010',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj16).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'colour')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-
-      let obj17 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa009',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj17).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'aperture')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-
-      // 获取税率(数据字典)
-      getbimProductAttributes('585438081021126405').then((res) => {
-        res.data.list.forEach((item) => {
-          item.taxRate = item.enCode.replace('%', '') * 1
-        })
-        this.taxRateList = res.data.list
       })
       // 所属项目
-      let obj18 = {
+      let obj4 = {
         pageNum: -1,
         pageSize: -1
       }
-      getProjectList(obj18).then((res) => {
+      getProjectList(obj4).then((res) => {
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -1345,15 +1055,22 @@ export default {
           arr.push(obj)
         })
         this.projectIdOptions = res.data.records
-        this.projectIdOptions = this.projectIdOptions.filter(item => item.id !== '1')
+        this.projectIdOptions = this.projectIdOptions.filter((item) => item.id !== '1')
         console.log(this.projectIdOptions, 'this.projectIdOptions')
         let tcObj = this.superQueryJson.find((item) => item.prop === 'projectName')
 
         if (tcObj) {
-          // 将options赋值为5
           tcObj.options = arr
-          tcObj.options = tcObj.options.filter(item => item.id !== '1')
+          tcObj.options = tcObj.options.filter((item) => item.id !== '1')
         }
+      })
+
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
       })
     },
     changeLeft() {
@@ -1619,9 +1336,9 @@ export default {
     },
     saveSubmit() {
       if (this.isProjectSwitch === '1') {
-        if (!this.importProjectId) return this.$message.error('请选择所属项目');
+        if (!this.importProjectId) return this.$message.error('请选择所属项目')
       }
-      if (!this.file) return this.$message.error('请上传文件');
+      if (!this.file) return this.$message.error('请上传文件')
       this.UploadProduct(this.file)
     },
     // 提示

@@ -9,7 +9,7 @@ import chooseProductParams from "@/views/esop/fileUpload/workinginstruction/util
 import BasicInfoMixin from "@/views/esop/fileUpload/workinginstruction/component/BasicInfoMixin";
 import CheckVersionCountDialog from "@/views/esop/fileUpload/workinginstruction/component/CheckVersionCountDialog .vue";
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
-import {getcategoryTree, getCooperativeData, getPartnerOrProductData} from '@/api/basicData';
+import {getcategoryTree, getCooperativeData, getOrderFiledMap, getPartnerOrProductData} from '@/api/basicData';
 
 function getOriginActiveNames(){
     return ['basicInfo']
@@ -310,13 +310,29 @@ export default {
                     return false
                 }
 
-              const [projectNameFlag,abProjectFlag]=await Promise.all(
+              const [projectNameFlag,abProjectFlag,filedFlags]=await Promise.all(
                   [
                       this.jnpf.getMainUnitFun('product', 'enable_productName'),
                       this.jnpf.getMainUnitFun( 'system', 'project'),
+                      this.getOrderFiledMap()
                   ])
                 const nameFlag = projectNameFlag === '1'
                 const projectFlag = abProjectFlag === '1'
+
+                const {
+                    sealingCoverTypingFlag,
+                    accuracyLevelFlag,
+                    vibrationLevelFlag,
+                    oilFlag,
+                    oilQuantityFlag,
+                    clearanceFlag,
+                    packagingMethodFlag,
+                    specialRequireFlag,
+                    colourFlag,
+                    materialFlag,
+                    protrusionFlag,
+                    preloadFlag,
+                } = filedFlags
                 this.customerProductListRequestObj ={
                     partnerType: "customer",
                     orderItems: [{
@@ -339,6 +355,7 @@ export default {
                      { prop: 'productName', label: '产品名称',type: 'input',visible:nameFlag },
                      { prop: 'drawingNo', label: '品名规格',type: 'input' }
                  ])
+
                 this.customerProductProductTableItems = filterArr( [
                         { prop: 'partnerName', label: '客户名称', fixed: 'left' },
                         { prop: 'partnerCode', label: '客户编码', fixed: 'left' },
@@ -351,13 +368,18 @@ export default {
                         { prop: 'excludingTaxPrice', label: '销售单价(不含税)',width:160 },
                         { prop: 'dateOrderStart', label: '有效日期起' ,width:160},
                         { prop: 'dateOrderStop', label: '有效日期止' ,width:160},
-                        {prop: 'sealingCoverTyping', label: "打字内容"},
-                        {prop: 'accuracyLevel', label: "精度等级"},
-                        {prop: 'vibrationLevel', label: "振动等级"},
-                        {prop: 'oil', label: "油脂"},
-                        {prop: 'oilQuantity', label: "油脂量"},
-                        {prop: 'clearance', label: "游隙"},
-                        {prop: 'packagingMethod', label: "包装方式"},
+                        {prop: 'sealingCoverTyping', label: "打字内容",visible: sealingCoverTypingFlag},
+                        {prop: 'accuracyLevel', label: "精度等级",visible: accuracyLevelFlag},
+                        {prop: 'vibrationLevel', label: "振动等级",visible: vibrationLevelFlag},
+                        {prop: 'oil', label: "油脂",visible: oilFlag},
+                        {prop: 'oilQuantity', label: "油脂量",visible: oilQuantityFlag},
+                        {prop: 'clearance', label: "游隙",visible: clearanceFlag},
+                        {prop: 'packagingMethod', label: "包装方式",visible: packagingMethodFlag},
+                        {prop: 'specialRequire', label: "特殊要求",visible: specialRequireFlag},
+                        {prop: 'material', label: "保持架材质",visible: materialFlag},
+                        {prop: 'colour', label: "密封盖颜色",visible: colourFlag},
+                        {prop: 'protrusion', label: "凸出量",visible: protrusionFlag},
+                        {prop: 'preload', label: "预负荷",visible: preloadFlag},
                         {prop: 'specialRequire', label: "特殊要求"},
                         {prop: 'remark', label: "备注"},
                         {prop: 'createTime', label: '创建时间'},
@@ -365,6 +387,27 @@ export default {
 
             }
             return true
+        },
+       async getOrderFiledMap() {
+         const [{data:data1},{data:data2}] =   await Promise.all([
+                getOrderFiledMap('sale'),
+                getOrderFiledMap('gobal')
+            ])
+
+        return {
+                sealingCoverTypingFlag : !!+data1.sealingCoverTyping,
+                accuracyLevelFlag : !!+data1.accuracyLevel,
+                vibrationLevelFlag : !!+data1.vibrationLevel,
+                oilFlag : !!+data1.oil,
+                oilQuantityFlag : !!+data1.oilQuantity,
+                clearanceFlag : !!+data1.clearance,
+                packagingMethodFlag : !!+data1.packagingMethod,
+                specialRequireFlag : !!+data1.specialRequire,
+                colourFlag : !!+data1.colour,
+                materialFlag : !!+data1.material,
+                protrusionFlag : !!+data2.protrusion,
+                preloadFlag : !!+data2.preload,
+            }
         },
         getCooperativeData,
         submitCustomerProduct(selectedIds, [{all:{id,code,drawingNo,productCategoryId,productCategoryName,routingId,routingName}}]){

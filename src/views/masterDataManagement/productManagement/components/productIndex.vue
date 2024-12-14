@@ -238,7 +238,7 @@
                 产品编码
                 <span class="required">*</span>
               </template>
-              <el-input v-model="quickForm.code" placeholder="请输入产品编码" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
+              <el-input v-model="quickForm.code" placeholder="请输入产品编码" :disabled="codeConfig.modifyFlag == true ? false : true
                 "></el-input>
             </el-form-item>
           </el-col>

@@ -658,6 +658,8 @@ export default {
       if (flag) return this.$message.error('只能选择相同所属项目的工艺数据')
       this.projectId = this.selectedData[0].projectId
       this.getProcessList()
+      this.dataForm.routingId = ''
+      this.routingLineList = []
       this.analyseDialog = true
     },
     hasDifferentProjectId(arr) {

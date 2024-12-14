@@ -652,6 +652,7 @@ export default {
       this.projectId = this.selectedData[0].projectId
       console.log(this.selectedData, 'selectedData')
       this.getProcessList()
+      this.dataForm.routingId = ''
       this.routingLineList = []
       this.analyseDialog = true
     },

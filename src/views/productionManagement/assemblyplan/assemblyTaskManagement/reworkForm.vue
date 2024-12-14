@@ -76,7 +76,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag==1">
+                      <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                             style="width: 100%;">
@@ -85,7 +85,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"  v-if="accuracyLevelFlag==1">
+                      <el-col :sm="6" :xs="24" v-if="accuracyLevelFlag == 1">
                         <el-form-item label="精度等级" prop="accuracyLevel">
                           <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -93,7 +93,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"  v-if="vibrationLevelFlag==1">
+                      <el-col :sm="6" :xs="24" v-if="vibrationLevelFlag == 1">
                         <el-form-item label="振动等级" prop="vibrationLevel">
                           <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
                             style="width: 100%;">
@@ -102,7 +102,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="oilFlag==1">
+                      <el-col :sm="6" :xs="24" v-if="oilFlag == 1">
                         <el-form-item label="油脂" prop="oil">
                           <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -110,7 +110,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"  v-if="oilQuantityFlag==1">
+                      <el-col :sm="6" :xs="24" v-if="oilQuantityFlag == 1">
                         <el-form-item label="油脂量" prop="oilQuantity">
                           <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -118,7 +118,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="clearanceFlag==1">
+                      <el-col :sm="6" :xs="24" v-if="clearanceFlag == 1">
                         <el-form-item label="游隙" prop="clearance">
                           <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -127,7 +127,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="包装方式" v-if="packagingMethodFlag==1">
+                        <el-form-item label="包装方式" v-if="packagingMethodFlag == 1">
                           <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
                             style="width: 100%;">
                             <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
@@ -136,7 +136,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="特殊要求" v-if="specialRequireFlag==1">
+                        <el-form-item label="特殊要求" v-if="specialRequireFlag == 1">
                           <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
                             style="width: 100%;">
                             <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
@@ -222,6 +222,14 @@
                               "请选择设备" }}
                           </el-button>
                         </template>
+                      </el-table-column>
+                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                        v-if="isTechnicalSwitch === '1'">
+
+                      </el-table-column>
+                      <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                        v-if="isCheckingSwitch === '1'">
+
                       </el-table-column>
                       <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
                         <template slot-scope="scope">
@@ -538,6 +546,14 @@
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
+            <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+              v-if="isTechnicalSwitch === '1'">
+
+            </el-table-column>
+            <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+              v-if="isCheckingSwitch === '1'">
+
+            </el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
             <el-table-column prop="productionQuantity" label="生产数量" width="100" />
@@ -585,9 +601,9 @@ import RoutingForm from "./RoutingForm.vue"
 import SelectProductForm from './selectProductForm.vue'
 import SelectProcrssForm from './processForm.vue'
 import CollectProductForm from './CollectProductForm.vue'
-import { getbimProductAttributesList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
-import { getBimBusinessSwitchConfigList,getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -705,11 +721,11 @@ export default {
         drawingNo: "",
         productionLineId: "",
         projectName: "",
-        pieceworkFlag:false,
+        pieceworkFlag: false,
       },
-      pieceworkFlagList:[
-        {label:"否",value:false,},
-        {label:"是",value:true,},
+      pieceworkFlagList: [
+        { label: "否", value: false, },
+        { label: "是", value: true, },
       ],
       dataFormTwo: {
         data: [],
@@ -792,6 +808,8 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
+      isTechnicalSwitch: "",
+      isCheckingSwitch: "",
     }
   },
   async created() {
@@ -799,6 +817,8 @@ export default {
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
   },
   computed: {
@@ -828,10 +848,20 @@ export default {
   mounted() {
   },
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       // 产品属性
-    return  getbimProductAttributesListMap().then((res) => {
+      return getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
     },
@@ -921,7 +951,7 @@ export default {
           })
           console.log(this.list3);
         }
-     
+
       })
     },
     async getProductNameSwitch(code, type) {
@@ -1395,7 +1425,7 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.$set(this.dataForm, 'planDate', [])
-      this.$refs.dataForm.clearValidate('planDate'); 
+      this.$refs.dataForm.clearValidate('planDate');
       await this.getProjectSwitch('system', 'project')
       this.getPickingConfig()
       if (btnType == 'edit') {
@@ -1531,17 +1561,21 @@ export default {
     margin-bottom: 0 !important;
   }
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
+
 .required {
   color: red;
   margin-right: 4px;
 }
+
 ::v-deep .el-tabs__header {
   padding: 0 !important;
   padding-bottom: 10px !important;
 }
+
 ::v-deep .el-tabs__header {
   padding-left: 0 !important;
 }
@@ -1551,6 +1585,7 @@ export default {
   height: auto !important;
   padding: 0;
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
@@ -1560,18 +1595,23 @@ export default {
   color: red;
   margin-right: 4px;
 }
+
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;
 }
+
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 5px 0 10px !important;
 }
+
 .el-button span {
   font-size: 14px !important;
 }
+
 .pagination-container {
   background-color: #f5f7fa;
 }
+
 ::v-deep .el-input-group__append {
   background-color: #48a2ff;
   color: #fff;
@@ -1579,52 +1619,67 @@ export default {
 </style>
 <style lang="scss" scoped>
 $footerPadding: '10px';
+
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
   padding: 0;
 }
+
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
   padding: 0 10px !important;
 }
+
 ::v-deep .el-dialog__body {
   margin-bottom: 10px;
 }
+
 ::v-deep .el-dialog__footer {
   padding: 0 20px 10px;
 }
+
 ::v-deep .even-row,
 ::v-deep .odd-row {
   cursor: pointer;
 }
+
 .killPadding {
   padding: 0;
 }
+
 .killPaddingLeft {
   padding-left: 0 !important;
 }
+
 .pagination-container {
   background-color: #f5f7fa;
   margin-top: 0px;
   padding: 2px 10px 2px 0;
 }
+
 ::v-deep .JNPF-common-search-box.noSearchList {
   padding: 3px 0;
 }
+
 ::v-deep .has-gutter .el-table__cell.gutter {
   border-bottom: 1px solid #ebeef5;
   background-color: #f5f7fa;
 }
+
 .JNPF-common-search-box {
   padding: 8px 0px 0;
 }
+
 .JNPF-preview-main .main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }
+
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1637,6 +1692,7 @@ $footerPadding: '10px';
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
+
 ::v-deep .el-collapse-item__wrap {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
@@ -1644,12 +1700,15 @@ $footerPadding: '10px';
   padding: 0px;
   border-top: none !important;
 }
+
 .orderInfo ::v-deep.el-collapse-item__wrap {
   padding: 0 10px;
 }
+
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
+
 .import_t {
   font-size: 22px;
   color: rgb(103, 194, 58);
@@ -1658,6 +1717,7 @@ $footerPadding: '10px';
   display: inline-block;
   margin-left: 20px;
 }
+
 .import_b {
   font-size: 18px;
   /* color: #67c23a; */
@@ -1665,31 +1725,40 @@ $footerPadding: '10px';
   margin-top: 43px;
   display: inline-block;
 }
+
 .orderInfo {
   margin-top: 5px;
   border-top: 0;
 }
+
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }
+
 ::v-deep.routingProRes .el-dialog__body {
   height: 500px;
 }
+
 ::v-deep .applySelect .el-icon-arrow-up:before {
   content: "";
 }
+
 .underline-button {
   text-decoration: underline;
 }
+
 .personBox p {
   text-align: center;
 }
+
 .personBox:nth-child(n + 6) {
   margin-top: 12px;
 }
+
 ::v-deep .elbutton span {
   font-size: 14px !important;
 }
+
 .personBox {
   border: 1px solid #dcdfe6;
   background-color: #f5f7fa;
@@ -1698,10 +1767,12 @@ $footerPadding: '10px';
   height: 150px;
   border-radius: 5px;
 }
+
 .active {
   background-color: #5d9bd5;
   color: #fff;
 }
+
 ::v-deep .el-range-editor {
   height: 34px !important;
 }

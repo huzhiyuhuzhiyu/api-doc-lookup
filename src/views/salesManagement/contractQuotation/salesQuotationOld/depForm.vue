@@ -928,6 +928,14 @@ export default {
         totalTaxAmount: "",
         mainUnit: "",
         taxRate: "",
+        sealingCoverTyping: "",
+        accuracyLevel: "",
+        vibrationLevel: "",
+        oil: "",
+        oilQuantity: "",
+        clearance: "",
+        packagingMethod: "",
+        specialRequire: "",
         remark: "",
         remark2: ""
       },
@@ -1614,7 +1622,7 @@ export default {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
           if (res.data.length > 0) {
-            this.dataFormTwo.lines = res.data
+            this.dataFormTwo.lines = res.data.list
           }
           this.formLoading = false
           this.loadingText = ''

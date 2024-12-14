@@ -980,6 +980,7 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
+       this.allocationFlag = data[0].locationStatus !== 'disabled'
       this.dataForm.warehouseId = data[0].id
       this.dataForm.projectId = data[0].all.projectId
       this.dataForm.warehouseName = data[0].name

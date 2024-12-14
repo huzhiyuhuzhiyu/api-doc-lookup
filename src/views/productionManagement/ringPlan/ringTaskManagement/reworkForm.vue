@@ -46,7 +46,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" >
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -154,6 +154,14 @@
                               "请选择设备" }}
                           </el-button>
                         </template>
+                      </el-table-column>
+                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                        v-if="isTechnicalSwitch === '1'">
+
+                      </el-table-column>
+                      <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                        v-if="isCheckingSwitch === '1'">
+
                       </el-table-column>
                       <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
                         <template slot-scope="scope">
@@ -452,6 +460,14 @@
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
+            <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+              v-if="isTechnicalSwitch === '1'">
+
+            </el-table-column>
+            <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+              v-if="isCheckingSwitch === '1'">
+
+            </el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
             <el-table-column prop="productionQuantity" label="生产数量" width="100" />
@@ -500,7 +516,7 @@ import SelectProductForm from './selectProductForm.vue'
 import SelectProcrssForm from './processForm.vue'
 import CollectProductForm from './CollectProductForm.vue'
 import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -688,6 +704,8 @@ export default {
       naturalResourcesFlag: true,
       isProjectSwitch: "",
       isProductNameSwitch:"",
+      isTechnicalSwitch: "",
+      isCheckingSwitch: "",
     }
   },
   computed: {
@@ -717,11 +735,23 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
   },
   mounted() {
   },
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
@@ -983,7 +1013,7 @@ export default {
         console.log(666);
         this.dataFormTwo.data = []
       }
-      detailProcess(data.id).then(res => {
+      detailResourceProcess(this.dataForm.id,this.dataForm.routingId).then(res => { 
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
       })
     },
@@ -1499,10 +1529,5 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-::v-deep .el-range-editor {
-  height: 34px !important;
-}
-::v-deep .el-range-editor {
-  height: 34px !important;
-}
+ 
 </style>

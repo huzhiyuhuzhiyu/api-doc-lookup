@@ -94,6 +94,8 @@
               <div v-if="scope.row.businessType == 'outbound_receive_material'">直接领料出库</div>
               <div v-if="scope.row.businessType == 'inbound_production'">生产工单入库</div>
               <div v-if="scope.row.businessType == 'inbound_order_production'">生产产品入库</div>
+              <div v-if="scope.row.businessType == 'inbound_flip'">翻库入库</div>
+
               <div v-if="scope.row.businessType == 'outbound_use'">资产领用</div>
               <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
               <div v-if="scope.row.businessType == 'inbound_taking_adjust'">盘点调整入库</div>
@@ -327,8 +329,10 @@ export default {
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "生产产品入库", value: "inbound_order_production" },
         { label: "生产工单入库", value: "inbound_production" },
+        { label: "翻库入库", value: "inbound_flip" }, 
+
         { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
+        // { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
@@ -396,6 +400,8 @@ export default {
             { label: "生产退料", value: "inbound_return_materials" },
             { label: "生产产品入库", value: "inbound_order_production" },
             { label: "生产工单入库", value: "inbound_production" },
+            { label: "翻库入库", value: "inbound_flip" }, 
+
             { label: "外协发料", value: "outbound_external_send" },
             // { label: "外协退料", value: "inbound_external_return" },
             { label: "外协收货", value: "inbound_external" },

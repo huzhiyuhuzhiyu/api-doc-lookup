@@ -765,7 +765,7 @@
           <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
             v-if="vibrationLevelFlag == 1" />
           <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+          <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" /> -->
           <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
           <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
             v-if="packagingMethodFlag == 1" />
@@ -926,7 +926,7 @@
           <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
             v-if="vibrationLevelFlag == 1" />
           <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+          <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" /> -->
           <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
           <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
             v-if="packagingMethodFlag == 1" />
@@ -1210,7 +1210,7 @@
           <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
             v-if="vibrationLevelFlag == 1" />
           <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+          <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" /> -->
           <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
           <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
             v-if="packagingMethodFlag == 1" />
@@ -1233,7 +1233,7 @@
           <el-table-column prop="orderNo" label="任务单号" width="180" />
           <el-table-column prop="orderType" label="任务类型" width="120">
             <template slot-scope="scope">
-              <div v-for="(item, index) in orderTypeList" :key="index">
+              <div v-for="(item, index) in filpOrderTypeList" :key="index">
                 <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
               </div>
             </template>
@@ -1254,7 +1254,7 @@
           <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
             v-if="vibrationLevelFlag == 1" />
           <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+          <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" /> -->
           <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
           <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
             v-if="packagingMethodFlag == 1" />

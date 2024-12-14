@@ -222,6 +222,14 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
+                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                    v-if="isTechnicalSwitch === '1'">
+
+                  </el-table-column>
+                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                    v-if="isCheckingSwitch === '1'">
+
+                  </el-table-column>
                   <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -491,7 +499,7 @@ import {
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import SelectProductForm from './selectProductForm.vue'
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
@@ -618,6 +626,8 @@ export default {
       isProjectSwitch: "",
       projectIdData: [],
       isProductNameSwitch:"",
+      isTechnicalSwitch: "",
+      isCheckingSwitch: "",
     }
   },
   computed: {
@@ -651,10 +661,22 @@ export default {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
   },
 
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
@@ -682,7 +704,8 @@ export default {
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
       if(!data.routingId) return
-      this.getRoutingDetail(data.routingId)
+      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId)
+
     },
 
 
@@ -851,7 +874,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId) 
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1077,8 +1100,8 @@ export default {
     },
 
     // 获取工艺详情
-    getRoutingDetail(id) {
-      detailProcess(id).then(res => {
+    getRoutingDetail(productsId,id) {
+      detailResourceProcess(productsId,id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {

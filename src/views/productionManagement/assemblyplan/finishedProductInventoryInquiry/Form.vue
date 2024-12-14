@@ -535,7 +535,7 @@ import {
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
@@ -998,7 +998,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1194,8 +1194,8 @@ export default {
       });
     },
     // 获取工艺详情
-    getRoutingDetail(id) {
-      detailProcess(id).then(res => {
+    getRoutingDetail(productsId,id) {
+      detailResourceProcess(productsId,id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
@@ -1223,15 +1223,25 @@ export default {
     init(data,btnType) {
       console.log(data);
       this.getProductionLineListFun()
-      this.fetchData("PROD")
+      this.dataForm=data[0]
+      this.$set(this.dataForm, 'orderNo', '')
+      this.$set(data[0], 'productionQuantity', data[0].inventoryQuantity )
+      this.$set(this.dataForm, 'planDate', [])
+      this.$set(this.dataForm, 'routingId', "")
+      this.$set(this.dataForm, 'routingName', "")
+      this.$refs.dataForm.clearValidate('planDate');
+      this.$refs.dataForm.clearValidate('routingName');
+
+      this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.dataForm.productsName=data[0].productName
       this.dataForm.productsDrawingNo=data[0].productDrawingNo
       this.dataForm.projectId=data[0].projectId
       this.dataForm.mainUnit=data[0].mainUnit
-      this.dataForm.productionQuantity=data[0].inventoryQuantity 
+      // this.dataForm.productionQuantity=data[0].inventoryQuantity 
       this.dataForm.stockInventoryLineId=data[0].id 
-      this.$set(this.dataForm, 'orderType', 'flipping')
       this.dataForm.productsId=data[0].productsId
+      this.$set(this.dataForm, 'orderType', 'flipping')
+      this.fetchData("PROD")
     },
     async fetchData(code) {
       try {

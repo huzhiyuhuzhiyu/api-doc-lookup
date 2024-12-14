@@ -32,22 +32,32 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectProcess"  :checkSelectable="dispurchaseData"
-            @row-click="handleRowClick" hasC ref="processRef">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectProcess" v-if="showFlag"
+            :checkSelectable="dispurchaseData" @row-click="handleRowClick" hasC ref="processRef">
             <el-table-column prop="processName" label="工序名称"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" />
-            <el-table-column prop="processType" label="工序类型" >
+            <el-table-column prop="processType" label="工序类型">
               <template slot-scope="scope">
                 <div v-if="scope.row.processType == 'normal'">正常工序</div>
                 <div v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
                 <div v-if="scope.row.processType == 'vibrate'">测震工序</div>
               </template>
             </el-table-column>
+
+
             <el-table-column prop="processingType" label="加工类型" width="180">
               <template slot-scope="scope">
                 <div v-if="scope.row.processingType == 'self_produced'">自制</div>
                 <div v-if="scope.row.processingType == 'external_production'">外协</div>
               </template>
+            </el-table-column>
+            <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+              v-if="isTechnicalSwitch === '1'">
+
+            </el-table-column>
+            <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+              v-if="isCheckingSwitch === '1'">
+
             </el-table-column>
             <el-table-column prop="workOrderFlag" label="是否生成工单" width="180">
               <template slot-scope="scope">
@@ -70,7 +80,7 @@
   </el-dialog>
 </template>
 <script>
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 export default {
   data() {
     return {
@@ -88,108 +98,75 @@ export default {
         },],
 
       },
-      selectArr:[],
+      selectArr: [],
       listLoading: false,
       total: 0,
       tableDataList: [],
       id: "",
-      processData:[]
+      processData: [],
+      isTechnicalSwitch: "",
+      isCheckingSwitch: "",
+      showFlag:false,
     }
   },
+  async created () {
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
+  },
   methods: {
-    dispurchaseData(row) {
-      return row.workOrderFlag;
-    }, 
-    init(id,processData) {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.showFlag=true
+      } catch (error) { }
+    },
+    init(id, processData) {
+      console.log("init", id, processData);
       this.customerVisible = true
       this.id = id
-      this.getProcessList(id)
-      this.processData=processData
+      this.getProcessList(processData.id, id)
+      this.processData = processData
     },
     selectProcess(val) {
       this.selectArr = val
     },
+    dispurchaseData(row) {
+      return row.workOrderFlag;
+    },
     submitFun() {
       if (!this.selectArr.length) return this.$message.error("请先选择工序")
-        this.selectArr.sort(function (a, b) {
-          return a.index - b.index;
-        });
-    
-        if (this.processData.length > 0) {
-          this.$confirm("此操作将更新工单表格数据, 是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-          }).then(() => { 
-            this.processDialog = false;
-            this.selectArr.forEach((item, index) => {
-              item.workOrderQuantity = this.reworkForm.productionQuantity;
-              item.planEndDate = this.reworkForm.planEndDate;
-              item.planStartDate = this.reworkForm.planStartDate;
-              item.firstFlag = false;
-              item.lastFlag = false;
-              if (index == 0) {
-                item.firstFlag = true;
-                item.lastFlag = false;
-              } else if (index == this.selectArr.length - 1) {
-                item.firstFlag = false;
-                item.lastFlag = true;
-                item.stockFlag = true;
-                if (this.selectArr[index].processingType !== "self_produced") {
-                  item.reportFlag = false;
-                } else {
-                  item.reportFlag = true;
-                }
-              } else {
-                item.firstFlag = false;
-                item.lastFlag = false;
-              }
-              if (item.processingType !== "self_produced") {
-                item.stockFlag = true
-              }
-          
-              item.orderType = "rework";
-              console.log("234", item.processingType);
-              if (item.processingType !== "self_produced" && this.selectArr.length > 1) {
-                console.log(333, this.selectArr, index);
-                if (item.firstFlag) {
-                  this.selectArr[index].stockFlag = true;
-                }
-                this.selectArr[index - 1].stockFlag = true;
-                this.selectArr[index - 1].reportFlag = true;
+      this.selectArr.sort(function (a, b) {
+        return a.index - b.index;
+      });
 
-              }
-
-            });
-            if (this.selectArr.length == 1) {
-              this.selectArr[0].firstFlag = true;
-              this.selectArr[0].lastFlag = true;
-              this.selectArr[0].stockFlag = true;
-              console.log("345", this.selectArr[0]);
-              if (this.selectArr[0].processingType !== "self_produced") {
-                this.selectArr[0].reportFlag = false;
-              } else {
-                this.selectArr[0].reportFlag = true;
-
-              }
-            }
-            setTimeout(() => {
-              this.$emit('selectProcess',this.selectArr)
-            }, 500);
-          });
-        } else {
+      if (this.processData.length > 0) {
+        this.$confirm("此操作将更新工单表格数据, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(() => {
           this.processDialog = false;
           this.selectArr.forEach((item, index) => {
-         
+            item.workOrderQuantity = this.reworkForm.productionQuantity;
+            item.planEndDate = this.reworkForm.planEndDate;
+            item.planStartDate = this.reworkForm.planStartDate;
             item.firstFlag = false;
             item.lastFlag = false;
             if (index == 0) {
               item.firstFlag = true;
               item.lastFlag = false;
+              this.$set(this.selectArr[index], 'lastFlag', false)
+              this.$set(this.selectArr[index], 'firstFlag', true)
             } else if (index == this.selectArr.length - 1) {
-              item.firstFlag = false;
-              item.lastFlag = true;
-              item.stockFlag = true;
+
+              this.$set(this.selectArr[index], 'firstFlag', false)
+              this.$set(this.selectArr[index], 'lastFlag', true)
+              this.$set(this.selectArr[index], 'stockFlag', true)
               if (this.selectArr[index].processingType !== "self_produced") {
                 item.reportFlag = false;
               } else {
@@ -202,20 +179,26 @@ export default {
             if (item.processingType !== "self_produced") {
               item.stockFlag = true
             }
-           
+
             item.orderType = "rework";
+            console.log("234", item.processingType);
             if (item.processingType !== "self_produced" && this.selectArr.length > 1) {
+              console.log(333, this.selectArr, index);
               if (item.firstFlag) {
                 this.selectArr[index].stockFlag = true;
               }
+              console.log(666, index);
               this.selectArr[index - 1].stockFlag = true;
               this.selectArr[index - 1].reportFlag = true;
+
             }
+
           });
           if (this.selectArr.length == 1) {
             this.selectArr[0].firstFlag = true;
             this.selectArr[0].lastFlag = true;
             this.selectArr[0].stockFlag = true;
+            console.log("345", this.selectArr[0]);
             if (this.selectArr[0].processingType !== "self_produced") {
               this.selectArr[0].reportFlag = false;
             } else {
@@ -223,12 +206,64 @@ export default {
 
             }
           }
-
-          console.log("selectArr", this.selectArr);
           setTimeout(() => {
-              this.$emit('selectProcess',this.selectArr) 
+            this.$emit('selectProcess', this.selectArr)
           }, 500);
+        });
+      } else {
+        this.processDialog = false;
+        this.selectArr.forEach((item, index) => {
+
+          item.firstFlag = false;
+          item.lastFlag = false;
+          if (index == 0) {
+            item.firstFlag = true;
+            item.lastFlag = false;
+          } else if (index == this.selectArr.length - 1) {
+            item.firstFlag = false;
+            item.lastFlag = true;
+            item.stockFlag = true;
+            if (this.selectArr[index].processingType !== "self_produced") {
+              item.reportFlag = false;
+            } else {
+              item.reportFlag = true;
+            }
+          } else {
+            item.firstFlag = false;
+            item.lastFlag = false;
+          }
+          if (item.processingType !== "self_produced") {
+            this.$set(item, 'stockFlag', true)
+          }
+
+          item.orderType = "rework";
+          if (item.processingType !== "self_produced" && this.selectArr.length > 1) {
+            if (item.firstFlag) {
+              this.selectArr[index].stockFlag = true;
+            } else {
+
+              this.selectArr[index - 1].stockFlag = true;
+              this.selectArr[index - 1].reportFlag = true;
+            }
+          }
+        });
+        if (this.selectArr.length == 1) {
+          this.selectArr[0].firstFlag = true;
+          this.selectArr[0].lastFlag = true;
+          this.selectArr[0].stockFlag = true;
+          if (this.selectArr[0].processingType !== "self_produced") {
+            this.selectArr[0].reportFlag = false;
+          } else {
+            this.selectArr[0].reportFlag = true;
+
+          }
         }
+
+        console.log("selectArr", this.selectArr);
+        setTimeout(() => {
+          this.$emit('selectProcess', this.selectArr)
+        }, 500);
+      }
       this.$emit("selectProcess", this.selectArr)
       this.customerVisible = false
     },
@@ -239,12 +274,13 @@ export default {
       // 如果当前行未选中，则调用toggleRowSelection方法选中该行
     },
 
-    getProcessList(id) {
+    getProcessList(productsId, id) {
       this.listLoading = true
-      detailProcess(id).then(res => {
+      detailResourceProcess(productsId, id).then(res => {
         this.listLoading = false
         console.log("工艺详情", res);
-        let linesData = res.data.routingLineList.filter(item => item.workOrderFlag).sort((a, b) => a.sort - b.sort)
+        let linesData = res.data.routingLineList
+        console.log(linesData);
         linesData.forEach(item => {
           item.selectFlag = false
           item.personId = "";
@@ -291,7 +327,7 @@ export default {
           column: ""
         },],
       }
-      this.init()
+      this.search()
     },
   }
 }

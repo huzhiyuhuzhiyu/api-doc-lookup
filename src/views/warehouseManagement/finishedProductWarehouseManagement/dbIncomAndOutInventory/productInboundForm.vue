@@ -624,7 +624,7 @@ export default {
       codeConfig: {},//单号配置信息(单据规则)
       dataForm: {  //表单信息
         orderNo: "",
-        businessType: "inbound_order_production",
+        businessType: "inbound_flip",
         warehouseName: "",
         warehouseId: "",
         documentType: "",
@@ -636,7 +636,7 @@ export default {
         orderDate: this.jnpf.getToday(),
         projectId: "",
       },
-      businessTypes: "inbound_mock_production",
+      businessTypes: "inbound_flip",
       getWarehouseList,
       sourceTypeList: [ //业务类型
         { label: "销售发货", value: "outbound_sale_send" },
@@ -651,7 +651,7 @@ export default {
         { label: "外协退货", value: "outbound_external" },
         { label: "生产产品入库", value: "inbound_order_production" },
         { label: "生产工单入库", value: "inbound_production" },
-        { label: "生产工单入库", value: "inbound_flip" },
+        { label: "翻库入库", value: "inbound_flip" },
 
       ],
 
@@ -1315,6 +1315,7 @@ export default {
             this.$set(item, 'warehouseId', this.dataForm.warehouseId)
             this.$set(item, 'warehouseName', this.dataForm.warehouseName)
             this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+            this.$set(item, 'batchNumber', "")
             item.ordersId = item.id
           });
           this.productData = data

@@ -46,7 +46,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 17px;">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -602,7 +602,7 @@ import SelectProductForm from './selectProductForm.vue'
 import SelectProcrssForm from './processForm.vue'
 import CollectProductForm from './CollectProductForm.vue'
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -1065,7 +1065,7 @@ export default {
       if (!this.dataForm.routingId) return this.$message.error("请先选择工艺路线")
       this.processVisible = true
       this.$nextTick(() => {
-        this.$refs.processForm.init(this.dataForm.routingId, this.dataFormTwo.data)
+        this.$refs.processForm.init(this.dataForm.routingId, this.dataForm)
       })
     },
     // 选择工序
@@ -1215,7 +1215,7 @@ export default {
         console.log(666);
         this.dataFormTwo.data = []
       }
-      detailProcess(data.id).then(res => {
+      detailResourceProcess(this.dataForm.id,this.dataForm.routingId).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
       })
     },
@@ -1773,7 +1773,5 @@ $footerPadding: '10px';
   color: #fff;
 }
 
-::v-deep .el-range-editor {
-  height: 34px !important;
-}
+
 </style>

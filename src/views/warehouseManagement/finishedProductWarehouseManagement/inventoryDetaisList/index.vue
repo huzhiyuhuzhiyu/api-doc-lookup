@@ -92,6 +92,7 @@
               <div v-if="scope.row.businessType == 'outbound_receive_material'">直接领料出库</div>
               <div v-if="scope.row.businessType == 'inbound_production'">生产工单入库</div>
               <div v-if="scope.row.businessType == 'inbound_order_production'">生产产品入库</div>
+              <div v-if="scope.row.businessType == 'inbound_flip'">翻库入库</div>
               <div v-if="scope.row.businessType == 'outbound_use'">资产领用</div>
               <div v-if="scope.row.businessType == 'inbound_return'">资产归还</div>
               <div v-if="scope.row.businessType == 'inbound_taking_adjust'">盘点调整入库</div>
@@ -117,9 +118,9 @@
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-          <el-table-column prop="weight" label="重量"  min-width="120" />
-          <el-table-column prop="proportion" label="比重"  min-width="120" />
-          <el-table-column prop="discount" label="折扣"  min-width="120" />
+          <el-table-column prop="weight" label="重量" min-width="120" />
+          <el-table-column prop="proportion" label="比重" min-width="120" />
+          <el-table-column prop="discount" label="折扣" min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -288,14 +289,14 @@ import PurchaseOrderInboundForm from '../dbIncomAndOutInventory/purchaseOrderInb
 import ExternalInboundForm from '../dbIncomAndOutInventory/externalInboundForm.vue'
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap 
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue'
 import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
-import { getBimBusinessSwitchConfigList, getWarehouseInfo, excelExport,getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getWarehouseInfo, excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -343,7 +344,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
       externalMaterOutboundFormVisible: false,
-      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount",'discount'],
+      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount", 'discount'],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -363,6 +364,7 @@ export default {
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "生产产品入库", value: "inbound_order_production" },
+        { label: "翻库入库", value: "inbound_flip" },
         { label: "生产工单入库", value: "inbound_production" },
         { label: "外协发料", value: "outbound_external_send" },
         // { label: "外协退料", value: "inbound_external_return" },
@@ -425,6 +427,7 @@ export default {
             { label: "生产退料", value: "inbound_return_materials" },
             { label: "生产产品入库", value: "inbound_order_production" },
             { label: "生产工单入库", value: "inbound_production" },
+            { label: "翻库入库", value: "inbound_flip" },
             { label: "外协发料", value: "outbound_external_send" },
             { label: "外协收货", value: "inbound_external" },
             { label: "直接入库", value: "inbound_other" },
@@ -733,16 +736,16 @@ export default {
     },
     // 点击高级查询
     advancedQueryFun() {
-    this.advancedQueryFuns()
-    this.superQueryVisible = true
+      this.advancedQueryFuns()
+      this.superQueryVisible = true
     },
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
         this.initListQuery.projectId = this.listQuery.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
-    this.getclassAttributeList()
-  })
+        this.getclassAttributeList()
+      })
     },
     async getMainUnitFun(code, type) {
       this.listLoading = true

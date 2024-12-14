@@ -516,11 +516,12 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex' 
+
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   mixins: [getProjectList],
@@ -856,7 +857,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1082,8 +1083,8 @@ export default {
     },
 
     // 获取工艺详情
-    getRoutingDetail(id) {
-      detailProcess(id).then(res => {
+    getRoutingDetail(productsId,id) {
+      detailResourceProcess(productsId,id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
@@ -1130,7 +1131,7 @@ export default {
       this.getProductionLineListFun()
       this.fetchData("PROD")
 
-      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
+      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
     },
     async fetchData(code) {
       try {

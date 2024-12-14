@@ -32,7 +32,8 @@
                   </el-col>
                   <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                     <el-form-item label="所属项目" prop="projectId">
-                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"  disabled >
+                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                        disabled>
                         <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
                           :value="item.value"></el-option>
                       </el-select>
@@ -92,7 +93,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod=='appoint'">
+                  <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod == 'appoint'">
                     <el-form-item label="产线" prop="productionLineId">
                       <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
                         @change="selectLine">
@@ -110,7 +111,7 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="工艺路线名称" prop="routingName" >
+                    <el-form-item label="工艺路线名称" prop="routingName">
                       <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>
@@ -144,7 +145,8 @@
                   </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="领料人" prop="personId">
-                      <el-input v-model="collectForm.personId"  :disabled="btnType == 'look' ? true : false"  placeholder="领料人"/>
+                      <el-input v-model="collectForm.personId" :disabled="btnType == 'look' ? true : false"
+                        placeholder="领料人" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -171,7 +173,7 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="personId" label="人员" min-width="150"  v-if="naturalResourcesFlag == true">
+                  <el-table-column prop="personId" label="人员" min-width="150" v-if="naturalResourcesFlag == true">
 
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.personId" placeholder="" clearable style="width: 60%; display: none"
@@ -186,7 +188,7 @@
                       </el-button>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="workGroupId" label="班组" min-width="150"  v-if="naturalResourcesFlag == true">
+                  <el-table-column prop="workGroupId" label="班组" min-width="150" v-if="naturalResourcesFlag == true">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
                         style="width: 70%; display: none">
@@ -200,7 +202,7 @@
                       </el-button>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="equipmentId" label="设备" min-width="150"  v-if="naturalResourcesFlag == true">
+                  <el-table-column prop="equipmentId" label="设备" min-width="150" v-if="naturalResourcesFlag == true">
 
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
@@ -239,6 +241,14 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
+                  <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                    v-if="isTechnicalSwitch === '1'">
+
+                  </el-table-column>
+                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                    v-if="isCheckingSwitch === '1'">
+
+                  </el-table-column>
                   <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -505,10 +515,10 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import { getWarehouseList  } from '@/api/basicData/index'
+import { getWarehouseList } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
@@ -538,7 +548,7 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-     
+
       },
       dataForm: {
         taskMethod: "",
@@ -620,12 +630,13 @@ export default {
         fontWeight: 'bold'
       },
       naturalResourcesFlag: true,
-      warehouseList:[],
-      isProjectSwitch:"",
-      projectIdData:[],
+      warehouseList: [],
+      isProjectSwitch: "",
+      projectIdData: [],
       isProductNameSwitch: "",
-
-    }      
+      isTechnicalSwitch: "",
+      isCheckingSwitch: "",
+    }
 
   },
   computed: {
@@ -652,11 +663,13 @@ export default {
       }
       return totalNums
     },
-  }, 
+  },
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
   },
 
@@ -666,20 +679,30 @@ export default {
 
   },
   methods: {
-    async getProductNameSwitch(code, type) {
+    async getTechnicalSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    getWarehouseListFun(){
-      let obj={
-        type:"line_edge",
-        state:"enable"
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    getWarehouseListFun() {
+      let obj = {
+        type: "line_edge",
+        state: "enable"
       }
-      obj.projectId=this.dataForm.projectId
-      getWarehouseList(obj).then(res=>{
-        console.log("线边仓库",res);
-        this.warehouseList=res.data
+      obj.projectId = this.dataForm.projectId
+      getWarehouseList(obj).then(res => {
+        console.log("线边仓库", res);
+        this.warehouseList = res.data
       })
     },
     selectLine(e) {
@@ -818,24 +841,24 @@ export default {
         this.currentDeviceId = item.split("_")[0];
       }
     },
-   
+
     openRoutingFun() {
       this.routingVisible = true
       if (this.isProjectSwitch == 1) {
         this.$nextTick(() => {
           this.$refs.routingForm.init(this.dataForm.projectId)
         })
-      }else{
+      } else {
         this.$nextTick(() => {
           this.$refs.routingForm.init("")
-        }) 
+        })
       }
     },
     selectRoutingFun(data) {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1060,12 +1083,12 @@ export default {
     },
 
     // 获取工艺详情
-    getRoutingDetail(id) {
-      detailProcess(id).then(res => {
+    getRoutingDetail(productsId, id) {
+      detailResourceProcess(productsId, id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
-          
+
           if (item.routingProResMap) {
             if (item.routingProResMap.personnel) {
               this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
@@ -1084,7 +1107,7 @@ export default {
           } else {
           }
         });
-        res.data.routingLineList.sort((a, b) => a.sort - b.sort); 
+        res.data.routingLineList.sort((a, b) => a.sort - b.sort);
         this.dataFormTwo.data = res.data.routingLineList
       })
     },
@@ -1104,7 +1127,7 @@ export default {
       this.getProductionLineListFun()
       this.fetchData("PROD")
 
-      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
+      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
     },
     async fetchData(code) {
       try {
@@ -1180,13 +1203,13 @@ export default {
         })
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
-      let arr=[]
-      if(this.dataForm.autoMaterialFlag){
+      let arr = []
+      if (this.dataForm.autoMaterialFlag) {
 
-        this.dataForm.lineEdgeList.forEach(item=>{
+        this.dataForm.lineEdgeList.forEach(item => {
           arr.push({
-            productionOrderId:"",
-            warehouseId:item
+            productionOrderId: "",
+            warehouseId: item
           })
         })
       }
@@ -1194,7 +1217,7 @@ export default {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
-        lineEdgeList:arr
+        lineEdgeList: arr
       }
       addProdPlanArrange(obj).then(res => {
         this.btnLoading = false

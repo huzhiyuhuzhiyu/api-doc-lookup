@@ -1233,7 +1233,7 @@
           <el-table-column prop="orderNo" label="任务单号" width="180" />
           <el-table-column prop="orderType" label="任务类型" width="120">
             <template slot-scope="scope">
-              <div v-for="(item, index) in orderTypeList" :key="index">
+              <div v-for="(item, index) in filpOrderTypeList" :key="index">
                 <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
               </div>
             </template>

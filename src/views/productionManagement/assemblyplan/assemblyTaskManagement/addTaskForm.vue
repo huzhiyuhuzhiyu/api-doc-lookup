@@ -518,7 +518,7 @@ import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api
 import SelectProductForm from './selectProductForm.vue'
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess} from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
@@ -830,7 +830,7 @@ export default {
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
       if (!data.routingId) return
-      this.getRoutingDetail(data.routingId)
+      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId)
     },
     getWarehouseListFun() {
       let obj = {
@@ -989,7 +989,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1185,8 +1185,8 @@ export default {
       });
     },
     // 获取工艺详情
-    getRoutingDetail(id) {
-      detailProcess(id).then(res => {
+    getRoutingDetail(productsId,id) {
+      detailResourceProcess(productsId,id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {

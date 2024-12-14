@@ -80,9 +80,8 @@
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="productsName" label="产品名称" min-width="180" sortable="custom"
-            v-if="isProductNameSwitch === '1'" />
-          <el-table-column prop="productsCode" label="产品编码" min-width="160" sortable="custom"></el-table-column>
+          <el-table-column prop="productsName" label="产品名称" min-width="180" v-if="isProductNameSwitch === '1'" />
+          <el-table-column prop="productsCode" label="产品编码" min-width="160"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
 
@@ -97,8 +96,6 @@
             </template>
           </el-table-column>
           <el-table-column prop="price" label="单价(元)" width="130"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" />
@@ -473,7 +470,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (['productsName', ].includes(prop)) {
+      if (['productsName',].includes(prop)) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

@@ -234,7 +234,7 @@ export default {
         }
     },
     watch:{
-        "$route.query.type":{
+        "$route.query.id":{
             immediate:true,
             handler(val){
                 if(!this.isFileUploadPage && !this.isFileManagementPage){
@@ -629,9 +629,13 @@ export default {
             this.$refs.SuperQuery.conditionList = []
             this.initData()
         },
-        addOrUpdateHandle(type, id) {
+        async addOrUpdateHandle(type, id) {
             this.fileUploadId = id
             this.uploadType = type
+            if(this.formVisible){
+                this.formVisible =false
+                await this.$nextTick()
+            }
             this.formVisible = true
         },
         /**

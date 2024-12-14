@@ -1024,7 +1024,6 @@ export default {
   },
 
   mounted() {
-    this.getTaxRateFun()
     this.getBimBusinessDetail()
 
   },
@@ -1039,7 +1038,6 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.tableVisible=true
       } catch (error) { }
     },
     // 点击选择产品
@@ -1315,7 +1313,7 @@ export default {
                   })
               }
               this.formLoading = false
-          }).catch(err => this.formLoading = false)
+      }).catch(err => this.formLoading = false)
           getOrderFiledMap('gobal').then(res => {
               this.protrusionFlag = res.data.protrusion //list1
               if (this.protrusionFlag === '1') {
@@ -1336,7 +1334,8 @@ export default {
                   })
               }
               this.formLoading = false
-          }).catch(err => this.formLoading = false)
+        this.tableVisible=true
+      }).catch(err => this.formLoading = false)
       },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7) 保持架材质（list9）、密封盖颜色(10)
       getProductClassFun() {
@@ -1554,18 +1553,7 @@ export default {
       productArr[index].totalTaxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 2)
       this.dataFormTwo.lines = productArr
     },
-    getTaxRateFun() {
-
-      // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
-          item.taxRate = item.enCode.replace('%', '') * 1
-        })
-        this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
-      })
-
-    },
+ 
     // 输入品名规格  查找对应得产品数据 按下enter键 自动新增一行空白数据
     searchDrawingNoProduct(data, idx) {
       console.log(data, idx);
@@ -1886,7 +1874,6 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
 
-      this.getProductClassFun()
       this.iszt = true
       this.status = false
       if (this.btnType == 'add') {

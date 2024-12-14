@@ -12,7 +12,6 @@
     <template class="hamburger-container">
       <project-select class="right-menu-item hover-effect" />
     </template>
-    55
     <NavbarRight />
   </div>
 </template>

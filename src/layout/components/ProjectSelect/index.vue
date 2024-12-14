@@ -2,7 +2,7 @@
   <div @keyup.native="close">
     <div class="international" v-if="selectFlag">
       <span @click="showSystem" style="cursor:pointer;">
-        <span class="ym yc">{{ projectName }}</span>
+        <span style="display: flex;color: aliceblue;">{{ projectName }}</span>
       </span>
     </div>
     <transition name="fade">
@@ -54,7 +54,7 @@
                 @click="changeMajor(item.id, 'System', item.name)">
                 <span>{{ item.name }}</span>
                 <span role="img" aria-label="check-circle"
-                  :class="['anticon-check-circle', item.currentSystem ? 'active' : '']">
+                  :class="['anticon-check-circle', item.name === projectName ? 'active' : '']">
                   <svg focusable="false" class="" data-icon="check-circle" width="1em" height="1em" fill="currentColor"
                     aria-hidden="true" viewBox="64 64 896 896">
                     <path

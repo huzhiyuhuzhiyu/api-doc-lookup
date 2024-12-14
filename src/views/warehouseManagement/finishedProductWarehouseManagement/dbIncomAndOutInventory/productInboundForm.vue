@@ -651,6 +651,7 @@ export default {
         { label: "外协退货", value: "outbound_external" },
         { label: "生产产品入库", value: "inbound_order_production" },
         { label: "生产工单入库", value: "inbound_production" },
+        { label: "生产工单入库", value: "inbound_flip" },
 
       ],
 

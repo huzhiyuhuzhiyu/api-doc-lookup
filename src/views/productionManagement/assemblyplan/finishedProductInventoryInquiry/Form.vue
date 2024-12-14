@@ -249,6 +249,14 @@
                       </el-button>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                    v-if="isTechnicalSwitch === '1'">
+
+                  </el-table-column>
+                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                    v-if="isCheckingSwitch === '1'">
+
+                  </el-table-column>
                   <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
                         <template slot-scope="scope">
                           <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable
@@ -482,6 +490,14 @@
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
+            <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                    v-if="isTechnicalSwitch === '1'">
+
+                  </el-table-column>
+                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                    v-if="isCheckingSwitch === '1'">
+
+                  </el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
             <el-table-column prop="productionQuantity" label="生产数量" width="100" />
@@ -517,7 +533,6 @@ import {
   dispatchListMap,
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
-import SelectProductForm from './selectProductForm.vue'
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
@@ -530,7 +545,6 @@ export default {
   mixins: [getProjectList],
   components: {
     RoutingForm,
-    SelectProductForm,
   },
   data() {
     return {
@@ -664,6 +678,8 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
+      isTechnicalSwitch: "",
+      isCheckingSwitch: "",
     }
   },
   computed: {
@@ -697,9 +713,21 @@ export default {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
   },
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     async getProductClassFun() {
       // 产品属性
@@ -801,16 +829,7 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    openSelectProductFun() {
-      this.productVisible = true
-      this.$nextTick(() => {
-        if (this.isProjectSwitch == 1) {
-          this.$refs.productForm.init(this.userInfo.projectId || '')
-        } else {
-          this.$refs.productForm.init('')
-        }
-      })
-    },
+ 
     // 选择产品
     selectProductFun(data) {
       this.$set(data, 'orderNo', this.dataForm.orderNo)

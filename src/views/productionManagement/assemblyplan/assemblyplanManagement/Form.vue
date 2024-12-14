@@ -242,6 +242,14 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
+                  <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                    v-if="isTechnicalSwitch === '1'">
+
+                  </el-table-column>
+                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                    v-if="isCheckingSwitch === '1'">
+
+                  </el-table-column>
                   <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -628,7 +636,8 @@ export default {
       isProjectSwitch: "",
       projectIdData: [],
       isProductNameSwitch: "",
-
+      isTechnicalSwitch: "",
+      isCheckingSwitch: "",
     }
   },
   computed: {
@@ -662,14 +671,26 @@ export default {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getTechnicalSwitch('produce', 'technical_requirement')
+    await this.getCheckingSwitch('produce', 'checking_information')
 
     this.getPickingConfig()
   },
 
   methods: {
+    async getTechnicalSwitch(code, type) {
+      try {
+        this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getCheckingSwitch(code, type) {
+      try {
+        this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     getWarehouseListFun() {

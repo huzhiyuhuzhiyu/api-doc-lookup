@@ -96,7 +96,7 @@
               <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                 <div v-if="btnType != 'look'">
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                  icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
+                    icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
                     icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
@@ -216,7 +216,8 @@
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
                       :key="17">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="status">
                           <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -224,7 +225,8 @@
                     </el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="status">
                           <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -232,7 +234,8 @@
                     </el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="status">
                           <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -240,7 +243,8 @@
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="status">
                           <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -249,7 +253,8 @@
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
                       :key="101">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;" :disabled="status">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="status">
                           <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -258,7 +263,8 @@
                     <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
                       :key="101">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;" :disabled="status"> 
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="status">
                           <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -376,7 +382,7 @@
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType == 'add' || btnType == 'edit'">
               <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-              icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
+                icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
@@ -754,13 +760,13 @@
 </template>
 <script>
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index"
 import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct } from "@/api/salesManagement/index";
 import { getCounryData, getPrivateList, deletePrivate, getcategoryTree, privateDetail } from '@/api/basicData/index'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData,getOrderFiledMap } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData, getOrderFiledMap } from '@/api/basicData/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
 import { mapGetters, mapState } from 'vuex'
@@ -959,7 +965,7 @@ export default {
       allProductTotal: 0,
 
       ProductTreeData: [],
-      allProVisible:false,
+      allProVisible: false,
       ProductListRequestObj: {
         classAttributeList: [],
         classAttribute: "",
@@ -988,7 +994,7 @@ export default {
         label: 'name'
       },
       selectArr: [],
-      tableFlag:false,
+      tableFlag: false,
       tableFlag: false,
       // 属性字段  控制属性字段显示隐藏
       accuracyLevelFlag: "",
@@ -1041,8 +1047,8 @@ export default {
   },
   methods: {
 
-      // 点击选择产品
-      addProduct() {
+    // 点击选择产品
+    addProduct() {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
@@ -1094,8 +1100,8 @@ export default {
       });
 
     },
-      // 获取所有产品列表数据
-      initData2() {
+    // 获取所有产品列表数据
+    initData2() {
       this.listLoading = true
 
       getProducts(this.ProductListRequestObj).then(listRes => {
@@ -1221,7 +1227,7 @@ export default {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
-       this.getProductAttributeFun()
+        this.getProductAttributeFun()
         console.log(this.bimProductAttributesList);
       })
     },
@@ -1255,7 +1261,7 @@ export default {
               name: item.name
             }
           })
-        } 
+        }
         this.oilFlag = res.data.oil
         if (this.oilFlag == 1) {
           this.list4 = this.bimProductAttributesList.pa002.map((item) => {
@@ -1629,6 +1635,7 @@ export default {
           this.uploadVisib = false
         } else {
           this.handleMessage(res.data)
+          this.formLoading = false
         }
         // this.tipsvisible=true
       }).catch(err => {

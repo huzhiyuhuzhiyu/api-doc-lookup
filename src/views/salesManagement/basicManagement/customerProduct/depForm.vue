@@ -1021,14 +1021,13 @@ export default {
 
   async mounted() {
     try {
+
       await Promise.all([
-        this.getProductClassFun(),
+        this.getProductClassFun().then(this.getProductAttributeFun),
         this.getProjectSwitch('system', 'project'),
         this.getProductNameSwitch('product', 'enable_productName'),
-        this.getProductAttributeFun(),
         this.getBimBusinessDetail()
       ])
-
     } catch (e) { console.log(e) }
     finally {
       this.$nextTick(() => {
@@ -1211,7 +1210,6 @@ export default {
     },
     // 获取业务参数中 属性字段动态显示
     async getProductAttributeFun() {
-
       await Promise.all([
         getOrderFiledMap('sale').then(res => {
           console.log("产品属性", res);
@@ -1341,10 +1339,6 @@ export default {
           this.tableVisible = true
         }).catch(err => this.formLoading = false)
       ])
-
-
-
-
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7) 保持架材质（list9）、密封盖颜色(10)
     async getProductClassFun() {

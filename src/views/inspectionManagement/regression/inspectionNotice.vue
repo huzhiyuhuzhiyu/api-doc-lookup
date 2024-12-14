@@ -379,7 +379,10 @@ export default {
         this.listQuery.operationEd = ''
       }
       this.listLoading = true
-
+      console.log(this.isProjectSwitch, 'proh')
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       WithdrawalmxList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

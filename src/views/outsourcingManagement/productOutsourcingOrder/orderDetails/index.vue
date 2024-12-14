@@ -404,6 +404,7 @@ export default {
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.tableFlag = true
     if (this.isDeputyUnitSwitch === '1') {
       this.superQueryJson.forEach(item => {
         if (item.prop === 'mainUnit') {

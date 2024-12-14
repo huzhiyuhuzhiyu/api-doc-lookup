@@ -77,6 +77,7 @@
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="120" sortable="custom"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>
@@ -167,10 +168,13 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { excelExport } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { Form, ExportForm, SuperQuery },
+  mixins: [getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
       isDeputyUnitSwitch: '',
       isProductNameSwitch: '',
       tableFlag: false,
@@ -363,6 +367,7 @@ export default {
   async created() {
     await this.getDeputyUnit()
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProjectSwitch('system', 'project')
     if (this.isDeputyUnitSwitch === '1') {
       this.superQueryJson.forEach(item => {
         if (item.prop === 'mainUnit') {

@@ -105,14 +105,14 @@
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
-                            maxlength="20"></el-input>
+                            :disabled="type === 'look'" maxlength="20"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
-                            maxlength="20"></el-input>
+                            :disabled="type === 'look'" maxlength="20"></el-input>
                         </template>
                       </el-table-column>
                       <!-- <el-table-column prop="firstFlag" label="是否首道工序" width="120">
@@ -659,7 +659,7 @@ export default {
       if (this.dataForm.id) {
         newArr = this.dataFormTwo.map((item) => {
           console.log(item, 'item')
-          
+
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
           return {
             prodResLine: {
@@ -671,10 +671,10 @@ export default {
               routingId: item.routingId,
               technicalRequirement: item.technicalRequirement
             },
-           
+
           }
         })
-        console.log(newArr,'kk')
+        console.log(newArr, 'kk')
         // return
       } else {
         newArr = this.dataFormTwo.map((item) => {

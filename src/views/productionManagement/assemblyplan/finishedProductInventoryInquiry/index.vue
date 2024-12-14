@@ -92,8 +92,8 @@
             :limit.sync="listQuery.pageSize" @pagination="initData">
             <div style="display: flex;">
               <div class="text" style="margin-right: 10px;"><span>库存数量:{{ inventoryQuantityNum }}</span></div>
-              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ occupancyQuantityNum }}</span></div>
-              <div class="text"><span>占用数量:{{ availableQuantityNum }}</span></div>
+              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ availableQuantityNum }}</span></div>
+              <div class="text"><span>占用数量:{{  occupancyQuantityNum }}</span></div>
             </div>
 
           </pagination>

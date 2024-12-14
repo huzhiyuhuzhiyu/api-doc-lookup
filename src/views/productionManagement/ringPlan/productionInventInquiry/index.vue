@@ -42,7 +42,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')" addText="生成外协订单">
+            <topOpts @add="addSupplier('', 'add')" addText="新建任务">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
@@ -90,8 +90,8 @@
             :limit.sync="listQuery.pageSize" @pagination="initData">
             <div style="display: flex;">
               <div class="text" style="margin-right: 10px;"><span>库存数量:{{ inventoryQuantityNum }}</span></div>
-              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ occupancyQuantityNum }}</span></div>
-              <div class="text"><span>占用数量:{{ availableQuantityNum }}</span></div>
+              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ availableQuantityNum }}</span></div>
+              <div class="text"><span>占用数量:{{  occupancyQuantityNum }}</span></div>
             </div>
 
           </pagination>
@@ -483,25 +483,20 @@ export default {
     },
 
     addSupplier(id, type) {
+      if(!this.selectData.length)return this.$message.error("请选择你要新建的任务数据")
+      if(this.selectData.length>1)return this.$message.error("只能选择一条数据")
       if (this.selectData.length === 0) {
         return this.$message({
-          message: '请选择你要生成的外协订单',
+          message: '请选择你要新建的任务数据',
           type: 'error',
           duration: 1500
         })
       } else {
-        let msg = true
-        let tempList = JSON.parse(JSON.stringify(this.selectData))
-        let hasItemList = []
-
-
-        if (msg) {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
             this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch)
           })
-        }
       }
     }
   }

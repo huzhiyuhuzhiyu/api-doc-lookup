@@ -1552,6 +1552,7 @@ export default {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
           this.$set(item, 'warehouseCode', this.dataForm.warehouseCode)
+          this.$set(item, 'warehouseId', this.dataForm.warehouseId)
         } else {
           this.$set(item, 'warehouseName', item.warehouseName)
           this.$set(item, 'allocationFlag', item.allocationFlag)

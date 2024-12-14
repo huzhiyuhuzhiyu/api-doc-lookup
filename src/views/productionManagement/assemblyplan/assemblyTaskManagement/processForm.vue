@@ -32,7 +32,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectProcess"
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectProcess" v-if="showFlag"
             :checkSelectable="dispurchaseData" @row-click="handleRowClick" hasC ref="processRef">
             <el-table-column prop="processName" label="工序名称"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" />
@@ -106,6 +106,7 @@ export default {
       processData: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      showFlag:false,
     }
   },
   async created () {
@@ -121,6 +122,7 @@ export default {
     async getCheckingSwitch(code, type) {
       try {
         this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.showFlag=true
       } catch (error) { }
     },
     init(id, processData) {

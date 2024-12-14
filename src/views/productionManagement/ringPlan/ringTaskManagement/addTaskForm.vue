@@ -704,7 +704,7 @@ export default {
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
       if(!data.routingId) return
-      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId)
 
     },
 
@@ -874,7 +874,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId) 
+      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId) 
     },
     // 选择班组
     selectWorkgroupFun(scope) {

@@ -46,7 +46,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" >
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -1013,7 +1013,7 @@ export default {
         console.log(666);
         this.dataFormTwo.data = []
       }
-      detailProcess(this.dataForm.productsId,this.dataForm.routingId).then(res => { 
+      detailResourceProcess(this.dataForm.id,this.dataForm.routingId).then(res => { 
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
       })
     },
@@ -1529,10 +1529,5 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-::v-deep .el-range-editor {
-  height: 34px !important;
-}
-::v-deep .el-range-editor {
-  height: 34px !important;
-}
+ 
 </style>

@@ -61,7 +61,7 @@
 
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
-                    v-if="tableVisible" v-bind="customStyleData">
+                     v-bind="customStyleData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -325,7 +325,7 @@
 
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
-                v-if="tableVisible" v-bind="customStyleData">
+                 v-bind="customStyleData">
                 <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />

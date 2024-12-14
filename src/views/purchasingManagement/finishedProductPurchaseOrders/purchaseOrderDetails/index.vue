@@ -522,7 +522,7 @@ export default {
       clearanceFlag: '',
       packagingMethodFlag: '',
       specialRequireFlag: '',
-      bimProductAttributesList: [],
+      bimProductAttributesList: {},
       processList: []
     }
   },

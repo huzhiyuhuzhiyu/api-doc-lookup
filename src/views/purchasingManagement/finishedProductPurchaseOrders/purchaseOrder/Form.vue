@@ -745,8 +745,8 @@ export default {
 
       // 工序
       let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         orderItems: [
           {
             asc: false,

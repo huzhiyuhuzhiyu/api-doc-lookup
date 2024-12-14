@@ -251,7 +251,7 @@ export default {
 .international {
   float: left;
   padding: 22px 8px;
-  line-height: 1.15;
+  line-height: 1;
   // height: 100vh;
 
   .icon-caidan {

@@ -172,16 +172,16 @@
                           </template>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="name" label="技术要求" width="180" show-overflow-tooltip
+                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.name }}
+                          {{ scope.row.technicalRequirement }}
                         </template>
                       </el-table-column>
-                      <el-table-column prop="name" label="检验信息" width="180" show-overflow-tooltip
+                      <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.name }}
+                          {{ scope.row.inspectionInformation }}
                         </template>
                       </el-table-column>
                       <!-- <el-table-column prop="departmentId" label="组织管理" width="340" fixed="left">
@@ -467,16 +467,16 @@
                       </template>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="name" label="技术要求" width="180" show-overflow-tooltip
+                  <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                     v-if="isTechnicalSwitch === '1'">
                     <template slot-scope="scope">
-                      {{ scope.row.name }}
+                      {{ scope.row.technicalRequirement }}
                     </template>
                   </el-table-column>
-                  <el-table-column prop="name" label="检验信息" width="180" show-overflow-tooltip
+                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                     v-if="isCheckingSwitch === '1'">
                     <template slot-scope="scope">
-                      {{ scope.row.name }}
+                      {{ scope.row.inspectionInformation }}
                     </template>
                   </el-table-column>
                   <el-table-column prop="firstFlag" label="是否首道工序" width="120">
@@ -670,7 +670,6 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '工序编码', fixed: 'left' },
         { prop: 'name', label: '工序名称', fixed: 'left' },
-        { prop: 'projectName', label: '所属项目', fixed: 'left' },
         { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
         { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
@@ -810,15 +809,15 @@ export default {
     if (this.userInfo.projectId === '1') {
       console.log(this.projectIdData, 'lllljj')
       this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
-      this.ProductTableItems = [
-        { prop: 'code', label: '工序编码', fixed: 'left' },
-        { prop: 'name', label: '工序名称', fixed: 'left' },
-        { prop: 'projectName', label: '所属项目', fixed: 'left' },
-        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
-        { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
-      ]
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目', fixed: 'left' })
     } else {
       this.dataForm.projectId = this.userInfo.projectId
+    }
+    if (this.isCheckingSwitch === '1') {
+      this.ProductTableItems.push({ prop: 'inspectionInformation', label: '检验信息', fixed: 'left' })
+    }
+    if (this.isTechnicalSwitch === '1') {
+      this.ProductTableItems.push({ prop: 'technicalRequirement', label: '技术要求', fixed: 'left' })
     }
     this.getBimBusinessDetail()
   },
@@ -1389,7 +1388,9 @@ export default {
             firstInspection: 0, // 是否首检
             firstFlag: false, //是否首道工序
             lastFlag: false, // 是否末道工序
-            workOrderFlag: 1 // 是否生成工单
+            workOrderFlag: 1, // 是否生成工单
+            technicalRequirement: item.technicalRequirement,
+            inspectionInformation: item.inspectionInformation
           }
           responseFlag = true
 

@@ -838,7 +838,7 @@ export default {
             this.tabs[0].tabContent.forEach((tc) => {
               if (
                 [
-                  'productCategoryName',
+                  // 'productCategoryName',
                   'code',
                   'drawingNo',
                   'model',

@@ -768,7 +768,7 @@
 import {
     getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from '@/api/masterDataManagement/index'
-import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct } from "@/api/salesManagement/index";
+import { getQuotationmxLists, addQuotationData, editQuotationMData, getQuotationInfo, denerateQuotationMData, calculatequotationData, calculatequotationSpecData, saleUploadData, saleUploadAmountsCount, exportNoProduct,saleUploadProductData } from "@/api/salesManagement/index";
 import {
     getCounryData,
     getPrivateList,
@@ -1659,17 +1659,27 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      saleUploadData(formData).then(res => {
+      saleUploadProductData(formData).then(res => {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
-          if (res.data.length > 0) {
-            this.dataFormTwo.lines =  [...res.data,...this.dataFormTwo.lines]
+          if (res.data) {
+            let lineArr = []
+            if (res.data.list && res.data.list.length){
+              lineArr = res.data.list.map(item=>{
+                return {...item, 
+                  productDrawingNo: item.drawingNo,
+                  productName:item.productsName || ''
+                }
+              })
+            }
+            this.dataFormTwo.lines =  [...lineArr,...this.dataFormTwo.lines]
 
           }
           this.formLoading = false
           this.loadingText = ''
           this.uploadVisib = false
         } else {
+          this.formLoading = false
           this.handleMessage(res.data)
         }
         // this.tipsvisible=true

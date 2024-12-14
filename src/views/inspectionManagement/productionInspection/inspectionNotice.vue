@@ -317,6 +317,7 @@ export default {
       listQuery: {},
       initListQuery: {
         finishFlag: 0,
+        patrolInspection: 0,
         documentStatus: 'submit',
         processingType: 'self_produced',
         orderItems: [

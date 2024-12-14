@@ -472,10 +472,11 @@ export default {
               }
             })
           } else {
+             // 编辑时，如果已经品名规格那些，不允许修改
             this.tabs[0].tabContent.forEach((tc) => {
               if (
                 [
-                  'productCategoryName',
+                  // 'productCategoryName',
                   'code',
                   'drawingNo',
                   'model',

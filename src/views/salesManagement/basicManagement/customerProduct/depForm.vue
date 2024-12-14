@@ -1675,7 +1675,16 @@ export default {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
           if (res.data) {
-            this.dataFormTwo.lines =  [...res.data.list,...this.dataFormTwo.lines]
+            let lineArr = []
+            if (res.data.list && res.data.list.length){
+              lineArr = res.data.list.map(item=>{
+                return {...item, 
+                  productDrawingNo: item.drawingNo,
+                  productName:item.productsName || ''
+                }
+              })
+            }
+            this.dataFormTwo.lines =  [...lineArr,...this.dataFormTwo.lines]
 
           }
           this.formLoading = false

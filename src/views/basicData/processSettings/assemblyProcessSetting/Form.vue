@@ -105,14 +105,14 @@
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
-                            :disabled="type === 'look'" maxlength="20"></el-input>
+                            :disabled="type === 'look'" ></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
-                            :disabled="type === 'look'" maxlength="20"></el-input>
+                            :disabled="type === 'look'" ></el-input>
                         </template>
                       </el-table-column>
                       <!-- <el-table-column prop="firstFlag" label="是否首道工序" width="120">

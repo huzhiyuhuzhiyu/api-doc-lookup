@@ -39,11 +39,13 @@
             <el-table-column prop="processType" label="工序类型">
               <template slot-scope="scope">
                 <div v-if="scope.row.processType == 'normal'">正常工序</div>
-                <div v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                <div v-if="scope.row.processType == 'vibrate'">测震工序</div>
+                <div v-if="scope.row.processType == 'vibrate'">测振工序</div>
+                <div v-if="scope.row.processType == 'heat_treatment'">热工工序</div>
+                <div v-if="scope.row.processType == 'packing'">包装工序</div>
+                <div v-if="scope.row.processType == 'pairs'">配对工序</div>
               </template>
             </el-table-column>
-
+ 
 
             <el-table-column prop="processingType" label="加工类型" width="180">
               <template slot-scope="scope">
@@ -66,8 +68,7 @@
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
-            @pagination="getbatchNumList" />
+
         </div>
 
       </div>
@@ -100,7 +101,6 @@ export default {
       },
       selectArr: [],
       listLoading: false,
-      total: 0,
       tableDataList: [],
       id: "",
       processData: [],
@@ -129,7 +129,7 @@ export default {
       console.log("init", id, processData);
       this.customerVisible = true
       this.id = id
-      this.getProcessList(processData.id, id)
+      this.getProcessList(id,processData.id)
       this.processData = processData
     },
     selectProcess(val) {
@@ -274,7 +274,7 @@ export default {
       // 如果当前行未选中，则调用toggleRowSelection方法选中该行
     },
 
-    getProcessList(productsId, id) {
+    getProcessList(id,productsId) {
       this.listLoading = true
       detailResourceProcess(productsId, id).then(res => {
         this.listLoading = false

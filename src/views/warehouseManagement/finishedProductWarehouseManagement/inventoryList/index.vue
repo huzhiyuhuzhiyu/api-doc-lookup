@@ -639,7 +639,7 @@ export default {
     },
     viewFun(id, type, row) {
 
-      if (row.businessType == 'inbound_order_production') {
+      if (row.businessType == 'inbound_order_production'||row.businessType== 'inbound_flip') {
         if (row.sourceType == 'direct') {
           this.formVisible = true
           this.$nextTick(() => {

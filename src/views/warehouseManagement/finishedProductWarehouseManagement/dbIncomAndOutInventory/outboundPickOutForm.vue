@@ -107,7 +107,7 @@
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         :partentOrChild="'product'" :setColumnDisplayList="columnList"  custom-column
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;height: auto">
 
 
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -295,7 +295,7 @@
                         </el-tooltip>
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" :setColumnDisplayList="columnList"  custom-column :partentOrChild="'product'"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" v-if="tableDataFlag" :setColumnDisplayList="columnList"  custom-column :partentOrChild="'product'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -664,11 +664,12 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
-    getBimBusinessSwitchConfigList(objs).then(res => {
+    await getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
 
 
     })
+    await this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -683,7 +684,6 @@ export default {
   mounted() {
     this.getBimBusinessDetail()
 
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
   },
   methods: {
@@ -1436,5 +1436,8 @@ export default {
 
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
+}
+::v-deep .el-table__body-wrapper{
+  height: auto!important;
 }
 </style>

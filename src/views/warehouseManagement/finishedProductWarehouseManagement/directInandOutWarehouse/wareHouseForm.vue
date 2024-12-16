@@ -29,8 +29,8 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
   
-          <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
-            @sort-change="sortChange" custom-column >
+          <JNPF-table ref="tabForm" v-loading="listLoading" v-if="flag" :data="tableDataList"  :fixedNO="true" :appendToBody="'child'"
+            @sort-change="sortChange"   style="width: 100%;">
             <el-table-column prop="name" label="库位名称" min-width="180">
             </el-table-column>
             <el-table-column prop="code" label="库位编码" width="180" sortable="custom">
@@ -74,6 +74,7 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
+      flag:false,
     }
   },
   methods: {
@@ -89,8 +90,7 @@ export default {
       this.locationVisible=true
       getLocationList(this.tableQuery).then(res => {
         this.tableDataList = res.data.records
-        this.tableDataList.forEach((item) => {
-        })
+       this.flag=true
 
         
 

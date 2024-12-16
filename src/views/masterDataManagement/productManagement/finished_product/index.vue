@@ -183,7 +183,7 @@
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
                 @del="handleDel(scope.row.id)">
-                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true, configFlag)">
                   查看详情
                 </el-button>
                 <!-- <el-dropdown hide-on-click>

@@ -44,9 +44,9 @@
             <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
               <div class="JNPF-common-head">
                 <topOpts @add="addSupplier('', 'add')">
-                  <el-button type="primary" size="mini" icon="el-icon-download" @click="importProductFun()">导入产品
+                  <el-button type="primary" size="mini" icon="el-icon-plus" @click="importProductFun()">导入产品
                   </el-button>
-                  <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button>
+                  <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm">导出</el-button>
                 </topOpts>
                 <!-- <el-button type="primary" size="mini" icon="el-icon-plus" @click="exportForm">导出</el-button> -->
                 <div class="JNPF-common-head-right">
@@ -104,6 +104,8 @@
                 <el-table-column prop="colour" label="密封盖颜色" width="120"  v-if="colourFlag === '1'" />
                 <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom"  v-if="protrusionFlag==1"/>
                 <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>
+                <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'" />
+                <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'" />
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                   <el-table-column label="操作" width="180" fixed="right">
@@ -490,7 +492,8 @@ export default {
       preloadFlag:'',
       materialFlag:'',
       colourFlag:'',
-
+      angleFlag:'',
+      centerDiameterFlag:'',
     }
   },
   computed: {
@@ -537,6 +540,8 @@ export default {
         getOrderFiledMap('gobal').then(res => {
             this.protrusionFlag = res.data.protrusion //list1
             this.preloadFlag = res.data.preload
+            this.centerDiameterFlag = res.data.centerDiameter
+            this.angleFlag = res.data.angle
         }).catch(err => {})
     },
     advancedQueryFun(superQuery,needFlag) {
@@ -614,6 +619,26 @@ export default {
                           value: item.name
                       }
                   })
+              })
+          }
+          if (this.angleFlag === '1') {
+              superQuery.splice(classIndex + 1, 0, {
+                  prop: 'angle',
+                  label: '角度',
+                  type: 'select',
+                  options: this.bimProductAttributesList.pa025.map((item) => {
+                      return {
+                          label: item.name,
+                          value: item.name
+                      }
+                  })
+              })
+          }
+          if (this.centerDiameterFlag === '1') {
+              superQuery.splice(classIndex + 1, 0, {
+                  prop: 'centerDiameter',
+                  label: '钢球/中心径/倒角',
+                  type: 'input',
               })
           }
       }

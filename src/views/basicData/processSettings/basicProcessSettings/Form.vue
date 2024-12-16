@@ -73,7 +73,7 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="检验信息" v-if="isCheckingSwitch === '1'">
-                        <el-input v-model="dataForm.inspectionInformation" placeholder="请输入检验信息" 
+                        <el-input v-model="dataForm.inspectionInformation" placeholder="请输入检验信息"
                           :disabled="disabled"></el-input>
                       </el-form-item>
                     </el-col>
@@ -323,6 +323,13 @@ export default {
       ],
       disabled: false,
       rules: {
+        projectId: [
+          {
+            required: true,
+            message: '请输入所属项目',
+            trigger: ['blur']
+          }
+        ],
         name: [
           {
             required: true,

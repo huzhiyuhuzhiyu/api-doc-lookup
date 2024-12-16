@@ -80,8 +80,9 @@
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="productsName" label="产品名称" min-width="180" v-if="isProductNameSwitch === '1'" />
-          <el-table-column prop="productsCode" label="产品编码" min-width="160"></el-table-column>
+          <el-table-column prop="productsName" label="产品名称" min-width="180" v-if="isProductNameSwitch === '1'"
+            sortable="custom" />
+          <el-table-column prop="productsCode" label="产品编码" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
 

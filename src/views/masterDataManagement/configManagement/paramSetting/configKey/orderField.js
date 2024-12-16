@@ -9,6 +9,16 @@ export default {
         description: '启用全局预负荷后，将会显示预负荷输入字段。',
         mainModule: '全局'
     },
+    gobal_angle: {
+        configKeyLabel: '启用角度',
+        description: '启用全局角度后，将会显示角度输入字段。',
+        mainModule: '全局'
+    },
+    gobal_centerDiameter: {
+        configKeyLabel: '启用钢球/中心径/倒角',
+        description: '启用全局钢球/中心径/倒角后，将会显示钢球/中心径/倒角输入字段。',
+        mainModule: '全局'
+    },
     purchase_standardValue: {
         configKeyLabel: '启用规值',
         description: '启用采购订单规值后，新建采购订单时，将会显示规值输入字段，对应收货也将显示规值字段。',

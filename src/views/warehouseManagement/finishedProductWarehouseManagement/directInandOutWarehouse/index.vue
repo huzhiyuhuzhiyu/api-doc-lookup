@@ -387,7 +387,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="processName" label="工序" v-if="processNameFlag == 1" width="160" key="103">
+                      <el-table-column prop="processName" label="工序" width="160" key="103">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -952,7 +952,6 @@ export default {
       // 工序
       let obj8 = {
         pageNum: -1,
-        pageSize: 20,
         orderItems: [
           {
             asc: false,
@@ -1155,7 +1154,7 @@ export default {
         "processingType": "",
         "orderItems": [{ "asc": false, "column": "" }, { "asc": false, "column": "create_time" }],
         "pageNum": -1,
-        "pageSize": 20,
+        "pageSize": -1,
         "productCategoryId": ""
       };
       obj.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''

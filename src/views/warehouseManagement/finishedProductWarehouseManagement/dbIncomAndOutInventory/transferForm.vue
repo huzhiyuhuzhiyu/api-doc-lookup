@@ -115,7 +115,9 @@ export default {
       list: [
         { label: "调拨出库", value: "outbound_transfer" },
         { label: "调拨入库", value: "inbound_transfer" },
-      ],
+        { label: "直接领料入库", value: "inbound_receive_material" },
+        { label: "直接领料出库", value: "outbound_receive_material" },
+      ],      
     }
   },
   created() {

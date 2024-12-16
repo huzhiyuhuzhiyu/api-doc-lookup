@@ -82,6 +82,8 @@
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
                 <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
+                <div v-if="scope.row.orderType == 'transit'">在制任务</div>
 
               </template>
             </el-table-column>
@@ -342,9 +344,11 @@ export default {
           label: "任务类型",
           type: 'select',
           options: [
-            { label: "正常任务", value: "normal" },
+          { label: "正常任务", value: "normal" },
             { label: "返工任务", value: "rework" },
             { label: "手动新建任务", value: "manually" },
+            { label: "翻库任务", value: "flipping" },
+            { label: "在制任务", value: "transit" },
 
           ]
         },
@@ -384,55 +388,7 @@ export default {
           type: 'input'
         },
 
-        {
-          prop: 'sealingCoverTyping',
-          label: "打字内容",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: "精度等级",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: "振动等级",
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: "油脂",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: "游隙",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: "包装方式",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'specialRequire',
-          label: "特殊要求",
-          type: 'select',
-          options: []
-        },
+        
         {
           prop: 'productionPlanNo',
           label: "生产计划单号",

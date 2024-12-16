@@ -88,7 +88,7 @@
                         <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
                           placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
                           @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
-                          :disabled="btnType !== 'add'"></el-autocomplete>
+                          :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
 
                       </template>
                       <!-- @select="handleSelect(scope.row, scope.$index, $event)" -->
@@ -247,7 +247,20 @@
                         </el-select>
                       </template>
                     </el-table-column>
-
+                      <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'">
+                          <template slot-scope="scope">
+                              <el-select :disabled="btnType === 'look'" v-model="scope.row.angle" placeholder="请选择" clearable
+                                         style="width: 100%;">
+                                  <el-option v-for="(item, index) in list13" :key="index" :label="item.name"
+                                             :value="item.name"></el-option>
+                              </el-select>
+                          </template>
+                      </el-table-column>
+                      <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'">
+                          <template slot-scope="scope">
+                              <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />
+                          </template>
+                      </el-table-column>
 
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -352,8 +365,8 @@
                     <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
                       placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
                       @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
-                      :disabled="btnType !== 'add'"></el-autocomplete>
-                    <!-- @select="handleSelect(scope.row, scope.$index, $event)" -->
+                      :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)" ></el-autocomplete>
+
                     <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                             style="width: 100%;"  /> -->
                   </template>
@@ -526,7 +539,20 @@
                     </el-select>
                   </template>
                 </el-table-column>
-
+                <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'">
+                  <template slot-scope="scope">
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.angle" placeholder="请选择" clearable
+                      style="width: 100%;">
+                      <el-option v-for="(item, index) in list13" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'">
+                      <template slot-scope="scope">
+                          <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />
+                      </template>
+                </el-table-column>
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" />
@@ -800,6 +826,7 @@ export default {
       list10: [],
       list11: [],
       list12: [],
+      list13: [],
       enterFlag: false,
       exportFormVisible: false,
       historyPriceTotal: 0,
@@ -933,6 +960,8 @@ export default {
         colour: "",
         protrusion: "",
         preload: "",
+        angle:'',
+        centerDiameter:'',
         remark: "",
       },
       codeConfig: {},
@@ -999,6 +1028,8 @@ export default {
       preloadFlag: '',
       materialFlag: '',
       colourFlag: '',
+      angleFlag: '',
+      centerDiameterFlag:'',
       bimProductAttributesList: [],
       row: null
     }
@@ -1335,6 +1366,16 @@ export default {
               }
             })
           }
+          this.angleFlag = res.data.angle
+          if (this.angleFlag === '1') {
+            this.list13 = this.bimProductAttributesList.pa025.map((item) => {
+              return {
+                label: item.name,
+                name: item.name
+              }
+            })
+          }
+          this.centerDiameterFlag = res.data.centerDiameter
           this.formLoading = false
           this.tableVisible = true
         }).catch(err => this.formLoading = false)
@@ -1495,54 +1536,24 @@ export default {
       let customerDrawingNumber
       let obj = JSON.parse(JSON.stringify(this.createdData))
       obj.taxRate = this.taxRate * 1
-
-      if (this.dataFormTwo.lines[index].customerProductNo) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerProductNo))
-      if (item.value) {
-        let objs = {
-          productDrawingNo: item.value,
-          customerDrawingNumber: "",
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [{
-            asc: false,
-            column: "quotationTime"
-          }],
-        }
-        getQuotationmxLists(objs).then(res => {
-          if (res.data.records.length) {
-            console.log('有值', res.data.records[0]);
-            let data = res.data.records[0]
-
-            // res.data.records[0].customerProductDrawingNo = customerDrawingNumber ? customerDrawingNumber : res.data.records[0].customerProductDrawingNo
-            res.data.records[0].taxRate = res.data.records[0].taxRate * 1
-            this.$set(this.dataFormTwo.lines, index, res.data.records[0])
-            // this.$set(this.dataFormTwo.lines, index, res.data.records[0])
-            console.log(111, this.dataFormTwo.lines);
-            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
-            if (!exists && res.data.records[0].taxRate) {
+      this.dataFormTwo.lines[index].productDrawingNo = item.data.drawingNo
+      this.dataFormTwo.lines[index].mainUnit = item.data.mainUnit
+      this.dataFormTwo.lines[index].productsId = item.data.id
+      this.dataFormTwo.lines[index].productName = item.data.name
+      this.dataFormTwo.lines[index].productCode = item.data.code
+      this.dataFormTwo.lines[index].taxRate = item.data.taxRate * 1 || this.taxRate * 1
+      let exists = this.taxRateList.some(line => line.taxRate === item.data.taxRate *1);
+            if (!exists && item.data.taxRate) {
               let obj = {
-                taxRate: res.data.records[0].taxRate * 1,
-                fullName: res.data.records[0].taxRate + '%',
-                enCode: res.data.records[0].taxRate + '%',
+                taxRate: item.data.taxRate * 1,
+                fullName: item.data.taxRate + '%',
+                enCode: item.data.taxRate + '%',
               }
               this.taxRateList.push(obj)
             }
-          } else {
-
-            item.data.taxRate = this.taxRate * 1
-            this.$set(item.data, 'productDrawingNo', item.value)
-            this.$set(item.data, 'price', "")
-            this.$set(item.data, 'customerProductNo', customerDrawingNumber)
-            item.data.productsId = item.data.id
-
-            this.$set(this.dataFormTwo.lines, index, item.data)
-            // this.$set(this.dataFormTwo.lines, index, item.data)
-            this.watchPrice(this.dataFormTwo.lines[index], index)
-          }
-          console.log(666777);
+      if (this.dataFormTwo.lines[index].customerProductNo) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerProductNo))
+      if (item.value) {
           this.dataFormTwo.lines.push(obj)
-        })
       }
     },
 
@@ -1800,7 +1811,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/客户产品价格导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/客户产品价格新建导入.xlsx')
       a.click()
     },
     // 联系人信息删除当前行

@@ -32,7 +32,7 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
-                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled >
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -57,7 +57,7 @@
                       </el-input>
                     </el-form-item>
                   </el-col>
-           
+
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="编排任务方式" prop="taskMethod">
                       <el-select v-model="dataForm.taskMethod" placeholder="请选择编排任务方式" style="width: 100%;"
@@ -86,12 +86,12 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="工艺路线名称" prop="routingName">
-                      <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
+                      <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>
                   </el-col>
 
-              
+
                   <el-col :sm="12" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -427,13 +427,13 @@
             <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
-                    v-if="isTechnicalSwitch === '1'">
+              v-if="isTechnicalSwitch === '1'">
 
-                  </el-table-column>
-                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
-                    v-if="isCheckingSwitch === '1'">
+            </el-table-column>
+            <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+              v-if="isCheckingSwitch === '1'">
 
-                  </el-table-column>
+            </el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
             <el-table-column prop="productionQuantity" label="生产数量" width="100" />
@@ -471,7 +471,7 @@ import {
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 // import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
@@ -505,7 +505,7 @@ export default {
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
       },
-      
+
       dataForm: {
         planDate: [],
         lineEdgeList: [],
@@ -533,9 +533,9 @@ export default {
         bomId: "",
         projectId: "",
         orderType: "manually",
-        stockInventoryLineId:"",
-        classAttribute:"finish_product",
-        productsId:"",
+        stockInventoryLineId: "",
+        classAttribute: "finish_product",
+        productsId: "",
       },
       dataFormTwo: {
         data: [],
@@ -609,6 +609,9 @@ export default {
       bimProductAttributesList: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      workFlagFalseInfo:{},//不生成工单的数据
+      currentProcessInfo:{},//当前所选的工序
+      workFlag:null,//是否都生成工单标志 
     }
   },
   computed: {
@@ -637,7 +640,7 @@ export default {
     },
   },
   async created() {
- 
+
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -656,14 +659,14 @@ export default {
         this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-  
- 
+
+
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
- 
+
     // 选择产品
     selectProductFun(data) {
       this.$set(data, 'orderNo', this.dataForm.orderNo)
@@ -673,7 +676,7 @@ export default {
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
-   
+
     },
     getWarehouseListFun() {
       let obj = {
@@ -832,7 +835,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1028,8 +1031,8 @@ export default {
       });
     },
     // 获取工艺详情
-    getRoutingDetail(productsId,id) {
-      detailResourceProcess(productsId,id).then(res => {
+    getRoutingDetail(productsId, id) {
+      detailResourceProcess(productsId, id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
@@ -1049,32 +1052,78 @@ export default {
           } else {
           }
         });
-        res.data.routingLineList.sort((a, b) => a.sort - b.sort);
-        this.dataFormTwo.data = res.data.routingLineList
-        this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
+        let processList = res.data.routingLineList.sort((a, b) => a.sort - b.sort);
+
+        // 找到当前 processId 的对象  
+        let currentItem = processList.find(item => item.processId === this.dataForm.processId);
+
+        if (currentItem) {
+          this.currentProcessInfo=currentItem
+          // 返回当前数据  
+
+          // 获取当前 object's sort 值  
+          let currentSortValue = currentItem.sort;
+
+          // 找出所有 sort 大于 currentSortValue 的对象  
+          let largerSortItems = processList.filter(item => item.sort > currentSortValue);
+
+          if (largerSortItems.length > 0) {
+            // 检查新数组中是否有 workOrderFlag 为 false 的对象 
+            this.dataFormTwo.data = largerSortItems
+
+            let hasWorkOrderFlagFalse = largerSortItems.some(item => !item.workOrderFlag);
+            
+            if (!hasWorkOrderFlagFalse) {
+              // 都生成工单
+              // 返回 false  
+              this.workFlag=true
+              //               console.log(false);
+            } else {
+              // 存在不生成工单的数据，并找出最后一道不生成工单的数据
+              // 找到 sort 最大的对象  
+              let maxSortItem = largerSortItems.reduce((maxItem, item) => {
+                return item.sort > maxItem.sort ? item : maxItem;
+              });
+
+              // 返回 sort 最大值的数据  
+              console.log(maxSortItem);
+              this.workFlagFalseInfo=maxSortItem
+            }
+          } else {
+            this.$message.error("数据存在问题,请检查后重试")
+            // 如果没有大于的 sort 值，返回空数组  
+            this.dataFormTwo.data=[] 
+          }
+        } else {
+          this.$message.error("所选数据的工序不在该工艺路线中")
+          console.log("currenProcessId 不存在于数组中");
+          this.dataFormTwo.data = []
+        }
+
       })
-    },  
-    init(data,btnType) {
+    },
+    init(data, btnType) {
       console.log(data);
       this.getProductionLineListFun()
-      this.dataForm=data[0]
+      this.dataForm = data[0]
       this.$set(this.dataForm, 'orderNo', '')
-      this.$set(data[0], 'productionQuantity', data[0].inventoryQuantity )
+      this.$set(data[0], 'productionQuantity', data[0].inventoryQuantity)
       this.$set(this.dataForm, 'planDate', [])
-      this.$set(this.dataForm, 'routingId', "")
-      this.$set(this.dataForm, 'routingName', "")
+      this.$set(this.dataForm, 'routingId', data[0].routingId)
+      this.$set(this.dataForm, 'routingName', data[0].routingName)
       this.$refs.dataForm.clearValidate('planDate');
       this.$refs.dataForm.clearValidate('routingName');
 
       this.$set(this.dataForm, 'taskMethod', 'appoint')
-      this.dataForm.productsName=data[0].productName
-      this.dataForm.productsDrawingNo=data[0].productDrawingNo
-      this.dataForm.projectId=data[0].projectId
-      this.dataForm.mainUnit=data[0].mainUnit
+      this.dataForm.productsName = data[0].productName
+      this.dataForm.productsDrawingNo = data[0].productDrawingNo
+      this.dataForm.projectId = data[0].projectId
+      this.dataForm.mainUnit = data[0].mainUnit
       // this.dataForm.productionQuantity=data[0].inventoryQuantity 
-      this.dataForm.stockInventoryLineId=data[0].id 
-      this.dataForm.productsId=data[0].productsId
-      this.$set(this.dataForm, 'orderType', 'flipping')
+      this.dataForm.stockInventoryLineId = data[0].id
+      this.dataForm.productsId = data[0].productsId
+      this.$set(this.dataForm, 'orderType', 'transit')
+      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
       this.fetchData("PROD")
     },
     async fetchData(code) {
@@ -1095,9 +1144,12 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
-      let submitFlag = null; 
+      let submitFlag = null;
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
+      if(!this.dataFormTwo.data.length) return this.$message.error("工单数据不能为空")
+      let hasTrueFlag = this.dataFormTwo.data.some(item => item.workOrderFlag === true);  
+    if(!hasTrueFlag) return this.$message.error("工单数据存在问题,请检查后重试")
       if (this.naturalResourcesFlag) {
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];
@@ -1158,14 +1210,50 @@ export default {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
-        lineEdgeList: arr
+        lineEdgeList: arr,
+        materialList:[],
       }
+      // 都生成工单  则投料清单数据为  所选数据的产品+所选的工序作为料 
+      
+      if(this.workFlag){
+        let objs={
+          calculationDirection:this.dataForm.calculationDirection,
+          deputyUnit:this.dataForm.deputyUnit,
+          mainUnit:this.dataForm.mainUnit,
+          materialProcessId:this.currentProcessInfo.processId,
+          materialsUsedQuantity:this.dataForm.productionQuantity,
+          processId:this.currentProcessInfo.processId,
+          productsId:this.dataForm.productsId,
+          ratio:this.dataForm.ratio, 
+          qty:1,
+        }
+        obj.materialList=[...obj.materialList,objs]
+      }else{
+        // 如果存在不生成工单的数据 
+        let objs={
+          calculationDirection:this.dataForm.calculationDirection,
+          deputyUnit:this.dataForm.deputyUnit,
+          mainUnit:this.dataForm.mainUnit,
+          materialProcessId:this.workFlagFalseInfo.processId,
+          materialsUsedQuantity:this.dataForm.productionQuantity,
+          processId:this.workFlagFalseInfo.processId,
+          productsId:this.dataForm.productsId,
+          ratio:this.dataForm.ratio, 
+          qty:1,
+        }
+        obj.materialList=[...obj.materialList,objs]
+      }
+      console.log("当前所选的工序",this.currentProcessInfo);
+      console.log("标识",this.workFlag);
+      console.log("不生成工单的数据",this.workFlagFalseInfo);
+      console.log("工单数据",this.dataFormTwo.data);
+      console.log("提交的数据",obj);
       this.btnLoading = true
       addProdOrder(obj).then(res => {
         this.btnLoading = false
         this.$message.success("新建任务成功")
         setTimeout(() => {
-          this.$emit('close',true)
+          this.$emit('close', true)
         }, 1500);
       }).catch(error => {
         this.btnLoading = false

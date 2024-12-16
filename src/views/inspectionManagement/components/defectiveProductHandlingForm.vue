@@ -644,7 +644,6 @@ export default {
           label: '产品名称',
           value: '',
           type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
           render: this.isProductNameSwitch === '1',
           itemDisabled: true

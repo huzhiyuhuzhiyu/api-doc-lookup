@@ -41,6 +41,7 @@
                     <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
                         <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
                         <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
+                        <el-table-column v-if="isCustomerProductPage" prop="cooperativePartnerName" label="客户名称" sortable="custom" min-width="150" />
                         <template v-if="!noProductCol">
                             <el-table-column prop="drawingNo" label="品名规格" min-width="150" />
                             <el-table-column prop="productsCode" label="产品编码" min-width="120" />
@@ -282,7 +283,8 @@ export default {
                        orderNo: item.orderNo,
                        drawingNo: item.drawingNo,
                        productsCode: item.productsCode,
-                       categoryName: item.categoryName
+                       categoryName: item.categoryName,
+                       cooperativePartnerName: item.cooperativePartnerName
                    })).sort((a,b)=>b.creatorTime - a.creatorTime)
                }else{
                    this.list = []
@@ -327,6 +329,9 @@ export default {
         },
         isImage(){
             return this.flowCode === FlowCode.IMAGE
+        },
+        isCustomerProductPage(){
+            return this.flowCode === FlowCode.CUSTOMER_PRODUCT
         }
     }
 }

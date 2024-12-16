@@ -70,6 +70,8 @@
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printDevice('p038')">打印设备二维码</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button>
+              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+              <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableData.length">导出</el-button>
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
@@ -149,6 +151,24 @@
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
+        :file-list="fileList" :limit="1" :on-exceed="handleFileexceed" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
+            icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="submit()">
+          提交</el-button>
+      </span>
+    </el-dialog>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <share v-if="shareVisible" ref="share" @close="closeForm"></share>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
@@ -157,6 +177,8 @@
 </template>
 
 <script>
+import { excelExport,supplierupload } from '@/api/basicData/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
 import { getCategoryTrees, getEquEquipmentList, plmsync } from '@/api/basicData/index'
@@ -170,9 +192,15 @@ import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
   name: 'deviceProfileSet',
-  components: { Form, PrintBrowse, share, SuperQuery },
+  components: { Form, PrintBrowse, share, SuperQuery, ExportForm },
   data() {
     return {
+      fileList: [],
+      loadingText: '',
+      file: {},
+      uploadVisib: false,
+      columnList: [],
+      exportFormVisible: false,
       istable: false,
       isProjectSwitch: '',
       superQueryJson: [
@@ -438,6 +466,126 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    submit() {
+      this.UploadProduct(this.file)
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    handleFileChange(file, fileList) {
+      // 当文件状态变为成功时，表示上传成功，可以替换文件
+      this.file = file.raw
+    },
+    handleFileexceed(files) {
+      this.$refs['uploadRef'].clearFiles()
+      this.$nextTick(() => {
+        this.$refs['uploadRef'].handleStart(files[0])
+      })
+    },
+    // 导入产品
+    importProductFun() {
+      this.uploadVisib = true
+    },
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+      a.setAttribute('href', location.origin + '/static/设备导入模板.xlsx')
+      a.click()
+    },
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.listLoading = true
+      var formData = new FormData()
+      formData.append("file", data)
+      //调用上传文件接口
+      supplierupload(formData, 'supplier').then(res => {
+        if (!res.data) {
+          this.$message.success(`导入成功`)
+          this.listLoading = false
+          this.loadingText = ''
+        } else {
+          this.handleMessage(res.data)
+        }
+        this.uploadVisib = false
+        this.initData()
+      }).catch(err => {
+        this.$message.error(`文件上传失败`)
+        this.uploadVisib = false
+        this.listLoading = false
+        this.loadingText = ''
+      })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+    },
+    //导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.listQuery,
+          exportType: '1011',
+          exportName: '设备档案',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url, res.data.name)
+        }).catch(() => { })
+      }
+    },
     //设置默认展开
     setexpand(expands) {
       this.refreshTree = false

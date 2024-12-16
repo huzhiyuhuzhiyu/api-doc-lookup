@@ -36,7 +36,7 @@
                     <el-col :span="12">
                       <el-form-item label="工序编码" prop="code">
                         <el-input oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" v-model="dataForm.code"
-                          placeholder="请输入工序编码" maxlength="20" :disabled="type ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false
+                          placeholder="请输入工序编码" maxlength="20" :disabled="dataForm.id ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false
                             "></el-input>
                       </el-form-item>
                     </el-col>
@@ -67,13 +67,13 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="技术要求" v-if="isTechnicalSwitch === '1'">
-                        <el-input v-model="dataForm.technicalRequirement" placeholder="请输入技术要求" maxlength="20"
+                        <el-input v-model="dataForm.technicalRequirement" placeholder="请输入技术要求"
                           :disabled="disabled"></el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="检验信息" v-if="isCheckingSwitch === '1'">
-                        <el-input v-model="dataForm.inspectionInformation" placeholder="请输入检验信息" maxlength="20"
+                        <el-input v-model="dataForm.inspectionInformation" placeholder="请输入检验信息" 
                           :disabled="disabled"></el-input>
                       </el-form-item>
                     </el-col>

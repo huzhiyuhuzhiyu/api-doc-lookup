@@ -525,7 +525,6 @@ export default {
     // },
     handleFileChange(file, fileList) {
       // 当文件状态变为成功时，表示上传成功，可以替换文件
-      console.log(file, fileList, '123123');
       this.file = file.raw
     },
     handleFileexceed(files) {

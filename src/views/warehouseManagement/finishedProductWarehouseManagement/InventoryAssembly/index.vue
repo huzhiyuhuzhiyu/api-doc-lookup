@@ -787,7 +787,7 @@ export default {
         // }, 600);
       }
     },
-    handleUsercustom(id, type) {
+    handleUserRelation(id, type) {
       this.depFormVisible = true
       let obj = {
         btnType: type,
@@ -809,12 +809,12 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(id, type) {
-      this.depFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.depForm.init(id, type)
-      })
-    }
+    // handleUserRelation(id, type) {
+    //   this.depFormVisible = true
+    //   this.$nextTick(() => {
+    //     this.$refs.depForm.init(id, type)
+    //   })
+    // }
   }
 }
 </script>

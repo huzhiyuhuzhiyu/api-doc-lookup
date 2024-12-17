@@ -203,6 +203,10 @@
                       </el-table-column>
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                         v-if="vibrationLevelFlag == 1"></el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                        v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -412,6 +416,10 @@
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
+                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                        v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="ordersNo" label="订单号" width="160" />
                   <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
@@ -580,6 +588,10 @@
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
+                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                        v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="remark" label="备注" width="160" />
                   <el-table-column prop="createTime" label="创建时间" width="180" />
                 </JNPF-table>
@@ -896,6 +908,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
       bimProductAttributesList: [],
     }
   },
@@ -960,6 +974,8 @@ export default {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.specialRequireFlag = res.data.specialRequire
         this.vibrationLevelFlag = res.data.vibrationLevel
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
     },
     async getProductNameSwitch(code, type) {

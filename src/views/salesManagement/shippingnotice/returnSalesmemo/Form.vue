@@ -153,14 +153,18 @@
                     <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                     <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                     </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" v-if="sealingCoverTypingFlag === '1'" />
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" v-if="accuracyLevelFlag === '1'" />
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" v-if="vibrationLevelFlag === '1'" />
+                    <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag === '1'" />
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag === '1'" />
+                    <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
+                    <el-table-column prop="material" label="保持架材质" width="120" 
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" 
+                        v-if="colourFlag == 1"></el-table-column>
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -328,14 +332,18 @@
                 <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                 <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                 </el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" v-if="sealingCoverTypingFlag === '1'" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" v-if="accuracyLevelFlag === '1'" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" v-if="vibrationLevelFlag === '1'" />
+                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag === '1'" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag === '1'" />
+                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
+                <el-table-column prop="material" label="保持架材质" width="120" 
+                    v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" 
+                    v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -486,14 +494,18 @@
                 v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" v-if="sealingCoverTypingFlag === '1'" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" v-if="accuracyLevelFlag === '1'" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" v-if="vibrationLevelFlag === '1'" />
+                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag === '1'" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag === '1'" />
+                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
+                <el-table-column prop="material" label="保持架材质" width="120" 
+                    v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" 
+                    v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -635,7 +647,7 @@ import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList ,getOrderFiledMap} from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import {
@@ -910,6 +922,18 @@ export default {
       taxRateList: [],
       selectArr: [],
       isProductNameSwitch: '',
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
+      bimProductAttributesList: {},
 
     }
   },
@@ -936,6 +960,7 @@ export default {
     // this.getProvinceList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getOrderFiledMap()
      
     this.getAttributeline()
   },
@@ -947,6 +972,20 @@ export default {
     this.getAttachmentswitch()
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

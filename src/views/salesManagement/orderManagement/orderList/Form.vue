@@ -166,23 +166,27 @@
                       <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                       <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column>
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
-                        v-if="accuracyLevelFlag == 1"></el-table-column>
+                        v-if="sealingCoverTypingFlag == 1"></el-table-column>
                       <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
-                        v-if="clearanceFlag == 1">
+                        v-if="accuracyLevelFlag == 1">
                       </el-table-column>
                       <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
-                        v-if="oilFlag == 1"></el-table-column>
+                        v-if="vibrationLevelFlag == 1"></el-table-column>
                       <el-table-column prop="oil" label="油脂" width="120" :key="61"
-                        v-if="oilQuantityFlag == 1"></el-table-column>
+                        v-if="oilFlag == 1"></el-table-column>
                       <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
-                        v-if="packagingMethodFlag == 1"></el-table-column>
+                        v-if="oilQuantityFlag == 1"></el-table-column>
                       <el-table-column prop="clearance" label="游隙" width="120" :key="100"
-                        v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                        v-if="clearanceFlag == 1"></el-table-column>
                       <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
-                        v-if="specialRequireFlag == 1">
+                        v-if="packagingMethodFlag == 1">
                       </el-table-column>
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                         v-if="vibrationLevelFlag == 1"></el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                        v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
                     </el-table>
                   </div>
@@ -343,6 +347,24 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
+                      :key="105">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
+                      :key="110">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -542,6 +564,10 @@
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
+                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                        v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                   </el-table-column>
                 </el-table>
@@ -704,6 +730,24 @@
                     </el-select>
                   </template>
                 </el-table-column>
+                <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
+                      :key="105">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
+                      :key="110">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
                 <el-table-column prop="remark" label="备注" width="200" :key="128">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -1253,6 +1297,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
       bimProductAttributesList: [],
       selectProductClassFlag:false,
       isProjectSwitchFlag:null,
@@ -1343,6 +1389,8 @@ export default {
         this.productData[index].oilQuantity=row.oilQuantity
         this.productData[index].packagingMethod=row.packagingMethod
         this.productData[index].specialRequire=row.specialRequire
+        this.productData[index].material=row.material
+        this.productData[index].colour=row.colour
         
     },
     // 点击选择属性按钮
@@ -1423,6 +1471,26 @@ export default {
         this.specialRequireFlag = res.data.specialRequire
         if (this.specialRequireFlag == 1) {
           this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        // 保持架材质
+        this.materialFlag = res.data.material
+        if (this.materialFlag == 1) {
+          this.list9 = this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        // 颜色
+        this.colourFlag = res.data.colour
+        if (this.colourFlag == 1) {
+          this.list10 = this.bimProductAttributesList.pa010.map((item) => {
             return {
               label: item.name,
               name: item.name
@@ -2772,7 +2840,9 @@ export default {
                   packagingMethod: item.packagingMethod,
                   sealingCoverTyping: item.sealingCoverTyping,
                   specialRequire: item.specialRequire,
-                  vibrationLevel: item.vibrationLevel
+                  vibrationLevel: item.vibrationLevel,
+                  material: item.material,
+                  colour: item.colour
                 };
               });
               let filteredArray = newArray.filter(item => {

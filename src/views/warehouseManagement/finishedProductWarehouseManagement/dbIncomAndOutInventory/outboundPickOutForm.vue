@@ -104,8 +104,8 @@
                             @click="columnSetFun('product')" />
                         </el-tooltip>
                       </div>
-
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                      <template v-if="tableDataFlag">
+                         <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         :partentOrChild="'product'" :setColumnDisplayList="columnList"  custom-column
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;height: auto">
 
@@ -191,6 +191,8 @@
                           </template>
                         </el-table-column>
                       </JNPF-table>
+                      </template>
+                     
 
 
 
@@ -296,7 +298,7 @@
                         </el-tooltip>
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" v-if="tableDataFlag" :setColumnDisplayList="columnList"  custom-column :partentOrChild="'product'"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" :setColumnDisplayList="columnList"  custom-column :partentOrChild="'product'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -1329,27 +1331,23 @@ export default {
   height: calc(100% - 47px);
   overflow-y: auto;
 }
-
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   padding: 10px 10px;
   padding-top: 0;
 }
-
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   overflow: auto;
 }
-
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
-
-
-
+::v-deep .JNPF-common-page-header.noButtons {
+  padding: 5px 10px;
+}
 .required {
   color: red;
   margin-right: 4px;
 }
-
 .subtitle {
   line-height: 33px;
   font-size: 18px;
@@ -1358,22 +1356,15 @@ export default {
   padding-left: 5px;
 }
 
-::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 !important;
-}
-
 .JNPF-preview-main .main {
   padding-top: 0;
 }
-
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }
-
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
-
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1386,21 +1377,19 @@ export default {
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
-
 ::v-deep .el-collapse-item__wrap {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
-
+.productInfo ::v-deep .el-collapse-item__wrap {
+  border-top: 1px solid #dcdfe6 !important;
+}
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
-
-
 .import_t {
   font-size: 22px;
   color: rgb(103, 194, 58);
@@ -1409,7 +1398,6 @@ export default {
   display: inline-block;
   margin-left: 20px;
 }
-
 .import_b {
   font-size: 18px;
   /* color: #67c23a; */
@@ -1417,30 +1405,22 @@ export default {
   margin-top: 43px;
   display: inline-block;
 }
-
 .JNPF-common-search-box {
   margin-bottom: 5px;
 }
-
 // .orderInfo ::v-deep .el-collapse-item__wrap {
 //   border-bottom: none !important
 // }
 .JNPF-common-table {
   border: 1px solid #ebeef5 !important;
 }
-
 .JNPF-common-layout-main {
   padding-top: 0;
 }
-
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
-
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
-}
-::v-deep .el-table__body-wrapper{
-  height: auto!important;
 }
 </style>

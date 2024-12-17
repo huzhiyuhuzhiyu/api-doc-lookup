@@ -501,6 +501,7 @@ import { mapGetters, mapState } from 'vuex'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import { getBimBusinessDetail } from '@/api/basicData/index'
 export default {
   components: { CustomerForm, BatchNumberForm, Process, recordList, PrintBrowse, PrintDialog },
   mixins: [flowMixin, busFlow, getProjectList],

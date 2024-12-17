@@ -259,7 +259,7 @@ import {
 import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
 import { BillNumber } from '@/api/system/billRule'
 import { addPlanList, updatePlanList } from '@/api/calculationList/calculationList.js'
-import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import Form from '../../assemblyPlan/salesOrderCreation/invent.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";

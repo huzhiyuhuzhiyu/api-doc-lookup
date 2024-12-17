@@ -1798,6 +1798,7 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
+        stockFlag :true,
       },
 
       purchaseFormVisible: false,
@@ -4655,7 +4656,8 @@ export default {
             deliveryStartTime: "",
             deliveryEndTime: "",
             cooperativePartnerName: "",
-            customerProductNo: "",
+        stockFlag :true,
+        customerProductNo: "",
             orderItems: [{
               asc: false,
               column: ""

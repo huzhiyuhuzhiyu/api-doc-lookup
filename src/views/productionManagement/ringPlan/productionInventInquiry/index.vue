@@ -72,7 +72,7 @@
 
             <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
-            <el-table-column prop="processCode" label="工序名称" min-width="180" sortable="custom" />
+            <el-table-column prop="processCode" label="工序编码" min-width="180" sortable="custom" />
             <!-- <el-table-column prop="weight" label="重量(kg)" width="90" />
             <el-table-column prop="proportion" label="比重" width="80" />
             <el-table-column prop="discount" label="折扣" width="80" /> -->

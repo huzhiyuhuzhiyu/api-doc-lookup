@@ -139,6 +139,7 @@
                           </template>
                         </el-table-column>
 
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specSize" placeholder="请选择" disabled clearable
@@ -175,7 +176,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120"
+                        <el-table-column prop="standardValue"   label="规值" width="120"
                           key="211">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
@@ -185,7 +186,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
+                        <el-table-column prop="colour" label="颜色"  width="120" key="210">
 
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
@@ -435,6 +436,7 @@
                           </template>
                         </el-table-column>
 
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specSize" placeholder="请选择" disabled clearable

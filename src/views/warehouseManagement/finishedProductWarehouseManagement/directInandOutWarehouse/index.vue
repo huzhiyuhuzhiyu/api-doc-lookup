@@ -129,6 +129,7 @@
                         v-if="dataForm.documentType == 'outbound'" />
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132"
                         v-if="dataForm.documentType == 'inbound'">
@@ -235,13 +236,14 @@
                       </el-table-column>
                       <el-table-column prop="taxAmount" label="税额" width="120" key="1721"></el-table-column>
                       <el-table-column prop="totalAmount" label="总金额(含税)" width="120" key="125"></el-table-column>
-                      <el-table-column prop="originalBatchNumber" label="原批次号" width="140" key="1255"
+                      <!-- <el-table-column prop="originalBatchNumber" label="原批次号" width="140" key="1255"
                         v-if="dataForm.documentType == 'inbound'">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
                             placeholder="原批次号"></el-input>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                       <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
@@ -278,7 +280,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120"
+                      <el-table-column prop="standardValue" v-if="dataForm.businessType=='inbound_purchase'" label="规值" width="120"
                         key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
@@ -288,7 +290,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
+                      <el-table-column prop="colour" label="颜色" v-if="dataForm.businessType=='inbound_purchase'" width="120" key="210">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -639,7 +641,7 @@ export default {
         ["inbound_purchase", "采购收货"],
         ["outbound_purchase", "采购退货"],
         ["outbound_external_send", "外协发料"],
-        ["inbound_external", "外协收货"], 
+        ["inbound_external", "外协收货"],
         ["inbound_order_production", "生产产品入库"],
         ["inbound_production", "生产工单入库"],
         ["outbound_pick_out", "生产领料"],
@@ -905,7 +907,7 @@ export default {
             value: item.businessType
           }
         })
-       resList = temp.filter(item =>item.value!=='inbound_flip').concat(list)
+        resList = temp.filter(item => item.value !== 'inbound_flip').concat(list)
       }
       this.list = resList
     },
@@ -919,8 +921,8 @@ export default {
         this.attachmentData = res.data
       })
     },
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
+    async getOrderFiledMap() {
+      await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel
@@ -930,7 +932,7 @@ export default {
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
       })
-      getOrderFiledMap('purchase').then(res => {
+      await getOrderFiledMap('purchase').then(res => {
         this.standardValueFlag = res.data.standardValue
         this.colourFlag = res.data.colour
         this.processFlag = res.data.process
@@ -941,8 +943,8 @@ export default {
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
-       // 获取税率(数据字典)
-       getbimProductAttributes("585438081021126405").then(res => {
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
         res.data.list.forEach(item => {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
@@ -976,8 +978,8 @@ export default {
       //     clearance //游隙
       //     packagingMethod //包装方式          
       //     specialRequire //特殊要求
-      console.log(this.categoryType);
-      if (this.categoryType == 'inbound_purchase') {
+      console.log(this.dataForm.businessType ,this.bimProductAttributesList);
+      if (this.dataForm.businessType == 'inbound_purchase') {
         if (this.colourFlag === '1') {
           this.list11 = this.bimProductAttributesList.pa010.map((item) => {
             return {
@@ -1327,6 +1329,7 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
+      console.log("arr",arr);
       arr.forEach(item => {
         if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
           this.$set(item, 'discount', '')
@@ -1339,7 +1342,8 @@ export default {
         }
         this.$set(item, 'warehouseId', this.dataForm.warehouseId)
         this.$set(item, 'warehouseName', this.dataForm.warehouseName)
-        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType) 
+        this.$set(item, 'productCategoryName', item.productCategoryName) 
         item.classAttribute = item.classAttribute
         item.ordersId = ""
         item.ordersLineId = ""
@@ -1361,17 +1365,24 @@ export default {
           item.productsId = item.id
         }
         if (this.dataForm.businessType == 'inbound_purchase') {
+          console.log(555,item.productCategoryName);
           if (item.productCategoryName == '保持架') {
             let arr = ['pa017', 'pa021']
             arr.forEach(items => {
               let obj1 = {
                 pageNum: -1,
-                pageSize: 20,
+                pageSize: -1,
                 typeCode: items,//保持架尺寸
               };
               getbimProductAttributesList(obj1).then(res => {
-                let list = items == 'pa017' ? 'spaceSizeList' : 'materialList'
-                this.$set(item, list, res.data.records)
+                if(items=='pa017'){
+                  console.log(66666);
+                  this.$set(item, 'spaceSizeList', res.data.records)
+                  console.log("item",item);
+                }else{
+                  this.$set(item, 'materialList', res.data.records)
+
+                } 
               })
             });
           }
@@ -1380,7 +1391,7 @@ export default {
             arr.forEach(items => {
               let obj1 = {
                 pageNum: -1,
-                pageSize: 20,
+                pageSize: -1,
                 typeCode: items,//保持架尺寸
               };
               getbimProductAttributesList(obj1).then(res => {

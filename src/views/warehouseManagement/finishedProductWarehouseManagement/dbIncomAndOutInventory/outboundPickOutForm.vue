@@ -162,6 +162,7 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
                         </el-table-column>
@@ -355,6 +356,7 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
                         </el-table-column>
@@ -742,7 +744,7 @@ export default {
       this.$set(this.productData[index], 'divideEqually', data.divideEqually)
       this.$set(this.productData[index], 'material', data.material)
       this.$set(this.productData[index], 'partnerName', data.partnerName)
-      this.$set(this.productData[index], 'parentId', data.parentId)
+      this.$set(this.productData[index], 'cooperativePartnerId', data.cooperativePartnerId)
       
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)

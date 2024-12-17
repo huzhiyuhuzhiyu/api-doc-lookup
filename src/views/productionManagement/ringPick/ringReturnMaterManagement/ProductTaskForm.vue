@@ -46,6 +46,9 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
+                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
+                <div v-if="scope.row.orderType == 'transit'">在制任务</div>
               </template>
             </el-table-column>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
@@ -138,7 +141,7 @@ export default {
       this.$emit("selectProductTask", row,)
       this.customerVisible = false
     },
-    getbatchNumList() {
+    getbatchNumList(id) {
       this.listLoading = true
       this.orderForm.projectId = id
       ordershengchanList(this.orderForm).then(res => {

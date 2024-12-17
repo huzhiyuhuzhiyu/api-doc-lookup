@@ -117,7 +117,9 @@ export default {
     },
     selectmaterial(val) {
       this.selectArr = val
-
+      this.selectArr.forEach(item => {
+        this.$set(item,'materialListId',item.id)
+      });
     },
     // 选择批次
     submitFun() {

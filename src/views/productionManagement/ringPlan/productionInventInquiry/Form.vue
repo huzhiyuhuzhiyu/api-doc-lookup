@@ -78,7 +78,7 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="计划生产开始—结束日期" prop="planDate"
-                      :style="dataForm.taskMethod != 'appoint' ? 'margin-bottom: 20px;' : ''">
+                      >
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
@@ -1107,7 +1107,7 @@ export default {
       this.getProductionLineListFun()
       this.dataForm = data[0]
       this.$set(this.dataForm, 'orderNo', '')
-      this.$set(data[0], 'productionQuantity', data[0].inventoryQuantity)
+      this.$set(data[0], 'productionQuantity',  this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'routingId', data[0].routingId)
       this.$set(this.dataForm, 'routingName', data[0].routingName)

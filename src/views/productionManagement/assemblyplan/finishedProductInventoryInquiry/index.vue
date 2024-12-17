@@ -224,6 +224,7 @@ export default {
         batchNumber:"",
         classAttribute:"finish_product",
         flipFlag:true,
+        availableBatch:true,
         excludeProcessFlag:true,
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         pageNum: 1,
@@ -415,6 +416,7 @@ export default {
         batchNumber:"",
         classAttribute:"finish_product",
         flipFlag:true,
+        availableBatch:true,
         excludeProcessFlag:true,
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         pageNum: 1,

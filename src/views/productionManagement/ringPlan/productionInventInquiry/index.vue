@@ -228,7 +228,7 @@ export default {
         orderNo: '', //订单号
         excludeProcessFlag: 0,
         flipFlag:true,
-
+        availableBatch:true,
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         pageNum: 1,
         pageSize: 20,
@@ -460,6 +460,7 @@ export default {
         orderNo: '', //订单号
         excludeProcessFlag: 0,
         flipFlag:true,
+        availableBatch:true,
 
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         pageNum: 1,

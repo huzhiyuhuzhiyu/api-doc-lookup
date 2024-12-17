@@ -84,7 +84,7 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px;">
+                    <el-form-item label="计划生产开始—结束日期" prop="planDate"  :style="dataForm.taskMethod == 'appoint' ? 'margin-bottom: 20px;' : ''">
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
@@ -92,7 +92,7 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="工艺路线名称" prop="routingName" style="margin-bottom: 20px;">
+                    <el-form-item label="工艺路线名称" prop="routingName"  >
                       <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>

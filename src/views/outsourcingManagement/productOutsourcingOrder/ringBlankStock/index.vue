@@ -200,6 +200,7 @@ export default {
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         ringBlankQueryFlag: 1,
         productSource: 'purchase', //产品来源
+        availableBatch:true,
         classAttribute: '',
         outFlag: 1,
         pageNum: 1,
@@ -432,6 +433,7 @@ export default {
         deliveryStartDate: '',
         deliveryDate: '',
         endTime: '',
+        availableBatch:true,
         orderNo: '', //订单号
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         ringBlankQueryFlag: 1,

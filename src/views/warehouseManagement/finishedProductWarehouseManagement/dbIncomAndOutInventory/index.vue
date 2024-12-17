@@ -1843,7 +1843,7 @@ export default {
       productForm: {
         orderNo: "",
         orderType: "",
-        orderTypeList: ['normal', 'rework'],
+        orderTypeList: ['normal', 'rework','manually'],
 
         productDrawingNo: "",
         stockFlag: true,

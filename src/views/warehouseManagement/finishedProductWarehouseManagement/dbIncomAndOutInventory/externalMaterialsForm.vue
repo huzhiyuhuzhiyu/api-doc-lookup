@@ -1082,7 +1082,7 @@ export default {
       if (btnType == 'look') {
         this.title = '查看出库单'
         detailWarehouseData(data).then(res => {
-          if (res.data.attachmentList) {
+          if (res.data.attachmentList.length) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push(
                 {

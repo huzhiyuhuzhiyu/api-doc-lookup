@@ -38,17 +38,19 @@
           <div class="JNPF-common-head">
             <div></div>
             <div></div>
-          <div class="JNPF-common-head-right">
-        
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
+            <div class="JNPF-common-head-right">
+
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+            </div>
           </div>
-        </div>
-          <JNPF-table v-loading="listLoading" v-if="showflag"  :setColumnDisplayList="columnList" :data="tableDataList" custom-column ref="dataTable" :fixedNO="true"  >
+          <JNPF-table v-loading="listLoading" v-if="showflag" :setColumnDisplayList="columnList" :data="tableDataList"
+            custom-column ref="dataTable" :fixedNO="true">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180"></el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180"></el-table-column>
-            <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120"/>
+            <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
             <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
@@ -62,10 +64,17 @@
             </el-table-column>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120" />
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
+            <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
+
             <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
             <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
             <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"
               :key="603"></el-table-column>
+            <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="603"></el-table-column>
+            <el-table-column prop="standardValue" label="规值" min-width="120"  
+              sortable="custom"></el-table-column>
+              <el-table-column prop="colour" label="颜色" min-width="120"  
+              sortable="custom"></el-table-column>
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
               sortable="custom"></el-table-column>
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
@@ -97,12 +106,12 @@
   </el-dialog>
 </template>
 <script>
-import { getBatchNumber,getOrderFiledMap } from '@/api/basicData/index'
+import { getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
 export default {
   data() {
     return {
-      columnList:[],
-      showflag:false,
+      columnList: [],
+      showflag: false,
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -118,7 +127,7 @@ export default {
           column: ""
         },],
         shelfSpaceName: "",
-        partnerName:"",
+        partnerName: "",
         batchNumber: "",
         warehouseId: "",
         vibrationLevel: "",
@@ -135,8 +144,8 @@ export default {
       tableDataList: [],
       cpData: {},
       cpIndex: "",
-        // 属性字段  控制属性字段显示隐藏
-        accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -145,11 +154,11 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
-      isProductNameSwitch:"",
+      isProductNameSwitch: "",
     }
   },
-  async created () {
-      await this.getOrderFiledMap()
+  async created() {
+    await this.getOrderFiledMap()
   },
   methods: {
     columnSetFun() {
@@ -158,7 +167,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'warehouseName' || prop == 'shelfSpaceName' ) {
+      if (prop == 'warehouseName' || prop == 'shelfSpaceName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -177,7 +186,7 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
-        this.showflag=true
+        this.showflag = true
       })
     },
     init(data, index) {

@@ -740,6 +740,7 @@ export default {
       this.$set(this.productData[index], 'divideEqually', data.divideEqually)
       this.$set(this.productData[index], 'material', data.material)
       this.$set(this.productData[index], 'partnerName', data.partnerName)
+      this.$set(this.productData[index], 'parentId', data.parentId)
       
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)

@@ -259,7 +259,7 @@ import {
 import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
 import { BillNumber } from '@/api/system/billRule'
 import { addPlanList, updatePlanList } from '@/api/calculationList/calculationList.js'
-import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import Form from './invent.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -758,6 +758,8 @@ export default {
           vibrationLevel: productData[0].vibrationLevel,
           packagingMethod: productData[0].packagingMethod,
           specialRequire: productData[0].specialRequire,
+          excludeProcessFlag:false,
+          projectId:productData[0].projectId
         };
         this.planForm.bomId = productData[0].bomId
         if (productData[0].bomId) {
@@ -858,6 +860,7 @@ export default {
           sealingCoverTyping: productData.plan.sealingCoverTyping,
           vibrationLevel: productData.plan.vibrationLevel,
 
+          excludeProcessFlag:false,
         };
         if (this.btnType == 'edit') {
           getProductInventory(obj).then(res => {

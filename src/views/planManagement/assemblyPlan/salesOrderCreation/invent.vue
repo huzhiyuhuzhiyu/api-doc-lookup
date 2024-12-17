@@ -391,7 +391,7 @@ export default {
       console.log("this.",this.isProjectSwitch);
       this.listQuery.projectId=this.isProjectSwitch==1?this.projectId:""
       console.log("this.fileFlag",this.fieldFlag);
-      // this.listQuery.excludeProcessFlag=!this.fieldFlag
+      this.listQuery.excludeProcessFlag=true
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false

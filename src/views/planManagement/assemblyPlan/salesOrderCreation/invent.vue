@@ -86,6 +86,7 @@
               </el-table-column>
               <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
               <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
               <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
               <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
               <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"

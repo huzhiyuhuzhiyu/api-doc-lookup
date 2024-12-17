@@ -65,14 +65,14 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="tableFlag" highlight-current-row :fixedNO="true"
             ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
             :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
 
-            <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
-            <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+            <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
+            <el-table-column prop="processCode" label="工序名称" min-width="180" sortable="custom" />
             <!-- <el-table-column prop="weight" label="重量(kg)" width="90" />
             <el-table-column prop="proportion" label="比重" width="80" />
             <el-table-column prop="discount" label="折扣" width="80" /> -->
@@ -82,6 +82,7 @@
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
             <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
             <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
+            <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="warehouseName" label="仓库" width="120" sortable="custom" />
             <el-table-column prop="shelfSpaceName" label="库位" width="120" sortable="custom" />
             <el-table-column prop="latestStorageTime" label="最新入库时间" width="220" sortable="custom" />
@@ -458,8 +459,8 @@ export default {
         endTime: '',
         orderNo: '', //订单号
         excludeProcessFlag: 0,
-        outFlag: 1,
-        productSource: 'produce',
+        flipFlag:true,
+
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         pageNum: 1,
         pageSize: 20,

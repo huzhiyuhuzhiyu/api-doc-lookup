@@ -65,11 +65,16 @@
             </el-table-column>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120" />
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
-            <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+              <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
             <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
             <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"
               :key="603"></el-table-column>
-            <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
+            <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column> 
+            <el-table-column prop="standardValue" label="规值" min-width="120" v-if="sealingCoverTypingFlag == 1"
+              sortable="custom"></el-table-column>
+              <el-table-column prop="colour" label="颜色" min-width="120" v-if="sealingCoverTypingFlag == 1"
+              sortable="custom"></el-table-column>
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" 
               sortable="custom"></el-table-column>
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 

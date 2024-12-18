@@ -448,18 +448,23 @@ export default {
                                             <el-input v-model="dataForm.orderNo" placeholder="请输入单号" :disabled="orderNoDisabled" />
                                         </el-form-item>
                                     </el-col>
-
+                                    <el-col :span="6" v-if="abProjectSwitchVisible">
+                                        <el-form-item label="所属项目" prop="projectId" required>
+                                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;"
+                                                       :disabled="!abIsCommonUser || isView">
+                                                <el-option v-for="(item, index) in abProjectList" :key="index" :label="item.label"
+                                                           :value="item.value"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
                                     <el-col :span="6" v-if="isNotCustomerProductPage">
                                         <el-form-item label="工艺路线名称">
                                             <el-input readonly :placeholder="dataForm.routingName" v-model="dataForm.routingName"></el-input>
                                         </el-form-item>
                                     </el-col>
+
                                     <template v-if="!isNoProductPage">
-                                        <el-col :span="6">
-                                            <el-form-item label="版本号" prop="version">
-                                                <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
-                                            </el-form-item>
-                                        </el-col>
+
                                         <el-col :span="6" v-if="isCustomerProductPage">
                                                 <el-form-item label="客户名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                                                     <ComSelect-page clearable :treeNodeClick="treeNodeClick" :isdisabled="isView"
@@ -555,13 +560,9 @@ export default {
                                             </el-form-item>
                                         </el-form>
                                     </el-col>
-                                    <el-col :span="6" v-if="abProjectSwitchVisible">
-                                        <el-form-item label="所属项目" prop="projectId" required>
-                                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;"
-                                                       :disabled="!abIsCommonUser || isView">
-                                                <el-option v-for="(item, index) in abProjectList" :key="index" :label="item.label"
-                                                           :value="item.value"></el-option>
-                                            </el-select>
+                                    <el-col :span="6"  v-if="!isNoProductPage">
+                                        <el-form-item label="版本号" prop="version">
+                                            <el-input v-model="dataForm.version" placeholder="请输入版本号"  />
                                         </el-form-item>
                                     </el-col>
                                 </el-row>

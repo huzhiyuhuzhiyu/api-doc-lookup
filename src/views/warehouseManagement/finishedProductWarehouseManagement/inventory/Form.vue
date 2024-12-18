@@ -212,7 +212,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
 
     await this.getOrderFiledMap()
-    this.getConfig()
+    await this.getConfig()
     this.isProjectSwitchFlag = true
 
   },
@@ -228,8 +228,8 @@ export default {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
     },
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
+    async getOrderFiledMap() {
+      await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel
@@ -239,17 +239,16 @@ export default {
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
       })
-      getOrderFiledMap('purchase').then(res => {
+      await getOrderFiledMap('purchase').then(res => {
         this.standardValueFlag = res.data.standardValue
         this.colourFlag = res.data.colour
         this.processFlag = res.data.process
       })
     },
-    getConfig() {
+    async getConfig() {
       let objs = { "pageSize": -1, "businessCode": "product" }
-      getBimBusinessSwitchConfigList(objs).then(res => {
+    await  getBimBusinessSwitchConfigList(objs).then(res => {
         this.productNameFlag = res.data.product[1].configValue1
-        console.log(this.productNameFlag);
         this.tableDataFlag = true
 
       }).catch(error => {
@@ -260,7 +259,6 @@ export default {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.tableDataFlag = true
         this.listLoading = false
 
 

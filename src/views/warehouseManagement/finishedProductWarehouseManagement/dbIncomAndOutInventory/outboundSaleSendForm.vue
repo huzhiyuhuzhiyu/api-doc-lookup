@@ -144,6 +144,8 @@
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -296,6 +298,8 @@
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -385,16 +389,8 @@
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"></el-table-column>
                 <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom"></el-table-column>
-                <!-- { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" }, -->
+                <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'" />

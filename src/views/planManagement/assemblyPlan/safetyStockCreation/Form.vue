@@ -164,6 +164,24 @@
                       </el-select>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
+                      :key="105">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
+                      :key="110">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -410,11 +428,11 @@ export default {
   },
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
+   async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
+    const res = await getbimProductAttributesListMap()
+    this.bimProductAttributesList = res.data
+
 
     },
     // 获取业务参数中 属性字段动态显示
@@ -488,6 +506,26 @@ export default {
         this.specialRequireFlag = res.data.specialRequire
         if (this.specialRequireFlag == 1) {
           this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+          // 保持架材质
+          this.materialFlag = res.data.material
+        if (this.materialFlag == 1) {
+          this.list9 = this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        // 颜色
+        this.colourFlag = res.data.colour
+        if (this.colourFlag == 1) {
+          this.list10 = this.bimProductAttributesList.pa010.map((item) => {
             return {
               label: item.name,
               name: item.name

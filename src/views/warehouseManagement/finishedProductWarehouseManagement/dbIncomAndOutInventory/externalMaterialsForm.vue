@@ -1018,7 +1018,6 @@ export default {
         this.dataForm.warehouseType = res.data[0].type
           this.dataForm.projectId = res.data[0].projectId
           this.allocationFlag = res.data[0].locationStatus == 'disabled' ? false : true
-          this.getMaterialsFun('init')
       })
     },
 
@@ -1115,6 +1114,7 @@ export default {
         data.forEach(item => {
           this.ordersLineIdList.push(item.id)
         });
+          this.getMaterialsFun('init')
         this.getBusInfo('b045')
 
         console.log(66666);

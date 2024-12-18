@@ -228,6 +228,7 @@ export default {
         orderNo: '', //订单号
         excludeProcessFlag: 0,
         flipFlag:true,
+        classAttribute:"semi_finished",
         availableBatch:true,
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         pageNum: 1,
@@ -460,6 +461,7 @@ export default {
         orderNo: '', //订单号
         excludeProcessFlag: 0,
         flipFlag:true,
+        classAttribute:"semi_finished",
         availableBatch:true,
 
         // orderType: 'external', //	订单类型 采购 procure、外协 external

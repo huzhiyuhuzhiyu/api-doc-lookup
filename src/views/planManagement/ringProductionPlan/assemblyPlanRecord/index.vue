@@ -72,6 +72,8 @@
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" />
+
             <!-- <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" /> -->
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />

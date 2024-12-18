@@ -1825,3 +1825,12 @@ export function Transfercustomer(data) {
     data
   })
 }
+
+// 配对方式
+export function getpairingModeList(data) {
+  return request({
+    url: `/api/zgt/bimPairingMode/list`,
+    method: 'post',
+    data
+  })
+}

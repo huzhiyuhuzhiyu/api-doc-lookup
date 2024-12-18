@@ -76,6 +76,7 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
+
                       <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="订单状态" prop="orderState">
                           <el-select v-model="dataForm.orderState" placeholder="请选择订单状态" style="width: 100%;"
@@ -142,6 +143,16 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       </el-table-column>
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                       <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
@@ -183,16 +194,17 @@
                       </el-table-column>
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                         v-if="vibrationLevelFlag == 1"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                      <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                         v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                      <el-table-column prop="colour" label="颜色" width="120" :key="1020"
                         v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
                     </el-table>
                   </div>
-                  <el-table ref="product" v-else-if="(btnType=='edit'||btnType=='add')&&isProjectSwitchFlag==true" :data="productData" :fixedNO="true"
-                    @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" key="165"
-                    style="width: 100%;">
+                  <el-table ref="product"
+                    v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
+                    :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
+                    @row-click="rowclick" key="165" style="width: 100%;">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -216,6 +228,16 @@
                           @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)">{{
                             scope.row.drawingNo }}
                         </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-show="isProjectSwitch == 1" />
@@ -351,8 +373,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
-                      :key="105">
+                    <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
@@ -360,8 +381,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
-                      :key="110">
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
@@ -524,6 +544,16 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   </el-table-column>
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                        :disabled="btnType == 'look' ? true : false">
+                        <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
@@ -564,17 +594,17 @@
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
-                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
-                        v-if="colourFlag == 1"></el-table-column>
+                  <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                    v-if="materialFlag == 1"></el-table-column>
+                  <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                    v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                   </el-table-column>
                 </el-table>
               </div>
-              <el-table ref="product" v-else-if="(btnType=='edit'||btnType=='add')&&isProjectSwitchFlag==true" :data="productData" :fixedNO="true"
-                @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" :key="165"
-                style="width: 100%;">
+              <el-table ref="product" v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
+                :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
+                @row-click="rowclick" :key="165" style="width: 100%;">
                 <el-table-column type="selection" width="55" fixed="left" :key="2">
                 </el-table-column>
                 <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -598,6 +628,16 @@
                       @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)">{{
                         scope.row.drawingNo }}
                     </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                      :disabled="btnType == 'look' ? true : false">
+                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
@@ -730,24 +770,22 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
-                      :key="105">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
-                      :key="110">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+                <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="remark" label="备注" width="200" :key="128">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -967,7 +1005,8 @@
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
       <Form v-if="formVisible" ref="Form"></Form>
-      <productAttributesListForm  v-if="attributesListVisible" ref="attributesListForm" @selectData="selectData"></productAttributesListForm>
+      <productAttributesListForm v-if="attributesListVisible" ref="attributesListForm" @selectData="selectData">
+      </productAttributesListForm>
     </div>
   </transition>
 </template>
@@ -1003,11 +1042,11 @@ import productAttributesListForm from './productAttributesListForm.vue'
 export default {
   mixins: [busFlow, getProjectList],
   components: {
-    ExportForm, Process, recordList, Form,productAttributesListForm
+    ExportForm, Process, recordList, Form, productAttributesListForm
   },
   data() {
     return {
-      attributesListVisible:false,
+      attributesListVisible: false,
       formVisible: false,
       isattachmentswitch: '',
       oldId: "",
@@ -1036,6 +1075,7 @@ export default {
         clearance: "",
         packagingMethod: "",
         remark: "",
+        pairingModeId: "",
       },
       btnText: "",
       tipsvisible: false,
@@ -1297,11 +1337,12 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
       bimProductAttributesList: [],
-      selectProductClassFlag:false,
-      isProjectSwitchFlag:null,
+      selectProductClassFlag: false,
+      isProjectSwitchFlag: null,
+      pairingModeList: [],
     }
   },
   computed: {
@@ -1345,9 +1386,10 @@ export default {
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
+    await this.getpairingModeListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
-        this.isProjectSwitchFlag = true
-        if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
+    this.isProjectSwitchFlag = true
+    if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
   },
   mounted() {
@@ -1375,28 +1417,40 @@ export default {
       this.salesList = res.data
     })
   },
-  beforeDestroy() {
-  },
+
   methods: {
+
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     // 选择的历史属性
-    selectData(row,index){
-      console.log(row,index);
-      this.productData[index].sealingCoverTyping=row.sealingCoverTyping
-        this.productData[index].accuracyLevel=row.accuracyLevel
-        this.productData[index].vibrationLevel=row.vibrationLevel
-        this.productData[index].clearance=row.clearance
-        this.productData[index].oil=row.oil
-        this.productData[index].oilQuantity=row.oilQuantity
-        this.productData[index].packagingMethod=row.packagingMethod
-        this.productData[index].specialRequire=row.specialRequire
-        this.productData[index].material=row.material
-        this.productData[index].colour=row.colour
-        
+    selectData(row, index) {
+      console.log(row, index);
+      this.productData[index].sealingCoverTyping = row.sealingCoverTyping
+      this.productData[index].accuracyLevel = row.accuracyLevel
+      this.productData[index].vibrationLevel = row.vibrationLevel
+      this.productData[index].clearance = row.clearance
+      this.productData[index].oil = row.oil
+      this.productData[index].oilQuantity = row.oilQuantity
+      this.productData[index].packagingMethod = row.packagingMethod
+      this.productData[index].specialRequire = row.specialRequire
+      this.productData[index].material = row.material
+      this.productData[index].colour = row.colour
+
     },
     // 点击选择属性按钮
-    selectProductClass (index){
-      this.attributesListVisible=true
-      this.$nextTick(()=>{
+    selectProductClass(index) {
+      this.attributesListVisible = true
+      this.$nextTick(() => {
         this.$refs.attributesListForm.init(index)
       })
     },
@@ -1507,13 +1561,13 @@ export default {
           })
           console.log(this.list3);
         }
-        
-    
-        if(this.sealingCoverTypingFlag!=1&&this.accuracyLevelFlag!=1&&this.vibrationLevelFlag!=1&&this.oilFlag!=1&&this.oilQuantityFlag!=1
-        &&this.clearanceFlag!=1&&this.packagingMethodFlag!=1&&this.specialRequireFlag!=1){
-          this.selectProductClassFlag=true
-        }else{
-          this.selectProductClassFlag=false
+
+
+        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
+          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
+          this.selectProductClassFlag = true
+        } else {
+          this.selectProductClassFlag = false
 
         }
       })
@@ -1545,7 +1599,7 @@ export default {
         item.drawingNo === "" &&
         item.productsId === "" &&
         item.num === "" &&
-        item.price === ""  
+        item.price === ""
       )
       if (index !== -1) {
         console.log(6666);
@@ -2045,6 +2099,8 @@ export default {
       console.log("all", allArray);
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
+
+        this.$set(item, 'pairingModeName', '')
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)
         } else {
@@ -2053,15 +2109,15 @@ export default {
         if (this.btnType == 'edit') {
           item.id = ""
         }
-        if(this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
-       
+        if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
+
       });
       if (this.productData.length) {
         let index = this.productData.findIndex(item =>
           item.drawingNo === "" &&
           item.productsId === "" &&
           item.num === "" &&
-          item.price === ""  
+          item.price === ""
         )
         console.log(5555, index);
         if (index !== -1) {
@@ -2190,9 +2246,10 @@ export default {
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
-        
+
+        this.$set(item, 'pairingModeName', '')
         this.$set(item, 'price', item.salesPrice)
-        if(this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
+        if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
         item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
@@ -2205,8 +2262,8 @@ export default {
           item.drawingNo === "" &&
           item.productsId === "" &&
           item.num === "" &&
-          item.price === ""  
-          
+          item.price === ""
+
         )
         if (index !== -1) {
           // 使用 splice 插入 newDataArray
@@ -2239,7 +2296,7 @@ export default {
         item.drawingNo === "" &&
         item.productsId === "" &&
         item.num === "" &&
-        item.price === ""  
+        item.price === ""
       )
       if (index !== -1) {
         console.log(6666);
@@ -2537,8 +2594,10 @@ export default {
                   this.salesList = res.data
                 })
               } else {
+
                 this.salesFlag = true
               }
+
               this.productData = res.data.orderLines
               if (btnType == 'add') {
                 this.dataForm.deliveryDate = ""
@@ -2689,7 +2748,7 @@ export default {
       return newObj;
     },
     handleConfirm(value) {
-      console.log(this.dataForm);
+      console.log(this.productData);
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           let submitFlag = null;
@@ -2730,7 +2789,7 @@ export default {
               item.drawingNo === "" &&
               item.productsId === "" &&
               item.num === "" &&
-              item.price === ""  
+              item.price === ""
             )
             if (index !== -1) {
               console.log(6666);
@@ -2807,6 +2866,17 @@ export default {
             }
             console.log("productData", this.productData);
             filteredArr = this.productData.filter(item => item.drawingNo && item.productsId);
+            // filteredArr.forEach(item => {
+            //   // 从 arr1 找到匹配的对象  
+            //   let match = this.pairingModeList.find(a => a.id === item.pairingModeId);
+
+            //   // 如果找到了匹配的对象  
+            //   if (match) {
+            //     // 将对应的 num 乘以 arr2 中的 num，并赋值给 arr2 的 num  
+            //     item.num = item.num * match.quantity;
+            //   }
+            // });
+
             console.log("filteredArr", filteredArr);
             obj.orderLineList = filteredArr
           }

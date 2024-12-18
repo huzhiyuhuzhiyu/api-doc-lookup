@@ -82,6 +82,16 @@
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                   <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                   <el-table-column prop="planQuantity" label="计划数量" width="140" :key="7">
                     <template slot="header">
                       <span class="required">*</span>计划数量
@@ -379,6 +389,8 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
+      pairingModeList: [],
+
     }
   },
   computed: {
@@ -388,6 +400,8 @@ export default {
   },
 
   async created() {
+    await this.getpairingModeListFun()
+
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
@@ -405,9 +419,15 @@ export default {
     this.getBimBusinessDetail()
 
   },
-  beforeDestroy() {
-  },
+ 
   methods: {
+        // 获取配对方式
+        async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
         // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
         getProductClassFun() {
       // 产品属性

@@ -90,6 +90,16 @@
 
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                       <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="planQuantity" label="计划数量" width="100" :key="7">
                         <template slot="header">
                           <span class="required">*</span>计划数量
@@ -305,6 +315,8 @@ export default {
       isProjectSwitchFlag: null,
       projectIdDataList: [],
       isProductNameSwitch:"",
+      pairingModeList: [],
+
     }
   },
   computed: {
@@ -314,6 +326,8 @@ export default {
   },
 
   async created() {
+    await this.getpairingModeListFun()
+
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
 
@@ -328,10 +342,15 @@ export default {
     this.init() 
     this.getBimBusinessDetail()
 
-  },
-  beforeDestroy() {
-  },
+  }, 
   methods: {
+        // 获取配对方式
+        async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

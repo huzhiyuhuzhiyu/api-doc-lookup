@@ -48,9 +48,9 @@ export default {
       },
       tableItems: [
         { prop: 'orderNo', label: '对账流水号', minWidth: '180' },
-        { prop: 'reconciliationDate', label: '对账日期', minWidth: '180' },
         { prop: 'cooperativePartnerCode', label: '客户编码', minWidth: '160' },
         { prop: 'cooperativePartnerName', label: '客户名称', minWidth: '160' },
+        { prop: 'reconciliationDate', label: '对账日期', minWidth: '180' },
         { prop: 'includingTaxAmount', label: '出入库金额', minWidth: '160' },
         { prop: 'totalReconciliationAmount', label: '应付金额', minWidth: '160' },
         { prop: 'totalPaymentAmount', label: '已收款金额', minWidth: '160' },
@@ -63,24 +63,14 @@ export default {
       ],
       searchList: [
         { prop: 'invoiceStatus', label: '开票状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
-        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
       ],
       superQueryJson: [
         {
           prop: 'orderNo',
           label: '对账流水号',
           type: 'input'
-        },
-
-        {
-          prop: 'reconciliationDate',
-          label: '对账日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
         },
         {
           prop: 'cooperativePartnerCode',
@@ -91,6 +81,15 @@ export default {
           prop: 'cooperativePartnerName',
           label: '客户名称',
           type: 'input'
+        },
+        {
+          prop: 'reconciliationDate',
+          label: '对账日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
         },
         {
           prop: 'remark',

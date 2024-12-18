@@ -63,14 +63,14 @@ export default {
       ],
       searchList: [
         { prop: 'invoiceStatus', label: '付款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
-        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
       ],
       searchListMore: [
         { prop: 'orderNo', label: '对账流水号', type: 'input' },
-        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', },
         { prop: 'cooperativePartnerCode', label: '供应商编码', type: 'input' },
         { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', },
         { prop: 'paymentStatus', label: '付款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
         { prop: 'invoiceStatus', label: '收票状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
       ],
@@ -79,16 +79,6 @@ export default {
           prop: 'orderNo',
           label: '对账流水号',
           type: 'input'
-        },
-
-        {
-          prop: 'reconciliationDate',
-          label: '对账日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
         },
         {
           prop: 'cooperativePartnerCode',
@@ -99,6 +89,15 @@ export default {
           prop: 'cooperativePartnerName',
           label: '供应商名称',
           type: 'input'
+        },
+        {
+          prop: 'reconciliationDate',
+          label: '对账日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
         },
         {
           prop: 'remark',

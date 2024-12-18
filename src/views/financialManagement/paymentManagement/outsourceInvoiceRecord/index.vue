@@ -52,8 +52,8 @@ export default {
       },
       tableItems: [
         { prop: 'orderNo', label: '对账单号', minWidth: '180', sortable: true },
-        { prop: 'cooperativePartnerName', label: '客户名称', minWidth: '160', sortable: true },
-        { prop: 'cooperativePartnerCode', label: '客户编码', minWidth: '160', sortable: true },
+        { prop: 'cooperativePartnerName', label: '供应商名称', minWidth: '160', sortable: true },
+        { prop: 'cooperativePartnerCode', label: '供应商编码', minWidth: '160', sortable: true },
         { prop: 'invoicingAmount', label: '收票金额', sortable: true },
         { prop: 'invoiceDate', label: '开票日期', minWidth: '160', sortable: true },
         { prop: 'invoiceCode', label: '发票代码', minWidth: '160', sortable: true },
@@ -72,7 +72,7 @@ export default {
       ],
       searchList: [
         { prop: 'orderNo', label: '对账单号', type: 'input' },
-        { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
+        { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
         { prop: 'reconciliationDateArr', label: '开票日期', type: 'date' }
       ],
       superQueryJson: [

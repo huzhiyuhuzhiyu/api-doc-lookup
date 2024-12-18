@@ -9,12 +9,6 @@
                 <el-input v-model="listQuery.orderNo" placeholder="检验单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="检验开始日期"
-                  end-placeholder="检验结束日期" value-format="yyyy-MM-dd"></el-date-picker>
-              </el-form-item>
-            </el-col>
             <el-col :span="4" v-if="isProductNameSwitch === '1'">
               <el-form-item>
                 <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
@@ -26,7 +20,12 @@
                   clearable />
               </el-form-item>
             </el-col>
-
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="检验开始日期"
+                  end-placeholder="检验结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">

@@ -47,9 +47,9 @@ export default {
       },
       tableItems: [
         { prop: 'orderNo', label: '对账流水号', minWidth: '180', sortable: 'custom'  },
-        { prop: 'reconciliationDate', label: '对账日期', minWidth: '180', sortable: 'custom'  },
         { prop: 'cooperativePartnerCode', label: '外协供应商编码', minWidth: '160', sortable: 'custom'  },
         { prop: 'cooperativePartnerName', label: '外协供应商名称', minWidth: '160' , sortable: 'custom' },
+        { prop: 'reconciliationDate', label: '对账日期', minWidth: '180', sortable: 'custom'  },
         { prop: 'includingTaxAmount', label: '订单金额', sortable: 'custom'  },
         { prop: 'totalReconciliationAmount', label: '应付金额' , sortable: 'custom' },
         { prop: 'totalPaymentAmount', label: '已付款金额', minWidth: '160',sortable: 'custom'  },
@@ -62,14 +62,14 @@ export default {
       ],
       searchList: [
         { prop: 'paymentStatus', label: '付款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
-        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '外协供应商名称', type: 'input' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
       ],
       searchListMore: [
         { prop: 'orderNo', label: '对账流水号', type: 'input' },
-        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', },
         { prop: 'cooperativePartnerCode', label: '外协供应商编码', type: 'input' },
         { prop: 'cooperativePartnerName', label: '外协供应商名称', type: 'input' },
+        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', },
         { prop: 'paymentStatus', label: '付款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
         { prop: 'invoiceStatus', label: '收票状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
       ],

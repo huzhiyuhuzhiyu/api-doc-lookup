@@ -946,6 +946,7 @@ export default {
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
+            obj.plan.projectId=this.productData[0].projectId
           } else {
             obj.plan = this.planForm
           }

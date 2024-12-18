@@ -576,6 +576,7 @@ export default {
         remark: "",
         bomId: "",
         projectId: "",
+        pairingModeId:"",
       },
       dataFormTwo: {
         data: [],
@@ -1116,6 +1117,7 @@ export default {
       this.$set(data[0], 'productionQuantity', '')
       this.dataForm = data[0]
       this.$set(this.dataForm, 'taskMethod', 'appoint')
+      this.$set(this.dataForm, 'pairingModeId', data[0].pairingModeId)
       this.$set(this.dataForm, 'orderNo', '')
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)

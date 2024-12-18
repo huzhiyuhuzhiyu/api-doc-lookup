@@ -909,6 +909,7 @@ export default {
               ordersLineId: item.id,
               productsId: item.productsId,
               planId: item.planId || null,
+
             }
             if (this.btnType != 'look') {
               objs.id = item.id
@@ -949,6 +950,8 @@ export default {
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
+            obj.plan.pairingModeId = this.productData[0].pairingModeId 
+
           } else {
             obj.plan = this.planForm
           }

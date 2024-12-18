@@ -199,7 +199,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="拆卸人" prop="transferBy">
-                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    <PersonSelect v-model="dataForm.transferBy" placeholder="请选择拆卸人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                     </PersonSelect>
                   </el-form-item>
                 </el-col>
@@ -372,7 +372,7 @@ import { TransferBarCode } from "@/api/warehouseManagement/transferManagement";
 import formValidate from "@/utils/formValidate";
 export default {
   mixins: [busFlow, flowMixin, getProjectList],
-  components: { Process, recordList,PersonSelect },
+  components: { Process, recordList, PersonSelect },
   data() {
     return {
       isProjectSwitch: '',
@@ -903,14 +903,14 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, obj, approvalFlag) {
+    init(id, btnType, approvalFlag, obj) {
       this.approvalFlag = approvalFlag
       this.formLoading = true
       this.dataForm.id = id || "";
-      this.btnType = obj.btnType;
-      this.warehouseInfo = obj.warehouseInfo
-      this.listQuery.projectId = this.warehouseInfo.projectId
-      this.ProductListRequestObj.projectId = this.warehouseInfo.projectId
+      this.btnType = btnType;
+      this.warehouseInfo = obj.warehouseInfo || ''
+      this.listQuery.projectId = this.warehouseInfo.projectId || ''
+      this.ProductListRequestObj.projectId = this.warehouseInfo.projectId || ''
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b063')
         this.fetchData('SPSD')

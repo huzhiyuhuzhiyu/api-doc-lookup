@@ -1801,6 +1801,22 @@ export function supplierupload(data, type) {
     data
   })
 }
+// 设备导入
+export function equEquipmentupload(data, type) {
+  return request({
+    url: `/api/mes/equEquipment/upload/data`,
+    method: 'post',
+    data
+  })
+}
+// 工具导入
+export function toolupload(data, type) {
+  return request({
+    url: `/api/mes/equEquipment/upload/tool/data/${type}`,
+    method: 'post',
+    data
+  })
+}
 // 供应商、客户联系人 导入
 export function supplierContactsupload(data, type) {
   return request({

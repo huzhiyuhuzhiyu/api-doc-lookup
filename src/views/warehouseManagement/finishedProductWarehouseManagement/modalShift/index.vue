@@ -652,7 +652,7 @@ export default {
         warehouseInfo: this.warehouseInfo
       }
       this.$nextTick(() => {
-        this.$refs.Form.init(id, obj)
+        this.$refs.Form.init(id, obj.btnType, false, obj)
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -663,7 +663,7 @@ export default {
           warehouseInfo: this.warehouseInfo
         }
         this.$nextTick(() => {
-          this.$refs.Form.init(id, obj)
+          this.$refs.Form.init(id, obj.btnType, false, obj)
         })
       }
     },
@@ -688,7 +688,7 @@ export default {
         warehouseInfo: this.warehouseInfo
       }
       this.$nextTick(() => {
-        this.$refs.Form.init(id, obj)
+        this.$refs.Form.init(id, obj.btnType, false, obj)
       })
     },
   }

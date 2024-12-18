@@ -755,7 +755,7 @@ export default {
         warehouseInfo: this.warehouseInfo
       }
       this.$nextTick(() => {
-        this.$refs.depForm.init("", obj)
+        this.$refs.depForm.init('', obj.btnType, false, obj)
       })
     },
     addOrUpdateHandlemx(res, type) {
@@ -774,7 +774,7 @@ export default {
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.depForm.init(id, obj)
+          this.$refs.depForm.init(id, obj.btnType, false, obj)
         })
         // }, 600);
       }
@@ -795,7 +795,7 @@ export default {
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.depForm.init(id, obj)
+          this.$refs.depForm.init(id, obj.btnType, false, obj)
         })
         // }, 600);
       }
@@ -808,7 +808,7 @@ export default {
       }
       if (id) {
         this.$nextTick(() => {
-          this.$refs.depForm.init(id, obj)
+          this.$refs.depForm.init(id, obj.btnType, false, obj)
         })
       }
     },

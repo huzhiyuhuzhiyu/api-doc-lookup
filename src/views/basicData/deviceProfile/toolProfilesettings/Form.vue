@@ -63,12 +63,12 @@
                   auth @change="onOrganizeChangeHandle" :disabled="disabled" />
               </el-form-item>
             </el-col> -->
-                    <el-col :sm="12" :xs="24">
+                    <!-- <el-col :sm="12" :xs="24">
                       <el-form-item label="图号" prop="drawingNo">
                         <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
                         </el-input>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="用途" prop="usin">
                         <el-input maxlength="200" v-model="dataForm.usin" placeholder="请输入用途" :disabled="disabled" />
@@ -239,7 +239,6 @@ export default {
         departmentId: "",
         specModel: "",
         equLong: "",
-        drawingNo: "",
         width: "",
         height: "",
         usin: "",

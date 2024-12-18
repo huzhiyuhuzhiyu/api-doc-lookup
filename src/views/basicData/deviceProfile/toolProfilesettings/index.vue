@@ -92,7 +92,6 @@
           </el-table-column>
           <el-table-column prop="categoryName" label="分类名称" width="200" sortable="custom" />
           <el-table-column prop="specModel" label="工具规格" min-width="200" sortable="custom" />
-          <el-table-column prop="drawingNo" label="图号" min-width="200" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="200" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -143,7 +142,7 @@
 </template>
 
 <script>
-import { excelExport,supplierupload } from '@/api/basicData/index'
+import { excelExport,toolupload } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
@@ -203,11 +202,6 @@ export default {
         {
           prop: 'specModel',
           label: "工具规格",
-          type: 'input'
-        },
-        {
-          prop: 'drawingNo',
-          label: "图号",
           type: 'input'
         },
         {
@@ -345,7 +339,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      supplierupload(formData, 'supplier').then(res => {
+      toolupload(formData, 'tool').then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.listLoading = false

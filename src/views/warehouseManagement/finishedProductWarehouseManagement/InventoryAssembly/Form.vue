@@ -165,7 +165,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="组装人" prop="transferBy">
-                    <PersonSelect v-model="dataForm.transferBy" :projectId="warehouseInfo.projectId" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                    <PersonSelect v-model="dataForm.transferBy" placeholder="请选择组装人" clearable style="width: 100%" :disabled="btnType == 'look'" @change="hangleSelectSales">
                     </PersonSelect>
                   </el-form-item>
                 </el-col>
@@ -177,7 +177,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="仓库" prop="warehouseId">
-                    <ComSelect-list :requestObj="{ type: 'normal',projectId:warehouseInfo.projectId }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
+                    <ComSelect-list :requestObj="{ type: 'normal' }" dialogTitle="选择仓库" placeholder="请选择仓库" :value="dataForm.warehouseName" :isdisabled="btnType === 'look'" :method="getWarehouseList" @change="changeWarehouse" :beforeSubmit="beforeWarehoustChange"></ComSelect-list>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -795,14 +795,14 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    init(id, obj, approvalFlag) {
+    init(id, btnType, approvalFlag, obj) {
       this.approvalFlag = approvalFlag
       this.formLoading = true
       this.dataForm.id = id || "";
-      this.btnType = obj.btnType;
-      this.warehouseInfo = obj.warehouseInfo
-      this.ProductListRequestObj2.projectId = this.warehouseInfo.projectId
-      this.ProductListRequestObj.projectId = this.warehouseInfo.projectId
+      this.btnType = btnType;
+      this.warehouseInfo = obj.warehouseInfo || ''
+      this.ProductListRequestObj2.projectId = this.warehouseInfo.projectId || ''
+      this.ProductListRequestObj.projectId = this.warehouseInfo.projectId || ''
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b062')
         this.fetchData('MSSD')

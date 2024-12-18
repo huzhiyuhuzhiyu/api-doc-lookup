@@ -177,7 +177,7 @@
 </template>
 
 <script>
-import { excelExport,supplierupload } from '@/api/basicData/index'
+import { excelExport,equEquipmentupload } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
@@ -500,7 +500,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      supplierupload(formData, 'supplier').then(res => {
+      equEquipmentupload(formData).then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.listLoading = false

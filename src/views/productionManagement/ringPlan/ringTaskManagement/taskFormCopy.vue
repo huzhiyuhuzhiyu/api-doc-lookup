@@ -135,7 +135,13 @@
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                   <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                  <el-table-column prop="receivedQuantity" label="已投数量" />
+                  <el-table-column prop="receivedQuantity" label="已领数量">
+                      <template slot-scope='scope'>
+                        <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
+                          scope.row.receivedQuantity
+                          }}</el-link>
+                      </template>
+                    </el-table-column>
                   <el-table-column prop="inventoryQuantity" label="库存数量">
                     <template slot-scope="scope">
                       <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
@@ -283,6 +289,7 @@
     <RelatedTasksForm v-if="relatedTaskVisible" ref="relatedTaskForms" @selectRelatedTasksFun="selectRelatedTasksFun">
     </RelatedTasksForm>
     <Guidebook  v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'" approval-need-header></Guidebook>
+    <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
 
     <Inspec v-if="detailFormVisible" ref="detailForm" @close="closeFun"></Inspec>
   </div>
@@ -302,11 +309,14 @@ import {
     DocumentStatus, FileManagePageSet, FileTrashPageSet,
     ModelType,
     PageType} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
+import MaterForm from '../../assemblyplan/assemblyTaskManagement/materForm.vue';
 export default {
-  components: { RelatedTasksForm,Guidebook,Inspec },
+  components: { RelatedTasksForm,Guidebook,Inspec, MaterForm},
   mixins: [getProjectList],
   data() {
     return {
+      materFormVisible:false,
+
       detailFormVisible:false,
       needHeader:true,
       ApplicationType,
@@ -394,9 +404,16 @@ export default {
     },
   },
   mounted() {
+
     this.switchStyle()
   },
   methods: {
+    viewDetailFun(id){
+      this.materFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.materFormRef.init(id)
+      })
+    },
     // 查看检验详情
     viewInspectionFun(id,type){
       this.detailFormVisible = true

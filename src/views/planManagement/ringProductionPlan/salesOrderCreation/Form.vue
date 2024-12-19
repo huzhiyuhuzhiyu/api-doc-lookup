@@ -59,7 +59,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                
+                 
 
 
 
@@ -368,7 +368,7 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
-       
+
         qualificationRate: [
           { required: true, message: '合格率不能为空', trigger: 'blur' }
         ],
@@ -427,7 +427,7 @@ export default {
     viewAvailableQuantity() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false,this.productData[0].projectId)
+        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false, this.productData[0].projectId)
       })
     },
     getBimBusinessDetail() {
@@ -744,7 +744,7 @@ export default {
       this.planForm.id = id || ''
       this.btnType = btnType
       this.planForm.planType = planType
- 
+
       if (this.btnType == 'add') {
 
         this.fetchData("JHDH")
@@ -886,7 +886,7 @@ export default {
 
 
     handleConfirm(value) {
- 
+
       console.log(this.productData);
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -908,7 +908,7 @@ export default {
               ordersLineId: item.id,
               productsId: item.productsId,
               planId: item.planId || null,
-              pairingModeId:item.pairingModeId,
+              pairingModeId: item.pairingModeId,
             }
             if (this.btnType != 'look') {
               objs.id = item.id
@@ -949,7 +949,7 @@ export default {
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
-            obj.plan.pairingModeId = this.productData[0].pairingModeId 
+            obj.plan.pairingModeId = this.productData[0].pairingModeId
           } else {
             obj.plan = this.planForm
           }

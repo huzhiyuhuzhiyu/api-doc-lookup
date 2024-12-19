@@ -46,7 +46,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate"   style="margin-bottom: 20px">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -57,6 +57,14 @@
                           <el-input v-model="dataForm.productionQuantity" placeholder="返工生产数量">
                           </el-input>
                         </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="编排任务方式" prop="taskMethod">
@@ -602,7 +610,7 @@ import SelectProductForm from './selectProductForm.vue'
 import SelectProcrssForm from './processForm.vue'
 import CollectProductForm from './CollectProductForm.vue'
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -722,6 +730,7 @@ export default {
         productionLineId: "",
         projectName: "",
         pieceworkFlag: false,
+        pairingModeId:"",
       },
       pieceworkFlagList: [
         { label: "否", value: false, },
@@ -810,9 +819,12 @@ export default {
       bimProductAttributesList: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      pairingModeList: [],
     }
   },
   async created() {
+    await this.getpairingModeListFun()
+
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
@@ -848,6 +860,13 @@ export default {
   mounted() {
   },
   methods: {
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1215,7 +1234,7 @@ export default {
         console.log(666);
         this.dataFormTwo.data = []
       }
-      detailResourceProcess(this.dataForm.id,this.dataForm.routingId).then(res => {
+      detailResourceProcess(this.dataForm.id, this.dataForm.routingId).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
       })
     },
@@ -1772,6 +1791,4 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-
-
 </style>

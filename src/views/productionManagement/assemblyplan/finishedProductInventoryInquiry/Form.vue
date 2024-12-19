@@ -32,7 +32,7 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="品名规格" prop="productsDrawingNo">
-                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled >
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -57,7 +57,14 @@
                       </el-input>
                     </el-form-item>
                   </el-col>
-           
+                  <el-col :sm="6" :xs="24">
+                    <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                      :disabled="btnType == 'look' ? true : false">
+                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="编排任务方式" prop="taskMethod">
                       <el-select v-model="dataForm.taskMethod" placeholder="请选择编排任务方式" style="width: 100%;"
@@ -491,13 +498,13 @@
             <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
-                    v-if="isTechnicalSwitch === '1'">
+              v-if="isTechnicalSwitch === '1'">
 
-                  </el-table-column>
-                  <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
-                    v-if="isCheckingSwitch === '1'">
+            </el-table-column>
+            <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+              v-if="isCheckingSwitch === '1'">
 
-                  </el-table-column>
+            </el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
             <el-table-column prop="productionQuantity" label="生产数量" width="100" />
@@ -535,7 +542,7 @@ import {
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
@@ -604,9 +611,11 @@ export default {
         bomId: "",
         projectId: "",
         orderType: "manually",
-        stockInventoryLineId:"",
-        classAttribute:"finish_product",
-        productsId:"",
+        stockInventoryLineId: "",
+        classAttribute: "finish_product",
+        productsId: "",
+        pairingModeId:"",
+
       },
       dataFormTwo: {
         data: [],
@@ -680,6 +689,8 @@ export default {
       bimProductAttributesList: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      pairingModeList: [],
+
     }
   },
   computed: {
@@ -708,6 +719,8 @@ export default {
     },
   },
   async created() {
+    await this.getpairingModeListFun()
+
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectList()
@@ -718,6 +731,13 @@ export default {
     this.getPickingConfig()
   },
   methods: {
+            // 获取配对方式
+            async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -736,7 +756,7 @@ export default {
       })
     },
     // 获取业务参数中 属性字段动态显示
-   async getProductAttributeFun() {
+    async getProductAttributeFun() {
       await getOrderFiledMap('sale').then(res => {
         console.log("产品属性", res, this.bimProductAttributesList);
         // sealingCoverTypingFlag list1  pa007
@@ -829,7 +849,7 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
- 
+
     // 选择产品
     selectProductFun(data) {
       this.$set(data, 'orderNo', this.dataForm.orderNo)
@@ -839,7 +859,7 @@ export default {
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
-   
+
     },
     getWarehouseListFun() {
       let obj = {
@@ -998,7 +1018,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1194,8 +1214,8 @@ export default {
       });
     },
     // 获取工艺详情
-    getRoutingDetail(productsId,id) {
-      detailResourceProcess(productsId,id).then(res => {
+    getRoutingDetail(productsId, id) {
+      detailResourceProcess(productsId, id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
@@ -1219,13 +1239,13 @@ export default {
         this.dataFormTwo.data = res.data.routingLineList
         this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
       })
-    },  
-    init(data,btnType) {
+    },
+    init(data, btnType) {
       console.log(data);
       this.getProductionLineListFun()
-      this.dataForm=data[0]
+      this.dataForm = data[0]
       this.$set(this.dataForm, 'orderNo', '')
-      this.$set(data[0], 'productionQuantity', data[0].inventoryQuantity )
+      this.$set(data[0], 'productionQuantity',  this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'routingId', "")
       this.$set(this.dataForm, 'routingName', "")
@@ -1233,13 +1253,13 @@ export default {
       this.$refs.dataForm.clearValidate('routingName');
 
       this.$set(this.dataForm, 'taskMethod', 'appoint')
-      this.dataForm.productsName=data[0].productName
-      this.dataForm.productsDrawingNo=data[0].productDrawingNo
-      this.dataForm.projectId=data[0].projectId
-      this.dataForm.mainUnit=data[0].mainUnit
+      this.dataForm.productsName = data[0].productName
+      this.dataForm.productsDrawingNo = data[0].productDrawingNo
+      this.dataForm.projectId = data[0].projectId
+      this.dataForm.mainUnit = data[0].mainUnit
       // this.dataForm.productionQuantity=data[0].inventoryQuantity 
-      this.dataForm.stockInventoryLineId=data[0].id 
-      this.dataForm.productsId=data[0].productsId
+      this.dataForm.stockInventoryLineId = data[0].id
+      this.dataForm.productsId = data[0].productsId
       this.$set(this.dataForm, 'orderType', 'flipping')
       this.fetchData("PROD")
     },
@@ -1261,7 +1281,7 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
-      let submitFlag = null; 
+      let submitFlag = null;
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
       if (this.naturalResourcesFlag) {
@@ -1331,7 +1351,7 @@ export default {
         this.btnLoading = false
         this.$message.success("新建任务成功")
         setTimeout(() => {
-          this.$emit('close',true)
+          this.$emit('close', true)
         }, 1500);
       }).catch(error => {
         this.btnLoading = false

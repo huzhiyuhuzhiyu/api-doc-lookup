@@ -176,21 +176,26 @@
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.vibrateReportFlag">
+                    <el-form-item label="测振等级:" prop="vibrationLevel" :style="{ marginBottom: producerMargin }">
+                      <el-select v-model="currentProcess.vibrationLevel" placeholder="请选择测振等级" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in vibrationLevelList" :key="index" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
 
-                  <el-col :sm="24" :xs="24" v-if="!currentProcess.vibrateReportFlag">
+                      <!-- producerId -->
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
                         @blur="handleBlur(item)" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index"
-                    v-if="currentProcess.vibrateReportFlag">
-                    <el-form-item :label="item.name + '(合格数量):'" :prop="item.name" class="iptLabel">
-                      <el-input v-model="currentProcess.item[item.name]" placeholder="合格数量" @input="forceUpdata"
-                        @blur="handleBlur(item, currentProcess.item[item.name])" class="ipt" />
-                    </el-form-item>
-                  </el-col>
+
 
                   <el-col :sm="24" :xs="24" :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -220,8 +225,8 @@
 
                       <!-- producerId -->
                     </el-form-item>
-                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'" :style="{ marginBottom: producerMargin }"
-                      class="iptLabel">
+                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"
+                      :style="{ marginBottom: producerMargin }" class="iptLabel">
                       <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable style="width: 100%;"
                         class="ipt" @change="hangleSelectSales">
                       </user-select>
@@ -266,7 +271,8 @@
                     </el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
-                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?currentProcess.qualifiedQuantity:0
+                    <el-descriptions-item label="完工数量" class="external_cotent">{{
+                      currentProcess.qualifiedQuantity ? currentProcess.qualifiedQuantity : 0
                       }}</el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
@@ -351,7 +357,10 @@ export default {
           { required: true, message: '合格数量不能为空', trigger: 'blur' },
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
           { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
-        ]
+        ],
+        vibrationLevel: [
+          { required: true, message: '测振等级不能为空', trigger: 'change' }
+        ],
       },
       iptLabelMargin: '28px',
       producerMargin: '28px'
@@ -393,6 +402,7 @@ export default {
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
       this.$set(this.currentProcess, 'reworkQuantity', 0)
+      this.$set(this.currentProcess, 'vibrationLevel', "")
       console.log("当前current", item);
       this.targetHeight = ""
       this.targetHeight2 = ""
@@ -419,7 +429,7 @@ export default {
         //   } else {
         //     this.producerMargin = '18px'
         //   }
-         
+
 
         // }
         this.$nextTick(() => {

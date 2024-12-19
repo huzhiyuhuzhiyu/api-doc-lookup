@@ -59,6 +59,16 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
+                    <el-form-item label="配对方式" prop="taskMethod">
+                      <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                        :disabled="btnType == 'look' ? true : false">
+                        <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="编排任务方式" prop="taskMethod">
                       <el-select v-model="dataForm.taskMethod" placeholder="请选择编排任务方式" style="width: 100%;"
                         @change="selectTaskMethod">
@@ -77,7 +87,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划生产开始—结束日期" prop="planDate" :style="dataForm.taskMethod == 'appoint' ? 'margin-bottom: 20px;' : ''">
+                    <el-form-item label="计划生产开始—结束日期" prop="planDate"
+                      :style="dataForm.taskMethod == 'appoint' ? 'margin-bottom: 19px;' : ''">
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
@@ -256,7 +267,7 @@
                     v-if="isCheckingSwitch === '1'">
 
                   </el-table-column>
-                  
+
                   <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                     <template slot-scope="scope">
                       <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -518,7 +529,7 @@ import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api
 import SelectProductForm from './selectProductForm.vue'
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess} from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
@@ -588,6 +599,7 @@ export default {
         bomId: "",
         projectId: "",
         orderType: "manually",
+        pairingModeId:"",
       },
       dataFormTwo: {
         data: [],
@@ -661,6 +673,7 @@ export default {
       bimProductAttributesList: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      pairingModeList: [],
     }
   },
   computed: {
@@ -689,6 +702,7 @@ export default {
     },
   },
   async created() {
+    await this.getpairingModeListFun()
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectList()
@@ -699,6 +713,13 @@ export default {
     this.getPickingConfig()
   },
   methods: {
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -830,7 +851,7 @@ export default {
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
       if (!data.routingId) return
-      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.id, this.dataForm.routingId)
     },
     getWarehouseListFun() {
       let obj = {
@@ -989,7 +1010,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.id, this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1185,8 +1206,8 @@ export default {
       });
     },
     // 获取工艺详情
-    getRoutingDetail(productsId,id) {
-      detailResourceProcess(productsId,id).then(res => {
+    getRoutingDetail(productsId, id) {
+      detailResourceProcess(productsId, id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {

@@ -183,16 +183,16 @@
                       </el-table-column>
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                         v-if="vibrationLevelFlag == 1"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                      <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                         v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                      <el-table-column prop="colour" label="颜色" width="120" :key="1020"
                         v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
                     </el-table>
                   </div>
-                  <el-table ref="product" v-else-if="(btnType=='edit'||btnType=='add')&&isProjectSwitchFlag==true" :data="productData" :fixedNO="true"
-                    @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" key="165"
-                    style="width: 100%;">
+                  <el-table ref="product" v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
+                    :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
+                    @row-click="rowclick" key="165" style="width: 100%;">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -212,10 +212,16 @@
                         <span class="required">*</span>品名规格
                       </template>
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.drawingNo" placeholder="请输入"
-                          @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)">{{
-                            scope.row.drawingNo }}
-                        </el-input>
+                        <el-autocomplete v-model="scope.row.drawingNo" :fetch-suggestions="querySearchAsync"
+                          placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
+                          @select="handleSelect(scope.row, scope.$index, $event)"
+                          @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
+                          :disabled="status"></el-autocomplete>
+                        <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" 
+                          @select="handleSelect(scope.row, scope.$index, $event)"
+                          @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
+                          >{{ scope.row.drawingNo }}
+                        </el-input> -->
                       </template>
                     </el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-show="isProjectSwitch == 1" />
@@ -351,8 +357,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
-                      :key="105">
+                    <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
@@ -360,8 +365,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
-                      :key="110">
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
@@ -564,17 +568,17 @@
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
-                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
-                        v-if="colourFlag == 1"></el-table-column>
+                  <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                    v-if="materialFlag == 1"></el-table-column>
+                  <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                    v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                   </el-table-column>
                 </el-table>
               </div>
-              <el-table ref="product" v-else-if="(btnType=='edit'||btnType=='add')&&isProjectSwitchFlag==true" :data="productData" :fixedNO="true"
-                @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" :key="165"
-                style="width: 100%;">
+              <el-table ref="product" v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
+                :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
+                @row-click="rowclick" :key="165" style="width: 100%;">
                 <el-table-column type="selection" width="55" fixed="left" :key="2">
                 </el-table-column>
                 <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -594,10 +598,11 @@
                     <span class="required">*</span>品名规格
                   </template>
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.drawingNo" placeholder="请输入"
-                      @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)">{{
-                        scope.row.drawingNo }}
-                    </el-input>
+                    <el-autocomplete v-model="scope.row.drawingNo" :fetch-suggestions="querySearchAsync"
+                      placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
+                      @select="handleSelect(scope.row, scope.$index, $event)"
+                      @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
+                      :disabled="status"></el-autocomplete>
                   </template>
                 </el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
@@ -730,24 +735,22 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
-                      :key="105">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
-                      :key="110">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+                <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="remark" label="备注" width="200" :key="128">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -967,12 +970,14 @@
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
       <Form v-if="formVisible" ref="Form"></Form>
-      <productAttributesListForm  v-if="attributesListVisible" ref="attributesListForm" @selectData="selectData"></productAttributesListForm>
+      <productAttributesListForm v-if="attributesListVisible" ref="attributesListForm" @selectData="selectData">
+      </productAttributesListForm>
     </div>
   </transition>
 </template>
 <script>
 // import productForm from "./productForm"
+import { getQuotationmxLists } from "@/api/salesManagement/index";
 import { excelExport } from '@/api/basicData/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getOrganizeInfo } from '@/api/permission/organize'
@@ -1003,11 +1008,11 @@ import productAttributesListForm from './productAttributesListForm.vue'
 export default {
   mixins: [busFlow, getProjectList],
   components: {
-    ExportForm, Process, recordList, Form,productAttributesListForm
+    ExportForm, Process, recordList, Form, productAttributesListForm
   },
   data() {
     return {
-      attributesListVisible:false,
+      attributesListVisible: false,
       formVisible: false,
       isattachmentswitch: '',
       oldId: "",
@@ -1023,7 +1028,7 @@ export default {
         assistantNum: "",
         price: "",
         excludingTaxPrice: "",
-        taxRate: "",
+        taxRate: 13,
         totalAmount: "",
         excludingTaxAmount: "",
         deliveryDate: "",
@@ -1297,11 +1302,12 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
       bimProductAttributesList: [],
-      selectProductClassFlag:false,
-      isProjectSwitchFlag:null,
+      selectProductClassFlag: false,
+      isProjectSwitchFlag: null,
+      taxRate:13
     }
   },
   computed: {
@@ -1346,8 +1352,8 @@ export default {
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-        this.isProjectSwitchFlag = true
-        if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
+    this.isProjectSwitchFlag = true
+    if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
   },
   mounted() {
@@ -1379,24 +1385,24 @@ export default {
   },
   methods: {
     // 选择的历史属性
-    selectData(row,index){
-      console.log(row,index);
-      this.productData[index].sealingCoverTyping=row.sealingCoverTyping
-        this.productData[index].accuracyLevel=row.accuracyLevel
-        this.productData[index].vibrationLevel=row.vibrationLevel
-        this.productData[index].clearance=row.clearance
-        this.productData[index].oil=row.oil
-        this.productData[index].oilQuantity=row.oilQuantity
-        this.productData[index].packagingMethod=row.packagingMethod
-        this.productData[index].specialRequire=row.specialRequire
-        this.productData[index].material=row.material
-        this.productData[index].colour=row.colour
-        
+    selectData(row, index) {
+      console.log(row, index);
+      this.productData[index].sealingCoverTyping = row.sealingCoverTyping
+      this.productData[index].accuracyLevel = row.accuracyLevel
+      this.productData[index].vibrationLevel = row.vibrationLevel
+      this.productData[index].clearance = row.clearance
+      this.productData[index].oil = row.oil
+      this.productData[index].oilQuantity = row.oilQuantity
+      this.productData[index].packagingMethod = row.packagingMethod
+      this.productData[index].specialRequire = row.specialRequire
+      this.productData[index].material = row.material
+      this.productData[index].colour = row.colour
+
     },
     // 点击选择属性按钮
-    selectProductClass (index){
-      this.attributesListVisible=true
-      this.$nextTick(()=>{
+    selectProductClass(index) {
+      this.attributesListVisible = true
+      this.$nextTick(() => {
         this.$refs.attributesListForm.init(index)
       })
     },
@@ -1507,13 +1513,13 @@ export default {
           })
           console.log(this.list3);
         }
-        
-    
-        if(this.sealingCoverTypingFlag!=1&&this.accuracyLevelFlag!=1&&this.vibrationLevelFlag!=1&&this.oilFlag!=1&&this.oilQuantityFlag!=1
-        &&this.clearanceFlag!=1&&this.packagingMethodFlag!=1&&this.specialRequireFlag!=1){
-          this.selectProductClassFlag=true
-        }else{
-          this.selectProductClassFlag=false
+
+
+        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
+          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
+          this.selectProductClassFlag = true
+        } else {
+          this.selectProductClassFlag = false
 
         }
       })
@@ -1545,7 +1551,7 @@ export default {
         item.drawingNo === "" &&
         item.productsId === "" &&
         item.num === "" &&
-        item.price === ""  
+        item.price === ""
       )
       if (index !== -1) {
         console.log(6666);
@@ -1566,6 +1572,33 @@ export default {
         this.isattachmentswitch = res.data.configValue1
         this.attachmentData = res.data
       })
+    },
+    handleSelect(row, index, item) {
+      console.log(666, item);
+      let customerDrawingNumber
+      let objs = JSON.parse(JSON.stringify(this.createdData))
+      objs.taxRate = this.taxRate * 1
+      console.log(objs);
+      this.productData[index].productDrawingNo = item.data.drawingNo
+      this.productData[index].mainUnit = item.data.mainUnit
+      this.productData[index].productsId = item.data.id
+      this.productData[index].productName = item.data.name
+      this.productData[index].productCode = item.data.code
+      this.productData[index].taxRate = item.data.taxRate * 1 || this.taxRate * 1
+      let exists = this.taxRateList.some(line => line.taxRate === item.data.taxRate * 1);
+      if (!exists && item.data.taxRate) {
+        let obj = {
+          taxRate: item.data.taxRate * 1,
+          fullName: item.data.taxRate + '%',
+          enCode: item.data.taxRate + '%',
+        }
+        this.taxRateList.push(obj)
+      }
+      if (this.productData[index].customerProductNo) customerDrawingNumber = JSON.parse(JSON.stringify(this.productData[index].customerProductNo))
+      console.log("this.",objs.taxRate);
+      if (item.value) {
+        this.productData.push(objs)
+      }
     },
     searchDrawingNoProduct(data, idx) {
       console.log(data, idx);
@@ -1590,6 +1623,66 @@ export default {
           this.$set(this.productData, idx, this.createdData)
         }
       })
+    },
+    querySearchAsync(queryString, cb) {
+      // if (!this.dataForm.cooperativePartnerId) {
+      //   let air = []
+      //   cb(air)
+      //   this.$message.error("请先选择客户!")
+      // } else {
+      if (queryString && queryString.length >= 3) {
+        let ProductListRequestObj = {
+          classAttributeList: [],
+          classAttribute: "",
+          productDrawingNo: queryString,
+          productCategoryId: "",
+          queryType: 2,
+          productStatus: 'enable',
+          code: "",
+          name: "",
+          orderItems: [{
+            "asc": false,
+            "column": ""
+          }, {
+            "asc": false,
+            "column": "create_time"
+          }],
+          pageNum: 1,
+          pageSize: 20,
+        }
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          getProducts(ProductListRequestObj).then(res => {
+            let datas = res.data.records
+            if (datas !== []) {
+              var restaurants = datas
+              var arr = []
+              restaurants.forEach((item, index) => {
+                arr.push({
+                  value: item.drawingNo,
+                  data: item,
+                })
+              })
+              cb(arr)
+            } else {
+              let air = []
+              this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
+              queryString = ""
+              cb(air)
+            }
+          })
+            .catch(res => {
+              this.$message({
+                type: 'error',
+                message: '获取数据失败'
+              })
+            })
+        }, 500)
+      } else {
+        let air = []
+        cb(air)
+      }
+      // }
     },
     // 按下enter键  根据输入的客户料号(客户物料号)查找客户产品
     searchCustomerProduct(data) {
@@ -2053,15 +2146,15 @@ export default {
         if (this.btnType == 'edit') {
           item.id = ""
         }
-        if(this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
-       
+        if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
+
       });
       if (this.productData.length) {
         let index = this.productData.findIndex(item =>
           item.drawingNo === "" &&
           item.productsId === "" &&
           item.num === "" &&
-          item.price === ""  
+          item.price === ""
         )
         console.log(5555, index);
         if (index !== -1) {
@@ -2190,9 +2283,9 @@ export default {
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
-        
+
         this.$set(item, 'price', item.salesPrice)
-        if(this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
+        if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
         item.taxRate = item.taxRate * 1
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.salesPrice) / (1 + (Number(item.taxRate)) / 100), 2)
@@ -2205,8 +2298,8 @@ export default {
           item.drawingNo === "" &&
           item.productsId === "" &&
           item.num === "" &&
-          item.price === ""  
-          
+          item.price === ""
+
         )
         if (index !== -1) {
           // 使用 splice 插入 newDataArray
@@ -2239,7 +2332,7 @@ export default {
         item.drawingNo === "" &&
         item.productsId === "" &&
         item.num === "" &&
-        item.price === ""  
+        item.price === ""
       )
       if (index !== -1) {
         console.log(6666);
@@ -2730,7 +2823,7 @@ export default {
               item.drawingNo === "" &&
               item.productsId === "" &&
               item.num === "" &&
-              item.price === ""  
+              item.price === ""
             )
             if (index !== -1) {
               console.log(6666);

@@ -11,7 +11,7 @@
           </div>
         </div>
         <div class="main" v-loading="formLoading">
-          <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table"  v-if="btnType == 'all'">
+          <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table" v-if="btnType == 'all'">
             <el-tab-pane label="任务信息" name="orderInfo">
               <el-collapse v-model="activeNames1" class="orderInfo">
                 <el-collapse-item title="任务信息" name="basicInfo">
@@ -49,7 +49,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
-                        <el-form-item label="所属项目"  >
+                        <el-form-item label="所属项目">
                           <el-input v-model="dataForm.projectName" placeholder="所属项目" disabled>
                           </el-input>
                         </el-form-item>
@@ -72,7 +72,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      
+
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled></el-input>
@@ -190,7 +190,7 @@
 
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="工单信息" name="workOrderInfo"  >
+            <el-tab-pane label="工单信息" name="workOrderInfo">
               <el-collapse v-model="activeNames2" class="orderInfo">
                 <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
                   <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
@@ -210,10 +210,16 @@
                     <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                     <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                     <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                    <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="personName" label="人员" min-width="120"> </el-table-column>
-                    <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="workGroupName" label="班组" min-width="120"> </el-table-column>
-                    <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="device" label="设备" min-width="120"> </el-table-column>
-                 
+                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
+                      min-width="120">
+                    </el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="workGroupName" label="班组"
+                      min-width="120">
+                    </el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="device" label="设备"
+                      min-width="120">
+                    </el-table-column>
+
 
                     <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                       <template slot-scope="scope">
@@ -252,21 +258,27 @@
               </el-collapse>
             </el-tab-pane>
 
-            <el-tab-pane label="投料信息" name="feedInfo"  >
+            <el-tab-pane label="投料信息" name="feedInfo">
               <el-collapse v-model="activeNames3" class="orderInfo">
                 <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
                     <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
                     <el-table-column prop="productCode" label="用料编码" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
-                <el-table-column prop="processName" label="工序名称" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                    <el-table-column prop="processName" label="工序名称" />
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                     <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                    <el-table-column prop="receivedQuantity" label="已领数量" />
-                    <el-table-column prop="inventoryQuantity" label="库存数量"  >
+                    <el-table-column prop="receivedQuantity" label="已领数量">
+                      <template slot-scope='scope'>
+                        <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
+                          scope.row.receivedQuantity
+                        }}</el-link>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="inventoryQuantity" label="库存数量">
                       <template slot-scope="scope">
-                        <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:"0" }}</div>
+                        <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
                       </template>
                     </el-table-column>
 
@@ -277,10 +289,10 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            
+
           </el-tabs>
-          
-          <el-collapse v-model="activeNames2" v-if="btnType == 'work'"  class="orderInfo">
+
+          <el-collapse v-model="activeNames2" v-if="btnType == 'work'" class="orderInfo">
             <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
               <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
                 <el-table-column prop="processName" label="工序名称" min-width="120" />
@@ -298,10 +310,15 @@
                 <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                 <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="workGroupName" label="班组" min-width="120"> </el-table-column>
-                <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="personName" label="人员" min-width="120"> </el-table-column>
-                <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="device" label="设备" min-width="120"> </el-table-column>
-             
+                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="workGroupName" label="班组"
+                  min-width="120">
+                </el-table-column>
+                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
+                  min-width="120">
+                </el-table-column>
+                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="device" label="设备" min-width="120">
+                </el-table-column>
+
 
                 <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                   <template slot-scope="scope">
@@ -331,22 +348,28 @@
               </JNPF-table>
             </el-collapse-item>
           </el-collapse>
-          <el-collapse v-model="activeNames3" v-if="btnType == 'feed'"  class="orderInfo">
+          <el-collapse v-model="activeNames3" v-if="btnType == 'feed'" class="orderInfo">
             <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
               <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
-                <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格" ></el-table-column>
+                <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
                 <el-table-column prop="productCode" label="用料编码" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                 <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                <el-table-column prop="receivedQuantity" label="已领数量" />
-                <el-table-column prop="inventoryQuantity" label="库存数量"  >
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:"0" }}</div>
-                      </template>
-                    </el-table-column>
+                <el-table-column prop="receivedQuantity" label="已领数量">
+                  <template slot-scope='scope'>
+                    <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
+                      scope.row.receivedQuantity
+                    }}</el-link>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inventoryQuantity" label="库存数量">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
+                  </template>
+                </el-table-column>
 
 
 
@@ -354,13 +377,13 @@
 
             </el-collapse-item>
           </el-collapse>
-          <el-collapse v-model="activeNames4" v-if="btnType == 'report'"  class="orderInfo">
+          <el-collapse v-model="activeNames4" v-if="btnType == 'report'" class="orderInfo">
             <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
               <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
                 <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
                 <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
-                <el-table-column prop="projectName" label="所属项目" min-width="120"   v-if="isProjectSwitch == 1" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" width="160" />
                 <el-table-column prop="reportingTime" label="报工时间" min-width="160" />
                 <el-table-column prop="producerName" label="生产人" min-width="160" />
@@ -382,6 +405,7 @@
         </div>
 
       </div>
+      <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
     </transition>
   </div>
 </template>
@@ -392,11 +416,15 @@ import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import MaterForm from './materForm.vue'
 export default {
   mixins: [getProjectList],
-
+  components: {
+    MaterForm
+  },
   data() {
     return {
+      materFormVisible: false,
       orderTypeList: [
         { label: "正常任务", value: "normal", },
         { label: "返工任务", value: "rework", },
@@ -428,14 +456,17 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
- 
-  }, 
+
+  },
   mounted() {
 
   },
   methods: {
-    handleClick() {
-
+    viewDetailFun(id) {
+      this.materFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.materFormRef.init(id)
+      })
     },
     goBack() {
       this.$emit('close')
@@ -508,8 +539,6 @@ export default {
   color: red;
   margin-right: 4px;
 }
-
- 
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -657,7 +686,7 @@ $footerPadding: '10px';
   margin-top: 5px;
 }
 
- 
+
 ::v-deep.routingProRes .el-dialog__body {
   height: 500px;
 }

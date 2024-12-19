@@ -624,7 +624,7 @@ export default {
       codeConfig: {},//单号配置信息(单据规则)
       dataForm: {  //表单信息
         orderNo: "",
-        businessType: "inbound_flip",
+        businessType: "",
         warehouseName: "",
         warehouseId: "",
         documentType: "",
@@ -1246,8 +1246,9 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-    init(data, btnType, classAttributeList, warehouseCode) {
+    init(data, btnType, classAttributeList, warehouseCode,type) {
       this.productData = []
+      this.dataForm.businessType=type
       console.log("11", data, btnType, classAttributeList, warehouseCode);
       // this.visible = true
       this.warehouseCode = warehouseCode

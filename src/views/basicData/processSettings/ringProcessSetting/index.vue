@@ -684,12 +684,10 @@ export default {
 
       if (submitFlag) {
         this.selectedData.forEach((item) => {
-          return {
-            classAttribute: item.classAttribute,
-            id: item.id,
-            productsId: item.productsId,
-            routingId: this.dataForm.routingId,
-          }
+          item.classAttribute = item.classAttribute
+          item.id = item.id
+          item.productsId = item.productsId
+          item.routingId = this.dataForm.routingId
         })
         let obj = {
           prodResList: this.selectedData,

@@ -1008,9 +1008,54 @@ export function checkadverseCausesCode(code, id) {
   })
 }
 
+// 不良原因
 
+//  列表数据
+export function getScrapCategoryList(data) {
+  return request({
+    url: `/api/zgt/bimScrapCategory/list`,
+    method: 'post',
+    data
+  })
+}
+// // 新增
+export function addScrapCategoryData(data) {
+  return request({
+    url: `/api/zgt/bimScrapCategory/add`,
+    method: 'post',
+    data
+  })
+}
+// // 删除
+export function deleteScrapCategoryData(id) {
+  return request({
+    url: `/api/zgt/bimScrapCategory/del/${id}`,
+    method: 'delete',
+  })
+}
+// // 修改
+export function editScrapCategoryData(data) {
+  return request({
+    url: `/api/zgt/bimScrapCategory/update`,
+    method: 'put',
+    data
+  })
+}
+// // 详情
+// export function getAdverseCausesInfo(id) {
+//   return request({
+//     url: `/api/mes/adverseCauses/detail/${id}`,
+//     method: 'get',
+//   })
+// }
+// // 检查名称是否重复
 
-
+export function checkScrapCategoryName(name, id) {
+  return request({
+    url: `/api/zgt/bimScrapCategory/check/code/exist?name=` + name + '&id=' + id,
+    method: 'get',
+  })
+}
 
 // 检验项目
 //  列表数据

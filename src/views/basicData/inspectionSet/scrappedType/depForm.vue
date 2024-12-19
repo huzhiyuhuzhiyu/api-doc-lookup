@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :title="!dataForm.id ? '新建不良原因' : '编辑不良原因'" :close-on-click-modal="false" :close-on-press-escape="false"
+  <el-drawer :title="!dataForm.id ? '新建报废类型' : '编辑报废类型'" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="visible" lock-scroll width="600px" @close="handleClose" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">
@@ -9,20 +9,21 @@
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="不良名称" prop="name">
+        <el-form-item label="报废名称" prop="name">
           <template slot="label">
-            不良名称<span class="required">*</span>
+            报废名称<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.name" placeholder="请输入不良名称" maxlength="20" :disabled="btntype ? true : false" />
+          <el-input v-model="dataForm.name" placeholder="请输入报废名称" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
-        <el-form-item label="不良编码" prop="code">
+        <el-form-item label="单价" prop="price">
           <template slot="label">
-            不良编码<span class="required">*</span>
+            单价<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.code" placeholder="请输入不良编码" maxlength="20"
-            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+          <el-input v-model="dataForm.price" placeholder="请输入单价" maxlength="20" />
         </el-form-item>
-
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
+        </el-form-item>
       </el-form>
     </div>
 
@@ -37,14 +38,22 @@
 
 <script>
 import {
-  addAdverseCausesData,
-  getAdverseCausesInfo,
-  editAdverseCausesData,
-  checkadverseCausesCode
+  addScrapCategoryData,
+  editScrapCategoryData,
+  checkScrapCategoryName
 } from '@/api/basicData/index'
 import formValidate from '@/utils/formValidate'
 export default {
   data() {
+    var checkPrice = (rule, value, callback) => {
+      if (/^(?:[0-9]\d*)$/.test(value) == false) {
+        callback(new Error('请输入整数'))
+      } else if (Number(value) == 0) {
+        callback(new Error('单价不能为0'))
+      } else {
+        callback()
+      }
+    }
     return {
       visible: false,
       formLoading: false,
@@ -53,24 +62,22 @@ export default {
       title: '',
       dataForm: {
         name: '',
-        code: '',
+        price: '',
         id: ''
       },
       codeConfig: {},
       btntype: false,
       dataRule: {
-        name: [{ required: true, message: '请输入不良名称', trigger: 'blur' }],
-        code: [
-          { required: true, message: '请输入不良编码', trigger: 'blur' },
-          { validator: formValidate('enCode'), trigger: 'blur' },
+        name: [
+          { required: true, message: '请输入报废名称', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               console.log(value, this.dataForm.id)
-              checkadverseCausesCode(value, this.dataForm.id)
+              checkScrapCategoryName(value, this.dataForm.id)
                 .then((res) => {
                   console.log('res===>', res)
                   if (res.data) {
-                    callback(new Error('不良编码重复'))
+                    callback(new Error('报废名称重复'))
                   } else {
                     callback()
                   }
@@ -79,62 +86,40 @@ export default {
             },
             trigger: 'blur'
           }
-        ]
+        ],
+        price: [
+          {
+            required: true,
+            message: '请输入单价',
+            trigger: ['blur']
+          },
+          { validator: checkPrice, trigger: 'blur' }
+        ],
       }
     }
   },
   created() { },
   methods: {
     handleClose() { },
-    async fetchData(code, flag) {
-      try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-        if (flag) {
-          this.dataForm.code = data.number
-        }
-      } catch (error) {
-      }
-    },
-    init(id, type) {
+
+    init(row) {
 
       this.visible = true
-      this.dataForm.id = id || ''
-      this.title = !this.dataForm.id ? '新建不良原因' : '编辑不良原因'
-      if (type == 'edit' || type == 'add') {
-        this.btntype = false
-      } else if (type == 'look') {
-        this.btntype = true
-      }
+      this.dataForm = { ...row }
+      this.title = !this.dataForm.id ? '新建报废类型' : '编辑报废类型'
       // this.formLoading = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          getAdverseCausesInfo(this.dataForm.id).then((res) => {
-            console.log(123321, res)
-            this.dataForm = res.data
-            this.fetchData("BLYY", false)
-            this.formLoading = false
-          })
-        } else {
-          this.fetchData("BLYY", true)
-          this.formLoading = false
-        }
-      })
+     
     },
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
-          let formMethod = this.dataForm.id ? editAdverseCausesData : addAdverseCausesData
-          let obj = {
-            causes: this.dataForm
-          }
-          formMethod(obj)
+          let formMethod = this.dataForm.id ? editScrapCategoryData : addScrapCategoryData
+          formMethod(this.dataForm)
             .then((res) => {
               console.log(666, res)
               let msg = ''
-              if (formMethod == editAdverseCausesData) {
+              if (formMethod == editScrapCategoryData) {
                 msg = '修改成功'
               } else {
                 msg = '新建成功'

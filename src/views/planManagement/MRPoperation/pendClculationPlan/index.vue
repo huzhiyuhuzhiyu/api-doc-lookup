@@ -126,6 +126,10 @@
               v-if="packagingMethodFlag == 1" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="120" fixed="right">
@@ -161,7 +165,7 @@
 </template>
 
 <script>
-import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
+import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import PlanForm from '../../assemblyPlan/salesOrderCreation/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
@@ -169,7 +173,7 @@ import Form from './Form.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanList } from '@/api/calculationList/calculationList.js'
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -300,7 +304,7 @@ export default {
           type: 'input'
         },
 
-         
+
 
 
         {
@@ -321,8 +325,8 @@ export default {
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       isProductNameSwitch: "",
-                // 属性字段  控制属性字段显示隐藏
-                accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -330,6 +334,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
       bimProductAttributesList: [],
     }
   },
@@ -357,7 +363,7 @@ export default {
     }
     this.advancedQueryFun()
     this.superForm = this.orderForm
-    this.search('basic') 
+    this.search('basic')
 
   },
   methods: {
@@ -371,6 +377,8 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
     },
     getProductClassFun() {
@@ -378,7 +386,7 @@ export default {
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
-       
+
     },
     advancedQueryFun() {
       // sealingCoverTyping //打字内容
@@ -390,6 +398,32 @@ export default {
       //     packagingMethod //包装方式          
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
+      if (this.colourFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'colour',
+          label: '颜色',
+          type: 'select',
+          options: this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.materialFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'material',
+          label: '保持架材质',
+          type: 'select',
+          options: this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
       if (this.specialRequireFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
           prop: 'specialRequire',
@@ -511,7 +545,7 @@ export default {
 
     handleSelectionChange(val) {
       this.selectList = val
-    }, 
+    },
 
 
 

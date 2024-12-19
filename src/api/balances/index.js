@@ -41,7 +41,13 @@ export function stockBalance(data) {
     data
   })
 }
-
+// 库存结存 反结存
+export function stockBalanceNegate(data) {
+    return request({
+        url: `/api/wms/stock/balance/negate?accountPeriod=${data.accountPeriod}`,
+        method: 'post',
+    })
+}
 
 // 销售 采购 外协 收付款结存
 //  报表
@@ -102,4 +108,20 @@ export const costDetail = (id) => {
     url: `/api/wms/self/made/actual/batches/cost/detail/${id}`,
     method: 'get'
   })
+}
+
+export function balanceQueryReport(data) {
+    return request({
+        url: `/api/wms/stock/balance/query/report`,
+        method: 'post',
+        data
+    })
+}
+
+export function wareHouseBalanceQuery(data) {
+    return request({
+        url: `/api/wms/stock/balance/summary`,
+        method: 'post',
+        data
+    })
 }

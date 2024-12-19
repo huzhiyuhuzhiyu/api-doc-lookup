@@ -1584,6 +1584,13 @@ export function excelExport(data) {
     data
   })
 }
+export function summaryExcelExport(data) {
+  return request({
+    url: `/api/wms/stock/balance/export/summary`,
+    method: 'POST',
+    data
+  })
+}
 // 导入客户产品
 export function importCustomerProduct(data) {
   return request({

@@ -73,16 +73,31 @@ export default {
           {
             validator: (rule, value, callback) => {
               console.log(value, this.dataForm.id)
-              checkScrapCategoryName(value, this.dataForm.id)
-                .then((res) => {
-                  console.log('res===>', res)
-                  if (res.data) {
-                    callback(new Error('报废名称重复'))
-                  } else {
-                    callback()
-                  }
-                })
-                .catch((error) => { })
+              if (this.dataForm.id) {
+                checkScrapCategoryName(value, this.dataForm.id)
+                  .then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('报废名称已存在'))
+                    }
+                  })
+                  .catch((err) => {
+                    callback(new Error(' '))
+                  })
+              } else {
+                checkScrapCategoryName(value, '')
+                  .then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('报废名称已存在'))
+                    }
+                  })
+                  .catch((err) => {
+                    callback(new Error(' '))
+                  })
+              }
             },
             trigger: 'blur'
           }
@@ -105,10 +120,13 @@ export default {
     init(row) {
 
       this.visible = true
-      this.dataForm = { ...row }
-      this.title = !this.dataForm.id ? '新建报废类型' : '编辑报废类型'
-      // this.formLoading = true
      
+      this.title = !this.dataForm.id ? '新建报废类型' : '编辑报废类型'
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+        this.dataForm = { ...row }
+      })
+
     },
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {

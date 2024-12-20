@@ -1041,13 +1041,7 @@ export function editScrapCategoryData(data) {
     data
   })
 }
-// // 详情
-// export function getAdverseCausesInfo(id) {
-//   return request({
-//     url: `/api/mes/adverseCauses/detail/${id}`,
-//     method: 'get',
-//   })
-// }
+
 // // 检查名称是否重复
 
 export function checkScrapCategoryName(name, id) {

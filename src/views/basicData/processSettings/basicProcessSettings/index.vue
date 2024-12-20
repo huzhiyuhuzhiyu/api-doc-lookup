@@ -133,7 +133,7 @@
               <div v-if="scope.row.pricingType == 'by_piece'">计件</div>
             </template>
           </el-table-column>
-    
+
           <el-table-column prop="processType" label="工序类型" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.processType == 'normal'">正常工序</div>
@@ -329,7 +329,7 @@ export default {
         { fullName: "辅料", enCode: "accessories" },
         { fullName: "其他 ", enCode: "other" }
       ],
-      columnList: [ 'createByName', 'createTime'],
+      columnList: ['createByName', 'createTime'],
       leftFlag: false,
     }
   },
@@ -610,9 +610,9 @@ export default {
           this.tableData = res.data.records
           this.tableData.forEach(item => {
             if (!item.timePrice) {
-              item.price = item.timePrice
-            } else if (item.pricingType === 'by_piece') {
-              item.price = item.unitPrice
+              item.timePrice = 0
+            } else if (!item.unitPrice) {
+              item.unitPrice = 0
             }
           })
           this.total = res.data.total

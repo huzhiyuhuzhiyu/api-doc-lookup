@@ -1,7 +1,7 @@
 <template>
     <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box" :gutter="16">
+            <el-row class="JNPF-common-search-box" :gutter="16" v-if="searchList.length">
                 <el-form @submit.native.prevent>
                     <template v-for="item in searchList">
                         <el-col :span="4" :key="item.prop">
@@ -17,7 +17,7 @@
                                 />
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
                                            :placeholder="'请选择' + item.label"
-                                           clearable
+                                           :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
                                 >
                                     <el-option v-for="(item2, index2) in item.options" :key="index2"
                                                :label="item2.label"
@@ -234,10 +234,12 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import actualCostIndex from './actualCostIndex.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 
 export default {
     name: 'inventoryBalance',
     components: { SuperQuery, Form, inboundAndOutboundLine, ExportForm, actualCostIndex },
+    mixins:[AbProjectMixin],
     data() {
         return {
             stockBalanceLineList,
@@ -254,32 +256,7 @@ export default {
             superQueryJson: [],
             basicQuery: {},
             superQuery: {},
-            searchList: [
-                {
-                    fieldValue: '',
-                    field: 'accountPeriod',
-                    label: '账期',
-                    prop: 'accountPeriod',
-                    symbol: 'like',
-                    searchType: 2
-                },
-                {
-                    fieldValue: '',
-                    field: 'productsDrawingNo',
-                    label: '品名规格',
-                    prop: 'productsDrawingNo',
-                    symbol: 'like',
-                    searchType: 1
-                },
-                {
-                    fieldValue: '',
-                    field: 'wareHouseName',
-                    label: '仓库名称',
-                    prop: 'wareHouseName',
-                    symbol: 'like',
-                    searchType: 1
-                }
-            ],
+            searchList: [],
             listQuery: {},
             initListQuery: {
                 accountPeriod: this.jnpf.getToday('YYYY-MM'),
@@ -308,7 +285,8 @@ export default {
                     asc: false,
                     column: 'productsDrawingNo',
                 }],
-                superQuery: {}
+                superQuery: {},
+                projectId: '',
             },
             total: 0,
             formVisible: false,
@@ -454,21 +432,64 @@ export default {
                 { prop: 'totalCostAmount', label: '成本总金额(元)', fixed: 'right', minWidth: '160' },
                 { prop: 'groupBatchNumber', label: '物料组批次号', minWidth: '160' }
             ],
-            isProductNameSwitch:''
+            isProductNameSwitch:'',
+            defaultProjectId:''
         }
     },
 
     async created() {
+        await this.awaitAbProject()
+        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+        this.initListQuery.projectId = this.defaultProjectId
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-        const res = await canStockBalance()
+        const res = await canStockBalance(this.defaultProjectId)
         this.accountPeriod = res.data
         this.listQuery.accountPeriod = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
-        this.searchList[0].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
         await this.getProductNameSwitch('product', 'enable_productName')
         this.setSuperQueryJson()
+        this.setSearchList()
+        this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
         this.initData()
     },
     methods: {
+        setSearchList(){
+            this.searchList = [
+                {
+                    fieldValue: this.defaultProjectId,
+                    field: 'projectId',
+                    label: '所属项目',
+                    prop: 'projectId',
+                    symbol: 'like',
+                    searchType: 4,
+                    options:this.abProjectNoCommonList,
+                    clearable:false,
+                },
+                {
+                    fieldValue: '',
+                    field: 'accountPeriod',
+                    label: '账期',
+                    prop: 'accountPeriod',
+                    symbol: 'like',
+                    searchType: 2
+                },
+                {
+                    fieldValue: '',
+                    field: 'productsDrawingNo',
+                    label: '品名规格',
+                    prop: 'productsDrawingNo',
+                    symbol: 'like',
+                    searchType: 1
+                },
+                {
+                    fieldValue: '',
+                    field: 'wareHouseName',
+                    label: '仓库名称',
+                    prop: 'wareHouseName',
+                    symbol: 'like',
+                    searchType: 1
+                }
+            ]
+        },
         setSuperQueryJson(){
             this.superQueryJson = [
                 {
@@ -631,17 +652,18 @@ export default {
         async reset() {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
             this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-            const res = await canStockBalance()
+            const res = await canStockBalance(this.defaultProjectId)
             this.accountPeriod = res.data
             this.listQuery.accountPeriod = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
-            this.searchList[0].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
+            this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
+            this.setSearchList()
             this.search()
         },
 
         addOrUpdateHandle(accountPeriod, type = 'normal') {
             this.formVisible = true
             this.$nextTick(() => {
-                this.$refs.Form.init(accountPeriod, type)
+                this.$refs.Form.init(accountPeriod, type,this.defaultProjectId)
             })
         },
 

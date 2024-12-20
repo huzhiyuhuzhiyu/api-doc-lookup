@@ -588,6 +588,7 @@ export default {
         bomId: "",
         projectId: "",
         orderType: "manually",
+        productionLineId:"",
       },
       dataFormTwo: {
         data: [],

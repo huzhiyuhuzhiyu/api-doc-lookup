@@ -35,7 +35,7 @@ export default {
                 totalRowFlag: false,
                 productsCode: "",
                 productsName: "",
-                notificationType:'external_process'
+                businessType:'inbound_external'
             },
             tableItems:[],
             columnList:[],
@@ -45,12 +45,14 @@ export default {
             exportName:'外协收货报表',
             isProductNameSwitch:'',
             accountPeriod:'',
-            indexFlag:false
+            indexFlag:false,
+            defaultProjectId:''
         }
     },
     async created() {
         await this.awaitAbProject()
-        this.listRequestObj.projectId = this.abProjectId
+        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+        this.listRequestObj.projectId = this.defaultProjectId
         await this.getProductNameSwitch('product', 'enable_productName')
         this.setTableItems()
         this.setSuperQueryJson()
@@ -118,13 +120,13 @@ export default {
         setSearchList() {
             this.searchList = [
                 {
-                    fieldValue: this.abProjectId,
+                    fieldValue: this.defaultProjectId,
                     field: 'projectId',
                     label: '所属项目',
                     prop: 'projectId',
                     symbol: 'like',
                     searchType: 4,
-                    options: this.abProjectList,
+                    options: this.abProjectNoCommonList,
                     clearable: false,
                 },
                 {
@@ -134,21 +136,6 @@ export default {
                     prop: 'month',
                     symbol: 'like',
                     searchType: 2
-                },
-                {
-                    fieldValue: '',
-                    field: 'partnerName',
-                    label: '供应商名称',
-                    prop: 'partnerName',
-                    symbol: 'like',
-                    searchType: 1
-                }, {
-                    fieldValue: '',
-                    field: 'productsDrawingNo',
-                    label: '品名规格',
-                    prop: 'productsDrawingNo',
-                    symbol: 'like',
-                    searchType: 1
                 },
             ]
         },

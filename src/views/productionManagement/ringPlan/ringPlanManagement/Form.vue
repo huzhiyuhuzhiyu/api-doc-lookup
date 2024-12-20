@@ -558,6 +558,7 @@ export default {
         productsDrawingNo: "",
         productsCode: "",
         mainUnit: "",
+        productionLineId:"",
         planProductionQuantity: "",
         availableArrangeQuantity: "",
         productionQuantity: "",
@@ -580,6 +581,7 @@ export default {
       dataFormTwo: {
         data: [],
       },
+      productionLineList:[],
       listLoading: false,
       activeName: "orderInfo",
       isdisabled: false,
@@ -705,6 +707,7 @@ export default {
         this.warehouseList = res.data
       })
     },
+ 
     selectLine(e) {
       console.log(e);
       getProductionLineInfo(e).then(res => {
@@ -1078,7 +1081,7 @@ export default {
       objs.projectId = this.dataForm.projectId
       getProductionLineList(objs).then((res) => {
         console.log("产线", res);
-        this.lineList = res.data.records;
+        this.productionLineList = res.data.records;
       });
     },
 

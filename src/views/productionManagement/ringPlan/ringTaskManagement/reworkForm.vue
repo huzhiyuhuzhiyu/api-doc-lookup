@@ -67,6 +67,15 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod == 'appoint'">
+                        <el-form-item label="产线" prop="productionLineId">
+                          <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
+                            @change="selectLine">
+                            <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
+                              :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="算计件工资" prop="pieceworkFlag">
                           <el-select v-model="dataForm.pieceworkFlag" placeholder="请选择业务类型" style="width: 100%;"
@@ -706,6 +715,7 @@ export default {
       isProductNameSwitch:"",
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      productionLineList:[],
     }
   },
   computed: {
@@ -1145,6 +1155,43 @@ export default {
       this.$forceUpdate();
       this.routingProResMapDiaFlag = false;
     },
+    selectLine(e) {
+      console.log(e);
+      getProductionLineInfo(e).then(res => {
+        console.log("产线", res);
+        let list = res.data.workstationList
+        // 遍历 arr 数组  
+        this.dataFormTwo.data.forEach(item => {
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
+          if (match) {
+            console.log(match);
+            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            item.routingProResList = match.workstationResList;
+            item.routingProResMap = match.workstationResMap;
+          }
+        });
+        this.dataFormTwo.data.forEach(item => {
+          if (item.routingProResMap) {
+            if (item.routingProResMap.personnel) {
+              this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
+              this.$set(item, 'personName', item.routingProResMap.personnel[0].resourceName)
+            }
+            if (item.routingProResMap.work_group) {
+              this.$set(item, 'workGroupId', item.routingProResMap.work_group[0].resourceId)
+              this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
+            }
+            if (item.routingProResMap.device) {
+              this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
+              this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
+            }
+          } else {
+          }
+          console.log(this.dataFormTwo.data);
+          this.$forceUpdate()
+        });
+      })
+    },
     // 选择工位
     selectworkstation(row) {
       console.log(row);
@@ -1171,7 +1218,6 @@ export default {
         this.listLoading = false
       })
     },
-    // 产线
     getProductionLineListFun() {
       let objs = {
         code: "",
@@ -1191,7 +1237,7 @@ export default {
       objs.projectId = this.dataForm.projectId
       getProductionLineList(objs).then((res) => {
         console.log("产线", res);
-        this.lineList = res.data.records;
+        this.productionLineList = res.data.records;
       });
     },
     // 获取工艺详情
@@ -1233,6 +1279,7 @@ export default {
         this.fetchData("PROD", true)
         this.fetchData("PODH", true)
       }
+      this.getProductionLineListFun()
       return
       this.dataForm = data[0]
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
@@ -1240,7 +1287,6 @@ export default {
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
-      this.getProductionLineListFun()
       this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code, flag) {

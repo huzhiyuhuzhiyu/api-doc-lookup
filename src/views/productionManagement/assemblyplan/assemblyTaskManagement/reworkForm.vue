@@ -46,7 +46,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate"   style="margin-bottom: 20px">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 18px;">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -67,10 +67,18 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="dataForm.taskMethod == 'appoint'">
+                        <el-form-item label="产线" prop="productionLineId">
+                          <el-select v-model="dataForm.productionLineId" placeholder="产线" clearable style="width: 100%;"
+                            @change="selectLine">
+                            <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
+                              :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="算计件工资" prop="pieceworkFlag">
-                          <el-select v-model="dataForm.pieceworkFlag" placeholder="请选择业务类型" style="width: 100%;"
-                            @change="selectTaskMethod">
+                          <el-select v-model="dataForm.pieceworkFlag" placeholder="请选择业务类型" style="width: 100%;">
                             <el-option v-for="(item, index) in pieceworkFlagList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -602,7 +610,7 @@ import SelectProductForm from './selectProductForm.vue'
 import SelectProcrssForm from './processForm.vue'
 import CollectProductForm from './CollectProductForm.vue'
 import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
@@ -722,6 +730,7 @@ export default {
         productionLineId: "",
         projectName: "",
         pieceworkFlag: false,
+        
       },
       pieceworkFlagList: [
         { label: "否", value: false, },
@@ -810,6 +819,7 @@ export default {
       bimProductAttributesList: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      productionLineList: [],
     }
   },
   async created() {
@@ -848,6 +858,66 @@ export default {
   mounted() {
   },
   methods: {
+       // 产线
+       getProductionLineListFun() {
+      let objs = {
+        code: "",
+        createByName: "",
+        endTime: "",
+        name: "",
+        orderItems: [
+          {
+            asc: true,
+            column: "",
+          },
+        ],
+        pageNum: 1,
+        pageSize: -1,
+      };
+      // 获取产线
+      objs.projectId = this.dataForm.projectId
+      getProductionLineList(objs).then((res) => {
+        console.log("产线", res);
+        this.productionLineList = res.data.records;
+      });
+    },
+    selectLine(e) {
+      console.log(e);
+      getProductionLineInfo(e).then(res => {
+        console.log("产线", res);
+        let list = res.data.workstationList
+        // 遍历 arr 数组  
+        this.dataFormTwo.data.forEach(item => {
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
+          if (match) {
+            console.log(match);
+            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            item.routingProResList = match.workstationResList;
+            item.routingProResMap = match.workstationResMap;
+          }
+        });
+        this.dataFormTwo.data.forEach(item => {
+          if (item.routingProResMap) {
+            if (item.routingProResMap.personnel) {
+              this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
+              this.$set(item, 'personName', item.routingProResMap.personnel[0].resourceName)
+            }
+            if (item.routingProResMap.work_group) {
+              this.$set(item, 'workGroupId', item.routingProResMap.work_group[0].resourceId)
+              this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
+            }
+            if (item.routingProResMap.device) {
+              this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
+              this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
+            }
+          } else {
+          }
+          console.log(this.dataFormTwo.data);
+          this.$forceUpdate()
+        });
+      })
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1215,7 +1285,7 @@ export default {
         console.log(666);
         this.dataFormTwo.data = []
       }
-      detailResourceProcess(this.dataForm.id,this.dataForm.routingId).then(res => {
+      detailResourceProcess(this.dataForm.id, this.dataForm.routingId).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
       })
     },
@@ -1372,29 +1442,7 @@ export default {
         this.listLoading = false
       })
     },
-    // 产线
-    getProductionLineListFun() {
-      let objs = {
-        code: "",
-        createByName: "",
-        endTime: "",
-        name: "",
-        orderItems: [
-          {
-            asc: true,
-            column: "",
-          },
-        ],
-        pageNum: 1,
-        pageSize: -1,
-      };
-      // 获取产线
-      objs.projectId = this.dataForm.projectId
-      getProductionLineList(objs).then((res) => {
-        console.log("产线", res);
-        this.lineList = res.data.records;
-      });
-    },
+ 
     // 获取工艺详情
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
@@ -1436,6 +1484,7 @@ export default {
         this.fetchData("PROD", true)
         this.fetchData("PODH", true)
       }
+      this.getProductionLineListFun()
       return
       this.dataForm = data[0]
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
@@ -1443,7 +1492,6 @@ export default {
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
-      this.getProductionLineListFun()
       this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code, flag) {
@@ -1772,6 +1820,4 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-
-
 </style>

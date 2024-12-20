@@ -620,6 +620,7 @@ export default {
 
       if (submitFlag) {
         this.selectedData.forEach((item) => {
+          item.pricingType = this.dataForm.pricingType
           if (item.pricingType === 'by_time') {
             item.timePrice = this.dataForm.timePrice
           } else if (item.pricingType === 'by_piece') {

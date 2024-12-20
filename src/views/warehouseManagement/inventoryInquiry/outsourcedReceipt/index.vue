@@ -41,7 +41,7 @@ export default {
             columnList:[],
             searchList:[],
             superQueryJson:[],
-            exportType:'1236',
+            exportType:'1237',
             exportName:'外协收货报表',
             isProductNameSwitch:'',
             accountPeriod:'',

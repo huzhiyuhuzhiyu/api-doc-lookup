@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item label="部门类型" prop="deptType">
         <el-select v-model="dataForm.deptType" placeholder="选择部门类型" clearable>
-          <el-option v-for="(item, index) in deptTypeList" v-bind="item" :key="item.value" />
+          <el-option v-for="item in deptTypeList" v-bind="item" :key="item.enCode" :label="item.fullName" :value="item.enCode"/>
         </el-select>
       </el-form-item>
       <el-form-item label="排序" prop="sortCode">
@@ -38,7 +38,7 @@
 
 <script>
 import { createDepartment, updateDepartment, getDepartmentInfo } from '@/api/permission/department'
-
+import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 export default {
   data() {
     return {
@@ -88,7 +88,32 @@ export default {
       ]
     }
   },
+  created() {
+    this.getDictionaryType()
+  },
   methods: {
+    getDictionaryType() {
+      getDictionaryType().then(res => {
+        let data = res.data.list
+        data.forEach(item => {
+          if (item.enCode == 'typz') {
+            let children = item.children
+            children.forEach(resp => {
+              if (resp.enCode == "BMLX") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.deptTypeList = response.data.list
+                })
+              }
+            })
+          }
+        })
+      })
+    },
     init(id) {
       this.visible = true
       this.dataForm.id = id || ''

@@ -23,7 +23,8 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
+                  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
@@ -45,19 +46,23 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
+                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
+                <div v-if="scope.row.orderType == 'transit'">在制任务</div>
               </template>
             </el-table-column>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="projectName" label="所属项目"  min-width="120"  sortable="custom" v-if="isProjectSwitch == 1" />
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
-              <template slot-scope="scope" >
+              <template slot-scope="scope">
                 <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
               </template>
             </el-table-column>
@@ -80,6 +85,9 @@ export default {
       orderTypeList: [
         { label: "正常任务", value: "normal" },
         { label: "返工任务", value: "rework" },
+        { label: "手动新建任务", value: "manually" },
+        { label: "翻库任务", value: "flipping" },
+        { label: "在制任务", value: "transit" },
       ],
       customerVisible: false,
 
@@ -109,26 +117,26 @@ export default {
       listLoading: false,
       total: 0,
       tableDataList: [],
-      id:"",
-      isProjectSwitch:"",
-      isProductNameSwitch:"",
+      id: "",
+      isProjectSwitch: "",
+      isProductNameSwitch: "",
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
- 
+
 
   },
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     init(id) {
       this.customerVisible = true
-      this.id=id
+      this.id = id
       this.getbatchNumList(id)
     },
     // 选择批次

@@ -24,14 +24,6 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
-                <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
-                <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
-                <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
-                <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
-                <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
-                <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
               </el-descriptions>
             </div>
 
@@ -91,64 +83,6 @@
                 </div>
 
               </el-col>
-
-
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">打字内容：</span>
-                  <span class="left-title">{{ currentProcess.sealingCoverTyping }}</span>
-                </div>
-
-              </el-col>
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">精度等级：</span>
-                  <span class="left-title">{{ currentProcess.accuracyLevel }}</span>
-                </div>
-
-              </el-col>
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">振动等级：</span>
-                  <span class="left-title">{{ currentProcess.vibrationLevel }}</span>
-                </div>
-
-              </el-col>
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">油脂：</span>
-                  <span class="left-title">{{ currentProcess.oil }}</span>
-                </div>
-
-              </el-col>
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">油脂量：</span>
-                  <span class="left-title">{{ currentProcess.oilQuantity }}</span>
-                </div>
-
-              </el-col>
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">游隙：</span>
-                  <span class="left-title">{{ currentProcess.clearance }}</span>
-                </div>
-
-              </el-col>
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">包装方式：</span>
-                  <span class="left-title">{{ currentProcess.processName }}</span>
-                </div>
-
-              </el-col>
-              <el-col :sm="24" :xs="24">
-                <div class="info">
-                  <span class="left-title">特殊要求：</span>
-                  <span class="left-title">{{ currentProcess.specialRequire }}</span>
-                </div>
-
-              </el-col>
               <el-col :sm="24" :xs="24" v-if="materialList.length&&materialList[0].reduceType=='picking'">
                 <div class="info">
                   <span class="left-title">已领料数量：</span>
@@ -198,6 +132,7 @@
                     <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur2"
                         class="ipt" />
+                        <el-button type="primary"  :disabled="!currentProcess.materialWasteQuantity" size="mini" @click='setMaterialWasteM()'>设置料废金额</el-button> 
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">

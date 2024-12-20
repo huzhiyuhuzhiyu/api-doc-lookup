@@ -38,7 +38,7 @@ export default {
                 productCategoryId: '',
                 productsCode: "",
                 productsName: "",
-                projectId: this.abProjectId,
+                projectId: '',
                 startTime: "",
                 startUpdateTime: "",
                 superQuery: {},
@@ -54,14 +54,16 @@ export default {
             exportName:'仓库汇总结存查询',
             isProductNameSwitch:'',
             accountPeriod:'',
-            indexFlag:false
+            indexFlag:false,
+            defaultProjectId:''
         }
     },
     async created() {
         await this.awaitAbProject()
-        this.listRequestObj.projectId = this.abProjectId
+        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+        this.listRequestObj.projectId = this.defaultProjectId
         await this.getProductNameSwitch('product', 'enable_productName')
-        const res = await canStockBalance()
+        const res = await canStockBalance(this.defaultProjectId)
         this.accountPeriod = res.data
         this.listRequestObj.accountPeriod = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.jnpf.getToday('YYYY-MM')
         // const listRes = await wareHouseBalanceQuery(this.listRequestObj)
@@ -121,13 +123,13 @@ export default {
         setSearchList(){
             this.searchList = [
                 {
-                    fieldValue: this.abProjectId,
+                    fieldValue: this.defaultProjectId,
                     field: 'projectId',
                     label: '所属项目',
                     prop: 'projectId',
                     symbol: 'like',
                     searchType: 4,
-                    options:this.abProjectList,
+                    options:this.abProjectNoCommonList,
                     clearable:false,
                 },
                 {

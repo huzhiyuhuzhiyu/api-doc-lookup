@@ -29,17 +29,20 @@ export default {
     return {
       btnLoading: false,
       dataForm: {
-        accountPeriod: ''
+        accountPeriod: '',
+        projectId:''
       },
       type: '',
       balVisible: false,
     }
   },
   methods: {
-    init(accountPeriod,type) {
+    init(accountPeriod,type,projectId) {
       this.type = type
       this.balVisible = true
       this.dataForm.accountPeriod = accountPeriod
+      this.dataForm.projectId = projectId
+
     },
     dataFormSubmit() {
       this.btnLoading = true

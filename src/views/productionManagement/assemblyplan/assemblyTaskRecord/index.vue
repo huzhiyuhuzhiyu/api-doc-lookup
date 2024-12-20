@@ -97,7 +97,6 @@
               v-if="packagingMethodFlag == 1" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
-            <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="orderStatus" label="状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderStatus == 'normal'"><el-tag >正常</el-tag> </div>

@@ -8,7 +8,7 @@
         <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
           @click="handleConfirm('submit')">保存并提交</el-button>
         <el-button
-          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_purchase')"
+          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase'||dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_purchase')"
           type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
         <el-button v-if="btnType == 'look' || btnType == 'edit'" @click="goBack">{{ $t('common.cancelButton')
           }}</el-button>
@@ -413,6 +413,7 @@
                     </JNPF-table>
                     <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                       <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
+                      <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
                     </div>
                   </el-collapse-item>
                 </el-collapse>
@@ -842,6 +843,11 @@ export default {
           code: "p013",
           fullName: "外协发料单"
         },
+        {
+          businessType: 'outbound_sale_send',
+          code: "p031",
+          fullName: "销售发货单"
+        },
       ],
       calculateQuantityFlag: "",
       // 属性字段  控制属性字段显示隐藏
@@ -869,6 +875,14 @@ export default {
       }
       return totalAmounts
     },
+    totalNum: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.productData.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.productData[i].num])
+      }
+      return totalNums
+    },
+    
   },
   async created() {
     await this.getProductClassFun()

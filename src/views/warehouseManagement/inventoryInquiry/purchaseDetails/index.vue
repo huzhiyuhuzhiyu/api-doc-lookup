@@ -30,13 +30,13 @@ export default {
                 orderStartDate: "",
                 pageNum: 1,
                 pageSize: 20,
-                projectId: this.abProjectId,
+                projectId: '',
                 superQuery: {},
                 totalRowFlag: false,
                 productCategoryId: '',
                 productsCode: "",
                 productsName: "",
-                notificationType:'procure'
+                businessType:'inbound_purchase'
             },
             treeTitle:'产品分类',
             methodArr:{ method:getcategoryTree,requestObj:{classAttribute: "", type: "material"} },
@@ -48,14 +48,14 @@ export default {
             exportName:'进货明细报表',
             isProductNameSwitch:'',
             accountPeriod:'',
-            indexFlag:false
+            indexFlag:false,
+            defaultProjectId:''
         }
     },
     async created() {
         await this.awaitAbProject()
-        console.log(this.abProjectId)
-        this.listRequestObj.projectId = this.abProjectId
-        console.log(this.abProjectList)
+        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+        this.listRequestObj.projectId = this.defaultProjectId
         await this.getProductNameSwitch('product', 'enable_productName')
         // await this.getProjectList()
         this.setTableItems()
@@ -122,37 +122,22 @@ export default {
         setSearchList(){
             this.searchList = [
                 {
-                    fieldValue: this.abProjectId,
+                    fieldValue: this.defaultProjectId,
                     field: 'projectId',
                     label: '所属项目',
                     prop: 'projectId',
                     symbol: 'like',
                     searchType: 4,
-                    options:this.abProjectList,
+                    options:this.abProjectNoCommonList,
                     clearable:false,
                 },
                 {
                     fieldValue: this.jnpf.getToday('YYYY-MM'),
-                    field: 'orderDate',
-                    label: '单据日期',
-                    prop: 'orderDate',
+                    field: 'month',
+                    label: '月份',
+                    prop: 'month',
                     symbol: 'like',
                     searchType: 2
-                },
-                {
-                    fieldValue: '',
-                    field: 'partnerName',
-                    label: '供应商名称',
-                    prop: 'partnerName',
-                    symbol: 'like',
-                    searchType: 1
-                },{
-                    fieldValue: '',
-                    field: 'productsDrawingNo',
-                    label: '品名规格',
-                    prop: 'productsDrawingNo',
-                    symbol: 'like',
-                    searchType: 1
                 },
             ]
         },

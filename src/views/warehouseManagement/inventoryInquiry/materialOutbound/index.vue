@@ -45,14 +45,14 @@ export default {
             exportName:'外协发料出库报表',
             isProductNameSwitch:'',
             accountPeriod:'',
-            indexFlag:false
+            indexFlag:false,
+            defaultProjectId:''
         }
     },
     async created() {
         await this.awaitAbProject()
-        console.log(this.abProjectId)
-        this.listRequestObj.projectId = this.abProjectId
-        console.log(this.abProjectList)
+        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+        this.listRequestObj.projectId = this.defaultProjectId
         await this.getProductNameSwitch('product', 'enable_productName')
         // await this.getProjectList()
         this.setTableItems()
@@ -119,37 +119,22 @@ export default {
         setSearchList() {
             this.searchList = [
                 {
-                    fieldValue: this.abProjectId,
+                    fieldValue: this.defaultProjectId,
                     field: 'projectId',
                     label: '所属项目',
                     prop: 'projectId',
                     symbol: 'like',
                     searchType: 4,
-                    options: this.abProjectList,
+                    options: this.abProjectNoCommonList,
                     clearable: false,
                 },
                 {
                     fieldValue: this.jnpf.getToday('YYYY-MM'),
-                    field: 'orderDate',
-                    label: '单据日期',
-                    prop: 'orderDate',
+                    field: 'month',
+                    label: '月份',
+                    prop: 'month',
                     symbol: 'like',
                     searchType: 2
-                },
-                {
-                    fieldValue: '',
-                    field: 'partnerName',
-                    label: '供应商名称',
-                    prop: 'partnerName',
-                    symbol: 'like',
-                    searchType: 1
-                }, {
-                    fieldValue: '',
-                    field: 'productsDrawingNo',
-                    label: '品名规格',
-                    prop: 'productsDrawingNo',
-                    symbol: 'like',
-                    searchType: 1
                 },
             ]
         },

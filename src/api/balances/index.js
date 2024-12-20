@@ -27,16 +27,16 @@ export function stockBalanceLineList(data) {
 
 
 // 库存结存-可结存账期
-export const canStockBalance = () => {
+export const canStockBalance = (projectId) => {
   return request({
-    url: `/api/wms/stock/balance/can`,
+    url: `/api/wms/stock/balance/can?projectId=${projectId}`,
     method: 'get'
   })
 }
 // 库存结存 结存
 export function stockBalance(data) {
   return request({
-    url: `/api/wms/stock/balance?accountPeriod=${data.accountPeriod}`,
+    url: `/api/wms/stock/balance?accountPeriod=${data.accountPeriod}&projectId=${data.projectId}`,
     method: 'post',
     data
   })
@@ -44,7 +44,7 @@ export function stockBalance(data) {
 // 库存结存 反结存
 export function stockBalanceNegate(data) {
     return request({
-        url: `/api/wms/stock/balance/negate?accountPeriod=${data.accountPeriod}`,
+        url: `/api/wms/stock/balance/negate?accountPeriod=${data.accountPeriod}&projectId=${data.projectId}`,
         method: 'post',
     })
 }

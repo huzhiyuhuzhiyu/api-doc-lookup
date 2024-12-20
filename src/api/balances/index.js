@@ -125,3 +125,35 @@ export function wareHouseBalanceQuery(data) {
         data
     })
 }
+
+
+export function purchaseLineReport(data) {
+    return request({
+        url: `/api/report/data/purchase/receipt/line/report`,
+        method: 'post',
+        data
+    })
+}
+
+export function lineEdgeReport(data) {
+    return request({
+        url: `/api/wms/stock/move/lineEdge/report`,
+        method: 'post',
+        data
+    })
+}
+
+export function lineEdgeLineReport(data) {
+    return request({
+        url: `/api/wms/stock/move/lineEdge/line/report`,
+        method: 'post',
+        data
+    })
+}
+export function externalSendReport(data) {
+    return request({
+        url: `/api/report/data/outbound/external/send/report`,
+        method: 'post',
+        data
+    })
+}

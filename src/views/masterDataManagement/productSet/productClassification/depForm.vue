@@ -151,6 +151,10 @@ export default {
         { label: '外圈毛坯', value: 'outer_ring_blank' },
         { label: '内圈', value: 'inner_ring' },
         { label: '外圈', value: 'outer_ring' },
+        { label: '磨料', value: 'abrasive' },
+        { label: '油料', value: 'oil' },
+        { label: '配件', value: 'accessory' },
+        { label: '周转箱', value: 'turnover_box' },
       ]
     }
   },
@@ -212,7 +216,7 @@ export default {
       }
     },
     async dataFormSubmit() {
-  
+
       let valid = await this.$refs['dataForm'].validate().catch((err) => false)
       this.btnLoading = true
       if (valid) {

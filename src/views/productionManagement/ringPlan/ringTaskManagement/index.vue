@@ -109,14 +109,7 @@
                 <div>{{ scope.row.taskMethod == 'appoint' ? "指定加工对象" : '不指定加工对象' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
+           
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
 

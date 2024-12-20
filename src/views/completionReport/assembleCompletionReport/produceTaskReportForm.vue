@@ -207,6 +207,7 @@
                     <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur3"
                         class="ipt" />
+                        <el-button type="primary"  :disabled="!currentProcess.materialWasteQuantity" size="mini" @click='setMaterialWasteM()'>设置料废金额</el-button>  
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">

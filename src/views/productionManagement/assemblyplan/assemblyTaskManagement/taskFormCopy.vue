@@ -135,7 +135,13 @@
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                   <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                  <el-table-column prop="receivedQuantity" label="已投数量" />
+                  <el-table-column prop="receivedQuantity" label="已投数量" >
+                  <template slot-scope="scope">
+                    <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
+                  scope.row.receivedQuantity
+                }}</el-link>
+                  </template>
+                    </el-table-column>
                   <el-table-column prop="inventoryQuantity" label="库存数量">
                     <template slot-scope="scope">
                       <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
@@ -286,7 +292,8 @@
     <Guidebook v-if="guidebookVisible" ref="guidebookForms" @back="closeFun" :type="'look'" approval-need-header>
     </Guidebook>
     <Inspec v-if="detailFormVisible" ref="detailForm" @close="closeFun"></Inspec>
-  </div>
+      <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
+    </div>
 </template>
 <script>
 import { detailordershengchan,getWorkReportList} from '@/api/productOrdes/index.js'
@@ -298,14 +305,15 @@ import Inspec from '@/views/inspectionManagement/components/inspectionFormManage
 import getProjectList from '@/mixins/generator/getProjectList'
 import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
+import MaterForm from './materForm.vue'
 import {
   ApplicationType,
   DocumentStatus, FileManagePageSet, FileTrashPageSet,
   ModelType,
-  PageType
+  PageType,
 } from "@/views/esop/fileUpload/workinginstruction/utils/constant";
 export default {
-  components: { RelatedTasksForm, Guidebook, Inspec },
+  components: { RelatedTasksForm, Guidebook, Inspec,MaterForm },
   mixins: [getProjectList],
   data() {
     return {
@@ -380,6 +388,7 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
+      materFormVisible:false,
     }
 
   },
@@ -397,6 +406,12 @@ export default {
     this.switchStyle()
   },
   methods: {
+    viewDetailFun(id){
+      this.materFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.materFormRef.init(id)
+      })
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping

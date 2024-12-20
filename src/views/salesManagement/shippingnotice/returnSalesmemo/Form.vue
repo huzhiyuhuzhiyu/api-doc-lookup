@@ -161,10 +161,8 @@
                     <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
                     <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
-                    <el-table-column prop="material" label="保持架材质" width="120" 
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" 
-                        v-if="colourFlag == 1"></el-table-column>
+                    <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag == 1"></el-table-column>
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -340,10 +338,8 @@
                 <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="保持架材质" width="120" 
-                    v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" 
-                    v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -502,10 +498,8 @@
                 <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="保持架材质" width="120" 
-                    v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" 
-                    v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>

@@ -424,6 +424,7 @@ export default {
         detailProcess(val).then((res) => {
           console.log(res, 'kkk')
           this.routingLineList = res.data.routingLineList
+          this.routingLineList.sort((a, b) => a.sort - b.sort);
         })
       } else {
         this.routingLineList = []
@@ -684,12 +685,10 @@ export default {
 
       if (submitFlag) {
         this.selectedData.forEach((item) => {
-          return {
-            classAttribute: item.classAttribute,
-            id: item.id,
-            productsId: item.productsId,
-            routingId: this.dataForm.routingId,
-          }
+          item.classAttribute = item.classAttribute
+          item.id = item.id
+          item.productsId = item.productsId
+          item.routingId = this.dataForm.routingId
         })
         let obj = {
           prodResList: this.selectedData,

@@ -8,13 +8,19 @@
     </template>
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
-        label-width="120px">
+        label-width="120px" :hide-required-asterisk="true">
         <el-form-item label="不良名称" prop="name">
+          <template slot="label">
+            不良名称<span class="required">*</span>
+          </template>
           <el-input v-model="dataForm.name" placeholder="请输入不良名称" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
         <el-form-item label="不良编码" prop="code">
+          <template slot="label">
+            不良编码<span class="required">*</span>
+          </template>
           <el-input v-model="dataForm.code" placeholder="请输入不良编码" maxlength="20"
-            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+            :disabled="btntype ? true : !codeConfig.modifyFlag == true ? false : true" />
         </el-form-item>
 
       </el-form>

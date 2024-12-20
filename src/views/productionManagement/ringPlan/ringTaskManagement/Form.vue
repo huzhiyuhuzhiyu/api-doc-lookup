@@ -266,7 +266,13 @@
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                     <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                    <el-table-column prop="receivedQuantity" label="已领数量" />
+                    <el-table-column prop="receivedQuantity" label="已领数量">
+                      <template slot-scope='scope'>
+                        <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
+                          scope.row.receivedQuantity
+                          }}</el-link>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="inventoryQuantity" label="库存数量"  >
                       <template slot-scope="scope">
                         <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:"0" }}</div>
@@ -348,7 +354,13 @@
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                 <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                <el-table-column prop="receivedQuantity" label="已领数量" />
+                <el-table-column prop="receivedQuantity" label="已领数量">
+                      <template slot-scope='scope'>
+                        <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
+                          scope.row.receivedQuantity
+                          }}</el-link>
+                      </template>
+                    </el-table-column>
                 <el-table-column prop="inventoryQuantity" label="库存数量"  >
                       <template slot-scope="scope">
                         <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:"0" }}</div>
@@ -389,6 +401,8 @@
         </div>
 
       </div>
+      <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
+
     </transition>
   </div>
 </template>
@@ -399,11 +413,17 @@ import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import MaterForm from '../../assemblyplan/assemblyTaskManagement/materForm.vue'
+
 export default {
   mixins: [getProjectList],
-
+  components: {
+    MaterForm
+  },
   data() {
     return {
+      materFormVisible:false,
+
       orderTypeList: [
         { label: "正常任务", value: "normal", },
         { label: "返工任务", value: "rework", },
@@ -441,6 +461,12 @@ export default {
 
   },
   methods: {
+    viewDetailFun(id){
+      this.materFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.materFormRef.init(id)
+      })
+    },
     handleClick() {
 
     },

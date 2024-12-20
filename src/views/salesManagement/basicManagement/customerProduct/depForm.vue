@@ -220,7 +220,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="密封盖颜色" width="120" :key="105" v-if="colourFlag === '1'">
+                    <el-table-column prop="colour" label="颜色" width="120" :key="105" v-if="colourFlag === '1'">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择" clearable
                           style="width: 100%;">
@@ -512,7 +512,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="colour" label="密封盖颜色" width="120" :key="105" v-if="colourFlag === '1'">
+                <el-table-column prop="colour" label="颜色" width="120" :key="105" v-if="colourFlag === '1'">
                   <template slot-scope="scope">
                     <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择" clearable
                       style="width: 100%;">
@@ -1381,7 +1381,7 @@ export default {
         }).catch(err => this.formLoading = false)
       ])
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7) 保持架材质（list9）、密封盖颜色(10)
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7) 保持架材质（list9）、颜色(10)
     async getProductClassFun() {
       await Promise.all([
         // 产品属性

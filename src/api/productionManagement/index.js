@@ -7,3 +7,11 @@ export function getProductionPlanList(data) {
     data
   })
 }
+// 生产计划导入
+export function planImport(data) {
+  return request({
+      url: `/api/zgt/prod/plan/upload`,
+      method: 'POST',
+      data
+  })
+}

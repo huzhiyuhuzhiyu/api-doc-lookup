@@ -129,12 +129,11 @@
           </el-table-column>
           <el-table-column prop="pricingType" label="计价类型" width="100">
             <template slot-scope="scope">
-              <div v-if="scope.row.processingType == 'by_time'">计时</div>
-              <div v-if="scope.row.processingType == 'by_piece'">计件</div>
+              <div v-if="scope.row.pricingType == 'by_time'">计时</div>
+              <div v-if="scope.row.pricingType == 'by_piece'">计件</div>
             </template>
           </el-table-column>
-          <el-table-column prop="unitPrice" label="计件单价" min-width="120"></el-table-column>
-          <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
+    
           <el-table-column prop="processType" label="工序类型" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.processType == 'normal'">正常工序</div>
@@ -144,12 +143,14 @@
               <div v-if="scope.row.processType == 'pairs'">配对工序</div>
             </template>
           </el-table-column>
+          <el-table-column prop="unitPrice" label="计件单价" min-width="120"></el-table-column>
+          <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="technicalRequirement" label="技术要求" width="130" sortable="custom" />
           <el-table-column prop="inspectionInformation" label="检验信息" width="130" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="180" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="remark" label="备注" width="130" />
-          <el-table-column label="操作" width="220" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
@@ -328,7 +329,7 @@ export default {
         { fullName: "辅料", enCode: "accessories" },
         { fullName: "其他 ", enCode: "other" }
       ],
-      columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice', 'createTime'],
+      columnList: [ 'createByName', 'createTime'],
       leftFlag: false,
     }
   },
@@ -607,6 +608,13 @@ export default {
         .then((res) => {
           console.log(res);
           this.tableData = res.data.records
+          this.tableData.forEach(item => {
+            if (!item.timePrice) {
+              item.price = item.timePrice
+            } else if (item.pricingType === 'by_piece') {
+              item.price = item.unitPrice
+            }
+          })
           this.total = res.data.total
           this.listLoading = false
         })

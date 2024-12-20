@@ -51,7 +51,9 @@
                     custom-column :setColumnDisplayList="columnList">
                     <el-table-column prop="name" label="报废名称" sortable="custom" />
                     <el-table-column prop="price" label="单价" sortable="custom"></el-table-column>
+                    <el-table-column prop="remark" label="备注" sortable="custom"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+                    <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
                             <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)" />

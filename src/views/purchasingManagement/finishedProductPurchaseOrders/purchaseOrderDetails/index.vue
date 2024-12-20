@@ -710,8 +710,6 @@ export default {
         this.standardValueFlag = res.data.standardValue
         this.colourFlag = res.data.colour
         this.processFlag = res.data.process
-      })
-      getOrderFiledMap('finishProductPurchase').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel

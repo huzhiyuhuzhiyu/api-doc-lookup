@@ -112,10 +112,10 @@
               v-if="packagingMethodFlag == 1" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
-              <el-table-column prop="material" label="保持架材质" width="120" 
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" 
-                        v-if="colourFlag == 1"></el-table-column>
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column label="操作" width="120" fixed="right">
@@ -142,7 +142,7 @@
 </template>
 <script>
 import { UserListAll, } from '@/api/permission/user'
-import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
+import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
 import Form from '../orderList/Form'
 import OrderFollow from '../orderList/orderFollow'
@@ -274,8 +274,8 @@ export default {
         type: 'select',
         options: []
       },
-       
-       
+
+
       {
         prop: 'ordersRemark',
         label: "备注",
@@ -296,7 +296,7 @@ export default {
         endPlaceholder: '结束日期',
       },
       ],
-    
+
       mainUnitFlag: null,
       tableDataFlag: false,
       isProjectSwitch: '',
@@ -310,8 +310,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
       bimProductAttributesList: [],
     }
   },

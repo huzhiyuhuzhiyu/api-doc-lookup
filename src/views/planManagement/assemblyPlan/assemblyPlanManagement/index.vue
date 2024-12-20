@@ -92,10 +92,10 @@
               v-if="packagingMethodFlag == 1" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
-              <el-table-column prop="material" label="保持架材质" width="120" 
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" 
-                        v-if="colourFlag == 1"></el-table-column>
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="planState" label="计划状态" width="120">
               <template slot-scope="scope">
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
+import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
 import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanList } from '@/api/calculationList/calculationList.js'
 import Form from './Form'
@@ -162,7 +162,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyPlanManagement',
@@ -254,7 +254,7 @@ export default {
         //   label: "最终计划数量",
         //   type: 'input'
         // },
-       
+
         {
           prop: 'remark',
           label: "备注",
@@ -296,8 +296,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
       bimProductAttributesList: [],
     }
   },

@@ -107,6 +107,10 @@
                   v-if="packagingMethodFlag == 1" />
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
                   v-if="specialRequireFlag == 1" />
+                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+                  v-if="materialFlag == 1"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+                  v-if="colourFlag == 1"></el-table-column>
                 <el-table-column label="操作" width="140" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
@@ -704,7 +708,7 @@ export default {
       ],
       orderDetailData: [],
       productVisible: false,
-      columnList1: ["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
+      columnList1: ["productCode", "planNo", "planEndDate"],
       columnList2: ["productCode", "planNo", "planEndDate"],
       columnList3: ["productCode", "planNo", "planEndDate"],
       columnList4: ["productCode", "planNo", "planEndDate"],
@@ -830,7 +834,7 @@ export default {
       outArrList: [],
       outArr: [],
       codeConfig: {},//生产计划单号配置
- 
+
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       isProductNameSwitch: "",
@@ -844,8 +848,10 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
       bimProductAttributesList: [],
-      superQueryJson:[],
+      superQueryJson: [],
 
 
 
@@ -896,6 +902,8 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
     },
     getProductClassFun() {
@@ -915,6 +923,32 @@ export default {
       //     packagingMethod //包装方式          
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
+      if (this.colourFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'colour',
+          label: '颜色',
+          type: 'select',
+          options: this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.materialFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'material',
+          label: '保持架材质',
+          type: 'select',
+          options: this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
       if (this.specialRequireFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
           prop: 'specialRequire',
@@ -1094,23 +1128,23 @@ export default {
             type: 'input',
           },
           {
-          prop: 'planStartDate',
-          label: '计划开始日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'planEndDate',
-          label: '计划结束日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
+            prop: 'planStartDate',
+            label: '计划开始日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'planEndDate',
+            label: '计划结束日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
 
 
         ]
@@ -1159,23 +1193,23 @@ export default {
             type: 'input',
           },
           {
-          prop: 'planStartDate',
-          label: '计划开始日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'planEndDate',
-          label: '计划结束日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
+            prop: 'planStartDate',
+            label: '计划开始日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'planEndDate',
+            label: '计划结束日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
           // {
           //   prop: 'safeInventory',
           //   label: "安全库存",
@@ -1263,24 +1297,24 @@ export default {
             type: 'input',
           },
           {
-          prop: 'planStartDate',
-          label: '计划开始日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'planEndDate',
-          label: '计划结束日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-           
+            prop: 'planStartDate',
+            label: '计划开始日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'planEndDate',
+            label: '计划结束日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+
 
 
 
@@ -1332,23 +1366,23 @@ export default {
             type: 'input',
           },
           {
-          prop: 'planStartDate',
-          label: '计划开始日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'planEndDate',
-          label: '计划结束日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
+            prop: 'planStartDate',
+            label: '计划开始日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+          {
+            prop: 'planEndDate',
+            label: '计划结束日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
 
 
 
@@ -1595,7 +1629,7 @@ export default {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planProductionQuantity', item.outputQuantity)
             this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
 
           });
           this.produceData = tableData
@@ -1687,7 +1721,7 @@ export default {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planDemandQuantity', item.outputQuantity)
             this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
@@ -1781,7 +1815,7 @@ export default {
             this.$set(item, 'urgentFlag', false)
             this.$set(item, 'planDemandQuantity', item.outputQuantity)
             this.$set(item, 'noIssuedQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.outputQuantity, item.issuedQuantity]), 6))
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity

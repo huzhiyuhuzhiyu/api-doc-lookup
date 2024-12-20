@@ -129,8 +129,8 @@
           </el-table-column>
           <el-table-column prop="pricingType" label="计价类型" width="100">
             <template slot-scope="scope">
-              <div v-if="scope.row.processingType == 'by_time'">计时</div>
-              <div v-if="scope.row.processingType == 'by_piece'">计件</div>
+              <div v-if="scope.row.pricingType == 'by_time'">计时</div>
+              <div v-if="scope.row.pricingType == 'by_piece'">计件</div>
             </template>
           </el-table-column>
           <el-table-column prop="unitPrice" label="计件单价" min-width="120"></el-table-column>

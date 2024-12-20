@@ -377,7 +377,7 @@ export default {
                         {prop: 'packagingMethod', label: "包装方式",visible: packagingMethodFlag},
                         {prop: 'specialRequire', label: "特殊要求",visible: specialRequireFlag},
                         {prop: 'material', label: "保持架材质",visible: materialFlag},
-                        {prop: 'colour', label: "密封盖颜色",visible: colourFlag},
+                        {prop: 'colour', label: "颜色",visible: colourFlag},
                         {prop: 'protrusion', label: "凸出量",visible: protrusionFlag},
                         {prop: 'preload', label: "预负荷",visible: preloadFlag},
                         {prop: 'specialRequire', label: "特殊要求"},

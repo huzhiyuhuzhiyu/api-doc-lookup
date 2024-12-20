@@ -56,15 +56,15 @@
                         批量删除
                       </el-button>
                       |
-                      <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC ref="multipleTable"
-                        @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                        border :max-height="customStyleData">
-                        <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
-                        <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                      <el-table :header-cell-style="{ background: '#F5F7FA', color: '#606266' }" :fixedNO="true" hasC
+                        ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
+                        :data="dataFormTwo.data" border :height="customStyleData">
+                        <el-table-column type="selection" width="55" fixed="left" align="center"></el-table-column>
+                        <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                           key="1"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
-                          key="3"></el-table-column>
+                          key="3" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                           key="5">
                           <template slot="header">
@@ -382,7 +382,7 @@
                             </el-button>
                           </template>
                         </el-table-column>
-                      </JNPF-table>
+                      </el-table>
                     </el-form>
                     <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin-right:10px;margin-left: 5px;">
@@ -780,31 +780,7 @@ export default {
       this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
       this.ProductPoolTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
     }
-    if (this.standardValueFlag === '1') {
-      this.superQueryJson.splice(8, 0, {
-        prop: 'standardValue',
-        label: '规值',
-        type: 'select'
-      })
 
-    }
-    if (this.colourFlag === '1') {
-      this.superQueryJson.splice(9, 0, {
-        prop: 'colour',
-        label: '颜色',
-        type: 'input'
-      })
-
-    }
-    if (this.processFlag === '1') {
-      this.superQueryJson.splice(10, 0, {
-        prop: 'processName',
-        label: '工序',
-        type: 'select',
-        options: []
-      })
-
-    }
     this.tableDataFlag = true
 
     this.getBimBusinessDetail()
@@ -886,9 +862,7 @@ export default {
               this.colourFlag = item.configValue1
             } else if (item.configKey === "process") {
               this.processFlag = item.configValue1
-            }
-          } else if (item.configValue2 === "finishProductPurchase") {
-            if (item.configKey === "sealingCoverTyping") {
+            } else  if (item.configKey === "sealingCoverTyping") {
               this.sealingCoverTypingFlag = item.configValue1
             } else if (item.configKey === "accuracyLevel") {
               this.accuracyLevelFlag = item.configValue1
@@ -905,7 +879,7 @@ export default {
             } else if (item.configKey === "specialRequire") {
               this.specialRequireFlag = item.configValue1
             }
-          }
+          } 
 
         })
       })

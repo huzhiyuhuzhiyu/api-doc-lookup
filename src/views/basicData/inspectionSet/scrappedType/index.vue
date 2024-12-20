@@ -50,8 +50,10 @@
                 <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
                     custom-column :setColumnDisplayList="columnList">
                     <el-table-column prop="name" label="报废名称" sortable="custom" />
-                    <el-table-column prop="price" label="单价" sortable="custom"></el-table-column>
-                    <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+                    <el-table-column prop="price" label="单价" sortable="custom" width="120"></el-table-column>
+                    <el-table-column prop="remark" label="备注" sortable="custom"></el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                    <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
                             <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)" />
@@ -147,7 +149,12 @@ export default {
             this.$refs.dataTable.showDrawer()
         },
         sortChange({ prop, order }) {
-            const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+            let newProp = ''
+            if (['createByName'].includes(prop)) {
+                newProp = 'create_by'
+            } else {
+                newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+            }
             this.tableQuery.orderItems[0].asc = order === 'ascending'
             this.tableQuery.orderItems[0].column = order === null ? '' : newProp
             this.initData()

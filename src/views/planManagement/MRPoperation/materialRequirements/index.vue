@@ -342,6 +342,10 @@
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+                  v-if="materialFlag == 1"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+                  v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -1054,6 +1058,37 @@ export default {
         })
       }
     },
+    advancedQueryFunsPurchase() {
+      //     material // 保持架材质
+      //     colour  //  颜色
+      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productDrawingNo')
+      if (this.colourFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'colour',
+          label: '颜色',
+          type: 'select',
+          options: this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.materialFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'material',
+          label: '保持架材质',
+          type: 'select',
+          options: this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1322,7 +1357,7 @@ export default {
 
 
         ]
-
+        this.advancedQueryFunsPurchase()
         this.superQueryVisible = true
       }
       if (this.activeName == 'out') {

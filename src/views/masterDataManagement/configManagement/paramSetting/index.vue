@@ -1,7 +1,8 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="tag-group JNPF-common-search-box treeBox_bot" style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="activeName">
           <el-radio-button label="product">产品设置</el-radio-button>
           <el-radio-button label="orderField">产品属性设置</el-radio-button>
@@ -18,9 +19,14 @@
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
         <div style="margin: 10px -6px 0 10px;overflow: scroll;">
-          <el-table v-if="tableRerender" :span-method="['attachment', 'orderField'].includes(activeName) ? arraySpanMethod : undefined" :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }" :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-            <el-table-column align="left" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块" width="135" />
-            <el-table-column align="left" v-if="activeName === 'orderField'" prop="mainModule" label="所属模块" width="135" />
+          <el-table v-if="tableRerender"
+            :span-method="['attachment', 'orderField'].includes(activeName) ? arraySpanMethod : undefined"
+            :height="maxHeight" :data="tableData" stripe :row-style="{ height: '50px' }"
+            :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
+            <el-table-column align="left" v-if="activeName === 'attachment'" prop="mainModule" label="所属模块"
+              width="135" />
+            <el-table-column align="left" v-if="activeName === 'orderField'" prop="mainModule" label="所属模块"
+              width="135" />
 
             <el-table-column prop="configKeyLabel" label="功能" width="230">
               <template v-slot:default="{ row }">
@@ -39,6 +45,21 @@
                     </el-radio>
                   </el-radio-group>
                 </div>
+                <div v-else-if="scope.row.businessCode === 'produce'">
+                  <template v-if="scope.row.configKey == 'auto_material'">
+                    <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
+                      <el-radio :label="0" style="margin-bottom: 7px;">
+                        {{ scope.row.radioOff }}
+                      </el-radio>
+                      <el-radio :label="1" style="margin-top: 7px;">
+                        {{ scope.row.radioOn }}
+                      </el-radio>
+                    </el-radio-group>
+                  </template>
+                  <template v-else>
+                    <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
+                  </template>
+                </div>
                 <div v-else>
                   <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
                   <el-input style="width: 150px;margin-left: 10px;" v-if="
@@ -52,10 +73,14 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column class-name="pointer" prop="configValue3" label="文件分类" width="150" v-if="activeName === 'attachment'">
+            <el-table-column class-name="pointer" prop="configValue3" label="文件分类" width="150"
+              v-if="activeName === 'attachment'">
               <template v-slot:default="{ row }">
                 <div @click="fileCategoryClick(row)" style="width: 100%">
-                  <ComSelect2 v-if="row.editFlag" :currOrgId="row.configValue2" v-model="row.configValue2" :ref="row.configKey" placeholder="请选择所属分类" auth :closeHandler="() => closeHandler(row)" @change="(...args) => onOrganizeChange(...args, row)" :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT" />
+                  <ComSelect2 v-if="row.editFlag" :currOrgId="row.configValue2" v-model="row.configValue2"
+                    :ref="row.configKey" placeholder="请选择所属分类" auth :closeHandler="() => closeHandler(row)"
+                    @change="(...args) => onOrganizeChange(...args, row)"
+                    :selectClassifyType="FileCategoryType.SYSTEM_ATTACHMENT" />
                   <div v-else>
                     <div style="width: 100%" v-if="row.configValue3">
                       <el-link type="primary" :underline="false">{{ row.configValue3 }}</el-link>
@@ -333,6 +358,9 @@ export default {
             } else if (item.configKey === 'proportion') {
               item.radioOff = '关闭'
               item.radioOn = '启用'
+            } else if (item.configKey === 'auto_material') {
+              item.radioOff = '首道自制工序扣减料'
+              item.radioOn = '生产产品入库扣减料'
             }
             const configKeyObj = ConfigKey[item.configKey]
             console.log(configKeyObj, 'obj')

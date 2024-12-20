@@ -20,7 +20,7 @@
                 <span class="required">*</span>报废类型
               </template>
               <template slot-scope="scope">
-                <el-select v-model="scope.row.typeId" placeholder="料废类型" style="width: 100%;" class="ipt"
+                <el-select v-model="scope.row.scrapId" placeholder="料废类型" style="width: 100%;" class="ipt"
                   @change="(value) => handleSelectionChange(value, scope)">
                   <el-option v-for="(item, index) in materialWasteList" :key="index" :label="item.name"
                     :value="item.id"></el-option>

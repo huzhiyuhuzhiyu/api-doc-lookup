@@ -8,10 +8,12 @@
 import ReportTypeTable from '@/components/no_mount/ReportTypeTable/index.vue';
 import {getcategoryTree} from '@/api/basicData/materialSettings';
 import { balanceQueryReport, canStockBalance } from '@/api/balances'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 
 export default {
     name: 'balanceQuiry',
     components: {ReportTypeTable},
+    mixins:[AbProjectMixin],
     data(){
         return {
             balanceQueryReport,
@@ -37,7 +39,7 @@ export default {
                 productCategoryId: '',
                 productsCode: "",
                 productsName: "",
-                projectId: '',
+                projectId: this.abProjectId,
                 startTime: "",
                 startUpdateTime: "",
                 superQuery: {},
@@ -59,6 +61,8 @@ export default {
         }
     },
     async created() {
+        await this.awaitAbProject()
+        this.listRequestObj.projectId = this.abProjectId
         await this.getProductNameSwitch('product', 'enable_productName')
         const res = await canStockBalance()
         this.accountPeriod = res.data
@@ -66,7 +70,7 @@ export default {
         this.setTableItems()
         this.setSuperQueryJson()
         this.setSearchList()
-        this.searchList[0].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.jnpf.getToday('YYYY-MM')
+        this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.jnpf.getToday('YYYY-MM')
         this.indexFlag = true
     },
     methods: {
@@ -157,6 +161,16 @@ export default {
         setSearchList(){
             this.searchList = [
                 {
+                    fieldValue: this.abProjectId,
+                    field: 'projectId',
+                    label: '所属项目',
+                    prop: 'projectId',
+                    symbol: 'like',
+                    searchType: 4,
+                    options:this.abProjectList,
+                    clearable:false,
+                },
+                {
                     fieldValue: '',
                     field: 'accountPeriod',
                     label: '账期',
@@ -172,9 +186,9 @@ export default {
                     searchType: 1
                 },{
                     fieldValue: '',
-                    field: 'warehouseName',
+                    field: 'productsName',
                     label: '产品名称',
-                    prop: 'warehouseName',
+                    prop: 'productsName',
                     symbol: 'like',
                     searchType: 1,
                 },

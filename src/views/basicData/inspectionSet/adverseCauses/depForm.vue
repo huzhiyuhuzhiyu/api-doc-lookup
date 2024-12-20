@@ -20,7 +20,7 @@
             不良编码<span class="required">*</span>
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入不良编码" maxlength="20"
-            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+            :disabled="btntype ? true : !codeConfig.modifyFlag == true ? false : true" />
         </el-form-item>
 
       </el-form>

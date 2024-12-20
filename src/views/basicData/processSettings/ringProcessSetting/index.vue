@@ -424,6 +424,7 @@ export default {
         detailProcess(val).then((res) => {
           console.log(res, 'kkk')
           this.routingLineList = res.data.routingLineList
+          this.routingLineList.sort((a, b) => a.sort - b.sort);
         })
       } else {
         this.routingLineList = []

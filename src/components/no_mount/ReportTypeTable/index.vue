@@ -32,12 +32,12 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
 
-                    <template v-for="item in searchList">
+                    <template v-for="item in domSearchList">
                         <el-col :span="4" :key="item.prop" v-if="item.hasOwnProperty('render') ? item.render : true">
                             <el-form-item>
                                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue"
                                           :placeholder="'请输入' + item.label"
-                                          clearable @keyup.enter.native="search('basic')"
+                                          :clearable="item.hasOwnProperty('clearable') ? item.clearable : true" @keyup.enter.native="search('basic')"
                                 />
                                 <el-date-picker v-else-if="item.searchType === 2" v-model="item.fieldValue" type="month"
                                                 value-format="yyyy-MM" style="width: 100%;" :clearable="false"
@@ -51,7 +51,7 @@
                                 />
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
                                            :placeholder="'请选择' + item.label"
-                                           clearable
+                                           :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
                                 >
                                     <el-option v-for="(item2, index2) in item.options" :key="index2"
                                                :label="item2.label"
@@ -83,7 +83,7 @@
                         </el-button>
                     </div>
                     <div class="JNPF-common-head-right">
-                        <el-tooltip content="高级查询" placement="top">
+                        <el-tooltip content="高级查询" placement="top" v-if="needSuperQuery">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                                      @click="superQueryVisible = true"
                             />
@@ -102,9 +102,21 @@
                 </div>
                 <JNPF-table  v-if="tableItems.length" @sort-change="sortChange" show-summary :summary-method="getSummaries" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
                     <template v-for="item in tableItems">
-                    <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
-                                     :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable ? 'custom' : false"
-                    />
+                        <template v-if="['abrasive','oil','accessory','turnoverBox','total'].includes(item.prop)">
+                            <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
+                                             :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable ? 'custom' : false" >
+                                <template slot-scope="scope">
+                                    <el-link type="primary" @click.native="goDetail(scope.row,item.prop)">
+                                        {{ scope.row[item.prop] }}
+                                    </el-link>
+                                </template>
+                            </el-table-column>
+                        </template>
+                        <template v-else>
+                            <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
+                                             :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable ? 'custom' : false"
+                            />
+                        </template>
                     </template>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
@@ -115,6 +127,7 @@
         <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download"/>
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+        <ReportLineTable ref="ReportLineTable" @closeLine="closeLine" v-if="reportLineVisible" :superQueryJson="lineSuperQueryJson"   :list-request-obj="lineListRequestObj" :list-method="lineEdgeLineReport" :tableItems="lineTableItems" :searchList="lineSearchList" :exportType="lineExportType" :export-name="lineExportName"></ReportLineTable>
     </div>
 </template>
 <script>
@@ -122,10 +135,11 @@
 import ExportForm from '@/components/no_mount/ExportBox/index.vue';
 import {excelExport} from '@/api/basicData';
 import SuperQuery from '@/components/SuperQuery/index.vue';
-
+import ReportLineTable from '@/components/no_mount/ReportLineTable/index.vue';
+import { lineEdgeLineReport } from '@/api/balances'
 export default {
     name:'ReportTypeTable',
-    components: {SuperQuery, ExportForm},
+    components: {SuperQuery, ExportForm,ReportLineTable},
     props: {
         treeTitle: {
             type: String,
@@ -233,9 +247,18 @@ export default {
                 return listQuery
             }
         },
+        needSuperQuery:{
+            type:Boolean,
+            default:true
+        },
+        isProductNameSwitch:{
+            type: String,
+            default: ""
+        }
     },
     data() {
         return {
+            lineEdgeLineReport,
             refreshTree:true,
             tableData: [],
             listLoading: false,
@@ -254,7 +277,15 @@ export default {
             },
             treeData: [],
             expands: true,
-            totalData:{}
+            totalData:{},
+            reportLineVisible:false,
+            domSearchList:[],
+            lineSuperQueryJson:[],
+            lineListRequestObj:{},
+            lineTableItems:[],
+            lineSearchList:[],
+            lineExportType:'1235',
+            lineExportName:'',
         };
     },
     created() {
@@ -339,17 +370,19 @@ export default {
                 this.treeLoading = false
             }
             this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
+            this.domSearchList = JSON.parse(JSON.stringify(this.searchList))
             this.initData()
         },
         initData() {
             this.visible = false
+            this.listLoading = true
             Object.keys(this.listQuery).forEach(key => { // 清除搜索条件两端空格
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
             this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
             this.listMethod(this.listQuery).then(res => {
-                this.tableData = res.data.page ? res.data.page.records : []
+                this.tableData = res.data.page ? res.data.page.records : res.data.list ? res.data.list : []
                 this.totalData = res.data.total || {}
                 // 合计 以后用到放开即可
                 // res.data.total ? this.totalList.push(res.data.total) : ''
@@ -364,8 +397,10 @@ export default {
             if (type === 'basic') {
                 this.basicQuery = {
                     matchLogic: 'AND',
-                    condition: this.searchList.filter(item => item.fieldValue).map(item => {
+                    condition: this.domSearchList.filter(item => item.fieldValue).map(item => {
                         this.listQuery['accountPeriod'] = item.field === 'accountPeriod' ? item.accountPeriod : this.listQuery['accountPeriod']
+                        this.listQuery['projectId'] = item.field === 'projectId' ? item.fieldValue : this.listQuery['projectId']
+                        this.listQuery['month'] = item.field === 'month' ? item.fieldValue : this.listQuery['month']
                         return {
                             ...item,
                             fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
@@ -416,6 +451,57 @@ export default {
                 }).catch(() => {
                 })
             }
+        },
+        goDetail(row,classType){
+            this.lineListRequestObj = {
+                classType:classType,
+                warehouseId:row.warehouseId,
+                reportDate:this.listQuery.reportDate,
+                totalRowFlag:false,
+                pageSize:20,
+                pageNum:1,
+            }
+            this.lineExportName = row.warehouseName + '领用明细'
+            this.lineTableItems = [
+                {prop:"productCode", label:"产品编码",minWidth:160},
+                {prop:"productName", label:"产品名称",minWidth:160 ,render:this.isProductNameSwitch === '1'},
+                {prop:"drawingNo", label:"品名规格",minWidth:160},
+                {prop:"num", label:"出库数量",minWidth:160},
+                {prop:"mainUnit", label:"单位",minWidth:120},
+                {prop:"totalAmount", label:"出库金额",minWidth:160},
+                {prop:"classType", label:"类别",minWidth:160,formatter:this.formatterClassType},
+            ]
+            this.lineSuperQueryJson = [
+                {
+                    prop: 'drawingNo',
+                    label: '品名规格',
+                    type: 'input',
+                },
+                {
+                    prop: 'productCode',
+                    label: '产品编码',
+                    type: 'input',
+                },
+                {
+                    prop: 'productName',
+                    label: '产品名称',
+                    type: 'input',
+                },
+            ]
+            this.reportLineVisible = true
+        },
+        closeLine(){
+            this.reportLineVisible = false
+            this.getData()
+        },
+        formatterClassType(row){
+            let arr = [
+                { label: '磨料', value: 'abrasive' },
+                { label: '油料', value: 'oil' },
+                { label: '配件', value: 'accessory' },
+                { label: '周转箱', value: 'turnover_box' },
+            ]
+            return arr.find(item=>item.value === row.classType).label
         },
 
     },

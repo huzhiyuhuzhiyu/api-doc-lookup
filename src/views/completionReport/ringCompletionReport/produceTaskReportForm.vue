@@ -505,6 +505,7 @@ export default {
           obj.reworkQuantity = this.currentProcess.reworkQuantity
           obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
           obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+          obj.scrapList = this.materialWasteDataList
           obj.pricingType = this.currentProcess.pricingType
           obj.processId = this.currentProcess.processId
           obj.producerId = this.currentProcess.producerId

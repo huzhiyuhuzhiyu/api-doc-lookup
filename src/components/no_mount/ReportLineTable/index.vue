@@ -30,49 +30,9 @@
         </div>
         <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-                <el-form @submit.native.prevent>
-
-                    <template v-for="item in searchList">
-                        <el-col :span="4" :key="item.prop" v-if="item.hasOwnProperty('render') ? item.render : true">
-                            <el-form-item>
-                                <el-input v-if="item.searchType === 1" v-model="item.fieldValue"
-                                          :placeholder="'请输入' + item.label"
-                                          clearable @keyup.enter.native="search('basic')"
-                                />
-                                <el-date-picker v-else-if="item.searchType === 2" v-model="item.fieldValue" type="month"
-                                                value-format="yyyy-MM" style="width: 100%;" :clearable="false"
-                                                popper-class="date_form"
-                                                @change="search('basic')"
-                                />
-                                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue" type="date"
-                                                value-format="yyyy-MM-dd" style="width: 100%;" :clearable="false"
-                                                popper-class="date_form"
-                                                @change="search('basic')"
-                                />
-                                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
-                                           :placeholder="'请选择' + item.label"
-                                           :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
-                                >
-                                    <el-option v-for="(item2, index2) in item.options" :key="index2"
-                                               :label="item2.label"
-                                               :value="item2.value"
-                                    ></el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                    </template>
-                    <el-col :span="6">
-                        <el-form-item>
-                            <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
-                                {{ $t('common.search') }}
-                            </el-button>
-                            <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                                    $t('common.reset')
-                                }}
-                            </el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-form>
+                <el-page-header style="margin-bottom: 8px;margin-left: 5px" @back="$emit('closeLine', true)"
+                                :content="exportName"
+                />
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding:10px">
@@ -83,7 +43,7 @@
                         </el-button>
                     </div>
                     <div class="JNPF-common-head-right">
-                        <el-tooltip content="高级查询" placement="top">
+                        <el-tooltip content="高级查询" placement="top" v-if="needSuperQuery">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                                      @click="superQueryVisible = true"
                             />
@@ -100,13 +60,19 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table  v-if="tableData.length" @sort-change="sortChange"  ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
+                <JNPF-table :partent-or-child="exportName+'child'"  v-if="tableItems.length" @sort-change="sortChange" show-summary :summary-method="getSummaries" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
                     <template v-for="item in tableItems">
-                        <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
-                                         :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable ? 'custom' : false"
-                        />
+                        <template v-if="['abrasive','oil','accessory','turnoverBox'].includes(item.prop)">
+                            <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
+                                             :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable ? 'custom' : false" >
+                            </el-table-column>
+                        </template>
+                        <template v-else>
+                            <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
+                                             :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable ? 'custom' : false"
+                            />
+                        </template>
                     </template>
-                    <el-table-column v-for="item in mapTableItems" :prop="item" :key="item" :label="item" min-width="140" />
                 </JNPF-table>
                 <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
                             @pagination="initData"
@@ -121,10 +87,11 @@
 <script>
 
 import ExportForm from '@/components/no_mount/ExportBox/index.vue';
-import { excelExport, summaryExcelExport } from '@/api/basicData'
+import {excelExport} from '@/api/basicData';
 import SuperQuery from '@/components/SuperQuery/index.vue';
 
 export default {
+    name:'ReportLineTable',
     components: {SuperQuery, ExportForm},
     props: {
         treeTitle: {
@@ -233,8 +200,11 @@ export default {
                 return listQuery
             }
         },
+        needSuperQuery:{
+            type:Boolean,
+            default:true
+        },
     },
-    name:'wareHouseQuery',
     data() {
         return {
             refreshTree:true,
@@ -255,8 +225,7 @@ export default {
             },
             treeData: [],
             expands: true,
-            totalData:{},
-            mapTableItems:[],
+            totalData:{}
         };
     },
     created() {
@@ -274,14 +243,8 @@ export default {
         sortChange({ prop, order }) {
             let newProp = ''
             console.log(prop)
-            let sortArr = [
-                {label:'drawingNo',name:'品名规格'},
-                {label:'productsCode',name:'产品编码'},
-                {label:'productsName',name:'产品名称'},
-                {label:'processName',name:'工序名称'},
-            ]
-            if (['品名规格','产品编码','产品名称','工序名称'].includes(prop)) {
-                newProp = sortArr.find(item=>item.name === prop).label
+            if (['productsDrawingNo','productsCode','productsName','warehouseName'].includes(prop)) {
+                newProp = prop
             } else {
                 newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
             }
@@ -328,6 +291,14 @@ export default {
         columnSetFun() {
             this.$refs.dataTable.showDrawer()
         },
+        // 总计处理
+        getSummaries(param) {
+            return param.columns.map((column, index) => {
+                if (index === 0) return '总计'
+                if (!column.property) return ''
+                return this.totalData[column.property]
+            })
+        },
         async getData() {
             this.treeLoading = true
             this.listLoading = true
@@ -343,18 +314,18 @@ export default {
         },
         initData() {
             this.visible = false
+            this.listLoading = true
             Object.keys(this.listQuery).forEach(key => { // 清除搜索条件两端空格
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
             this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
             this.listMethod(this.listQuery).then(res => {
-                console.log(res)
-                const mapArr = ['账期','结存状态','品名规格','产品名称','产品编码','工序名称']
-                const legendData =  Object.keys(res.data.records[0]).filter(item=> !mapArr.includes(item))
-                this.mapTableItems = legendData
-                this.tableData = res.data.records ? res.data.records : []
-                this.total = res.data.total
+                this.tableData = res.data.page ? res.data.page.records : []
+                this.totalData = res.data.total || {}
+                // 合计 以后用到放开即可
+                // res.data.total ? this.totalList.push(res.data.total) : ''
+                this.total = res.data.page ? res.data.page.total : 0
                 this.listLoading = false
             }).catch(() => {
                 this.listLoading = false
@@ -366,8 +337,7 @@ export default {
                 this.basicQuery = {
                     matchLogic: 'AND',
                     condition: this.searchList.filter(item => item.fieldValue).map(item => {
-                        this.listQuery.accountPeriod = item.field === 'accountPeriod' ? item.accountPeriod : this.listQuery.accountPeriod
-                        this.listQuery['projectId'] = item.field === 'projectId' ? item.fieldValue : this.listQuery['projectId']
+                        this.listQuery['accountPeriod'] = item.field === 'accountPeriod' ? item.accountPeriod : this.listQuery['accountPeriod']
                         return {
                             ...item,
                             fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
@@ -411,12 +381,17 @@ export default {
                     pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
                     totalRowFlag: true
                 }
-                summaryExcelExport(_data).then(res => {
+                excelExport(_data).then(res => {
                     this.exportFormVisible = false
                     if (!res.data.url) return
                     this.jnpf.downloadFile(res.data.url)
                 }).catch(() => {
                 })
+            }
+        },
+        goDetail(row){
+            let _data = {
+
             }
         },
 

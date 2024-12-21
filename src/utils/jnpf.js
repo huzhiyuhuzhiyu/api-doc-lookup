@@ -6,7 +6,7 @@ import { message } from '@/utils/message';
 import { create, all } from "mathjs"
 import { BillNumber, getBillRuleConfig } from '@/api/system/billRule'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
-import {  getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getpairingModeList } from '@/api/basicData/index'
 const STORAGEPREFIX = 'jnpf_'
 const STORAGETYPE = window.localStorage
 const mathjs = create(all, { number: "BigNumber", precision: 20 });
@@ -22,7 +22,7 @@ getMainUnitFun(code,type){
       businessCode: code,
       configKey: type
     }
-   
+
     return new Promise((resolve, reject) => {
       getBimBusinessDetail(obj).then(res => {
         resolve(res.data.configValue1)
@@ -32,7 +32,21 @@ getMainUnitFun(code,type){
 
     })
 },
+    getpairingModeListFun() {
+        let obj = {
+            "pageNum":-1,
+            "pageSize": -1,
+        }
 
+        return new Promise((resolve, reject) => {
+            getpairingModeList(obj).then(res => {
+                resolve(res.data.records)
+            }).catch(error => {
+                reject(error)
+            })
+
+        })
+    },
 
 // 获取单号
   getBillRuleConfigFun(code) {

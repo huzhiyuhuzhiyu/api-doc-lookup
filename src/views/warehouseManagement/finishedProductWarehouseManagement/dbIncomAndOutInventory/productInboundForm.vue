@@ -113,9 +113,9 @@
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                          <el-table-column prop="batchNumber" label="批次号" min-width="160" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
+                            <el-input v-model="scope.row.batchNumber"  style="width: 100%;" :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
@@ -161,6 +161,16 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -353,9 +363,9 @@
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                          <el-table-column prop="batchNumber" label="批次号" min-width="180" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
+                            <el-input v-model="scope.row.batchNumber"     :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
@@ -391,16 +401,17 @@
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-
-                        <!-- <el-table-column prop="aperture" label="孔径" width="100"
-                          v-if="classAttribute != 'finish_product'">
-                          <template slot-scope="scope">
-                            <el-select :disabled="btnType=='look'" v-model="scope.row.aperture" placeholder="孔径" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column> -->
+ 
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -624,7 +635,7 @@ export default {
       codeConfig: {},//单号配置信息(单据规则)
       dataForm: {  //表单信息
         orderNo: "",
-        businessType: "inbound_flip",
+        businessType: "",
         warehouseName: "",
         warehouseId: "",
         documentType: "",
@@ -733,10 +744,14 @@ export default {
       productNameFlag: null,
       tableDataFlag: false,
       mainUnitFlag: null,
+      pairingModeList: [],
+
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getpairingModeListFun()
+
     this.getProductClassFun()
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
@@ -762,6 +777,13 @@ export default {
 
   },
   methods: {
+       // 获取配对方式
+       async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1246,8 +1268,9 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-    init(data, btnType, classAttributeList, warehouseCode) {
+    init(data, btnType, classAttributeList, warehouseCode,type) {
       this.productData = []
+      this.dataForm.businessType=type
       console.log("11", data, btnType, classAttributeList, warehouseCode);
       // this.visible = true
       this.warehouseCode = warehouseCode

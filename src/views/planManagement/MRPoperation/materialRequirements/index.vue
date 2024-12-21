@@ -72,6 +72,8 @@
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
+                <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
@@ -110,7 +112,7 @@
                 <el-table-column label="操作" width="140" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
-                      @click.native="complateSetFun(scope.row.id, 'assemble')">齐套查询</el-button>
+                      @click.native="complateSetFun(scope.row.id, 'assemble',0)">齐套查询</el-button>
 
                   </template>
                 </el-table-column>
@@ -187,6 +189,7 @@
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -249,7 +252,7 @@
                       :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag"
                       @click.native="retrospectFun(scope.row.id, 'produce')">追溯主产品</el-button>
                     <el-button size="mini" type="text"
-                      @click.native="complateSetFun(scope.row.id, 'produce')">齐套查询</el-button>
+                      @click.native="complateSetFun(scope.row.id, 'produce',0)">齐套查询</el-button>
 
                   </template>
 
@@ -530,7 +533,7 @@
                       :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag"
                       @click.native="retrospectFun(scope.row.id, 'out')">追溯主产品</el-button>
                     <el-button size="mini" type="text"
-                      @click.native="complateSetFun(scope.row.id, 'out')">齐套查询</el-button>
+                      @click.native="complateSetFun(scope.row.id, 'out',0)">齐套查询</el-button>
 
                   </template>
                 </el-table-column>
@@ -560,6 +563,8 @@
         <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
           show-overflow-tooltip></el-table-column>
         <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
+        <el-table-column prop="pairingModeName" label="配对方式" width="160"  />
+
         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
         <el-table-column prop="outputQuantity" label="组装数量" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
@@ -1453,11 +1458,11 @@ export default {
     },
 
     // 齐套查询
-    complateSetFun(id, type) {
+    complateSetFun(id, type,flag) {
       console.log(id, type);
       this.complateSetFormVisible = true
       this.$nextTick(() => {
-        this.$refs.complateSetForm.init(id, type);
+        this.$refs.complateSetForm.init(id, type,flag);
       });
 
     },
@@ -1847,7 +1852,7 @@ export default {
         prop === "productName" ||
         prop === "productDrawingNo" ||
         prop === "routingName" ||
-        prop === "routingCode" || prop == 'projectName'
+        prop === "routingCode" || prop == 'projectName'||prop=='pairingModeName'
       ) {
         newProp = prop;
       } else {

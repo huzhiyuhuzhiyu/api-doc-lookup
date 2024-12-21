@@ -680,7 +680,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
+      if (prop === 'productName'||prop=='pairingModeName'  || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

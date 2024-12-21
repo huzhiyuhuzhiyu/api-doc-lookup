@@ -87,3 +87,21 @@ export function addProdPlanArrange(data) {
       data
   })
 }
+
+// 获取上一道工序的配对方式测振等级数据(测震工序后面的工序可用)
+
+export function getvibrationList(data) {
+  return request({
+      url: `/api/zgt/proWorkFinish/vibration/list`,
+      method: 'get',
+      data
+  })
+}
+// 获取上一道工序的配对方式（配对工序后面的工序可用）
+export function getPairingModelList(data) {
+  return request({
+      url: `/api/zgt/proWorkFinish/pairingModel/list`,
+      method: 'get',
+      data
+  })
+}

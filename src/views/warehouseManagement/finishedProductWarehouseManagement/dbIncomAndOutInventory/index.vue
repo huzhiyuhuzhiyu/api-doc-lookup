@@ -1197,6 +1197,8 @@
           <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -1221,7 +1223,7 @@
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="productInbound(scope.row,)">入库</el-button>
+              <el-button size="mini" type="text" @click="productInbound(scope.row,'inbound_order_production')">入库</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -1265,7 +1267,7 @@
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="productInbound(scope.row,)">入库</el-button>
+              <el-button size="mini" type="text" @click="productInbound(scope.row,'inbound_flip')">入库</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -3559,13 +3561,13 @@ export default {
       this.selectWorkList = val
     },
     // 生产产品单条入库
-    productInbound(row) {
+    productInbound(row,type) {
       let arr = []
       arr.push(row)
       this.productInboundFormVisible = true
       this.$nextTick(() => {
         console.log(555);
-        this.$refs.productInboundREFForm.init(arr, 'add', this.classAttributeList, this.warehouseCode)
+        this.$refs.productInboundREFForm.init(arr, 'add', this.classAttributeList, this.warehouseCode,type)
       })
     },
     // 生产工单单条入库

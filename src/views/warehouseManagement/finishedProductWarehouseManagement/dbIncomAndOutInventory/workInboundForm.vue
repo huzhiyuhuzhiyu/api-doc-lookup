@@ -99,7 +99,7 @@
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="processName" label="工序" width="120" />
-                        <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">
@@ -242,7 +242,7 @@
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="processName" label="工序" width="120" />
-                        <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">

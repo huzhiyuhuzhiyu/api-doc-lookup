@@ -859,6 +859,7 @@ export default {
       }
     },
     openRoutingFun() {
+      if(!this.dataForm.id) return this.$message.error("请先选择产品")
       this.routingVisible = true
       if (this.isProjectSwitch == 1) {
         this.$nextTick(() => {

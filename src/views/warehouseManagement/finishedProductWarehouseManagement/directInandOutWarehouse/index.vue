@@ -131,7 +131,7 @@
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                      <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132"
+                      <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
                         v-if="dataForm.documentType == 'inbound'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">

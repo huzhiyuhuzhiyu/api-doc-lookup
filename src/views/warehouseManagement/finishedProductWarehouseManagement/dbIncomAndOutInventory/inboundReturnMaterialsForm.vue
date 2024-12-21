@@ -126,7 +126,7 @@
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
 
-                        <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">
@@ -301,7 +301,7 @@
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
 
-                        <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">

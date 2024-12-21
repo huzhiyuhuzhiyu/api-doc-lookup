@@ -59,7 +59,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="配对方式" prop="taskMethod">
+                    <el-form-item label="配对方式" prop="pairingModeName">
                       <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                         :disabled="btnType == 'look' ? true : false">
                         <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
@@ -88,7 +88,7 @@
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="计划生产开始—结束日期" prop="planDate"
-                      :style="dataForm.taskMethod == 'appoint' ? 'margin-bottom: 19px;' : ''">
+                      >
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
@@ -845,8 +845,10 @@ export default {
     selectProductFun(data) {
       this.$set(data, 'orderNo', this.dataForm.orderNo)
       console.log("所选返工产品", data);
+      let pairingModeId=JSON.parse(JSON.stringify(this.dataForm.pairingModeId))
       this.dataForm = data
       this.$set(this.dataForm, 'orderType', 'manually')
+      this.$set(this.dataForm, 'pairingModeId', pairingModeId)
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
@@ -995,6 +997,7 @@ export default {
       }
     },
     openRoutingFun() {
+      if(!this.dataForm.id) return this.$message.error("请先选择产品")
       this.routingVisible = true
       if (this.isProjectSwitch == 1) {
         this.$nextTick(() => {

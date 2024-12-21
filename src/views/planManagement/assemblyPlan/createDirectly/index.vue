@@ -78,8 +78,8 @@
                           <el-input v-model="scope.row.planNo" placeholder="计划单号" />
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="bomId" label="BOM" width="140" :key="444">
@@ -90,6 +90,16 @@
 
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                       <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="planQuantity" label="计划数量" width="100" :key="7">
                         <template slot="header">
                           <span class="required">*</span>计划数量
@@ -228,9 +238,9 @@
                         <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                       </el-form-item>
                     </el-col>
-                    <el-col :span="6"  v-if="isProductNameSwitch === '1'">
+                    <el-col :span="6" v-if="isProductNameSwitch === '1'">
                       <el-form-item>
-                        <el-input  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                        <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                       </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -255,12 +265,13 @@
                   <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                     @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                     <el-table-column prop="code" label="产品编码" sortable="custom" width="160"></el-table-column>
-                    <el-table-column prop="name" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="330"/>
+                    <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
+                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="330" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
-                    <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="160" sortable="custom"></el-table-column>
+                    <el-table-column prop="inventoryQuantity" label="可用库存数量" min-width="160"
+                      sortable="custom"></el-table-column>
                     <el-table-column prop="bomId" label="是否有BOM" sortable="custom" min-width="140">
                       <template slot-scope="scope">
                         {{ scope.row.bomId ? '有' : '无' }}
@@ -398,7 +409,8 @@ export default {
       isProjectSwitch: "",
       isProjectSwitchFlag: null,
       projectIdDataList: [],
-      isProductNameSwitch:"",
+      isProductNameSwitch: "",
+      pairingModeList: [],
     }
   },
   computed: {
@@ -410,12 +422,13 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getpairingModeListFun()
 
     await this.getProjectList() 
     await this.getProductAttributeFun()
     if (this.isProjectSwitch == 1) {
       console.log(this.projectIdDataList);
-      this.planForm.projectId=this.userInfo.projectId==1?"":this.userInfo.projectId
+      this.planForm.projectId = this.userInfo.projectId == 1 ? "" : this.userInfo.projectId
 
     }
   },
@@ -548,13 +561,20 @@ export default {
         }
       })
     },
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.isProjectSwitchFlag = true
       } catch (error) { }
     },
-    changeProject() { 
+    changeProject() {
       this.productData = this.productData.filter(item => item.projectId === this.planForm.projectId);
     },
     getBimBusinessDetail() {
@@ -655,8 +675,8 @@ export default {
 
 
     // 根据订单类型  打开不同的选择产品弹框
-    openSeleceProductDialog() { 
-      if(!this.planForm.projectId&&this.isProjectSwitch==1) return this.$message.error("请先选择所属项目")
+    openSeleceProductDialog() {
+      if (!this.planForm.projectId && this.isProjectSwitch == 1) return this.$message.error("请先选择所属项目")
 
       this.allProVisible = true
       this.allproductData = []
@@ -667,8 +687,8 @@ export default {
     // 获取所有产品列表数据
     initData() {
       this.listLoading = true
-     this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
-     getProducts(this.ProductListRequestObj).then(listRes => {
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.planForm.projectId || '' : ''
+      getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
         } else {
@@ -720,6 +740,7 @@ export default {
       this.allProVisible = false
       this.selectArr.forEach(item => {
         item.productName = item.name
+        this.$set(item, 'pairingModeName', '')
         item.productsId = item.id
         item.planType = 'add_plan'
         if (this.planForm.planDate.length) {

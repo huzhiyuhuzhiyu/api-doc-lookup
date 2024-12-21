@@ -64,6 +64,8 @@
                 v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
               <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+              <el-table-column prop="pairingModeName" label="配对方式" width="160" />
+
               <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
               <el-table-column prop="occupancyQuantity" v-if="fieldFlag" label="占用数量" width="120" sortable="custom" />

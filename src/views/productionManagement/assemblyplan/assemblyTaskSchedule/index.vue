@@ -49,8 +49,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" :fixedNO="true"  v-if="showFlag"
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"  >
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" :fixedNO="true" v-if="showFlag"
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
@@ -71,7 +71,7 @@
                     style="width: 30px;height: 30px;position: absolute; top: 13px; right: -14px;"
                     src="../../../../assets/images/right.png" alt="">
                 </div>
-        
+
               </template>
             </el-table-column>
             <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
@@ -84,15 +84,17 @@
               </template>
             </el-table-column>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-            v-if="isProjectSwitch == 1" />
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderStatus == 'normal'"><el-tag >正常</el-tag> </div>
+                <div v-if="scope.row.orderStatus == 'normal'"><el-tag>正常</el-tag> </div>
                 <div v-if="scope.row.orderStatus == 'suspend'"><el-tag type="info">暂停</el-tag></div>
                 <div v-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">关闭</el-tag></div>
                 <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
@@ -151,7 +153,7 @@ import Form from '../assemblyTaskManagement/taskFormCopy.vue'
 import TaskSchedule from './taskSchedule.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -170,7 +172,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-      taskScheduleVisible: false, 
+      taskScheduleVisible: false,
       form: {
         appendQuantity: "",
         productionQuantity: "",
@@ -262,7 +264,7 @@ export default {
           label: "工艺路线编码",
           type: 'input'
         },
-        
+
         {
           prop: 'productionPlanNo',
           label: "生产计划单号",
@@ -291,7 +293,7 @@ export default {
           type: 'input'
         },
       ],
-   
+
       dataRule: {
         appendQuantity: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["追加数量不能为空", (errMsg, index) => { this.$message.error(`追加数量：${errMsg}`) }] }), trigger: 'blur' },
@@ -301,10 +303,10 @@ export default {
       },
       maxWidth: "180",
       isProjectSwitch: '',
-      showFlag:true,
-      isProductNameSwitch:"",
-    // 属性字段  控制属性字段显示隐藏
-    accuracyLevelFlag: "",
+      showFlag: true,
+      isProductNameSwitch: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -333,7 +335,7 @@ export default {
     }
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   mounted() {
   },
   methods: {
@@ -483,7 +485,7 @@ export default {
         this.$refs.taskScheduleForm.init(id)
       })
     },
- 
+
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -491,7 +493,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode'||prop=='productName' ||prop=='projectName'|| prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'partnerCode'||prop=='pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -516,8 +518,8 @@ export default {
       this.showFlag = false
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
-          this.showFlag = true
-          if (res.data.records.length) {
+        this.showFlag = true
+        if (res.data.records.length) {
           res.data.records.forEach(item => {
             // 初始化 processInfoList 为一个空数组  
             item.processInfoList = [];
@@ -549,11 +551,11 @@ export default {
           }, 500);
           this.tableData = res.data.records
           this.total = res.data.total
-        }else{
-          this.showFlag=true
-          this.tableData=[]
-          this.total=0
-          this.listLoading=false
+        } else {
+          this.showFlag = true
+          this.tableData = []
+          this.total = 0
+          this.listLoading = false
         }
         // this.listLoading = false
       }).catch(() => {
@@ -628,6 +630,7 @@ export default {
   margin-left: 0 !important;
   margin-bottom: 5px;
 }
+
 .processSchedule_top {
   width: 50px;
   height: 50px;
@@ -636,15 +639,19 @@ export default {
   line-height: 50px;
   text-align: center;
 }
+
 .noValue {
   border-color: #ccc;
 }
+
 .normal {
   border-color: #409eff
 }
+
 .sucess {
   border-color: #67c23A
 }
+
 .ProcessName {
   font-size: 12px !important;
   overflow: hidden;

@@ -59,6 +59,14 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
+                        <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="编排任务方式" prop="taskMethod">
                           <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
                             @change="selectTaskMethod">
@@ -730,7 +738,7 @@ export default {
         productionLineId: "",
         projectName: "",
         pieceworkFlag: false,
-        
+        pairingModeId:"",
       },
       pieceworkFlagList: [
         { label: "否", value: false, },
@@ -820,9 +828,12 @@ export default {
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
       productionLineList: [],
+      pairingModeList: [],
     }
   },
   async created() {
+    await this.getpairingModeListFun()
+
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
@@ -917,6 +928,13 @@ export default {
           this.$forceUpdate()
         });
       })
+    },
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
     },
     async getTechnicalSwitch(code, type) {
       try {

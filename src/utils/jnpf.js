@@ -15,9 +15,27 @@ const mathjs = create(all, { number: "BigNumber", precision: 20 });
 
 
 const jnpf = {
-// 获取主副单位配置
-getMainUnitFun(code,type){
-  console.log(code,type);
+
+  getpairingModeListFun() {
+    let obj = {
+      "pageNum":-1,
+      "pageSize": -1,
+    }
+   
+    return new Promise((resolve, reject) => {
+      getpairingModeList(obj).then(res => {
+        resolve(res.data.records)
+      }).catch(error => {
+        reject(error)
+      })
+
+    })
+  },
+
+
+  // 获取主副单位配置
+  getMainUnitFun(code, type) {
+    console.log(code, type);
     let obj = {
       businessCode: code,
       configKey: type
@@ -31,24 +49,11 @@ getMainUnitFun(code,type){
       })
 
     })
-},
-    getpairingModeListFun() {
-        let obj = {
-            "pageNum":-1,
-            "pageSize": -1,
-        }
+  },
 
-        return new Promise((resolve, reject) => {
-            getpairingModeList(obj).then(res => {
-                resolve(res.data.records)
-            }).catch(error => {
-                reject(error)
-            })
+        
 
-        })
-    },
-
-// 获取单号
+  // 获取单号
   getBillRuleConfigFun(code) {
     let obj = {
       code: code

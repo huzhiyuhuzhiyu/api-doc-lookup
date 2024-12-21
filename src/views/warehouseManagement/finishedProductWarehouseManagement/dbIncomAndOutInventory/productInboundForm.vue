@@ -105,17 +105,17 @@
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
-                       
+
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="160" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
+                            <el-input v-model="scope.row.batchNumber" style="width: 100%;" :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
@@ -161,6 +161,16 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                              :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                :value="item.id">
+                              </el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -198,7 +208,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                   
+
                         <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
@@ -257,7 +267,7 @@
                   <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-model="activeName" v-else >
+              <el-tabs v-model="activeName" v-else>
                 <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -345,18 +355,18 @@
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
-                       
+
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
+                          show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="batchNumber" label="批次号" width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="180" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
-                              placeholder="批次号">
+                            <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
@@ -392,15 +402,16 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-                        <!-- <el-table-column prop="aperture" label="孔径" width="100"
-                          v-if="classAttribute != 'finish_product'">
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                           <template slot-scope="scope">
-                            <el-select :disabled="btnType=='look'" v-model="scope.row.aperture" placeholder="孔径" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
+                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                              :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                :value="item.id">
+                              </el-option>
                             </el-select>
                           </template>
-                        </el-table-column> -->
+                        </el-table-column>
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -438,7 +449,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                   
+
                         <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
@@ -490,7 +501,7 @@
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                   </UploadWj>
                 </el-tab-pane>
-                
+
               </el-tabs>
             </div>
           </div>
@@ -507,7 +518,7 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
 
-             
+
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
@@ -578,7 +589,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getBimBusinessDetail} from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves, getBimBusinessDetail } from '@/api/basicData/index'
 import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import { ordershengchanList, getWorkPage } from '@/api/productOrdes/index.js'
@@ -707,7 +718,7 @@ export default {
         superQuery: {},
         pageNum: 1,
         pageSize: 20,
-        productCode:"",
+        productCode: "",
       },
       classAttribute: "",
       activeName: "orderInfo",
@@ -733,10 +744,14 @@ export default {
       productNameFlag: null,
       tableDataFlag: false,
       mainUnitFlag: null,
+      pairingModeList: [],
+
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getpairingModeListFun()
+
     this.getProductClassFun()
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
@@ -762,6 +777,13 @@ export default {
 
   },
   methods: {
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1246,9 +1268,9 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-    init(data, btnType, classAttributeList, warehouseCode,type) {
+    init(data, btnType, classAttributeList, warehouseCode, type) {
       this.productData = []
-      this.dataForm.businessType=type
+      this.dataForm.businessType = type
       console.log("11", data, btnType, classAttributeList, warehouseCode);
       // this.visible = true
       this.warehouseCode = warehouseCode

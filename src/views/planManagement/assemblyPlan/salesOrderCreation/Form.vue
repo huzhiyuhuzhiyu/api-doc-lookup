@@ -59,7 +59,16 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="配对方式" prop="taskMethod">
+                          <el-select v-model="planForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
 
 
 
@@ -394,6 +403,7 @@ export default {
         finalPlanQuantity: "",
         remark: "",
         id: "",
+        pairingModeId:"",
       },
       codeConfig: {},//单据规则配置
       activeName: "orderInfo",
@@ -492,7 +502,9 @@ export default {
       materialFlag:'',
       colourFlag:'',
       bimProductAttributesList:{},
-      dataFalg:false
+      dataFalg:false,
+      pairingModeList: [],
+
     }
   },
 
@@ -506,6 +518,7 @@ export default {
   async created() {
     await this.getProductClassFun()
     await this.getProductAttributeFun()
+    await this.getpairingModeListFun()
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -645,6 +658,13 @@ export default {
 
         }
       })
+    },
+        // 获取配对方式
+        async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
     },
     async getProductNameSwitch(code, type) {
       try {
@@ -1009,6 +1029,7 @@ export default {
         this.planForm.mainUnit = productData[0].mainUnit
         this.planForm.productName = productData[0].productName
         this.planForm.productSource = productData[0].productSource
+        this.planForm.pairingModeId = productData[0].pairingModeId
 
         productData.forEach(item => {
           item.productDrawingNo = item.drawingNo
@@ -1139,6 +1160,7 @@ export default {
               ordersLineId: item.id,
               productsId: item.productsId,
               planId: item.planId || null,
+
             }
             if (this.btnType != 'look') {
               objs.id = item.id
@@ -1180,6 +1202,7 @@ export default {
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
             obj.plan.projectId=this.isProjectSwitch==1?this.productData[0].projectId:""
+            obj.plan.pairingModeId = this.productData[0].pairingModeId 
 
           } else {
             obj.plan = this.planForm

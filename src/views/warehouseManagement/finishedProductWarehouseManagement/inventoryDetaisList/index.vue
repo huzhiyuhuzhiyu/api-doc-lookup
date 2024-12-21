@@ -113,6 +113,8 @@
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
+          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
@@ -1065,7 +1067,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' ||prop=='pairingModeName'|| prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

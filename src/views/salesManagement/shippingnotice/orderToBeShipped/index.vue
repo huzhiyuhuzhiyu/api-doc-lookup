@@ -92,6 +92,8 @@
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -101,11 +103,7 @@
             <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" sortable="custom" />
             <el-table-column prop="inventoryQuantity" label="库存数量" width="140" sortable="custom">
-              <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewFun(scope.row.productsId, 'inventoryFlag')">
-                  {{ scope.row.inventoryQuantity }}
-                </el-link>
-              </template>
+ 
             </el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
@@ -121,10 +119,8 @@
               v-if="packagingMethodFlag == 1" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
-            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
-              v-if="colourFlag == 1"></el-table-column>
+            <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column label="操作" width="120" fixed="right">
@@ -639,7 +635,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
+      if (prop === 'productName'||prop=='pairingModeName'  || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

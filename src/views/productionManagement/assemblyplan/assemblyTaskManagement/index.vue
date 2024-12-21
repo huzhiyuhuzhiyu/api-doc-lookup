@@ -82,7 +82,9 @@
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -749,7 +751,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'partnerCode'||prop=='pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

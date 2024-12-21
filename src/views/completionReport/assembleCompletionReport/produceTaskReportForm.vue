@@ -50,19 +50,18 @@
           </div>
           <el-col :span="11" class="fixedInfo" ref="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
             style="width: 48%!important;position: relative;">
-            <img src="@/assets/images/extend.png" alt="" v-if="currentProcess.processingType == 'external_production'"
+            <img src="@/assets/images/extend.png" alt="" v-if="processInfo.processingType == 'external_production'"
               class="extend">
             <img src="@/assets/images/noReport.png" alt=""
-              v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == false"
-              class="extend">
+              v-if="processInfo.processingType == 'self_produced' && processInfo.reportFlag == false" class="extend">
             <el-row>
               <el-col :sm="24" :xs="24">
 
                 <div class="info">
                   <span class="left-title">工单单号：</span>
-                  <el-tooltip class="item" effect="dark" :content="currentProcess.orderNo" placement="top-start">
+                  <el-tooltip class="item" effect="dark" :content="processInfo.orderNo" placement="top-start">
                     <span class="left-title ts">
-                      {{ currentProcess.orderNo }}
+                      {{ processInfo.orderNo }}
                     </span>
                   </el-tooltip>
                 </div>
@@ -70,18 +69,21 @@
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">工单类型：</span>
-                  <span class="left-title" v-if="currentProcess.orderType == 'normal'">正常工单</span>
-                  <span class="left-title" v-if="currentProcess.orderType == 'rework'">返工工单</span>
+                  <span class="left-title" v-if="processInfo.orderType == 'normal'">正常任务</span>
+                  <span class="left-title" v-if="processInfo.orderType == 'rework'">返工工单</span>
+                  <span class="left-title" v-if="processInfo.orderType == 'manually'">手动新建任务</span>
+                  <span class="left-title" v-if="processInfo.orderType == 'flipping'">翻库任务</span>
+                  <span class="left-title" v-if="processInfo.orderType == 'transit'">在制任务</span>
+
                 </div>
               </el-col>
 
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">品名规格：</span>
-                  <el-tooltip class="item" effect="dark" :content="currentProcess.productDrawingNo"
-                    placement="top-start">
+                  <el-tooltip class="item" effect="dark" :content="processInfo.productDrawingNo" placement="top-start">
                     <span class="left-title ts">
-                      {{ currentProcess.productDrawingNo }}
+                      {{ processInfo.productDrawingNo }}
                     </span>
                   </el-tooltip>
                 </div>
@@ -90,7 +92,7 @@
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">加工工序：</span>
-                  <span class="left-title">{{ currentProcess.processName }}</span>
+                  <span class="left-title">{{ processInfo.processName }}</span>
                 </div>
 
               </el-col>
@@ -99,56 +101,56 @@
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">打字内容：</span>
-                  <span class="left-title">{{ currentProcess.sealingCoverTyping }}</span>
+                  <span class="left-title">{{ processInfo.sealingCoverTyping }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">精度等级：</span>
-                  <span class="left-title">{{ currentProcess.accuracyLevel }}</span>
+                  <span class="left-title">{{ processInfo.accuracyLevel }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">振动等级：</span>
-                  <span class="left-title">{{ currentProcess.vibrationLevel }}</span>
+                  <span class="left-title">{{ processInfo.vibrationLevel }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">油脂：</span>
-                  <span class="left-title">{{ currentProcess.oil }}</span>
+                  <span class="left-title">{{ processInfo.oil }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">油脂量：</span>
-                  <span class="left-title">{{ currentProcess.oilQuantity }}</span>
+                  <span class="left-title">{{ processInfo.oilQuantity }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">游隙：</span>
-                  <span class="left-title">{{ currentProcess.clearance }}</span>
+                  <span class="left-title">{{ processInfo.clearance }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">包装方式：</span>
-                  <span class="left-title">{{ currentProcess.processName }}</span>
+                  <span class="left-title">{{ processInfo.processName }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">特殊要求：</span>
-                  <span class="left-title">{{ currentProcess.specialRequire }}</span>
+                  <span class="left-title">{{ processInfo.specialRequire }}</span>
                 </div>
 
               </el-col>
@@ -176,19 +178,50 @@
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
-
-                  <el-col :sm="24" :xs="24" v-if="!currentProcess.vibrateReportFlag">
-                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
-                      :style="{ marginBottom: iptLabelMargin }">
-                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
-                        @blur="handleBlur(item)" />
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcessType===4||currentProcessType===5">
+                    <el-form-item label="配对方式" prop="pairingModeName">
+                      <el-select v-model="currentProcess.pairingModeId" placeholder="请选择配对方式" style="width: 70%;"
+                        clearable @input="handleClear" class="ipt" @change="(value) => changePairingMode(value)">
+                        <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+                      <span class="pairNum">配对数量：{{ pairingModeNum }}</span>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index"
-                    v-if="currentProcess.vibrateReportFlag">
-                    <el-form-item :label="item.name + '(合格数量):'" :prop="item.name" class="iptLabel">
-                      <el-input v-model="currentProcess.item[item.name]" placeholder="合格数量" @input="forceUpdata"
-                        @blur="handleBlur(item, currentProcess.item[item.name])" class="ipt" />
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType!==1">
+                    <el-form-item label="测振等级:" prop="vibrationLevel" :style="{ marginBottom: producerMargin }">
+                      <el-select v-model="currentProcess.vibrationLevel" placeholder="请选择测振等级" style="width: 100%;"
+                        @change="(value) => handleSelectionChange(value)" class="ipt">
+                        <el-option v-for="(item, index) in vibrationLevelList" :key="index" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+
+                    </el-form-item>
+                  </el-col>
+                 
+                  <el-col :sm="24" :xs="24">
+                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt" 
+                        @blur="handleBlur()" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" v-if="currentProcessType===4||currentProcessType===5">
+                    <el-form-item label="总配对数量:" prop="matchedQuantity" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-input v-model="currentProcess.matchedQuantity" disabled placeholder="总配对数量" class="ipt" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType!==1&&currentProcess.reportFlag">
+                    <!-- stockFlag 0否 继续生产 1入库 -->
+                    <el-form-item label="是否入库:" prop="stockFlag">
+                      <el-select v-model="stockFlag" placeholder="请选择是否入库" :disabled="currentProcess.lastFlag" style="width: 100%;" class="ipt">
+                        <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+
                     </el-form-item>
                   </el-col>
 
@@ -220,8 +253,8 @@
 
                       <!-- producerId -->
                     </el-form-item>
-                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'" :style="{ marginBottom: producerMargin }"
-                      class="iptLabel">
+                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"
+                      :style="{ marginBottom: producerMargin }" class="iptLabel">
                       <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable style="width: 100%;"
                         class="ipt" @change="hangleSelectSales">
                       </user-select>
@@ -266,8 +299,9 @@
                     </el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
-                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?currentProcess.qualifiedQuantity:0
-                      }}</el-descriptions-item>
+                    <el-descriptions-item label="完工数量" class="external_cotent">{{
+                      currentProcess.qualifiedQuantity ? currentProcess.qualifiedQuantity : 0
+                    }}</el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
                     <el-descriptions-item label="发料数量" class="external_cotent ">
@@ -298,7 +332,7 @@
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { detailProcess, } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getvibrationList,getPairingModelList } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
 import { log } from 'mathjs'
@@ -329,7 +363,7 @@ export default {
       codeConfig: {},//单据规则配置
       workList: [],
 
-
+      processInfo: {},
       currentProcess: {},
       listLoading: false,
       currentProcessId: "",
@@ -351,18 +385,56 @@ export default {
           { required: true, message: '合格数量不能为空', trigger: 'blur' },
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
           { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
-        ]
+        ],
+        vibrationLevel: [
+          { required: true, message: '测振等级不能为空', trigger: 'change' }
+        ],
       },
       iptLabelMargin: '28px',
-      producerMargin: '28px'
+      producerMargin: '28px',
+      stockFlag: false,
+      stockFlagList: [
+        { label: "继续生产", value: false },
+        { label: "入库", value: true }
+      ],
+      vibrationLevelList: [],
+      pairingModeList: [],
+      pairingModeListCopy:[],
+      pairingModeNum: 0,
+      currentProcessType:0,
     }
   },
 
-  mounted() {
+  async mounted() {
+    await this.getpairingModeListFun()
   },
 
   methods: {
+    // 定义当前工序的类型
+          //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序
+    setProcessType(){
+      if(this.currentProcess.vibrateReportFlag){
+            if(this.currentProcess.processType == 'vibrate'){
+              this.currentProcessType=2
+            }else if(!this.currentProcess.pairsReportFlag){
+              this.currentProcessType=3
+            }else if(this.currentProcess.processType == 'pairs'){
+              this.currentProcessType=4
 
+            }else{
+              this.currentProcessType=5
+            }
+          }else{
+            this.currentProcessType=1
+          }
+    },
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        this.pairingModeListCopy=JSON.parse(JSON.stringify(this.pairingModeList))
+      } catch (error) { }
+    },
     closeForm(flag) {
       if (flag) this.getRoutingDetailFun(this.dataForm.routingId)
     },
@@ -373,19 +445,86 @@ export default {
         this.workList = res.data.workOrderList
         this.currentProcessId = res.data.workOrderList[0].processId
         this.currentProcess = res.data.workOrderList[0]
+        this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
         this.$set(this.currentProcess, 'reportingQuantity', 0)
         this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
+      this.setProcessType()
 
         this.commonFun()
         // this.getRoutingDetailFun(this.dataForm.routingId)
       })
     },
+    // 获取 可选的测振等级
+    getReprotNum(id) {
+      let obj = {
+        workOrderId: this.currentProcess.id,
+        pairingModelId: id,
+      }
+      getvibrationList(obj).then(res => {
+        console.log("测振数据", res);
+        this.vibrationLevelList = res.data
+      })
+    },
+    handleSelectionChange(value) {
+      console.log("value", value);
+      if (this.currentProcess.currentProcessType!==2) {
+
+        const selectedItem = this.vibrationLevelList.find(item => item.name === value);
+        console.log("selectedItem", selectedItem);
+        this.currentProcess.waitReportNum = selectedItem.waitReportNum
+      }
+
+
+    },
+    handleClear(value) {
+      if (this.currentProcess.pairingModeId === '') {
+        this.pairingModeNum = 0
+        // 这里可以执行清除操作后的逻辑
+      }
+    },
+    changePairingMode(value) {
+      this.pairingModeNum = this.pairingModeListCopy.filter(items => items.id === value)[0].quantity;
+      this.getReprotNum(this.currentProcess.pairingModeId)
+    },
+    // 获取上一道工序的配对方式 配对工序后面的可用
+    getPairingModelListFun(){
+      let obj = {
+        workOrderId: this.currentProcess.id,
+        pairingModelId: "",
+      }
+      getPairingModelList(obj).then(res=>{
+        console.log("上一道配对方式",res);
+        this.currentProcess.pairingModeId=""
+        this.pairingModeNum=""
+        this.pairingModeList=res.data
+        this.vibrationLevelList=[]
+      })
+    },
     getProcessFun(item) {
+      console.log("当前点击的工序", item);
       this.currentProcess = item
+      this.setProcessType()
+      this.stockFlag = false
+      if(this.currentProcessType==5){
+        this.getPairingModelListFun()
+      }
+      if(this.currentProcess.lastFlag===true) {
+        this.stockFlag=true
+
+      }
+      console.log("object,this",this.stockFlag,this.currentProcessType);
+      this.commonFun()
+      this.processInfo = JSON.parse(JSON.stringify(item))
+      if (item.vibrateReportFlag === true && item.processType !== 'vibrate'&&this.currentProcessType==3) {
+        console.log("进来了");
+        this.getReprotNum('')
+      }
+      console.log("配对方式", this.pairingModeList, item.pairingModeId);
+      this.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
       this.currentProcessId = item.processId
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")
@@ -393,41 +532,19 @@ export default {
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
       this.$set(this.currentProcess, 'reworkQuantity', 0)
+      this.$set(this.currentProcess, 'vibrationLevel', "")
       console.log("当前current", item);
       this.targetHeight = ""
       this.targetHeight2 = ""
-      this.commonFun()
 
     },
-    handleBlur(item, data) {
-      console.log("item", item, data, this.currentProcess.item);
-      let total
-      if (this.currentProcess.item) {
-        total = Object.values(this.currentProcess.item)
-          .map(Number) // 将每个值转换为数字  
-          .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      } else {
-        total = this.currentProcess.qualifiedQuantity
-      }
-      if (!this.currentProcess.vibrateReportFlag) {
-        // if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
-        //   this.iptLabelMargin = '24px'
-        // } else {
-        //   this.iptLabelMargin = '18px'
-        //   if (!this.currentProcess.producerId) {
-        //     this.producerMargin = '24px'
-        //   } else {
-        //     this.producerMargin = '18px'
-        //   }
-         
 
-        // }
-        this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          this.targetHeight = height;
-        });
-      }
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
+    handleBlur() {
+      let total
+      console.log(this.jnpf.numberFormat(this.jnpf.math('divide', [this.currentProcess.qualifiedQuantity, this.pairingModeNum])));
+      if (this.currentProcessType === 4||this.currentProcessType===5) this.currentProcess.matchedQuantity = this.jnpf.numberFormat(this.jnpf.math('divide', [this.currentProcess.qualifiedQuantity, this.pairingModeNum]))
+      console.log(this.matchedQuantity);
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
     handleBlur2() {
@@ -458,25 +575,26 @@ export default {
     },
     commonFun() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
-      if (this.currentProcess.vibrateReportFlag) {
-        this.$set(this.currentProcess, 'item', {})
+      if (this.currentProcessType === 2) {
         this.getvibrationLevelFun()
-      } else {
-        if (this.currentProcess.processingType == 'self_produced' && this.currentProcess.reportFlag == true) {
 
-          this.$nextTick(() => {
-            const height = this.$refs.mycol.$el.clientHeight
-            this.targetHeight = height;
-          });
-        } else {
-          const height = this.$refs.fixedInfo.$el.clientHeight
-          this.targetHeight2 = height;
-        }
+      }
+
+      if (this.currentProcess.processingType == 'self_produced' && this.currentProcess.reportFlag == true) {
+
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
+      } else {
+        const height = this.$refs.fixedInfo.$el.clientHeight
+        this.targetHeight2 = height;
       }
       this.producePersonListFun(this.currentProcess.id)
       const end = new Date();//获取当前的日期
       this.currentProcess.reportingTime = this.dateFormat(end)
     },
+
     // 获取生产人员数据
     producePersonListFun(id) {
       producePersonList(id).then(res => {
@@ -519,11 +637,9 @@ export default {
         ]
       };
       getbimProductAttributesList(obj3).then(res => {
+        console.log("进来了么2");
         this.vibrationLevelList = res.data.records
-        res.data.records.forEach(item => {
-          this.$set(this.currentProcess, item[item.name], 0)
-          // this.currentProcess.item[item.name] = ""
-        });
+
         this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
           this.targetHeight = height;
@@ -542,6 +658,9 @@ export default {
         this.$refs.recordForm.init(this.currentProcess.orderNo)
       })
     },
+    isPositiveInteger(num) {
+      return /^\d+$/.test(num);
+    },
     // 报工
     report() {
       // 先判断是否有测震工序(sort有值表示有测震工序)  
@@ -556,62 +675,116 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
+          if(this.currentProcessType===4){
+            let flag = this.isPositiveInteger(this.currentProcess.matchedQuantity)
+            if(!flag) this.$message.error("总配对数量不能有小数")
+          if(!flag) submitFlag=false
+          }
           if (submitFlag === false) return
           let arr = []
           if (this.currentProcess.vibrateReportFlag) {
-
-            if (this.vibrationLevelList.length) {
-              this.vibrationLevelList.forEach((item, index) => {
-                let obj = {}
-                if (index == 0) {
-                  obj.classAttribute = this.currentProcess.classAttribute
-                  obj.orderType = this.currentProcess.orderType
-                  obj.productDrawingNo = this.currentProcess.productDrawingNo
-                  obj.processName = this.currentProcess.processName
-                  obj.productionQuantity = this.currentProcess.productionQuantity
-                  obj.equipmentId = this.currentProcess.equipmentId
-                  obj.remark = this.currentProcess.remark
-                  obj.reportingTime = this.currentProcess.reportingTime
-                  obj.reworkQuantity = this.currentProcess.reworkQuantity
-                  obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
-                  obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
-                  obj.pricingType = this.currentProcess.pricingType
-                  obj.processId = this.currentProcess.processId
-                  obj.producerId = this.currentProcess.producerId
-                  obj.productionOrderId = this.currentProcess.productionOrderId
-                  obj.qualifiedQuantity = this.currentProcess.item[item.name]
-                  obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.item[item.name], this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
-                  obj.reportingType = "normal"
-                  obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
-                  obj.vibrationLevel = item.name
-                  obj.workOrderId = this.currentProcess.id
-                  arr.push(obj)
-                } else {
-                  obj.classAttribute = this.currentProcess.classAttribute
-                  obj.orderType = this.currentProcess.orderType
-                  obj.productDrawingNo = this.currentProcess.productDrawingNo
-                  obj.processName = this.currentProcess.processName
-                  obj.productionQuantity = this.currentProcess.productionQuantity
-                  obj.equipmentId = this.currentProcess.equipmentId
-                  obj.remark = this.currentProcess.remark
-                  obj.reportingTime = this.currentProcess.reportingTime
-                  obj.reworkQuantity = 0
-                  obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
-                  obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
-                  obj.pricingType = this.currentProcess.pricingType
-                  obj.processId = this.currentProcess.processId
-                  obj.producerId = this.currentProcess.producerId
-                  obj.productionOrderId = this.currentProcess.productionOrderId
-                  obj.qualifiedQuantity = this.currentProcess.item[item.name]
-                  obj.reportingQuantity = this.currentProcess.item[item.name]
-                  obj.reportingType = "normal"
-                  obj.unqualifiedQuantity = 0
-                  obj.vibrationLevel = item.name
-                  obj.workOrderId = this.currentProcess.id
-                  arr.push(obj)
-                }
-              });
+            let obj = {}
+            if (this.currentProcessType === 2) {
+              // 测震工序
+              console.log("测震工序");
+              obj.classAttribute = this.currentProcess.classAttribute
+              obj.orderType = this.currentProcess.orderType
+              obj.productDrawingNo = this.currentProcess.productDrawingNo
+              obj.processName = this.currentProcess.processName
+              obj.productionQuantity = this.currentProcess.productionQuantity
+              obj.equipmentId = this.currentProcess.equipmentId
+              obj.remark = this.currentProcess.remark
+              obj.reportingTime = this.currentProcess.reportingTime
+              obj.reworkQuantity = this.currentProcess.reworkQuantity
+              obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+              obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+              obj.pricingType = this.currentProcess.pricingType
+              obj.processId = this.currentProcess.processId
+              obj.producerId = this.currentProcess.producerId
+              obj.productionOrderId = this.currentProcess.productionOrderId
+              obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
+              obj.reportingQuantity = this.currentProcess.reportingQuantity
+              obj.reportingType = "normal"
+              obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.workOrderId = this.currentProcess.id
+              obj.stockFlag = this.stockFlag
+            } else if (this.currentProcessType===3) {
+              obj.classAttribute = this.currentProcess.classAttribute
+              obj.orderType = this.currentProcess.orderType
+              obj.productDrawingNo = this.currentProcess.productDrawingNo
+              obj.processName = this.currentProcess.processName
+              obj.productionQuantity = this.currentProcess.productionQuantity
+              obj.equipmentId = this.currentProcess.equipmentId
+              obj.remark = this.currentProcess.remark
+              obj.reportingTime = this.currentProcess.reportingTime
+              obj.reworkQuantity = 0
+              obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+              obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+              obj.pricingType = this.currentProcess.pricingType
+              obj.processId = this.currentProcess.processId
+              obj.producerId = this.currentProcess.producerId
+              obj.productionOrderId = this.currentProcess.productionOrderId
+              obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
+              obj.reportingQuantity = this.currentProcess.reportingQuantity
+              obj.reportingType = "normal"
+              obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.workOrderId = this.currentProcess.id
+              obj.stockFlag = this.stockFlag
+              console.log("测震到配对工序之间的工序");
+            } else if (this.currentProcessType ===4) {
+              obj.classAttribute = this.currentProcess.classAttribute
+              obj.orderType = this.currentProcess.orderType
+              obj.productDrawingNo = this.currentProcess.productDrawingNo
+              obj.processName = this.currentProcess.processName
+              obj.productionQuantity = this.currentProcess.productionQuantity
+              obj.equipmentId = this.currentProcess.equipmentId
+              obj.remark = this.currentProcess.remark
+              obj.reportingTime = this.currentProcess.reportingTime
+              obj.reworkQuantity = this.currentProcess.reworkQuantity
+              obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+              obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+              obj.pricingType = this.currentProcess.pricingType
+              obj.processId = this.currentProcess.processId
+              obj.producerId = this.currentProcess.producerId
+              obj.productionOrderId = this.currentProcess.productionOrderId
+              obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingType = "normal"
+              obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.workOrderId = this.currentProcess.id
+              obj.matchedQuantity=this.currentProcess.matchedQuantity
+              obj.pairingModeId=this.currentProcess.pairingModeId
+              console.log("配对工序");
+            } else {
+              console.log("配对后工序");
+              obj.classAttribute = this.currentProcess.classAttribute
+              obj.orderType = this.currentProcess.orderType
+              obj.productDrawingNo = this.currentProcess.productDrawingNo
+              obj.processName = this.currentProcess.processName
+              obj.productionQuantity = this.currentProcess.productionQuantity
+              obj.equipmentId = this.currentProcess.equipmentId
+              obj.remark = this.currentProcess.remark
+              obj.reportingTime = this.currentProcess.reportingTime
+              obj.reworkQuantity = this.currentProcess.reworkQuantity
+              obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+              obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+              obj.pricingType = this.currentProcess.pricingType
+              obj.processId = this.currentProcess.processId
+              obj.producerId = this.currentProcess.producerId
+              obj.productionOrderId = this.currentProcess.productionOrderId
+              obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingType = "normal"
+              obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.workOrderId = this.currentProcess.id
+              obj.matchedQuantity=this.currentProcess.matchedQuantity
+              obj.pairingModeId=this.currentProcess.pairingModeId
             }
+            arr.push(obj)
           } else {
             let obj = {
               "classAttribute": this.currentProcess.classAttribute,
@@ -639,6 +812,7 @@ export default {
             }
             arr.push(obj)
           }
+          
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
             this.init(this.id)
@@ -1124,5 +1298,17 @@ box-card:nth-child(n+3) {
 ::v-deep .el-form-item__error {
   font-size: 16px !important;
   margin: 8px 0
+}
+
+.pairNum {
+  display: inline-block;
+  height: 50px;
+  float: right;
+  padding-right: 10px;
+  line-height: 50px;
+  background: #3fb9f8;
+  padding-left: 10px;
+  font-size: 18px;
+  color: #fff;
 }
 </style>

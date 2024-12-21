@@ -113,6 +113,7 @@
                 show-overflow-tooltip></el-table-column>
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+              <el-table-column prop="pairingModeName" label="配对方式" width="160" />
 
               <el-table-column prop="productSource" label="产品来源" min-width="160">
                 <template slot-scope="scope">
@@ -135,19 +136,14 @@
               <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" />
               <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="120" />
               <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" />
-              <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" 
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" 
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" 
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100"  v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120"  v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100"  v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" 
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" 
-              v-if="specialRequireFlag == 1" />
+              <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag == 1" />
+              <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1" />
+              <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1" />
+              <el-table-column prop="oil" label="油脂" width="100" v-if="oilFlag == 1" />
+              <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" />
+              <el-table-column prop="clearance" label="游隙" width="100" v-if="clearanceFlag == 1" />
+              <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1" />
+              <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1" />
               <el-table-column prop="createTime" label="创建时间" min-width="180" />
 
 
@@ -185,6 +181,8 @@
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
+
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -206,22 +204,24 @@
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
+                    v-if="sealingCoverTypingFlag == 1" />
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+                    v-if="accuracyLevelFlag == 1" />
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+                    v-if="vibrationLevelFlag == 1" />
+                  <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+                  <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
+                    v-if="oilQuantityFlag == 1" />
+                  <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"
+                    v-if="clearanceFlag == 1" />
+                  <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+                    v-if="packagingMethodFlag == 1" />
+                  <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                    v-if="specialRequireFlag == 1" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
-                        @click="QTsearch(scope.row.id, 'assemble')">齐套查询</el-button>
+                        @click="QTsearch(scope.row.id, 'assemble',1)">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -254,9 +254,11 @@
                   v-if="activeName == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef">
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"  />
+
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -316,7 +318,7 @@
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'produce')"
                         :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
                       <el-button :disabled="!scope.row.bomFlag" type="text"
-                        @click="QTsearch(scope.row.id, 'produce')">齐套查询</el-button>
+                        @click="QTsearch(scope.row.id, 'produce',1)">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -353,8 +355,8 @@
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -442,8 +444,8 @@
                   ref="outRef">
 
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -503,7 +505,7 @@
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'out')"
                         :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
                       <el-button :disabled="!scope.row.bomFlag" type="text"
-                        @click="QTsearch(scope.row.id, 'out')">齐套查询</el-button>
+                        @click="QTsearch(scope.row.id, 'out',1)">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -545,9 +547,11 @@
                   :partentOrChild="'assemble'" :data="assembleDataIss" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
+
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -569,22 +573,24 @@
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
+                    v-if="sealingCoverTypingFlag == 1" />
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+                    v-if="accuracyLevelFlag == 1" />
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+                    v-if="vibrationLevelFlag == 1" />
+                  <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+                  <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
+                    v-if="oilQuantityFlag == 1" />
+                  <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"
+                    v-if="clearanceFlag == 1" />
+                  <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+                    v-if="packagingMethodFlag == 1" />
+                  <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                    v-if="specialRequireFlag == 1" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
-                        @click="QTsearch(scope.row.id, 'assemble')">齐套查询</el-button>
+                        @click="QTsearch(scope.row.id, 'assemble',0)">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -617,9 +623,11 @@
                   v-if="activeNameIss == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef">
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
+
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                     <template slot-scope="scope">
@@ -679,7 +687,7 @@
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'produce')"
                         :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
                       <el-button :disabled="!scope.row.bomFlag" type="text"
-                        @click="QTsearch(scope.row.id, 'produce')">齐套查询</el-button>
+                        @click="QTsearch(scope.row.id, 'produce',0)">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -716,8 +724,8 @@
                   @sort-change="sortChange" :data="purchaseDataIss" :setColumnDisplayList="columnList3"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="purchaseRef">
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -805,8 +813,8 @@
                   :fixedNO="true" class="dataTable" border ref="outRef">
 
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                  <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -866,7 +874,7 @@
                       <el-button type="text" @click="tracMainProduct(scope.row.id, 'out')"
                         :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag">追溯主产品</el-button>
                       <el-button :disabled="!scope.row.bomFlag" type="text"
-                        @click="QTsearch(scope.row.id, 'out')">齐套查询</el-button>
+                        @click="QTsearch(scope.row.id, 'out',0)">齐套查询</el-button>
                     </template>
                   </el-table-column>
 
@@ -931,8 +939,8 @@
                 ref="dataTableRef" @row-click="handleRowClick">
                 <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
-                <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                  v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -955,18 +963,19 @@
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
+                  v-if="sealingCoverTypingFlag == 1" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+                  v-if="accuracyLevelFlag == 1" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+                  v-if="vibrationLevelFlag == 1" />
+                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
+                  v-if="oilQuantityFlag == 1" />
+                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+                  v-if="packagingMethodFlag == 1" />
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                  v-if="specialRequireFlag == 1" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="total" :page.sync="planForm.pageNum" :limit.sync="planForm.pageSize"
@@ -1035,9 +1044,9 @@ import { mapGetters, mapState } from 'vuex'
 import DBForm from './dbForm.vue'
 
 import {
-  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
-import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 export default {
   components: {
     PlanForm, ComplateSetForm, DBForm
@@ -1271,8 +1280,8 @@ export default {
       planIdList: [],
       selectDateDialogVisible: false,
       isProductNameSwitch: "",
-            // 属性字段  控制属性字段显示隐藏
-            accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -1305,19 +1314,19 @@ export default {
     this.fetchData("AMDH")
   },
   methods: {
-           // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-           getProductClassFun() {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
-    
+
     },
-    
-      // 获取业务参数中 属性字段动态显示
-      getProductAttributeFun() {
+
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
       getOrderFiledMap('sale').then(res => {
-        console.log("产品属性", res,this.bimProductAttributesList);
+        console.log("产品属性", res, this.bimProductAttributesList);
         // sealingCoverTypingFlag list1  pa007
         // accuracyLevelFlag list2  pa006
         // vibrationLevelFlag list3 pa005
@@ -1328,26 +1337,26 @@ export default {
         // specialRequireFlag list8 pa016
 
         this.accuracyLevelFlag = res.data.accuracyLevel //list1
-         
+
         this.clearanceFlag = res.data.clearance
-    
+
         console.log("this.list6", this.list6);
         this.oilFlag = res.data.oil
-         
+
         this.oilQuantityFlag = res.data.oilQuantity
-         
+
         this.packagingMethodFlag = res.data.packagingMethod
-         
+
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-         
+
         this.specialRequireFlag = res.data.specialRequire
-        
+
         this.vibrationLevelFlag = res.data.vibrationLevel
-         
-          console.log(this.list3);
-        
-    
-       
+
+        console.log(this.list3);
+
+
+
       })
     },
     async getProductNameSwitch(code, type) {
@@ -1434,10 +1443,10 @@ export default {
     },
 
     // 齐套查询
-    QTsearch(id, type) {
+    QTsearch(id, type,flag) {
       this.complateSetFormVisible = true
       this.$nextTick(() => {
-        this.$refs.complateSetForm.init(id, type);
+        this.$refs.complateSetForm.init(id, type,flag);
       });
     },
 
@@ -1483,7 +1492,7 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
 
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
 
         }
@@ -1512,7 +1521,7 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
 
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
 
         }
@@ -1532,7 +1541,7 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
 
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
 
         }
@@ -1560,7 +1569,7 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
 
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
 
         }
@@ -1587,7 +1596,7 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
 
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
 
         }
@@ -1615,7 +1624,7 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
 
-            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity,item.processOccupancyQuantity]), 6)
+            item.occupancyQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [item.occupancyQuantity, item.inTransitOccupancyQuantity, item.processOccupancyQuantity]), 6)
           });
 
         }

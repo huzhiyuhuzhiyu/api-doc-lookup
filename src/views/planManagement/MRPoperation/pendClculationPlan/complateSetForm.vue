@@ -154,7 +154,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type) {
+    init(id, type,flag) {
       if(type=='assemble'){
         this.pageTitle = "组装需求——齐套查询"
         this.labelTitle="需组装数量"
@@ -169,7 +169,7 @@ export default {
         this.labelTitle="需外协数量"
       }
       this.formLoading = true
-      getDemandList({'id':id}).then(res => {
+      getDemandList({'id':id,mrpFlag:flag}).then(res => {
         this.dataForm = res.data.demand
         console.log("res===>", res);
         this.popupList = res.data.lineList

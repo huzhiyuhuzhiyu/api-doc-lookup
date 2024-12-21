@@ -73,6 +73,7 @@
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="280" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
@@ -515,7 +516,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' ||prop=='pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

@@ -90,6 +90,7 @@
 
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                       <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
+                  
                       <el-table-column prop="planQuantity" label="计划数量" width="100" :key="7">
                         <template slot="header">
                           <span class="required">*</span>计划数量
@@ -305,6 +306,7 @@ export default {
       isProjectSwitchFlag: null,
       projectIdDataList: [],
       isProductNameSwitch:"",
+
     }
   },
   computed: {
@@ -314,6 +316,8 @@ export default {
   },
 
   async created() {
+    await this.getpairingModeListFun()
+
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
 
@@ -328,10 +332,9 @@ export default {
     this.init() 
     this.getBimBusinessDetail()
 
-  },
-  beforeDestroy() {
-  },
+  }, 
   methods: {
+
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

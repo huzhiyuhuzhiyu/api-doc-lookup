@@ -76,6 +76,7 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
+
                       <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="订单状态" prop="orderState">
                           <el-select v-model="dataForm.orderState" placeholder="请选择订单状态" style="width: 100%;"
@@ -141,6 +142,16 @@
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+                      </el-table-column>
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
                       </el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -222,6 +233,16 @@
                           @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           >{{ scope.row.drawingNo }}
                         </el-input> -->
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-show="isProjectSwitch == 1" />
@@ -528,6 +549,16 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   </el-table-column>
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                        :disabled="btnType == 'look' ? true : false">
+                        <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
@@ -603,6 +634,16 @@
                       @select="handleSelect(scope.row, scope.$index, $event)"
                       @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                       :disabled="status"></el-autocomplete>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                      :disabled="btnType == 'look' ? true : false">
+                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
@@ -1041,6 +1082,7 @@ export default {
         clearance: "",
         packagingMethod: "",
         remark: "",
+        pairingModeId: "",
       },
       btnText: "",
       tipsvisible: false,
@@ -1307,7 +1349,8 @@ export default {
       bimProductAttributesList: [],
       selectProductClassFlag: false,
       isProjectSwitchFlag: null,
-      taxRate:13
+      taxRate:13,
+      pairingModeList: [],
     }
   },
   computed: {
@@ -1351,6 +1394,7 @@ export default {
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
+    await this.getpairingModeListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
     this.isProjectSwitchFlag = true
     if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
@@ -1381,9 +1425,21 @@ export default {
       this.salesList = res.data
     })
   },
-  beforeDestroy() {
-  },
+
   methods: {
+
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     // 选择的历史属性
     selectData(row, index) {
       console.log(row, index);
@@ -2138,6 +2194,8 @@ export default {
       console.log("all", allArray);
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
+
+        this.$set(item, 'pairingModeName', '')
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)
         } else {
@@ -2284,6 +2342,7 @@ export default {
         item.productCode = item.code
         item.productsId = item.id
 
+        this.$set(item, 'pairingModeName', '')
         this.$set(item, 'price', item.salesPrice)
         if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
         item.taxRate = item.taxRate * 1
@@ -2630,8 +2689,10 @@ export default {
                   this.salesList = res.data
                 })
               } else {
+
                 this.salesFlag = true
               }
+
               this.productData = res.data.orderLines
               if (btnType == 'add') {
                 this.dataForm.deliveryDate = ""
@@ -2782,7 +2843,7 @@ export default {
       return newObj;
     },
     handleConfirm(value) {
-      console.log(this.dataForm);
+      console.log(this.productData);
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           let submitFlag = null;
@@ -2900,6 +2961,17 @@ export default {
             }
             console.log("productData", this.productData);
             filteredArr = this.productData.filter(item => item.drawingNo && item.productsId);
+            // filteredArr.forEach(item => {
+            //   // 从 arr1 找到匹配的对象  
+            //   let match = this.pairingModeList.find(a => a.id === item.pairingModeId);
+
+            //   // 如果找到了匹配的对象  
+            //   if (match) {
+            //     // 将对应的 num 乘以 arr2 中的 num，并赋值给 arr2 的 num  
+            //     item.num = item.num * match.quantity;
+            //   }
+            // });
+
             console.log("filteredArr", filteredArr);
             obj.orderLineList = filteredArr
           }

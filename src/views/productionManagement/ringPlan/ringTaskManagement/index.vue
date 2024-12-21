@@ -109,7 +109,7 @@
                 <div>{{ scope.row.taskMethod == 'appoint' ? "指定加工对象" : '不指定加工对象' }}</div>
               </template>
             </el-table-column>
-     
+           
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
 

@@ -93,6 +93,17 @@
                       </template>
                       <!-- @select="handleSelect(scope.row, scope.$index, $event)" -->
                     </el-table-column>
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                          <template slot-scope="scope">
+                              <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                                         :disabled="btnType == 'look' ? true : false">
+                                  <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                             :value="item.id">
+                                  </el-option>
+                              </el-select>
+                          </template>
+
+                    </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
 
                     <el-table-column prop="price" label="单价(含税)" width="120">
@@ -371,6 +382,18 @@
                             style="width: 100%;"  /> -->
                   </template>
                 </el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                      <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                                     :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                         :value="item.id">
+                              </el-option>
+                          </el-select>
+                      </template>
+
+                </el-table-column>
+
                 <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
                 <!-- <el-table-column prop="num" label="数量" width="120">
                     <template slot="header">
@@ -943,6 +966,8 @@ export default {
         customerProductNo: "",
         productName: "",
         productDrawingNo: "",
+        pairingModeName:'',
+        pairingModeId:'',
         mainUnit: "",
         price: "",
         taxRate: "",
@@ -984,7 +1009,7 @@ export default {
       ],
       allproductData: [],
       allProductTotal: 0,
-
+      pairingModeList:[],
       ProductTreeData: [],
       ProductListRequestObj: {
         classAttributeList: [],
@@ -1057,6 +1082,7 @@ export default {
         this.getProductClassFun().then(this.getProductAttributeFun),
         this.getProjectSwitch('system', 'project'),
         this.getProductNameSwitch('product', 'enable_productName'),
+        this.getpairingModeListFun(),
         this.getBimBusinessDetail()
       ])
     } catch (e) { console.log(e) }
@@ -1067,6 +1093,13 @@ export default {
     }
   },
   methods: {
+      // 获取配对方式
+      async getpairingModeListFun() {
+          try {
+              this.pairingModeList = await this.jnpf.getpairingModeListFun()
+              console.log("this.par", this.pairingModeList);
+          } catch (error) { }
+      },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

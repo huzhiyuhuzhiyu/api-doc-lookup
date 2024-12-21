@@ -692,10 +692,10 @@ export default {
           // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
           // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
         ],
-        mobilePhone: [
-          { validator: formValidate('iphone'), trigger: 'blur' },
-          { validator: this.validateField2, trigger: 'blur' }
-        ],
+        // mobilePhone: [
+        //   { validator: formValidate('iphone'), trigger: 'blur' },
+        //   { validator: this.validateField2, trigger: 'blur' }
+        // ],
 
         // regionCode: [{ required: true, message: '地区不能为空', trigger: 'change' }],
         // country: [{ required: true, message: '国家不能为空', trigger: 'change' }],
@@ -703,7 +703,7 @@ export default {
         // city: [{ required: true, message: '城市不能为空', trigger: 'change' }],
         // area: [{ required: true, message: '区不能为空', trigger: 'change' }],
         // address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
-        contacts: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
+        // contacts: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
         taxRate: [{ required: true, message: '请输入税率', trigger: 'change' }],
         includingTaxPrecision: [{ required: true, message: '请输入含税计价精度', trigger: 'blur' }],
         excludingTaxPrecision: [{ required: true, message: '请输入不含税计价精度', trigger: 'blur' }],

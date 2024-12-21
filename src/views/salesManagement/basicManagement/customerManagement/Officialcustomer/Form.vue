@@ -181,13 +181,13 @@
                       </el-form-item>
                     </el-col>
 
-                    <el-col :sm="6" :xs="24" v-if="btnType=='look'">
-                      <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">
-                        <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;" :disabled="btnType=='look' ? true : false">
-                          <el-option v-for="(item, index) in shipmentFreezeFlagList" :key="index" :label="item.text" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
+<!--                    <el-col :sm="6" :xs="24" v-if="btnType=='look'">-->
+<!--                      <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">-->
+<!--                        <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;" :disabled="btnType=='look' ? true : false">-->
+<!--                          <el-option v-for="(item, index) in shipmentFreezeFlagList" :key="index" :label="item.text" :value="item.value"></el-option>-->
+<!--                        </el-select>-->
+<!--                      </el-form-item>-->
+<!--                    </el-col>-->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="运输方式" prop="modeTransport">
                         <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" style="width: 100%;" :disabled="btnType=='look' ? true : false">
@@ -633,8 +633,6 @@ export default {
         partnerCategoryId: [
           { required: true, message: '所属分类不能为空', trigger: 'change' }
         ],
-        mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' }, { validator: this.validateField2, trigger: 'blur' }],
-        // phone: [{ validator: this.validateField2, trigger: 'blur' }],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
           { validator: this.formValidate('enCode'), trigger: 'blur' },
@@ -798,13 +796,13 @@ export default {
       })
     },
     // 电话 手机 二填一
-    validateField2(rule, value, callback) {
-      if (!this.dataForm.phone && !value) {
-        callback(new Error('电话和手机号至少填一个'));
-      } else {
-        callback();
-      }
-    },
+    // validateField2(rule, value, callback) {
+    //   if (!this.dataForm.phone && !value) {
+    //     callback(new Error('电话和手机号至少填一个'));
+    //   } else {
+    //     callback();
+    //   }
+    // },
     changeCountry(e, index) {
       this.dataForm.country = e.code
       if (this.dataForm.country != 'CN') {

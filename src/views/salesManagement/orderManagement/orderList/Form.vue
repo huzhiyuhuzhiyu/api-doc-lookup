@@ -201,7 +201,8 @@
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
                     </el-table>
                   </div>
-                  <el-table ref="product" v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
+                  <el-table ref="product"
+                    v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
                     :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
                     @row-click="rowclick" key="165" style="width: 100%;">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
@@ -1349,7 +1350,7 @@ export default {
       bimProductAttributesList: [],
       selectProductClassFlag: false,
       isProjectSwitchFlag: null,
-      taxRate:13,
+      taxRate: 13,
       pairingModeList: [],
     }
   },
@@ -1651,7 +1652,7 @@ export default {
         this.taxRateList.push(obj)
       }
       if (this.productData[index].customerProductNo) customerDrawingNumber = JSON.parse(JSON.stringify(this.productData[index].customerProductNo))
-      console.log("this.",objs.taxRate);
+      console.log("this.", objs.taxRate);
       if (item.value) {
         this.productData.push(objs)
       }
@@ -2149,18 +2150,20 @@ export default {
       }
       console.log("index", index);
       console.log("row.num", row.num);
-      if (row.calculationDirection == 'multiplication') {
-        productArr[index].assistantNum = this.jnpf.numberFormat(row.num * row.ratio, 2)
-        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
-        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
-        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
-      } else {
-        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
-        productArr[index].assistantNum = this.jnpf.numberFormat(row.num / row.ratio, 2)
-        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
-        productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+      if (row.calculationDirection) {
+        if (row.calculationDirection == 'multiplication') {
+          productArr[index].assistantNum = this.jnpf.numberFormat(row.num * row.ratio, 2)
+          productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
+          productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
+          productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+          this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
+        } else {
+          this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
+          productArr[index].assistantNum = this.jnpf.numberFormat(row.num / row.ratio, 2)
+          productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 2)
+          productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 2)
+          productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
+        }
       }
       console.log("productArr", productArr);
       this.productData = productArr
@@ -2692,7 +2695,15 @@ export default {
 
                 this.salesFlag = true
               }
-
+              res.data.orderLines.forEach(item => {
+                if (this.mainUnitFlag == 1) {
+                  if (item.calculationDirection == 'multiplication') {
+                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                  } else {
+                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                  }
+                }
+              });
               this.productData = res.data.orderLines
               if (btnType == 'add') {
                 this.dataForm.deliveryDate = ""

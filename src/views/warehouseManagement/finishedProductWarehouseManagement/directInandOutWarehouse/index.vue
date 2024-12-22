@@ -129,7 +129,7 @@
                         v-if="dataForm.documentType == 'outbound'" />
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                      <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
                         v-if="dataForm.documentType == 'inbound'">
@@ -263,7 +263,7 @@
                             placeholder="原批次号"></el-input>
                         </template>
                       </el-table-column> -->
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+              <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
                       <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"

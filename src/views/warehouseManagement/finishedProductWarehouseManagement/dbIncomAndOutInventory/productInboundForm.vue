@@ -179,16 +179,7 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                              :disabled="btnType == 'look' ? true : false">
-                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                                :value="item.id">
-                              </el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
+                       
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -438,16 +429,7 @@
                         </el-table-column>
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                              :disabled="btnType == 'look' ? true : false">
-                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                                :value="item.id">
-                              </el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
+                        
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable

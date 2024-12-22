@@ -542,8 +542,7 @@ export default {
     handleBlur() {
       let total
       console.log(this.jnpf.numberFormat(this.jnpf.math('divide', [this.currentProcess.qualifiedQuantity, this.pairingModeNum])));
-      if (this.currentProcessType === 4||this.currentProcessType===5) this.currentProcess.matchedQuantity = this.jnpf.numberFormat(this.jnpf.math('divide', [this.currentProcess.qualifiedQuantity, this.pairingModeNum]))
-      console.log(this.matchedQuantity);
+      if (this.currentProcessType === 4||this.currentProcessType===5) this.currentProcess.matchedQuantity =  Math.floor(this.jnpf.numberFormat(this.jnpf.math('divide', [this.currentProcess.qualifiedQuantity, this.pairingModeNum])))
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
@@ -675,7 +674,7 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
-          if(this.currentProcessType===4){
+          if(this.currentProcessType===4||this.currentProcessType===5){
             let flag = this.isPositiveInteger(this.currentProcess.matchedQuantity)
             if(!flag) this.$message.error("总配对数量不能有小数")
           if(!flag) submitFlag=false

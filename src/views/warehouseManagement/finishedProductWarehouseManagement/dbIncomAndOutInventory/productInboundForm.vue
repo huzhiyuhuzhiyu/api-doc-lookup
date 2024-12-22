@@ -105,17 +105,17 @@
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
-                       
+
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="batchNumber" label="批次号" min-width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="160" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"  style="width: 100%;" :disabled="btnType == 'look'"
+                            <el-input v-model="scope.row.batchNumber" style="width: 100%;" :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
@@ -137,8 +137,22 @@
 
 
 
-
-                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                              :disabled="btnType == 'look' ? true : false" clearable @input="handleClear(scope)"
+                              @change="(value) => changePairingMode(value)">
+                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                :value="item.id">
+                              </el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120">
+                          <template slot-scope="scope">
+                            <div>{{ scope.row.pairingModeId ? '对' : scope.row.mainUnit }}</div>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '入库数量(主)' : '入库数量'" min-width="160">
                           <template slot="header">
                             <span class="required">*</span>{{ mainUnitFlag == 1 ? '入库数量(主)' : '入库数量' }}
@@ -149,7 +163,11 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1">
+                          <template slot-scope="scope">
+                            <div>{{ scope.row.pairingModeId ? '对' : scope.row.deputyUnit }}</div>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
                         <!-- <el-table-column prop="aperture" label="孔径" width="100"
@@ -161,16 +179,7 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
-                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                              :value="item.id">
-                            </el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
+
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -208,7 +217,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                   
+
                         <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
@@ -267,7 +276,7 @@
                   <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-model="activeName" v-else >
+              <el-tabs v-model="activeName" v-else>
                 <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -355,18 +364,18 @@
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
-                       
+
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
+                          show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="batchNumber" label="批次号" min-width="180" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="180" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"     :disabled="btnType == 'look'"
-                              placeholder="批次号">
+                            <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
@@ -387,8 +396,22 @@
 
 
 
-
-                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                              :disabled="btnType == 'look' ? true : false" clearable @input="handleClear(scope)"
+                              @change="(value) => changePairingMode(value, scope)">
+                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                :value="item.id">
+                              </el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120">
+                          <template slot-scope="scope">
+                            <div>{{ scope.row.pairingModeId ? '对' : scope.row.mainUnit }}</div>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '入库数量(主)' : '入库数量'" min-width="160">
                           <template slot="header">
                             <span class="required">*</span>{{ mainUnitFlag == 1 ? '入库数量(主)' : '入库数量' }}
@@ -399,19 +422,14 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1">
+                          <template slot-scope="scope">
+                            <div>{{ scope.row.pairingModeId ? '对' : scope.row.deputyUnit }}</div>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
- 
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
-                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                              :value="item.id">
-                            </el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
+
+
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -449,7 +467,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                   
+
                         <el-table-column prop="clearance" label="游隙" width="120" :key="5">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
@@ -501,7 +519,7 @@
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                   </UploadWj>
                 </el-tab-pane>
-                
+
               </el-tabs>
             </div>
           </div>
@@ -518,7 +536,7 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
 
-             
+
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
@@ -589,7 +607,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getBimBusinessDetail} from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves, getBimBusinessDetail } from '@/api/basicData/index'
 import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import { ordershengchanList, getWorkPage } from '@/api/productOrdes/index.js'
@@ -718,7 +736,7 @@ export default {
         superQuery: {},
         pageNum: 1,
         pageSize: 20,
-        productCode:"",
+        productCode: "",
       },
       classAttribute: "",
       activeName: "orderInfo",
@@ -745,6 +763,8 @@ export default {
       tableDataFlag: false,
       mainUnitFlag: null,
       pairingModeList: [],
+      pairingModeNum: "",//配对方式的基本数量
+      productDataCopy:[],
 
     }
   },
@@ -771,14 +791,45 @@ export default {
     }
   },
   mounted() {
+
     this.getBimBusinessDetail()
 
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
 
   },
   methods: {
-       // 获取配对方式
-       async getpairingModeListFun() {
+    handleClear(scope) {
+      let item = this.productData[scope.$index]
+      console.log("this.productDataCopy",this.productDataCopy);
+      console.log("scope",scope);
+      let waitReceivedQuantityCopy=JSON.parse(JSON.stringify(item.waitReceivedQuantity))
+      if (item.pairingModeId === '') {
+        item.num = item.waitReceivedQuantity = this.productDataCopy[scope.$index].waitReceivedQuantity
+        if (this.mainUnitFlag == 1) {
+          if (item.calculationDirection == 'multiplication') {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceivedQuantity, item.ratio]), 6))
+          } else {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
+          }
+        }
+        // 这里可以执行清除操作后的逻辑
+      }
+    },
+    changePairingMode(value, scope) {
+      let item=this.productData[scope.$index]
+      let waitReceivedQuantityCopy=JSON.parse(JSON.stringify(item.waitReceivedQuantity))
+        this.$set(item,'pairingModeNum',this.pairingModeList.filter(items => items.id === value)[0].quantity)
+        item.num = item.waitReceivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('divide', [this.productDataCopy[scope.$index].waitReceivedQuantity, item.pairingModeNum]), 6))
+      if (this.mainUnitFlag == 1) {
+          if (item.calculationDirection == 'multiplication') {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceivedQuantity, item.ratio]), 6))
+          } else {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
+          }
+        }
+    },
+    // 获取配对方式
+    async getpairingModeListFun() {
       try {
         this.pairingModeList = await this.jnpf.getpairingModeListFun()
         console.log("this.par", this.pairingModeList);
@@ -1089,6 +1140,11 @@ export default {
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
       arr.forEach(item => {
+        if (item.pairingModeId) {
+          item.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
+          item.num = item.waitReceivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.pairingModeNum]), 6))
+
+        }
         this.$set(item, 'num', item.waitReceivedQuantity)
         this.$set(item, 'sourceNo', item.orderNo)
         item.ordersId = item.id
@@ -1104,6 +1160,8 @@ export default {
         this.$set(item, 'warehouseType', this.dataForm.warehouseType)
       })
       this.productData = [...this.productData, ...arr]
+      this.productDataCopy=JSON.parse(JSON.stringify(this.productData))
+
       this.productData.forEach(item => {
         if (!item.shelfSpaceId) {
           this.$set(item, 'shelfSpaceName', this.shelfSpaceName)
@@ -1213,6 +1271,8 @@ export default {
         }
       }
       this.productData = productArr
+      this.productDataCopy=JSON.parse(JSON.stringify(this.productData))
+
     },
 
 
@@ -1268,9 +1328,9 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-    init(data, btnType, classAttributeList, warehouseCode,type) {
+    init(data, btnType, classAttributeList, warehouseCode, type) {
       this.productData = []
-      this.dataForm.businessType=type
+      this.dataForm.businessType = type
       console.log("11", data, btnType, classAttributeList, warehouseCode);
       // this.visible = true
       this.warehouseCode = warehouseCode
@@ -1341,7 +1401,13 @@ export default {
             this.$set(item, 'batchNumber', "")
             item.ordersId = item.id
           });
+          if (data[0].pairingModeId) {
+            data[0].pairingModeNum = this.pairingModeList.filter(items => items.id === data[0].pairingModeId)[0].quantity;
+            data[0].num = data[0].waitReceivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('divide', [data[0].waitReceivedQuantity, data[0].pairingModeNum]), 6))
+
+          }
           this.productData = data
+          this.productDataCopy=JSON.parse(JSON.stringify(this.productData))
         }, 800);
         console.log("shit", this.productData);
       }

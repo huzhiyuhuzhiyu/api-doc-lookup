@@ -166,6 +166,7 @@
                           <div v-if="dataForm.documentType == 'outbound'"> {{ scope.row.shelfSpaceName }}</div>
                         </template>
                       </el-table-column>
+
                       <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                         v-if="dataForm.weightFlag == true">
                         <template slot-scope="scope">
@@ -187,7 +188,22 @@
                             v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" >
+                        <template slot-scope="scope"> 
+                          <div>{{ scope.row.pairingModeId?'对':scope.row.mainUnit }}</div>
+                        </template>
+                      </el-table-column>
+
                       <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
                         <template slot="header">
                           <span class="required">*</span>{{ mainUnitFlag == 1 ? '数量(主)' : '数量' }}
@@ -198,7 +214,11 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" >
+                        <template slot-scope="scope"> 
+                          <div>{{ scope.row.pairingModeId?'对':scope.row.deputyUnit }}</div>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                       <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="8" />
                       <el-table-column prop="num" label="数量" width="140" key="77">
@@ -858,6 +878,7 @@ export default {
       apertureFlag: "",
       colourFlag: "",
       processFlag: "",
+      pairingModeList: [],
     }
   },
   computed: {
@@ -874,6 +895,7 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.getpairingModeListFun()
     this.getprocessList()
     this.getWarehouseListFun()
     this.getclassAttributeList()
@@ -896,6 +918,13 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
+  // 获取配对方式
+  async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     async getBusinessTypeList() {
       const res = await stockWarehouseBusinessTypeList(this.dataForm.warehouseId)
       const list = [{ label: "直接入库", value: "inbound_other" }, { label: "直接出库", value: "outbound_other" },]
@@ -1695,6 +1724,8 @@ export default {
       })
     },
     changeWarehousex(val, data) {
+      this.productData=[]
+      this.businessType=""
       console.log(val, data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''

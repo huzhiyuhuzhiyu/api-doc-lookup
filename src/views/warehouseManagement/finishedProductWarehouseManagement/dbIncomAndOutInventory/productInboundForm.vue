@@ -179,7 +179,6 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
-<<<<<<< HEAD
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
@@ -190,9 +189,6 @@
                             </el-select>
                           </template>
                         </el-table-column>
-=======
-
->>>>>>> 配对方式
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -442,7 +438,6 @@
                         </el-table-column>
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-<<<<<<< HEAD
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
@@ -453,9 +448,6 @@
                             </el-select>
                           </template>
                         </el-table-column>
-=======
-
->>>>>>> 配对方式
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
@@ -824,8 +816,6 @@ export default {
 
   },
   methods: {
-<<<<<<< HEAD
-=======
     handleClear(scope) {
       let item = this.productData[scope.$index]
       console.log("this.productDataCopy",this.productDataCopy);
@@ -856,7 +846,6 @@ export default {
           }
         }
     },
->>>>>>> 配对方式
     // 获取配对方式
     async getpairingModeListFun() {
       try {

@@ -322,20 +322,20 @@
                 </p>
                 <div v-if="totalData[item].length > 1">
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
-                    {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
+                    {{ totalData[item][0].planStartDate?totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}-
+                    {{ totalData[item][0].planEndDate?totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
-                    {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
+                    {{ totalData[item][1].planStartDate?totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") :''}}-
+                    {{ totalData[item][1].planEndDate?totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}
                     {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity }}个
                   </p>
                 </div>
                 <div v-else-if="totalData[item].length == 1">
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                      ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
+                    {{ totalData[item][0].planStartDate?totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-","."):'' }}-
+                    {{ totalData[item][0].planEndDate?totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") :''}}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>

@@ -463,7 +463,7 @@ export default {
         },
         goDetail(row,classType){
             this.lineListRequestObj = {
-                classType:classType === 'total' ? '' : classType,
+                classType:classType === 'total' ? '' : classType === 'turnoverBox' ? 'turnover_box' : classType,
                 warehouseId:row.warehouseId,
                 orderStartDate:this.listQuery.orderStartDate,
                 orderEndDate:this.listQuery.orderEndDate,

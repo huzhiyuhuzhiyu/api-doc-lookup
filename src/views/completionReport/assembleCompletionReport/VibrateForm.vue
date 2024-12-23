@@ -87,12 +87,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :sm="8" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index">
-            <el-form-item :label="item.name + '(合格数量)'" :prop="item.name">
-              <el-input v-model="form.item[item.name]" placeholder="合格数量" @input="forceUpdata"
-                @blur="handleBlur(item, form.item[item.name])" />
-            </el-form-item>
-          </el-col>
+
           <el-col :sm="8" :xs="24">
             <el-form-item label="不合格数量">
               <el-input v-model="form.unqualifiedQuantity" placeholder="不合格数量" disabled />
@@ -126,7 +121,7 @@
                 <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
                   :value="item.id"></el-option>
               </el-select>
-           
+
               <!-- producerId -->
             </el-form-item>
             <el-form-item label="生产人" prop="producerId" v-if="form.taskMethod == 'not_appoint'">
@@ -236,11 +231,21 @@ export default {
       codeConfig: {},
       vibrationLevelList: [],
       totalReportNum: 0,
+      stockFlag: false,
+      stockFlagList: [
+        { label: "继续生产", value: false },
+        { label: "入库", value: true }
+      ],
+      vibrationLevelList: [],
+      pairingModeList: [],
+      pairingModeListCopy:[],
+      pairingModeNum: 0,
+      currentProcessType:0,
     }
   },
   methods: {
-     //生产人
-     hangleSelectSales(e, r) {
+    //生产人
+    hangleSelectSales(e, r) {
       this.$nextTick(() => {
         this.$refs.form.validateField('producerId')
       })
@@ -407,8 +412,31 @@ export default {
         }
       })
     },
+    // 定义当前工序的类型
+    //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序
+    setProcessType() {
+      if (this.currentProcess.vibrateReportFlag) {
+        if (this.currentProcess.processType == 'vibrate') {
+          this.currentProcessType = 2
+        } else if (!this.currentProcess.pairsReportFlag) {
+          this.currentProcessType = 3
+        } else if (this.currentProcess.processType == 'pairs') {
+          this.currentProcessType = 4
 
-
+        } else {
+          this.currentProcessType = 5
+        }
+      } else {
+        this.currentProcessType = 1
+      }
+    },
+     // 获取配对方式
+     async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        this.pairingModeListCopy=JSON.parse(JSON.stringify(this.pairingModeList))
+      } catch (error) { }
+    },
 
 
 

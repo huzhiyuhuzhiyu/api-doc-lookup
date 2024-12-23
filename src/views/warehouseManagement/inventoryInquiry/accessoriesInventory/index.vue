@@ -58,14 +58,7 @@
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
-          <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
-              <div v-if="scope.row.classAttribute == 'raw_material'">原材料</div>
-              <div v-if="scope.row.classAttribute == 'semi_finished'">半成品</div>
-              <div v-if="scope.row.classAttribute == 'accessories'">配件</div>
-            </template>
-          </el-table-column>
+         
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -393,7 +386,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'productDrawingNo' || prop == 'productCode' || prop == 'warehouseName') {
+      if (prop == 'productDrawingNo'||prop=='projectName'||prop=='classAttribute' || prop == 'productCode' || prop == 'warehouseName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

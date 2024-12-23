@@ -52,6 +52,8 @@
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+
             <el-table-column prop="weight" label="重量(KG)" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
             <el-table-column prop="proportion" label="比重" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
             <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
@@ -140,6 +142,7 @@ export default {
         specialRequire: "",
         inspectStockFlag: true,
         processId: "",
+        pairingModeId:"",
       },
       refreshTree: true,
       listLoading: false,
@@ -178,7 +181,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'warehouseName' || prop == 'shelfSpaceName') {
+      if (prop == 'warehouseName'||prop=='pairingModeName' || prop == 'shelfSpaceName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -221,6 +224,7 @@ export default {
       this.form.warehouseId = data.warehouseId
       this.form.packagingMethod = data.packagingMethod
       this.form.specialRequire = data.specialRequire
+      this.form.pairingModeId = data.pairingModeId
 
       this.dataForm = data
       if (!requestFlag) {

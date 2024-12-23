@@ -462,7 +462,7 @@ export default {
         },
         goDetail(row,classType){
             this.lineListRequestObj = {
-                classType:classType,
+                classType:classType === 'total' ? '' : classType,
                 warehouseId:row.warehouseId,
                 orderStartDate:this.listQuery.orderStartDate,
                 orderEndDate:this.listQuery.orderEndDate,

@@ -111,11 +111,6 @@ export default {
                     prop: 'productsCode',
                     label: '产品编码',
                     type: 'input'
-                },
-                {
-                    prop: 'mainUnit',
-                    label: '单位',
-                    type: 'input'
                 }
             ]
         },

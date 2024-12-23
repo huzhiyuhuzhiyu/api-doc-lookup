@@ -309,7 +309,7 @@ export default {
         sortChange({ prop, order }) {
             let newProp = ''
             console.log(prop)
-            if (['productsDrawingNo','productsCode','productsName','warehouseName'].includes(prop)) {
+            if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice'].includes(prop)) {
                 newProp = prop
             } else {
                 newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

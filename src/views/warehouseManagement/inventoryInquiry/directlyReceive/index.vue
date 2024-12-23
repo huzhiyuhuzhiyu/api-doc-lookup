@@ -1,7 +1,7 @@
 
 
 <template>
-    <ReportTypeTable :isProductNameSwitch="isProductNameSwitch" :superQueryJson="superQueryJson"  v-loading="!indexFlag" v-if="indexFlag"  :list-request-obj="listRequestObj" :list-method="lineEdgeReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName"/>
+    <ReportTypeTable :needSuperQuery="false" :isProductNameSwitch="isProductNameSwitch" :superQueryJson="superQueryJson"  v-loading="!indexFlag" v-if="indexFlag"  :list-request-obj="listRequestObj" :list-method="lineEdgeReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName"/>
 </template>
 
 <script>
@@ -27,7 +27,7 @@ export default {
                 pageNum: 1,
                 pageSize: 20,
                 projectId: this.abProjectId,
-                reportDate: this.jnpf.getToday('YYYY-MM'),
+                orderDate: [],
                 startTime: "",
                 startUpdateTime: "",
                 superQuery: {},
@@ -72,11 +72,16 @@ export default {
         },
         setSuperQueryJson(){
             this.superQueryJson = [
+                // {
+                //     prop: 'orderDate',
+                //     label: '单据日期',
+                //     type: 'daterange',
+                //     valueFormat: 'yyyy-MM-dd',
+                // },
                 {
-                    prop: 'reportDate',
-                    label: '月份',
-                    type: 'month',
-                    valueFormat: 'yyyy-MM',
+                    prop: 'warehouseName',
+                    label: '仓库名称',
+                    type: 'input'
                 },
             ]
         },
@@ -93,12 +98,13 @@ export default {
                     clearable:false,
                 },
                 {
-                    fieldValue: this.jnpf.getToday('YYYY-MM'),
-                    field: 'reportDate',
-                    label: '月份',
-                    prop: 'reportDate',
-                    symbol: 'like',
-                    searchType: 2
+                    fieldValue: '',
+                    field: '',
+                    label: '',
+                    prop: 'orderDate',
+                    symbol: '',
+                    searchType: 5,
+                    noNeedSuper: true,
                 },
             ]
         },

@@ -539,6 +539,28 @@ const jnpf = {
     }
     return formatQuery
   },
+  // 搜索条件日期时间格式化 searchTimeFormat(<请求条件对象>, <日期时间来源区间>, <开始日期时间字段>, <结束日期时间字段>)
+  searchDateFormat(requestQuery, dateTimeArr, startTime, endTime) {
+    const formatQuery = requestQuery
+    if (Array.isArray(dateTimeArr)) {
+      if (dateTimeArr && dateTimeArr.length > 0) {
+        formatQuery[startTime] = dateTimeArr[0]
+        formatQuery[endTime] = dateTimeArr[1]
+      } else {
+        formatQuery[startTime] = ""
+        formatQuery[endTime] = ""
+      }
+    } else {
+      if (formatQuery[dateTimeArr] && formatQuery[dateTimeArr].length > 0) {
+        formatQuery[startTime] = formatQuery[dateTimeArr][0]
+        formatQuery[endTime] = formatQuery[dateTimeArr][1]
+      } else {
+        formatQuery[startTime] = ""
+        formatQuery[endTime] = ""
+      }
+    }
+    return formatQuery
+  },
   // 高精度计算 math(<计算方法>, <参数数组>)
   math(calcMethod, paramsArr) {
     if (!calcMethod) return mathjs // 如果不传递参数，返回mathjs实例

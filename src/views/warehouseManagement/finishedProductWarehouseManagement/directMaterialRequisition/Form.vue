@@ -306,7 +306,7 @@ import {
 } from "@/api/masterDataManagement/index";
 import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
 // import { addInboundOutbound} from '@/api/warehouseManagement/inboundAndOutbounds.js'
-import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表 
+import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表
 import WareHouseForm from './wareHouseForm.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -551,7 +551,7 @@ export default {
       this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
       this.initData2()
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -744,7 +744,12 @@ export default {
             item.warehouseName = item.outWarehouseName
             item.shelfSpaceName = item.outShelfSpaceName
           });
-          this.productData = res.data.lines
+          this.productData = res.data.lines.map(item=>{
+              return {
+                ...item,
+                price:item.costPrice,
+              }
+          })
 
         }).catch(() => { this.formLoading = false })
       } else {
@@ -853,38 +858,51 @@ export default {
               picking: this.dataForm,
               lines: []
             }
-            let arr = []
-            this.productData.forEach(item => {
-              let obj = {
-                accuracyLevel: item.accuracyLevel,
-                batchNumber: item.batchNumber,
-                calculationDirection: item.calculationDirection,
-                classAttribute: item.classAttribute,
-                clearance: item.clearance,
-                inAreaId: item.inAreaId,
-                inGoodsShelvesId: item.inGoodsShelvesId,
-                inShelfSpaceId: item.inShelfSpaceId,
-                inWarehouseId: item.inWarehouseId,
-                mainUnit: item.mainUnit,
-                num: item.num,
-                oil: item.oil,
-                id: this.dataForm.id ? item.id : "",
-                deputyNum: item.calculationDirection == 'multiplication' ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6) : this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6),
-                deputyUnit: item.deputyUnit,
-                outAreaId: item.areaId,
-                outGoodsShelvesId: item.goodsShelvesId,
-                outShelfSpaceId: item.shelfSpaceId,
-                outWarehouseId: item.warehouseId,
-                processId: item.processId,
-                productsId: item.productsId,
-                ratio: item.ratio,
-                sealingCoverTyping: item.sealingCoverTyping,
-                standardValue: item.standardValue,
-                vibrationLevel: item.vibrationLevel,
-                pickingId: item.pickingId,
-              }
-              arr.push(obj)
-            });
+            let arr = this.productData.map(item=>{
+                return {
+                    ...item,
+                    id: this.dataForm.id ? item.id : "",
+                    deputyNum: item.calculationDirection == 'multiplication' ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6) : this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6),
+                    outAreaId: item.areaId,
+                    outGoodsShelvesId: item.goodsShelvesId,
+                    outShelfSpaceId: item.shelfSpaceId,
+                    outWarehouseId: item.warehouseId,
+                    costPrice:item.costPrice ? item.costPrice : item.price,
+                }
+            })
+            // this.productData.forEach(item => {
+            //   let obj = {
+            //     accuracyLevel: item.accuracyLevel,
+            //     batchNumber: item.batchNumber,
+            //     calculationDirection: item.calculationDirection,
+            //     classAttribute: item.classAttribute,
+            //     clearance: item.clearance,
+            //     inAreaId: item.inAreaId,
+            //     inGoodsShelvesId: item.inGoodsShelvesId,
+            //     inShelfSpaceId: item.inShelfSpaceId,
+            //     inWarehouseId: item.inWarehouseId,
+            //     mainUnit: item.mainUnit,
+            //     num: item.num,
+            //     oil: item.oil,
+            //     id: this.dataForm.id ? item.id : "",
+            //     deputyNum: item.calculationDirection == 'multiplication' ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6) : this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6),
+            //     deputyUnit: item.deputyUnit,
+            //     outAreaId: item.areaId,
+            //     outGoodsShelvesId: item.goodsShelvesId,
+            //     outShelfSpaceId: item.shelfSpaceId,
+            //     outWarehouseId: item.warehouseId,
+            //     processId: item.processId,
+            //     productsId: item.productsId,
+            //     ratio: item.ratio,
+            //     sealingCoverTyping: item.sealingCoverTyping,
+            //     standardValue: item.standardValue,
+            //     vibrationLevel: item.vibrationLevel,
+            //     pickingId: item.pickingId,
+            //     costPrice:item.price || '',
+            //     totalAmount: item.totalAmount || '',
+            //   }
+            //   arr.push(obj)
+            // });
             obj.lines = arr
             const formMethod = this.dataForm.id ? updateTransferData : addTransferData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号

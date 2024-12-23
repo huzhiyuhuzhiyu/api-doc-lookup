@@ -26,7 +26,6 @@ export default {
                     column: '',
                 }],
                 createByName: "",
-                month: this.jnpf.getToday('YYYY-MM'),
                 orderStartDate: "",
                 pageNum: 1,
                 pageSize: 20,
@@ -36,6 +35,9 @@ export default {
                 productCategoryId: '',
                 productsCode: "",
                 productsName: "",
+                startDate:'',
+                endDate:'',
+                orderDate: [],
             },
             tableItems:[],
             columnList:[],
@@ -85,8 +87,8 @@ export default {
                 {
                     prop: 'orderDate',
                     label: '单据日期',
-                    type: 'month',
-                    valueFormat: 'yyyy-MM',
+                    type: 'daterange',
+                    valueFormat: 'yyyy-MM-dd',
                 },
                 {
                     prop: 'partnerName',
@@ -129,12 +131,13 @@ export default {
                     clearable: false,
                 },
                 {
-                    fieldValue: this.jnpf.getToday('YYYY-MM'),
-                    field: 'month',
-                    label: '月份',
-                    prop: 'month',
-                    symbol: 'like',
-                    searchType: 2
+                    fieldValue: '',
+                    field: '',
+                    label: '',
+                    prop: 'orderDate',
+                    symbol: '',
+                    searchType: 5,
+                    noNeedSuper: true,
                 },
             ]
         },

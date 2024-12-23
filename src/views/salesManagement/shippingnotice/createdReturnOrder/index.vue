@@ -154,26 +154,27 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="退货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
-                      v-if="sealingCoverTypingFlag == 1"></el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="accuracyLevelFlag == 1">
-                    </el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
-                      v-if="vibrationLevelFlag == 1"></el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" :key="61"
-                      v-if="oilFlag == 1"></el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
-                      v-if="oilQuantityFlag == 1"></el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" :key="100"
-                      v-if="clearanceFlag == 1"></el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
-                      v-if="packagingMethodFlag == 1">
-                    </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
-                      v-if="specialRequireFlag == 1"></el-table-column>
-                      <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
-                        v-if="materialFlag == 1"></el-table-column>
+                          v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
+                          v-if="accuracyLevelFlag == 1">
+                        </el-table-column>
+                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
+                          v-if="vibrationLevelFlag == 1"></el-table-column>
+                        <el-table-column prop="oil" label="油脂" width="120" :key="61"
+                          v-if="oilFlag == 1"></el-table-column>
+                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
+                          v-if="oilQuantityFlag == 1"></el-table-column>
+                        <el-table-column prop="clearance" label="游隙" width="120" :key="100"
+                          v-if="clearanceFlag == 1"></el-table-column>
+                        <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
+                          v-if="packagingMethodFlag == 1">
+                        </el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
+                          v-if="specialRequireFlag == 1"></el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                          v-if="materialFlag == 1"></el-table-column>
                         <el-table-column prop="colour" label="颜色" width="120" :key="1020"
-                        v-if="colourFlag == 1"></el-table-column>
+                          v-if="colourFlag == 1"></el-table-column>
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
                           v-if="isattachmentswitch != 1">
                           <template slot="header">
@@ -374,6 +375,7 @@
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
@@ -382,12 +384,12 @@
                     <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
                       v-if="sealingCoverTypingFlag == 1"></el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="accuracyLevelFlag == 1">
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
+                      v-if="accuracyLevelFlag == 1">
                     </el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
                       v-if="vibrationLevelFlag == 1"></el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" :key="61"
-                      v-if="oilFlag == 1"></el-table-column>
+                    <el-table-column prop="oil" label="油脂" width="120" :key="61" v-if="oilFlag == 1"></el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
                       v-if="oilQuantityFlag == 1"></el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100"
@@ -397,10 +399,10 @@
                     </el-table-column>
                     <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                       v-if="specialRequireFlag == 1"></el-table-column>
-                      <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
-                        v-if="colourFlag == 1"></el-table-column>
+                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                      v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                      v-if="colourFlag == 1"></el-table-column>
                     <el-table-column prop="remark" label="备注" width="160" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                   </JNPF-table>
@@ -530,7 +532,7 @@ import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData,getOrderFiledMap } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData, getOrderFiledMap } from '@/api/basicData/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { editSwitch, getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
@@ -816,8 +818,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
     }
   },
   computed: {

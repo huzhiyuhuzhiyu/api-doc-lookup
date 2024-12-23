@@ -405,6 +405,7 @@ export default {
                 this.basicQuery = {
                     matchLogic: 'AND',
                     condition: this.domSearchList.filter(item => item.fieldValue).map(item => {
+                        this.listQuery[item.field] = item.fieldValue
                         this.listQuery['accountPeriod'] = item.field === 'accountPeriod' ? item.fieldValue : this.listQuery['accountPeriod']
                         this.listQuery['projectId'] = item.field === 'projectId' ? item.fieldValue : this.listQuery['projectId']
                         this.listQuery['month'] = item.field === 'month' ? item.fieldValue : this.listQuery['month']

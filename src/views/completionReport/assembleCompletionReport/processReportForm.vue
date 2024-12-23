@@ -43,7 +43,9 @@
                         <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="personName" label="人员" min-width="120" sortable="custom" />
                     <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
+                    <el-table-column prop="equipmentName" label="设备" min-width="120" sortable="custom" />
                     <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                     <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" min-width="80" />

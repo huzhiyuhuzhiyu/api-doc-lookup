@@ -58,12 +58,14 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false">
-                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
+                    <el-form-item label="配对方式" prop="pairingModeName">
+                      <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                        :disabled="btnType == 'look' ? true : false">
+                        <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="编排任务方式" prop="taskMethod">
@@ -614,7 +616,7 @@ export default {
         stockInventoryLineId: "",
         classAttribute: "finish_product",
         productsId: "",
-        pairingModeId:"",
+        pairingModeId: "",
 
       },
       dataFormTwo: {
@@ -731,8 +733,8 @@ export default {
     this.getPickingConfig()
   },
   methods: {
-            // 获取配对方式
-            async getpairingModeListFun() {
+    // 获取配对方式
+    async getpairingModeListFun() {
       try {
         this.pairingModeList = await this.jnpf.getpairingModeListFun()
         console.log("this.par", this.pairingModeList);
@@ -1245,7 +1247,7 @@ export default {
       this.getProductionLineListFun()
       this.dataForm = data[0]
       this.$set(this.dataForm, 'orderNo', '')
-      this.$set(data[0], 'productionQuantity',  this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
+      this.$set(data[0], 'productionQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'routingId', "")
       this.$set(this.dataForm, 'routingName', "")

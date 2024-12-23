@@ -131,6 +131,7 @@
                             </el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
@@ -248,7 +249,8 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                          show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
@@ -283,6 +285,7 @@
                             </el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
@@ -316,7 +319,7 @@
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                   </UploadWj>
                 </el-tab-pane>
-                 
+
               </el-tabs>
             </div>
           </div>
@@ -375,6 +378,7 @@
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="ordersNum" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
                 </el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="undeliveredQuantity" label="待发货数量" width="130" sortable="custom" />
@@ -434,7 +438,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves,getBimBusinessDetail } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves, getBimBusinessDetail } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import CustomerForm from './customerForm.vue'
 import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
@@ -1204,23 +1208,29 @@ export default {
   height: calc(100% - 47px);
   overflow-y: auto;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   padding: 10px 10px;
   padding-top: 0;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   overflow: auto;
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 5px 10px;
 }
+
 .required {
   color: red;
   margin-right: 4px;
 }
+
 .subtitle {
   line-height: 33px;
   font-size: 18px;
@@ -1232,12 +1242,15 @@ export default {
 .JNPF-preview-main .main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }
+
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1250,6 +1263,7 @@ export default {
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
+
 ::v-deep .el-collapse-item__wrap {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
@@ -1257,12 +1271,15 @@ export default {
   padding: 0 10px 0px;
   border-top: none !important;
 }
+
 .productInfo ::v-deep .el-collapse-item__wrap {
   border-top: 1px solid #dcdfe6 !important;
 }
+
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
+
 .import_t {
   font-size: 22px;
   color: rgb(103, 194, 58);
@@ -1271,6 +1288,7 @@ export default {
   display: inline-block;
   margin-left: 20px;
 }
+
 .import_b {
   font-size: 18px;
   /* color: #67c23a; */
@@ -1278,21 +1296,26 @@ export default {
   margin-top: 43px;
   display: inline-block;
 }
+
 .JNPF-common-search-box {
   margin-bottom: 5px;
 }
+
 // .orderInfo ::v-deep .el-collapse-item__wrap {
 //   border-bottom: none !important
 // }
 .JNPF-common-table {
   border: 1px solid #ebeef5 !important;
 }
+
 .JNPF-common-layout-main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
+
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
 }

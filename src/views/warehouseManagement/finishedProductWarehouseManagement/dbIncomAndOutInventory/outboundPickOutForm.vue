@@ -99,100 +99,103 @@
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
-                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top"  style="float: right;margin-right: 10px">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top"
+                          style="float: right;margin-right: 10px">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun('product')" />
                         </el-tooltip>
                       </div>
                       <template v-if="tableDataFlag">
-                         <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        :partentOrChild="'product'" :setColumnDisplayList="columnList"  custom-column
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;height: auto">
+                        <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                          :partentOrChild="'product'" :setColumnDisplayList="columnList" custom-column
+                          @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;height: auto">
 
 
-                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
-                          min-width="160" />
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                          min-width="160" />
-                          <el-table-column prop="partnerName" label="供应商名称"  min-width="160" />
-                        <el-table-column prop="processName" label="工序名称" width="160" :key="222">
-                        </el-table-column>
+                          <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
+                            min-width="160" />
+                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                            show-overflow-tooltip> </el-table-column>
+                          <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                            min-width="160" />
+                          <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
+                          <el-table-column prop="processName" label="工序名称" width="160" :key="222">
+                          </el-table-column>
 
 
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
-                          <template slot="header">
-                            <span class="required">*</span>批次号
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
-                              @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
-                              {{ scope.row.batchNumber }}
-                            </el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
+                          <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                            <template slot="header">
+                              <span class="required">*</span>批次号
+                            </template>
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
+                                @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
+                                {{ scope.row.batchNumber }}
+                              </el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
 
-                          <template slot-scope="scope">
+                            <template slot-scope="scope">
 
-                            <div> {{ scope.row.shelfSpaceName }}</div>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
-                          :key="7"></el-table-column>
+                              <div> {{ scope.row.shelfSpaceName }}</div>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"
+                            v-if="btnType != 'look'" :key="7"></el-table-column>
 
 
-                        <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
-                          v-if="btnType != 'look'">
-                        </el-table-column>
+                          <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
+                            v-if="btnType != 'look'">
+                          </el-table-column>
 
-                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '领料数量(主)' : '领料数量'" min-width="160">
-                          <template slot="header">
-                            <span class="required">*</span>{{ mainUnitFlag == 1 ? '领料数量(主)' : '领料数量' }}
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.num" placeholder="领料数量(主)" :disabled="btnType == 'look'"
-                              @input="watchNum(scope.row, scope.$index)">
-                            </el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                        <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'"
+                            min-width="120" />
+                          <el-table-column prop="num" :label="mainUnitFlag == 1 ? '领料数量(主)' : '领料数量'" min-width="160">
+                            <template slot="header">
+                              <span class="required">*</span>{{ mainUnitFlag == 1 ? '领料数量(主)' : '领料数量' }}
+                            </template>
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.num" placeholder="领料数量(主)" :disabled="btnType == 'look'"
+                                @input="watchNum(scope.row, scope.$index)">
+                              </el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                          <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                        <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+                          <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                          <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
-                        </el-table-column>
-                        <el-table-column prop="logo" label="Logo" width="120" key="2116">
+                          </el-table-column>
+                          <el-table-column prop="logo" label="Logo" width="120" key="2116">
 
-                        </el-table-column>
-                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                          </el-table-column>
+                          <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
 
-                        </el-table-column>
-                        <el-table-column prop="material" label="材质" width="120" key="2118">
+                          </el-table-column>
+                          <el-table-column prop="material" label="材质" width="120" key="2118">
 
-                        </el-table-column>
-                        <!-- <el-table-column prop="standardValue" label="规值" width="100" />
+                          </el-table-column>
+                          <!-- <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="aperture" label="孔径" width="100" /> -->
 
-                        <el-table-column prop="remark" label="备注" width="200" :key="128">
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
-                              placeholder="备注"></el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
-                          fixed="right">
-                          <template slot-scope="scope">
-                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
-                          </template>
-                        </el-table-column>
-                      </JNPF-table>
+                          <el-table-column prop="remark" label="备注" width="200" :key="128">
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
+                                placeholder="备注"></el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                            fixed="right">
+                            <template slot-scope="scope">
+                              <el-button type="text" @click="copyFun(scope.row, scope.$index)"
+                                size="mini">复制</el-button>
+                            </template>
+                          </el-table-column>
+                        </JNPF-table>
                       </template>
-                     
+
 
 
 
@@ -292,13 +295,15 @@
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
-                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top" style="float: right;margin-right: 10px">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top"
+                          style="float: right;margin-right: 10px">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun('product')" />
                         </el-tooltip>
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" :setColumnDisplayList="columnList"  custom-column :partentOrChild="'product'"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                        :setColumnDisplayList="columnList" custom-column :partentOrChild="'product'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
 
 
@@ -310,8 +315,7 @@
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                          <el-table-column prop="partnerName" label="供应商名称" 
-                          min-width="160" />
+                        <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222">
                         </el-table-column>
 
@@ -356,7 +360,7 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
                         </el-table-column>
@@ -428,7 +432,7 @@
                   <el-form-item>
                     <el-input v-model="orderForm.processName" placeholder="工序名称" clearable />
                   </el-form-item>
-                </el-col> 
+                </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
@@ -745,7 +749,7 @@ export default {
       this.$set(this.productData[index], 'material', data.material)
       this.$set(this.productData[index], 'partnerName', data.partnerName)
       this.$set(this.productData[index], 'cooperativePartnerId', data.cooperativePartnerId)
-      
+
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
@@ -1032,7 +1036,7 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
-       this.allocationFlag = data[0].all.locationStatus !== 'disabled'
+      this.allocationFlag = data[0].all.locationStatus !== 'disabled'
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
@@ -1331,23 +1335,29 @@ export default {
   height: calc(100% - 47px);
   overflow-y: auto;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   padding: 10px 10px;
   padding-top: 0;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   overflow: auto;
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 5px 10px;
 }
+
 .required {
   color: red;
   margin-right: 4px;
 }
+
 .subtitle {
   line-height: 33px;
   font-size: 18px;
@@ -1359,12 +1369,15 @@ export default {
 .JNPF-preview-main .main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }
+
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1377,6 +1390,7 @@ export default {
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
+
 ::v-deep .el-collapse-item__wrap {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
@@ -1384,12 +1398,15 @@ export default {
   padding: 0 10px 0px;
   border-top: none !important;
 }
+
 .productInfo ::v-deep .el-collapse-item__wrap {
   border-top: 1px solid #dcdfe6 !important;
 }
+
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
+
 .import_t {
   font-size: 22px;
   color: rgb(103, 194, 58);
@@ -1398,6 +1415,7 @@ export default {
   display: inline-block;
   margin-left: 20px;
 }
+
 .import_b {
   font-size: 18px;
   /* color: #67c23a; */
@@ -1405,21 +1423,26 @@ export default {
   margin-top: 43px;
   display: inline-block;
 }
+
 .JNPF-common-search-box {
   margin-bottom: 5px;
 }
+
 // .orderInfo ::v-deep .el-collapse-item__wrap {
 //   border-bottom: none !important
 // }
 .JNPF-common-table {
   border: 1px solid #ebeef5 !important;
 }
+
 .JNPF-common-layout-main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
+
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
 }

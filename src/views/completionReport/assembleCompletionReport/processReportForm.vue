@@ -173,19 +173,12 @@ export default {
     },
     // 点击报工
     reportFun(row) {
-      if (row.vibrateReportFlag) {
         this.vibrateFormVisible = true
         this.$nextTick(() => {
-          this.$refs.VibrateForm.init(row,'process')
+          this.$refs.VibrateForm.init(row)
 
         })
-      } else {
-        this.normalFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.normalForm.init(row)
-
-        })
-      }
+      
     },
     reportRecordsFun(row) {
       this.recordFormVisible=true

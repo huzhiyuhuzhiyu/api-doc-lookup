@@ -102,14 +102,7 @@
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
-          <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
-              <div v-if="scope.row.classAttribute == 'raw_material'">原材料</div>
-              <div v-if="scope.row.classAttribute == 'semi_finished'">半成品</div>
-              <div v-if="scope.row.classAttribute == 'accessories'">配件</div>
-            </template>
-          </el-table-column>
+         
           <el-table-column prop="mainUnit" label="单位" min-width="80" sortable="custom" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -139,7 +132,7 @@
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
           <el-table-column prop="warehouseName" label="仓库名称/库位名称" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
+              <div>{{  scope.row.shelfSpaceName?scope.row.warehouseName + '/' + scope.row.shelfSpaceName:scope.row.warehouseName }}</div>
             </template>
           </el-table-column>
           <!-- <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom"/> -->
@@ -356,7 +349,7 @@ export default {
     superQuerySearch(query) {
       this.tableQuery.superQuery = query
       this.superQueryVisible = false
-      this.search('super')
+      this.search()
     },
     // 查看产品明细
     viewFun(id, type, warehouseId) {
@@ -488,7 +481,7 @@ export default {
       this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'shelfSpaceName', fieldValue: '', label: '货位名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'shelfSpaceName', fieldValue: '', label: '库位名称', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.getWarehouseTree(true)
     },
@@ -514,7 +507,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'productDrawingNo' || prop == 'productCode' || prop == 'warehouseName') {
+      if (prop == 'productDrawingNo'||prop=='projectName' || prop == 'productCode' || prop == 'warehouseName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

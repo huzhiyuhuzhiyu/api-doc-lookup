@@ -59,12 +59,15 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                            :value="item.id">
-                          </el-option>
-                        </el-select>
+                        <el-form-item label="配对方式" prop="pairingModeName">
+                          <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="编排任务方式" prop="taskMethod">
@@ -738,7 +741,7 @@ export default {
         productionLineId: "",
         projectName: "",
         pieceworkFlag: false,
-        pairingModeId:"",
+        pairingModeId: "",
       },
       pieceworkFlagList: [
         { label: "否", value: false, },

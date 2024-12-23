@@ -149,6 +149,8 @@
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                       <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                         show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+
                       <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
                         show-overflow-tooltip>
                       </el-table-column>
@@ -203,9 +205,9 @@
                       </el-table-column>
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                         v-if="vibrationLevelFlag == 1"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                      <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                         v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                      <el-table-column prop="colour" label="颜色" width="120" :key="1020"
                         v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
@@ -396,7 +398,8 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
@@ -416,10 +419,10 @@
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
-                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
-                        v-if="colourFlag == 1"></el-table-column>
+                  <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                    v-if="materialFlag == 1"></el-table-column>
+                  <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                    v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="ordersNo" label="订单号" width="160" />
                   <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
@@ -567,7 +570,8 @@
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>
-                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
@@ -588,10 +592,10 @@
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
-                    <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
-                        v-if="colourFlag == 1"></el-table-column>
+                  <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
+                    v-if="materialFlag == 1"></el-table-column>
+                  <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                    v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="remark" label="备注" width="160" />
                   <el-table-column prop="createTime" label="创建时间" width="180" />
                 </JNPF-table>
@@ -908,8 +912,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
       bimProductAttributesList: [],
     }
   },
@@ -1747,6 +1751,7 @@ export default {
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+              pairingModeId: item.pairingModeId ? item.pairingModeId : '',
               remark: item.remark ? item.remark : '',
               excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
               excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
@@ -1776,7 +1781,8 @@ export default {
                 excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
                 excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
                 price: item.price ? item.price : '',
-                taxAmount: item.taxAmount ? item.taxAmount : '',
+              pairingModeId: item.pairingModeId ? item.pairingModeId : '',
+              taxAmount: item.taxAmount ? item.taxAmount : '',
                 taxRate: item.taxRate ? item.taxRate : '',
                 totalAmount: item.totalAmount ? item.totalAmount : '',
                 // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1820,7 +1826,8 @@ export default {
                 taxRate: item.taxRate ? item.taxRate : '',
                 totalAmount: item.totalAmount ? item.totalAmount : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-                sourceNoticeLineList: [
+              pairingModeId: item.pairingModeId ? item.pairingModeId : '',
+              sourceNoticeLineList: [
                   {
                     id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
                     deliveryQuantity: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].deliveryQuantity : item.deliveryQuantity,

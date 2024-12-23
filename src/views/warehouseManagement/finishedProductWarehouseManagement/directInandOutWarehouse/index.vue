@@ -1643,6 +1643,7 @@ export default {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")
       }
+    // 如果选的是销售发退货、采购收退货、直接出入库、生产产品入库  
       if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
         this.partnerFlag = true
         this.partnerTitle = '客户'
@@ -1739,7 +1740,7 @@ export default {
     },
     changeWarehousex(val, data) {
       this.productData=[]
-      this.businessType=""
+      this.dataForm.businessType=""
       console.log(val, data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''

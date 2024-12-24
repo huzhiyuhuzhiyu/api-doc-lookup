@@ -56,14 +56,14 @@
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" @changeMove="changeMove">
           <el-table-column prop="name" label="名称" width="250" sortable="custom" />
-          <el-table-column prop="quantity" label="配对数量" min-width="150" sortable="custom" />
-          <el-table-column prop="remark" label="备注" width="250" />
-          <el-table-column label="操作" width="110" fixed="right">
+          <el-table-column prop="quantity" label="配对数量" sortable="custom" />
+          <el-table-column prop="remark" label="备注" min-width="250" />
+          <!-- <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)">
+              <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)" :hasEdit="false" :hasDel="false">
               </tableOpts>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </JNPF-table>
         <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
           @pagination="initData" />

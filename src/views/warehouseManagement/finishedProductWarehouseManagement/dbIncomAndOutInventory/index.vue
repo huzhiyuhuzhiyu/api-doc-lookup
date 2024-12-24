@@ -771,6 +771,10 @@
             v-if="packagingMethodFlag == 1" />
           <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
             v-if="specialRequireFlag == 1" />
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+                      v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+                      v-if="colourFlag == 1"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="160" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
 

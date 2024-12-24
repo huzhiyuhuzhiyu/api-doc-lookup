@@ -273,6 +273,70 @@
                     </template>
                   </el-table-column>
                 </JNPF-table>
+                <JNPF-table ref="drawing" v-if="categoryType == 'drawing'" :data="drawingData" fixedNO :height="height"
+                  v-loading="tableloading" :key="Math.random()">
+
+                  <!-- <el-table-column prop="orderNo" label="上传单编码" min-width="180" /> -->
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
+
+                  <el-table-column prop="productsCode" label="产品编码" min-width="160" />
+                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="categoryName" label="文件分类" min-width="120" />
+                  <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+                    <template slot-scope="{row}">
+                      <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
+                      <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                      <el-tag type="danger" v-else-if="row.documentStatus === 'back'">退回</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="fileCount" label="文件数量" width="120" />
+                  <el-table-column prop="createTime" label="创建时间" width="180" />
+                  <el-table-column prop="createByName" label="创建人" width="100" />
+
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="mini"
+                        @click="previewFun(scope.row.id, 'look', ApplicationType.INSPECT)">
+                        查看详情
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </JNPF-table>
+                <JNPF-table ref="customerProduct" v-if="categoryType == 'customerProduct'" :data="customerProductData"
+                  fixedNO :height="height" v-loading="tableloading" :key="Math.random()">
+                  <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
+                  <el-table-column prop="productsCode" label="产品编码" min-width="160" />
+                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+                    <template slot-scope="{row}">
+                      <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
+                      <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
+                      <el-tag type="danger" v-else-if="row.documentStatus === 'back'">退回</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="version" label="版本号" width="80" />
+                  <el-table-column prop="fileCount" label="文件数量" width="120" />
+                  <el-table-column prop="versionCount" label="关联版本" width="120">
+                  </el-table-column>
+                  <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
+                  <el-table-column prop="createByName" label="创建人" width="100" />
+                  <!-- <el-table-column prop="status" label="启用状态" width="120" align="center">
+                <template slot-scope="scope">
+                    <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark" :disabled="true"
+                               :active-value="true" :inactive-value="false">
+                    </el-switch>
+                </template>
+            </el-table-column> -->
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" size="mini"
+                        @click="previewFun(scope.row.id, 'look', ApplicationType.INSPECT)">
+                        查看详情
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </JNPF-table>
               </div>
             </el-collapse-item>
             <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
@@ -323,6 +387,8 @@ export default {
       fileUploadId:"",
       applicationType:"",
       inspectionManualData:[],
+      drawingData: [],
+      customerProductData:[],
       guidebookVisible: false,
       height: 0,
       relatedTaskVisible: false,
@@ -335,6 +401,8 @@ export default {
         { code: "inspect", fullName: "检验", },
         { code: "guidebook", fullName: "作业指导书", },
         { code: "inspectionManual", fullName: "检验指导书", },
+        { code: "drawing", fullName: "图纸", },
+        { code: "customerProduct", fullName: "客户产品工艺信息", },
         // { code: "tool", fullName: "工装模具", },
       ],
       categoryType: "workOrder",
@@ -535,7 +603,48 @@ export default {
         })
       } else if (this.categoryType == 'tool') {
         // 工装模具
-      }
+      } else if (this.categoryType == 'drawing') {
+        console.log(this.ApplicationType, 'this.ApplicationType')
+        // 图纸
+        let obj = {
+          applicationType: this.ApplicationType.IMAGE,
+          approvalStatus: "ok",
+          documentStatus: "submit",
+          superQuery: {
+            condition: [
+              {
+                field: "drawingNo",
+                fieldValue: this.dataForm.productDrawingNo,
+                symbol: "like"
+              }
+            ]
+          }
+        }
+        getBimFileUpload(obj).then(res => {
+          console.log("指导书", res);
+          this.drawingData = res.data.records
+        })
+      } else if (this.categoryType == 'customerProduct') {
+        // 图纸
+        let obj = {
+          applicationType: this.ApplicationType.CUSTOMER_PRODUCT,
+          approvalStatus: "ok",
+          documentStatus: "submit",
+          superQuery: {
+            condition: [
+              {
+                field: "drawingNo",
+                fieldValue: this.dataForm.productDrawingNo,
+                symbol: "like"
+              }
+            ]
+          }
+        }
+        getBimFileUpload(obj).then(res => {
+          console.log("指导书", res);
+          this.customerProductData = res.data.records
+        })
+      } 
     },
     goBack() {
       this.$emit('close')

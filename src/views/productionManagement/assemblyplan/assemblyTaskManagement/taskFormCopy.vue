@@ -402,6 +402,7 @@ export default {
       applicationType: "",
       inspectionManualData: [],
       drawingData: [],
+      customerProductData:[],
       guidebookVisible: false,
       height: 0,
       relatedTaskVisible: false,
@@ -482,7 +483,6 @@ export default {
 
   watch: {
     'categoryType': function (newVal) {
-      console.log(newVal,'new')
       this.getTabdataList()
       
     },
@@ -556,7 +556,6 @@ export default {
     getTabdataList() {
 
       // 工单数据
-      console.log(this.categoryType,'type')
       if (this.categoryType == 'workOrder') {
       } else if (this.categoryType == 'feed') {
         // 投料
@@ -590,11 +589,11 @@ export default {
         }
         // 检验
         getInspectionList(obj).then(res => {
-          console.log("res===>", res);
+    
           this.inspectData = res.data.records
         })
       } else if (this.categoryType == 'guidebook') {
-        console.log("dataForm", this.dataForm);
+  
         let obj = {
           applicationType: this.ApplicationType.WORK,
           approvalStatus: "ok",
@@ -610,7 +609,6 @@ export default {
           }
         }
         getBimFileUpload(obj).then(res => {
-          console.log("指导书", res);
           this.guidebookData = res.data.records
         })
         // 作业指导书
@@ -631,13 +629,11 @@ export default {
           }
         }
         getBimFileUpload(obj).then(res => {
-          console.log("指导书", res);
           this.inspectionManualData = res.data.records
         })
       } else if (this.categoryType == 'tool') {
         // 工装模具
       } else if (this.categoryType == 'drawing') {
-        console.log(this.ApplicationType, 'this.ApplicationType')
         // 图纸
         let obj = {
           applicationType: this.ApplicationType.IMAGE,
@@ -654,7 +650,6 @@ export default {
           }
         }
         getBimFileUpload(obj).then(res => {
-          console.log("指导书", res);
           this.drawingData = res.data.records
         })
       } else if (this.categoryType == 'customerProduct') {
@@ -674,17 +669,15 @@ export default {
           }
         }
         getBimFileUpload(obj).then(res => {
-          console.log("指导书", res);
           this.customerProductData = res.data.records
         })
-      } else { }
+      } 
     },
     goBack() {
       this.$emit('close')
     },
     associationTaskFun() {
       this.relatedTaskVisible = true
-      console.log(666);
       this.$nextTick(() => {
         this.$refs.relatedTaskForms.init(this.dataForm.productionPlanNo)
       })
@@ -694,15 +687,12 @@ export default {
 
       this.prodOrderId = id
       detailordershengchan(id).then(res => {
-        console.log("生产任务详情", res);
         this.dataForm = res.data.prodOrder
         this.feedData = res.data.materialList
         res.data.workOrderList.forEach(item => {
           let schedule = this.jnpf.numberFormat(this.jnpf.math('divide', [item.qualifiedQuantity, item.productionQuantity]), 2)
           this.$set(item, 'schedule', schedule)
-
         });
-        console.log('workOrderList', res.data.workOrderList);
         this.workOrderData = res.data.workOrderList
       })
     },

@@ -97,14 +97,25 @@
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
 
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom"
+              v-if="sealingCoverTypingFlag === '1'" />
+            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom"
+              v-if="accuracyLevelFlag === '1'" />
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom"
+              v-if="vibrationLevelFlag === '1'" />
+            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" v-if="oilFlag === '1'" />
+            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom"
+              v-if="oilQuantityFlag === '1'" />
+            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom"
+              v-if="clearanceFlag === '1'" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom"
+              v-if="packagingMethodFlag === '1'" />
+            <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom"
+              v-if="specialRequireFlag === '1'" />
+            <el-table-column prop="material" label="材质" width="130" sortable="custom"
+              v-if="materialFlag === '1'"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+              v-if="colourFlag === '1'"></el-table-column>
             <el-table-column prop="processName" label="工序" width="80" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -285,7 +296,7 @@ export default {
           type: 'input'
         }
       ],
-      standardValueFlag: '',
+      materialFlag: '',
       colourFlag: '',
       processFlag: '',
       sealingCoverTypingFlag: '',
@@ -321,6 +332,32 @@ export default {
         label: '工序',
         type: 'select',
         options: this.processList.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'colour',
+        label: '颜色',
+        type: 'select',
+        options: this.bimProductAttributesList.pa010.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.materialFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'material',
+        label: '材质',
+        type: 'select',
+        options: this.bimProductAttributesList.pa021.map((item) => {
           return {
             label: item.name,
             value: item.name
@@ -433,32 +470,7 @@ export default {
         })
       })
     }
-    if (this.colourFlag === '1') {
-      this.superQueryJson.splice(classIndex + 1, 0, {
-        prop: 'colour',
-        label: '颜色',
-        type: 'select',
-        options: this.bimProductAttributesList.pa010.map((item) => {
-          return {
-            label: item.name,
-            value: item.name
-          }
-        })
-      })
-    }
-    if (this.standardValueFlag === '1') {
-      this.superQueryJson.splice(classIndex + 1, 0, {
-        prop: 'standardValue',
-        label: '规值',
-        type: 'select',
-        options: this.bimProductAttributesList.pa008.map((item) => {
-          return {
-            label: item.name,
-            value: item.name
-          }
-        })
-      })
-    }
+  
     if (this.isDeputyUnitSwitch === '1') {
       let mainUnitIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
       this.superQueryJson.forEach((item) => {
@@ -493,7 +505,7 @@ export default {
   methods: {
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
-        this.standardValueFlag = res.data.standardValue
+        this.materialFlag = res.data.material
         this.colourFlag = res.data.colour
         this.processFlag = res.data.process
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping

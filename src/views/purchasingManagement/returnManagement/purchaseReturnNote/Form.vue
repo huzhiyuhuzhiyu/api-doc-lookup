@@ -122,7 +122,7 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
+                    @selection-change="handeleProductInfoData" height="400px">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -237,7 +237,24 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                    <el-table-column prop="material" label="材质" width="120" v-if="materialFlag == 1" :key="105">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in bimProductAttributesObj.pa021" :key="index"
+                            :label="item.name" :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in bimProductAttributesObj.pa010" :key="index"
+                            :label="item.name" :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
 
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -365,7 +382,7 @@
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData">
+                @selection-change="handeleProductInfoData" height="400px">
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -478,7 +495,24 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                <el-table-column prop="material" label="材质" width="120" v-if="materialFlag == 1" :key="105">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                      :disabled="btnType == 'look'">
+                      <el-option v-for="(item, index) in bimProductAttributesObj.pa021" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                      :disabled="btnType == 'look'">
+                      <el-option v-for="(item, index) in bimProductAttributesObj.pa010" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
 
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
@@ -717,9 +751,9 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
-import { getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getbimProductAttributes, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
   components: { Process, recordList },
   mixins: [busFlow, getProjectList],
@@ -990,7 +1024,8 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      bimProductAttributesObj: {}
     }
   },
   computed: {
@@ -1041,6 +1076,7 @@ export default {
     }
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     // this.handleChange()
@@ -1058,6 +1094,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
+
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1074,6 +1119,11 @@ export default {
       })
     },
     getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesObj = res.data
+        console.log(this.bimProductAttributesObj, 'this.bimProductAttributesObj')
+      })
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
         res.data.list.forEach((item) => {
@@ -2105,6 +2155,12 @@ export default {
         }
       }).catch(() => { })
     },
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>

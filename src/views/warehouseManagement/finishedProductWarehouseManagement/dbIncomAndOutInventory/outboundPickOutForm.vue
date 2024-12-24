@@ -177,6 +177,7 @@
                           <el-table-column prop="material" label="材质" width="120" key="2118">
 
                           </el-table-column>
+                          <el-table-column prop="colour" label="颜色" width="120" :key="2120"></el-table-column>
                           <!-- <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="aperture" label="孔径" width="100" /> -->
 
@@ -214,7 +215,7 @@
                   <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-model="activeName" v-else>
+              <el-tabs v-model="activeName" v-else v-loading="loadingFlag">
                 <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -301,94 +302,97 @@
                             @click="columnSetFun('product')" />
                         </el-tooltip>
                       </div>
-
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        :setColumnDisplayList="columnList" custom-column :partentOrChild="'product'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-
-
-                        <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
-                        <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
-                          min-width="160" />
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip>
-                        </el-table-column>
-                        <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
-                          min-width="160" />
-                        <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
-                        <el-table-column prop="processName" label="工序名称" width="160" :key="222">
-                        </el-table-column>
+                      <template v-if="tableDataFlag">
+                        <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                          :setColumnDisplayList="columnList" custom-column :partentOrChild="'product'"
+                          @selection-change="handeleProductInfoData" border :key="165"
+                          style="width: 100%;height: 407px;">
 
 
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
-                          <template slot="header">
-                            <span class="required">*</span>批次号
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
-                              @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
-                              {{ scope.row.batchNumber }}
-                            </el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
-
-                          <template slot-scope="scope">
-
-                            <div> {{ scope.row.shelfSpaceName }}</div>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
-                          :key="7"></el-table-column>
+                          <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                          <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
+                            min-width="160" />
+                          <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                            show-overflow-tooltip>
+                          </el-table-column>
+                          <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                            min-width="160" />
+                          <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
+                          <el-table-column prop="processName" label="工序名称" width="160" :key="222">
+                          </el-table-column>
 
 
-                        <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
-                          v-if="btnType != 'look'">
-                        </el-table-column>
+                          <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                            <template slot="header">
+                              <span class="required">*</span>批次号
+                            </template>
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
+                                @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
+                                {{ scope.row.batchNumber }}
+                              </el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
 
-                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '领料数量(主)' : '领料数量'" min-width="160">
-                          <template slot="header">
-                            <span class="required">*</span>{{ mainUnitFlag == 1 ? '领料数量(主)' : '领料数量' }}
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.num" placeholder="领料数量(主)" :disabled="btnType == 'look'"
-                              @input="watchNum(scope.row, scope.$index)">
-                            </el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                        <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                            <template slot-scope="scope">
 
-                        <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                        <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
-
-                        </el-table-column>
-                        <el-table-column prop="logo" label="Logo" width="120" key="2116">
-
-                        </el-table-column>
-                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
-
-                        </el-table-column>
-                        <el-table-column prop="material" label="材质" width="120" key="2118">
-
-                        </el-table-column>
+                              <div> {{ scope.row.shelfSpaceName }}</div>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"
+                            v-if="btnType != 'look'" :key="7"></el-table-column>
 
 
-                        <el-table-column prop="remark" label="备注" width="200" :key="128">
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
-                              placeholder="备注"></el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column label="操作" min-width="100" v-show="productData.length && btnType != 'look'"
-                          fixed="right">
-                          <template slot-scope="scope">
-                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
-                          </template>
-                        </el-table-column>
-                      </JNPF-table>
+                          <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
+                            v-if="btnType != 'look'">
+                          </el-table-column>
 
+                          <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'"
+                            min-width="120" />
+                          <el-table-column prop="num" :label="mainUnitFlag == 1 ? '领料数量(主)' : '领料数量'" min-width="160">
+                            <template slot="header">
+                              <span class="required">*</span>{{ mainUnitFlag == 1 ? '领料数量(主)' : '领料数量' }}
+                            </template>
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.num" placeholder="领料数量(主)" :disabled="btnType == 'look'"
+                                @input="watchNum(scope.row, scope.$index)">
+                              </el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                          <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+
+                          <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                          <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+
+                          </el-table-column>
+                          <el-table-column prop="logo" label="Logo" width="120" key="2116">
+
+                          </el-table-column>
+                          <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+
+                          </el-table-column>
+                          <el-table-column prop="material" label="材质" width="120" key="2118">
+
+                          </el-table-column>
+                          <el-table-column prop="colour" label="颜色" width="120" :key="2120"></el-table-column>
+
+                          <el-table-column prop="remark" label="备注" width="200" :key="128">
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
+                                placeholder="备注"></el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="操作" min-width="100" v-show="productData.length && btnType != 'look'"
+                            fixed="right">
+                            <template slot-scope="scope">
+                              <el-button type="text" @click="copyFun(scope.row, scope.$index)"
+                                size="mini">复制</el-button>
+                            </template>
+                          </el-table-column>
+                        </JNPF-table>
+                      </template>
 
 
                     </el-collapse-item>
@@ -534,6 +538,7 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
+      loadingFlag: false,
       isProjectSwitch: '',
       warehouseRequestObj: {
         type: 'normal', state: 'enable'
@@ -670,6 +675,7 @@ export default {
   },
 
   async created() {
+    this.loadingFlag = true
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
     await getBimBusinessSwitchConfigList(objs).then(res => {
@@ -678,6 +684,7 @@ export default {
 
     })
     await this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+    this.loadingFlag = false
   },
   computed: {
     ...mapGetters(['userInfo'])

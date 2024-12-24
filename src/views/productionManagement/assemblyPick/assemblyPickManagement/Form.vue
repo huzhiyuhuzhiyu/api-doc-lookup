@@ -85,6 +85,10 @@
                       <el-table-column prop="productName" label="用料名称" min-width="130"></el-table-column>
                       <el-table-column prop="productCode" label="用料编码" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
+                      <el-table-column prop="material" label="保持架材质" width="130" 
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120"
+                        v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
@@ -195,6 +199,10 @@
                   <el-table-column prop="productDrawingNo" label="用料规格" min-width="130"></el-table-column>
                   <el-table-column prop="productCode" label="用料编码" min-width="130"></el-table-column>
                   <el-table-column prop="processName" label="工序名称" min-width="130" />
+                  <el-table-column prop="material" label="保持架材质" width="130" 
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" 
+                        v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                   <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                     v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
@@ -249,8 +257,9 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
+
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
@@ -347,11 +356,13 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isProjectSwitch: '',
+      materialFlag:'',
+      colourFlag:'',
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-
+    await this.getOrderFiledMap()
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -361,6 +372,12 @@ export default {
 
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

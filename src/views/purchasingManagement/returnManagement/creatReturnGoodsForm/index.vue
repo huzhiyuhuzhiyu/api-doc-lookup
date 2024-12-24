@@ -156,7 +156,7 @@
                         </div>
                         <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                           <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO
-                            fixedNO @selection-change="handeleProductInfoData">
+                            fixedNO @selection-change="handeleProductInfoData" height="400px">
                             <el-table-column type="selection" width="60" fixed="left" align="center"
                               v-if="btnType !== 'look'" key="1" />
                             <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -273,7 +273,23 @@
                                 </el-form-item>
                               </template>
                             </el-table-column>
-                            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                            <el-table-column prop="material" label="材质" width="120" v-if="materialFlag == 1" :key="105">
+                              <template slot-scope="scope">
+                                <el-select v-model="scope.row.material" placeholder="请选择" clearable
+                                  style="width: 100%;">
+                                  <el-option v-for="(item, index) in bimProductAttributesObj.pa021" :key="index"
+                                    :label="item.name" :value="item.name"></el-option>
+                                </el-select>
+                              </template>
+                            </el-table-column>
+                            <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                              <template slot-scope="scope">
+                                <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                                  <el-option v-for="(item, index) in bimProductAttributesObj.pa010" :key="index"
+                                    :label="item.name" :value="item.name"></el-option>
+                                </el-select>
+                              </template>
+                            </el-table-column>
 
                             <el-table-column prop="remark" label="备注" min-width="200">
                               <template slot-scope="scope">
@@ -430,8 +446,7 @@
                         <el-table-column prop="processName" label="工序" width="160" sortable="custom"
                           v-if="isReturnSwitch === '1'" />
                         <el-table-column prop="remark" label="备注" width="160" v-if="isReturnSwitch === '1'" />
-                        <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
-                          v-if="isReturnSwitch === '1'" />
+
                         <el-table-column prop="code" label="产品编码" show-overflow-tooltip v-if="isReturnSwitch === '0'"
                           width="150"></el-table-column>
                         <el-table-column v-if="isProductNameSwitch === '1' && isReturnSwitch === '0'" prop="name"
@@ -500,10 +515,10 @@ import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { mapGetters } from 'vuex'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import { getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getbimProductAttributes, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
   components: { Process },
   mixins: [getProjectList],
@@ -569,10 +584,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-      // orderList: [
-      //   { label: "外协通知", value: "external" },
-      //   { label: "采购通知", value: "sale" },
-      // ],
+
       inspectionStatusList: [
         { label: '待检验', value: 'unInspect' },
         { label: '已检验', value: 'inspected' },
@@ -591,25 +603,7 @@ export default {
         { label: '审批拒绝', value: 'rebut' }
       ],
       orderListtf: [{ label: '退货', value: 'back' }, { label: '发货', value: 'delivery' }],
-      orderListdd: [
-        { label: '外贸', value: 'foreign_trade' },
-        { label: '内销', value: 'domestic_market' },
-        { label: '总成', value: 'assembly' }
-      ],
-      orderListfhfs: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
-      ],
-      orderList: [
-        { label: '正常任务', value: 'normal' },
-        { label: '预测订单', value: 'prediction' },
-        { label: '样品订单', value: 'sample' },
-        { label: '备货订单', value: 'stock_up' },
-        { label: '急件订单', value: 'urgent' }
-      ],
+
       productRules: {
         receivedQuantity: [
           {
@@ -767,6 +761,18 @@ export default {
         remark: '',
         approvalFlag: false
       },
+      standardValueFlag: '',
+      materialFlag: '',
+      colourFlag: '',
+      processFlag: '',
+      sealingCoverTypingFlag: '',
+      accuracyLevelFlag: '',
+      vibrationLevelFlag: '',
+      oilFlag: '',
+      oilQuantityFlag: '',
+      clearanceFlag: '',
+      packagingMethodFlag: '',
+      specialRequireFlag: '',
       defaultAddress: '',
       parentId: '',
       pickerOptions: {
@@ -842,6 +848,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getOrderFiledMap()
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch === '1') {
 
@@ -892,7 +899,20 @@ export default {
         })
       })
     },
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesObj = res.data
+        console.log(this.bimProductAttributesObj, 'this.bimProductAttributesObj')
+      })
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
         res.data.list.forEach((item) => {
@@ -1738,6 +1758,12 @@ export default {
         })
         .catch(() => { })
     }
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>

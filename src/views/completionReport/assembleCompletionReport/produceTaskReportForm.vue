@@ -24,14 +24,24 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
-                <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
-                <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
-                <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
-                <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
-                <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
-                <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                <el-descriptions-item label="打字内容" v-if="sealingCoverTypingFlag === '1'">{{ dataForm.sealingCoverTyping
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="精度等级" v-if="accuracyLevelFlag === '1'">{{ dataForm.accuracyLevel
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="振动等级" v-if="vibrationLevelFlag === '1'">{{ dataForm.vibrationLevel
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="油脂" v-if="oilFlag === '1'">{{ dataForm.oil }}</el-descriptions-item>
+                <el-descriptions-item label="油脂量" v-if="oilQuantityFlag === '1'">{{ dataForm.oilQuantity
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="游隙" v-if="clearanceFlag === '1'">{{ dataForm.clearance
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="包装方式" v-if="packagingMethodFlag === '1'">{{ dataForm.packagingMethod
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="特殊要求" v-if="specialRequireFlag === '1'">{{ dataForm.specialRequire
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="保持架材质" v-if="materialFlag === '1'">{{ dataForm.material
+                  }}</el-descriptions-item>
+                <el-descriptions-item label="颜色" v-if="colourFlag === '1'">{{ dataForm.colour }}</el-descriptions-item>
               </el-descriptions>
             </div>
 
@@ -98,59 +108,73 @@
               </el-col>
 
 
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="sealingCoverTypingFlag === '1'">
                 <div class="info">
                   <span class="left-title">打字内容：</span>
                   <span class="left-title">{{ processInfo.sealingCoverTyping }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="accuracyLevelFlag === '1'">
                 <div class="info">
                   <span class="left-title">精度等级：</span>
                   <span class="left-title">{{ processInfo.accuracyLevel }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="vibrationLevelFlag === '1'">
                 <div class="info">
                   <span class="left-title">振动等级：</span>
                   <span class="left-title">{{ processInfo.vibrationLevel }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="oilFlag === '1'">
                 <div class="info">
                   <span class="left-title">油脂：</span>
                   <span class="left-title">{{ processInfo.oil }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="oilQuantityFlag === '1'">
                 <div class="info">
                   <span class="left-title">油脂量：</span>
                   <span class="left-title">{{ processInfo.oilQuantity }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="clearanceFlag === '1'">
                 <div class="info">
                   <span class="left-title">游隙：</span>
                   <span class="left-title">{{ processInfo.clearance }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="packagingMethodFlag === '1'">
                 <div class="info">
                   <span class="left-title">包装方式：</span>
-                  <span class="left-title">{{ processInfo.processName }}</span>
+                  <span class="left-title">{{ currentProcess.packagingMethod }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="specialRequireFlag === '1'">
                 <div class="info">
                   <span class="left-title">特殊要求：</span>
                   <span class="left-title">{{ processInfo.specialRequire }}</span>
+                </div>
+
+              </el-col>
+              <el-col :sm="24" :xs="24" v-if="materialFlag === '1'">
+                <div class="info">
+                  <span class="left-title">保持架材质：</span>
+                  <span class="left-title">{{ currentProcess.material }}</span>
+                </div>
+
+              </el-col>
+              <el-col :sm="24" :xs="24" v-if="colourFlag === '1'">
+                <div class="info">
+                  <span class="left-title">颜色：</span>
+                  <span class="left-title">{{ currentProcess.colour }}</span>
                 </div>
 
               </el-col>
@@ -178,8 +202,7 @@
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
-                  <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType===4||currentProcessType===5">
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType === 4 || currentProcessType === 5">
                     <el-form-item label="配对方式" prop="pairingModeName">
                       <el-select v-model="currentProcess.pairingModeId" placeholder="请选择配对方式" style="width: 60%;"
                         clearable @input="handleClear" class="ipt" @change="(value) => changePairingMode(value)">
@@ -190,7 +213,7 @@
                       <span class="pairNum" v-if="currentProcess.pairingModeId">配对基本数量：{{ pairingModeNum }}</span>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType!==1">
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType !== 1">
                     <el-form-item label="测振等级:" prop="vibrationLevel" :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.vibrationLevel" placeholder="请选择测振等级" style="width: 100%;"
                         @change="(value) => handleSelectionChange(value)" class="ipt">
@@ -200,26 +223,32 @@
 
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="currentProcessType===4||currentProcessType===5">
+                  <el-col :sm="24" :xs="24" v-if="currentProcessType === 4 || currentProcessType === 5">
                     <el-form-item label="总配对数量(对):" prop="matchedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
-                      <el-input v-model="currentProcess.matchedQuantity" :disabled="currentProcess.pairingModeId===''?true:false" placeholder="总配对数量" class="ipt" @blur="countQualifiedQuantity"/>
+                      <el-input v-model="currentProcess.matchedQuantity"
+                        :disabled="currentProcess.pairingModeId === '' ? true : false" placeholder="总配对数量" class="ipt"
+                        @blur="countQualifiedQuantity" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
-                      <el-input v-model="currentProcess.qualifiedQuantity" v-if="currentProcessType===4||currentProcessType===5" :disabled="currentProcess.pairingModeId===''?false:true" placeholder="合格数量" class="ipt" 
+                      <el-input v-model="currentProcess.qualifiedQuantity"
+                        v-if="currentProcessType === 4 || currentProcessType === 5"
+                        :disabled="currentProcess.pairingModeId === '' ? false : true" placeholder="合格数量" class="ipt"
                         @blur="handleBlur()" />
-                        <el-input v-model="currentProcess.qualifiedQuantity" v-if="currentProcessType===1||currentProcessType===2||currentProcessType===3"  placeholder="合格数量" class="ipt" 
-                        @blur="handleBlur()" />
+                      <el-input v-model="currentProcess.qualifiedQuantity"
+                        v-if="currentProcessType === 1 || currentProcessType === 2 || currentProcessType === 3" placeholder="合格数量"
+                        class="ipt" @blur="handleBlur()" />
                     </el-form-item>
                   </el-col>
-             
-                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType!==1&&currentProcess.reportFlag">
+
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType !== 1 && currentProcess.reportFlag">
                     <!-- stockFlag 0否 继续生产 1入库 -->
                     <el-form-item label="是否入库:" prop="stockFlag">
-                      <el-select v-model="stockFlag" placeholder="请选择是否入库" :disabled="currentProcess.lastFlag" style="width: 100%;" class="ipt">
+                      <el-select v-model="stockFlag" placeholder="请选择是否入库" :disabled="currentProcess.lastFlag"
+                        style="width: 100%;" class="ipt">
                         <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label"
                           :value="item.value"></el-option>
                       </el-select>
@@ -227,19 +256,20 @@
                     </el-form-item>
                   </el-col>
 
-                  <el-col :sm="24" :xs="24" v-if="currentProcessType==1" :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''" >
+                  <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
+                    :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" placeholder="责废数量"
                         @blur="handleBlur2" class="ipt" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="currentProcessType==1">
+                  <el-col :sm="24" :xs="24" v-if="currentProcessType == 1">
                     <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur3"
                         class="ipt" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24"  v-if="currentProcessType==1">
+                  <el-col :sm="24" :xs="24" v-if="currentProcessType == 1">
                     <el-form-item label="返工数量:" class="iptLabel">
                       <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" />
                     </el-form-item>
@@ -334,13 +364,14 @@
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { detailProcess, getvibrationList,getPairingModelList } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getvibrationList, getPairingModelList } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
 import recordForm from './recordForm.vue'
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
 
   components: {
@@ -401,47 +432,81 @@ export default {
       ],
       vibrationLevelList: [],
       pairingModeList: [],
-      pairingModeListCopy:[],
+      pairingModeListCopy: [],
       pairingModeNum: 0,
-      currentProcessType:0,
+      currentProcessType: 0,
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      materialFlag: '',
+      colourFlag: '',
     }
   },
 
   async mounted() {
     await this.getpairingModeListFun()
   },
+  mounted() {
+    this.getOrderFiledMap()
 
+  },
   methods: {
-    countQualifiedQuantity(){
-      if(this.currentProcess.matchedQuantity){
-        this.totalReportNum=this.currentProcess.reportingQuantity=this.currentProcess.qualifiedQuantity=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.matchedQuantity, this.pairingModeNum]), 2)
+    countQualifiedQuantity() {
+      if (this.currentProcess.matchedQuantity) {
+        this.totalReportNum = this.currentProcess.reportingQuantity = this.currentProcess.qualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.matchedQuantity, this.pairingModeNum]), 2)
       }
     },
     // 定义当前工序的类型
-          //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序
-    setProcessType(){
-      if(this.currentProcess.vibrateReportFlag){
-            if(this.currentProcess.processType == 'vibrate'){
-              this.currentProcessType=2
-            }else if(!this.currentProcess.pairsReportFlag){
-              this.currentProcessType=3
-            }else if(this.currentProcess.processType == 'pairs'){
-              this.currentProcessType=4
+    //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序
+    setProcessType() {
+      if (this.currentProcess.vibrateReportFlag) {
+        if (this.currentProcess.processType == 'vibrate') {
+          this.currentProcessType = 2
+        } else if (!this.currentProcess.pairsReportFlag) {
+          this.currentProcessType = 3
+        } else if (this.currentProcess.processType == 'pairs') {
+          this.currentProcessType = 4
 
-            }else{
-              this.currentProcessType=5
-            }
-          }else{
-            this.currentProcessType=1
-          }
+        } else {
+          this.currentProcessType = 5
+        }
+      } else {
+        this.currentProcessType = 1
+      }
     },
+
     // 获取配对方式
     async getpairingModeListFun() {
       try {
         this.pairingModeList = await this.jnpf.getpairingModeListFun()
-        this.pairingModeListCopy=JSON.parse(JSON.stringify(this.pairingModeList))
+        this.pairingModeListCopy = JSON.parse(JSON.stringify(this.pairingModeList))
       } catch (error) { }
+
+
     },
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
+
+
+
     closeForm(flag) {
       if (flag) this.getRoutingDetailFun(this.dataForm.routingId)
     },
@@ -459,7 +524,7 @@ export default {
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
-      this.setProcessType()
+        this.setProcessType()
 
         this.commonFun()
         // this.getRoutingDetailFun(this.dataForm.routingId)
@@ -478,7 +543,7 @@ export default {
     },
     handleSelectionChange(value) {
       console.log("value", value);
-      if (this.currentProcessType!==2) {
+      if (this.currentProcessType !== 2) {
 
         const selectedItem = this.vibrationLevelList.find(item => item.name === value);
         console.log("selectedItem", selectedItem);
@@ -488,63 +553,63 @@ export default {
 
     },
     handleClear(value) {
-      console.log("value",value);
+      console.log("value", value);
       if (value === '') {
-        this.currentProcess.pairingModeId=""
+        this.currentProcess.pairingModeId = ""
         this.pairingModeNum = 0
-        this.currentProcess.matchedQuantity=''
-        this.currentProcess.qualifiedQuantity=''
-        this.currentProcess.reportingQuantity=0
+        this.currentProcess.matchedQuantity = ''
+        this.currentProcess.qualifiedQuantity = ''
+        this.currentProcess.reportingQuantity = 0
         // 这里可以执行清除操作后的逻辑
       }
-      console.log("aaa",this.currentProcess);
+      console.log("aaa", this.currentProcess);
     },
     changePairingMode(value) {
-      console.log("bbb",value);
-      if(value){
+      console.log("bbb", value);
+      if (value) {
 
         this.pairingModeNum = this.pairingModeListCopy.filter(items => items.id === value)[0].quantity;
-        this.currentProcess.qualifiedQuantity=''
-        this.currentProcess.reportingQuantity=0
-        if(this.currentProcessType!==4){
+        this.currentProcess.qualifiedQuantity = ''
+        this.currentProcess.reportingQuantity = 0
+        if (this.currentProcessType !== 4) {
 
           this.getReprotNum(this.currentProcess.pairingModeId)
         }
       }
     },
     // 获取上一道工序的配对方式 配对工序后面的可用
-    getPrvePairingModelListFun(){
+    getPrvePairingModelListFun() {
       let obj = {
         workOrderId: this.currentProcess.id,
         pairingModelId: "",
       }
-      getPairingModelList(obj).then(res=>{
-        console.log("上一道配对方式",res);
-        this.currentProcess.pairingModeId=""
-        this.pairingModeNum=""
-        this.pairingModeList=res.data
-        this.vibrationLevelList=[]
+      getPairingModelList(obj).then(res => {
+        console.log("上一道配对方式", res);
+        this.currentProcess.pairingModeId = ""
+        this.pairingModeNum = ""
+        this.pairingModeList = res.data
+        this.vibrationLevelList = []
       })
     },
     async getProcessFun(item) {
       this.currentProcess = item
       console.log("当前点击的工序", item);
-     
+
       this.setProcessType()
       this.stockFlag = false
-      if(this.currentProcessType==5){
-        this.currentProcess.pairingModeId=''
+      if (this.currentProcessType == 5) {
+        this.currentProcess.pairingModeId = ''
         this.getPrvePairingModelListFun()
       }
-      if(this.currentProcessType==4){
+      if (this.currentProcessType == 4) {
         await this.getpairingModeListFun()
       }
-      if(this.currentProcess.lastFlag===true) {
-        this.stockFlag=true
+      if (this.currentProcess.lastFlag === true) {
+        this.stockFlag = true
 
       }
-      console.log("object,this",this.stockFlag,this.currentProcessType);
-         this.targetHeight = ""
+      console.log("object,this", this.stockFlag, this.currentProcessType);
+      this.targetHeight = ""
       this.targetHeight2 = ""
       this.commonFun()
       this.processInfo = JSON.parse(JSON.stringify(item))
@@ -553,7 +618,7 @@ export default {
         this.getReprotNum('')
       }
       console.log("配对方式", this.pairingModeList, item.pairingModeId);
-      if(this.currentProcess.pairingModeId) this.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
+      if (this.currentProcess.pairingModeId) this.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
       this.currentProcessId = item.processId
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")
@@ -563,7 +628,7 @@ export default {
       this.$set(this.currentProcess, 'reworkQuantity', 0)
       // this.$set(this.currentProcess, 'vibrationLevel', "")
       console.log("当前current", item);
-   
+
 
     },
 
@@ -701,10 +766,10 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
-          if(this.currentProcessType===4||this.currentProcessType===5){
+          if (this.currentProcessType === 4 || this.currentProcessType === 5) {
             let flag = this.isPositiveInteger(this.currentProcess.matchedQuantity)
-            if(!flag) this.$message.error("总配对数量不能有小数")
-          if(!flag) submitFlag=false
+            if (!flag) this.$message.error("总配对数量不能有小数")
+            if (!flag) submitFlag = false
           }
           if (submitFlag === false) return
           let arr = []
@@ -735,7 +800,7 @@ export default {
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
-            } else if (this.currentProcessType===3) {
+            } else if (this.currentProcessType === 3) {
               obj.classAttribute = this.currentProcess.classAttribute
               obj.orderType = this.currentProcess.orderType
               obj.productDrawingNo = this.currentProcess.productDrawingNo
@@ -759,7 +824,7 @@ export default {
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
               console.log("测震到配对工序之间的工序");
-            } else if (this.currentProcessType ===4) {
+            } else if (this.currentProcessType === 4) {
               obj.classAttribute = this.currentProcess.classAttribute
               obj.orderType = this.currentProcess.orderType
               obj.productDrawingNo = this.currentProcess.productDrawingNo
@@ -781,8 +846,8 @@ export default {
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
-              obj.matchedQuantity=this.currentProcess.matchedQuantity
-              obj.pairingModeId=this.currentProcess.pairingModeId
+              obj.matchedQuantity = this.currentProcess.matchedQuantity
+              obj.pairingModeId = this.currentProcess.pairingModeId
               console.log("配对工序");
             } else {
               console.log("配对后工序");
@@ -807,8 +872,8 @@ export default {
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
-              obj.matchedQuantity=this.currentProcess.matchedQuantity
-              obj.pairingModeId=this.currentProcess.pairingModeId
+              obj.matchedQuantity = this.currentProcess.matchedQuantity
+              obj.pairingModeId = this.currentProcess.pairingModeId
             }
             arr.push(obj)
           } else {
@@ -838,7 +903,7 @@ export default {
             }
             arr.push(obj)
           }
-          
+
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
             this.init(this.id)

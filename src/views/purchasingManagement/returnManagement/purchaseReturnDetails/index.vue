@@ -368,27 +368,174 @@ export default {
     await this.getDeputyUnit()
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectSwitch('system', 'project')
+    let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'receivingStatus')
+    if (this.processFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'processName',
+        label: '工序',
+        type: 'select',
+        options: this.processList.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.colourFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'colour',
+        label: '颜色',
+        type: 'select',
+        options: this.bimProductAttributesList.pa010.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.materialFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'material',
+        label: '材质',
+        type: 'select',
+        options: this.bimProductAttributesList.pa021.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.specialRequireFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'specialRequire',
+        label: '特殊要求',
+        type: 'select',
+        options: this.bimProductAttributesList.pa016.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.packagingMethodFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'packagingMethod',
+        label: '包装方式',
+        type: 'select',
+        options: this.bimProductAttributesList.pa015.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.clearanceFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'clearance',
+        label: '游隙',
+        type: 'select',
+        options: this.bimProductAttributesList.pa001.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.oilQuantityFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'oilQuantity',
+        label: '油脂量',
+        type: 'select',
+        options: this.bimProductAttributesList.pa003.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.oilFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'oil',
+        label: '油脂',
+        type: 'select',
+        options: this.bimProductAttributesList.pa002.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+
+    if (this.vibrationLevelFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'vibrationLevel',
+        label: '振动等级',
+        type: 'select',
+        options: this.bimProductAttributesList.pa005.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.accuracyLevelFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'accuracyLevel',
+        label: '精度等级',
+        type: 'select',
+        options: this.bimProductAttributesList.pa006.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.sealingCoverTypingFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'sealingCoverTyping',
+        label: '打字内容',
+        type: 'select',
+        options: this.bimProductAttributesList.pa007.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+
     if (this.isDeputyUnitSwitch === '1') {
-      this.superQueryJson.forEach(item => {
+      let mainUnitIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
+      this.superQueryJson.forEach((item) => {
         if (item.prop === 'mainUnit') {
           item.label = '单位(主)'
         }
       })
-      this.superQueryJson.splice(7, 0, {
+      this.superQueryJson.splice(mainUnitIndex + 1, 0, {
         prop: 'deputyUnit',
         label: '单位(副)',
         type: 'input'
       })
-
     }
     if (this.isProductNameSwitch === '1') {
-
-      this.superQueryJson.splice(5, 0, {
+      let productCodeIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productCode')
+      this.superQueryJson.splice(productCodeIndex + 1, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
       })
     }
+
     this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
     this.search()
   },

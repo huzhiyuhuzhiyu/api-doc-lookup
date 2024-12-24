@@ -266,6 +266,8 @@
                     <el-table-column prop="productCode" label="用料编码" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="processName" label="工序名称" />
+                    <!-- <el-table-column prop="material" label="保持架材质" width="130"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120"></el-table-column> -->
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                     <el-table-column prop="materialsUsedQuantity" label="计划用量" />
@@ -354,7 +356,11 @@
                 <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
                 <el-table-column prop="productCode" label="用料编码" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                <el-table-column prop="processName" label="工序名称" />
+                <el-table-column prop="processName" label="工序名称" width="120"  />
+                <el-table-column prop="material" label="保持架材质" width="120" 
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" 
+                        v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                 <el-table-column prop="materialsUsedQuantity" label="计划用量" />
@@ -417,6 +423,7 @@ import { getWorkReportList } from "@/api/productOrdes/index.js"
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import MaterForm from './materForm.vue'
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
   mixins: [getProjectList],
   components: {
@@ -452,10 +459,13 @@ export default {
       btnType: "",
       title: "",
       isProjectSwitch: '',
+      materialFlag:'',
+      colourFlag:'',
     }
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getOrderFiledMap()
 
   },
   mounted() {
@@ -470,6 +480,12 @@ export default {
     },
     goBack() {
       this.$emit('close')
+    },
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
     },
     init(id, btnType) {
       this.btnType = btnType

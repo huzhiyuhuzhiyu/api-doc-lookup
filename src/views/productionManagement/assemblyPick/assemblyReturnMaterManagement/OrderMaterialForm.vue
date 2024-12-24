@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择订单物料" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="选择任务物料" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
 
@@ -47,6 +47,10 @@
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140"></el-table-column>
             <el-table-column prop="processName" label="工序名称" min-width="140" />
+            <el-table-column prop="material" label="保持架材质" width="130" 
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" 
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="mainUnit" label="单位" min-width="140" />
             <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="140" />
             <el-table-column prop="waitReceiveQuantity" label="待退料数量" min-width="140" />
@@ -66,6 +70,7 @@
 </template>
 <script>
 import { ordershengchanList, addOrderNum, detailordershengchan, getMaterialList } from '@/api/productOrdes/index.js'
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -96,7 +101,10 @@ export default {
       tableDataList: [],
       id: "",
       selectArr:[],
-      isProductNameSwitch:""
+      isProductNameSwitch:"",
+      materialFlag:'',
+      colourFlag:'',
+      
     }
   },
   async  created() {
@@ -109,7 +117,8 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
       } catch (error) { }
     },
-    init(id) {
+   async init(id) {
+      await this.getOrderFiledMap()
       this.customerVisible = true
       this.orderForm.productionOrderId = id
       this.getMaterialListFun()
@@ -120,7 +129,12 @@ export default {
         this.$set(item,'materialListId',item.id)
       });
     },
-     
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
     submitFun () {
      
      this.$emit('selectOrderMaterial',this.selectArr)

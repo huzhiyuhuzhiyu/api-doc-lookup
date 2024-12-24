@@ -49,6 +49,8 @@
                   <el-descriptions-item v-if="clearanceFlag==1" label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
                   <el-descriptions-item v-if="packagingMethodFlag==1" label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
                   <el-descriptions-item v-if="specialRequireFlag==1" label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item label="保持架材质" v-if="materialFlag==='1'">{{ dataForm.material }}</el-descriptions-item>
+                  <el-descriptions-item label="颜色" v-if="colourFlag==='1'">{{ dataForm.colour }}</el-descriptions-item>
                   <!-- <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'normal'">进行中</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'closed'">关闭</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'finish'">已完成</el-descriptions-item> -->
@@ -132,6 +134,10 @@
                   <el-table-column prop="productCode" label="用料编码" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="processName" label="工序名称" />
+                  <el-table-column prop="material" label="保持架材质" width="130" 
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" 
+                        v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                   <el-table-column prop="materialsUsedQuantity" label="计划用量" />
@@ -378,8 +384,8 @@ export default {
       prodOrderId: "",
       inspectData: [],
       isProjectSwitch: '',
-            // 属性字段  控制属性字段显示隐藏
-            accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -389,6 +395,8 @@ export default {
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
       materFormVisible:false,
+      materialFlag:'',
+      colourFlag:'',
     }
 
   },
@@ -422,6 +430,8 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
     },
     // 查看检验详情
@@ -554,7 +564,6 @@ export default {
     goBack() {
       this.$emit('close')
     },
-
     associationTaskFun() {
       this.relatedTaskVisible = true
       console.log(666);

@@ -58,7 +58,7 @@
                       |
                       <el-table :header-cell-style="{ background: '#F5F7FA', color: '#606266' }" :fixedNO="true" hasC
                         ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
-                        :data="dataFormTwo.data" border :height="customStyleData">
+                        :data="dataFormTwo.data" border height="400px">
                         <el-table-column type="selection" width="55" fixed="left" align="center"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
@@ -252,19 +252,109 @@
                             <el-form-item>
                               <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
                                 style="width: 100%;">
-                                <el-option v-for="(item, index) in list0" :key="index" :label="item.name"
-                                  :value="item.name"></el-option>
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
+                                  :label="item.name" :value="item.name"></el-option>
                               </el-select>
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" min-width="120"
-                          v-if="dataForm.classAttribute !== 'finish_product' && colourFlag === '1'">
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
+                          prop="sealingCoverTyping" label="打字内容" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
+                          prop="accuracyLevel" label="精度等级" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && vibrationLevelFlag === '1'"
+                          prop="vibrationLevel" label="振动等级" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product' && oilFlag === '1'"
+                          prop="oil" label="油脂" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && oilQuantityFlag === '1'"
+                          prop="oilQuantity" label="油脂量" min-width="160">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && clearanceFlag === '1'"
+                          prop="clearance" label="游隙" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          v-if="this.dataForm.classAttribute == 'finish_product' && packagingMethodFlag === '1'"
+                          prop="packagingMethod" label="包装方式" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
+                          v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index"
+                                :label="item.name" :value="item.id"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120" v-if="materialFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="colour" label="颜色" min-width="120" v-if="colourFlag === '1'">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
-                                <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                                  :value="item.name"></el-option>
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index"
+                                  :label="item.name" :value="item.name"></el-option>
                               </el-select>
                             </el-form-item>
                           </template>
@@ -280,91 +370,6 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
-                          prop="sealingCoverTyping" label="打字内容" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
-                          prop="accuracyLevel" label="精度等级" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                              <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && vibrationLevelFlag === '1'"
-                          prop="vibrationLevel" label="振动等级" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product' && oilFlag === '1'"
-                          prop="oil" label="油脂" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && oilQuantityFlag === '1'"
-                          prop="oilQuantity" label="油脂量" min-width="160">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && clearanceFlag === '1'"
-                          prop="clearance" label="游隙" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && packagingMethodFlag === '1'"
-                          prop="packagingMethod" label="包装方式" min-width="120">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
-                          v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
-                              style="width: 100%;">
-                              <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                                :value="item.id"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                           <template slot-scope="scope">
                             <el-form-item>
@@ -437,12 +442,12 @@ import {
   getWorkOrderNo,
   uploadProduct
 } from '@/api/salesManagement/assemblyOrders'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getOrderFiledMap } from '@/api/basicData/index'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
@@ -741,7 +746,7 @@ export default {
       olddeliveryDateArr: [], // 表格中旧的数据值
       oldData: [],
       formLoading: false,
-      customStyleData: 0,
+      customStyleData: 300,
       selectRows: [],
 
       list0: [],
@@ -766,11 +771,12 @@ export default {
       oilQuantityFlag: '',
       clearanceFlag: '',
       packagingMethodFlag: '',
-      specialRequireFlag: ''
+      specialRequireFlag: '',
+      bimProductAttributesList: {}
     }
   },
   async created() {
-    await this.getOrderSwitch()
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -847,41 +853,19 @@ export default {
     }
   },
   methods: {
-    getOrderSwitch() {
-      let obj = {
-        businessCode: 'orderField',
-        pageSize: -1
-      }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        res.data.orderField.forEach((item) => {
-          console.log(item.configValue2 === "purchase")
-          if (item.configValue2 === "purchase") {
-            if (item.configKey === "standardValue") {
-              this.standardValueFlag = item.configValue1
-            } else if (item.configKey === "colour") {
-              this.colourFlag = item.configValue1
-            } else if (item.configKey === "process") {
-              this.processFlag = item.configValue1
-            } else  if (item.configKey === "sealingCoverTyping") {
-              this.sealingCoverTypingFlag = item.configValue1
-            } else if (item.configKey === "accuracyLevel") {
-              this.accuracyLevelFlag = item.configValue1
-            } else if (item.configKey === "vibrationLevel") {
-              this.vibrationLevelFlag = item.configValue1
-            } else if (item.configKey === "oil") {
-              this.oilFlag = item.configValue1
-            } else if (item.configKey === "oilQuantity") {
-              this.oilQuantityFlag = item.configValue1
-            } else if (item.configKey === "clearance") {
-              this.clearanceFlag = item.configValue1
-            } else if (item.configKey === "packagingMethod") {
-              this.packagingMethodFlag = item.configValue1
-            } else if (item.configKey === "specialRequire") {
-              this.specialRequireFlag = item.configValue1
-            }
-          } 
-
-        })
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
     },
     async getProductNameSwitch(code, type) {
@@ -926,151 +910,9 @@ export default {
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-      let obj0 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa008',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj0).then((res) => {
-        this.list0 = res.data.records
-      })
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa007',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj1).then((res) => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa006',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj2).then((res) => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa005',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj3).then((res) => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa002',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj4).then((res) => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa003',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj5).then((res) => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa001',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj6).then((res) => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa015',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj7).then((res) => {
-        this.list7 = res.data.records
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
       })
 
       let obj8 = {
@@ -1089,43 +931,6 @@ export default {
       }
       getBimProcessList(obj8).then((res) => {
         this.list8 = res.data.records
-      })
-
-      let obj9 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa010',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj9).then((res) => {
-        this.list9 = res.data.records
-      })
-      let obj10 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa016',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj10).then((res) => {
-        this.list10 = res.data.records
       })
 
       // 获取税率(数据字典)
@@ -1202,6 +1007,7 @@ export default {
         }
       })
     },
+
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val

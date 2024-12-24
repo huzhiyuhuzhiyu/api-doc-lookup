@@ -53,61 +53,73 @@
           </el-col>
 
 
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="sealingCoverTypingFlag === '1'">
             <div class="info">
               <span class="left-title">打字内容：</span>
               <span class="left-title">{{ form.sealingCoverTyping }}</span>
             </div>
 
           </el-col>
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="accuracyLevelFlag === '1'">
             <div class="info">
               <span class="left-title">精度等级：</span>
               <span class="left-title">{{ form.accuracyLevel }}</span>
             </div>
 
           </el-col>
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="vibrationLevelFlag === '1'">
             <div class="info">
               <span class="left-title">振动等级：</span>
               <span class="left-title">{{ form.vibrationLevel }}</span>
             </div>
 
           </el-col>
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="oilFlag === '1'">
             <div class="info">
               <span class="left-title">油脂：</span>
               <span class="left-title">{{ form.oil }}</span>
             </div>
 
           </el-col>
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="oilQuantityFlag === '1'">
             <div class="info">
               <span class="left-title">油脂量：</span>
               <span class="left-title">{{ form.oilQuantity }}</span>
             </div>
 
           </el-col>
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="clearanceFlag === '1'">
             <div class="info">
               <span class="left-title">游隙：</span>
               <span class="left-title">{{ form.clearance }}</span>
             </div>
 
           </el-col>
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="packagingMethodFlag === '1'">
             <div class="info">
               <span class="left-title">包装方式：</span>
-              <span class="left-title">{{ form.processName }}</span>
+              <span class="left-title">{{ form.packagingMethod}}</span>
             </div>
 
           </el-col>
-          <el-col :sm="24" :xs="24">
+          <el-col :sm="24" :xs="24" v-if="specialRequireFlag === '1'">
             <div class="info">
               <span class="left-title">特殊要求：</span>
               <span class="left-title">{{ form.specialRequire }}</span>
             </div>
 
+          </el-col>
+          <el-col :sm="24" :xs="24" v-if="materialFlag === '1'">
+            <div class="info">
+              <span class="left-title">保持架材质：</span>
+              <span class="left-title">{{ form.material }}</span>
+            </div>
+          </el-col>
+          <el-col :sm="24" :xs="24" v-if="colourFlag === '1'">
+            <div class="info">
+              <span class="left-title">颜色：</span>
+              <span class="left-title">{{ form.colour }}</span>
+            </div>
           </el-col>
 
         </el-row>
@@ -235,6 +247,7 @@
 <script>
 import { detailordershengchan, getWorkList, addWorkReport, detailWorkData } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
+import { getOrderFiledMap } from '@/api/basicData/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -307,6 +320,17 @@ export default {
       codeConfig: {},
       vibrationLevelList: [],
       totalReportNum: 0,
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
     }
   },
   mounted() {
@@ -331,8 +355,9 @@ export default {
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },
-    init(workData, type) {
+   async init(workData, type) {
       console.log("workData", workData);
+      await this.getOrderFiledMap()
       if (type == 'process') {
         this.title = "工序报工"
       }
@@ -348,6 +373,20 @@ export default {
     handleBlur3() {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
 
+    },
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
     },
     // 获取振动等级数据
     getvibrationLevelFun() {

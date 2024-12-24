@@ -310,19 +310,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" v-if="dataForm.businessType == 'inbound_purchase'"
-                        width="120" key="210">
-                        <!-- <template slot="header">
-                            <span class="required">*</span>打字内容
-                          </template> -->
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list11" key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
+                 
                       <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
                         width="120" key="2111">
                         <!-- <template slot="header">
@@ -406,6 +394,27 @@
                           <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
                             :disabled="btnType == 'look'" style="width: 100%;">
                             <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="material" label="保持架材质" width="120" key="2118">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in list12" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="colour" label="颜色" width="120" key="210">
+                        <!-- <template slot="header">
+                            <span class="required">*</span>打字内容
+                          </template> -->
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in list11" key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
@@ -793,6 +802,7 @@ export default {
       list9: [],
       list10: [],
       list11: [],
+      list12: [],
       taxRateList: [],
       listQuery: {
         productName: '',
@@ -976,10 +986,11 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
       await getOrderFiledMap('purchase').then(res => {
         this.standardValueFlag = res.data.standardValue
-        this.colourFlag = res.data.colour
         this.processFlag = res.data.process
       })
     },
@@ -1025,15 +1036,6 @@ export default {
       //     specialRequire //特殊要求
       console.log(this.dataForm.businessType, this.bimProductAttributesList);
       if (this.dataForm.businessType == 'inbound_purchase') {
-        if (this.colourFlag === '1') {
-          this.list11 = this.bimProductAttributesList.pa010.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-
-        }
         if (this.standardValueFlag === '1') {
           this.list8 = this.bimProductAttributesList.pa008.map((item) => {
             return {
@@ -1044,6 +1046,24 @@ export default {
         }
 
       }
+      if (this.materialFlag === '1') {
+          this.list12 = this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+
+        }
+        if (this.colourFlag === '1') {
+          this.list11 = this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+
+        }
       if (this.specialRequireFlag === '1') {
         this.list9 = this.bimProductAttributesList.pa016.map((item) => {
           return {

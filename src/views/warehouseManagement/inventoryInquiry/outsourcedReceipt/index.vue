@@ -26,7 +26,6 @@ export default {
                     column: '',
                 }],
                 createByName: "",
-                month: this.jnpf.getToday('YYYY-MM'),
                 orderStartDate: "",
                 pageNum: 1,
                 pageSize: 20,
@@ -35,13 +34,16 @@ export default {
                 totalRowFlag: false,
                 productsCode: "",
                 productsName: "",
-                businessType:'inbound_external'
+                businessType:'inbound_external',
+                startDate:'',
+                endDate:'',
+                orderDate: '',
             },
             tableItems:[],
             columnList:[],
             searchList:[],
             superQueryJson:[],
-            exportType:'1237',
+            exportType:'1236',
             exportName:'外协收货报表',
             isProductNameSwitch:'',
             accountPeriod:'',
@@ -86,8 +88,8 @@ export default {
                 {
                     prop: 'orderDate',
                     label: '单据日期',
-                    type: 'month',
-                    valueFormat: 'yyyy-MM',
+                    type: 'daterange',
+                    valueFormat: 'yyyy-MM-dd',
                 },
                 {
                     prop: 'partnerName',
@@ -109,11 +111,6 @@ export default {
                     prop: 'productsCode',
                     label: '产品编码',
                     type: 'input'
-                },
-                {
-                    prop: 'mainUnit',
-                    label: '单位',
-                    type: 'input'
                 }
             ]
         },
@@ -130,12 +127,13 @@ export default {
                     clearable: false,
                 },
                 {
-                    fieldValue: this.jnpf.getToday('YYYY-MM'),
-                    field: 'month',
-                    label: '月份',
-                    prop: 'month',
-                    symbol: 'like',
-                    searchType: 2
+                    fieldValue: '',
+                    field: '',
+                    label: '',
+                    prop: 'orderDate',
+                    symbol: '',
+                    searchType: 5,
+                    noNeedSuper: true,
                 },
             ]
         },
@@ -147,7 +145,7 @@ export default {
                 { label: '包装工序', value: 'packing' },
                 { label: '配对工序', value: 'pairs' }
             ]
-            return arr.find(item=>item.value === row.processType).label
+            return arr.find(item=>item.value === row.processType) ?  arr.find(item=>item.value === row.processType).label : ''
         },
     }
 

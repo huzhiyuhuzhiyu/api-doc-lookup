@@ -49,6 +49,12 @@
                                                 popper-class="date_form"
                                                 @change="search('basic')"
                                 />
+                                <el-date-picker v-else-if="item.searchType === 5" v-model="item.fieldValue" type="daterange"
+                                                value-format="yyyy-MM-dd" style="width: 100%;" :clearable="false"
+                                                popper-class="date_form" start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                @change="search('basic')"
+                                />
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
                                            :placeholder="'请选择' + item.label"
                                            :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
@@ -303,7 +309,7 @@ export default {
         sortChange({ prop, order }) {
             let newProp = ''
             console.log(prop)
-            if (['productsDrawingNo','productsCode','productsName','warehouseName'].includes(prop)) {
+            if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode'].includes(prop)) {
                 newProp = prop
             } else {
                 newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -380,7 +386,8 @@ export default {
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
-            this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
+            this.jnpf.searchDateFormat(this.listQuery, 'orderDate', 'startDate', 'endDate')
+            this.jnpf.searchDateFormat(this.listQuery, 'orderDate', 'orderStartDate', 'orderEndDate')
             this.listMethod(this.listQuery).then(res => {
                 this.tableData = res.data.page ? res.data.page.records : res.data.list ? res.data.list : []
                 this.totalData = res.data.total || {}
@@ -398,12 +405,14 @@ export default {
                 this.basicQuery = {
                     matchLogic: 'AND',
                     condition: this.domSearchList.filter(item => item.fieldValue).map(item => {
-                        this.listQuery['accountPeriod'] = item.field === 'accountPeriod' ? item.accountPeriod : this.listQuery['accountPeriod']
+                        this.listQuery[item.field] = item.fieldValue
+                        this.listQuery['accountPeriod'] = item.field === 'accountPeriod' ? item.fieldValue : this.listQuery['accountPeriod']
                         this.listQuery['projectId'] = item.field === 'projectId' ? item.fieldValue : this.listQuery['projectId']
                         this.listQuery['month'] = item.field === 'month' ? item.fieldValue : this.listQuery['month']
+                        this.listQuery['orderDate'] = item.prop === 'orderDate' ? item.fieldValue : []
                         return {
                             ...item,
-                            fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                            fieldValue: item.hasOwnProperty('noNeedSuper') ? '' : Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                         }
                     })
                 }
@@ -454,9 +463,10 @@ export default {
         },
         goDetail(row,classType){
             this.lineListRequestObj = {
-                classType:classType,
+                classType:classType === 'total' ? '' : classType === 'turnoverBox' ? 'turnover_box' : classType,
                 warehouseId:row.warehouseId,
-                reportDate:this.listQuery.reportDate,
+                orderStartDate:this.listQuery.orderStartDate,
+                orderEndDate:this.listQuery.orderEndDate,
                 totalRowFlag:false,
                 pageSize:20,
                 pageNum:1,

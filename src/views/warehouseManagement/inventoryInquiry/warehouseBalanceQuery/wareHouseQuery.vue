@@ -32,7 +32,7 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
 
-                    <template v-for="item in searchList">
+                    <template v-for="item in domSearchList">
                         <el-col :span="4" :key="item.prop" v-if="item.hasOwnProperty('render') ? item.render : true">
                             <el-form-item>
                                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue"
@@ -83,7 +83,7 @@
                         </el-button>
                     </div>
                     <div class="JNPF-common-head-right">
-                        <el-tooltip content="高级查询" placement="top">
+                        <el-tooltip content="高级查询" placement="top"  v-if="needSuperQuery">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                                      @click="superQueryVisible = true"
                             />
@@ -233,6 +233,10 @@ export default {
                 return listQuery
             }
         },
+        needSuperQuery:{
+            type:Boolean,
+            default:true
+        },
     },
     name:'wareHouseQuery',
     data() {
@@ -257,6 +261,7 @@ export default {
             expands: true,
             totalData:{},
             mapTableItems:[],
+            domSearchList:[]
         };
     },
     created() {
@@ -339,6 +344,7 @@ export default {
                 this.treeLoading = false
             }
             this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
+            this.domSearchList = JSON.parse(JSON.stringify(this.searchList))
             this.initData()
         },
         initData() {
@@ -351,7 +357,7 @@ export default {
             this.listMethod(this.listQuery).then(res => {
                 console.log(res)
                 const mapArr = ['账期','结存状态','品名规格','产品名称','产品编码','工序名称']
-                const legendData =  Object.keys(res.data.records[0]).filter(item=> !mapArr.includes(item))
+                const legendData = res.data.records.length ?  Object.keys(res.data.records[0]).filter(item=> !mapArr.includes(item)) : []
                 this.mapTableItems = legendData
                 this.tableData = res.data.records ? res.data.records : []
                 this.total = res.data.total
@@ -365,8 +371,9 @@ export default {
             if (type === 'basic') {
                 this.basicQuery = {
                     matchLogic: 'AND',
-                    condition: this.searchList.filter(item => item.fieldValue).map(item => {
-                        this.listQuery.accountPeriod = item.field === 'accountPeriod' ? item.accountPeriod : this.listQuery.accountPeriod
+                    condition: this.domSearchList.filter(item => item.fieldValue).map(item => {
+                        this.listQuery[item.field] = item.fieldValue
+                        this.listQuery.accountPeriod = item.field === 'accountPeriod' ? item.fieldValue : this.listQuery.accountPeriod
                         this.listQuery['projectId'] = item.field === 'projectId' ? item.fieldValue : this.listQuery['projectId']
                         return {
                             ...item,

@@ -1,7 +1,7 @@
 
 
 <template>
-    <ReportTypeTable :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag" :treeTitle="treeTitle" renderTree :methodArr="methodArr" :list-request-obj="listRequestObj" :list-method="balanceQueryReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName"/>
+    <ReportTypeTable :need-super-query="false" :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag" :treeTitle="treeTitle" renderTree :methodArr="methodArr" :list-request-obj="listRequestObj" :list-method="balanceQueryReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName"/>
 </template>
 
 <script>
@@ -86,9 +86,9 @@ export default {
                 {prop:"accountPeriod", label:"账期",minWidth:160},
                 {prop:"balanceState", label:"结存状态",minWidth:160,formatter:(row, column, cellValue)=>{
                         if (row.balanceState === 'not_finished'){
-                            return '未完成'
+                            return '未结存'
                         }else{
-                            return '已完成'
+                            return '已结存'
                         }
                     }
                 },

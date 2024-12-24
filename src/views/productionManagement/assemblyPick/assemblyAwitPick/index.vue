@@ -116,6 +116,10 @@
               v-if="packagingMethodFlag == 1" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
             <el-table-column label="操作" width="220" fixed="right">
@@ -162,7 +166,7 @@ export default {
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       pickVisible: false,
-      columnList: ["sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire",],
+      columnList: [],
       orderTypeList: [
         { label: "正常任务", value: "normal" },
         { label: "返工任务", value: "rework" },
@@ -287,6 +291,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
       bimProductAttributesList: [],
       isProductNameSwitch:"",
 
@@ -330,6 +336,8 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
     },
     async getProductClassFun() {

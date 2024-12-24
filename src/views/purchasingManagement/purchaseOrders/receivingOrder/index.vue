@@ -98,6 +98,8 @@
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" width="100" sortable="custom"
               v-if="standardValueFlag === '1'" />
+            <el-table-column prop="material" label="材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
             <el-table-column prop="colour" label="颜色" width="100" sortable="custom" v-if="colourFlag === '1'" />
             <el-table-column prop="processName" label="工序" width="100" sortable="custom" v-if="processFlag === '1'" />
             <el-table-column prop="remark" label="备注" width="120" />
@@ -276,6 +278,7 @@ export default {
         }
       ],
       standardValueFlag: '',
+      materialFlag: "",
       colourFlag: '',
       processFlag: '',
       sealingCoverTypingFlag: '',
@@ -312,6 +315,19 @@ export default {
         label: '工序',
         type: 'select',
         options: this.processList.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+    }
+    if (this.materialFlag === '1') {
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'material',
+        label: '材质',
+        type: 'select',
+        options: this.bimProductAttributesList.pa021.map((item) => {
           return {
             label: item.name,
             value: item.name
@@ -382,6 +398,7 @@ export default {
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then(res => {
         this.standardValueFlag = res.data.standardValue
+        this.materialFlag = res.data.material
         this.colourFlag = res.data.colour
         this.processFlag = res.data.process
       })

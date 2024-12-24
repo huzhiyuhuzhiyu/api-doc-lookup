@@ -122,23 +122,22 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="standardValue" label="规值" width="120" :key="211"
-                        v-if="dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
+
+                      <el-table-column prop="material" label="材质" width="120" :key="211" v-if="materialFlag === '1'">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
+                          <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list0" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa021" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" width="120" :key="211"
-                        v-if="dataForm.classAttribute !== 'finish_product' && colourFlag === '1'">
+                      <el-table-column prop="colour" label="颜色" width="120" :key="211" v-if="colourFlag === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa010" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -158,8 +157,8 @@
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable disabled
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa007" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -167,8 +166,8 @@
                         prop="accuracyLevel" label="精度等级" width="120" :key="123">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable disabled>
-                            <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa006" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -178,8 +177,8 @@
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable disabled
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa005" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -187,8 +186,8 @@
                         label="油脂" width="120" :key="61">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.oil" placeholder="请选择" clearable disabled style="width: 100%;">
-                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa002" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -197,8 +196,8 @@
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.oilQuantity" placeholder="请选择" disabled clearable
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa003" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -207,8 +206,8 @@
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.clearance" placeholder="请选择" disabled clearable
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa001" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -217,8 +216,8 @@
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.packagingMethod" placeholder="请选择" disabled clearable
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa015" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -227,8 +226,8 @@
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable
                             style="width: 100%;">
-                            <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                              :value="item.id"></el-option>
+                            <el-option v-for="(item, index) in bimProductAttributesObj.pa016" :key="index"
+                              :label="item.name" :value="item.id"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -399,41 +398,13 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="standardValue" label="规值" width="120" :key="211"
-                    v-if="dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
-                        style="width: 100%;">
-                        <el-option v-for="(item, index) in bimProductAttributesObj.pa008" :key="index"
-                          :label="item.name" :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="colour" label="颜色" width="120" :key="211"
-                    v-if="dataForm.classAttribute !== 'finish_product' && colourFlag === '1'">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="processId" label="工序" width="120" :key="102"
-                    v-if="dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.processId" placeholder="请选择" clearable disabled
-                        style="width: 100%;">
-                        <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                          :value="item.id"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
+                 
                   <el-table-column v-if="dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
                     prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable disabled
                         style="width: 100%;">
-                        <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
@@ -442,7 +413,7 @@
                     prop="accuracyLevel" label="精度等级" width="120" :key="123">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable disabled>
-                        <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
@@ -453,7 +424,7 @@
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable disabled
                         style="width: 100%;">
-                        <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
@@ -462,7 +433,7 @@
                     label="油脂" width="120" :key="61">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.oil" placeholder="请选择" clearable disabled style="width: 100%;">
-                        <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
@@ -472,7 +443,7 @@
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.oilQuantity" placeholder="请选择" disabled clearable
                         style="width: 100%;">
-                        <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
@@ -482,7 +453,7 @@
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.clearance" placeholder="请选择" disabled clearable
                         style="width: 100%;">
-                        <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
@@ -492,7 +463,7 @@
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.packagingMethod" placeholder="请选择" disabled clearable
                         style="width: 100%;">
-                        <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
@@ -507,7 +478,32 @@
                       </el-select>
                     </template>
                   </el-table-column>
-
+                  <el-table-column prop="material" label="材质" width="120" :key="211" v-if="materialFlag === '1'">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable style="width: 100%;">
+                        <el-option v-for="(item, index) in bimProductAttributesObj.pa021" :key="index"
+                          :label="item.name" :value="item.name"></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="colour" label="颜色" width="120" :key="211" v-if="colourFlag === '1'">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="processId" label="工序" width="120" :key="102"
+                    v-if="dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.processId" placeholder="请选择" clearable disabled
+                        style="width: 100%;">
+                        <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"
@@ -696,7 +692,7 @@ export default {
   methods: {
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then(res => {
-        this.standardValueFlag = res.data.standardValue
+        this.materialFlag = res.data.material
         this.colourFlag = res.data.colour
         this.processFlag = res.data.process
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -738,7 +734,6 @@ export default {
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesObj = res.data
         console.log(this.bimProductAttributesObj, 'this.bimProductAttributesObj')
-        console.log(this.bimProductAttributesObj.pa016, 'pa016')
       })
 
       // 工序

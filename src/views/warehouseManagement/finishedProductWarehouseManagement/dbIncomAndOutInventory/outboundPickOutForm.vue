@@ -175,6 +175,7 @@
                         <el-table-column prop="material" label="材质" width="120" key="2118">
 
                         </el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" :key="2120"></el-table-column>
                         <!-- <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="aperture" label="孔径" width="100" /> -->
 
@@ -211,7 +212,7 @@
                   <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
                 </el-tab-pane>
               </el-tabs>
-              <el-tabs v-model="activeName" v-else>
+              <el-tabs v-model="activeName" v-else v-loading="loadingFlag">
                 <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -297,9 +298,9 @@
                             @click="columnSetFun('product')" />
                         </el-tooltip>
                       </div>
-
+                      <template v-if="tableDataFlag">
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" :setColumnDisplayList="columnList"  custom-column :partentOrChild="'product'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;height: 407px;">
 
 
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -369,7 +370,7 @@
                         <el-table-column prop="material" label="材质" width="120" key="2118">
 
                         </el-table-column>
-
+                        <el-table-column prop="colour" label="颜色" width="120" :key="2120"></el-table-column>
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
@@ -384,7 +385,7 @@
                           </template>
                         </el-table-column>
                       </JNPF-table>
-
+                      </template>
 
 
                     </el-collapse-item>
@@ -530,6 +531,7 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
+      loadingFlag:false,
       isProjectSwitch: '',
       warehouseRequestObj: {
         type: 'normal', state: 'enable'
@@ -666,6 +668,7 @@ export default {
   },
 
   async created() {
+    this.loadingFlag = true
     await this.getProjectSwitch('system', 'project')
     let objs = { "pageSize": -1, "businessCode": "product" }
     await getBimBusinessSwitchConfigList(objs).then(res => {
@@ -674,6 +677,7 @@ export default {
 
     })
     await this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+    this.loadingFlag = false
   },
   computed: {
     ...mapGetters(['userInfo'])

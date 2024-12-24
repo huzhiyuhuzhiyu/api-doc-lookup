@@ -24,14 +24,16 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
-                <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
-                <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
-                <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
-                <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
-                <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
-                <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                <el-descriptions-item label="打字内容" v-if="sealingCoverTypingFlag === '1'">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                <el-descriptions-item label="精度等级" v-if="accuracyLevelFlag=== '1'">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                <el-descriptions-item label="振动等级" v-if="vibrationLevelFlag === '1'">{{ dataForm.vibrationLevel }}</el-descriptions-item>
+                <el-descriptions-item label="油脂" v-if="oilFlag=== '1'">{{ dataForm.oil }}</el-descriptions-item>
+                <el-descriptions-item label="油脂量" v-if="oilQuantityFlag=== '1'">{{ dataForm.oilQuantity }}</el-descriptions-item>
+                <el-descriptions-item label="游隙" v-if="clearanceFlag=== '1'">{{ dataForm.clearance }}</el-descriptions-item>
+                <el-descriptions-item label="包装方式" v-if="packagingMethodFlag=== '1'">{{ dataForm.packagingMethod }}</el-descriptions-item>
+                <el-descriptions-item label="特殊要求" v-if="specialRequireFlag=== '1'">{{ dataForm.specialRequire }}</el-descriptions-item>
+                <el-descriptions-item label="保持架材质" v-if="materialFlag=== '1'">{{ dataForm.material }}</el-descriptions-item>
+                <el-descriptions-item label="颜色" v-if="colourFlag=== '1'">{{ dataForm.colour }}</el-descriptions-item>
               </el-descriptions>
             </div>
 
@@ -96,59 +98,73 @@
               </el-col>
 
 
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="sealingCoverTypingFlag === '1'">
                 <div class="info">
                   <span class="left-title">打字内容：</span>
                   <span class="left-title">{{ currentProcess.sealingCoverTyping }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="accuracyLevelFlag === '1'">
                 <div class="info">
                   <span class="left-title">精度等级：</span>
                   <span class="left-title">{{ currentProcess.accuracyLevel }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="vibrationLevelFlag === '1'">
                 <div class="info">
                   <span class="left-title">振动等级：</span>
                   <span class="left-title">{{ currentProcess.vibrationLevel }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="oilFlag === '1'">
                 <div class="info">
                   <span class="left-title">油脂：</span>
                   <span class="left-title">{{ currentProcess.oil }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="oilQuantityFlag === '1'">
                 <div class="info">
                   <span class="left-title">油脂量：</span>
                   <span class="left-title">{{ currentProcess.oilQuantity }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="clearanceFlag === '1'">
                 <div class="info">
                   <span class="left-title">游隙：</span>
                   <span class="left-title">{{ currentProcess.clearance }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="packagingMethodFlag === '1'">
                 <div class="info">
                   <span class="left-title">包装方式：</span>
-                  <span class="left-title">{{ currentProcess.processName }}</span>
+                  <span class="left-title">{{ currentProcess.packagingMethod }}</span>
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24" v-if="specialRequireFlag === '1'">
                 <div class="info">
                   <span class="left-title">特殊要求：</span>
                   <span class="left-title">{{ currentProcess.specialRequire }}</span>
+                </div>
+
+              </el-col>
+              <el-col :sm="24" :xs="24" v-if="materialFlag === '1'">
+                <div class="info">
+                  <span class="left-title">保持架材质：</span>
+                  <span class="left-title">{{ currentProcess.material }}</span>
+                </div>
+
+              </el-col>
+              <el-col :sm="24" :xs="24" v-if="colourFlag === '1'">
+                <div class="info">
+                  <span class="left-title">颜色：</span>
+                  <span class="left-title">{{ currentProcess.colour }}</span>
                 </div>
 
               </el-col>
@@ -305,6 +321,7 @@ import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
 import recordForm from './recordForm.vue'
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
 
   components: {
@@ -354,15 +371,41 @@ export default {
         ]
       },
       iptLabelMargin: '28px',
-      producerMargin: '28px'
+      producerMargin: '28px',
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
+
     }
   },
 
   mounted() {
+    this.getOrderFiledMap()
   },
 
   methods: {
-
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
     closeForm(flag) {
       if (flag) this.getRoutingDetailFun(this.dataForm.routingId)
     },

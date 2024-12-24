@@ -211,7 +211,10 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-
+                    <el-table-column prop="material" label="材质" width="130" :key="1015"
+                      v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="130" :key="1015"
+                      v-if="colourFlag == 1"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="110" />
                     <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" />
                     <el-table-column prop="remark" label="备注" min-width="200">
@@ -443,6 +446,10 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
+                <el-table-column prop="material" label="材质" width="130" :key="1015"
+                  v-if="materialFlag == 1"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="130" :key="1015"
+                  v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="processName" label="工序" width="110" />
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -661,7 +668,7 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { getWarehouseList, getBimBusinessDetail } from '@/api/basicData/index'
+import { getWarehouseList, getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -1013,6 +1020,7 @@ export default {
     }
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     this.getBimBusinessDetail()
@@ -1028,6 +1036,21 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

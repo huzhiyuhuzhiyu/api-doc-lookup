@@ -179,7 +179,6 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="standardValue" label="规值" width="100" />
-                        <el-table-column prop="colour" label="颜色" width="100" />
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
@@ -187,6 +186,8 @@
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                        <el-table-column prop="material" label="材质" width="130"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -374,7 +375,6 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="standardValue" label="规值" width="100" />
-                        <el-table-column prop="colour" label="颜色" width="100" />
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
@@ -382,6 +382,8 @@
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                        <el-table-column prop="material" label="材质" width="130"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"

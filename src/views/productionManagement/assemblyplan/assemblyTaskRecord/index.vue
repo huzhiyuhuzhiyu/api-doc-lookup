@@ -97,6 +97,10 @@
               v-if="packagingMethodFlag == 1" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="orderStatus" label="状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderStatus == 'normal'"><el-tag >正常</el-tag> </div>
@@ -309,8 +313,8 @@ export default {
       ],
      
       isProductNameSwitch:"",
-          // 属性字段  控制属性字段显示隐藏
-    accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -318,6 +322,8 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
+      materialFlag:'',
+      colourFlag:'',
       bimProductAttributesList: [],
     }
   },
@@ -356,6 +362,8 @@ export default {
         this.clearanceFlag = res.data.clearance
         this.packagingMethodFlag = res.data.packagingMethod
         this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
       })
     },
     async getProductClassFun() {
@@ -375,6 +383,32 @@ export default {
       //     packagingMethod //包装方式          
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'routingCode')
+      if (this.colourFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'colour',
+          label: '颜色',
+          type: 'select',
+          options: this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.materialFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'material',
+          label: '保持架材质',
+          type: 'select',
+          options: this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
       if (this.specialRequireFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
           prop: 'specialRequire',

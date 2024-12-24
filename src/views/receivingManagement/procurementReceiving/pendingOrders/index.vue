@@ -94,9 +94,11 @@
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
-
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
-
+            <el-table-column prop="material" label="材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
@@ -150,7 +152,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
@@ -165,7 +167,7 @@ export default {
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
-      columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
+      columnList: ['cooperativePartnerCode', 'departmentName', 'createTime'],
       deliveryDateArr: [],
       orderFollowVisible: false,
       superQueryVisible: false,
@@ -306,10 +308,11 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    
+
     if (this.isDeputyUnitSwitch === '1') {
       this.superQueryJson.forEach((item) => {
         if (item.prop === 'mainUnit') {
@@ -340,6 +343,21 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

@@ -85,6 +85,10 @@
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
+                      <el-table-column prop="material" label="保持架材质" width="130"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120"
+                        v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
@@ -194,6 +198,10 @@
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
+                      <el-table-column prop="material" label="保持架材质" width="130"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120"
+                        v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
@@ -245,7 +253,7 @@ import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/Flow
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
 
 export default {
   components: {
@@ -342,6 +350,9 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime:0,
       isProductNameSwitch:"",
+      materialFlag:'',
+      colourFlag:'',
+        
     }
   },
   computed: {
@@ -349,12 +360,18 @@ export default {
   },
 async  created() {
   await this.getProductNameSwitch('product', 'enable_productName')
-   
+  await this.getOrderFiledMap()
   },
   mounted() {
     this.getBimBusinessDetail()
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 

@@ -84,6 +84,12 @@
             <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
 
             <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="130" sortable="custom"
+              v-if="standardValueFlag == 1"></el-table-column>
+            <el-table-column prop="material" label="材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
@@ -157,7 +163,7 @@ import {
   deletepurPurchaseReceiptReturnGoods
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { excelExport } from '@/api/basicData/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
@@ -336,6 +342,7 @@ export default {
     }
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -373,6 +380,22 @@ export default {
     this.search('basic')
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

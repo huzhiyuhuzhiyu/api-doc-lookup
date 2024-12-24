@@ -125,7 +125,10 @@
               <div v-if="scope.row.demandStatus == 'finished'"><el-tag type="success">已完成</el-tag></div>
             </template>
           </el-table-column>
-
+          <el-table-column prop="material" label="材质" width="130" sortable="custom"
+            v-if="materialFlag == 1"></el-table-column>
+          <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+            v-if="colourFlag == 1"></el-table-column>
           <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
@@ -179,8 +182,8 @@ import moment from 'moment'
 import QuiryForm from '@/views/purchasingManagement/priceAdjustmentInquiry/purchaseInquirySheet/Form.vue'
 import fixedForm from '@/views/purchasingManagement/priceAdjustmentInquiry/fixedPointPricing/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getclassAttributeList } from '@/api/masterDataManagement/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getclassAttributeList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -250,16 +253,6 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-        {
-          prop: 'colour',
-          label: '颜色',
-          type: 'input'
         },
         {
           prop: 'source',
@@ -419,13 +412,17 @@ export default {
         ]
       },
       total: 0,
-      formVisible: false
+      formVisible: false,
+      materialFlag: '',
+      colourFlag: '',
+      bimProductAttributesList:{}
     }
   },
   mounted() {
     this.getProductClassFun()
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
@@ -450,12 +447,83 @@ export default {
         type: 'input'
       })
     }
+    this.advancedQueryFuns()
     this.tableDataFlag = true
 
 
     this.initData()
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+
+
+
+
+
+
+
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        let arr = []
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+          let obj = {
+            label: item.taxRate,
+            value: item.taxRate,
+          }
+          arr.push(obj)
+        })
+        let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+
+    },
+    advancedQueryFuns() {
+      //     material // 保持架材质
+      //     colour  //  颜色
+      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'demandStatus')
+      if (this.colourFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'colour',
+          label: '颜色',
+          type: 'select',
+          options: this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.materialFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'material',
+          label: '保持架材质',
+          type: 'select',
+          options: this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -691,7 +759,7 @@ export default {
         }
       }
     },
-   
+
     // 关闭询价单页面
     closePool(isRefresh) {
       this.quiryVisible = false
@@ -766,6 +834,11 @@ export default {
     },
 
     getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+
       let obj = {
         pageNum: 1,
         pageSize: -1

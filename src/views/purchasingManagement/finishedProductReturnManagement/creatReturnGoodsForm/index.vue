@@ -147,7 +147,7 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
+                    @selection-change="handeleProductInfoData" height="400px">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -268,16 +268,25 @@
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom"
+                      v-if="sealingCoverTypingFlag == 1" />
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom"
+                      v-if="accuracyLevelFlag == 1" />
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom"
+                      v-if="vibrationLevelFlag == 1" />
+                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" v-if="oilFlag == 1" />
+                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
+                      v-if="oilQuantityFlag == 1" />
+                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom"
+                      v-if="clearanceFlag == 1" />
+                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"
+                      v-if="packagingMethodFlag == 1" />
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                      v-if="specialRequireFlag === '1'" />
+                    <el-table-column prop="material" label="材质" width="130" :key="1015"
+                      v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="130" :key="1015"
+                      v-if="colourFlag == 1"></el-table-column>
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -525,15 +534,11 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import {
-  getclassAttributeList
-} from '@/api/masterDataManagement/index'
-import { getWarehouseList } from '@/api/basicData/index'
+import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters } from "vuex"
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import { getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
+import { getclassAttributeList, getbimProductAttributes, getbimProductAttributesListMap, getProducts } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
@@ -873,6 +878,7 @@ export default {
     }
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     this.getDeputyUnit()
@@ -891,6 +897,7 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -905,7 +912,27 @@ export default {
         this.isDeputyUnitSwitch = res.data.configValue1
       })
     },
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
     getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesObj = res.data
+        console.log(this.bimProductAttributesObj, 'this.bimProductAttributesObj')
+      })
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
         res.data.list.forEach((item) => {
@@ -1770,6 +1797,12 @@ export default {
         }
       }).catch(() => { })
     },
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>

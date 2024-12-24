@@ -40,14 +40,16 @@
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="工艺路线名称">{{ dataForm.routingName }}</el-descriptions-item>
-                  <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                  <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
-                  <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
-                  <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
-                  <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
-                  <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
-                  <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                  <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item label="打字内容" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                  <el-descriptions-item label="精度等级" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                  <el-descriptions-item label="振动等级" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.vibrationLevel }}</el-descriptions-item>
+                  <el-descriptions-item label="油脂" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.oil }}</el-descriptions-item>
+                  <el-descriptions-item label="油脂量" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.oilQuantity }}</el-descriptions-item>
+                  <el-descriptions-item label="游隙" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.clearance }}</el-descriptions-item>
+                  <el-descriptions-item label="包装方式" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.packagingMethod }}</el-descriptions-item>
+                  <el-descriptions-item label="特殊要求" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item label="保持架材质" v-if="materialFlag==='1'">{{ dataForm.material }}</el-descriptions-item>
+                  <el-descriptions-item label="颜色" v-if="colourFlag==='1'">{{ dataForm.colour }}</el-descriptions-item>
                   <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo }}</el-descriptions-item>
                   <!-- <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'normal'">进行中</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'closed'">关闭</el-descriptions-item>
@@ -84,6 +86,7 @@ import { getWorkReportList } from "@/api/productOrdes/index.js"
 import { gantt } from 'dhtmlx-gantt' // 引入dhtmlx-gantt
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 import getProjectList from '@/mixins/generator/getProjectList'
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
   mixins: [getProjectList],
   data() {
@@ -267,7 +270,20 @@ export default {
         // { align: 'center', name: 'person', label: '负责人', width: '120' },
         // { align: 'right', name: 'time', label: '时间节点', width: '80' },
         { align: 'center', name: 'progress', label: '进度', width: '120', template: (task) => task.progress * 100 + '%' },
-      ]
+      ],
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      materFormVisible:false,
+      materialFlag:'',
+      colourFlag:'',
     }
 
   },
@@ -279,6 +295,7 @@ export default {
   async created() {
 
     await this.getProjectSwitch('system', 'project')
+    await this.getOrderFiledMap()
   },
   mounted() {
     this.switchStyle()
@@ -394,6 +411,20 @@ export default {
 
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
     monthScaleTemplate(date) {
       const dateToStrss = gantt.date.date_to_str("%Y年");
       const dateToStrs = gantt.date.date_to_str("%M");

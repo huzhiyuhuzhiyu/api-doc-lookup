@@ -47,6 +47,10 @@
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140"></el-table-column>
             <el-table-column prop="processName" label="工序名称" min-width="140" />
+            <el-table-column prop="material" label="保持架材质" width="130"
+                        v-if="materialFlag == 1"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" 
+                        v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="mainUnit" label="单位" min-width="140" />
             <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="140" />
             <el-table-column prop="waitReceiveQuantity" label="待领料数量" min-width="140" />
@@ -66,6 +70,7 @@
 </template>
 <script>
 import { ordershengchanList, addOrderNum, detailordershengchan, getMaterialList,ordermaterialList } from '@/api/productOrdes/index.js'
+import { getOrderFiledMap } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -102,15 +107,22 @@ export default {
   },
  async created () {
     await this.getProductNameSwitch('product', 'enable_productName')
-     
+   
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
       } catch (error) { }
     },
-    init(id) {
+  async init(id) {
+      await this.getOrderFiledMap()
       this.customerVisible = true
       this.orderForm.productionOrderId = id
       this.getMaterialListFun()

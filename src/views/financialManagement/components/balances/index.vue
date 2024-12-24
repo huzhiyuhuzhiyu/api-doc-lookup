@@ -68,8 +68,8 @@
             <el-table-column v-if="item.prop == 'balanceState'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center" :sortable="item.sortable">
               <template slot-scope="scope">
-                <el-tag type="warning" v-if="scope.row.balanceState === 'not_finished'">未完成</el-tag>
-                <el-tag type="success" v-else-if="scope.row.balanceState === 'finished'">已完成</el-tag>
+                <el-tag type="warning" v-if="scope.row.balanceState === 'not_finished'">未结存</el-tag>
+                <el-tag type="success" v-else-if="scope.row.balanceState === 'finished'">已结存</el-tag>
               </template>
             </el-table-column>
             <el-table-column v-else-if="item.prop == 'paymentCycle'" :prop="item.prop" :key="item.prop"
@@ -179,7 +179,7 @@ export default {
     listRequestObj: {
       type: Object | Function,
       required: true
-      /* 
+      /*
         对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
         函数写法：(rowIndex) => {
           let id = this.linesList[rowIndex].id
@@ -671,28 +671,28 @@ export default {
       })
     },
     isInCurrentOrLastMonth(dateString) {
-      // 获取当前日期  
+      // 获取当前日期
       const now = new Date();
       const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth(); // 月份从0开始，0代表1月，11代表12月  
+      const currentMonth = now.getMonth(); // 月份从0开始，0代表1月，11代表12月
 
-      // 解析输入的日期字符串  
+      // 解析输入的日期字符串
       const [month, day] = dateString.split('-').map(Number);
 
-      // 创建指定日期对象  
-      const targetDate = new Date(currentYear, month - 1, day); // month - 1 因为月份从0开始  
+      // 创建指定日期对象
+      const targetDate = new Date(currentYear, month - 1, day); // month - 1 因为月份从0开始
 
-      // 获取指定日期的月份  
+      // 获取指定日期的月份
       const targetMonth = targetDate.getMonth();
       const targetYear = targetDate.getFullYear();
 
-      // 检查是否在本月或上月  
+      // 检查是否在本月或上月
       if (targetYear === currentYear) {
         if (targetMonth === currentMonth || targetMonth === currentMonth - 1) {
           return true;
         }
       } else if (targetYear === currentYear - 1 && currentMonth === 0 && targetMonth === 11) {
-        // 处理跨年情况：去年12月  
+        // 处理跨年情况：去年12月
         return true;
       }
 

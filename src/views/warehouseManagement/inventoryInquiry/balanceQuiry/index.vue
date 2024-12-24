@@ -86,9 +86,9 @@ export default {
                 {prop:"accountPeriod", label:"账期",minWidth:160},
                 {prop:"balanceState", label:"结存状态",minWidth:160,formatter:(row, column, cellValue)=>{
                         if (row.balanceState === 'not_finished'){
-                            return '未完成'
+                            return '未结存'
                         }else{
-                            return '已完成'
+                            return '已结存'
                         }
                     }
                 },

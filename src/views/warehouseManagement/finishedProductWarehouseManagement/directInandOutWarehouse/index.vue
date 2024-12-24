@@ -1743,6 +1743,7 @@ export default {
     changeWarehousex(val, data) {
       this.productData = []
       this.dataForm.businessType = ""
+      this.partnerFlag=false
       console.log(val, data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''

@@ -258,9 +258,19 @@ export default {
           item.classTypeName = '内圈'
         } else if (item.classType === 'outer_ring') {
           item.classTypeName = '外圈'
-        } else {
-
-        }
+        }  else if (item.classType === 'abrasive') {
+          item.classTypeName = '磨料'
+        } else if (item.classType === 'oil') {
+          item.classTypeName = '油料'
+        } else if (item.classType === 'accessory') {
+          item.classTypeName = '配件'
+        } else if (item.classType === 'turnover_box') {
+          item.classTypeName = '周转箱'
+        }else if (item.classType === 'holder') {
+          item.classTypeName = '保持架'
+        } else if (item.classType === 'sealing_cap') {
+          item.classTypeName = '密封盖'
+        } 
       })
 
       return res.data.records

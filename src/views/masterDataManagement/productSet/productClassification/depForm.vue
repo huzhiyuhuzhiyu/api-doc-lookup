@@ -155,6 +155,8 @@ export default {
         { label: '油料', value: 'oil' },
         { label: '配件', value: 'accessory' },
         { label: '周转箱', value: 'turnover_box' },
+        { label: '保持架', value: 'holder' },
+        { label: '密封盖', value: 'sealing_cap' },
       ]
     }
   },

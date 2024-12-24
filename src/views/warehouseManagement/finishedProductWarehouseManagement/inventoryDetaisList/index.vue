@@ -117,6 +117,8 @@
 
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
+          <el-table-column prop="warehouseName" label="仓库" width="160" sortable="custom" />
+          <el-table-column prop="shelfSpaceName" label="库位" width="160" sortable="custom" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -136,14 +138,13 @@
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
           <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-              <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="logo" label="logo" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="material" label="材质" width="120" sortable="custom"></el-table-column>
 
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
-          <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120"   />
+          <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
             sortable="custom"></el-table-column>
           <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
@@ -346,7 +347,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
       externalMaterOutboundFormVisible: false,
-      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount", 'discount'],
+      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount", 'discount','shelfSpaceName'],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -815,7 +816,7 @@ export default {
       this.search()
     },
     viewFun(id, type, row) {
-      if (row.businessType == 'inbound_order_production'||row.businessType== 'inbound_flip') {
+      if (row.businessType == 'inbound_order_production' || row.businessType == 'inbound_flip') {
         if (row.sourceType == 'direct') {
           this.formVisible = true
           this.$nextTick(() => {
@@ -1067,7 +1068,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' ||prop=='pairingModeName'|| prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'pairingModeName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

@@ -8,7 +8,7 @@
         <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
           @click="handleConfirm('submit')">保存并提交</el-button>
         <el-button
-          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase'||dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_purchase')"
+          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase'||dataForm.businessType=='inbound_sale_return'||dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_purchase')"
           type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
         <el-button v-if="btnType == 'look' || btnType == 'edit'" @click="goBack">{{ $t('common.cancelButton')
           }}</el-button>
@@ -879,6 +879,11 @@ export default {
           businessType: 'outbound_sale_send',
           code: "p031",
           fullName: "销售发货单"
+        },
+        {
+          businessType: 'inbound_sale_return',
+          code: "p031",
+          fullName: "销售退货单"
         },
       ],
       calculateQuantityFlag: "",

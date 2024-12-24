@@ -215,16 +215,16 @@ export default {
       this.cpData = JSON.parse(JSON.stringify(data))
       this.cpIndex = JSON.parse(JSON.stringify(index))
       this.form.productsId = data.productsId
-      this.form.vibrationLevel = data.vibrationLevel
-      this.form.sealingCoverTyping = data.sealingCoverTyping
-      this.form.oil = data.oil
-      this.form.processId = data.processId ? data.processId : ""
-      this.form.clearance = data.clearance
-      this.form.accuracyLevel = data.accuracyLevel
-      this.form.warehouseId = data.warehouseId
-      this.form.packagingMethod = data.packagingMethod
-      this.form.specialRequire = data.specialRequire
-      this.form.pairingModeId = data.pairingModeId
+      // this.form.vibrationLevel = data.vibrationLevel
+      // this.form.sealingCoverTyping = data.sealingCoverTyping
+      // this.form.oil = data.oil
+      // this.form.processId = data.processId ? data.processId : ""
+      // this.form.clearance = data.clearance
+      // this.form.accuracyLevel = data.accuracyLevel
+      // this.form.warehouseId = data.warehouseId
+      // this.form.packagingMethod = data.packagingMethod
+      // this.form.specialRequire = data.specialRequire
+      // this.form.pairingModeId = data.pairingModeId
 
       this.dataForm = data
       if (!requestFlag) {

@@ -133,7 +133,17 @@
                         <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              @change="(value) => changePairingMode(value, scope)">
+                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                :value="item.id">
+                              </el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" min-width="150"
@@ -153,28 +163,7 @@
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="退货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
-                          v-if="sealingCoverTypingFlag == 1"></el-table-column>
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
-                          v-if="accuracyLevelFlag == 1">
-                        </el-table-column>
-                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
-                          v-if="vibrationLevelFlag == 1"></el-table-column>
-                        <el-table-column prop="oil" label="油脂" width="120" :key="61"
-                          v-if="oilFlag == 1"></el-table-column>
-                        <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
-                          v-if="oilQuantityFlag == 1"></el-table-column>
-                        <el-table-column prop="clearance" label="游隙" width="120" :key="100"
-                          v-if="clearanceFlag == 1"></el-table-column>
-                        <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
-                          v-if="packagingMethodFlag == 1">
-                        </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"
-                          v-if="specialRequireFlag == 1"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
-                          v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="1020"
-                          v-if="colourFlag == 1"></el-table-column>
+
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
                           v-if="isattachmentswitch != 1">
                           <template slot="header">
@@ -216,6 +205,107 @@
                         <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
                         <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                         <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                        </el-table-column>
+                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
+                          v-if="sealingCoverTypingFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false">
+                              <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="packagingMethod" label="包装方式" width="120"
+                          v-if="packagingMethodFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.material" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.colour" placeholder="请选择" clearable
+                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                                :value="item.name"></el-option>
+                            </el-select>
+                          </template>
                         </el-table-column>
                         <el-table-column prop="remark" label="备注" min-width="200">
                           <template slot-scope="scope">
@@ -540,7 +630,7 @@ import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index"
 export default {
   components: { Process, Form },
@@ -820,6 +910,18 @@ export default {
       vibrationLevelFlag: "",
       materialFlag: '',
       colourFlag: '',
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
+      list5: [],
+      list6: [],
+      list7: [],
+      list8: [],
+      list9: [],
+      list10: [],
+      pairingModeList: [],
+      bimProductAttributesList  :[],
     }
   },
   computed: {
@@ -843,23 +945,48 @@ export default {
   async created() {
     // this.handleChange()
     // this.getProvinceList()
+    await this.getpairingModeListFun()
+    await this.getAttachmentswitch()
+    await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
 
-    this.getAttributeline()
   },
   mounted() {
     this.init()
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
-    this.getAttachmentswitch()
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
-    getProductAttributeFun() {
-      getOrderFiledMap('sale').then(res => {
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
+
+    // 选择配对方式 强行将单位改成对
+    changePairingMode(value, scope) {
+      if (value) {
+        this.dataFormTwo.productData[scope.$index].mainUnit = "对"
+        this.dataFormTwo.productData[scope.$index].deputyUnit = "对"
+      }
+    },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    async getProductClassFun() {
+      // 产品属性
+      await getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+
+    },
+    // 获取业务参数中 属性字段动态显示
+    async getProductAttributeFun() {
+      await getOrderFiledMap('sale').then(res => {
         console.log("产品属性", res);
         // sealingCoverTypingFlag list1  pa007
         // accuracyLevelFlag list2  pa006
@@ -871,15 +998,102 @@ export default {
         // specialRequireFlag list8 pa016
 
         this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        if (this.accuracyLevelFlag == 1) {
+          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.clearanceFlag = res.data.clearance
+        if (this.clearanceFlag == 1) {
+          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        console.log("this.list6", this.list6);
         this.oilFlag = res.data.oil
+        if (this.oilFlag == 1) {
+          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.oilQuantityFlag = res.data.oilQuantity
+        if (this.oilQuantityFlag == 1) {
+          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.packagingMethodFlag = res.data.packagingMethod
+        if (this.packagingMethodFlag == 1) {
+          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        if (this.sealingCoverTypingFlag == 1) {
+          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.specialRequireFlag = res.data.specialRequire
-        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.specialRequireFlag == 1) {
+          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        // 保持架材质
         this.materialFlag = res.data.material
+        if (this.materialFlag == 1) {
+          this.list9 = this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        // 颜色
         this.colourFlag = res.data.colour
+        if (this.colourFlag == 1) {
+          this.list10 = this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.vibrationLevelFlag == 1) {
+          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+          console.log(this.list3);
+        }
+
+
+
       })
     },
     async getProductNameSwitch(code, type) {

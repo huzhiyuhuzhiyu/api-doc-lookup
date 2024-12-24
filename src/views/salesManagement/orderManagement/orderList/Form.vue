@@ -1433,13 +1433,6 @@ export default {
       if (value) {
           this.productData[scope.$index].mainUnit="对"
           this.productData[scope.$index].deputyUnit="对"
-        // this.pairingModeNum = this.pairingModeList.filter(items => items.id === value)[0].quantity;
-        // this.currentProcess.qualifiedQuantity = ''
-        // this.currentProcess.reportingQuantity = 0
-        if (this.currentProcessType !== 4) {
-
-          this.getReprotNum(this.currentProcess.pairingModeId)
-        }
       }
     },
 

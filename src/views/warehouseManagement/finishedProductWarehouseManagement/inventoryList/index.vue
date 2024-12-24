@@ -262,7 +262,7 @@
     
     
     
-                <el-dropdown-item type="text" :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
+                <el-dropdown-item type="text" :disabled="!((scope.row.businessType == 'inbound_purchase'||scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
     
                     @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
     
@@ -614,6 +614,11 @@ export default {
                     businessType: 'outbound_sale_send',
                     code: "p031",
                     fullName: "销售出库单"
+                },
+                {
+                    businessType: 'inbound_sale_return',
+                    code: "p031",
+                    fullName: "销售退库单"
                 },
             ],
             enCode: "",

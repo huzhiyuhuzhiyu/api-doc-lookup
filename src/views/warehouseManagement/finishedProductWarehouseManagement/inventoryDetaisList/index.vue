@@ -138,14 +138,13 @@
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
           <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-              <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="logo" label="logo" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="material" label="材质" width="120" sortable="custom"></el-table-column>
 
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
-          <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120"   />
+          <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
             sortable="custom"></el-table-column>
           <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
@@ -817,7 +816,7 @@ export default {
       this.search()
     },
     viewFun(id, type, row) {
-      if (row.businessType == 'inbound_order_production'||row.businessType== 'inbound_flip') {
+      if (row.businessType == 'inbound_order_production' || row.businessType == 'inbound_flip') {
         if (row.sourceType == 'direct') {
           this.formVisible = true
           this.$nextTick(() => {
@@ -1069,7 +1068,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' ||prop=='pairingModeName'|| prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'pairingModeName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

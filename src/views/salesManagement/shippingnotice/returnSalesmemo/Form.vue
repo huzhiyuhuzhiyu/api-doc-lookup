@@ -54,7 +54,7 @@
                     </el-col>
 
 
-                     
+
 
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
@@ -89,21 +89,28 @@
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称"   width="160" v-if="isProductNameSwitch === '1'"
-                    show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="projectName" label="所属项目" min-width="120"  
-                    v-if="isProjectSwitch == 1" />
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
-
-                    <el-table-column prop="mainUnit" label="单位" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false"
+                          @change="(value) => changePairingMode(value, scope)">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </template>
                     </el-table-column>
 
-                    <el-table-column prop="deliveryQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
-                      key="789">
+                    <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                    <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" width="170"
+                      v-if="!dataForm.exchangeGoodsFlag" key="789">
                       <template slot="header">
-                        <span class="required">*</span>退货数量
+                        <span class="required">*</span>{{ mainUnitFlag === '1' ? '退货数量(主)' : '退货数量' }}
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
@@ -116,7 +123,9 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch != 1">
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch !== '1'">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
                       </template>
@@ -128,22 +137,22 @@
                         </el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch == 1">
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch === '1'">
                     </el-table-column>
 
-                    <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch == 1">
+                    <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch === '1'">
                       <template slot-scope="scope">
                         <div>{{ scope.row.taxRate + '%' }}</div>
                       </template>
 
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch != 1" >
+                    <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch !== '1'">
                       <template slot="header">
                         <span class="required">*</span>税率
                       </template>
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false"
-                          @change="changeTaxRate(scope.row, scope.$index)">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false" @change="changeTaxRate(scope.row, scope.$index)">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
@@ -155,16 +164,97 @@
                     <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                     <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                     </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" v-if="sealingCoverTypingFlag === '1'" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" v-if="accuracyLevelFlag === '1'" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" v-if="vibrationLevelFlag === '1'" />
-                    <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag === '1'" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag === '1'" />
-                    <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
-                    <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag == 1"></el-table-column>
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
+                      v-if="sealingCoverTypingFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false">
+                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.material" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable
+                          :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -235,7 +325,7 @@
                 </el-col>
 
 
-                
+
 
                 <el-col :sm="12" :xs="24">
                   <el-form-item label="备注" prop="remark">
@@ -269,21 +359,28 @@
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
-                show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="projectName" label="所属项目" min-width="120"  
-                v-if="isProjectSwitch == 1" />
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
-
-                <el-table-column prop="mainUnit" label="单位" min-width="160" show-overflow-tooltip>
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false"
+                      @change="(value) => changePairingMode(value, scope)">
+                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </template>
                 </el-table-column>
 
-                <el-table-column prop="deliveryQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
-                  key="789">
+                <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" width="170"
+                  v-if="!dataForm.exchangeGoodsFlag" key="789">
                   <template slot="header">
-                    <span class="required">*</span>退货数量
+                    <span class="required">*</span>{{ mainUnitFlag === '1' ? '退货数量(主)' : '退货数量' }}
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
@@ -295,7 +392,9 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch != 1">
+                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch !== '1'">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
                   </template>
@@ -307,43 +406,124 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch == 1">
+                <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch === '1'">
                 </el-table-column>
 
-                <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch == 1">
+                <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch === '1'">
                   <template slot-scope="scope">
                     <div>{{ scope.row.taxRate + '%' }}</div>
                   </template>
 
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch != 1">
+                <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="noticeswitch !== '1'">
                   <template slot="header">
                     <span class="required">*</span>税率
                   </template>
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false"
-                      @change="changeTaxRate(scope.row, scope.$index)">
+                    <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                      :disabled="btnType == 'look' ? true : false" @change="changeTaxRate(scope.row, scope.$index)">
                       <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                         :value="item.taxRate"></el-option>
                     </el-select>
                   </template>
 
                 </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag == 1"
+                  :key="211">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
                 </el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" v-if="sealingCoverTypingFlag === '1'" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" v-if="accuracyLevelFlag === '1'" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" v-if="vibrationLevelFlag === '1'" />
-                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag === '1'" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag === '1'" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1" :key="123">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false">
+                      <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
+                  :key="17">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oil" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.clearance" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
+                  :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
+                  :key="101">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.material" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable
+                      :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
+                      <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                        :value="item.name"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+
+
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -487,25 +667,33 @@
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="productName" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
-                show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
 
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" v-if="sealingCoverTypingFlag === '1'" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" v-if="accuracyLevelFlag === '1'" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" v-if="vibrationLevelFlag === '1'" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+                  v-if="sealingCoverTypingFlag === '1'" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+                  v-if="accuracyLevelFlag === '1'" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+                  v-if="vibrationLevelFlag === '1'" />
                 <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag === '1'" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag === '1'" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag === '1'" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" v-if="packagingMethodFlag === '1'" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
+                  v-if="oilQuantityFlag === '1'" />
+                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"
+                  v-if="clearanceFlag === '1'" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+                  v-if="packagingMethodFlag === '1'" />
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                  v-if="specialRequireFlag === '1'" />
+                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+                  v-if="materialFlag == 1"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -572,7 +760,7 @@
                     <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6" v-if="isProductNameSwitch==1">
+                <el-col :span="6" v-if="isProductNameSwitch == 1">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                   </el-form-item>
@@ -600,13 +788,13 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="name" label="产品名称"    width="160" v-if="isProductNameSwitch === '1'"
-                show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" />
 
                 <el-table-column prop="productCategoryName" label="所属分类" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
+                  v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="inventoryQuantity" label="库存数量">
                   <template slot-scope="scope">
@@ -645,20 +833,21 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
-import { getBimBusinessSwitchConfigList ,getOrderFiledMap} from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
+
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index"
 export default {
   components: { Process, recordList },
-  mixins: [busFlow,getProjectList],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
-      isProjectSwitch:"",
+      isProjectSwitch: "",
       isattachmentswitch: '',
       noticeswitch: "",
       tipsvisible: false,
@@ -717,18 +906,8 @@ export default {
         { label: "退货", value: "back" },
         { label: "发货", value: "delivery" },
       ],
-      orderListdd: [
-        { label: "外贸", value: "foreign_trade" },
-        { label: "内销", value: "domestic_market" },
-        { label: "总成", value: "assembly" }
-      ],
-      orderListfhfs: [
-        { label: "送货", value: "deliver_goods" },
-        { label: "自提", value: "self_pickup" },
-        { label: "快递", value: "express_delivery" },
-        { label: "货运", value: "freight_transport" },
-        { label: "到付", value: "collect_payment" }
-      ],
+
+
       orderList: [
         { label: "正常任务", value: "normal" },
         { label: "预测订单", value: "prediction" },
@@ -840,11 +1019,7 @@ export default {
       paymentCycleList: [],
       activeNameDetail: 'productInfo',
       coverNum: "",//用于计算
-      invoicingStatusList: [
-        { label: "未开票", value: "not_invoiced" },
-        { label: "部分开票", value: "partial_invoicing" },
-        { label: "已开票", value: "invoiced" },
-      ],
+
       btnType: undefined,
       areaList: [],
       provinces: [],
@@ -931,10 +1106,21 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
+      materialFlag: '',
+      colourFlag: '',
       bimProductAttributesList: {},
-
+      mainUnitFlag: null,
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
+      list5: [],
+      list6: [],
+      list7: [],
+      list8: [],
+      list9: [],
+      list10: [],
+      pairingModeList:[],
     }
   },
   computed: {
@@ -958,46 +1144,181 @@ export default {
   async created() {
     // this.handleChange()
     // this.getProvinceList()
+    await this.getpairingModeListFun()
+
+    await this.getAttachmentswitch()
+    await this.getProductClassFun()
+    await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    await this.getOrderFiledMap()
-     
+
     this.getAttributeline()
   },
   mounted() {
+    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
+
     this.getBimBusinessDetail()
     let tBody = document.querySelectorAll('.el-table')[0]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
-    this.getAttachmentswitch()
   },
   methods: {
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
-        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-        this.accuracyLevelFlag = res.data.accuracyLevel
-        this.vibrationLevelFlag = res.data.vibrationLevel
-        this.oilFlag = res.data.oil
-        this.oilQuantityFlag = res.data.oilQuantity
+    async getMainUnitFun(code, type) {
+      this.listLoading = true
+      try {
+        this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
+        this.tableDataFlag = true
+        this.listLoading = false
+      } catch (error) {
+      }
+    },
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
+    // 选择配对方式 强行将单位改成对
+    changePairingMode(value, scope) {
+      if (value) {
+        this.dataFormTwo.productData[scope.$index].mainUnit = "对"
+        this.dataFormTwo.productData[scope.$index].deputyUnit = "对"
+      }
+    },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    async getProductClassFun() {
+      // 产品属性
+      await getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+
+    },
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
+      getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        if (this.accuracyLevelFlag == 1) {
+          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.clearanceFlag = res.data.clearance
+        if (this.clearanceFlag == 1) {
+          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        console.log("this.list6", this.list6);
+        this.oilFlag = res.data.oil
+        if (this.oilFlag == 1) {
+          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.oilQuantityFlag = res.data.oilQuantity
+        if (this.oilQuantityFlag == 1) {
+          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.packagingMethodFlag = res.data.packagingMethod
+        if (this.packagingMethodFlag == 1) {
+          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        if (this.sealingCoverTypingFlag == 1) {
+          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
         this.specialRequireFlag = res.data.specialRequire
+        if (this.specialRequireFlag == 1) {
+          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        // 保持架材质
         this.materialFlag = res.data.material
+        if (this.materialFlag == 1) {
+          this.list9 = this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        // 颜色
         this.colourFlag = res.data.colour
+        if (this.colourFlag == 1) {
+          this.list10 = this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.vibrationLevelFlag == 1) {
+          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+          console.log(this.list3);
+        }
+
+
+
       })
     },
+
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
- 
+
       } catch (error) { }
     },
-    getAttachmentswitch() {
+    async getAttachmentswitch() {
       let obj = {
         businessCode: 'return',
         pageSize: -1
       }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
+      await getBimBusinessSwitchConfigList(obj).then((res) => {
         console.log(res);
         res.data.return.forEach((item) => {
           if (item.configKey == 'sale_order') {
@@ -1117,7 +1438,7 @@ export default {
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
       return (rule, value, callback) => {
-        if (this.noticeswitch != 1) return
+        if (this.noticeswitch !== '1') return
         let index = Number(rule.field.match(/\d+/)[0])
         let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `退货数量超过最大可退货数量`
         if (!value || value == 0) { callback() }
@@ -1319,7 +1640,7 @@ export default {
     },
     // 点击选择产品
     openSeleceProductDialog() {
-      if (this.noticeswitch == 1) {
+      if (this.noticeswitch === '1') {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
         this.productVisible = true
         this.searchProductFun()
@@ -1496,16 +1817,19 @@ export default {
           row.deliveryQuantity = row.deliveryQuantity.substring(0, 8);
         }
       }
+
       console.log("index", index);
       console.log("row.deliveryQuantity", row.deliveryQuantity);
       if (row.calculationDirection == 'multiplication') {
-        productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity * row.ratio, 2)
+          this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
+          productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity * row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
 
       } else {
-        productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
+          this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
+          productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
@@ -1817,7 +2141,7 @@ export default {
           }
           res.data.noticeLineList.forEach(item => {
             item.drawingNo = item.productDrawingNo
-            item.taxRate = item.taxRate+"%"
+            item.taxRate = item.taxRate + "%"
           });
           this.dataFormTwo.productData = res.data.noticeLineList
         })

@@ -398,8 +398,8 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
-                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
@@ -570,8 +570,8 @@
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
-                <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
@@ -1760,6 +1760,18 @@ export default {
               taxRate: item.taxRate ? item.taxRate : '',
               totalAmount: item.totalAmount ? item.totalAmount : '',
               returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+              sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
+              accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
+              vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
+              oil: item.oil ? item.oil : '',
+              oilQuantity: item.oilQuantity ? item.oilQuantity : '',
+              clearance: item.clearance ? item.clearance : '',
+              packagingMethod: item.packagingMethod ? item.packagingMethod : '',
+              specialRequire: item.specialRequire ? item.specialRequire : '',
+              material: item.material ? item.material : '',
+              colour: item.colour ? item.colour : '',
+
+
             }
             obj1.receiptLineList.push(dep1)
             if (this.btnType == 'add' || this.btnType == 'copy') {
@@ -1781,13 +1793,23 @@ export default {
                 excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
                 excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
                 price: item.price ? item.price : '',
-              pairingModeId: item.pairingModeId ? item.pairingModeId : '',
-              taxAmount: item.taxAmount ? item.taxAmount : '',
+                pairingModeId: item.pairingModeId ? item.pairingModeId : '',
+                taxAmount: item.taxAmount ? item.taxAmount : '',
                 taxRate: item.taxRate ? item.taxRate : '',
                 totalAmount: item.totalAmount ? item.totalAmount : '',
                 // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
                 remark: item.remark ? item.remark : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+                sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
+              accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
+              vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
+              oil: item.oil ? item.oil : '',
+              oilQuantity: item.oilQuantity ? item.oilQuantity : '',
+              clearance: item.clearance ? item.clearance : '',
+              packagingMethod: item.packagingMethod ? item.packagingMethod : '',
+              specialRequire: item.specialRequire ? item.specialRequire : '',
+              material: item.material ? item.material : '',
+              colour: item.colour ? item.colour : '',
                 sourceNoticeLineList: [
                   {
                     id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
@@ -1826,8 +1848,18 @@ export default {
                 taxRate: item.taxRate ? item.taxRate : '',
                 totalAmount: item.totalAmount ? item.totalAmount : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-              pairingModeId: item.pairingModeId ? item.pairingModeId : '',
-              sourceNoticeLineList: [
+                pairingModeId: item.pairingModeId ? item.pairingModeId : '',
+                sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
+                accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
+                vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
+                oil: item.oil ? item.oil : '',
+                oilQuantity: item.oilQuantity ? item.oilQuantity : '',
+                clearance: item.clearance ? item.clearance : '',
+                packagingMethod: item.packagingMethod ? item.packagingMethod : '',
+                specialRequire: item.specialRequire ? item.specialRequire : '',
+                material: item.material ? item.material : '',
+                colour: item.colour ? item.colour : '',
+                sourceNoticeLineList: [
                   {
                     id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
                     deliveryQuantity: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].deliveryQuantity : item.deliveryQuantity,

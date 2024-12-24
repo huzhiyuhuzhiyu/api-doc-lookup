@@ -198,9 +198,9 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" >
-                        <template slot-scope="scope"> 
-                          <div>{{ scope.row.pairingModeId?'对':scope.row.mainUnit }}</div>
+                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120">
+                        <template slot-scope="scope">
+                          <div>{{ scope.row.pairingModeId ? '对' : scope.row.mainUnit }}</div>
                         </template>
                       </el-table-column>
 
@@ -214,9 +214,9 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" >
-                        <template slot-scope="scope"> 
-                          <div>{{ scope.row.pairingModeId?'对':scope.row.deputyUnit }}</div>
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1">
+                        <template slot-scope="scope">
+                          <div>{{ scope.row.pairingModeId ? '对' : scope.row.deputyUnit }}</div>
                         </template>
                       </el-table-column>
                       <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -263,8 +263,8 @@
                             placeholder="原批次号"></el-input>
                         </template>
                       </el-table-column> -->
-              <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
-                      <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+                      <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
+                      <!-- <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -290,8 +290,8 @@
                               :label="item.name" :value="item.name"></el-option>
                           </el-select>
                         </template>
-                      </el-table-column>
-                      <el-table-column prop="material" label="材质" width="120" key="2118">
+                      </el-table-column> -->
+                      <!-- <el-table-column prop="material" label="材质" width="120" key="2118">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -299,9 +299,9 @@
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
-                      </el-table-column>
-                      <el-table-column prop="standardValue" v-if="dataForm.businessType=='inbound_purchase'" label="规值" width="120"
-                        key="211">
+                      </el-table-column> -->
+                      <el-table-column prop="standardValue" v-if="dataForm.businessType == 'inbound_purchase'" label="规值"
+                        width="120" key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -310,7 +310,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" v-if="dataForm.businessType=='inbound_purchase'" width="120" key="210">
+                      <el-table-column prop="colour" label="颜色" v-if="dataForm.businessType == 'inbound_purchase'"
+                        width="120" key="210">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -520,6 +521,7 @@
                 v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
+              <el-table-column prop="pairingModeName" label="配对方式" width="160" />
 
 
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -932,8 +934,8 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
-  // 获取配对方式
-  async getpairingModeListFun() {
+    // 获取配对方式
+    async getpairingModeListFun() {
       try {
         this.pairingModeList = await this.jnpf.getpairingModeListFun()
         console.log("this.par", this.pairingModeList);
@@ -1021,7 +1023,7 @@ export default {
       //     clearance //游隙
       //     packagingMethod //包装方式          
       //     specialRequire //特殊要求
-      console.log(this.dataForm.businessType ,this.bimProductAttributesList);
+      console.log(this.dataForm.businessType, this.bimProductAttributesList);
       if (this.dataForm.businessType == 'inbound_purchase') {
         if (this.colourFlag === '1') {
           this.list11 = this.bimProductAttributesList.pa010.map((item) => {
@@ -1372,7 +1374,7 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      console.log("arr",arr);
+      console.log("arr", arr);
       arr.forEach(item => {
         if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
           this.$set(item, 'discount', '')
@@ -1385,8 +1387,8 @@ export default {
         }
         this.$set(item, 'warehouseId', this.dataForm.warehouseId)
         this.$set(item, 'warehouseName', this.dataForm.warehouseName)
-        this.$set(item, 'warehouseType', this.dataForm.warehouseType) 
-        this.$set(item, 'productCategoryName', item.productCategoryName) 
+        this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+        this.$set(item, 'productCategoryName', item.productCategoryName)
         item.classAttribute = item.classAttribute
         item.ordersId = ""
         item.ordersLineId = ""
@@ -1407,56 +1409,56 @@ export default {
           item.productName = item.name
           item.productsId = item.id
         }
-        if (this.dataForm.businessType == 'inbound_purchase') {
-          console.log(555,item.productCategoryName);
-          if (item.productCategoryName == '保持架') {
-            let arr = ['pa017', 'pa021']
-            arr.forEach(items => {
-              let obj1 = {
-                pageNum: -1,
-                pageSize: -1,
-                typeCode: items,//保持架尺寸
-              };
-              getbimProductAttributesList(obj1).then(res => {
-                if(items=='pa017'){
-                  console.log(66666);
-                  this.$set(item, 'spaceSizeList', res.data.records)
-                  console.log("item",item);
-                }else{
-                  this.$set(item, 'materialList', res.data.records)
+        // if (this.dataForm.businessType == 'inbound_purchase') {
+        //   console.log(555, item.productCategoryName);
+        //   if (item.productCategoryName == '保持架') {
+        //     let arr = ['pa017', 'pa021']
+        //     arr.forEach(items => {
+        //       let obj1 = {
+        //         pageNum: -1,
+        //         pageSize: -1,
+        //         typeCode: items,//保持架尺寸
+        //       };
+        //       getbimProductAttributesList(obj1).then(res => {
+        //         if (items == 'pa017') {
+        //           console.log(66666);
+        //           this.$set(item, 'spaceSizeList', res.data.records)
+        //           console.log("item", item);
+        //         } else {
+        //           this.$set(item, 'materialList', res.data.records)
 
-                } 
-              })
-            });
-          }
-          if (item.productCategoryName == '防尘盖') {
-            let arr = ['pa018', 'pa022']
-            arr.forEach(items => {
-              let obj1 = {
-                pageNum: -1,
-                pageSize: -1,
-                typeCode: items,//保持架尺寸
-              };
-              getbimProductAttributesList(obj1).then(res => {
-                let list = items == 'pa018' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
-                this.$set(item, list, res.data.records)
-              })
-            });
-          }
-          let arr = ['pa019', 'pa020']
-          arr.forEach(items => {
-            let obj1 = {
-              pageNum: -1,
-              pageSize: 20,
-              typeCode: items,
-            };
-            getbimProductAttributesList(obj1).then(res => {
-              let list = items == 'pa019' ? 'logoList' : 'divideEquallyList'
-              this.$set(item, list, res.data.records)
-            })
-          });
+        //         }
+        //       })
+        //     });
+        //   }
+        //   if (item.productCategoryName == '防尘盖') {
+        //     let arr = ['pa018', 'pa022']
+        //     arr.forEach(items => {
+        //       let obj1 = {
+        //         pageNum: -1,
+        //         pageSize: -1,
+        //         typeCode: items,//保持架尺寸
+        //       };
+        //       getbimProductAttributesList(obj1).then(res => {
+        //         let list = items == 'pa018' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
+        //         this.$set(item, list, res.data.records)
+        //       })
+        //     });
+        //   }
+        //   let arr = ['pa019', 'pa020']
+        //   arr.forEach(items => {
+        //     let obj1 = {
+        //       pageNum: -1,
+        //       pageSize: 20,
+        //       typeCode: items,
+        //     };
+        //     getbimProductAttributesList(obj1).then(res => {
+        //       let list = items == 'pa019' ? 'logoList' : 'divideEquallyList'
+        //       this.$set(item, list, res.data.records)
+        //     })
+        //   });
 
-        }
+        // }
         this.productData.push(item)
         console.log("this.productData", this.productData);
       });
@@ -1643,7 +1645,7 @@ export default {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")
       }
-    // 如果选的是销售发退货、采购收退货、直接出入库、生产产品入库  
+      // 如果选的是销售发退货、采购收退货、直接出入库、生产产品入库  
       if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
         this.partnerFlag = true
         this.partnerTitle = '客户'
@@ -1739,8 +1741,8 @@ export default {
       })
     },
     changeWarehousex(val, data) {
-      this.productData=[]
-      this.dataForm.businessType=""
+      this.productData = []
+      this.dataForm.businessType = ""
       console.log(val, data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''

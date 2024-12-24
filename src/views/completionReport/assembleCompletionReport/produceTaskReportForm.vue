@@ -534,7 +534,7 @@ export default {
     getReprotNum(id) {
       let obj = {
         workOrderId: this.currentProcess.id,
-        pairingModelId: id,
+        pairingModeId: id,
       }
       getvibrationList(obj).then(res => {
         console.log("测振数据", res);
@@ -581,7 +581,7 @@ export default {
     getPrvePairingModelListFun() {
       let obj = {
         workOrderId: this.currentProcess.id,
-        pairingModelId: "",
+        vibrationLevel: "",
       }
       getPairingModelList(obj).then(res => {
         console.log("上一道配对方式", res);
@@ -618,7 +618,7 @@ export default {
         this.getReprotNum('')
       }
       console.log("配对方式", this.pairingModeList, item.pairingModeId);
-      if (this.currentProcess.pairingModeId) this.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
+      if (this.currentProcess.pairingModeId&&this.pairingModeList.length) this.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
       this.currentProcessId = item.processId
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")

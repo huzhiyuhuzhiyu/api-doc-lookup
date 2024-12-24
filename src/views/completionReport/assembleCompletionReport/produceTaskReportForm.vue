@@ -153,7 +153,7 @@
               <el-col :sm="24" :xs="24" v-if="packagingMethodFlag === '1'">
                 <div class="info">
                   <span class="left-title">包装方式：</span>
-                  <span class="left-title">{{ currentProcess.packagingMethod }}</span>
+                  <span class="left-title">{{ processInfo.packagingMethod }}</span>
                 </div>
 
               </el-col>
@@ -167,14 +167,14 @@
               <el-col :sm="24" :xs="24" v-if="materialFlag === '1'">
                 <div class="info">
                   <span class="left-title">保持架材质：</span>
-                  <span class="left-title">{{ currentProcess.material }}</span>
+                  <span class="left-title">{{ processInfo.material }}</span>
                 </div>
 
               </el-col>
               <el-col :sm="24" :xs="24" v-if="colourFlag === '1'">
                 <div class="info">
                   <span class="left-title">颜色：</span>
-                  <span class="left-title">{{ currentProcess.colour }}</span>
+                  <span class="left-title">{{ processInfo.colour }}</span>
                 </div>
 
               </el-col>

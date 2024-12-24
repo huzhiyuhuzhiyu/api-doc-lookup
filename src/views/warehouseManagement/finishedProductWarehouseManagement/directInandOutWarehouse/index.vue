@@ -519,6 +519,7 @@
                 v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
+                <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
 
 
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"

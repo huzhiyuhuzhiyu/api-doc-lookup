@@ -65,6 +65,7 @@
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120" />
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
             <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
 
             <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
             <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>

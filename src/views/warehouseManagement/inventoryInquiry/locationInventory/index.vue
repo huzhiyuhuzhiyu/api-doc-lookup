@@ -103,7 +103,7 @@
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
          
-          <el-table-column prop="mainUnit" label="单位" min-width="80" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -507,7 +507,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'productDrawingNo'||prop=='projectName' || prop == 'productCode' || prop == 'warehouseName') {
+      if (prop == 'productDrawingNo'||prop=='mainUnit'||prop=='projectName' || prop == 'productCode' || prop == 'warehouseName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

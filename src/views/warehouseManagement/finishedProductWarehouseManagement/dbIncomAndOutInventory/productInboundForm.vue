@@ -567,6 +567,8 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
+                <el-table-column prop="pairingModeName" label="配对方式" width="160" />
+
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
@@ -616,7 +618,7 @@ import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
 import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
-import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
+import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList,getInboundWarehouseData } from '@/api/productOrdes/index.js'
 import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
@@ -764,7 +766,7 @@ export default {
       mainUnitFlag: null,
       pairingModeList: [],
       pairingModeNum: "",//配对方式的基本数量
-      productDataCopy:[],
+      productDataCopy: [],
 
     }
   },
@@ -800,9 +802,9 @@ export default {
   methods: {
     handleClear(scope) {
       let item = this.productData[scope.$index]
-      console.log("this.productDataCopy",this.productDataCopy);
-      console.log("scope",scope);
-      let waitReceivedQuantityCopy=JSON.parse(JSON.stringify(item.waitReceivedQuantity))
+      console.log("this.productDataCopy", this.productDataCopy);
+      console.log("scope", scope);
+      let waitReceivedQuantityCopy = JSON.parse(JSON.stringify(item.waitReceivedQuantity))
       if (item.pairingModeId === '') {
         item.num = item.waitReceivedQuantity = this.productDataCopy[scope.$index].waitReceivedQuantity
         if (this.mainUnitFlag == 1) {
@@ -816,17 +818,17 @@ export default {
       }
     },
     changePairingMode(value, scope) {
-      let item=this.productData[scope.$index]
-      let waitReceivedQuantityCopy=JSON.parse(JSON.stringify(item.waitReceivedQuantity))
-        this.$set(item,'pairingModeNum',this.pairingModeList.filter(items => items.id === value)[0].quantity)
-        item.num = item.waitReceivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('divide', [this.productDataCopy[scope.$index].waitReceivedQuantity, item.pairingModeNum]), 6))
+      let item = this.productData[scope.$index]
+      let waitReceivedQuantityCopy = JSON.parse(JSON.stringify(item.waitReceivedQuantity))
+      this.$set(item, 'pairingModeNum', this.pairingModeList.filter(items => items.id === value)[0].quantity)
+      item.num = item.waitReceivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('divide', [this.productDataCopy[scope.$index].waitReceivedQuantity, item.pairingModeNum]), 6))
       if (this.mainUnitFlag == 1) {
-          if (item.calculationDirection == 'multiplication') {
-            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceivedQuantity, item.ratio]), 6))
-          } else {
-            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
-          }
+        if (item.calculationDirection == 'multiplication') {
+          this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceivedQuantity, item.ratio]), 6))
+        } else {
+          this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
         }
+      }
     },
     // 获取配对方式
     async getpairingModeListFun() {
@@ -1160,7 +1162,7 @@ export default {
         this.$set(item, 'warehouseType', this.dataForm.warehouseType)
       })
       this.productData = [...this.productData, ...arr]
-      this.productDataCopy=JSON.parse(JSON.stringify(this.productData))
+      this.productDataCopy = JSON.parse(JSON.stringify(this.productData))
 
       this.productData.forEach(item => {
         if (!item.shelfSpaceId) {
@@ -1271,7 +1273,7 @@ export default {
         }
       }
       this.productData = productArr
-      this.productDataCopy=JSON.parse(JSON.stringify(this.productData))
+      this.productDataCopy = JSON.parse(JSON.stringify(this.productData))
 
     },
 
@@ -1407,7 +1409,7 @@ export default {
 
           }
           this.productData = data
-          this.productDataCopy=JSON.parse(JSON.stringify(this.productData))
+          this.productDataCopy = JSON.parse(JSON.stringify(this.productData))
         }, 800);
         console.log("shit", this.productData);
       }

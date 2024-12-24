@@ -469,7 +469,7 @@ export default {
     getReprotNum(id) {
       let obj = {
         workOrderId: this.currentProcess.id,
-        pairingModelId: id,
+        pairingModeId: id,
       }
       getvibrationList(obj).then(res => {
         console.log("测振数据", res);
@@ -516,7 +516,7 @@ export default {
     getPrvePairingModelListFun(){
       let obj = {
         workOrderId: this.currentProcess.id,
-        pairingModelId: "",
+        vibrationLevel: "",
       }
       getPairingModelList(obj).then(res=>{
         console.log("上一道配对方式",res);

@@ -261,3 +261,11 @@ export function getPlanSchedule(id) {
   })
 }
 
+// 获取入库数据
+export function getInboundWarehouseData(data) {
+  return request({
+    url: `/api/zgt/proWorkFinish/inbound/list`,
+    method: 'get',
+    data
+  })
+}

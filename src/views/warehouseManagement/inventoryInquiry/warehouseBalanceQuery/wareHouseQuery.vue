@@ -357,7 +357,7 @@ export default {
             this.listMethod(this.listQuery).then(res => {
                 console.log(res)
                 const mapArr = ['账期','结存状态','品名规格','产品名称','产品编码','工序名称']
-                const legendData =  Object.keys(res.data.records[0]).filter(item=> !mapArr.includes(item))
+                const legendData = res.data.records.length ?  Object.keys(res.data.records[0]).filter(item=> !mapArr.includes(item)) : []
                 this.mapTableItems = legendData
                 this.tableData = res.data.records ? res.data.records : []
                 this.total = res.data.total

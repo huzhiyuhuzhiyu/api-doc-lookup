@@ -146,7 +146,7 @@
                       <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
+                            :disabled="btnType == 'look' ? true : false"   @change="(value) => changePairingMode(value,scopew)">
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                               :value="item.id">
                             </el-option>
@@ -239,7 +239,7 @@
                     <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
+                          :disabled="btnType == 'look' ? true : false"   @change="(value) => changePairingMode(value,scope)">
                           <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                             :value="item.id">
                           </el-option>
@@ -553,7 +553,7 @@
                   <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                        :disabled="btnType == 'look' ? true : false">
+                        :disabled="btnType == 'look' ? true : false" @change="(value) => changePairingMode(value,scope)">
                         <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                           :value="item.id">
                         </el-option>
@@ -640,7 +640,7 @@
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false">
+                      :disabled="btnType == 'look' ? true : false"  @change="(value) => changePairingMode(value,scope)">
                       <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                         :value="item.id">
                       </el-option>
@@ -1428,6 +1428,21 @@ export default {
   },
 
   methods: {
+    // 选择配对方式 强行将单位改成对
+    changePairingMode(value,scope) {
+      if (value) {
+          this.productData[scope.$index].mainUnit="对"
+          this.productData[scope.$index].deputyUnit="对"
+        // this.pairingModeNum = this.pairingModeList.filter(items => items.id === value)[0].quantity;
+        // this.currentProcess.qualifiedQuantity = ''
+        // this.currentProcess.reportingQuantity = 0
+        if (this.currentProcessType !== 4) {
+
+          this.getReprotNum(this.currentProcess.pairingModeId)
+        }
+      }
+    },
+
 
     // 获取配对方式
     async getpairingModeListFun() {

@@ -482,9 +482,9 @@ export default {
                 },
                 {
                     fieldValue: '',
-                    field: 'wareHouseName',
+                    field: 'warehouseName',
                     label: '仓库名称',
-                    prop: 'wareHouseName',
+                    prop: 'warehouseName',
                     symbol: 'like',
                     searchType: 1
                 }

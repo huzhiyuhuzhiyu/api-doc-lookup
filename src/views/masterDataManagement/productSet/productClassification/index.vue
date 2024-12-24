@@ -151,6 +151,12 @@ export default {
         { label: '外圈毛坯', value: 'outer_ring_blank' },
         { label: '内圈', value: 'inner_ring' },
         { label: '外圈', value: 'outer_ring' },
+        { label: '磨料', value: 'abrasive' },
+        { label: '油料', value: 'oil' },
+        { label: '配件', value: 'accessory' },
+        { label: '周转箱', value: 'turnover_box' },
+        { label: '保持架', value: 'holder' },
+        { label: '密封盖', value: 'sealing_cap' },
       ],
       treeList: [],
       treeDataAll: [],
@@ -198,7 +204,13 @@ export default {
           { label: '内圈毛坯', value: 'inner_ring_blank' },
           { label: '外圈毛坯', value: 'outer_ring_blank' },
           { label: '内圈', value: 'inner_ring' },
-          { label: '外圈', value: 'outer_ring' }]
+          { label: '外圈', value: 'outer_ring' },
+          { label: '磨料', value: 'abrasive' },
+          { label: '油料', value: 'oil' },
+          { label: '配件', value: 'accessory' },
+          { label: '周转箱', value: 'turnover_box' },
+          { label: '保持架', value: 'holder' },
+          { label: '密封盖', value: 'sealing_cap' }]
         },
         {
           prop: 'createTime',

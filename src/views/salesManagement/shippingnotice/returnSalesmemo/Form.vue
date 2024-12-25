@@ -1712,7 +1712,7 @@ export default {
         item.deliveryQuantity = item.num
 
         item.productCode = item.code||item.productCode
-        item.productsId = item.id
+        item.productsId =this.noticeswitch==='1'?item.productsId: item.id
         if (item.calculationDirection) {
           if (item.calculationDirection == 'multiplication') {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

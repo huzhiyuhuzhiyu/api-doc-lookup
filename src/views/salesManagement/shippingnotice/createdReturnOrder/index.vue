@@ -1482,7 +1482,7 @@ export default {
         item.ordersNum = item.num
         item.deliveryQuantity = item.num
         item.productCode = item.code||item.productCode
-        item.productsId = item.id
+        item.productsId =this.isattachmentswitch==1?item.productsId: item.id
         item.taxRate = item.taxRate * 1
         this.dataFormTwo.productData.push(item)
       });
@@ -1950,6 +1950,7 @@ export default {
               taxAmount: item.taxAmount ? item.taxAmount : '',
               taxRate: item.taxRate ? item.taxRate : '',
               totalAmount: item.totalAmount ? item.totalAmount : '',
+              pairingModeId:item.pairingModeId
             }
             let dep1 = {
               billStatus: item.billStatus ? item.billStatus : '',
@@ -1963,7 +1964,7 @@ export default {
               classAttribute: item.classAttribute,
               productsId: item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              ordersLineId: item.ordersLineId ? item.ordersLineId : "",
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1976,6 +1977,7 @@ export default {
               taxAmount: item.taxAmount ? item.taxAmount : '',
               taxRate: item.taxRate ? item.taxRate : '',
               totalAmount: item.totalAmount ? item.totalAmount : '',
+              pairingModeId:item.pairingModeId
             }
             if (this.btnType == 'add' || this.btnType == 'copy') {
               obj.noticeLineList.push(dep)

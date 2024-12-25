@@ -204,10 +204,10 @@ export default {
       selectFlag: false,
       sleeveItems: [
         { prop: "customerProductNo", label: "客户物料号", value: "", type: 'view', width: "120", },
-        { prop: "customerProductDrawingNo", label: `客户${this.$store.getters.productDrawingNo}`, value: "", type: 'view', width: "180", },
+        { prop: "customerProductDrawingNo", label: `客户规格型号`, value: "", type: 'view', width: "180", },
         { prop: "productCode", label: "产品编码", value: "", type: 'view', width: "140", },
         { prop: "productName", label: "产品名称", value: "", type: 'view', width: "120", },
-        { prop: "productDrawingNo", label: this.$store.getters.productDrawingNo, value: "", type: 'view', width: "350", },
+        { prop: "productDrawingNo", label: "规格型号", value: "", type: 'view', width: "350", },
         { prop: "num", label: "原数量", value: "", type: 'view', width: "100", },
         { prop: "mainUnit", label: "单位", value: "", type: 'view', width: "180", },
         // { prop: "assistantNum", label: "原数量(副)", value: "", type: 'view', width: "100", },

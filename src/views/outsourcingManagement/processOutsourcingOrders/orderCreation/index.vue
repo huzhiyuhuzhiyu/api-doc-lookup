@@ -865,45 +865,34 @@ export default {
       this.sourceVisibled = true
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
+        this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
+
+        // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
+        //   console.log(item, 'p{{}}')
+        //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
+        //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
+        //   this.sourceData[ind].processId = item.processId
+        //   this.sourceData[ind].processName = item.processName
+        // })
+      } else {
+        this.sourceData = []
       }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        console.log(res, '清单数据')
-        this.sourceData = res.data
-        if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
-          this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
+      console.log(this.sourceData, '1111')
 
-          // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-          //   console.log(item, 'p{{}}')
-          //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
-          //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
-          //   this.sourceData[ind].processId = item.processId
-          //   this.sourceData[ind].processName = item.processName
-          // })
-        } else {
-          this.sourceData.forEach((item, index) => {
-            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
-          })
-        }
-        console.log(this.sourceData, '1111')
-
-        if (this.sourceData.length === 0) {
-          this.sourceDisabled = true
-        } else {
-          this.sourceDisabled = false
-        }
-        console.log(this.dataFormTwo.data, 'daaaa')
-        this.$nextTick(() => {
-          this.$refs['sourceRef'].init(
-            this.sourceData,
-            '',
-            this.dataFormTwo.data[this.index].productsId,
-            this.dataFormTwo.data[this.index].purchaseQuantity
-          )
-        })
+      if (this.sourceData.length === 0) {
+        this.sourceDisabled = true
+      } else {
+        this.sourceDisabled = false
+      }
+      console.log(this.dataFormTwo.data, 'daaaa')
+      this.$nextTick(() => {
+        this.$refs['sourceRef'].init(
+          this.sourceData,
+          '',
+          this.dataFormTwo.data[this.index].productsId,
+          this.dataFormTwo.data[this.index].purchaseQuantity
+        )
       })
     },
 
@@ -1059,21 +1048,8 @@ export default {
       console.log(val, 'kkk')
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
+      this.$set(this.dataFormTwo.data[index], 'outShipmentList', [])
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index]')
-      if (this.dataFormTwo.data[index].purchaseQuantity) {
-        let obj = {
-          productsId: this.dataFormTwo.data[index].productsId,
-          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-        }
-        // 通过需求池id 获取明细的数据
-        getShipmentList(obj).then((res) => {
-          console.log(res, '清单数据')
-          this.dataFormTwo.data[index].outShipmentList = res.data
-
-          console.log(this.dataFormTwo.data, 'daaaa')
-        })
-      }
-
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(

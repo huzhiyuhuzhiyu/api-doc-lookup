@@ -2205,7 +2205,10 @@ export default {
       console.log("all", allArray);
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
-
+        if(item.pairingModeId){
+          item.mainUnit="对"
+          item.deputyUnit="对"
+        }
         this.$set(item, 'pairingModeName', '')
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)

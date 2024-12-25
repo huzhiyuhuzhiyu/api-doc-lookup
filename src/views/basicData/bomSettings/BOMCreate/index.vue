@@ -951,6 +951,9 @@ export default {
     continueAdd() {
       this.init('', 'add')
       this.dataForm = {}
+      if (this.isProjectSwitch === '1') {
+        this.dataForm.projectId = this.userInfo.projectId
+      }
       this.linesList = []
       this.tipsvisible = false
       this.btnLoading = false

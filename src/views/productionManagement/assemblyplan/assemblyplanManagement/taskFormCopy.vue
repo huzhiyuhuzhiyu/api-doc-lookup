@@ -4,36 +4,29 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" :content="'任务信息'" />
+          <el-page-header @back="goBack" :content="'计划信息'" />
           <div class="options">
-            <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <div class="main" v-loading="formLoading" ref="main">
           <el-collapse v-model="activeNames1" class="orderInfo">
-            <el-collapse-item title="任务信息" name="basicInfo">
+            <el-collapse-item title="计划信息" name="basicInfo">
               <div class="stoclInfo" ref="stoclInfo">
                 <el-descriptions :column="1" class="orderNo">
-                  <el-descriptions-item label="任务单号">{{ dataForm.orderNo
+                  <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo
                     }}<img v-if="dataForm.urgentFlag" src="@/assets/images/emergency1.png" alt=""
                       style="width: 22px;vertical-align: text-top;margin-left: 5px"> </el-descriptions-item>
 
                 </el-descriptions>
                 <el-descriptions :column="1" class="box">
 
-                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                  <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productsDrawingNo
                     }} </el-descriptions-item>
                 </el-descriptions>
 
                 <el-descriptions class="margin-top" :column="4">
-                  <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'normal'">
-                    <el-tag style="vertical-align: super;" effect="dark">正常任务</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'rework'">
-                    <el-tag style="vertical-align: super;" type="warning" effect="dark">返工任务</el-tag>
-                  </el-descriptions-item>
-                  <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
+                  <el-descriptions-item label="产品编码">{{ dataForm.productsCode }}</el-descriptions-item>
                   <el-descriptions-item label="所属项目" v-if="isProjectSwitch == 1">{{ dataForm.projectName
                     }} </el-descriptions-item>
                   <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ dataForm.mainUnit
@@ -79,153 +72,6 @@
                       item.fullName
                     }}</el-radio-button>
                 </el-radio-group>
-                <JNPF-table ref="work" v-if="categoryType == 'workOrder'" :data="workOrderData" fixedNO :height="height"
-                  v-loading="tableloading">
-                  <el-table-column prop="processName" label="工序名称" min-width="120" />
-                  <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
-                  <el-table-column prop="processingType" label="加工类型" min-width="120">
-                    <template slot-scope="scope">
-                      <div>
-                        {{ scope.row.processingType == "self_produced" ? "自制" : "外协" }}
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
-                  <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
-                  <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
-                  <el-table-column prop="productionQuantity" label="计划数量" min-width="100"></el-table-column>
-                  <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
-                  <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                  <el-table-column prop="schedule" label="完成进度" min-width="130">
-                    <template slot-scope="scope">
-                      <el-progress
-                        :percentage="Number((scope.row.qualifiedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
-                    min-width="120">
-                  </el-table-column>
-                  <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="workGroupName" label="班组"
-                    min-width="160">
-                  </el-table-column>
-                  <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="device" label="设备" min-width="120">
-                  </el-table-column>
-                  <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="firstInspection" label="是否首检" min-width="100">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.firstInspection ? "是" : "否" }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="checkFlag" label="是否检验" min-width="100">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.checkFlag ? "是" : "否" }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="reportFlag" label="是否报工" min-width="100">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.reportFlag ? "是" : "否" }}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="stockFlag" label="是否入库" min-width="100">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
-                    </template>
-                  </el-table-column>
-                </JNPF-table>
-                <JNPF-table ref="feed" v-if="categoryType == 'feed'" :data="feedData" fixedNO v-loading="tableloading"
-                  :height="height" :key="Math.random()">
-                  <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
-                  <el-table-column prop="productCode" label="用料编码" />
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                  <el-table-column prop="processName" label="工序名称" />
-                  <el-table-column prop="material" label="保持架材质" width="130" v-if="materialFlag == 1"></el-table-column>
-                  <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
-                  <el-table-column prop="mainUnit" label="单位" />
-                  <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
-                  <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                  <el-table-column prop="receivedQuantity" label="已投数量">
-                    <template slot-scope="scope">
-                      <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
-                        scope.row.receivedQuantity
-                      }}</el-link>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="inventoryQuantity" label="库存数量">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
-                    </template>
-                  </el-table-column>
-                </JNPF-table>
-                <JNPF-table ref="report" v-if="categoryType == 'report'" :data="recoredsData" fixedNO :height="height"
-                  v-loading="tableloading" :key="Math.random()">
-                  <el-table-column prop="workNo" label="工单号" min-width="200"></el-table-column>
-                  <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="330"></el-table-column>
-                  <el-table-column prop="processName" label="工序名称" width="160" />
-                  <el-table-column prop="reportingTime" label="报工时间" min-width="180" />
-                  <el-table-column prop="producerName" label="生产人" min-width="120" />
-                  <el-table-column prop="mainUnit" label="单位" min-width="80" />
-                  <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" />
-                  <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" />
-                  <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" />
-                  <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" />
-                  <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
-                  <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
-                </JNPF-table>
-                <JNPF-table ref="inspect" v-if="categoryType == 'inspect'" :data="inspectData" fixedNO :height="height"
-                  v-loading="tableloading" :key="Math.random()">
-                  <el-table-column prop="orderNo" label="检验单号" min-width="200">
-
-                  </el-table-column>
-                  <el-table-column prop="docNo" label="业务单号" min-width="200" />
-                  <el-table-column prop="inspectorName" label="检验人" width="100" />
-                  <el-table-column prop="inspectionDate" label="检验日期" width="120" />
-                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
-                  <el-table-column prop="productCode" label="产品编码" min-width="180" />
-
-                  <el-table-column prop="mainUnit" label="单位" width="60" />
-                  <el-table-column prop="inspectionQuantity" label="报检数量" width="110" />
-
-                  <el-table-column prop="inspectionMethod" label="检验方式" width="110">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.inspectionMethod == 'exempt'">免检</div>
-                      <div v-if="scope.row.inspectionMethod == 'spot_check'">抽检</div>
-                      <div v-if="scope.row.inspectionMethod == 'all'">全检</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="samplingQuantity" label="检验数量" width="110" />
-                  <el-table-column prop="inspectionResults" label="检验结果" width="110">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
-                      <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="130" />
-                  <el-table-column prop="processingStatus" label="处理状态" width="110">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.processingStatus == 'untreated'">未处理</div>
-                      <div v-if="scope.row.processingStatus == 'processing'">处理中</div>
-                      <div v-if="scope.row.processingStatus == 'processed'">已处理</div>
-                    </template>
-                  </el-table-column>
-                  <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" /> -->
-                  <el-table-column prop="remark" label="备注" min-width="200" />
-                  <el-table-column prop="createTime" label="创建时间" width="180" />
-                  <el-table-column prop="createByName" label="创建人" width="100" />
-                  <el-table-column label="操作" width="180" fixed="right">
-                    <template slot-scope="scope">
-                      <el-button type="text" size="mini" @click="viewInspectionFun(scope.row.id, 'look')">
-                        查看详情
-                      </el-button>
-                    </template>
-                  </el-table-column>
-                </JNPF-table>
                 <JNPF-table ref="guidebook" v-if="categoryType == 'guidebook'" :data="guidebookData" fixedNO
                   :height="height" v-loading="tableloading" :key="Math.random()">
 
@@ -239,7 +85,7 @@
                       <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
                       <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
                     </template>
-                  </el-table-column> -->
+</el-table-column> -->
                   <el-table-column prop="enabledMark" label="启用状态" width="120" align="center">
                     <template slot-scope="{row}">
                       <el-tag type="danger" v-if="row.enabledMark === false">禁用</el-tag>
@@ -375,7 +221,7 @@
 </template>
 <script>
 import { detailordershengchan, getWorkReportList } from '@/api/productOrdes/index.js'
-import RelatedTasksForm from "./relatedTaskForm.vue";
+import RelatedTasksForm from "../assemblyTaskManagement/relatedTaskForm.vue";
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import Guidebook from '@/views/esop/fileUpload/workinginstruction/Form.vue'
 import { deleteBimFileUpload, getBimFileUpload } from "@/api/esop/fileUpload/workinginstruction";
@@ -383,7 +229,7 @@ import Inspec from '@/views/inspectionManagement/components/inspectionFormManage
 import getProjectList from '@/mixins/generator/getProjectList'
 import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
-import MaterForm from './materForm.vue'
+import MaterForm from '../assemblyTaskManagement/materForm.vue'
 import {
   ApplicationType,
   DocumentStatus, FileManagePageSet, FileTrashPageSet,
@@ -402,47 +248,20 @@ export default {
       applicationType: "",
       inspectionManualData: [],
       drawingData: [],
-      customerProductData:[],
+      customerProductData: [],
       guidebookVisible: false,
       height: 0,
       relatedTaskVisible: false,
       previewFile: "",
       previewVisible: false,
       categoryTypeList: [
-        { code: "workOrder", fullName: "工单", },
-        { code: "feed", fullName: "投料", },
-        { code: "report", fullName: "报工", },
-        { code: "inspect", fullName: "检验", },
         { code: "guidebook", fullName: "作业指导书", },
         { code: "inspectionManual", fullName: "检验指导书", },
         { code: "drawing", fullName: "图纸", },
         { code: "customerProduct", fullName: "客户产品工艺", },
         // { code: "tool", fullName: "工装模具", },
       ],
-      categoryType: "workOrder",
-      orderTypeList: [
-        { label: "正常任务", value: "normal", },
-        { label: "返工任务", value: "rework", },
-      ],
-      orderStatusList: [
-
-        { label: "进行中", value: "normal", },
-
-        { label: "暂停", value: "suspend", },
-
-        { label: "关闭", value: "closed", },
-
-        { label: "已完成", value: "finish", },
-
-      ],
-
-      urgentFlagList: [
-
-        { label: "是", value: true, },
-
-        { label: "否", value: false, },
-
-      ],
+      categoryType: "guidebook",
       guidebookData: [],
       recoredsData: [],
 
@@ -484,7 +303,7 @@ export default {
   watch: {
     'categoryType': function (newVal) {
       this.getTabdataList()
-      
+
     },
   },
   mounted() {
@@ -556,44 +375,8 @@ export default {
     getTabdataList() {
 
       // 工单数据
-      if (this.categoryType == 'workOrder') {
-      } else if (this.categoryType == 'feed') {
-        // 投料
-      } else if (this.categoryType == 'report') {
-        // 报工
-        let obj = {
-          productionOrderNo: this.dataForm.orderNo,
-          classAttribute: "finish_product",
-          processId: "",
-          "orderItems": [
-            {
-              "asc": false,
-              "column": ""
-            },
-            {
-              "asc": false,
-              "column": "create_time"
-            }
-          ],
-          pageNum: -1,
-          pageSize: 20,
-        }
-        getWorkReportList(obj).then(res => {
-          this.recoredsData = res.data.records
-        })
+      if (this.categoryType == 'guidebook') {
 
-      } else if (this.categoryType == 'inspect') {
-        let obj = {
-          notificationType: "",
-          docId: this.dataForm.id
-        }
-        // 检验
-        getInspectionList(obj).then(res => {
-    
-          this.inspectData = res.data.records
-        })
-      } else if (this.categoryType == 'guidebook') {
-  
         let obj = {
           applicationType: this.ApplicationType.WORK,
           approvalStatus: "ok",
@@ -602,7 +385,7 @@ export default {
             condition: [
               {
                 field: "drawingNo",
-                fieldValue: this.dataForm.productDrawingNo,
+                fieldValue: this.dataForm.productsDrawingNo,
                 symbol: "like"
               }
             ]
@@ -622,7 +405,7 @@ export default {
             condition: [
               {
                 field: "drawingNo",
-                fieldValue: this.dataForm.productDrawingNo,
+                fieldValue: this.dataForm.productsDrawingNo,
                 symbol: "like"
               }
             ]
@@ -643,7 +426,7 @@ export default {
             condition: [
               {
                 field: "drawingNo",
-                fieldValue: this.dataForm.productDrawingNo,
+                fieldValue: this.dataForm.productsDrawingNo,
                 symbol: "like"
               }
             ]
@@ -662,7 +445,7 @@ export default {
             condition: [
               {
                 field: "drawingNo",
-                fieldValue: this.dataForm.productDrawingNo,
+                fieldValue: this.dataForm.productsDrawingNo,
                 symbol: "like"
               }
             ]
@@ -671,7 +454,7 @@ export default {
         getBimFileUpload(obj).then(res => {
           this.customerProductData = res.data.records
         })
-      } 
+      }
     },
     goBack() {
       this.$emit('close')
@@ -682,25 +465,11 @@ export default {
         this.$refs.relatedTaskForms.init(this.dataForm.productionPlanNo)
       })
     },
-    async init(id) {
+    async init(row) {
       await this.getProjectSwitch('system', 'project')
-
-      this.prodOrderId = id
-      detailordershengchan(id).then(res => {
-        this.dataForm = res.data.prodOrder
-        this.feedData = res.data.materialList
-        res.data.workOrderList.forEach(item => {
-          let schedule = this.jnpf.numberFormat(this.jnpf.math('divide', [item.qualifiedQuantity, item.productionQuantity]), 2)
-          this.$set(item, 'schedule', schedule)
-        });
-        this.workOrderData = res.data.workOrderList
-      })
+      this.dataForm = row
+      this.getTabdataList()
     },
-
-
-
-
-
   }
 
 }

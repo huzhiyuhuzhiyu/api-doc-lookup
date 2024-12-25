@@ -61,8 +61,8 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="配对方式" prop="taskMethod">
-                          <el-select v-model="planForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;" disabled
-                            >
+                          <el-select v-model="planForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            disabled>
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                               :value="item.id">
                             </el-option>
@@ -97,7 +97,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划日期" prop="planDate" >
+                        <el-form-item label="计划日期" prop="planDate">
                           <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
                             end-placeholder="结束日期" clearable>
@@ -162,7 +162,8 @@
                             <el-input class="ipt1" v-model="planForm.utilizationQuantity" @blur="watchly"
                               placeholder="利用库存数量" :disabled='btnType == "look"'
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
-                            </el-input><span class="mainUnit" v-if="planForm.pairingModeId">{{ planForm.mainUnit }}</span>
+                            </el-input><span class="mainUnit" v-if="planForm.pairingModeId">{{ planForm.mainUnit
+                              }}</span>
 
                             <span class="lab_t" v-if="btnType != 'look'">可用库存数量</span>
                             <span v-if="btnType != 'look'" class="pointer" @click="viewAvailableQuantity()">{{
@@ -239,93 +240,100 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
-                      v-if="sealingCoverTypingFlag == 1" :key="211">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable :disabled='btnType == "look"'
-                          style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
-                      :key="123">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
-                      :key="17">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
-                      :key="101">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
-                      :key="101">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"
-                      :key="105">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"
-                      :key="110">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;" :disabled='btnType == "look"'>
-                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+                        v-if="sealingCoverTypingFlag == 1" :key="211">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                            :disabled='btnType == "look"' style="width: 100%;">
+                            <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
+                        :key="123">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
+                        :key="17">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
+                        :key="101">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                            style="width: 100%;" :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
+                        :key="101">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled='btnType == "look"'>
+                            <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>
@@ -359,7 +367,7 @@ import Form from './invent.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
-import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
@@ -403,7 +411,7 @@ export default {
         finalPlanQuantity: "",
         remark: "",
         id: "",
-        pairingModeId:"",
+        pairingModeId: "",
       },
       codeConfig: {},//单据规则配置
       activeName: "orderInfo",
@@ -465,7 +473,7 @@ export default {
         planDate: [
           { required: true, message: '计划日期不能为空', trigger: 'change' }
         ],
-       
+
         qualificationRate: [
           { required: true, message: '合格率不能为空', trigger: 'blur' }
         ],
@@ -490,8 +498,8 @@ export default {
       isProductNameSwitch: '',
 
       originalData: [],
-        // 属性字段  控制属性字段显示隐藏
-        accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -499,12 +507,12 @@ export default {
       sealingCoverTypingFlag: "",
       specialRequireFlag: "",
       vibrationLevelFlag: "",
-      materialFlag:'',
-      colourFlag:'',
-      bimProductAttributesList:{},
-      dataFalg:false,
+      materialFlag: '',
+      colourFlag: '',
+      bimProductAttributesList: {},
+      dataFalg: false,
       pairingModeList: [],
-
+      pairingModeNum: 1,
     }
   },
 
@@ -516,9 +524,9 @@ export default {
   },
 
   async created() {
+    await this.getpairingModeListFun()
     await this.getProductClassFun()
     await this.getProductAttributeFun()
-    await this.getpairingModeListFun()
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -532,16 +540,16 @@ export default {
   beforeDestroy() {
   },
   methods: {
-       // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-  async  getProductClassFun() {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    async getProductClassFun() {
       // 产品属性
-    const res = await  getbimProductAttributesListMap()
+      const res = await getbimProductAttributesListMap()
       this.bimProductAttributesList = res.data
-  
-    
+
+
     },
-   // 获取业务参数中 属性字段动态显示
-   getProductAttributeFun() {
+    // 获取业务参数中 属性字段动态显示
+    getProductAttributeFun() {
       getOrderFiledMap('sale').then(res => {
         console.log("产品属性", res);
         // sealingCoverTypingFlag list1  pa007
@@ -555,7 +563,7 @@ export default {
 
         this.accuracyLevelFlag = res.data.accuracyLevel //list1
         if (this.accuracyLevelFlag == 1) {
-          console.log(this.bimProductAttributesList,'bimProductAttributesList')
+          console.log(this.bimProductAttributesList, 'bimProductAttributesList')
           this.list2 = this.bimProductAttributesList.pa006.map((item) => {
             return {
               label: item.name,
@@ -648,22 +656,22 @@ export default {
           })
           console.log(this.list3);
         }
-        
-    
-        if(this.sealingCoverTypingFlag!=1&&this.accuracyLevelFlag!=1&&this.vibrationLevelFlag!=1&&this.oilFlag!=1&&this.oilQuantityFlag!=1
-        &&this.clearanceFlag!=1&&this.packagingMethodFlag!=1&&this.specialRequireFlag!=1){
-          this.selectProductClassFlag=true
-        }else{
-          this.selectProductClassFlag=false
+
+
+        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
+          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
+          this.selectProductClassFlag = true
+        } else {
+          this.selectProductClassFlag = false
 
         }
       })
     },
-        // 获取配对方式
-        async getpairingModeListFun() {
+    // 获取配对方式
+    async getpairingModeListFun() {
       try {
         this.pairingModeList = await this.jnpf.getpairingModeListFun()
-        console.log("this.par", this.pairingModeList);
+        console.log("this.pairingModeList", this.pairingModeList, this.planForm.pairingModeId);
       } catch (error) { }
     },
     async getProductNameSwitch(code, type) {
@@ -676,7 +684,7 @@ export default {
     viewAvailableQuantity() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false,this.productData[0].projectId)
+        this.$refs.form.init(this.productData[0].productsId, 'availableFlag', false, this.productData[0].projectId)
       })
     },
     getBimBusinessDetail() {
@@ -698,6 +706,7 @@ export default {
     closeForm() {
       this.bomFormVisible = false
     },
+
     // 监听列表计划数量/订单数量修改
     watchPlanQuantity(data) {
       console.log(data);
@@ -739,7 +748,7 @@ export default {
         this.countFun1()
       } else {
         let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]), 6)
-        if (Number(total) > Number(this.planForm.relaxQuantity)) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        if (Number(total) > Number(this.planForm.relaxQuantity * this.pairingModeNum)) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
         this.countFun1()
       }
     },
@@ -756,11 +765,11 @@ export default {
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
         } else {
           this.planForm.utilizationQuantity = this.planForm.availableQuantity
-          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
         }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
         }
       }
 
@@ -772,11 +781,12 @@ export default {
           this.planForm.purchaseQuantity = 0
         } else {
           this.planForm.utilizationQuantity = this.planForm.availableQuantity
-          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, , this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
         }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, , this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity * this.pairingModeNum
+          ]), 6)
         }
       }
       if (this.planForm.productSource == 'out') {
@@ -787,11 +797,11 @@ export default {
           this.planForm.outsourcingQuantity = 0
         } else {
           this.planForm.utilizationQuantity = this.planForm.availableQuantity
-          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.purchaseQuantity, this.planForm.productionQuantity]))
+          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.utilizationQuantity * this.pairingModeNum, this.planForm.purchaseQuantity, this.planForm.productionQuantity]))
         }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantityx, this.planForm.utilizationQuantity * this.pairingModeNum]), 6)
         }
       }
 
@@ -805,10 +815,13 @@ export default {
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
         } else {
         }
-        this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        this.planForm.utilizationQuantity = this.pairingModeNum ? this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity])) / this.pairingModeNum : this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+          this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity
+            , this.planForm.purchaseQuantity
+            , this.planForm.outsourcingQuantity
+            , this.pairingModeNum ? this.planForm.utilizationQuantity * this.pairingModeNum : this.planForm.utilizationQuantity]), 6)
         }
       }
 
@@ -818,32 +831,32 @@ export default {
           this.planForm.utilizationQuantity = this.planForm.relaxQuantity
           this.planForm.purchaseQuantity = 0
         } else {
-          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+          this.planForm.utilizationQuantity = this.pairingModeNum ? this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity])) / this.pairingModeNum : this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
         }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity]), 6)
         }
       }
       if (this.planForm.productSource == 'out') {
 
         if (this.planForm.availableQuantity >= this.planForm.relaxQuantity) {
-          this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
+          this.planForm.utilizationQuantity = this.pairingModeNum ? this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity])) / this.pairingModeNum : this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
           this.planForm.outsourcingQuantity = 0
         } else {
         }
-        this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
+        this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+          this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.pairingModeNum ? this.planForm.utilizationQuantity * this.pairingModeNum : this.planForm.utilizationQuantity]), 6)
         }
       }
 
     },
     // 采购数量监听
     watchcg(val) {
-      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.planForm.utilizationQuantity]), 6)
-      if (Number(this.planForm.purchaseQuantity) > Number(this.planForm.relaxQuantity)) {
+      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.pairingModeNum ? this.planForm.utilizationQuantity * this.pairingModeNum : this.planForm.utilizationQuantity]), 6)
+      if (Number(this.planForm.purchaseQuantity) > Number(this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity)) {
         this.$message.error("采购数量不能超过宽放数量")
         this.planForm.purchaseQuantity = 0
         // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
@@ -857,8 +870,8 @@ export default {
     },
     // 外协数量监听
     watchOut(val) {
-      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.planForm.utilizationQuantity]), 6)
-      if (Number(this.planForm.outsourcingQuantity) > Number(this.planForm.relaxQuantity)) {
+      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.pairingModeNum ? this.planForm.utilizationQuantity * this.pairingModeNum : this.planForm.utilizationQuantity]), 6)
+      if (Number(this.planForm.outsourcingQuantity) > Number(this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity)) {
         this.$message.error("外协数量不能超过宽放数量")
         this.planForm.outsourcingQuantity = 0
         // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
@@ -871,15 +884,15 @@ export default {
     },
     // 生产数量监听
     watchProduce(val) {
-      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.planForm.utilizationQuantity]), 6)
-      if (Number(this.planForm.productionQuantity) > Number(this.planForm.relaxQuantity)) {
+      let Nums = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity, this.pairingModeNum ? this.planForm.utilizationQuantity * this.pairingModeNum : this.planForm.utilizationQuantity]), 6)
+      if (Number(this.planForm.productionQuantity) > Number(this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity)) {
         this.$message.error("生产数量不能超过宽放数量")
         this.planForm.productionQuantity = 0
         // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
         this.countFun2()
         return
       } else {
-        if ((Nums > Number(this.planForm.relaxQuantity))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        if ((Nums > Number(this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
         this.countFun2()
       }
     },
@@ -988,13 +1001,13 @@ export default {
       }
     },
 
-   init(id, btnType, productData, planType) {
+    init(id, btnType, productData, planType) {
       console.log("传递过来的数据", id, btnType, productData, planType);
-     
+
       this.planForm.id = id || ''
       this.btnType = btnType
       this.planForm.planType = planType
- 
+
       if (this.btnType == 'add') {
 
         this.fetchData("JHDH")
@@ -1008,9 +1021,9 @@ export default {
           vibrationLevel: productData[0].vibrationLevel,
           packagingMethod: productData[0].packagingMethod,
           specialRequire: productData[0].specialRequire,
-          excludeProcessFlag:false,
-          projectId:productData[0].projectId,
-          pairingModeId:productData[0].pairingModeId,
+          excludeProcessFlag: false,
+          projectId: productData[0].projectId,
+          pairingModeId: productData[0].pairingModeId,
         };
         this.planForm.bomId = productData[0].bomId
         if (productData[0].bomId) {
@@ -1031,30 +1044,39 @@ export default {
         this.planForm.productName = productData[0].productName
         this.planForm.productSource = productData[0].productSource
         this.planForm.pairingModeId = productData[0].pairingModeId
+        setTimeout(() => {
+          // 查找与id相同的对象  
+          let result = this.pairingModeList.find(item => item.id === this.planForm.pairingModeId);
+          console.log("基本数量", this.pairingModeList, this.planForm.pairingModeId);
 
-        productData.forEach(item => {
-          item.productDrawingNo = item.drawingNo
-          item.ordersNo = item.orderNo
-          this.$set(item, 'planQuantity', item.num)
-        });
-        console.log(obj);
-        this.productData = productData
-        this.originalData = JSON.parse(JSON.stringify(productData))
+          // 提取num值，如果没有找到则返回null  
+          this.pairingModeNum = result ? result.quantity : null;
+          console.log("基本数量", this.pairingModeNum);
+          productData.forEach(item => {
+            item.productDrawingNo = item.drawingNo
+            item.ordersNo = item.orderNo
+            this.$set(item, 'planQuantity', item.num)
+          });
+          console.log(obj);
+          this.productData = productData
+          this.originalData = JSON.parse(JSON.stringify(productData))
 
-        getProductInventory(obj).then(res => {
-          console.log("产品库存", res);
-          this.planForm.availableQuantity = res.data.availableQuantity
-          this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
+          getProductInventory(obj).then(res => {
+            console.log("产品库存", res);
+            this.planForm.availableQuantity = res.data.availableQuantity
+            this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
 
-          if (this.planForm.availableQuantity > this.planForm.relaxQuantity) {
-            this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.relaxQuantity))
-          } else {
-            this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
-          }
-          this.countFun1()
+            if (this.planForm.availableQuantity > this.planForm.relaxQuantity) {
+              this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.relaxQuantity))
+            } else {
+              this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
+            }
+            this.countFun1()
 
-          // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        })
+            // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+          })
+        }, 500);
+
       }
       if (btnType == 'edit' || btnType == 'look') {
 
@@ -1111,9 +1133,9 @@ export default {
           productDrawingNo: productData.plan.productDrawingNo,
           sealingCoverTyping: productData.plan.sealingCoverTyping,
           vibrationLevel: productData.plan.vibrationLevel,
-          pairingModeId:productData[0].pairingModeId,
+          pairingModeId: productData[0].pairingModeId,
 
-          excludeProcessFlag:false,
+          excludeProcessFlag: false,
         };
         if (this.btnType == 'edit') {
           getProductInventory(obj).then(res => {
@@ -1133,6 +1155,7 @@ export default {
         }
 
       }
+
     },
 
     goBack() {
@@ -1203,8 +1226,8 @@ export default {
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
-            obj.plan.projectId=this.isProjectSwitch==1?this.productData[0].projectId:""
-            obj.plan.pairingModeId = this.productData[0].pairingModeId 
+            obj.plan.projectId = this.isProjectSwitch == 1 ? this.productData[0].projectId : ""
+            obj.plan.pairingModeId = this.productData[0].pairingModeId
 
           } else {
             obj.plan = this.planForm
@@ -1430,12 +1453,13 @@ export default {
 .BOM_T ::v-deep .el-input__inner {
   color: rgb(63, 185, 248)
 }
-.mainUnit{
+
+.mainUnit {
   height: 32px;
-    line-height: 32px;
-    background: rgb(63, 185, 248);
-    display: inline-block;
-    padding: 0 5px;
-    color: #fff
+  line-height: 32px;
+  background: rgb(63, 185, 248);
+  display: inline-block;
+  padding: 0 5px;
+  color: #fff
 }
 </style>

@@ -99,9 +99,9 @@
                     <el-table-column prop="warehouseCode" label="仓库编码" min-width="160" sortable="custom"/>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"/>
                     <el-table-column prop="initInventoryQuantity" label="期初数量" min-width="140" sortable="custom"/>
-                    <el-table-column prop="initPrice" label="期初单价(含税)" min-width="160" sortable="custom"/>
-                    <el-table-column prop="initAmount" label="期初金额(含税)" min-width="160" sortable="custom">
-                    </el-table-column>
+<!--                    <el-table-column prop="initPrice" label="期初单价(含税)" min-width="160" sortable="custom"/>-->
+<!--                    <el-table-column prop="initAmount" label="期初金额(含税)" min-width="160" sortable="custom">-->
+<!--                    </el-table-column>-->
                     <el-table-column prop="inboundQuantity" label="入库数量" min-width="140" sortable="custom">
                         <template slot-scope="scope">
                             <el-link type="primary" @click.native="inboundAndOutboundLine('inbound', scope.row.id)">
@@ -109,9 +109,9 @@
                             </el-link>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="inboundPrice" label="入库单价(含税)" min-width="160" sortable="custom"/>
-                    <el-table-column prop="inboundAmount" label="入库金额(含税)" min-width="160" sortable="custom">
-                    </el-table-column>
+<!--                    <el-table-column prop="inboundPrice" label="入库单价(含税)" min-width="160" sortable="custom"/>-->
+<!--                    <el-table-column prop="inboundAmount" label="入库金额(含税)" min-width="160" sortable="custom">-->
+<!--                    </el-table-column>-->
                     <el-table-column prop="outboundQuantity" label="出库数量" min-width="140" sortable="custom">
                         <template slot-scope="scope">
                             <el-link type="primary" @click.native="inboundAndOutboundLine('outbound', scope.row.id)">
@@ -119,13 +119,13 @@
                             </el-link>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="outboundPrice" label="出库单价(含税)" min-width="160" sortable="custom"/>
-                    <el-table-column prop="outboundAmount" label="出库金额(含税)" min-width="160" sortable="custom">
-                    </el-table-column>
+<!--                    <el-table-column prop="outboundPrice" label="出库单价(含税)" min-width="160" sortable="custom"/>-->
+<!--                    <el-table-column prop="outboundAmount" label="出库金额(含税)" min-width="160" sortable="custom">-->
+<!--                    </el-table-column>-->
                     <el-table-column prop="endInventoryQuantity" label="期末数量" min-width="140" sortable="custom"/>
-                    <el-table-column prop="endPrice" label="期末单价(含税)" min-width="160" sortable="custom"/>
-                    <el-table-column prop="endAmount" label="期末金额(含税)" min-width="160" sortable="custom">
-                    </el-table-column>
+<!--                    <el-table-column prop="endPrice" label="期末单价(含税)" min-width="160" sortable="custom"/>-->
+<!--                    <el-table-column prop="endAmount" label="期末金额(含税)" min-width="160" sortable="custom">-->
+<!--                    </el-table-column>-->
                 </JNPF-table>
                 <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
                             @pagination="initData"

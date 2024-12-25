@@ -1068,7 +1068,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' || prop == 'pairingModeName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'pairingModeName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode'|| prop == 'warehouseName' || prop == 'shelfSpaceName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

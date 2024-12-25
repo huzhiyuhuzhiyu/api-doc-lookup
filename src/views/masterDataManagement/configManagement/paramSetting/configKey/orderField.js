@@ -129,5 +129,10 @@ export default {
         description: '启用销售管理颜色后，新建销售管理时，将会显示颜色输入字段，对应发货通知单、计划、需求、生产计划等也将显示颜色字段。',
         mainModule: '销售管理'
     },
+    sale_customerContractNo: {
+        configKeyLabel: '启用客户合同号',
+        description: '启用客户合同号后，在销售订单、订单进度会显示客户合同号。',
+        mainModule: '销售管理'
+    },
 
 }

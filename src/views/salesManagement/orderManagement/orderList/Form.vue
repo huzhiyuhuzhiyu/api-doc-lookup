@@ -45,6 +45,12 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                    <el-form-item label="客户合同号" prop="contractNo">
+                      <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
+                        :disabled="btnType == 'look'" maxlength="300" clearable />
+                    </el-form-item>
+                  </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="所属部门" prop="departmentId">
                           <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
@@ -452,6 +458,12 @@
                       <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择所属客户" readonly
                         @focus="openDialog" :disabled="btnType == 'look' ? true : false">
                       </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                    <el-form-item label="客户合同号" prop="contractNo">
+                      <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
+                        :disabled="btnType == 'look'" maxlength="300" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -1051,6 +1063,9 @@ export default {
   mixins: [busFlow, getProjectList],
   components: {
     ExportForm, Process, recordList, Form, productAttributesListForm
+  },
+  props: {
+    saleContractNoSwitch: {}
   },
   data() {
     return {

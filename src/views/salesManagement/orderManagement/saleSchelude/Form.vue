@@ -13,8 +13,12 @@
           <el-collapse v-model="activeNames1" class="orderInfo">
             <el-collapse-item title="基本信息" name="basicInfo">
               <div class="stoclInfo" ref="stoclInfo">
-                <el-descriptions :column="1" class="orderNo">
+                <el-descriptions :column="1" class="orderNo" v-if="!saleContractNoSwitch === '1'">
                   <el-descriptions-item label="订单号">{{ dataForm.orderNo }} </el-descriptions-item>
+                </el-descriptions>
+                <el-descriptions :column="2" class="orderNo" v-else>
+                  <el-descriptions-item label="订单号"> {{ dataForm.orderNo }} </el-descriptions-item>
+                  <el-descriptions-item label="客户合同号"> {{ dataForm.contractNo }} </el-descriptions-item>
                 </el-descriptions>
 
                 <el-descriptions class="margin-top" :column="4">
@@ -713,6 +717,9 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 export default {
   components: {
     Form, ShipementForm, ReturnForm, SaleOutboundForm, OutboundSaleSendForm, InboundSaleReturnForm, Reconciliation, ReceivePayRefundForm, InvoiceForm, PurchaseForm, ExtendForm
+  },
+  props: {
+    saleContractNoSwitch: {}
   },
   data() {
     return {

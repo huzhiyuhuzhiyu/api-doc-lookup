@@ -161,7 +161,8 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList"
+      :saleContractNoSwitch="saleContractNoSwitch" />
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -377,6 +378,7 @@ export default {
       materialFlag: '',
       colourFlag: '',
       bimProductAttributesList: [],
+      saleContractNoSwitch: null,
     }
   },
   watch: {
@@ -393,6 +395,15 @@ export default {
 
 
   async created() {
+    await Promise.all([
+      this.jnpf.getMainUnitFun('orderField', 'customerContractNo'),
+    ]).then(([
+      saleContractNoSwitch,
+    ]) => {
+      this.saleContractNoSwitch = saleContractNoSwitch
+    }).catch(error => {
+      console.error('请求失败:', error);
+    });
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')

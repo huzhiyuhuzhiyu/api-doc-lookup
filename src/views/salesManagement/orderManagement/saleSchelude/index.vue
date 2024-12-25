@@ -128,7 +128,7 @@
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> 
-    <OrderInfoDetail  v-if="OrderInfoDetailVisible" ref="OrderInfoDetailForm" @refreshDataList="initData" @close="closeForm" ></OrderInfoDetail>
+    <OrderInfoDetail  v-if="OrderInfoDetailVisible" ref="OrderInfoDetailForm" @refreshDataList="initData" @close="closeForm" :saleContractNoSwitch="saleContractNoSwitch"></OrderInfoDetail>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -355,6 +355,7 @@ export default {
 
       ],
       totalDataForm: {},
+      saleContractNoSwitch: null,
     }
   },
   watch: {
@@ -381,7 +382,16 @@ export default {
     console.log(6767);
 
   },
-  created() {
+  async created() {
+    await Promise.all([
+      this.jnpf.getMainUnitFun('orderField', 'customerContractNo'),
+    ]).then(([
+      saleContractNoSwitch,
+    ]) => {
+      this.saleContractNoSwitch = saleContractNoSwitch
+    }).catch(error => {
+      console.error('请求失败:', error);
+    });
     this.getUserList()
     this.superForm = this.orderForm
     this.search('basic')

@@ -117,6 +117,8 @@
 
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
+          <el-table-column prop="warehouseName" label="仓库" width="160" sortable="custom" />
+          <el-table-column prop="shelfSpaceName" label="库位" width="160" sortable="custom" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -345,7 +347,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
       externalMaterOutboundFormVisible: false,
-      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount", 'discount'],
+      columnList: ["partnerCode", 'productCode', "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxTotalAmount", "createByName", "taxAmount", 'discount','shelfSpaceName'],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -1066,7 +1068,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'partnerName' || prop == 'pairingModeName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode') {
+      if (prop == 'partnerName' || prop == 'pairingModeName' || prop == 'createTime' || prop == 'documentStatus' || prop == 'processName' || prop == 'excludingTaxTotalAmount' || prop == 'productCode' || prop == 'partnerCode'|| prop == 'warehouseName' || prop == 'shelfSpaceName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

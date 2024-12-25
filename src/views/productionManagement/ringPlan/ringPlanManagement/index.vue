@@ -103,12 +103,14 @@
 
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="140" fixed="right">
+            <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="addition(scope.row)">编排</el-button>
                 <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="planSchedule(scope.row)">计划进度</el-button>
+                <el-button size="mini" type="text" 
+                  @click="viewDetailFun(scope.row)">查看详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -120,6 +122,7 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <TaskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="initData" @close="closeForm"></TaskForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -158,13 +161,15 @@ import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import TaskForm from '../../assemblyplan/assemblyplanManagement/taskFormCopy.vue'
 export default {
   name: 'assemblyplanManagement',
-  components: { Form, SuperQuery, ExportForm, PlanSchedule },
+  components: { Form, SuperQuery, ExportForm,TaskForm, PlanSchedule },
   mixins: [getProjectList],
   data() {
     return {
       planScheduleVisible: false,
+      taskFormVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -406,6 +411,13 @@ export default {
         this.$refs.Form.init(this.selectArr)
       })
     },
+    // 详情
+    viewDetailFun(row) {
+      this.taskFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.taskForm.init(row)
+      })
+    },
     selectFun(val) {
       console.log(val);
       if (val.length) {
@@ -457,6 +469,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.planScheduleVisible = false
+      this.taskFormVisible = false
       this.selectArr = []
       this.search('super')
 

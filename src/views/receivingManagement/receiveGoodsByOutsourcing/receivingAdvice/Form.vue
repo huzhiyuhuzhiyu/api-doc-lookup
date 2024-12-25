@@ -129,9 +129,9 @@
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                      width="110" sortable="custom" />
+                      width="110"  />
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
+                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
@@ -356,17 +356,17 @@
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
 
-                <el-table-column prop="drawingNo" label="品名规格" width="200" sortable="custom" show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="品名规格" width="200"  show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                  width="110" sortable="custom" />
+                  width="110"  />
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
                   v-if="isDeputyUnitSwitch === '1'" />
                 <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                  sortable="custom" /> -->
+                   /> -->
                 <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">

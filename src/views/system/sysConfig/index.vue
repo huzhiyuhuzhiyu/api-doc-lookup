@@ -187,6 +187,41 @@
             <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
           </el-form-item>
         </el-tab-pane>
+        <el-tab-pane label="工位终端设置" name="terminal">
+          <el-row :gutter="20" style="margin: 0 20px;">
+            <el-col :span="24" style="font-weight:bold;color: #606266;font-size:16px">登录风格:</el-col>
+            <el-col :span="24"><el-radio-group v-model="baseForm.terminal">
+                <div class="manner-container">
+                  <div class="manner-container-img">
+                    <el-image :src="require('@/assets/images/terminalLogin.jpg')" fit="fill" :preview-src-list="srcList3"></el-image>
+                    <div><el-radio label="1">登录样式</el-radio></div>
+                  </div>
+                </div>
+              </el-radio-group></el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin: 15px 20px;">
+            <el-col :span="12" style="font-weight:bold;color: #606266;font-size:16px">登录背景:</el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin: 0 20px;">
+            <el-col :span="12">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.terminalLoginBg" tip="1920:1080" />
+                  <div class="img_box_text">
+                    该登录背景应用于登录界面
+                    <i class="el-icon-question"></i>
+                  </div>
+                  <!-- <div class="img_box_text">11:1</div> -->
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <div style="margin:20px 30px;">
+              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitTerminalLogin()">保 存</el-button>
+            </div>
+          </el-row>
+        </el-tab-pane>
         <!-- <el-tab-pane label="安全设置" name="second">
           <el-alert title="注意：系统登录安全、黑名单IP限制" type="warning" :closable="false" show-icon />
           <el-row class="mt-20">
@@ -553,6 +588,7 @@ export default {
     return {
       srcList1:[require('@/assets/images/manner1.png')],
       srcList2:[require('@/assets/images/manner2.png')],
+      srcList3:[require('@/assets/images/terminalLogin.jpg')],
       activeName: 'first',
       listLoading: false,
       btnLoading: false,
@@ -620,7 +656,9 @@ export default {
         passwordErrorsNumber: 0,
         lockType: 1,
         lockTime: 10,
-        enableVerificationCode: 0
+        enableVerificationCode: 0,
+        terminal:"1",
+        terminalLoginBg:""
       },
       rules: {
         aliAccessKey: [
@@ -721,7 +759,8 @@ export default {
           this.ddEvents[1].select = this.baseForm.dingSynIsSynUser ? true : false
           this.baseForm.smsCompany = this.baseForm.smsCompany ? this.baseForm.smsCompany : '1'
           this.baseForm.lockType = this.baseForm.lockType ? this.baseForm.lockType : 1
-          this.baseForm.lockTime = this.baseForm.lockTime ? this.baseForm.lockTime : 10
+          this.baseForm.lockTime = this.baseForm.lockTime ? this.baseForm.lockTime : 10,
+          this.baseForm.terminal = this.baseForm.terminal ? this.baseForm.terminal : "1",
           this.listLoading = false
         }).catch(() => {
           this.listLoading = false
@@ -882,6 +921,15 @@ export default {
         pattern: this.baseForm.pattern,
         loginIcon: this.baseForm.loginIcon,
         loginBg: this.baseForm.loginBg
+      }
+      setpattern(a).then(res => {
+        this.submitForm()
+      })
+    },
+    submitTerminalLogin() {
+      this.btnLoading = true
+      let a = {
+        terminalLoginBg: this.baseForm.terminalLoginBg
       }
       setpattern(a).then(res => {
         this.submitForm()

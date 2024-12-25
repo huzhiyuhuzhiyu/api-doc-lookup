@@ -120,3 +120,20 @@ export function withdrawApi(id) {
   })
 }
 
+// 中亚生产在制库存报表-列表
+export function inventoryWarehouseReport(data) {
+  return request({
+    url: `/api/report/data/zy/transit/list`,
+    method: 'POST',
+    data
+  })
+}
+
+// 中亚生产在制库存报表-导出
+export function inventoryWarehouseExport(data) {
+  return request({
+    url: `/api/report/data/zy/transit/export`,
+    method: 'POST',
+    data
+  })
+}

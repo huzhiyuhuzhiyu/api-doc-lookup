@@ -402,7 +402,7 @@ export default {
         { code: "guidebook", fullName: "作业指导书", },
         { code: "inspectionManual", fullName: "检验指导书", },
         { code: "drawing", fullName: "图纸", },
-        { code: "customerProduct", fullName: "客户产品工艺信息", },
+        { code: "customerProduct", fullName: "客户产品工艺", },
         // { code: "tool", fullName: "工装模具", },
       ],
       categoryType: "workOrder",

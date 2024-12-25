@@ -153,7 +153,7 @@ import {
 import Form from '../components/inspectionNoticeForm.vue'
 import DetailForm from '@/views/salesManagement/shippingnotice/returnSalesmemo/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes, getbimProductsModelList } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributes, getbimProductsModelList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getUnitData } from '@/api/basicData/materialSettings'

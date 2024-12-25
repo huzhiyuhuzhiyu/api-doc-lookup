@@ -281,11 +281,11 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: ''
+            column: 'create_time'
           },
           {
             asc: false,
-            column: 'create_time'
+            column: 'order_no'
           }
         ],
         pageNum: 1,

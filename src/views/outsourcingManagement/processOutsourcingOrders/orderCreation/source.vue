@@ -4,23 +4,27 @@
       :before-close="handleClose" size="45%" columnSettings-drawer class="JNPF-common-drawer">
       <div ref="main">
         <el-scrollbar style="height: 100%;">
+          <div v-if="types !== 'look'">
+            <el-button type="text" class="topButton" icon="el-icon-plus" @click="openProductDialog('product')">
+              选择产品
+            </el-button>
+            |
+            <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
+            |
+          </div>
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-            <JNPF-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
-              :style="{ height: height + 'px' }" ref="sourceTable">
+            <JNPF-table hasNO fixedNO hasC v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
+              :style="{ height: height + 'px' }" ref="sourceTable" @selection-change="handeleProductInfoData">
               <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
               <el-table-column prop="projectName" label="所属项目" width="120"
                 v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-
-                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                      v-model="scope.row.drawingNo" ref="ComSelect-page" @change="productChange"
-                      :tableItems="ProductTableItems" :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类"
-                      :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
-                      :paramsObj="{ scope }" :searchList="ProductTableSearchList"
-                      :listDataFormatting="listDataFormatting" />
+                    <div class="viewData">
+                      <span>{{ scope.row.drawingNo }}</span>
+                    </div>
                   </el-form-item>
                 </template>
               </el-table-column>
@@ -28,37 +32,28 @@
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">
-
                     <div class="viewData">
                       <span>{{ scope.row.productCode }}</span>
                     </div>
-
                   </el-form-item>
                 </template>
               </el-table-column>
               <el-table-column prop="processName" label="工序名称" width="135" show-overflow-tooltip>
-
                 <template slot-scope="scope">
                   <el-form-item>
                     <!-- 工序选择弹窗  -->
                     <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeProcessClick"
-                      v-model="scope.row.processName" ref="ComSelect-page" @change="onOrganizeChangeTwo"
-                      :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
-                      :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
-                      :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
+                      v-model="scope.row.processName" @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems"
+                      :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
+                      :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
                       :searchList="ProcessTableSearchList" />
                   </el-form-item>
                 </template>
               </el-table-column>
 
-
-
               <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                 <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                    <!-- <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" maxlength="20" placeholder="请输入基本数量">
-                    </el-input> -->
                     <div class="viewData">
                       <span>{{ scope.row.mainUnit }}</span>
                     </div>
@@ -81,12 +76,8 @@
               </el-table-column>
 
               <!-- 操作 -->
-              <el-table-column label="操作" width="110">
+              <el-table-column label="操作" width="60" fixed="right">
                 <template slot-scope="scope">
-                  <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'" style="color:#606266"
-                    @click="handlerAdd(scope.$index, 'personnel')">
-                    添加
-                  </el-button>
                   <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'"
                     style="color:rgb(245,108,108)" @click="handlerDelete(scope.$index, 'personnel')">
                     删除
@@ -104,6 +95,10 @@
         </div>
       </div>
     </el-drawer>
+    <ComSelect-page :treeNodeClick="treeNodeClick" ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems"
+      :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
+      :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList"
+      :listDataFormatting="listDataFormatting" multiple />
   </div>
 </template>
 
@@ -135,7 +130,12 @@ export default {
       // 产品
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '', type: 'material' } }
+        {
+          label: '产品分类',
+          classAttribute: '',
+          method: getcategoryTree,
+          requestObj: { classAttribute: '', type: 'material' }
+        }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttribute: '',
@@ -156,18 +156,15 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'code', label: '产品编码' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
-
-        // { prop: 'spec', label: '规格型号' },
+        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'classAttributeName', label: '类别属性' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        // { prop: "name", label: "产品名称", type: 'input', },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
 
+        // { prop: "name", label: "产品名称", type: 'input', },
       ], // 产品选择弹出框搜索条件
       // 工序
       getBimProcessList,
@@ -177,7 +174,7 @@ export default {
       // 供应商 列表
       ProcessTableItems: [
         { prop: 'name', label: '工序名称' },
-        { prop: 'code', label: '工序编码' },
+        { prop: 'code', label: '工序编码' }
 
         // { prop: 'nameEn', label: '英文名称' },
         // { prop: 'taxId', label: '税号' }
@@ -185,7 +182,7 @@ export default {
       // 供应商搜索条件
       ProcessTableSearchList: [
         { prop: 'name', label: '工序名称', type: 'input' },
-        { prop: 'code', label: '工序编码', type: 'input' },
+        { prop: 'code', label: '工序编码', type: 'input' }
       ],
       // 供应商请求参数
       ProcessListRequestObj: {
@@ -198,9 +195,7 @@ export default {
         data: []
       },
       productRule: {
-        processName: [
-          { required: true, trigger: ['blur'] },
-        ],
+        processName: [{ required: true, trigger: ['blur'] }],
         demandQuantity1: [
           { required: true, validator: this.checktaxDemandQuantity1(), trigger: ['blur'] },
           {
@@ -224,7 +219,6 @@ export default {
   mounted() {
     this.switchStyle()
     this.getclassAttributeList()
-
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
@@ -232,45 +226,36 @@ export default {
     this.tableDataFlag = true
     console.log(this.isProjectSwitch)
     if (this.isProjectSwitch === '1') {
-      this.ProductTableItems = [
-        { prop: 'projectName', label: '所属项目' },
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'code', label: '产品编码' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
-
-        // { prop: 'spec', label: '规格型号' },
-        { prop: 'classAttributeName', label: '类别属性' }
-      ]
+      let codeIndex = this.ProductTableItems.findIndex(obj => obj.prop === 'code');
+      this.ProductTableItems.splice(codeIndex + 1, 0, { prop: 'projectName', label: '所属项目' })
     } else {
-      this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'code', label: '产品编码' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
 
-        // { prop: 'spec', label: '规格型号' },
-        { prop: 'classAttributeName', label: '类别属性' }
-      ]
     }
+    if (this.isProjectSwitch === '1') {
+      let drawingNoIndex = this.ProductTableItems.findIndex(obj => obj.prop === 'drawingNo');
+      this.ProductTableItems.splice(drawingNoIndex + 1, 0, { prop: 'name', label: '产品名称' })
+    } else {
 
+    }
   },
   methods: {
     //自适应窗口
     async switchStyle() {
-      await this.$nextTick();
+      await this.$nextTick()
       console.log(this.$refs.main, 'this.$refs.main')
       let allHeight = this.$refs.main.clientHeight
       console.log(allHeight, 'allHeight')
       // let HeightstoclInfo = this.$refs.stoclInfo.clientHeight
       // let Heightradio = this.$refs.radio.clientHeight
-      this.height = (allHeight - 700) < 700 ? 700 : (allHeight - 425)
+      this.height = allHeight - 700 < 700 ? 700 : allHeight - 425
       console.log(this.height, 'this.height')
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           this.switchStyle()
-        }, 100);
-      };
+        }, 100)
+      }
     },
     listDataFormatting(res) {
       res.data.records.forEach((item, index) => {
@@ -298,7 +283,9 @@ export default {
     },
     handlerAdd() {
       this.dataFormTwo.data.push({
-        drawingNo: '', processName: '', demandQuantity1: this.purchaseQuantity
+        drawingNo: '',
+        processName: '',
+        demandQuantity1: this.purchaseQuantity
       })
       console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
     },
@@ -322,13 +309,7 @@ export default {
       console.log(data, '资源')
       this.parentId = parentId
       this.purchaseQuantity = purchaseQuantity
-      if (data.length !== 0) {
 
-      } else {
-        data = [{
-          drawingNo: '', demandQuantity1: this.purchaseQuantity
-        }]
-      }
       // this.dataForm = data
       this.type = type
       console.log(this.type)
@@ -343,6 +324,34 @@ export default {
       }
       console.log(this.dataFormTwo.data, '0003333333333333333')
       this.drawer = true
+    },
+    openProductDialog() {
+      this.ProductListRequestObj.routingId = ''
+      this.ProductListRequestObj.queryType = ''
+      this.$refs['ComSelect-page'].openDialog()
+    },
+    // 批量删除
+    batchDelete() {
+      // 遍历选中的行的数据
+      if (this.productArr.length === 0) {
+        this.$message({
+          message: "请选择你要删除的数据",
+          type: "error",
+          duration: 1500,
+        })
+      }
+      for (let i = 0; i < this.productArr.length; i++) {
+        const row = this.productArr[i];
+        const index = this.dataFormTwo.data.indexOf(row);
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.productArr = []  // 清空选中的行的数据
+    },
+    // 选中的产品信息
+    handeleProductInfoData(val) {
+      this.productArr = val
     },
     handleClick(tab, event) {
       this.activeName = tab.name
@@ -361,27 +370,67 @@ export default {
       listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
       return listQuery
     },
-    // 选择产品名称的弹框
-    productChange(val, data, paramsObj) {
-      let index = paramsObj.scope.$index
-      if (!data || !data.length) return
+    addth(id, data) {
       console.log(data)
-      console.log(paramsObj, '1111')
-      if (data[0].all.id == this.parentId) {
-        this.dataFormTwo.data[index].drawingNo = ''
-        return this.$message.error('不能选择与产品信息相同的产品')
-      }
+      let selectArr = []
 
-      console.log(index, '索引')
       if (data.length) {
-        this.dataFormTwo.data[index].projectName = data[0].all.projectName
-        this.dataFormTwo.data[index].drawingNo = data[0].all.drawingNo
-        this.dataFormTwo.data[index].productCode = data[0].all.code
-        this.dataFormTwo.data[index].productsId = data[0].all.id
-        this.dataFormTwo.data[index].mainUnit = data[0].all.mainUnit
+        let list = data.map((item) => item.all)
+        list.forEach((item, index) => {
+          selectArr.push({
+            productName: item.name,
+            productsId: item.id, // 产品id
+            productCode: item.code,
+            projectName: item.projectName,
+            drawingNo: item.drawingNo,
+            routingName: item.routingName,
+            routingId: item.routingId,
+            processName: item.processName,
+            processId: item.processId,
+            mainUnit: item.mainUnit,
+            demandQuantity: '',
+            calculationDirection: item.calculationDirection,
+            ratio: item.ratio,
+            routingLineId: item.routingLineId
+          })
+        })
       }
 
-      console.log(this.dataFormTwo, 'this.dataFormTwo')
+      console.log(selectArr, '选中')
+      console.log(this.dataFormTwo.data, '列表')
+      if (this.dataFormTwo.data.length) {
+        const deletedArray = []
+        const deletedArray2 = []
+        selectArr = selectArr.filter((item1) => {
+          if (!item1.processId) {
+            const index = this.dataFormTwo.data.findIndex(
+              (item2) => item2.productsId === item1.productsId && item1.processId === item2.processId
+            )
+            if (index !== -1) {
+              deletedArray.push(item1.productName)
+              if (deletedArray.length) {
+                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+              }
+              return false
+            }
+            return true
+          } else {
+            const index = this.dataFormTwo.data.findIndex((item2) => item2.processId === item1.processId)
+            if (index !== -1) {
+              deletedArray2.push(item1.processName)
+              if (deletedArray2.length) {
+                this.$message.error(`已经添加过的工序产品：${deletedArray2.join('、')}`)
+              }
+              return false
+            }
+            return true
+          }
+        })
+        console.log(data, '删除后的数据')
+        console.log(deletedArray, '被删掉的数据')
+      }
+      this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+      this.calcHeight()
     },
     // 选择工序的弹框
     onOrganizeChangeTwo(val, data, paramsObj) {
@@ -436,7 +485,7 @@ export default {
   },
   updated() {
     this.$refs['sourceTable'].doLayout()
-  },
+  }
 }
 </script>
 <style lang="scss" scoped>

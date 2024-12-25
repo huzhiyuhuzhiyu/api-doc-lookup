@@ -118,19 +118,19 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom"
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" 
                       show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                      width="110" sortable="custom" />
+                      width="110"  />
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
+                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                      sortable="custom" />
+                       />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -225,27 +225,27 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom"
+                    <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" 
                       v-if="sealingCoverTypingFlag === '1'" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom"
+                    <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 
                       v-if="accuracyLevelFlag === '1'" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom"
+                    <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
                       v-if="vibrationLevelFlag === '1'" />
-                    <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" v-if="oilFlag === '1'" />
-                    <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom"
+                    <el-table-column prop="oil" label="油脂" min-width="120"  v-if="oilFlag === '1'" />
+                    <el-table-column prop="oilQuantity" label="油脂量" min-width="140" 
                       v-if="oilQuantityFlag === '1'" />
-                    <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom"
+                    <el-table-column prop="clearance" label="游隙" min-width="120" 
                       v-if="clearanceFlag === '1'" />
-                    <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom"
+                    <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
                       v-if="packagingMethodFlag === '1'" />
-                    <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom"
+                    <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
                       v-if="specialRequireFlag === '1'" />
-                    <el-table-column prop="material" label="材质" width="130" sortable="custom"
+                    <el-table-column prop="material" label="材质" width="130" 
                       v-if="materialFlag === '1'"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+                    <el-table-column prop="colour" label="颜色" width="130" 
                       v-if="colourFlag === '1'"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="160" />
-                    <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" />
+                    <el-table-column prop="ordersNo" label="订单号" width="200"  />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -368,18 +368,18 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom"
+                <el-table-column prop="drawingNo" label="品名规格" min-width="200" 
                   show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                  width="110" sortable="custom" />
+                  width="110"  />
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
                   v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                  sortable="custom" />
+                   />
                 <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -473,27 +473,27 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom"
+                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" 
                   v-if="sealingCoverTypingFlag === '1'" />
-                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom"
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 
                   v-if="accuracyLevelFlag === '1'" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom"
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
                   v-if="vibrationLevelFlag === '1'" />
-                <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" v-if="oilFlag === '1'" />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom"
+                <el-table-column prop="oil" label="油脂" min-width="120"  v-if="oilFlag === '1'" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" 
                   v-if="oilQuantityFlag === '1'" />
-                <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom"
+                <el-table-column prop="clearance" label="游隙" min-width="120" 
                   v-if="clearanceFlag === '1'" />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom"
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
                   v-if="packagingMethodFlag === '1'" />
-                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom"
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
                   v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="材质" width="130" sortable="custom"
+                <el-table-column prop="material" label="材质" width="130" 
                   v-if="materialFlag === '1'"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+                <el-table-column prop="colour" label="颜色" width="130" 
                   v-if="colourFlag === '1'"></el-table-column>
                 <el-table-column prop="processName" label="工序" width="160" />
-                <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
+                <el-table-column prop="ordersNo" label="订单号" width="180"  />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -632,39 +632,39 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
-                <el-table-column prop="orderNo" label="订单号" min-width="220" sortable="custom"
+                <el-table-column prop="orderNo" label="订单号" min-width="220" 
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="140"  />
+                <el-table-column prop="drawingNo" label="品名规格" width="160"  />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
-                <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="160"  />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160"  />
                 <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
 
-                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" sortable="custom"
+                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" 
                   v-if="sealingCoverTypingFlag === '1'" />
-                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom"
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 
                   v-if="accuracyLevelFlag === '1'" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom"
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
                   v-if="vibrationLevelFlag === '1'" />
-                <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" v-if="oilFlag === '1'" />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom"
+                <el-table-column prop="oil" label="油脂" min-width="120"  v-if="oilFlag === '1'" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" 
                   v-if="oilQuantityFlag === '1'" />
-                <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom"
+                <el-table-column prop="clearance" label="游隙" min-width="120" 
                   v-if="clearanceFlag === '1'" />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom"
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
                   v-if="packagingMethodFlag === '1'" />
-                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom"
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
                   v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="材质" width="130" sortable="custom"
+                <el-table-column prop="material" label="材质" width="130" 
                   v-if="materialFlag === '1'"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+                <el-table-column prop="colour" label="颜色" width="130" 
                   v-if="colourFlag === '1'"></el-table-column>
                 <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
-                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                <el-table-column prop="createTime" label="创建时间" width="180"  />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="searchProductFun" />

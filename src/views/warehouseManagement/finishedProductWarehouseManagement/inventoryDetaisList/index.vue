@@ -844,7 +844,7 @@ export default {
         if (row.sourceType == 'notice') {
           this.inboundSaleReturnFormVisible = true
           this.$nextTick(() => {
-            this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttribute)
+            this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
         } else {
           this.formVisible = true
@@ -856,7 +856,7 @@ export default {
         if (row.sourceType == 'notice') {
           this.outboundPurchaseFormVisible = true
           this.$nextTick(() => {
-            this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
+            this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList)
           })
         } else {
           this.formVisible = true
@@ -885,12 +885,12 @@ export default {
         if (row.sourceType == 'order') {
           this.PurchaseOrderInboundFormVisible = true
           this.$nextTick(() => {
-            this.$refs.PurchaseOrderInboundREFForm.init(id, type, row.businessType, this.classAttributeList)
+            this.$refs.PurchaseOrderInboundREFForm.init(id, type, row.businessType, this.classAttributeList,this.warehouseCode)
           })
         } else if (row.sourceType == 'notice') {
           this.inboundPurchaseFormVisible = true
           this.$nextTick(() => {
-            this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList)
+            this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList,this.warehouseCode)
           })
         } else {
           this.formVisible = true
@@ -907,7 +907,7 @@ export default {
         } else if (row.sourceType == 'notice') {
           this.inboundExternalFormVisible = true
           this.$nextTick(() => {
-            this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttributeList)
+            this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttributeList,this.warehouseCode)
           })
         } else {
           this.formVisible = true
@@ -919,12 +919,12 @@ export default {
         if (row.sourceType == 'order') {
           this.saleOutboundFormVisible = true
           this.$nextTick(() => {
-            this.$refs.saleOutboundREFForm.init(id, type, row.businessType, this.classAttributeList)
+            this.$refs.saleOutboundREFForm.init(id, type, row.businessType, this.classAttributeList,this.warehouseCode)
           })
         } else if (row.sourceType == 'notice') {
           this.outboundSaleSendFormVisible = true
           this.$nextTick(() => {
-            this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
+            this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList,this.warehouseCode)
           })
         } else {
           this.formVisible = true
@@ -936,7 +936,7 @@ export default {
         if (row.sourceType == 'notice') {
           this.outboundPickOutFormVisible = true
           this.$nextTick(() => {
-            this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttribute)
+            this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttribute,this.warehouseCode)
           })
         } else {
           this.formVisible = true
@@ -948,7 +948,7 @@ export default {
         if (row.sourceType == 'notice') {
           this.inboundReturnMaterialsFormVisible = true
           this.$nextTick(() => {
-            this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute)
+            this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute,this.warehouseCode)
           })
         } else {
           this.formVisible = true

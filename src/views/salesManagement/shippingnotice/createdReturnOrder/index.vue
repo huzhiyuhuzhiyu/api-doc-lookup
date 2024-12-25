@@ -152,11 +152,10 @@
                             <span class="required">*</span>退货数量(主)
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
+                            <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
                               :rules='productRules.deliveryQuantity'>
                               <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
-                                :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
-                                @blur="checkNum(scope.row, scope.$index)" @input="watchnums(scope.row, scope.$index)">
+                                :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11" @input="watchnums(scope.row, scope.$index)">
                               </el-input>
                             </el-form-item>
                           </template>
@@ -951,11 +950,11 @@ export default {
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
 
   },
   mounted() {
     this.init()
-    this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
@@ -1482,7 +1481,7 @@ export default {
       this.selectArr.forEach(item => {
         item.ordersNum = item.num
         item.deliveryQuantity = item.num
-        item.productCode = item.code
+        item.productCode = item.code||item.productCode
         item.productsId = item.id
         item.taxRate = item.taxRate * 1
         this.dataFormTwo.productData.push(item)
@@ -1573,14 +1572,14 @@ export default {
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
-        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.ratio]), 6))
 
       } else {
         productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
-        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.deliveryQuantity, row.ratio]), 6))
       }
       console.log("productArr", productArr);
       this.dataFormTwo.productData = productArr

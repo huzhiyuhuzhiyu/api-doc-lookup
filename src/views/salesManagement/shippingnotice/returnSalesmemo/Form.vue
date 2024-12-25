@@ -1120,7 +1120,7 @@ export default {
       list8: [],
       list9: [],
       list10: [],
-      pairingModeList:[],
+      pairingModeList: [],
     }
   },
   computed: {
@@ -1711,10 +1711,20 @@ export default {
         item.ordersNum = item.num
         item.deliveryQuantity = item.num
 
-        item.productCode = item.code
+        item.productCode = item.code||item.productCode
         item.productsId = item.id
+        if (item.calculationDirection) {
+          if (item.calculationDirection == 'multiplication') {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+           
+          } else {
+            this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+         
+          }
+        }
         item.taxRate = item.taxRate * 1
         this.dataFormTwo.productData.push(item)
+
       });
       let uniqueArr = [];
       let idSet = new Set();
@@ -1820,16 +1830,16 @@ export default {
 
       console.log("index", index);
       console.log("row.deliveryQuantity", row.deliveryQuantity);
-      if (row.calculationDirection == 'multiplication') {
-          this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
-          productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity * row.ratio, 2)
+      if (row.calculationDirection == 'multiplication') { 
+        productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.ratio]), 6)
+        productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity * row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
 
       } else {
-          this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
-          productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
+        this.$set(productArr[index], 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.deliveryQuantity, row.ratio]), 6))
+        productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity / row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
         productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.excludingTaxPrice]), 2)
         productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
@@ -2288,6 +2298,7 @@ export default {
               taxAmount: item.taxAmount ? item.taxAmount : '',
               taxRate: item.taxRate ? item.taxRate : '',
               totalAmount: item.totalAmount ? item.totalAmount : '',
+              pairingModeId:item.pairingModeId
             }
             let dep1 = {
               billStatus: item.billStatus ? item.billStatus : '',
@@ -2314,6 +2325,7 @@ export default {
               taxAmount: item.taxAmount ? item.taxAmount : '',
               taxRate: item.taxRate ? item.taxRate : '',
               totalAmount: item.totalAmount ? item.totalAmount : '',
+              pairingModeId:item.pairingModeId
             }
             if (this.btnType == 'add' || this.btnType == 'copy') {
               obj.noticeLineList.push(dep)

@@ -61,8 +61,8 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="配对方式" prop="taskMethod">
-                          <el-select v-model="planForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
+                          <el-select v-model="planForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;" disabled
+                            >
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                               :value="item.id">
                             </el-option>
@@ -97,7 +97,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划日期" prop="planDate" style="margin-bottom: 20px;">
+                        <el-form-item label="计划日期" prop="planDate" >
                           <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
                             end-placeholder="结束日期" clearable>
@@ -130,7 +130,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="合格率" prop="qualificationRate">
+                        <el-form-item label="合格率" prop="qualificationRate" style="margin-bottom: 19px;">
                           <el-input v-model="planForm.qualificationRate" placeholder="请输入合格率"
                             :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
                             @blur="watchRate(planForm.qualificationRate)">
@@ -162,7 +162,7 @@
                             <el-input class="ipt1" v-model="planForm.utilizationQuantity" @blur="watchly"
                               placeholder="利用库存数量" :disabled='btnType == "look"'
                               oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
-                            </el-input>
+                            </el-input><span class="mainUnit" v-if="planForm.pairingModeId">{{ planForm.mainUnit }}</span>
 
                             <span class="lab_t" v-if="btnType != 'look'">可用库存数量</span>
                             <span v-if="btnType != 'look'" class="pointer" @click="viewAvailableQuantity()">{{
@@ -1009,7 +1009,8 @@ export default {
           packagingMethod: productData[0].packagingMethod,
           specialRequire: productData[0].specialRequire,
           excludeProcessFlag:false,
-          projectId:productData[0].projectId
+          projectId:productData[0].projectId,
+          pairingModeId:productData[0].pairingModeId,
         };
         this.planForm.bomId = productData[0].bomId
         if (productData[0].bomId) {
@@ -1110,6 +1111,7 @@ export default {
           productDrawingNo: productData.plan.productDrawingNo,
           sealingCoverTyping: productData.plan.sealingCoverTyping,
           vibrationLevel: productData.plan.vibrationLevel,
+          pairingModeId:productData[0].pairingModeId,
 
           excludeProcessFlag:false,
         };
@@ -1427,5 +1429,13 @@ export default {
 
 .BOM_T ::v-deep .el-input__inner {
   color: rgb(63, 185, 248)
+}
+.mainUnit{
+  height: 32px;
+    line-height: 32px;
+    background: rgb(63, 185, 248);
+    display: inline-block;
+    padding: 0 5px;
+    color: #fff
 }
 </style>

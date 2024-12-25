@@ -215,16 +215,18 @@ export default {
       this.cpData = JSON.parse(JSON.stringify(data))
       this.cpIndex = JSON.parse(JSON.stringify(index))
       this.form.productsId = data.productsId
-      // this.form.vibrationLevel = data.vibrationLevel
-      // this.form.sealingCoverTyping = data.sealingCoverTyping
-      // this.form.oil = data.oil
-      // this.form.processId = data.processId ? data.processId : ""
-      // this.form.clearance = data.clearance
-      // this.form.accuracyLevel = data.accuracyLevel
-      // this.form.warehouseId = data.warehouseId
-      // this.form.packagingMethod = data.packagingMethod
-      // this.form.specialRequire = data.specialRequire
-      // this.form.pairingModeId = data.pairingModeId
+      this.form.vibrationLevel = data.vibrationLevel
+      this.form.sealingCoverTyping = data.sealingCoverTyping
+      this.form.oil = data.oil
+      this.form.processId = data.processId ? data.processId : ""
+      this.form.clearance = data.clearance
+      this.form.accuracyLevel = data.accuracyLevel
+      this.form.warehouseId = data.warehouseId
+      this.form.packagingMethod = data.packagingMethod
+      this.form.specialRequire = data.specialRequire
+      this.form.pairingModeId = data.pairingModeId
+      this.form.material = data.material
+      this.form.standardValue = data.standardValue
 
       this.dataForm = data
       if (!requestFlag) {
@@ -275,19 +277,21 @@ export default {
           asc: false,
           column: ""
         },],
-        shelfSpaceName: "",
+        shelfSpaceName:"" ,
         batchNumber: "",
-        warehouseId: "",
-        vibrationLevel: "",
-        sealingCoverTyping: "",
-        oil: "",
-        clearance: "",
-        accuracyLevel: "",
-        packagingMethod: "",
-        specialRequire: "",
+        warehouseId: this.dataForm.warehouseId,
+        vibrationLevel: this.dataForm.vibrationLevel,
+        sealingCoverTyping: this.dataForm.sealingCoverTyping,
+        oil: this.dataForm.oil,
+        clearance: this.dataForm.clearance,
+        accuracyLevel: this.dataForm.accuracyLevel,
+        packagingMethod: this.dataForm.packagingMethod,
+        specialRequire: this.dataForm.specialRequire,
         inspectStockFlag: true,
         availableBatch:true,
         partnerName:"",
+        standardValue:this.dataForm.standardValue,
+        colour:this.dataForm.colour
       }
       if (this.requestFlag) {
         this.getlistOutBatchStockFun()

@@ -45,6 +45,12 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                    <el-form-item label="客户合同号" prop="contractNo">
+                      <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
+                        :disabled="btnType == 'look'" maxlength="300" clearable />
+                    </el-form-item>
+                  </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="所属部门" prop="departmentId">
                           <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
@@ -138,6 +144,11 @@
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       </el-table-column>
+                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
+                  </template>
+                </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                         show-overflow-tooltip></el-table-column>
@@ -216,6 +227,11 @@
                         </el-input>
                       </template>
                     </el-table-column>
+                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
+                  </template>
+                </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
@@ -454,6 +470,12 @@
                       </el-input>
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                    <el-form-item label="客户合同号" prop="contractNo">
+                      <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
+                        :disabled="btnType == 'look'" maxlength="300" clearable />
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="所属部门" prop="departmentId">
                       <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
@@ -545,6 +567,11 @@
                   <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   </el-table-column>
+                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
+                  </template>
+                </el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
@@ -620,6 +647,11 @@
                       @keyup.enter.native="searchCustomerProduct(scope)">{{
                         scope.row.customerProductNo }}
                     </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
@@ -1051,6 +1083,9 @@ export default {
   mixins: [busFlow, getProjectList],
   components: {
     ExportForm, Process, recordList, Form, productAttributesListForm
+  },
+  props: {
+    saleContractNoSwitch: {}
   },
   data() {
     return {

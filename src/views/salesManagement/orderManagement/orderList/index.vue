@@ -79,6 +79,7 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column v-if="saleContractNoSwitch === '1'" prop="contractNo" label="客户合同号" min-width="200"></el-table-column>
             <el-table-column prop="departmentName" label="所属部门" min-width="160" sortable="custom"></el-table-column>
             <el-table-column prop="salesName" label="所属销售 " min-width="140" sortable="custom" />
             <el-table-column prop="orderDate" label="订单日期" min-width="140" sortable="custom"></el-table-column>
@@ -145,7 +146,8 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList"
+      :saleContractNoSwitch="saleContractNoSwitch" />
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -371,6 +373,7 @@ export default {
 
       ],
       totalDataForm: {},
+      saleContractNoSwitch: null,
     }
   },
   watch: {
@@ -391,7 +394,16 @@ export default {
 
   },
 
-  created() {
+  async created() {
+    await Promise.all([
+      this.jnpf.getMainUnitFun('orderField', 'customerContractNo'),
+    ]).then(([
+      saleContractNoSwitch,
+    ]) => {
+      this.saleContractNoSwitch = saleContractNoSwitch
+    }).catch(error => {
+      console.error('请求失败:', error);
+    });
     this.getUserList()
     this.superForm = this.orderForm
     this.search('basic')

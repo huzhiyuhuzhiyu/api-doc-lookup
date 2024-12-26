@@ -7,11 +7,20 @@ export function getSalaryList(data) {
         data: data
     })
 }
+// 工资管理列表数据(总计)
+export function getSalaryReportList(data) {
+    return request({
+        url: '/api/mrp/work/report/wages/report',
+        method: 'post',
+        data: data
+    })
+}
 // 重新计算异常工资
 
 export function editSalaryList(data) {
     return request({
-        url: '/api/mrp/work/report/wages/reload',
+        // url: '/api/mrp/work/report/wages/reload',
+        url: '/api/mrp/work/report/price/update',
         method: 'put',
         data: data
     })
@@ -22,6 +31,14 @@ export function editSalaryList(data) {
 export function getSalaryDetailList(data) {
     return request({
         url: '/api/mrp/work/report/report',
+        method: 'post',
+        data: data
+    })
+}
+// 工资明细
+export function getSalaryWagesDetailList(data) {
+    return request({
+        url: '/api/mrp/work/report/wages/report',
         method: 'post',
         data: data
     })

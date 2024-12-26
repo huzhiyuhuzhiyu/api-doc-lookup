@@ -63,7 +63,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitSurface }}
                 </el-link>
               </template>
             </el-table-column>
@@ -73,7 +73,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitCenterLess }}
                 </el-link>
               </template>
             </el-table-column>
@@ -81,7 +81,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitCenterLess }}
                 </el-link>
               </template>
             </el-table-column>
@@ -91,7 +91,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitRubHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -99,7 +99,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitRubHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -109,7 +109,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitTestHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -117,7 +117,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitTestHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -127,7 +127,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitRubChannel }}
                 </el-link>
               </template>
             </el-table-column>
@@ -135,7 +135,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitRubChannel }}
                 </el-link>
               </template>
             </el-table-column>
@@ -145,7 +145,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitSuperfine }}
                 </el-link>
               </template>
             </el-table-column>
@@ -153,7 +153,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitSuperfine }}
                 </el-link>
               </template>
             </el-table-column>
@@ -163,7 +163,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitRollingResearch }}
                 </el-link>
               </template>
             </el-table-column>
@@ -171,7 +171,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitRollingResearch }}
                 </el-link>
               </template>
             </el-table-column>

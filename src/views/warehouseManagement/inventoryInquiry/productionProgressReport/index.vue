@@ -36,7 +36,7 @@
             <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewFun(scope.row.productsId, 'inventoryFlag', scope.row.warehouseId)">
+                @click.native="viewFun(scope.row.blankProductsId, 'availableFlag', scope.row.warehouseId, projectId)">
                   {{ scope.row.waitHeat }}
                 </el-link>
               </template>
@@ -44,7 +44,7 @@
             <el-table-column prop="transitHeat" label="热处理在制" width="130" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewFun(scope.row.productsId, 'inventoryFlag', scope.row.warehouseId)">
+                @click.native="viewFun(scope.row.blankProductsId, 'availableFlag', scope.row.warehouseId, projectId)">
                   {{ scope.row.transitHeat }}
                 </el-link>
               </template>
@@ -63,7 +63,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitSurface }}
                 </el-link>
               </template>
             </el-table-column>
@@ -73,7 +73,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitCenterLess }}
                 </el-link>
               </template>
             </el-table-column>
@@ -81,7 +81,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitCenterLess }}
                 </el-link>
               </template>
             </el-table-column>
@@ -91,7 +91,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitRubHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -99,7 +99,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitRubHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -109,7 +109,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitTestHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -117,7 +117,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitTestHole }}
                 </el-link>
               </template>
             </el-table-column>
@@ -127,7 +127,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitRubChannel }}
                 </el-link>
               </template>
             </el-table-column>
@@ -135,7 +135,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitRubChannel }}
                 </el-link>
               </template>
             </el-table-column>
@@ -145,7 +145,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitSuperfine }}
                 </el-link>
               </template>
             </el-table-column>
@@ -153,7 +153,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitSuperfine }}
                 </el-link>
               </template>
             </el-table-column>
@@ -163,7 +163,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.waitRollingResearch }}
                 </el-link>
               </template>
             </el-table-column>
@@ -171,7 +171,7 @@
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.warehouseId)">
-                  {{ scope.row.waitSurface }}
+                  {{ scope.row.transitRollingResearch }}
                 </el-link>
               </template>
             </el-table-column>
@@ -188,7 +188,7 @@
 </template>
 <script>
 import { inventoryWarehouseReport, inventoryWarehouseExport } from '@/api/warehouseManagement/inventory'
-import Form from '../warehouseInventory/Form.vue'
+import Form from '../../finishedProductWarehouseManagement/inventory/Form.vue'
 import TaskForm from './taskForm.vue'
 export default {
   name: 'productionProgressReport',
@@ -221,10 +221,11 @@ export default {
   },
   methods: {
     // 查看产品明细
-    viewFun(id, type, warehouseId) {
+    viewFun(id, type, warehouseId, projectId) {
+      if (!id) id = 0
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, warehouseId)
+        this.$refs.Form.init(id, type, warehouseId, projectId)
       })
     },
     // 查看产品明细

@@ -134,12 +134,6 @@ export default {
 
       },
       total: 0,
-      totalData: {
-        totalInventory: 0,
-        totalAvailable: 0,
-        totalOccupancy: 0,
-      },
-
       listQuery: {
       },
       searchList: [
@@ -299,7 +293,9 @@ export default {
 
       this.originalListQuery = tempListQuery
       this.listQuery = JSON.parse(JSON.stringify(this.originalListQuery))
-      this.initData()
+      setTimeout(() => {
+        this.initData()
+      }, 500);
     },
     search(type) {
       if (type === 'basic') {
@@ -328,14 +324,9 @@ export default {
       ordershengchanList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if (!res.data.whPage.records.length) return
-        this.tableData = res.data.whPage.records
-        this.total = res.data.whPage.total
-        this.totalData = res.data.stockSts || {
-          totalInventory: 0,
-          totalAvailable: 0,
-          totalOccupancy: 0,
-        }
+        this.tableData = res.data.records
+        this.total = res.data.total
+      
 
       }).catch(err => {
         this.treeLoading = false

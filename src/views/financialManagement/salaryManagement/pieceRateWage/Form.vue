@@ -55,25 +55,44 @@
             </el-form>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-
+            <div class="JNPF-common-head">
+              <div>
+                <!-- <el-button type="primary" @click="recalculate()">重新计算异常工资</el-button>
+                <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm"
+                  :disabled="!tableData.length">导出</el-button> -->
+              </div>
+              <div class="JNPF-common-head-right">
+                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                  <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                    @click="$refs.dataTable.showDrawer()" />
+                </el-tooltip>
+              </div>
+            </div>
             <JNPF-table :partentOrChild="'child'" ref="dataTable" v-loading="listLoading" :data="tableData"
-              :fixedNO="true" @sort-change="sortChange" custom-column>
-              <el-table-column prop="producerJobNumber" label="生产人工号" min-width="180"></el-table-column>
+              :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="setColumnDisplayList"
+              partentOrChild="Form">
+              <el-table-column prop="producerJobNumber" label="生产人工号" min-width="180" />
               <el-table-column prop="producerName" label="生产人名称" min-width="120" />
-              <el-table-column prop="productCode" label="产品编码" min-width="160" />
-              <el-table-column prop="productName" label="产品名称" min-width="160" />
-              <el-table-column prop="productDrawingNo" label="产品图号" min-width="250" />
-              <el-table-column prop="processCode" label="工序编码" min-width="160" />
-              <el-table-column prop="processName" label="工序名称" min-width="160" />
-              <el-table-column prop="pricingType" label="计价类型" min-width="110">
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="250" sortable="custom" />
+              <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
+              <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+              <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
+              <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom" />
+              <el-table-column prop="pricingType" label="计价类型" min-width="110" sortable="custom">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in pricingTypeList" :key="index">
                     <span v-if="item.value == scope.row.pricingType">{{ item.label }}</span>
                   </div>
                 </template>
               </el-table-column>
-
               <el-table-column prop="timePrice" label="单价(元)" min-width="140">
+                <template slot-scope="scope">
+                  <div v-if="scope.row.pricingType == 'by_time'">{{ scope.row.timePrice }}</div>
+                  <div v-else-if="scope.row.pricingType == 'by_piece'">{{ scope.row.unitPrice }}</div>
+                  <div v-else>无计价类型</div>
+                </template>
+              </el-table-column>
+              <!-- <el-table-column prop="timePrice" label="单价(元)" min-width="140">
                 <template slot-scope="scope">
                   <el-input v-if="scope.row.pricingType == 'by_time'" v-model="scope.row.timePrice"
                     @input="watchNum(scope.row, scope.$index)" @blur="blurFun(scope.row, scope.$index)" maxlength="22"
@@ -82,18 +101,21 @@
                     @input="watchNum(scope.row, scope.$index)" @blur="blurFun(scope.row, scope.$index)" maxlength="22"
                     pattern="\d{1,18}(\.\d{0,2})?"></el-input>
                 </template>
-              </el-table-column>
-              <el-table-column prop="reportingQuantity" label="报工数量" min-width="140" />
-              <el-table-column prop="reportingWages" label="计件工资" min-width="140" />
-              <el-table-column prop="reportingDate" label="报工时间" min-width="140" />
-
+              </el-table-column> -->
+              <el-table-column prop="reportingQuantity" label="报工合格数量" min-width="160" sortable="custom" />
+              <!-- <el-table-column prop="reportingWages" label="报工金额" min-width="140" sortable="custom" /> -->
+              <el-table-column prop="reportingWages" label="工资(元)" min-width="140" sortable="custom" />
+              <el-table-column prop="reportingTime" label="报工时间" min-width="180" sortable="custom" />
+              <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
+              <el-table-column prop="aperture" label="孔径" min-width="140" sortable="custom" />
+              <el-table-column prop="orderNo" label="工单单号" min-width="200" sortable="custom" />
             </JNPF-table>
             <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
               @pagination="initData">
               <div style="background: #f5f7fa;" class="text">
 
-                <span style="font-weight:500;margin-right:10px">报工总数量：{{ dispatchQuantity }}</span>
-                <span style="font-weight:500;margin-right:10px">报工总金额：{{ reportingWages }}</span>
+                <span style="font-weight:500;margin-right:10px">数量总计：{{ dispatchQuantity }}</span>
+                <span style="font-weight:500;margin-right:10px">工资总计：{{ reportingWages }}</span>
               </div>
             </pagination>
 
@@ -152,7 +174,7 @@
         <span slot="footer" class="dialog-footer">
           <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
           <el-button type="primary" @click="search()">
-            搜索</el-button>
+            搜 索</el-button>
         </span>
       </el-dialog>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
@@ -162,7 +184,7 @@
 
 <script>
 
-import { getSalaryDetailList, editPrice } from '@/api/salaryManagement'
+import { getSalaryWagesDetailList, editPrice } from '@/api/salaryManagement'
 
 export default {
   props: {
@@ -194,6 +216,16 @@ export default {
         pageNum: 1,
         pageSize: 20,
         month: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "reporting_time"
+        }, {
+          asc: true,
+          column: "producerJobNumber"
+        }],
       },
       reportDateArr: [],
       reportWagesFlagList: [
@@ -208,6 +240,23 @@ export default {
       listQuery: {},
       month: "",
       producerId: "",
+      setColumnDisplayList: [
+        'producerJobNumber',
+        // 'producerName',
+        // 'productDrawingNo',
+        'productName',
+        'productCode',
+        // 'processName',
+        // 'processCode',
+        // 'pricingType',
+        // 'timePrice',
+        // 'reportingQuantity',
+        // 'reportingWages',
+        // 'reportingTime',
+        'vibrationLevel',
+        'aperture',
+        'workOrderNo',
+      ]
 
     }
   },
@@ -292,8 +341,18 @@ export default {
         this.getSalaryDetailFun()
       })
     },
-    sortChange() {
-
+    sortChange({ prop, order }) {
+      let newProp
+      if (prop === 'productCode' || prop === 'productName' || prop === 'productSpec' || prop === 'processName'
+        || prop === 'productDrawingNo'
+        || prop === 'productName'
+        || prop === 'productCode'
+        || prop === 'processCode'
+      ) { newProp = prop }
+      else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
+      this.listQuery.orderItems[0].asc = order === 'ascending'
+      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.getSalaryDetailFun()
     },
     init(id, month) {
       console.log("id", month);
@@ -324,7 +383,7 @@ export default {
 
       this.listLoading = true
 
-      getSalaryDetailList(this.listQuery).then(res => {
+      getSalaryWagesDetailList(this.listQuery).then(res => {
         console.log("明细", res);
         this.tableData = res.data.page.records
         this.total = res.data.page.total

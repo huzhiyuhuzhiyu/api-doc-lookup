@@ -26,7 +26,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="listQuery.state" placeholder="请选择工资状态" :clearable="true">
+                <el-select v-model="listQuery.state" placeholder="请选择工资状态" clearable>
                   <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
@@ -44,11 +44,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <div>
-              <el-button type="primary" @click="recalculate()">重新计算异常工资</el-button>
-              <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm"
-                :disabled="!tableData.length">导出</el-button>
-            </div>
+            <el-button type="primary" @click="recalculate()">重新计算异常工资</el-button>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -65,8 +61,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" hasC :data="tableData" :fixedNO="true"
             :checkSelectable="(row) => row.state != '0'" @sort-change="sortChange"
-            @selection-change="handeleProductInfoData" custom-column :show-summary="false"
-            :summary-method="getSummaries">
+            @selection-change="handeleProductInfoData" custom-column show-summary :summary-method="getSummaries">
             <el-table-column prop="producerJobNumber" label="生产人工号" sortable="custom" />
             <el-table-column prop="producerName" label="生产人名称" sortable="custom">
               <template slot-scope="scope">
@@ -76,7 +71,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="month" label="月份" />
-            <el-table-column prop="reportingWages" label="工资" sortable="custom" />
+            <el-table-column prop="wages" label="工资" sortable="custom" />
             <el-table-column prop="state" label="工资状态" sortable="custom">
               <template slot-scope="scope">
                 <div v-for="(item, index) in stateList" :key="index">
@@ -96,7 +91,6 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
             @pagination="initData">
-            工资总计：{{ totalData.reportingWages }}
           </pagination>
         </div>
       </div>
@@ -104,25 +98,23 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
 
   </div>
 </template>
 
 <script>
-import { excelExport } from '@/api/basicData/index'
-import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getSalaryList, editSalaryList, getSalaryReportList } from '@/api/salaryManagement'
+import { getSalaryList, editSalaryList } from '@/api/salaryManagement'
 import Form from './Form'
+import { log } from 'mathjs'
 export default {
   name: 'pieceRateWage',
-  components: { Form, ExportForm },
+  components: { Form },
   data() {
     return {
       formVisible: false,
       total: 0,
       stateList: [
-        // { value: "", label: "所有" },
+        { value: "", label: "所有" },
         { value: 0, label: "正常" },
         { value: 1, label: "异常" },
       ],
@@ -146,8 +138,6 @@ export default {
       tableData: [],
       title: "更多查询",
       producerIdList: [],
-      exportFormVisible: false,
-      totalData: {},
     }
   },
   watch: {
@@ -164,15 +154,18 @@ export default {
   },
   methods: {
     handeleProductInfoData(val) {
-      this.producerIdList = val.map(item => item.id);
+
+
+      this.producerIdList = val.map(item => item.producerId);
     },
     recalculate() {
       if (!this.producerIdList.length) return this.$message.error("请先选择数据")
-      // let obj = {
-      //   month: this.listQuery.month,
-      //   producerIdList: this.producerIdList
-      // }
-      editSalaryList(this.producerIdList).then(res => {
+      let obj = {
+        month: this.listQuery.month,
+        producerIdList: this.producerIdList
+      }
+      editSalaryList(obj).then(res => {
+        console.log("res",);
         this.$message.success("重新计算异常工资成功")
         this.selectArr = []
         this.initData()
@@ -180,7 +173,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'producerJobNumber' || prop === 'producerName') {
+      if (prop === 'producerJobNumber' || prop === 'producerName' || prop === 'wages') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -192,6 +185,7 @@ export default {
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
+
     dataFormSubmit() {
       this.listQuery.pageNum = 1
       Object.keys(this.listQuery).forEach(key => { // 清除搜索条件两端空格
@@ -199,7 +193,9 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.initData()
+
     },
+
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -210,10 +206,9 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getSalaryReportList(this.listQuery).then(res => {
-        this.tableData = res.data.page.records
-        this.total = res.data.page.total
-        this.totalData = res.data.total
+      getSalaryList(this.listQuery).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -284,36 +279,73 @@ export default {
       return sums;
 
     },
-    //导出
-    exportForm() {
-      this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
-    },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-        }
-        let _data = {
-          ...this.listQuery,
-          exportType: '1238',
-          exportName: '工资',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: true,
-        }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url, res.data.name)
-        }).catch(() => { })
-      }
-    },
   }
 }
 </script>
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped/>
+<style scoped>
+.el-tab-pane {
+  height: calc(100% - 10px);
+}
+
+::v-deep .el-tabs__content {
+  height: calc(100% - 40px);
+}
+
+.el-tabs {
+  height: 100%;
+}
+
+.el-tabs__nav-scroll {
+  padding-left: 10px;
+}
+
+.JNPF-common-head {
+  padding: 10px;
+}
+
+.JNPF-common-search-box {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+}
+
+.JNPF-common-search-box .el-form-item {
+  margin-bottom: 0px !important;
+}
+
+.pagination-container {
+  background-color: #ebeef5;
+  margin-top: 0px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.main {
+  padding: 10px 30px 0;
+}
+
+::v-deep .el-tabs__header {
+  padding: 0 !important;
+  padding-bottom: 10px !important;
+  margin-bottom: 0;
+  padding-left: 10px !important;
+  background: #fff;
+}
+
+.el-button--small {
+  padding: 1;
+}
+
+::v-deep .JNPF-common-page-header {
+  padding: 5px 10px;
+}
+
+.JNPF-common-layout-center .JNPF-common-layout-main {
+  padding-bottom: 0;
+}
+
+::v-deep .JNPF-preview-main .JNPF-common-search-box {
+  padding-top: 4px;
+}
+</style>

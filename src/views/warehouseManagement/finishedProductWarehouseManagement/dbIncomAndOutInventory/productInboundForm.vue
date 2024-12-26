@@ -101,7 +101,7 @@
                       </div> -->
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
-                        style="width: 100%;height: auto" >
+                        style="width: 100%;height: auto">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
@@ -126,8 +126,9 @@
                             <span class="required">*</span>库位
                           </template>
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.shelfSpaceName" readonly :disabled='btnType == "look"' style="width: 100%;"
-                              @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
+                            <el-input v-model="scope.row.shelfSpaceName" readonly :disabled='btnType == "look"'
+                              style="width: 100%;" @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')"
+                              placeholder="库位">
                             </el-input>
 
                           </template>
@@ -178,7 +179,7 @@
                             </el-select>
                           </template>
                         </el-table-column> -->
-                       
+
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable disabled
@@ -382,8 +383,9 @@
                             <span class="required">*</span>库位
                           </template>
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.shelfSpaceName" readonly :disabled='btnType == "look"' style="width: 100%;"
-                              @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
+                            <el-input v-model="scope.row.shelfSpaceName" readonly :disabled='btnType == "look"'
+                              style="width: 100%;" @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')"
+                              placeholder="库位">
                             </el-input>
 
                           </template>
@@ -425,7 +427,7 @@
                         </el-table-column>
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
-                        
+
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable disabled
@@ -1140,7 +1142,8 @@ export default {
         if (item.pairingModeId) {
           item.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
           item.num = item.waitReceivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.pairingModeNum]), 6))
-
+          item.mainUnit = "对"
+          item.deputyUnit = "对"
         }
         this.$set(item, 'num', item.waitReceivedQuantity)
         this.$set(item, 'sourceNo', item.orderNo)
@@ -1381,6 +1384,10 @@ export default {
               } else {
                 this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.waitReceivedQuantity, item.ratio]), 6))
               }
+            }
+            if (item.pairingModeId) {
+              item.mainUnit = "对"
+              item.deputyUnit = "对"
             }
             this.$set(item, 'num', item.waitReceivedQuantity)
             this.$set(item, 'sourceNo', item.orderNo)
@@ -1661,7 +1668,8 @@ export default {
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
 }
-::v-deep .el-table__body-wrapper{
-  height: auto!important;
+
+::v-deep .el-table__body-wrapper {
+  height: auto !important;
 }
 </style>

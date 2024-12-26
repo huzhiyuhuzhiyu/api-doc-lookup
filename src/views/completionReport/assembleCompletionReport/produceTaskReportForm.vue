@@ -766,7 +766,8 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
-          if (this.currentProcessType === 4 || this.currentProcessType === 5) {
+          if ((this.currentProcessType === 4 || this.currentProcessType === 5)&&this.currentProcess.pairingModeId) {
+            if(!this.currentProcess.matchedQuantity) return this.$messagea.error("总配对数量不能为空")
             let flag = this.isPositiveInteger(this.currentProcess.matchedQuantity)
             if (!flag) this.$message.error("总配对数量不能有小数")
             if (!flag) submitFlag = false

@@ -8,7 +8,7 @@
         <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
           @click="handleConfirm('submit')">保存并提交</el-button>
         <el-button
-          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase'||dataForm.businessType=='inbound_sale_return'||dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_purchase')"
+          v-if="btnType !== 'look' && (dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_purchase')"
           type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">提交并打印</el-button>
         <el-button v-if="btnType == 'look' || btnType == 'edit'" @click="goBack">{{ $t('common.cancelButton')
           }}</el-button>
@@ -300,8 +300,8 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="standardValue" v-if="dataForm.businessType == 'inbound_purchase'" label="规值"
-                        width="120" key="211">
+                      <el-table-column prop="standardValue" v-if="dataForm.businessType == 'inbound_purchase'"
+                        label="规值" width="120" key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -310,7 +310,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                 
+
                       <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
                         width="120" key="2111">
                         <!-- <template slot="header">
@@ -920,7 +920,7 @@ export default {
       }
       return totalNums
     },
-    
+
   },
   async created() {
     await this.getProductClassFun()
@@ -1052,23 +1052,23 @@ export default {
 
       }
       if (this.materialFlag === '1') {
-          this.list12 = this.bimProductAttributesList.pa021.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
+        this.list12 = this.bimProductAttributesList.pa021.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
 
-        }
-        if (this.colourFlag === '1') {
-          this.list11 = this.bimProductAttributesList.pa010.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
+      }
+      if (this.colourFlag === '1') {
+        this.list11 = this.bimProductAttributesList.pa010.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
 
-        }
+      }
       if (this.specialRequireFlag === '1') {
         this.list9 = this.bimProductAttributesList.pa016.map((item) => {
           return {
@@ -1768,7 +1768,7 @@ export default {
     changeWarehousex(val, data) {
       this.productData = []
       this.dataForm.businessType = ""
-      this.partnerFlag=false
+      this.partnerFlag = false
       console.log(val, data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
@@ -1925,7 +1925,15 @@ export default {
           // 自动聚焦未使用则提交
           if (submitFlag) {
             this.dataForm.documentStatus = submitModel
-            this.productData.forEach(item => item.id = "")
+            this.productData.forEach(item => {
+              item.id = ""
+              if (item.pairingModeId) {
+                item.mainUnit = "对"
+                item.deputyUnit = "对"
+              }
+            }
+
+            )
             const formMethod = this.dataForm.id ? updateWarehouseData : addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))

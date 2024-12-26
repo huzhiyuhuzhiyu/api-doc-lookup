@@ -400,8 +400,8 @@
           </el-collapse>
         </div>
 
-      </div>
       <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
+    </div>
 
     </transition>
   </div>

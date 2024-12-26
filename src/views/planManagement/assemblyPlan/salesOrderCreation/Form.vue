@@ -1224,8 +1224,8 @@ export default {
             obj.plan.calculationDirection = this.productData[0].calculationDirection
             obj.plan.classAttribute = this.productData[0].classAttribute
             obj.plan.clearance = this.productData[0].clearance
-            obj.plan.deputyUnit = this.productData[0].deputyUnit
-            obj.plan.mainUnit = this.productData[0].mainUnit
+            obj.plan.mainUnit = "套"
+            obj.plan.deputyUnit = "套"
             obj.plan.projectId = this.isProjectSwitch == 1 ? this.productData[0].projectId : ""
             obj.plan.pairingModeId = this.productData[0].pairingModeId
 

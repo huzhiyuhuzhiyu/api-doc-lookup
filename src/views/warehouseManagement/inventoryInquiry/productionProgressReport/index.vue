@@ -222,6 +222,7 @@ export default {
   methods: {
     // 查看产品明细
     viewFun(id, type, warehouseId, projectId) {
+      if (!id) id = 0
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, type, warehouseId, projectId)

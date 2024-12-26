@@ -268,7 +268,7 @@ export default {
         // 'reportingTime',
         'vibrationLevel',
         'aperture',
-        'workOrderNo',
+        'orderNo',
       ],
       exportFormVisible: false,
     }
@@ -434,7 +434,6 @@ export default {
           exportName: '工资明细',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: true,
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

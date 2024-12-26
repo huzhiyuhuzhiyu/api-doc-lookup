@@ -45,7 +45,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button type="primary" @click="recalculate()">重新计算异常工资</el-button>
+              <el-button type="primary" size="mini" @click="recalculate()">重新计算异常工资</el-button>
               <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm"
                 :disabled="!tableData.length">导出</el-button>
             </div>

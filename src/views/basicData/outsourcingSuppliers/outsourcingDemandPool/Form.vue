@@ -373,7 +373,7 @@ export default {
       getCooperativeData,
       getcategoryTree,
       //  供应商 树请求
-      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'supplier' } },
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'outsourcing_suppliers' } },
       // 供应商 列表
       PartnerTableItems: [
         { prop: 'code', label: '供应商编码', fixed: 'left' },
@@ -394,7 +394,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         partnerCategoryId: '',
-        type: 'supplier'
+        type: 'outsourcing_suppliers'
       },
       dataForm: {
         attachmentList: [],

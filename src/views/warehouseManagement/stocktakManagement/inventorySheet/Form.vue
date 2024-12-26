@@ -36,7 +36,7 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="盘点日期" prop="orderDate">
                               <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期"
+                                style="width: 100%;"  placeholder="请选择盘点日期"
                                 :disabled="btnType == 'look'">
                               </el-date-picker>
                             </el-form-item>
@@ -92,7 +92,16 @@
                         </el-table-column>
                         <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                         </el-table-column>
-
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                              :disabled="btnType == 'look' ? true : false" >
+                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                                :value="item.id">
+                              </el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="num" label="盘点数量" width="120" :key="10112">
                           <template slot="header">
                             <span class="required">*</span>盘点数量
@@ -149,7 +158,7 @@
                               :index="scope.$index" />
                           </template>
                         </el-table-column>
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
@@ -186,8 +195,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="standardValue"   label="规值" width="120"
-                          key="211">
+                        <el-table-column prop="standardValue" label="规值" width="120" key="211">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
                               style="width: 100%;" :disabled="btnType == 'look'">
@@ -196,7 +204,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色"   width="120" key="210">
+                        <el-table-column prop="colour" label="颜色" width="120" key="210">
                           <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -330,7 +338,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="盘点日期" prop="orderDate">
                           <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择盘点日期"
+                            style="width: 100%;"  placeholder="请选择盘点日期"
                             :disabled="btnType == 'look'">
                           </el-date-picker>
                         </el-form-item>
@@ -384,7 +392,17 @@
                     </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
-
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false"
+                          @change="(value) => changePairingMode(value, scope)">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="num" label="盘点数量" width="120" :key="10112">
                       <template slot="header">
                         <span class="required">*</span>盘点数量
@@ -436,11 +454,12 @@
                           :placeholder="scope.row.partnerPlaceholder" :methodArr="scope.row.getCooperativeMethodArr"
                           :listMethod="getCooperativeData" :listRequestObj="scope.row.partnerRequestObj"
                           :searchList="scope.row.partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
-                          :isdisabled="btnType === 'look'||(scope.row.productSource!='out'&&scope.row.productSource!='purchase')" :index="scope.$index" />
+                          :isdisabled="btnType === 'look' || (scope.row.productSource != 'out' && scope.row.productSource != 'purchase')"
+                          :index="scope.$index" />
                       </template>
                     </el-table-column>
 
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                     <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
@@ -477,8 +496,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue"   label="规值" width="120"
-                      key="211">
+                    <el-table-column prop="standardValue" label="规值" width="120" key="211">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
                           :disabled="btnType == 'look'">
@@ -487,7 +505,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色"   width="120" key="210">
+                    <el-table-column prop="colour" label="颜色" width="120" key="210">
                       <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -665,8 +683,8 @@
                   min-width="120"></el-table-column>
                 <el-table-column prop="shelfSpaceName" label="库位名称" v-if="type == 'invent'"
                   min-width="120"></el-table-column>
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-              <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+                <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
                 </el-table-column>
                 <el-table-column prop="logo" label="Logo" width="120" key="2116">
@@ -678,10 +696,10 @@
                 <el-table-column prop="material" label="材质" width="120" key="2118">
 
                 </el-table-column>
-                <el-table-column prop="standardValue"   label="规值" width="120" key="211">
+                <el-table-column prop="standardValue" label="规值" width="120" key="211">
 
                 </el-table-column>
-                <el-table-column prop="colour" label="颜色"   width="120" key="210">
+                <el-table-column prop="colour" label="颜色" width="120" key="210">
 
                 </el-table-column>
                 <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容" width="120"
@@ -938,6 +956,7 @@ export default {
       list10: [],
       list11: [],
       partnerInfo: {},
+      pairingModeList: [],
     }
   },
 
@@ -945,6 +964,7 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.getpairingModeListFun()
 
   },
 
@@ -973,14 +993,23 @@ export default {
   },
 
   methods: {
+
+    
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     // 意向客户分类节点点击
     yxPartnerTreeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
       listQuery.partnerCategoryId = data.id
       return listQuery
     },
-    partnerChange(id,data , is, index) {
-      console.log(data,id,is,index);
+    partnerChange(id, data, is, index) {
+      console.log(data, id, is, index);
 
       if (data && data.length) { // 数据有效，进行更新
         const partnerInfo = data[0].all
@@ -1337,12 +1366,12 @@ export default {
       let index = this.currentProductIndex
       this.productData[index].shelfSpaceName = data.name
       this.productData[index].shelfSpaceId = data.id
-      this.productData[index].shelfSpaceCode=data.code
+      this.productData[index].shelfSpaceCode = data.code
       this.index = ""
     },
     // 表单切换仓库
     changeWarehousex(val, data) {
-      console.log("data",data);
+      console.log("data", data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
@@ -1355,8 +1384,8 @@ export default {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
-        this.dataForm.warehouseCode = data[0].all.code
-        if (this.productData.length) {
+      this.dataForm.warehouseCode = data[0].all.code
+      if (this.productData.length) {
         this.productData.forEach(item => {
           this.$set(item, 'allocationFlag', data[0].all.locationStatus == 'disabled' ? false : true)
           item.warehouseId = data[0].id
@@ -1382,7 +1411,7 @@ export default {
       this.productData[index].warehouseId = data[0].id
       this.productData[index].warehouseName = data[0].name
       this.productData[index].warehouseCode = data[0].all.code
-        this.$set(this.productData[index], 'allocationFlag', data[0].all.locationStatus == 'disabled' ? false : true)
+      this.$set(this.productData[index], 'allocationFlag', data[0].all.locationStatus == 'disabled' ? false : true)
 
 
     },
@@ -1527,7 +1556,7 @@ export default {
         }
 
 
-
+1
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
@@ -1550,7 +1579,7 @@ export default {
         this.$set(item, 'aperture', '')
         this.$set(item, 'packagingMethod', '')
         this.$set(item, 'specialRequire', '')
-
+        this.$set(item, 'pairingModeId', '') 
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
@@ -1780,7 +1809,7 @@ export default {
                   shelfSpaceId: item.shelfSpaceId,
                   stockNum: item.stockNum,
                   warehouseId: item.warehouseId,
-                  
+                  pairingModeId:item.pairingModeId,
                   specSize: item.specSize,
                   logo: item.logo,
                   divideEqually: item.divideEqually,
@@ -1798,8 +1827,8 @@ export default {
                   specialRequire: item.specialRequire,
                   cooperativePartnerName: item.cooperativePartnerName,
                   cooperativePartnerId: item.cooperativePartnerId,
-              
-                  
+
+
                 }
                 arr.push(obj)
               });

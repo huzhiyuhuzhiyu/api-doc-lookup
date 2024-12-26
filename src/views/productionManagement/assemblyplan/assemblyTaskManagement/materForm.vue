@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择工艺路线" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="查看，=领料明细" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
 
@@ -35,11 +35,14 @@
             <el-table-column prop="productCode" label="产品编码" sortable="custom" ></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom" ></el-table-column>
             <el-table-column prop="orderNo" label="领料单号" sortable="custom" ></el-table-column>
+            <el-table-column prop="num" label="领料数量" sortable="custom" ></el-table-column>
+
             <el-table-column prop="receiveType" label="领料类型" sortable="custom" >
               <template slot-scope="scope">
                 <div>{{ scope.row.receiveType=='order'?'任务物料':"工序物料" }}</div>
               </template>
             </el-table-column>
+            <el-table-column prop="personName" label="领料人" sortable="custom" ></el-table-column>
             <el-table-column prop="personName" label="领料人" sortable="custom" ></el-table-column>
            
           </JNPF-table>

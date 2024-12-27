@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建收货单'
-          : btnType == 'edit'
-            ? '编辑收货单'
-            : btnType == 'copy'
-              ? '新建收货单'
-              : '查看收货单'
+            ? '新建收货单'
+            : btnType == 'edit'
+              ? '编辑收货单'
+              : btnType == 'copy'
+                ? '新建收货单'
+                : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -252,10 +252,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                      ? true
-                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                        ? false
-                        : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -1188,49 +1188,6 @@ export default {
       }
     },
 
-    dateFormat(dateData) {
-      var date = new Date(dateData)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      m = m < 10 ? '0' + m : m
-      var d = date.getDate()
-      d = d < 10 ? '0' + d : d
-      const time = y + '-' + m + '-' + d
-      return time
-    },
-    // 根据选择的省份获取相应的城市数据
-    changeProvince(item, row) {
-      this.dataForm.city = ''
-      this.dataForm.area = ''
-      getProvinceList(item.id).then((res) => {
-        // this.changeCity()
-        this.cities = res.data.list
-      })
-    },
-    // 根据选择的城市获取各区的数据
-    changeCity(item, row) {
-      if (row) {
-        row.area = ''
-      } else {
-        this.dataForm.area = ''
-      }
-      getProvinceList(item.id).then((res) => {
-        this.areas = res.data.list
-      })
-    },
-    // 获取省份数据
-    getProvinceList() {
-      getProvinceList(this.nodeId, this.listQuery)
-        .then((res) => {
-          this.provinces = res.data.list
-          this.init(id, parentId)
-        })
-        .catch(() => {
-          this.listLoading = false
-          this.btnLoading = false
-          this.refreshTable = true
-        })
-    },
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val

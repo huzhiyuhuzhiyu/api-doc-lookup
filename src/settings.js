@@ -33,7 +33,7 @@ module.exports = {
      */
     sysConfig: {
         sysVersion: "V4.0.0",
-        copyright: "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有",
+        copyright: "Copyright @ 2012 宁波圣泽网络科技有限公司版权所有",
         navigationIcon: "",
         logoIcon: "",
         loginIcon: "",

@@ -106,7 +106,7 @@
         备案号：<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备12041571号-2</a>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{
-          sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有" }}</a>
+          sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波圣泽网络科技有限公司版权所有" }}</a>
         <!-- <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{"Copyright @ 2012 浙江聚果工业互联网科技有限公司版权所有"}}</a> -->
       </p>
     </div>
@@ -206,7 +206,7 @@
                 备案号：<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备12041571号-2</a>
               </div>
               <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{
-              sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有" }}</a>
+              sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波圣泽网络科技有限公司版权所有" }}</a>
             </div>
           </div>
         </div>

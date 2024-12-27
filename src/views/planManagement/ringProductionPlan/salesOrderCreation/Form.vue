@@ -59,7 +59,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                 
+
 
 
 
@@ -73,7 +73,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="BOM" prop="bomId">
+                        <el-form-item label="BOM" prop="bomId" style="cursor:pointer;">
 
                           <el-input v-model="planForm.bomText" placeholder="请输入是否有BOM" disabled v-if="!planForm.bomId">
                           </el-input>
@@ -458,7 +458,7 @@ export default {
       this.planForm.finalPlanQuantity = this.planForm.productionQuantity
     },
     // 合格率
-    // relaxQuantity 宽放 
+    // relaxQuantity 宽放
     // purchaseQuantity 采购
     // utilizationQuantity 利用
     // finalPlanQuantity 最终
@@ -681,12 +681,12 @@ export default {
 
 
     validateInput(value) {
-      // 使用正则表达式来匹配正整数  
-      const reg = /^\d*$/; // 或者用 /^\d+$/ 来匹配至少一位数字  
+      // 使用正则表达式来匹配正整数
+      const reg = /^\d*$/; // 或者用 /^\d+$/ 来匹配至少一位数字
       if (value === '' || reg.test(value)) {
-        this.inputValue = value; // 只有当输入符合条件时才更新  
+        this.inputValue = value; // 只有当输入符合条件时才更新
       } else {
-        this.inputValue = this.inputValue; // 保持原值不变  
+        this.inputValue = this.inputValue; // 保持原值不变
       }
     },
 
@@ -768,7 +768,7 @@ export default {
         }
 
         this.planForm.planQuantity = productData.reduce((acc, item) => {
-          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字
         }, 0);
 
         this.planForm.productDrawingNo = productData[0].drawingNo
@@ -806,7 +806,7 @@ export default {
 
         if (planType == 'order_plan') {
           this.planForm.planQuantity = productData.planLineList.reduce((acc, item) => {
-            return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+            return acc + Number(item.num); // 使用 Number() 将字符串转换为数字
           }, 0);
         } else {
           this.planForm.planQuantity = productData.plan.planQuantity
@@ -949,7 +949,7 @@ export default {
             obj.plan.clearance = this.productData[0].clearance
             obj.plan.deputyUnit = this.productData[0].deputyUnit
             obj.plan.mainUnit = this.productData[0].mainUnit
-            obj.plan.projectId=this.isProjectSwitch==1?this.productData[0].projectId:"" 
+            obj.plan.projectId=this.isProjectSwitch==1?this.productData[0].projectId:""
             obj.plan.pairingModeId = this.productData[0].pairingModeId
           } else {
             obj.plan = this.planForm
@@ -1173,6 +1173,7 @@ export default {
 }
 
 .BOM_T ::v-deep .el-input__inner {
-  color: rgb(63, 185, 248)
+  color: rgb(63, 185, 248);
+  cursor: pointer;
 }
 </style>

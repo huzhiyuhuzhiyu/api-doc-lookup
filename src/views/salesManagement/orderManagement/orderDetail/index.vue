@@ -81,7 +81,7 @@
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-            <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <el-table-column prop="assistantNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="taxRate" label="税率" width="120" sortable="custom"></el-table-column>
@@ -688,9 +688,11 @@ export default {
           res.data.records.forEach(item => {
             if (this.mainUnitFlag == 1) {
               if (item.calculationDirection == 'multiplication') {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                this.$set(item, 'assistantNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+
               } else {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+
+                this.$set(item, 'assistantNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6)) 
               }
             }
           });

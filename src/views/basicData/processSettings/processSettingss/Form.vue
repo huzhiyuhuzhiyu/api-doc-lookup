@@ -16,12 +16,12 @@
           </div>
         </div>
 
-        <div class="main">
+        <div class="main" ref="main" v-loading="responseLoading">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="工艺信息" name="modelInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" style="padding: 0 10px;">
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <template v-if="!loading">
@@ -127,8 +127,8 @@
                     </div>
 
                     <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
-                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
-                      size="mini" id="table" row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove">
+                      @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
+                      row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
@@ -357,7 +357,7 @@
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="工艺信息" name="modelInfo" class="orderInfo">
-              <el-row :gutter="15" class="">
+              <el-row :gutter="15" style="padding: 0 10px;">
                 <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <template v-if="!loading">
@@ -420,10 +420,9 @@
                   |
                 </div>
                 <!-- <el-form-item label-width="0" ref="tableForm">  -->
-                <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                <JNPF-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
                   v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini"
-                  id="table">
-                  <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                  id="table" :height="customStyleData2">
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                   <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
                     <template slot="header">
@@ -585,7 +584,7 @@
                       </el-button>
                     </template>
                   </el-table-column>
-                </el-table>
+                </JNPF-table>
               </el-col>
             </el-collapse-item>
           </el-collapse>
@@ -797,8 +796,21 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
-      categoryId: ''
+      categoryId: '',
+      customStyleData: 0,
+      customStyleData2:0
     }
+  },
+  mounted() {
+    this.$nextTick(() => this.switchStyleheight())
+    // 页面发生缩放，触发明细表格表单的resize
+    this.clientResize = () => {
+      if (!this.$refs.processRef) return
+      this.$nextTick(() => {
+        this.$refs.processRef.doLayout()
+      })
+    }
+    window.addEventListener('resize', this.clientResize)
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
@@ -822,6 +834,30 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight = mainHeight1 - 350
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      this.customStyleData2 = maxHeight + 70
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1614,9 +1650,9 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-table__body-wrapper.is-scrolling-left {
+/* ::v-deep .el-table__body-wrapper.is-scrolling-left {
   height: auto !important;
-}
+} */
 
 ::v-deep .JNPF-preview-main .el-table--mini td {
   padding: 8px 0 !important;
@@ -1665,7 +1701,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  // padding: 0 10px 0px;
   border-top: none !important;
 }
 

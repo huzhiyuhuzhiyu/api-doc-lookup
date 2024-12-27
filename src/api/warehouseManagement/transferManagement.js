@@ -63,3 +63,21 @@ export function TransferBarCode(data) {
     method: 'GET'
   })
 }
+
+// 投料清单-生产待领料
+export function getWaitMaterialList(data) {
+  return request({
+    url: `/api/mrp/prod/order/material/wait/page`,
+    method: 'POST',
+    data
+  })
+}
+
+// 投料清单-生产待领料
+export function finishWaitMaterialList(data) {
+  return request({
+    url: `/api/mrp/prod/order/material/finish`,
+    method: 'POST',
+    data
+  })
+}

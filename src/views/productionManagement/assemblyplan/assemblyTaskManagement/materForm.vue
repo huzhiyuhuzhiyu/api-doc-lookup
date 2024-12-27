@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="查看，=领料明细" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="查看领料明细" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
 

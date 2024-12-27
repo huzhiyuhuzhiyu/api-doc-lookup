@@ -74,8 +74,6 @@
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="productName" label="产品名称" width="120"
-              v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>

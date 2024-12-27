@@ -36,17 +36,16 @@
             <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                @click.native="viewFun(scope.row.blankProductsId, 'availableFlag', scope.row.warehouseId, projectId)">
+                  @click.native="viewFun(scope.row.blankProductsId, 'availableFlag', scope.row.warehouseId, projectId)">
                   {{ scope.row.waitHeat }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="transitHeat" label="热处理在制" width="130" align="center">
-              <template slot-scope="scope">
-                <el-link type="primary"
-                @click.native="viewFun(scope.row.blankProductsId, 'availableFlag', scope.row.warehouseId, projectId)">
-                  {{ scope.row.transitHeat }}
-                </el-link>
+              <template slot-scope='scope'>
+                <el-link type="primary" @click.native="viewDetailFun(scope.row.blankProductsId)">{{
+                  scope.row.transitHeat
+                }}</el-link>
               </template>
             </el-table-column>
           </el-table-column>
@@ -184,19 +183,22 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
     <TaskForm v-if="taskFormVisible" ref="TaskForm" @refreshDataList="initData" />
+    <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
   </div>
 </template>
 <script>
 import { inventoryWarehouseReport, inventoryWarehouseExport } from '@/api/warehouseManagement/inventory'
 import Form from '../../finishedProductWarehouseManagement/inventory/Form.vue'
 import TaskForm from './taskForm.vue'
+import MaterForm from './materForm.vue'
 export default {
   name: 'productionProgressReport',
-  components: { Form, TaskForm },
+  components: { Form, TaskForm, MaterForm },
   data() {
     return {
       formVisible: false,
       taskFormVisible: false,
+      materFormVisible: false,
       tableData: [],
       listLoading: false,
       listQuery: {},
@@ -228,6 +230,14 @@ export default {
         this.$refs.Form.init(id, type, warehouseId, projectId)
       })
     },
+    // 
+    viewDetailFun(id) {
+      if (!id) id = 0
+      this.materFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.materFormRef.init(id)
+      })
+    },
     // 查看产品明细
     viewTask(drawingNo, type, warehouseId) {
       this.taskFormVisible = true
@@ -235,6 +245,7 @@ export default {
         this.$refs.TaskForm.init(drawingNo, type, warehouseId)
       })
     },
+
     initData() {
       this.listLoading = true
       Object.keys(this.listQuery).forEach((key) => {

@@ -43,7 +43,6 @@
               </template>
             </el-table-column>
             <el-table-column prop="personName" label="领料人" sortable="custom" ></el-table-column>
-            <el-table-column prop="personName" label="领料人" sortable="custom" ></el-table-column>
            
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"

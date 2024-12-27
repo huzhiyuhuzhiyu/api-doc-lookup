@@ -93,42 +93,49 @@
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" min-width="160" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"  v-if="sealingCoverTypingFlag==1"/>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"  v-if="accuracyLevelFlag==1"/>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"  v-if="vibrationLevelFlag==1"/>
-                <el-table-column prop="oil" label="油脂" width="100" sortable="custom"  v-if="oilFlag==1"/>
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"  v-if="oilQuantityFlag==1"/>
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"  v-if="clearanceFlag==1"/>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"  v-if="packagingMethodFlag==1"/>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"  v-if="specialRequireFlag==1"/>
-                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"  v-if="materialFlag === '1'" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+                  v-if="sealingCoverTypingFlag == 1" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+                  v-if="accuracyLevelFlag == 1" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+                  v-if="vibrationLevelFlag == 1" />
+                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
+                  v-if="oilQuantityFlag == 1" />
+                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+                  v-if="packagingMethodFlag == 1" />
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                  v-if="specialRequireFlag == 1" />
+                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+                  v-if="materialFlag === '1'" />
                 <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag === '1'" />
-                <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom"  v-if="protrusionFlag==1"/>
-                <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>
+                <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom" v-if="protrusionFlag == 1" />
+                <el-table-column prop="preload" label="预负荷" width="120" sortable="custom" v-if="preloadFlag == 1" />
                 <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'" />
-                <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'" />
+                <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200"
+                  v-if="centerDiameterFlag === '1'" />
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-                  <el-table-column label="操作" width="180" fixed="right">
-                      <template slot-scope="scope">
-                          <el-button size="mini" type="text"
-                                     @click="addSupplier(scope.row, 'edit')">编辑</el-button>
-                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                     @click="handleDel(scope.row.id)">删除</el-button>
-                          <el-dropdown hide-on-click>
-                                  <span class="el-dropdown-link">
-                                    <el-button type="text" size="mini">
-                                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                                    </el-button>
-                                  </span>
-                              <el-dropdown-menu slot="dropdown">
-                                  <el-dropdown-item @click.native="addSupplier(scope.row, 'look')">
-                                      查看详情
-                                  </el-dropdown-item>
-                              </el-dropdown-menu>
-                          </el-dropdown>
-                      </template>
-                  </el-table-column>
+                <el-table-column label="操作" width="180" fixed="right">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="addSupplier(scope.row, 'edit')">编辑</el-button>
+                    <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                      @click="handleDel(scope.row.id)">删除</el-button>
+                    <el-dropdown hide-on-click>
+                      <span class="el-dropdown-link">
+                        <el-button type="text" size="mini">
+                          {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item @click.native="addSupplier(scope.row, 'look')">
+                          查看详情
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </template>
+                </el-table-column>
               </JNPF-table>
               <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
                 :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -217,18 +224,25 @@
                 <el-table-column prop="excludingTaxUnitPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="validEnd" label="有效日期止" sortable="custom" min-width="160" />
                 <el-table-column prop="ask" label="要求" sortable="custom" min-width="160" />
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"  v-if="sealingCoverTypingFlag==1"/>
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"  v-if="accuracyLevelFlag==1"/>
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"  v-if="vibrationLevelFlag==1"/>
-                  <el-table-column prop="oil" label="油脂" width="100" sortable="custom"  v-if="oilFlag==1"/>
-                  <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"  v-if="oilQuantityFlag==1"/>
-                  <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"  v-if="clearanceFlag==1"/>
-                  <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"  v-if="packagingMethodFlag==1"/>
-                  <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"  v-if="specialRequireFlag==1"/>
-                  <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag === '1'" />
-                  <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag === '1'" />
-<!--                  <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom"  v-if="protrusionFlag==1"/>-->
-<!--                  <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>-->
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+                  v-if="sealingCoverTypingFlag == 1" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+                  v-if="accuracyLevelFlag == 1" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+                  v-if="vibrationLevelFlag == 1" />
+                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
+                  v-if="oilQuantityFlag == 1" />
+                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+                  v-if="packagingMethodFlag == 1" />
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                  v-if="specialRequireFlag == 1" />
+                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+                  v-if="materialFlag === '1'" />
+                <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag === '1'" />
+                <!--                  <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom"  v-if="protrusionFlag==1"/>-->
+                <!--                  <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>-->
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
 
@@ -270,8 +284,8 @@
 
 <script>
 import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation } from '@/api/salesManagement/index'
-import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData } from '@/api/basicData/index'
-import { excelExport, addPartnerOrProductData, importCustomerProduct,getOrderFiledMap } from '@/api/basicData/index'
+import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData,delPartnerOrProductData } from '@/api/basicData/index'
+import { excelExport, addPartnerOrProductData, importCustomerProduct, getOrderFiledMap } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import CustomerForm from '../customerManagement/Officialcustomer/Form.vue'
@@ -489,12 +503,12 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
-      protrusionFlag:'',
-      preloadFlag:'',
-      materialFlag:'',
-      colourFlag:'',
-      angleFlag:'',
-      centerDiameterFlag:'',
+      protrusionFlag: '',
+      preloadFlag: '',
+      materialFlag: '',
+      colourFlag: '',
+      angleFlag: '',
+      centerDiameterFlag: '',
     }
   },
   computed: {
@@ -538,26 +552,26 @@ export default {
         this.colourFlag = res.data.colour
         this.materialFlag = res.data.material
       })
-        getOrderFiledMap('gobal').then(res => {
-            this.protrusionFlag = res.data.protrusion //list1
-            this.preloadFlag = res.data.preload
-            this.centerDiameterFlag = res.data.centerDiameter
-            this.angleFlag = res.data.angle
-        }).catch(err => {})
+      getOrderFiledMap('gobal').then(res => {
+        this.protrusionFlag = res.data.protrusion //list1
+        this.preloadFlag = res.data.preload
+        this.centerDiameterFlag = res.data.centerDiameter
+        this.angleFlag = res.data.angle
+      }).catch(err => { })
     },
-    advancedQueryFun(superQuery,needFlag) {
+    advancedQueryFun(superQuery, needFlag) {
       if (this.isProductNameSwitch === '1') {
-          superQuery.splice(4, 0, {
+        superQuery.splice(4, 0, {
           prop: 'productName',
           label: '产品名称',
           type: 'input'
         })
       }
       let classIndex = superQuery.findIndex((obj) => obj.prop === 'remark')
-      console.log("clas",classIndex);
+      console.log("clas", classIndex);
 
       if (this.specialRequireFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'specialRequire',
           label: '特殊要求',
           type: 'select',
@@ -570,7 +584,7 @@ export default {
         })
       }
       if (this.colourFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'colour',
           label: '颜色',
           type: 'select',
@@ -583,7 +597,7 @@ export default {
         })
       }
       if (this.materialFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'material',
           label: '保持架材质',
           type: 'select',
@@ -595,60 +609,60 @@ export default {
           })
         })
       }
-      if (needFlag){
-          if (this.preloadFlag === '1') {
-              superQuery.splice(classIndex + 1, 0, {
-                  prop: 'preload',
-                  label: '预负荷',
-                  type: 'select',
-                  options: this.bimProductAttributesList.pa024.map((item) => {
-                      return {
-                          label: item.name,
-                          value: item.name
-                      }
-                  })
-              })
-          }
-          if (this.protrusionFlag === '1') {
-              superQuery.splice(classIndex + 1, 0, {
-                  prop: 'protrusion',
-                  label: '凸出量',
-                  type: 'select',
-                  options: this.bimProductAttributesList.pa023.map((item) => {
-                      return {
-                          label: item.name,
-                          value: item.name
-                      }
-                  })
-              })
-          }
-          if (this.angleFlag === '1') {
-              superQuery.splice(classIndex + 1, 0, {
-                  prop: 'angle',
-                  label: '角度',
-                  type: 'select',
-                  options: this.bimProductAttributesList.pa025.map((item) => {
-                      return {
-                          label: item.name,
-                          value: item.name
-                      }
-                  })
-              })
-          }
-          if (this.centerDiameterFlag === '1') {
-              superQuery.splice(classIndex + 1, 0, {
-                  prop: 'centerDiameter',
-                  label: '钢球/中心径/倒角',
-                  type: 'input',
-              })
-          }
+      if (needFlag) {
+        if (this.preloadFlag === '1') {
+          superQuery.splice(classIndex + 1, 0, {
+            prop: 'preload',
+            label: '预负荷',
+            type: 'select',
+            options: this.bimProductAttributesList.pa024.map((item) => {
+              return {
+                label: item.name,
+                value: item.name
+              }
+            })
+          })
+        }
+        if (this.protrusionFlag === '1') {
+          superQuery.splice(classIndex + 1, 0, {
+            prop: 'protrusion',
+            label: '凸出量',
+            type: 'select',
+            options: this.bimProductAttributesList.pa023.map((item) => {
+              return {
+                label: item.name,
+                value: item.name
+              }
+            })
+          })
+        }
+        if (this.angleFlag === '1') {
+          superQuery.splice(classIndex + 1, 0, {
+            prop: 'angle',
+            label: '角度',
+            type: 'select',
+            options: this.bimProductAttributesList.pa025.map((item) => {
+              return {
+                label: item.name,
+                value: item.name
+              }
+            })
+          })
+        }
+        if (this.centerDiameterFlag === '1') {
+          superQuery.splice(classIndex + 1, 0, {
+            prop: 'centerDiameter',
+            label: '钢球/中心径/倒角',
+            type: 'input',
+          })
+        }
       }
 
-      console.log("this.packagingMethodFlag",this.packagingMethodFlag);
+      console.log("this.packagingMethodFlag", this.packagingMethodFlag);
       if (this.packagingMethodFlag === '1') {
         console.log(555);
 
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'packagingMethod',
           label: '包装方式',
           type: 'select',
@@ -661,7 +675,7 @@ export default {
         })
       }
       if (this.clearanceFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'clearance',
           label: '游隙',
           type: 'select',
@@ -674,7 +688,7 @@ export default {
         })
       }
       if (this.oilQuantityFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'oilQuantity',
           label: '油脂量',
           type: 'select',
@@ -687,7 +701,7 @@ export default {
         })
       }
       if (this.oilFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'oil',
           label: '油脂',
           type: 'select',
@@ -701,7 +715,7 @@ export default {
       }
 
       if (this.vibrationLevelFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'vibrationLevel',
           label: '振动等级',
           type: 'select',
@@ -714,7 +728,7 @@ export default {
         })
       }
       if (this.accuracyLevelFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'accuracyLevel',
           label: '精度等级',
           type: 'select',
@@ -727,7 +741,7 @@ export default {
         })
       }
       if (this.sealingCoverTypingFlag === '1') {
-          superQuery.splice(classIndex + 1, 0, {
+        superQuery.splice(classIndex + 1, 0, {
           prop: 'sealingCoverTyping',
           label: '打字内容',
           type: 'select',
@@ -847,12 +861,12 @@ export default {
     },
     seniorFun() {
       if (this.activeName == 'historicalprice') {
-        this.advancedQueryFun(this.superQueryJson2,false)
+        this.advancedQueryFun(this.superQueryJson2, false)
         this.superQueryJson = this.superQueryJson2
 
       } else {
-        console.log("this.superQueryJson1",this.superQueryJson1);
-        this.advancedQueryFun(this.superQueryJson1,true)
+        console.log("this.superQueryJson1", this.superQueryJson1);
+        this.advancedQueryFun(this.superQueryJson1, true)
         this.superQueryJson = this.superQueryJson1
 
       }
@@ -1122,7 +1136,7 @@ export default {
       }
 
     },
-    addSupplier(row,type) {
+    addSupplier(row, type) {
 
       this.depFormVisible = true
       this.$nextTick(() => {
@@ -1145,7 +1159,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-          deleteBimVehicleType(id).then(res => {
+        delPartnerOrProductData(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

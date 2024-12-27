@@ -92,7 +92,7 @@
               :filter-node-method="filterNode">
               <span class="custom-tree-node" slot-scope="{ node, data }">
                 <i :class="data.icon"></i>
-                <span :class="['text', data.disabled ? 'nodeDisabled' : '']">{{ iscode?data.code+'-'+node.label:node.label }}</span>
+                <span :class="['text', data.disabled ? 'nodeDisabled' : '']">{{ node.label }}</span>
               </span>
             </el-tree>
           </div>
@@ -141,10 +141,6 @@ export default {
     },
     dialogTitle: {
       default: ''
-    },
-    iscode:{
-      type: Boolean,
-      default: false
     },
     tagMultipleLine: {
       type: Boolean,

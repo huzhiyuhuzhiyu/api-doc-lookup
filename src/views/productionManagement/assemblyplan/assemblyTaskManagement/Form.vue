@@ -409,9 +409,9 @@
             </el-collapse-item>
           </el-collapse>
         </div>
+      <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
 
       </div>
-      <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
     </transition>
   </div>
 </template>

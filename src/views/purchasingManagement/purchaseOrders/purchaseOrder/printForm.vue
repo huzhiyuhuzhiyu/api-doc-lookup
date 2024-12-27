@@ -15,7 +15,7 @@
             letter-spacing: 2px;
             color: #191f25;
             text-align: center;
-            line-height: 1.5vw;">宁波聚轩信息科技有限公司</div>
+            line-height: 1.5vw;">宁波圣泽网络科技有限公司</div>
             <div class="hTitle hTitle2" style=" font-size: 18px;letter-spacing: 0;color: #191f25;
             text-align: center;
             line-height: 1.5vw;font-family:Microsoft YaHei">Ningbo JUXUAN Technology Co.,Ltd.</div>
@@ -133,7 +133,7 @@
         border-right: 2px solid #191f258a;
         box-sizing: border-box;font-size:20px">
             <div style="flex:1;border-right: 1px solid #191f25;padding: 2px; flex-direction: column;">
-              <p>需方：宁波聚轩信息科技有限公司</p>
+              <p>需方：宁波圣泽网络科技有限公司</p>
               <p>盖章：</p>
               <p>日期：{{ jnpf.getToday() }}</p>
             </div>

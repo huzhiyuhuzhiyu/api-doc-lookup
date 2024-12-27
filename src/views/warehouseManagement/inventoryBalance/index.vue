@@ -654,9 +654,9 @@ export default {
             this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
             const res = await canStockBalance(this.defaultProjectId)
             this.accountPeriod = res.data
+            this.setSearchList()
             this.listQuery.accountPeriod = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
             this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
-            this.setSearchList()
             this.search()
         },
 

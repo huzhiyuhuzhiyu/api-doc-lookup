@@ -24,11 +24,11 @@
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ data }" :title="data.code +'-'+ data.name">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
             <i :class="[
               data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
             ]" />
-            <span class="text" :title="data.code +'-'+ data.name">{{ data.code +'-'+ data.name }}</span>
+            <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
       </el-scrollbar>
@@ -294,7 +294,7 @@
                 产品分类
                 <span class="required">*</span>
               </template>
-              <ComSelect-list :iscode="true" v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
+              <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
                 @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop"
                 :requestObj="quickRequestObj" :dataFormatting="dataFormatting" />
             </el-form-item>

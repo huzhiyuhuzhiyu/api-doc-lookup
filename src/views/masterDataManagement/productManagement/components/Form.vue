@@ -151,7 +151,6 @@ export default {
         if (tc.type == 'custom') {
           // 产品分类
           if (tc.prop === 'productCategoryName') {
-            tc.iscode = true
             tc.method = getcategoryTree
             tc.dataFormatting = (res) => res.data[0].childrenList
             tc.change = (val, data) => {

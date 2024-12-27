@@ -225,6 +225,7 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" :warehouseCode="warehouseCode" />
+    <ChangeDetailForm v-if="changeDetailFormVisible" ref="ChangeDetailForm" @close="closeForm" :warehouseCode="warehouseCode" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
     </ProductInboundForm>
@@ -274,6 +275,7 @@
 import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../directInandOutWarehouse/index.vue'
+import ChangeDetailForm from './ChangeDetailForm.vue' // 产品变更类出入库查看详情时表单
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ProductInboundForm from '../dbIncomAndOutInventory/productInboundForm.vue'
 import WorkInboundForm from '../dbIncomAndOutInventory/workInboundForm.vue'
@@ -310,7 +312,8 @@ export default {
     Form, SuperQuery, ExportForm, ProductInboundForm, WorkInboundForm, OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog, TakingAdjustForm
+    Transfer, SaleOutboundForm, ExternalMaterOutboundForm, PurchaseOrderInboundForm, ExternalInboundForm, outboundUseForm, InboundReturnForm, PrintBrowse, PrintDialog, TakingAdjustForm,
+    ChangeDetailForm
   },
   mixins: [getProjectList],
   props: {
@@ -409,6 +412,7 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      changeDetailFormVisible: false,
       selectData: [],
       totalList: [],
       superQueryJson: [
@@ -956,10 +960,10 @@ export default {
             this.$refs.Form.init(id, type, this.warehouseCode)
           })
         }
-      } else if (row.businessType == 'inbound_transfer' || row.businessType == 'outbound_transfer') {
-        this.transferFormVisible = true
+      } else if (row.businessType == 'inbound_shift' || row.businessType == 'outbound_shift' || row.businessType == 'inbound_merge' || row.businessType == 'outbound_merge' || row.businessType == 'inbound_split' || row.businessType == 'outbound_split') {
+        this.changeDetailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.transferREFForm.init(id, type,)
+          this.$refs.ChangeDetailForm.init(id, type)
         })
       } else if (row.businessType == 'outbound_use') {
         this.outboundUseVisible = true
@@ -1080,6 +1084,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.changeDetailFormVisible = false
       this.recordFormVisible = false
       this.productInboundFormVisible = false
       this.workInboundFormVisible = false

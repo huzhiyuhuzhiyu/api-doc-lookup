@@ -223,7 +223,8 @@ export default {
       this.form.accuracyLevel = data.accuracyLevel
       this.form.warehouseId = data.warehouseId
       this.form.packagingMethod = data.packagingMethod
-      this.form.specialRequire = data.specialRequire
+      // this.form.specialRequire = data.specialRequire
+      this.form.specialRequire = ""
       this.form.pairingModeId = data.pairingModeId
       this.form.material = data.material
       this.form.standardValue = data.standardValue

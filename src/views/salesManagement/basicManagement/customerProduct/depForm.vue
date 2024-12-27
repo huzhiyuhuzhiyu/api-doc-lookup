@@ -65,7 +65,7 @@
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                    <el-table-column prop="customerProductNo" label=" 客户料号" min-width="120">
+                    <el-table-column prop="customerProductNo" label=" 客户料号" min-width="160">
                       <template slot="header">
                         <span class="required">*</span> 客户料号
                       </template>

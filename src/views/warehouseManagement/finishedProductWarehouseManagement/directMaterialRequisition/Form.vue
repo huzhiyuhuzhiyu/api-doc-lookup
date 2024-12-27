@@ -719,7 +719,7 @@ export default {
       this.$emit('close', true)
     },
 
-    init(id, btnType, classAttributeList, warehouseCode) {
+    init(id, btnType, classAttributeList, warehouseCode,data) {
       console.log(classAttributeList);
       // this.visible = true
       this.formLoading = true
@@ -730,6 +730,9 @@ export default {
       this.warehouseCode = warehouseCode
       this.btnType = btnType
       console.log("btnty", btnType);
+      if (data.length) {
+        this.productData = data
+      }
       // this.refeshDataFormItems()
       if (id) {
         this.title = btnType == 'look' ? '查看直接领料单' : '编辑直接领料单'

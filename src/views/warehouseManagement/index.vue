@@ -11,6 +11,7 @@ import inventory from "@/views/warehouseManagement/finishedProductWarehouseManag
 import inventoryList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList"
 import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryDetaisList"
 import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
+import productionWaitMaterial from "@/views/warehouseManagement/finishedProductWarehouseManagement/productionWaitMaterial" 
 import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
 import awaitInspectionInventory from'@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
 import modalShift from'@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
@@ -18,7 +19,7 @@ import InventoryAssembly from'@/views/warehouseManagement/finishedProductWarehou
 import lnventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly'
 export default {
   name: 'quality',
-  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,lnventoryDisassembly},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,productionWaitMaterial,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,lnventoryDisassembly},
   data() {
     return {
       businessType:"",
@@ -70,6 +71,9 @@ export default {
     }
     if(this.businessType=='transferManagement'){
       this.listPageComponent=transferManagement
+    }
+    if(this.businessType=='productionWaitMaterial'){
+      this.listPageComponent=productionWaitMaterial
     }
     if(this.businessType=='directMaterialRequisition'){
       this.listPageComponent=directMaterialRequisition

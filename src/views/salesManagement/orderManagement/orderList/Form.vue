@@ -164,7 +164,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                      <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'" />
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                       <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                       </el-table-column>
@@ -262,7 +262,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-show="isProjectSwitch == 1" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch=== '1'" />
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                       <template slot="header">
@@ -587,7 +587,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                  <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'" />
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>
@@ -679,7 +679,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="80" :key="8" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" width="100" :key="7">
                   <template slot="header">
@@ -990,7 +990,7 @@
                   <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
                   <el-table-column prop="productCategoryName" label="所属分类" min-width="330" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                    v-if="isProjectSwitch == 1" />
+                    v-if="isProjectSwitch === '1'" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120">
                     <template slot-scope="scope">
@@ -1433,7 +1433,7 @@ export default {
     await this.getpairingModeListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
     this.isProjectSwitchFlag = true
-    if (this.isProjectSwitch == 1) this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
+    if (this.isProjectSwitch === '1') this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
   },
   mounted() {
@@ -1681,6 +1681,10 @@ export default {
       console.log(objs);
       this.productData[index].productDrawingNo = item.data.drawingNo
       this.productData[index].mainUnit = item.data.mainUnit
+      this.productData[index].deputyUnit = item.data.deputyUnit
+      this.productData[index].ratio = item.data.ratio
+      this.productData[index].classAttribute = item.data.classAttribute
+      this.productData[index].calculationDirection = item.data.calculationDirection
       this.productData[index].productsId = item.data.id
       this.productData[index].productName = item.data.name
       this.productData[index].productCode = item.data.code
@@ -1798,6 +1802,10 @@ export default {
           console.log(777, this.productData);
           // this.productData.push(res.data.records[0])
           if (res.data.records.length) {
+            if(res.data.records[0].pairingModeId){
+              res.data.records[0].mainUnit="对"
+              res.data.records[0].deputyUnit="对"
+            }
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
             this.$set(this.productData, index, res.data.records[0])
             let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));

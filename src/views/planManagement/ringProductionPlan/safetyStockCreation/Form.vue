@@ -390,7 +390,6 @@ export default {
   },
 
   async created() {
-    await this.getpairingModeListFun()
 
     await this.getProductClassFun()
     await this.getProductAttributeFun()

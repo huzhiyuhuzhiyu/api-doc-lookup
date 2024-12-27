@@ -193,7 +193,6 @@ export default {
         if (tc.type == 'custom') {
           // 产品分类
           if (tc.prop === 'productCategoryName') {
-            tc.iscode = true
             tc.method = getcategoryTree
             tc.requestObj = {
               classAttribute: 'finish_product'

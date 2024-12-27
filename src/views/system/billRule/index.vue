@@ -371,6 +371,10 @@ export default {
       this.search()
     },
     changeMove(data) {
+      data.forEach(item => {
+        item.lastModifyTime = ''
+        item.creatorTime = ''
+      });
       updateSortBatch(data).then(res => {
         this.$message.success("批量修改排序成功")
         this.initData()

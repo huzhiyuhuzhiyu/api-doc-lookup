@@ -83,7 +83,8 @@
                         </el-table-column>
                         <el-table-column prop="stockNum" label="调整前库存" width="150" :key="6" show-overflow-tooltip>
                         </el-table-column>
-
+                        <el-table-column prop="pairingModeName" label="配对方式" width="120" :key="6" show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="num" label="调整数量" width="120" :key="10112">
                           <template slot="header">
                             <span class="required">*</span>调整数量
@@ -139,11 +140,11 @@
                           </template>
                         </el-table-column>
 
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specSize" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in scope.row.spaceSizeList" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -152,7 +153,7 @@
                         <el-table-column prop="logo" label="Logo" width="120" key="2116">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.logo" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in scope.row.logoList" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -161,7 +162,7 @@
                         <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.divideEqually" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in scope.row.divideEquallyList" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -170,27 +171,26 @@
                         <el-table-column prop="material" label="材质" width="120" key="2118">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in scope.row.materialList" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="standardValue"   label="规值" width="120"
-                          key="211">
+                        <el-table-column prop="standardValue" label="规值" width="120" key="211">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色"  width="120" key="210">
+                        <el-table-column prop="colour" label="颜色" width="120" key="210">
 
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list11" key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -201,7 +201,7 @@
 
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" disabled clearable
-                               style="width: 100%;">
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list1" key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -213,8 +213,7 @@
                             <span class="required">*</span>精度等级
                           </template> -->
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" disabled clearable
-                              >
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" disabled clearable>
                               <el-option v-for="(item, index) in list2" key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -227,7 +226,7 @@
                           </template> -->
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" disabled clearable
-                               style="width: 100%;">
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -236,8 +235,8 @@
                         <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
 
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" disabled clearable style="width: 100%;"
-                              >
+                            <el-select v-model="scope.row.oil" placeholder="请选择" disabled clearable
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -246,7 +245,7 @@
                         <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -255,7 +254,7 @@
                         <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.aperture" placeholder="请选择" disabled clearable
-                              style="width: 100%;" >
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -265,7 +264,7 @@
                           key="101">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" disabled clearable
-                               style="width: 100%;">
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -275,7 +274,7 @@
                           key="202">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable
-                               style="width: 100%;">
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -348,7 +347,8 @@
                     </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
-
+                    <el-table-column prop="pairingModeName" label="配对方式" width="120" :key="6" show-overflow-tooltip>
+                    </el-table-column>
                     <el-table-column prop="num" label="盘点数量" width="120" :key="10112">
                       <template slot="header">
                         <span class="required">*</span>盘点数量
@@ -394,204 +394,186 @@
                     </el-table-column>
                     <el-table-column prop="diffAmount" label="差值金额" width="120" :key="88" />
                     <el-table-column prop="warehouseName" label="当前仓库" width="160" :key="10112">
-                          <template slot="header">
-                            <span class="required">*</span>当前仓库
-                          </template>
-                          <template slot-scope="scope">
-                            <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择盘点仓库'" isdisabled
-                              v-model="scope.row.warehouseName" :method="getWarehouseList" :currentIndex="scope.$index"
-                              placeholder="请选择仓库" @change="changeCurrentWarehousex"></ComSelect-list>
+                      <template slot="header">
+                        <span class="required">*</span>当前仓库
+                      </template>
+                      <template slot-scope="scope">
+                        <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择盘点仓库'" isdisabled
+                          v-model="scope.row.warehouseName" :method="getWarehouseList" :currentIndex="scope.$index"
+                          placeholder="请选择仓库" @change="changeCurrentWarehousex"></ComSelect-list>
 
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
 
-                          <template slot-scope="scope" v-if="scope.row.allocationFlag">
-                            <el-input v-model="scope.row.shelfSpaceName" disabled
-                              @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
-                            </el-input>
+                      <template slot-scope="scope" v-if="scope.row.allocationFlag">
+                        <el-input v-model="scope.row.shelfSpaceName" disabled
+                          @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
+                        </el-input>
 
-                          </template>
+                      </template>
 
-                        </el-table-column>
+                    </el-table-column>
 
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                    <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
 
-                          <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber" readonly disabled
-                              @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
-                              {{ scope.row.batchNumber }}
-                            </el-input>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="cooperativePartnerName" label="供应商" width="200" :key="10111">
-                          <template slot-scope="scope">
-                            <ComSelect-page key="partner" ref="ComSelect-page"
-                              v-model="scope.row.cooperativePartnerName" @change="partnerChange"
-                              :tableItems="partnerTableItems" :dialogTitle="scope.row.partnerDialogTitle"
-                              :treeTitle="scope.row.partnerTreeTitle" :placeholder="scope.row.partnerPlaceholder"
-                              :methodArr="scope.row.getCooperativeMethodArr" :listMethod="getCooperativeData"
-                              :listRequestObj="scope.row.partnerRequestObj" :searchList="scope.row.partnerSearchList"
-                              :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="true" />
-                          </template>
-                        </el-table-column>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.batchNumber" readonly disabled
+                          @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
+                          {{ scope.row.batchNumber }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="cooperativePartnerName" label="供应商" width="200" :key="10111">
+                      <template slot-scope="scope">
+                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="scope.row.cooperativePartnerName"
+                          @change="partnerChange" :tableItems="partnerTableItems"
+                          :dialogTitle="scope.row.partnerDialogTitle" :treeTitle="scope.row.partnerTreeTitle"
+                          :placeholder="scope.row.partnerPlaceholder" :methodArr="scope.row.getCooperativeMethodArr"
+                          :listMethod="getCooperativeData" :listRequestObj="scope.row.partnerRequestObj"
+                          :searchList="scope.row.partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
+                          :isdisabled="true" />
+                      </template>
+                    </el-table-column>
 
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                        <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.specSize" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in scope.row.spaceSizeList" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="logo" label="Logo" width="120" key="2116">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.logo" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in scope.row.logoList" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.divideEqually" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in scope.row.divideEquallyList" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="material" label="材质" width="120" key="2118">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in scope.row.materialList" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120"
-                          key="211">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                    <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specSize" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in scope.row.spaceSizeList" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="logo" label="Logo" width="120" key="2116">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.logo" placeholder="请选择" disabled clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in scope.row.logoList" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.divideEqually" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in scope.row.divideEquallyList" :key="index"
+                            :label="item.name" :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="material" label="材质" width="120" key="2118">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in scope.row.materialList" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="standardValue" v-if="standardValueFlag == 1" label="规值" width="120"
+                      key="211">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.standardValue" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
 
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in list11" key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
-                          width="120" key="2111">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list11" key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
+                      width="120" key="2111">
 
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" disabled clearable
-                              
-                         style="width: 100%;">
-                              <el-option v-for="(item, index) in list1" key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
-                          key="123">
-                          <!-- <template slot="header">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                      key="123">
+                      <!-- <template slot="header">
                             <span class="required">*</span>精度等级
                           </template> -->
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" disabled clearable
-                              
-                        >
-                              <el-option v-for="(item, index) in list2" key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="vibrationLevel" v-if="vibrationLevelFlag == 1" label="振动等级" width="120"
-                          key="17">
-                          <!-- <template slot="header">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" disabled clearable>
+                          <el-option v-for="(item, index) in list2" key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="vibrationLevel" v-if="vibrationLevelFlag == 1" label="振动等级" width="120"
+                      key="17">
+                      <!-- <template slot="header">
                             <span class="required">*</span>振动等级
                           </template> -->
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" disabled clearable
-                              
-                         style="width: 100%;">
-                              <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
 
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" disabled clearable style="width: 100%;"
-                              
-                        >
-                              <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.clearance" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.aperture" placeholder="请选择" disabled clearable
-                              style="width: 100%;" 
-                          >
-                              <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="packagingMethod" label="包装方式" v-if="packagingMethodFlag == 1" width="120"
-                          key="101">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" disabled clearable
-                              
-                         style="width: 100%;">
-                              <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
-                          key="202">
-                          <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable
-                              
-                         style="width: 100%;">
-                              <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                                :value="item.name"></el-option>
-                            </el-select>
-                          </template>
-                        </el-table-column>
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" disabled clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.aperture" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" v-if="packagingMethodFlag == 1" width="120"
+                      key="101">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                      key="202">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
                   </JNPF-table>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                     <span style="font-weight:500;margin-right:10px">当前库存总数：{{ totalStock }}</span>
@@ -630,7 +612,7 @@
 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import { mapGetters, mapState } from 'vuex'
-import { getWarehouseList,getOrderFiledMap } from '@/api/basicData/index'
+import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 
 import { getProduct, addStocktak, detailStocktak, editStocktak, deleteStocktak, productExport, productImport, stockTakingToAdjus, addstockTakingAdjustList, getstockTakingAdjustDetail } from '@/api/warehouseManagement/stocktak.js'
 import Process from '@/components/Process/Preview'
@@ -729,8 +711,8 @@ export default {
       endTime: 0,
       productNameFlag: null,
       uploadVisib: false,
-        // 属性字段  控制属性字段显示隐藏
-        accuracyLevelFlag: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -925,7 +907,8 @@ export default {
                 stockNum: item.stockNum,
                 warehouseId: item.warehouseId,
                 diffAmount: "",
-                takingLineId: item.takingLineId
+                takingLineId: item.takingLineId,
+                pairingModeId:item.pairingModeId,
               }
               arr.push(obj)
             });

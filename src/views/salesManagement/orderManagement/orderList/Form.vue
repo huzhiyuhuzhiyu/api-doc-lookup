@@ -2776,6 +2776,15 @@ export default {
             } else {
               this.salesFlag = true
             }
+            res.data.orderLines.forEach(item => {
+                if (this.mainUnitFlag == 1) {
+                  if (item.calculationDirection == 'multiplication') {
+                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                  } else {
+                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                  }
+                }
+              });
             this.productData = res.data.orderLines
             if (btnType == 'add') {
               this.dataForm.deliveryDate = ""

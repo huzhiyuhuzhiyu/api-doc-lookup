@@ -36,7 +36,7 @@
                       <el-form-item label="有效时间起止" prop="validDateArr">
 
                         <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd"
-                          :disabled='btnType !== "add"' style="width: 100%;" start-placeholder="有效时间起"
+                          :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起"
                           end-placeholder="有效时间止" clearable>
                         </el-date-picker>
                       </el-form-item>

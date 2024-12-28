@@ -8,18 +8,16 @@
     </template>
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
-        label-width="120px" :hide-required-asterisk="true">
+        label-width="120px" >
         <el-form-item label="名称" prop="name">
-          <template slot="label">
-            名称<span class="required">*</span>
-          </template>
           <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
         </el-form-item>
-        <el-form-item label="配对数量" prop="quantity">
-          <template slot="label">
-            配对数量<span class="required">*</span>
-          </template>
-          <el-input v-model="dataForm.quantity" placeholder="请输入配对数量" maxlength="20" />
+
+        <el-form-item label="单位" prop="unit">
+          <el-select v-model="dataForm.unit" placeholder="请选择单位" style="width: 100%;">
+            <el-option v-for="item in unitList" size="small" :key="item.id" :label="item.name" :value="item.name">
+            </el-option>
+          </el-select> 
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
@@ -44,6 +42,7 @@ import {
   getbimProductAttributesList,
   checkBimPairingModeCode
 } from '@/api/masterDataManagement/index'
+import { getUnitData } from '@/api/basicData/materialSettings'
 export default {
   components: {},
   data() {
@@ -74,7 +73,7 @@ export default {
       autoCode: '',
       dataRule: {
         name: [
-          { required: true, message: '请输入类别编码', trigger: 'blur' },
+          { required: true, message: '请输入名称', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               if (!value) {
@@ -88,7 +87,7 @@ export default {
                       if (!res.data) {
                         callback()
                       } else {
-                        callback(new Error('此类型编码已存在'))
+                        callback(new Error('此名称已存在'))
                       }
                     })
                     .catch((err) => {
@@ -100,7 +99,7 @@ export default {
                       if (!res.data) {
                         callback()
                       } else {
-                        callback(new Error('此类型编码已存在'))
+                        callback(new Error('此名称已存在'))
                       }
                     })
                     .catch((err) => {
@@ -112,6 +111,14 @@ export default {
             trigger: 'blur'
           }
         ],
+        unit: [
+          {
+            required: true,
+            message: '请选择单位',
+            trigger: ['change']
+          },
+          
+        ],
         quantity: [
           {
             required: true,
@@ -120,16 +127,39 @@ export default {
           },
           { validator: checkQuantity, trigger: 'blur' }
         ],
-      }
+      },
+      unitList:[],
+      listQuery: {
+        unitCode: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20
+      },
     }
   },
   methods: {
-
+    getUnitList(){
+      getUnitData(this.listQuery).then(res=>{
+        console.log("单位",res);
+        this.unitList=res.data.records||[]
+      })
+    },
     choiceIcon(value) {
       this.dataForm.icon = value
     },
     init(row, btntype) {
       this.visible = true
+      this.getUnitList()
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
@@ -139,6 +169,7 @@ export default {
         this.title = '新建配对方式'
       } else if (btntype == 'edit') {
         this.dataForm = { ...row }
+        this.title = '编辑配对方式'
       }
       this.btntype = btntype
     },

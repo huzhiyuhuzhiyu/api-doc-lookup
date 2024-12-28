@@ -730,7 +730,7 @@ export default {
       this.warehouseCode = warehouseCode
       this.btnType = btnType
       console.log("btnty", btnType);
-      if (data.length) {
+      if (data&& data.length) {
         this.productData = data
       }
       // this.refeshDataFormItems()
@@ -756,6 +756,7 @@ export default {
 
         }).catch(() => { this.formLoading = false })
       } else {
+        this.formLoading = false
         // 获取当前日期
         const currentDate = new Date();
 
@@ -772,7 +773,6 @@ export default {
         const formattedDate = `${year}-${month}-${date}`;
         this.dataForm.pickingDate = formattedDate;
         this.title = '新建直接领料单'
-        this.formLoading = false
         this.fetchData("ZJDH", true)
 
 

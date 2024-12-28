@@ -991,7 +991,8 @@ export default {
       })
       this.totalList = []
       this.listQuery.classAttributeList = this.classAttributeList
-      if (this.createTimeArr.length) {
+      console.log("this.",this.createTimeArr);
+      if (this.createTimeArr&&this.createTimeArr.length) {
         this.listQuery.orderStartDate = this.createTimeArr[0]
         this.listQuery.orderEndDate = this.createTimeArr[1]
       } else {
@@ -1041,13 +1042,13 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-        let query = this.initListQuery
+        let query = this.listQuery
         let _data = {
           ...query,
           exportType: '1013',
           exportName: '出入库明细',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.initListQuery.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

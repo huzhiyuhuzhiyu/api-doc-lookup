@@ -1018,14 +1018,14 @@ export default {
                 for (let i = 0; i < data.selectKey.length; i++) {
                     includeFieldMap[data.selectKey[i]] = data.selectVal[i];
                 }
-                this.initListQuery.classAttributeList = this.classAttributeList
-                let query = this.initListQuery
+                this.listQuery.classAttributeList = this.classAttributeList
+                let query = this.listQuery
                 let _data = {
                     ...query,
                     exportType: '1012',
                     exportName: '出入库列表',
                     includeFieldMap,
-                    pageSize: data.dataType == 0 ? this.initListQuery.pageSize : -1,
+                    pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
                 }
                 excelExport(_data).then(res => {
                     this.exportFormVisible = false

@@ -1212,43 +1212,43 @@ export default {
 
 
 
-              if (Number(item.num) > Number(item.ordersNum)) {
-                console.log(item.num);
-                console.log(item.ordersNum);
-                submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发货数量")
-                break
-              }
+              // if (Number(item.num) > Number(item.ordersNum)) {
+              //   console.log(item.num);
+              //   console.log(item.ordersNum);
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发货数量")
+              //   break
+              // }
 
-              if (Num(item.num) > Num(item.availableBatchNumber)) {
-                submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
-                break
-              }
-              if (!totals[item.ordersLineId]) {
-                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-              }
-              if (!totalNum[item.ordersLineId]) {
-                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-              }
-              totals[item.ordersLineId].totalNum += Number(item.num)
-              totalNum[item.ordersLineId].totalNum += Number(item.num);
+              // if (Number(item.num) > Number(item.availableBatchNumber)) {
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
+              //   break
+              // }
+              // if (!totals[item.ordersLineId]) {
+              //   totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
+              // }
+              // if (!totalNum[item.ordersLineId]) {
+              //   totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
+              // }
+              // totals[item.ordersLineId].totalNum += Number(item.num)
+              // totalNum[item.ordersLineId].totalNum += Number(item.num);
             }
-            for (let id in totals) {
-              if (totals[id].totalNum > totals[id].ordersNum) {
-                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
-                submitFlag = false
-                this.$message.error("同产品的总数量不能超过订单数量")
-                break
-              }
-            }
-            for (let id in totalNum) {
-              if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
-                submitFlag = false
-                this.$message.error("同产品的总数量不能批次库存数量")
-                break
-              }
-            }
+            // for (let id in totals) {
+            //   if (totals[id].totalNum > totals[id].ordersNum) {
+            //     console.log(`同产品 ${id} 的总数量不能超过订单数量`);
+            //     submitFlag = false
+            //     this.$message.error("同产品的总数量不能超过订单数量")
+            //     break
+            //   }
+            // }
+            // for (let id in totalNum) {
+            //   if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
+            //     submitFlag = false
+            //     this.$message.error("同产品的总数量不能批次库存数量")
+            //     break
+            //   }
+            // }
           }
 
 

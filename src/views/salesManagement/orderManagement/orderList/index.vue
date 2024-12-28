@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout">
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+      <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <template v-for="item in searchList">
@@ -114,9 +114,10 @@
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
                   @click="handleDel(scope.row.id)">删除</el-button>
+                <!-- :disabled="scope.row.documentStatus == 'draft' ? false : true" -->
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -127,12 +128,18 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item :disabled="scope.row.documentStatus == 'draft'||scope.row.orderState == 'finish' ? true : false" @click.native="closeOrdersFun(scope.row.id)">
+                    <el-dropdown-item
+                      :disabled="scope.row.documentStatus == 'draft' || scope.row.orderState == 'finish' ? true : false"
+                      @click.native="closeOrdersFun(scope.row.id)">
                       关单
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="getCopyOrders(scope.row.id, 'copy')">
                       复制订单
-                    </el-dropdown-item> 
+                    </el-dropdown-item>
+                    <el-dropdown-item :disable="scope.row.documentStatus === 'draft'"
+                      @click.native="printFun(scope.row.id)">
+                      打印
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -154,22 +161,31 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal,closeOrders } from '@/api/salesManagement/assemblyOrders'
+import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, closeOrders } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   name: 'orderList',
-  components: { Form, ExportForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery,      PrintBrowse,
+    PrintDialog, },
   data() {
     return {
+      printVisible: false,
+      printBrowseVisible: false,
 
       superQuery: {},
       superForm: {},
@@ -374,6 +390,9 @@ export default {
       ],
       totalDataForm: {},
       saleContractNoSwitch: null,
+      prindId: '',
+      formId: '',
+      enCode: "",
     }
   },
   watch: {
@@ -410,10 +429,34 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    printFun(id) {
+      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
+      this.formId = id
+      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项  
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
-    }, 
-    closeOrdersFun(id){
+    },
+    closeOrdersFun(id) {
       this.$confirm("您确定关闭该订单吗？", this.$t('提示'), {
         type: 'warning'
       }).then(() => {
@@ -441,7 +484,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'salesName'||prop=='cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
+      if (prop === 'salesName' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -468,7 +511,7 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-      this.formVisible = false 
+      this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -500,13 +543,13 @@ export default {
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
-        if (this.deliveryDateArr.length) {
-          this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-          this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-        } else {
-          this.orderForm.deliveryStartDate = ""
-          this.orderForm.deliveryEndDate = ""
-        }
+      if (this.deliveryDateArr.length) {
+        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartDate = ""
+        this.orderForm.deliveryEndDate = ""
+      }
       this.orderForm.pageNum = 1 // 重置页码
       // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
       if (type === 'basic') {
@@ -531,7 +574,7 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.deliveryDateArr=[]
+      this.deliveryDateArr = []
       this.superForm = this.orderForm = {
         orderNo: "",
         cooperativePartnerName: "",
@@ -562,7 +605,7 @@ export default {
       this.search('basic')
     },
 
-    
+
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {

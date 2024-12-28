@@ -19,6 +19,9 @@
             </el-option>
           </el-select> 
         </el-form-item>
+        <el-form-item label="配对数量" prop="quantity">
+          <el-input v-model="dataForm.quantity" placeholder="请输入配对数量" maxlength="20" />
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
         </el-form-item>

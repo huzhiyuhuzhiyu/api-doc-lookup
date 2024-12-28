@@ -202,7 +202,7 @@
                     </el-table>
                   </div>
                   <el-table ref="product"
-                    v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
+                    v-else-if="(btnType == 'edit' || btnType == 'add'||btnType=='copy') && isProjectSwitchFlag == true"
                     :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
                     @row-click="rowclick" key="165" style="width: 100%;">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
@@ -608,7 +608,7 @@
                   </el-table-column>
                 </el-table>
               </div>
-              <el-table ref="product" v-else-if="(btnType == 'edit' || btnType == 'add') && isProjectSwitchFlag == true"
+              <el-table ref="product" v-else-if="(btnType == 'edit' || btnType == 'add'||btnType=='copy') && isProjectSwitchFlag == true"
                 :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
                 @row-click="rowclick" :key="165" style="width: 100%;">
                 <el-table-column type="selection" width="55" fixed="left" :key="2">
@@ -2680,7 +2680,8 @@ export default {
               res.data.order.approvalStatus = ""
               this.dataForm = res.data.order
               if (this.btnType === 'edit') {
-                this.getBusInfo()
+              this.ProductListRequestObjs.partnerId = this.dataForm.cooperativePartnerId
+              this.getBusInfo()
               } else {
                 // 流程信息和流转记录
                 if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)

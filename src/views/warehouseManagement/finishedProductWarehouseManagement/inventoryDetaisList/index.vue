@@ -22,7 +22,7 @@
           </template>
           <el-col :span="4">
             <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="daterange" style="width: 100%" start-placeholder="单据开始日期"
+              <el-date-picker v-model="createTimeArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%" start-placeholder="单据开始日期"
                 end-placeholder="单据结束日期" clearable></el-date-picker>
             </el-form-item>
           </el-col>

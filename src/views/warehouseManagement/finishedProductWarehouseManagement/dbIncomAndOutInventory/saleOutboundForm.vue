@@ -1264,6 +1264,7 @@ export default {
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.productData.forEach(item => {
+              item.packagingMethod=""
               item.specialRequire=""
             });
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))

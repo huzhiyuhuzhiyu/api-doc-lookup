@@ -25,11 +25,11 @@
                         <el-input readonly placeholder="请选择订单" :disabled="btnType == 'look' ? true : false" v-model="dataForm.ordersNo" @focus="openOrderDia"></el-input>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="来源单号" prop="sourceOrderNo">
                         <el-input placeholder="请输入来源单号" :disabled="btnType == 'look'" v-model="dataForm.sourceOrderNo"></el-input>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="申请理由" prop="applyReason">
                         <el-input v-model="dataForm.applyReason" placeholder="请输入申请理由" :disabled="btnType == 'look' ? true : false" maxlength="200" />
@@ -70,11 +70,11 @@
                     <el-input readonly placeholder="请选择订单" :disabled="btnType == 'look' ? true : false" v-model="dataForm.ordersNo" @focus="openOrderDia"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :sm="6" :xs="24">
+                <!-- <el-col :sm="6" :xs="24">
                   <el-form-item label="来源单号" prop="sourceOrderNo">
                     <el-input placeholder="请输入来源单号" :disabled="btnType == 'look'" v-model="dataForm.sourceOrderNo"></el-input>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="申请理由" prop="applyReason">
                     <el-input v-model="dataForm.applyReason" placeholder="请输入申请理由" :disabled="btnType == 'look' ? true : false" maxlength="200" />
@@ -120,11 +120,11 @@
                     <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
+                <!-- <el-col :span="4">
                   <el-form-item>
                     <el-input v-model="orderForm.workOrderNo" placeholder="请输入工作令号" clearable />
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -142,8 +142,8 @@
 
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" />
                 <el-table-column prop="cooperativePartnerName" label="客户名称" width="120" />
-                <el-table-column prop="workOrderNo" label="工作令号" width="160"></el-table-column>
-                <el-table-column prop="sourceOrderNo" label="来源单号" width="160"></el-table-column>
+                <!-- <el-table-column prop="workOrderNo" label="工作令号" width="160"></el-table-column>
+                <el-table-column prop="sourceOrderNo" label="来源单号" width="160"></el-table-column> -->
                 <el-table-column prop="deliveryDate" label="交货日期" width="180" />
                 <el-table-column prop="num" label="数量" width="120" />
                 <el-table-column prop="remark" label="订单主表备注" min-width="180" />
@@ -203,13 +203,15 @@ export default {
       selectRows: [],
       selectFlag: false,
       sleeveItems: [
-        { prop: "customerProductNo", label: "客户物料号", value: "", type: 'view', width: "120", },
-        { prop: "customerProductDrawingNo", label: `客户规格型号`, value: "", type: 'view', width: "180", },
+        { prop: "customerProductNo", label: "客户料号", value: "", type: 'view', width: "120", },
+        { prop: "contractNo", label: "客户合同号", value: "", type: 'view', width: "120", },
+        // { prop: "customerProductDrawingNo", label: `客户规格型号`, value: "", type: 'view', width: "180", },
         { prop: "productCode", label: "产品编码", value: "", type: 'view', width: "140", },
         { prop: "productName", label: "产品名称", value: "", type: 'view', width: "120", },
-        { prop: "productDrawingNo", label: "规格型号", value: "", type: 'view', width: "350", },
-        { prop: "num", label: "原数量", value: "", type: 'view', width: "100", },
+        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', width: "350", },
+        { prop: "pairingModeName", label: "配对方式", value: "", type: 'view', width: "120", },
         { prop: "mainUnit", label: "单位", value: "", type: 'view', width: "180", },
+        { prop: "num", label: "原数量", value: "", type: 'view', width: "100", },
         // { prop: "assistantNum", label: "原数量(副)", value: "", type: 'view', width: "100", },
         // { prop: "deputyUnit", label: "副单位", value: "", type: 'view', width: "180", },
         { prop: "price", label: "原单价", value: "", type: 'view', width: "120" },
@@ -428,6 +430,8 @@ export default {
             })
             a.forEach(item => {
               let obj = {
+                pairingModeName:item.pairingModeName ? item.pairingModeName : "",
+                contractNo:item.contractNo ? item.contractNo : "",
                 productCode: item.productCode ? item.productCode : "",
                 productName: item.productName ? item.productName : "",
                 drawingNo: item.drawingNo ? item.drawingNo : "",

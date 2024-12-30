@@ -24,74 +24,36 @@
                   </el-form-item>
                 </el-col>
               </template>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
-                    {{ $t('common.search') }}
-                  </el-button>
-                  <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                    {{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </el-row> -->
+<el-col :span="6">
+  <el-form-item>
+    <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
+      {{ $t('common.search') }}
+    </el-button>
+    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+      {{ $t('common.reset') }}
+    </el-button>
+  </el-form-item>
+</el-col>
+</el-form>
+</el-row> -->
           <div class="JNPF-common-layout-main JNPF-flex-main">
             <JNPF-table v-loading="listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange"
               ref="dataTables">
-              <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
+              <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
+              <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
+              <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
                 <template slot-scope="scope">
-                  <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
-                    scope.row.orderNo
-                  }}</el-link>
+                  <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
                 </template>
               </el-table-column>
-              <el-table-column prop="orderType" label="任务类型" min-width="120" sortable="custom">
-                <template slot-scope="scope">
-                  <div v-if="scope.row.orderType == 'normal'">正常任务</div>
-                  <div v-if="scope.row.orderType == 'rework'">返工任务</div>
-                  <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
-                  <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
-                  <div v-if="scope.row.orderType == 'transit'">在制任务</div>
-
-                </template>
-              </el-table-column>
-              <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
-              <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-                v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
-              <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
-              <el-table-column prop="mainUnit" label="单位" width="80" />
-              <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
-              <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
-              <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
-                <template slot-scope="scope">
-                  <el-progress
-                    :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
-                </template>
-              </el-table-column>
-              <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
-              <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
-              <el-table-column prop="taskMethod" label="编排任务方式" min-width="160" sortable="custom">
-                <template slot-scope="scope">
-                  <div>{{ scope.row.taskMethod == 'appoint' ? "指定加工对象" : '不指定加工对象' }}</div>
-                </template>
-              </el-table-column>
-
-              <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-              <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
-
-
-              <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
-              <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
-              <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
-                <template slot-scope="scope">
-                  <div>{{ scope.row.urgentFlag ? '是' : '否' }}</div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-              <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
+              <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
+              <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
+              <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
+              <el-table-column prop="mainUnit" label="单位" min-width="80" />
+              <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
+              <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
+              <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
+              <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
             </JNPF-table>
             <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
               @pagination="initData">
@@ -110,7 +72,7 @@
 <script>
 import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index' // 仓库树
-import { ordershengchanList, addOrderNum, detailordershengchan } from '@/api/productOrdes/index.js'
+import { getWorkList } from '@/api/productOrdes/index.js'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -321,12 +283,12 @@ export default {
     },
     initData() {
       this.listLoading = true
-      ordershengchanList(this.listQuery).then(res => {
+      getWorkList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
         this.tableData = res.data.records
         this.total = res.data.total
-      
+
 
       }).catch(err => {
         this.treeLoading = false

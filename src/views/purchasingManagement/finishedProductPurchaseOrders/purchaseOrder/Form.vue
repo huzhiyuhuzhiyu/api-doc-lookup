@@ -6,7 +6,7 @@
           <el-page-header @back="goBack" :content="type === 'look' ? '查看成品采购订单' : '新建成品采购订单'" />
         </div>
 
-        <div class="main">
+        <div class="main" ref="main" v-loading="formLoading">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
@@ -40,7 +40,7 @@
                 <el-collapse-item title="产品信息" name="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table">
+                      :data="dataFormTwo.data" id="table" ref="multipleTable" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
@@ -294,7 +294,7 @@
             <el-collapse-item title="产品信息" name="productInfo">
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                 <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                  :data="dataFormTwo.data" id="table">
+                  :data="dataFormTwo.data" id="table" ref="multipleTable" :height="customStyleData">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
@@ -398,7 +398,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                 
+
                   <el-table-column v-if="dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
                     prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
@@ -629,7 +629,9 @@ export default {
       packagingMethodFlag: '',
       specialRequireFlag: '',
       bimProductAttributesObj: {},
-      processList: []
+      processList: [],
+      customStyleData: 0,
+      formLoading: false
     }
   },
   async created() {
@@ -637,6 +639,8 @@ export default {
     this.getDeputyUnit()
     this.getBimBusinessDetail()
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.switchStyleheight()
+    this.formLoading = false
   },
   computed: {
     computedValue() {
@@ -690,6 +694,29 @@ export default {
     }
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 325
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then(res => {
         this.materialFlag = res.data.material
@@ -821,6 +848,7 @@ export default {
       this.$emit('close')
     },
     init(id, type, approvalFlag) {
+      this.formLoading = true
       this.getProductClassFun()
       console.log(id, type)
       // 此处判断用户选择新增还是编辑
@@ -913,7 +941,10 @@ export default {
         })
         .catch(() => { })
     }
-  }
+  },
+  updated() {
+    this.$refs['multipleTable'].doLayout()
+  },
 }
 </script>
 <style scoped>

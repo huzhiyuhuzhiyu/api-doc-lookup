@@ -798,11 +798,11 @@ export default {
       isattachmentswitch: '',
       categoryId: '',
       customStyleData: 0,
-      customStyleData2:0
+      customStyleData2: 0
     }
   },
   mounted() {
-    this.$nextTick(() => this.switchStyleheight())
+
     // 页面发生缩放，触发明细表格表单的resize
     this.clientResize = () => {
       if (!this.$refs.processRef) return
@@ -817,8 +817,9 @@ export default {
     await this.getProjectList()
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
+    await this.switchStyleheight()
     console.log(this.isProjectSwitch)
-    if (this.userInfo.projectId === '1') {
+    if (this.isProjectSwitch === '1') {
       console.log(this.projectIdData, 'lllljj')
       this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
       this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目', fixed: 'left' })

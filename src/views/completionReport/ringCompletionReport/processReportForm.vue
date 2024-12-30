@@ -28,7 +28,7 @@
                     </div>
                   </div>
                   <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
-                    :setColumnDisplayList="columnList" custom-column style="height: auto; max-height: 600px;">
+                    :setColumnDisplayList="columnList" custom-column style="height: auto;">
                     <el-table-column prop="processName" label="工序名称" min-width="160"
                       sortable="custom"></el-table-column>
                     <el-table-column prop="processCode" label="工序编码" min-width="160"
@@ -120,6 +120,8 @@ export default {
         workReportFlag: true,
         processingType: "self_produced",
         classAttribute: "semi_finished",
+        pageNum: -1,
+        pageSize: -1,
         processId: "",
         "orderItems": [
           {

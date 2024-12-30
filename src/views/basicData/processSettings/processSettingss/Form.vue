@@ -62,7 +62,7 @@
                         <!-- <el-col :span="12">
                       <el-form-item label="工艺状态" prop="state">
                         <el-select v-model="dataForm.state" style="width:100%" :disabled="type == 'look'">
-                       
+
                           <el-option label="启用" value="enable" />
                           <el-option label="禁用" value="disable" />
                         </el-select>
@@ -102,7 +102,7 @@
                         <!-- <el-col :span="12">
                       <el-form-item label="人员" prop="personName" >
                         <PersonSelect multiple v-model="dataForm.personName" placeholder="请选择所属人员"  style="width: 100%;"
-                        @change="hangleSelectSales" />      
+                        @change="hangleSelectSales" />
                       </el-form-item>
                     </el-col> -->
                       </template>
@@ -1553,6 +1553,8 @@ export default {
     },
     // 抽屉提交
     handlerConfirm(data) {
+        console.log('抽屉提交');
+        console.log(this.dataFormTwo[this.currntIndex],data);
       this.dataFormTwo[this.currntIndex].bimRoutingProcessResourceDTOList = data
       this.sourceVisibled = false
     },

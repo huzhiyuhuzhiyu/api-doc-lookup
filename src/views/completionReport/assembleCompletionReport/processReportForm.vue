@@ -126,6 +126,8 @@ export default {
         processingType: "self_produced",
         classAttribute: "finish_product",
         processId: "",
+        pageNum: -1,
+        pageSize: -1,
         "orderItems": [
           {
             "asc": false,

@@ -516,11 +516,11 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import { mapGetters, mapState } from 'vuex' 
+import { mapGetters, mapState } from 'vuex'
 
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
@@ -578,7 +578,7 @@ export default {
         remark: "",
         bomId: "",
         projectId: "",
-        pairingModeId:"",
+        pairingModeId: "",
       },
       dataFormTwo: {
         data: [],
@@ -858,12 +858,11 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
       console.log("班组", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.work_group) {
           this.index = scope.$index;
@@ -879,6 +878,7 @@ export default {
             resType: "work_group",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("班组数据", res);
             this.workgroupData = Object.keys(res.data).sort();
@@ -896,7 +896,6 @@ export default {
     // 选择设备
     selectDeviceFun(scope) {
       console.log("设备", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.device) {
           this.index = scope.$index
@@ -912,6 +911,7 @@ export default {
             resType: "device",
             resIdList: resIdList,
           }
+          this.totalData = []
           getWorkListMap(obj).then(res => {
             console.log("设备数据", res);
             this.deviceData = Object.keys(res.data).sort();
@@ -929,7 +929,6 @@ export default {
     selectPersonnelFun(scope) {
       console.log(scope.row);
 
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.personnel) {
           this.currentPersonId = scope.row.personId;
@@ -945,6 +944,7 @@ export default {
             resType: "personnel",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("人员数据", res);
 
@@ -1084,8 +1084,8 @@ export default {
     },
 
     // 获取工艺详情
-    getRoutingDetail(productsId,id) {
-      detailResourceProcess(productsId,id).then(res => {
+    getRoutingDetail(productsId, id) {
+      detailResourceProcess(productsId, id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
@@ -1133,7 +1133,7 @@ export default {
       this.getProductionLineListFun()
       this.fetchData("PROD")
 
-      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.productsId,this.dataForm.routingId)
+      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
     },
     async fetchData(code) {
       try {

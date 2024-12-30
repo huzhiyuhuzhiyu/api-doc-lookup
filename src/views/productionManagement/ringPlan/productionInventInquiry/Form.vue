@@ -77,8 +77,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划生产开始—结束日期" prop="planDate"
-                      >
+                    <el-form-item label="计划生产开始—结束日期" prop="planDate">
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
@@ -609,9 +608,9 @@ export default {
       bimProductAttributesList: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
-      workFlagFalseInfo:{},//不生成工单的数据
-      currentProcessInfo:{},//当前所选的工序
-      workFlag:null,//是否都生成工单标志 
+      workFlagFalseInfo: {},//不生成工单的数据
+      currentProcessInfo: {},//当前所选的工序
+      workFlag: null,//是否都生成工单标志 
     }
   },
   computed: {
@@ -840,7 +839,6 @@ export default {
     // 选择班组
     selectWorkgroupFun(scope) {
       console.log("班组", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.work_group) {
           this.index = scope.$index;
@@ -856,6 +854,7 @@ export default {
             resType: "work_group",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("班组数据", res);
             this.workgroupData = Object.keys(res.data).sort();
@@ -873,7 +872,6 @@ export default {
     // 选择设备
     selectDeviceFun(scope) {
       console.log("设备", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.device) {
           this.index = scope.$index
@@ -889,6 +887,7 @@ export default {
             resType: "device",
             resIdList: resIdList,
           }
+          this.totalData = []
           getWorkListMap(obj).then(res => {
             console.log("设备数据", res);
             this.deviceData = Object.keys(res.data).sort();
@@ -904,7 +903,6 @@ export default {
     //  选择人员
     selectPersonnelFun(scope) {
       console.log(scope.row);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.personnel) {
           this.currentPersonId = scope.row.personId;
@@ -920,6 +918,7 @@ export default {
             resType: "personnel",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("人员数据", res);
             this.personnelData = Object.keys(res.data).sort();
@@ -1058,7 +1057,7 @@ export default {
         let currentItem = processList.find(item => item.processId === this.dataForm.processId);
 
         if (currentItem) {
-          this.currentProcessInfo=currentItem
+          this.currentProcessInfo = currentItem
           // 返回当前数据  
 
           // 获取当前 object's sort 值  
@@ -1072,11 +1071,11 @@ export default {
             this.dataFormTwo.data = largerSortItems
 
             let hasWorkOrderFlagFalse = largerSortItems.some(item => !item.workOrderFlag);
-            
+
             if (!hasWorkOrderFlagFalse) {
               // 都生成工单
               // 返回 false  
-              this.workFlag=true
+              this.workFlag = true
               //               console.log(false);
             } else {
               // 存在不生成工单的数据，并找出最后一道不生成工单的数据
@@ -1087,12 +1086,12 @@ export default {
 
               // 返回 sort 最大值的数据  
               console.log(maxSortItem);
-              this.workFlagFalseInfo=maxSortItem
+              this.workFlagFalseInfo = maxSortItem
             }
           } else {
             this.$message.error("数据存在问题,请检查后重试")
             // 如果没有大于的 sort 值，返回空数组  
-            this.dataFormTwo.data=[] 
+            this.dataFormTwo.data = []
           }
         } else {
           this.$message.error("所选数据的工序不在该工艺路线中")
@@ -1107,7 +1106,7 @@ export default {
       this.getProductionLineListFun()
       this.dataForm = data[0]
       this.$set(this.dataForm, 'orderNo', '')
-      this.$set(data[0], 'productionQuantity',  this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
+      this.$set(data[0], 'productionQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'routingId', data[0].routingId)
       this.$set(this.dataForm, 'routingName', data[0].routingName)
@@ -1147,9 +1146,9 @@ export default {
       let submitFlag = null;
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
-      if(!this.dataFormTwo.data.length) return this.$message.error("工单数据不能为空")
-      let hasTrueFlag = this.dataFormTwo.data.some(item => item.workOrderFlag === true);  
-    if(!hasTrueFlag) return this.$message.error("工单数据存在问题,请检查后重试")
+      if (!this.dataFormTwo.data.length) return this.$message.error("工单数据不能为空")
+      let hasTrueFlag = this.dataFormTwo.data.some(item => item.workOrderFlag === true);
+      if (!hasTrueFlag) return this.$message.error("工单数据存在问题,请检查后重试")
       if (this.naturalResourcesFlag) {
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];
@@ -1211,43 +1210,43 @@ export default {
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
         lineEdgeList: arr,
-        materialList:[],
+        materialList: [],
       }
       // 都生成工单  则投料清单数据为  所选数据的产品+所选的工序作为料 
-      
-      if(this.workFlag){
-        let objs={
-          calculationDirection:this.dataForm.calculationDirection,
-          deputyUnit:this.dataForm.deputyUnit,
-          mainUnit:this.dataForm.mainUnit,
-          materialProcessId:this.currentProcessInfo.processId,
-          materialsUsedQuantity:this.dataForm.productionQuantity,
-          processId:this.currentProcessInfo.processId,
-          productsId:this.dataForm.productsId,
-          ratio:this.dataForm.ratio, 
-          qty:1,
+
+      if (this.workFlag) {
+        let objs = {
+          calculationDirection: this.dataForm.calculationDirection,
+          deputyUnit: this.dataForm.deputyUnit,
+          mainUnit: this.dataForm.mainUnit,
+          materialProcessId: this.currentProcessInfo.processId,
+          materialsUsedQuantity: this.dataForm.productionQuantity,
+          processId: this.currentProcessInfo.processId,
+          productsId: this.dataForm.productsId,
+          ratio: this.dataForm.ratio,
+          qty: 1,
         }
-        obj.materialList=[...obj.materialList,objs]
-      }else{
+        obj.materialList = [...obj.materialList, objs]
+      } else {
         // 如果存在不生成工单的数据 
-        let objs={
-          calculationDirection:this.dataForm.calculationDirection,
-          deputyUnit:this.dataForm.deputyUnit,
-          mainUnit:this.dataForm.mainUnit,
-          materialProcessId:this.workFlagFalseInfo.processId,
-          materialsUsedQuantity:this.dataForm.productionQuantity,
-          processId:this.workFlagFalseInfo.processId,
-          productsId:this.dataForm.productsId,
-          ratio:this.dataForm.ratio, 
-          qty:1,
+        let objs = {
+          calculationDirection: this.dataForm.calculationDirection,
+          deputyUnit: this.dataForm.deputyUnit,
+          mainUnit: this.dataForm.mainUnit,
+          materialProcessId: this.workFlagFalseInfo.processId,
+          materialsUsedQuantity: this.dataForm.productionQuantity,
+          processId: this.workFlagFalseInfo.processId,
+          productsId: this.dataForm.productsId,
+          ratio: this.dataForm.ratio,
+          qty: 1,
         }
-        obj.materialList=[...obj.materialList,objs]
+        obj.materialList = [...obj.materialList, objs]
       }
-      console.log("当前所选的工序",this.currentProcessInfo);
-      console.log("标识",this.workFlag);
-      console.log("不生成工单的数据",this.workFlagFalseInfo);
-      console.log("工单数据",this.dataFormTwo.data);
-      console.log("提交的数据",obj);
+      console.log("当前所选的工序", this.currentProcessInfo);
+      console.log("标识", this.workFlag);
+      console.log("不生成工单的数据", this.workFlagFalseInfo);
+      console.log("工单数据", this.dataFormTwo.data);
+      console.log("提交的数据", obj);
       this.btnLoading = true
       addProdOrder(obj).then(res => {
         this.btnLoading = false

@@ -1212,19 +1212,12 @@ export default {
 
 
 
-              // if (Number(item.num) > Number(item.ordersNum)) {
-              //   console.log(item.num);
-              //   console.log(item.ordersNum);
-              //   submitFlag = false
-              //   this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发货数量")
-              //   break
-              // }
-
-              // if (Number(item.num) > Number(item.availableBatchNumber)) {
-              //   submitFlag = false
-              //   this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
-              //   break
-              // }
+              
+              if (Number(item.num) > Number(item.availableBatchNumber)) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
+                break
+              }
               // if (!totals[item.ordersLineId]) {
               //   totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
               // }

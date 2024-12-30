@@ -178,7 +178,7 @@
           <el-table-column prop="total" label="合计" align="center"></el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+          @pagination="initData" :pageSizes="[50, 100, 500, 1000]" />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />

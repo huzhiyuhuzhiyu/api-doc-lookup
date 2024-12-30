@@ -66,7 +66,22 @@
                           :disabled="btnType ? true : false" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="所属部门" prop="departmentId">
+                        <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
+                          @change="onOrganizeChangeHandle" :currOrgId="dataForm.departmentId || '0'" />
+                      </el-form-item>
 
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="所属销售" prop="salespersonId">
+                        <el-select v-model="dataForm.salespersonIdText" placeholder="请选择所属销售人员" clearable
+                          style="width: 100%;" :disabled="salesFlag" filterable @change="selectsales">
+                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="地区" prop="regionCode"
                         :rules="isaddressswitch ? { required: true, message: '地区不能为空', trigger: 'change' } : {}">
@@ -519,6 +534,7 @@ import formValidate from '@/utils/formValidate'
 import { getProvinceList } from '@/api/system/province'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBimBusinessSwitchConfigList, getBimBusinessDetail } from '@/api/basicData/index'
+import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     var checkReconciliationEndDate = (rule, value, callback) => {
@@ -613,6 +629,8 @@ export default {
           value: true
         }
       ],
+      organizeIdTrees: '',
+      salesList: [],
       visible: false,
       btnLoading: false,
       formLoading: false,
@@ -623,6 +641,7 @@ export default {
         name: '',
         nameEn: '',
         regionCode: '',
+        salespersonIdText: '',
         country: '',
         province: '',
         city: '',
@@ -817,6 +836,28 @@ export default {
       } else {
         callback()
       }
+    },
+    onOrganizeChangeHandle(val) {
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') })
+      this.dataForm.salespersonIdText = ""
+      this.dataForm.salespersonId = ""
+      this.$forceUpdate()
+      if (!val || !val.length) return this.dataForm.departmentId = ''
+      this.dataForm.departmentId = val[val.length - 1]
+      this.salesFlag = false
+
+      getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
+        if (res.data.length > 0) {
+          res.data.forEach(item => {
+            item.name = item.fullName.split('/')[0]
+          });
+          this.salesList = res.data
+        } else {
+          this.salesList = []
+        }
+
+
+      })
     },
     changeCountry(e, index) {
       this.dataForm.country = e.code

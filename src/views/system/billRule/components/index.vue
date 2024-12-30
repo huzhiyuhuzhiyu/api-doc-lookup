@@ -1,6 +1,6 @@
 <template>
-  <el-drawer :title="!dataForm.id ? '新建单据' : '编辑单据'" :visible.sync="drawer" :wrapperClosable="false" ref="drawer" append-to-body
-    size="420px" class="JNPF-common-drawer columnSettings-drawer">
+  <el-drawer :title="!dataForm.id ? '新建单据' : '编辑单据'" :visible.sync="drawer" :wrapperClosable="false" ref="drawer"
+    append-to-body size="420px" class="JNPF-common-drawer columnSettings-drawer">
     <div class="JNPF-flex-main">
       <el-scrollbar class="column-list" v-loading="loading">
         <el-form ref="dataForm" :model="dataForm" :rules="dataRule" v-loading="formLoading" label-width="100px">
@@ -8,7 +8,7 @@
             <el-input v-model="dataForm.fullName" placeholder="输入名称" />
           </el-form-item>
           <el-form-item label="业务编码" prop="enCode">
-            <el-input v-model="dataForm.enCode" placeholder="业务编码" />
+            <el-input v-model="dataForm.enCode" placeholder="业务编码" :disabled="!!dataForm.id" />
           </el-form-item>
           <el-form-item label="业务分类" prop="category">
             <el-select v-model="dataForm.category" placeholder="请选择" clearable>
@@ -61,7 +61,7 @@
         <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
           {{ $t('common.confirmButton') }}</el-button>
       </div>
-      
+
     </div>
   </el-drawer>
 </template>
@@ -149,6 +149,7 @@ export default {
     init(id, categoryList, categoryId, tableList) {
       this.drawer = true
       this.dataForm.id = id || ''
+      console.log(this.dataForm.id)
       this.dataForm.category = categoryId || ''
       this.categoryList = categoryList
       this.visible = true
@@ -176,12 +177,13 @@ export default {
             category: categoryId || '',
             codeWay: "auto",
             modifyFlag: false
-          },
-            this.formLoading = false
+          }
+          this.formLoading = false
           this.dataForm.sortCode = tableList.length
         }
       })
       this.formLoading = false
+      console.log(this.dataForm.id,';')
     },
     handleChange() {
       // 流水前缀

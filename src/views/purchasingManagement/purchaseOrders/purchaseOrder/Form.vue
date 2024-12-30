@@ -6,7 +6,7 @@
           <el-page-header @back="goBack" :content="type === 'look' ? '查看采购订单' : '新建采购订单'" />
         </div>
 
-        <div class="main">
+        <div class="main" ref="main" v-loading="formLoading">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
@@ -40,7 +40,7 @@
                 <el-collapse-item title="产品信息" name="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table">
+                      :data="dataFormTwo.data" id="table" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
@@ -301,7 +301,7 @@
             <el-collapse-item title="产品信息" name="productInfo">
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                 <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                  :data="dataFormTwo.data" id="table">
+                  :data="dataFormTwo.data" id="table" :height="customStyleData">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
@@ -651,13 +651,17 @@ export default {
       packagingMethodFlag: '',
       specialRequireFlag: '',
       bimProductAttributesObj: {},
-      processList: []
+      processList: [],
+      customStyleData: 0,
+      formLoading: false
     }
   },
   async created() {
     await this.getOrderFiledMap()
-    this.getDeputyUnit()
+    await this.getDeputyUnit()
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.switchStyleheight()
+    this.formLoading = false
     this.getBimBusinessDetail()
   },
   computed: {
@@ -712,6 +716,29 @@ export default {
     }
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 305
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.standardValueFlag = res.data.standardValue
@@ -800,6 +827,7 @@ export default {
       this.$emit('close')
     },
     init(id, type, approvalFlag) {
+      this.formLoading = true
       console.log(id, type)
       this.getProductClassFun()
       // 此处判断用户选择新增还是编辑

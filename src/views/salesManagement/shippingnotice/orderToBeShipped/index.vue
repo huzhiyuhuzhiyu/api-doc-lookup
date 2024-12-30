@@ -390,6 +390,9 @@ export default {
         this.printBrowseVisible = false
       });
     },
+    closePrint() {
+            this.printVisible = false
+        },
     printFun(id) {
       this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
       this.formId = id

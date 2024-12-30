@@ -111,7 +111,7 @@
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                <el-button size="mini" type="text" 
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
 
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
@@ -441,6 +441,9 @@ export default {
         this.$refs.printTemplate.init(this.enCode)
       })
     },
+    closePrint() {
+            this.printVisible = false
+        },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

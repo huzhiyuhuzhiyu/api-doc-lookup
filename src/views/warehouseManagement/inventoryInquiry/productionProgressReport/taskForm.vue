@@ -162,72 +162,15 @@ export default {
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
     },
-    // 获取规值 振动等级
-    getProductClassFun() {
-      let obj0 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa008",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj0).then(res => {
 
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-
-        this.standardValueList = arr
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        this.vibrationLevelList = arr
-      })
-    },
-    init(drawingNo, type, warehouseId) {
-      this.getProductClassFun()
-      if (type === 'inventoryFlag') { this.title = '生产任务' }
+    init(productsId, type, processName) {
+      if (type === 'inventoryFlag') { this.title = '可报工数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
       this.visible = true
       let tempListQuery = {
-        productDrawingNo: drawingNo,
+        productsId: productsId,
+        processName:processName,
         productionPlanNo: "",
         orderNo: "",
         orderStatus: "normal",

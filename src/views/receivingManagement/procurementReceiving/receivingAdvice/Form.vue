@@ -112,7 +112,7 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
                   :rules="productRules">
-                  <el-table ref=" product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
+                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
                     @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="0" />

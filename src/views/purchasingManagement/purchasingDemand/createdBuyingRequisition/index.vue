@@ -18,7 +18,7 @@
                 <el-button @click="goBack" v-if="!!dialogTitle">{{ $t('common.cancelButton') }}</el-button>
               </div>
             </div>
-            <div class="main">
+            <div class="main" ref="main">
               <el-tabs v-model="activeName" v-if="!approvalFlag">
                 <el-tab-pane label="基础信息" name="jcInfo">
                   <el-collapse v-model="activeNames" style="margin-top: 5px;">
@@ -63,11 +63,10 @@
                       </div>
 
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                        <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC
-                          hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
-                          <el-table-column type="selection" width="60" fixed="left" align="center"
-                            v-if="type !== 'look'" />
-                          <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                        <JNPF-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC
+                          hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
+                          ref="multipleTable" :height="customStyleData">
+
                           <el-table-column prop="projectName" label="所属项目" width="120"
                             v-if="isProjectSwitch === '1'"></el-table-column>
                           <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
@@ -97,7 +96,7 @@
                           </el-table-column>
 
 
-                          <el-table-column prop="planQuantity" label="数量" min-width="100" key="planQuantity">
+                          <el-table-column prop="planQuantity" label="数量" min-width="120" key="planQuantity">
                             <template slot="header">
                               <span class="required">*</span>
                               数量
@@ -113,7 +112,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip key="mainUnit">
+                          <el-table-column prop="mainUnit" label="单位" width="60" key="mainUnit">
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
 
@@ -157,7 +156,7 @@
                               </el-button>
                             </template>
                           </el-table-column>
-                        </el-table>
+                        </JNPF-table>
                       </el-form>
                     </el-collapse-item>
                   </el-collapse>
@@ -365,6 +364,7 @@ export default {
   mixins: [busFlow, getProjectList],
   data() {
     return {
+      customStyleData: 0,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -521,6 +521,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
+    await this.switchStyleheight()
     this.tableDataFlag = true
     console.log(this.isProjectSwitch)
     if (this.isProductNameSwitch === '1') {
@@ -545,7 +546,41 @@ export default {
     this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
   },
+  mounted() {
+
+    // 页面发生缩放，触发明细表格表单的resize
+    this.clientResize = () => {
+      if (!this.$refs.multipleTable) return
+      this.$nextTick(() => {
+        this.$refs.multipleTable.doLayout()
+      })
+    }
+    window.addEventListener('resize', this.clientResize)
+  },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 325
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight + 'px'
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

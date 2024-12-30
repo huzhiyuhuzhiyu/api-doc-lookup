@@ -32,7 +32,7 @@
                 </el-col> -->
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="dataForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="请输入客户名称" clearable />
+                    <el-input v-model="dataForm.partnerName" @keyup.enter.native="search()" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
 

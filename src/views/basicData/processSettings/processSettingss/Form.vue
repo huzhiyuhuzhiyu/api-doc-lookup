@@ -594,7 +594,7 @@
     <process-dialog v-if="processVisibled" ref="processRef" @dataFormSubmit="submit"></process-dialog>
     <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
 
-    <ComSelect-page ref="ComSelect-page" @change="submit" :tableItems="ProductTableItems" title="选择工序" treeTitle="工序分类"
+    <ComSelect-page ref="ComSelect-page" :beforeSubmit="beforeSubmit" @change="submit" :tableItems="ProductTableItems" title="选择工序" treeTitle="工序分类"
       :methodArr="ProductMethodArr" :listMethod="getBimProcessList" :listRequestObj="ProductListRequestObj"
       :searchList="ProductTableSearchList" :elementShow="false" multiple :listDataFormatting="listDataFormatting" />
   </div>
@@ -1390,7 +1390,10 @@ export default {
         })
       }
     },
-
+    beforeSubmit(data, paramsObj) {
+      if (data && data.length) return true // 如果判断条件真，直接提交，不弹出提示
+      return this.$message.error('请选择数据')
+    },
     submit(id, data) {
       let list = data.map((item) => item.all)
       if (list.length) {

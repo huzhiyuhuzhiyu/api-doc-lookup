@@ -205,6 +205,7 @@
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="250" />
                 <el-table-column prop="num" label="原数量(主)" min-width="120" />
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="140" />
                 <el-table-column prop="mainUnit" label="单位(主)" min-width="120" />
                 <el-table-column prop="assistantNum" label="原数量(副)" min-width="120" />
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" />
@@ -322,6 +323,11 @@ export default {
         {
           prop: 'num',
           label: "原数量(主)",
+          type: 'input'
+        },
+        {
+          prop: 'pairingModeName',
+          label: "配对方式",
           type: 'input'
         },
         {

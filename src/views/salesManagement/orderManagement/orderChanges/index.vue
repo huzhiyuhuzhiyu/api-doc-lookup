@@ -211,12 +211,12 @@
                 <el-table-column prop="price" label="原单价" min-width="120" />
                 <el-table-column prop="excludingTaxAmount" label="原金额" min-width="120" />
                 <el-table-column prop="deliveryDate" label="原交货日期" min-width="120" />
-                <el-table-column prop="ask" label="要求" min-width="120" />
+                <!-- <el-table-column prop="ask" label="要求" min-width="120" /> -->
                 <el-table-column prop="newNum" label="新数量" min-width="120" />
                 <el-table-column prop="newPrice" label="新单价" min-width="120" />
                 <el-table-column prop="newExcludingTaxAmount" label="新金额" min-width="120" />
                 <el-table-column prop="newDeliveryDate" label="新交货日期" min-width="120" />
-                <el-table-column prop="newAsk" label="新要求" min-width="120" />
+                <!-- <el-table-column prop="newAsk" label="新要求" min-width="120" /> -->
                 <el-table-column prop="remark" label="备注" min-width="150"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="createByName" label="创建人" width="100"></el-table-column>
@@ -358,11 +358,11 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: {}
         },
-        {
-          prop: 'ask',
-          label: "要求",
-          type: 'input'
-        },
+        // {
+        //   prop: 'ask',
+        //   label: "要求",
+        //   type: 'input'
+        // },
         {
           prop: 'newNum',
           label: "新数量",
@@ -387,11 +387,11 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: {}
         },
-        {
-          prop: 'newAsk',
-          label: "新要求",
-          type: 'input'
-        },
+        // {
+        //   prop: 'newAsk',
+        //   label: "新要求",
+        //   type: 'input'
+        // },
         {
           prop: 'remark',
           label: "备注",

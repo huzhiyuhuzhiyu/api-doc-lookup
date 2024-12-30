@@ -186,7 +186,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
-                      <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column>
+                      <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
                         v-if="sealingCoverTypingFlag == 1"></el-table-column>
                       <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
@@ -320,11 +320,11 @@
                         </el-date-picker>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="contractNo" label="客户单号" width="160" :key="116">
+                    <!-- <el-table-column prop="contractNo" label="客户单号" width="160" :key="116">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
                       v-if="sealingCoverTypingFlag == 1" :key="211">
                       <template slot-scope="scope">
@@ -609,7 +609,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
-                  <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column>
+                  <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
                     v-if="accuracyLevelFlag == 1"></el-table-column>
                   <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="clearanceFlag == 1">
@@ -736,11 +736,11 @@
                     </el-date-picker>
                   </template>
                 </el-table-column>
-                <el-table-column prop="contractNo" label="客户单号" width="160" :key="116">
+                <!-- <el-table-column prop="contractNo" label="客户单号" width="160" :key="116">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag == 1"
                   :key="211">
                   <template slot-scope="scope">

@@ -103,7 +103,7 @@
             <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" sortable="custom" />
             <el-table-column prop="inventoryQuantity" label="库存数量" width="140" sortable="custom">
- 
+
             </el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
@@ -127,6 +127,8 @@
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>
+                <el-button size="mini" type="text" :disable="scope.row.documentStatus === 'draft'"
+                  @click.native="printFun(scope.row.ordersId)">打印</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -146,6 +148,9 @@
     <AddForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm"
       :customList="customList" />
     <ViewForm v-if="formVisible" ref="ViewForm"></ViewForm>
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 <script>
@@ -162,15 +167,26 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import ViewForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index"
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, AddForm, ExportForm, OrderFollow, SuperQuery, ViewForm },
+  components: {
+    Form, UserRelationList, AddForm, ExportForm, OrderFollow, SuperQuery, ViewForm, PrintBrowse,
+    PrintDialog,
+  },
   mixins: [getProjectList],
   data() {
     return {
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printVisible: false,
+      printBrowseVisible: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -359,6 +375,30 @@ export default {
     this.search('basic')
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    printFun(id) {
+      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
+      this.formId = id
+      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项  
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -635,7 +675,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='pairingModeName'  || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
+      if (prop === 'productName' || prop == 'pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName' || prop == 'waitDeliverNum') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

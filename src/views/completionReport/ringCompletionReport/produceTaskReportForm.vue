@@ -141,7 +141,7 @@
                         class="ipt" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" class="iptLabel">
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.processType=='grinding'">
                     <el-form-item label="孔径" :prop="aperture">
                       <el-select v-model="currentProcess.aperture" placeholder="孔径" style="width: 100%;" class="ipt">
                         <el-option v-for="(item, index) in apertureList" :key="index" :label="item.label"

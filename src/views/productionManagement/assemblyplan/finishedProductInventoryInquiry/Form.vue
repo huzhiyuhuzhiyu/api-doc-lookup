@@ -1025,7 +1025,6 @@ export default {
     // 选择班组
     selectWorkgroupFun(scope) {
       console.log("班组", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.work_group) {
           this.index = scope.$index;
@@ -1041,6 +1040,7 @@ export default {
             resType: "work_group",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("班组数据", res);
             this.workgroupData = Object.keys(res.data).sort();
@@ -1058,7 +1058,6 @@ export default {
     // 选择设备
     selectDeviceFun(scope) {
       console.log("设备", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.device) {
           this.index = scope.$index
@@ -1074,6 +1073,7 @@ export default {
             resType: "device",
             resIdList: resIdList,
           }
+          this.totalData = []
           getWorkListMap(obj).then(res => {
             console.log("设备数据", res);
             this.deviceData = Object.keys(res.data).sort();
@@ -1089,7 +1089,6 @@ export default {
     //  选择人员
     selectPersonnelFun(scope) {
       console.log(scope.row);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.personnel) {
           this.currentPersonId = scope.row.personId;
@@ -1105,6 +1104,7 @@ export default {
             resType: "personnel",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("人员数据", res);
             this.personnelData = Object.keys(res.data).sort();

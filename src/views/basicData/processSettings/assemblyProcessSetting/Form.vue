@@ -53,7 +53,7 @@
                         <el-col :span="24">
                           <el-form-item label="备注" prop="remark" v-if="dataForm.id">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
-                              maxlength="200" :disabled="type == 'look'"></el-input>
+                              maxlength="200" disabled></el-input>
                           </el-form-item>
                         </el-col>
                       </template>
@@ -105,14 +105,14 @@
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
-                            :disabled="type === 'look'" ></el-input>
+                            :disabled="type === 'look'"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
-                            :disabled="type === 'look'" ></el-input>
+                            :disabled="type === 'look'"></el-input>
                         </template>
                       </el-table-column>
                       <!-- <el-table-column prop="firstFlag" label="是否首道工序" width="120">

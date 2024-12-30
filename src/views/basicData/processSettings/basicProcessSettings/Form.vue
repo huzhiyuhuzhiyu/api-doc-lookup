@@ -308,7 +308,8 @@ export default {
         { label: '测振工序', value: 'vibrate' },
         { label: '热工工序', value: 'heat_treatment' },
         { label: '包装工序', value: 'packing' },
-        { label: '配对工序', value: 'pairs' }
+        { label: '配对工序', value: 'pairs' },
+        { label: '磨孔工序', value: 'grinding' }
       ],
       getcategoryTree,
       configurationName: '',

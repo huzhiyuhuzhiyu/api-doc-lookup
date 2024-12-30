@@ -304,20 +304,38 @@
                 </p>
                 <div v-if="totalData[item].length > 1">
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
-                    {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
+                    {{
+                      totalData[item][0].planStartDate ?
+                        totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    "."):'' }}-
+                    {{
+                      totalData[item][0].planStartDate ?
+                        totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    "."):'' }}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
-                    {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
+                    {{
+                      totalData[item][1].planStartDate ?
+                        totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    "."):'' }}-
+                    {{
+                      totalData[item][1].planStartDate ?
+                        totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    "."):'' }}
                     {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity }}个
                   </p>
                 </div>
                 <div v-else-if="totalData[item].length == 1">
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                      ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
+                    {{
+                      totalData[item][0].planStartDate ?
+                        totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    "."):"" }}-
+                    {{
+                      totalData[item][0].planEndDate ?
+                        totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    "."):'' }}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
@@ -558,7 +576,7 @@ export default {
         productsDrawingNo: "",
         productsCode: "",
         mainUnit: "",
-        productionLineId:"",
+        productionLineId: "",
         planProductionQuantity: "",
         availableArrangeQuantity: "",
         productionQuantity: "",
@@ -577,12 +595,12 @@ export default {
         remark: "",
         bomId: "",
         projectId: "",
-        pairingModeId:"",
+        pairingModeId: "",
       },
       dataFormTwo: {
         data: [],
       },
-      productionLineList:[],
+      productionLineList: [],
       listLoading: false,
       activeName: "orderInfo",
       isdisabled: false,
@@ -708,7 +726,7 @@ export default {
         this.warehouseList = res.data
       })
     },
- 
+
     selectLine(e) {
       console.log(e);
       getProductionLineInfo(e).then(res => {
@@ -867,7 +885,6 @@ export default {
     // 选择班组
     selectWorkgroupFun(scope) {
       console.log("班组", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.work_group) {
           this.index = scope.$index;
@@ -883,6 +900,7 @@ export default {
             resType: "work_group",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("班组数据", res);
             this.workgroupData = Object.keys(res.data).sort();
@@ -900,7 +918,6 @@ export default {
     // 选择设备
     selectDeviceFun(scope) {
       console.log("设备", scope);
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.device) {
           this.index = scope.$index
@@ -916,6 +933,7 @@ export default {
             resType: "device",
             resIdList: resIdList,
           }
+          this.totalData = []
           getWorkListMap(obj).then(res => {
             console.log("设备数据", res);
             this.deviceData = Object.keys(res.data).sort();
@@ -933,7 +951,6 @@ export default {
     selectPersonnelFun(scope) {
       console.log(scope.row);
 
-      this.totalData = []
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.personnel) {
           this.currentPersonId = scope.row.personId;
@@ -949,6 +966,7 @@ export default {
             resType: "personnel",
             resIdList: resIdList,
           };
+          this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("人员数据", res);
 

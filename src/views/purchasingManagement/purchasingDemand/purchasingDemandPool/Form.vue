@@ -58,7 +58,7 @@
                       |
                       <el-table :header-cell-style="{ background: '#F5F7FA', color: '#606266' }" :fixedNO="true" hasC
                         ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
-                        :data="dataFormTwo.data" border height="400px">
+                        :data="dataFormTwo.data" border :height="customStyleData">
                         <el-table-column type="selection" width="55" fixed="left" align="center"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
@@ -746,7 +746,7 @@ export default {
       olddeliveryDateArr: [], // 表格中旧的数据值
       oldData: [],
       formLoading: false,
-      customStyleData: 300,
+      customStyleData: 0,
       selectRows: [],
 
       list0: [],
@@ -780,7 +780,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
-
+    await this.switchStyleheight()
     if (this.isProductNameSwitch === '1') {
       this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
       this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
@@ -1200,7 +1200,7 @@ export default {
           } else {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           }
-          this.customStyleData = 389
+
         } else {
           item.purchaseQuantity = Number(item.maxInventory) - Number(item.availableQuantity)
           if (item.calculationDirection === 'multiplication') {
@@ -1208,7 +1208,7 @@ export default {
           } else {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           }
-          this.customStyleData = 389
+
         }
       })
 
@@ -1494,7 +1494,7 @@ export default {
     }
   },
   mounted() {
-    this.switchStyleheight()
+
     // 页面发生缩放，触发明细表格表单的resize
     this.clientResize = () => {
       if (!this.$refs.table) return

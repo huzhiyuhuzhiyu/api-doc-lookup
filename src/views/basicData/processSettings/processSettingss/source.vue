@@ -122,6 +122,37 @@
             </el-table-column>
           </JNPF-table>
         </el-tab-pane>
+          <el-tab-pane label="检验人员" name="inspect_personnel">
+              <!-- 人员配置 -->
+              <JNPF-table :hasC="type != 'look'" @selection-change="handelInspectPersonnelInfoData" :data="inspectPersonnel"
+                          style="width: 100%">
+                  <el-table-column prop="resourceId" label="人员名称">
+                      <template slot-scope="scope">
+                          <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
+                                              <el-option v-for="item in selectList" :key="item.id" :label="item.realName"
+                                                  :value="item.id">
+                                              </el-option>
+                                          </el-select> -->
+                          <!-- <div>{{ scope.row }}</div> -->
+                          <!-- <user-select :disabled="type === 'look'" v-model="scope.row.resourceId" ref="resourceId"
+                            placeholder="请选择人员" @change="changePerple" clearable style="width: 100%;"></user-select> -->
+                          <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" disabled />
+                      </template>
+                  </el-table-column>
+                  <el-table-column prop="resourceType" label="人员工号">
+                      <template slot-scope="scope">
+                          <el-input v-model="scope.row.jobNumber" disabled placeholder="" />
+                      </template>
+                  </el-table-column>
+                  <!-- 操作 -->
+                  <el-table-column label="操作" width="90" v-if="type != 'look'">
+                      <template slot-scope="scope">
+                          <el-button type="text" style="color:rgb(245,108,108)"
+                                     @click="handlerDelete(scope.$index, 'inspect_personnel')">删除</el-button>
+                      </template>
+                  </el-table-column>
+              </JNPF-table>
+          </el-tab-pane>
       </el-tabs>
       <!-- <div class="submit" v-if="type != 'look' ? true : false">
         <el-button type="primary" @click="submitForm('dataForm')">确定</el-button>
@@ -254,6 +285,7 @@ export default {
       DeviceVisibled: false,  // 设备抽屉
       WorkgroupVisibled: false, // 班组抽屉
       personnelVisibled: false,
+        resourceType:'',
       getGroupList,   //班组
       editEquEquipmentAll, //设备
       getEquEquipmentList, //工具
@@ -271,9 +303,11 @@ export default {
       tooList: [],
       activeName: 'personnel',
       personArr: [],
+        inspectPersonnelArr: [],
       classArr: [],
       equipArr: [],
       toolArr: [],
+        inspectPersonnel:[],
       personData: [],
       classData: [],
       equipData: [],
@@ -321,8 +355,9 @@ export default {
     openSeleceProcessDialog(e, type) {
       this.index = e
       this.types = type
-      if (type === 'personnel') {
+      if (type === 'personnel' || type === 'inspect_personnel') {
         this.personnelVisibled = true
+          this.resourceType = type
         this.$nextTick(() => {
           this.$refs['personnelRef'].openDialog()
         })
@@ -359,6 +394,10 @@ export default {
       console.log(val);
       this.personArr = val
     },
+      handelInspectPersonnelInfoData(val) {
+      console.log(val);
+      this.inspectPersonnelArr = val
+    },
     // 选中班组的数据
     handeleworkgroupInfoData(val) {
       this.classArr = val
@@ -392,6 +431,23 @@ export default {
         }
         this.personArr = []  // 清空选中的行的数据
       }
+        if(type === 'inspect_personnel'){
+            if (this.inspectPersonArr.length === 0) {
+                this.$message({
+                    message: '请选择你要删除的数据',
+                    type: 'error',
+                    duration: 1500
+                })
+            }
+            for (let i = 0; i < this.inspectPersonArr.length; i++) {
+                const row = this.inspectPersonArr[i]
+                const index = this.inspectPersonnel.indexOf(row)
+                if (index > -1) {
+                    this.inspectPersonnel.splice(index, 1) // 从tableData中删除选中的行
+                }
+            }
+            this.inspectPersonArr = [] // 清空选中的行的数据
+        }
       if (type === 'work_group') {
         if (this.classArr.length === 0) {
           this.$message({
@@ -456,25 +512,27 @@ export default {
       if (data.length === 0) {
 
       } else {
-        let tempList = JSON.parse(JSON.stringify(this.personData))
+          const arrName = this.resourceType === 'personnel' ? 'personData' : 'inspectPersonnel'
+
+          let tempList = JSON.parse(JSON.stringify(this[arrName]))
         let hasItemList = []
         for (let i = 0; i < data.length; i++) {
           let item = data[i];
-          const hasFlag = this.personData.find(i => item.id === i.resourceId)
+          const hasFlag = this[arrName].find(i => item.id === i.resourceId)
           if (hasFlag) { hasItemList.push(item.fullName.split('/')[0]) }
           else { tempList.push(item) }
           if (hasItemList.length) this.$message.error(`已经存在的人员：${hasItemList.join('、')}`)
         }
-        this.personData = tempList.map((item, index) => {
+        this[arrName] = tempList.map((item, index) => {
           return {
             index: index,
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.fullName.split('/')[0],
             jobNumber: item.jobNumber,
-            resourceType: "personnel",
+            resourceType: this.resourceType,
           };
         });
-        this.personData = this.removeDuplicates(this.personData);
+        this[arrName] = this.removeDuplicates(this[arrName]);
 
       }
       console.log(this.personData, '再次添加人员');
@@ -596,6 +654,14 @@ export default {
                 this.personData[index].jobNumber = item.jobNumber
                 this.personData[index].processId = item.processId
               })
+              const filteredData0 = resourceList.filter(item => item.resourceType === 'inspect_personnel')
+              this.inspectPersonnel = filteredData0
+              console.log(filteredData, 'ren');
+              this.inspectPersonnel.forEach((item, index) => {
+                this.inspectPersonnel[index].resourceId = item.resourceId
+                this.inspectPersonnel[index].jobNumber = item.jobNumber
+                this.inspectPersonnel[index].processId = item.processId
+              })
 
               const filteredData2 = resourceList.filter(item => item.resourceType === 'work_group')
               this.classData = filteredData2
@@ -634,6 +700,14 @@ export default {
                   this.personData[index].jobNumber = item.jobNumber
                 })
 
+                const filteredData0 = data[0].bimRoutingProcessResourceDTOList.filter(item => item.resourceType === 'inspect_personnel')
+                this.inspectPersonnel = filteredData0
+                console.log(filteredData, 'ren');
+                this.inspectPersonnel.forEach((item, index) => {
+                  this.inspectPersonnel[index].resourceId = item.resourceId
+                  this.inspectPersonnel[index].jobNumber = item.jobNumber
+                })
+
                 const filteredData2 = data[0].bimRoutingProcessResourceDTOList.filter(item => item.resourceType === 'work_group')
                 this.classData = filteredData2
                 this.classData.forEach((item, index) => {
@@ -659,6 +733,7 @@ export default {
                 })
               } else {
                 this.personData = []
+                this.inspectPersonnel=[]
                 this.classData = []
                 this.equipData = []
                 this.toolData = []
@@ -674,6 +749,9 @@ export default {
         if (data[0].bimRoutingProcessResourceVOList) {
           const filteredData = data[0].bimRoutingProcessResourceVOList.filter(item => item.resourceType === 'personnel')
           this.personData = filteredData
+
+          const filteredData0 = data[0].bimRoutingProcessResourceVOList.filter(item => item.resourceType === 'inspect_personnel')
+          this.inspectPersonnel = filteredData0
           console.log(filteredData, 'ren');
 
           const filteredData2 = data[0].bimRoutingProcessResourceVOList.filter(item => item.resourceType === 'work_group')
@@ -688,6 +766,9 @@ export default {
         if (data[0].bimRoutingProcessResourceDTOList) {
           const filteredData = data[0].bimRoutingProcessResourceDTOList.filter(item => item.resourceType === 'personnel')
           this.personData = filteredData
+          console.log(filteredData, 'ren');
+          const filteredData0 = data[0].bimRoutingProcessResourceDTOList.filter(item => item.resourceType === 'inspect_personnel')
+          this.inspectPersonnel = filteredData0
           console.log(filteredData, 'ren');
 
           const filteredData2 = data[0].bimRoutingProcessResourceDTOList.filter(item => item.resourceType === 'work_group')
@@ -705,6 +786,10 @@ export default {
           const filteredData = dataAll.filter(item => item.resourceType === 'personnel')
           this.personData = [...new Set(filteredData)]
           this.personData = this.removeDuplicates(this.personData);
+
+          const filteredData0 = dataAll.filter(item => item.resourceType === 'inspect_personnel')
+          this.inspectPersonnel = [...new Set(filteredData0)]
+          this.inspectPersonnel = this.removeDuplicates(this.inspectPersonnel);
           console.log(filteredData, 'ren');
 
           const filteredData2 = dataAll.filter(item => item.resourceType === 'work_group')
@@ -746,6 +831,8 @@ export default {
     handlerDelete(index, type) {
       if (type == 'personnel') {
         this.personData.splice(index, 1)
+      } else if (type == 'inspect_personnel') {
+        this.inspectPersonnel.splice(index, 1)
       } else if (type == 'work_group') {
         this.classData.splice(index, 1)
       } else if (type == 'device') {
@@ -764,6 +851,7 @@ export default {
       console.log(this.personData, 'wwwww');
       let data = [
         ...this.personData,
+        ...this.inspectPersonnel,
         ...this.classData,
         ...this.equipData,
         ...this.toolData

@@ -216,6 +216,32 @@
                     </el-table-column>
                   </JNPF-table>
                 </el-tab-pane>
+                <el-tab-pane label="检验人员" name="inspect_personnel" :key="Math.random()">
+                      <!-- 人员配置 -->
+                      <JNPF-table :hasC="type != 'look'" @selection-change="handelInspectPersonInfoData" :data="inspectPersonnel"
+                                  style="width: 100%">
+                          <el-table-column prop="resourceId" label="人员名称">
+                              <template slot-scope="scope">
+                                  <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" :disabled="type === 'look'"
+                                            readonly />
+                              </template>
+                          </el-table-column>
+                          <el-table-column prop="resourceType" label="人员工号">
+                              <template slot-scope="scope">
+                                  <el-input v-model="scope.row.jobNumber" :disabled="type === 'look'" placeholder="" readonly />
+                              </template>
+                          </el-table-column>
+                          <!-- 操作 -->
+                          <el-table-column label="操作" width="90" v-if="type != 'look'" :key="8">
+                              <template slot-scope="scope">
+                                  <el-button type="text" :disabled="type === 'look'" style="color:rgb(245,108,108)"
+                                             @click="handlerDelete(scope.$index, 'inspect_personnel')">
+                                      删除
+                                  </el-button>
+                              </template>
+                          </el-table-column>
+                      </JNPF-table>
+              </el-tab-pane>
               </el-tabs>
             </div>
           </el-tab-pane>
@@ -386,12 +412,14 @@ export default {
       getEquEquipmentList, //工具
       type: '',
       personnelVisibled: false,
-
+      resourceType:'',
+      inspectPersonArr: [],
       personArr: [],
       classArr: [],
       equipArr: [],
       toolArr: [],
       personData: [],
+      inspectPersonnel: [],
       classData: [],
       equipData: [],
       toolData: [],
@@ -572,6 +600,8 @@ export default {
         this.equipData.splice(index, 1)
       } else if (type == 'tool') {
         this.toolData.splice(index, 1)
+      } else if(type === 'inspect_personnel'){
+        this.inspectPersonnel.splice(index, 1)
       }
     },
     handleClickFun(tab, event) {
@@ -588,6 +618,9 @@ export default {
       if (this.configurationName == 'tool') {
         this.actTitle = '工具'
       }
+      if (this.configurationName == 'inspect_personnel') {
+        this.actTitle = '检验人员'
+      }
     },
     // 可以多选
     openSeleceProcessDialog(e, type) {
@@ -600,8 +633,9 @@ export default {
 
       this.index = e
       this.types = type
-      if (type === 'personnel') {
+      if (type === 'personnel' || type === 'inspect_personnel') {
         this.personnelVisibled = true
+          this.resourceType = type
         this.$nextTick(() => {
           this.$refs['personnelRef'].openDialog()
         })
@@ -635,6 +669,9 @@ export default {
     handelepersonInfoData(val) {
       this.personArr = val
     },
+    handelInspectPersonInfoData(val) {
+      this.inspectPersonArr = val
+    },
     // 选中班组的数据
     handeleworkgroupInfoData(val) {
       this.classArr = val
@@ -666,6 +703,23 @@ export default {
           }
         }
         this.personArr = [] // 清空选中的行的数据
+      }
+      if(type === 'inspect_personnel'){
+        if (this.inspectPersonArr.length === 0) {
+          this.$message({
+            message: '请选择你要删除的数据',
+            type: 'error',
+            duration: 1500
+          })
+        }
+        for (let i = 0; i < this.inspectPersonArr.length; i++) {
+          const row = this.inspectPersonArr[i]
+          const index = this.inspectPersonnel.indexOf(row)
+          if (index > -1) {
+            this.inspectPersonnel.splice(index, 1) // 从tableData中删除选中的行
+          }
+        }
+        this.inspectPersonArr = [] // 清空选中的行的数据
       }
       if (type === 'work_group') {
         if (this.classArr.length === 0) {
@@ -726,11 +780,13 @@ export default {
       // if (type === 'Object') {}
       if (data.length === 0) {
       } else {
-        let tempList = JSON.parse(JSON.stringify(this.personData))
+          const arrName = this.resourceType === 'personnel' ? 'personData' : 'inspectPersonnel'
+
+        let tempList = JSON.parse(JSON.stringify(this[arrName]))
         let hasItemList = []
         for (let i = 0; i < data.length; i++) {
           let item = data[i]
-          const hasFlag = this.personData.find((i) => item.id === i.resourceId)
+          const hasFlag = this[arrName].find((i) => item.id === i.resourceId)
           if (hasFlag) {
             hasItemList.push(item.fullName.split('/')[0])
           } else {
@@ -738,13 +794,13 @@ export default {
           }
           if (hasItemList.length) this.$message.error(`已经存在的人员：${hasItemList.join('、')}`)
         }
-        this.personData = tempList.map((item, index) => {
+        this[arrName] = tempList.map((item, index) => {
           return {
             index: index,
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.fullName.split('/')[0],
             jobNumber: item.jobNumber,
-            resourceType: 'personnel',
+            resourceType: this.resourceType,
             processId: this.dataForm.id
           }
         })
@@ -958,6 +1014,16 @@ export default {
                   this.personData[index].resourceClass = item.resourceClass
                 })
 
+                const filteredData0 = this.resourceList.filter((item) => item.resourceType === 'inspect_personnel')
+                this.inspectPersonnel = filteredData0
+
+                this.inspectPersonnel.forEach((item, index) => {
+                  this.inspectPersonnel[index].resourceId = item.resourceId
+                  this.inspectPersonnel[index].jobNumber = item.jobNumber
+                  this.inspectPersonnel[index].processId = item.processId
+                  this.inspectPersonnel[index].resourceClass = item.resourceClass
+                })
+
                 const filteredData2 = this.resourceList.filter((item) => item.resourceType === 'work_group')
                 this.classData = filteredData2
                 this.classData.forEach((item, index) => {
@@ -966,6 +1032,7 @@ export default {
                   this.classData[index].recourceName = item.recourceName
                   this.classData[index].processId = item.processId
                   this.personData[index].resourceClass = item.resourceClass
+                  this.inspectPersonnel[index].resourceClass = item.resourceClass
                 })
 
                 const filteredData3 = this.resourceList.filter((item) => item.resourceType === 'device')
@@ -976,6 +1043,7 @@ export default {
                   this.equipData[index].recourceName = item.recourceName
                   this.equipData[index].processId = item.processId
                   this.personData[index].resourceClass = item.resourceClass
+                  this.inspectPersonnel[index].resourceClass = item.resourceClass
                 })
 
                 const filteredData4 = this.resourceList.filter((item) => item.resourceType === 'tool')
@@ -986,6 +1054,7 @@ export default {
                   this.toolData[index].recourceName = item.recourceName
                   this.toolData[index].processId = item.processId
                   this.personData[index].resourceClass = item.resourceClass
+                  this.inspectPersonnel[index].resourceClass = item.resourceClass
                 })
               }
             }
@@ -993,6 +1062,9 @@ export default {
               if (this.resourceList.length) {
                 const filteredData = this.resourceList.filter((item) => item.resourceType === 'personnel')
                 this.personData = filteredData
+
+                const filteredData0 = this.resourceList.filter((item) => item.resourceType === 'inspect_personnel')
+                this.inspectPersonnel = filteredData0
 
                 const filteredData2 = this.resourceList.filter((item) => item.resourceType === 'work_group')
                 this.classData = filteredData2
@@ -1017,7 +1089,7 @@ export default {
         if (!this.dataForm.processingType) return this.$message.error('工序类型为空')
       }
       this.btnLoading = true
-      let data = [...this.personData, ...this.classData, ...this.equipData, ...this.toolData]
+      let data = [...this.personData, ...this.inspectPersonnel, ...this.classData, ...this.equipData, ...this.toolData,]
       if (data.length) {
         data.forEach((item) => {
           item.resourceClass = 'process'

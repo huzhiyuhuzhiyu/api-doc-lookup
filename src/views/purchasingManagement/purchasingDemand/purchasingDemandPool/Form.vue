@@ -16,7 +16,7 @@
           </div>
         </div>
 
-        <div class="main" ref="main">
+        <div class="main" ref="main" v-loading="formLoading">
           <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo" ref="orderInfos">
               <el-collapse v-model="activeNames">
@@ -788,6 +788,7 @@ export default {
     }
 
     this.tableDataFlag = true
+    this.formLoading = false
 
     this.getBimBusinessDetail()
   },
@@ -853,6 +854,29 @@ export default {
     }
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 325
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.standardValueFlag = res.data.standardValue
@@ -1181,6 +1205,7 @@ export default {
       this.$emit('close')
     },
     init(data, classAttributeFlag, type) {
+      this.formLoading = true
       this.getDeputyUnit()
       console.log(data, 'uuuu')
       console.log(classAttributeFlag, 'classAttributeFlag')
@@ -1446,9 +1471,7 @@ export default {
     },
 
     switchStyleheight() {
-      const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
       const mainRegion1 = this.$refs.main // 表单页面区域
-      const mainHeight = mainRegion.clientHeight
       const mainHeight1 = mainRegion1.clientHeight
       // 其他同级组件占用高度
       let bortherHeight = 0

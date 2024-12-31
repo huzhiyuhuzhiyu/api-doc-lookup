@@ -221,7 +221,7 @@ export default {
         { prop: "newNum", label: "新数量", value: "", type: 'input', width: "180", maxlength: 20, itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [10, 4, false, errMsg => { this.$message.error(`新数量(主)：${errMsg}`) }] }), trigger: 'blur' }] },
         // { prop: "newAssistantNum", label: "新数量(副)", value: "", type: 'view', width: "100" },
         { prop: "newPrice", label: "新单价", value: "", width: "180", change: this.changePrice, type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [20, 4, false, errMsg => { this.$message.error(`新单价：${errMsg}`) }] }), trigger: 'blur' }] },
-        { prop: "newExcludingTaxAmount", label: "新金额", value: "", type: 'view', width: "180" },
+        { prop: "newTotalAmount", label: "新金额", value: "", type: 'view', width: "180" },
         { prop: "newDeliveryDate", label: "新交货日期", value: "", type: 'date', width: "180", itemRules: [{ required: true, trigger: "change" },] },
         // { prop: "newAsk", label: "新要求", value: "", type: 'input', width: "180", },
         { prop: "remark", label: "备注", value: "", type: 'input', maxlength: 200, width: "200" },
@@ -294,15 +294,20 @@ export default {
 
           }
           if (item.newNum && item.newPrice) {
-            item.newExcludingTaxAmount = this.jnpf.math('multiply', [item.newNum, item.newPrice], 2)
+            item.newTotalAmount = this.jnpf.math('multiply', [item.newNum, item.newPrice], 2)
+          } else {
+            item.newTotalAmount = ""
+          }
+          if (item.newNum && item.newPrice && item.taxRate) {
+            item.newExcludingTaxAmount = this.jnpf.math('multiply', [item.newNum, this.jnpf.numberFormat((item.newPrice / (1 + (Number(item.taxRate)) / 100)), 4)], 2)
           } else {
             item.newExcludingTaxAmount = ""
           }
-          // if (item.newPrice) {
-          //   item.newExcludingTaxAmount = (Number(item.num) || 0) * (Number(item.newPrice) || 0)
-          // } else {
-          //   item.newExcludingTaxAmount = ""
-          // }
+          if (item.newNum && item.newPrice && item.taxRate) {
+            item.newTaxAmount = this.jnpf.math('multiply', [this.jnpf.math('multiply', [item.newNum, item.newPrice], 2), (Number(item.taxRate)) / 100], 2)
+          } else {
+            item.newTaxAmount = ""
+          }
           this.$forceUpdate()
         }
 
@@ -430,8 +435,8 @@ export default {
             })
             a.forEach(item => {
               let obj = {
-                pairingModeName:item.pairingModeName ? item.pairingModeName : "",
-                contractNo:item.contractNo ? item.contractNo : "",
+                pairingModeName: item.pairingModeName ? item.pairingModeName : "",
+                contractNo: item.contractNo ? item.contractNo : "",
                 productCode: item.productCode ? item.productCode : "",
                 productName: item.productName ? item.productName : "",
                 drawingNo: item.drawingNo ? item.drawingNo : "",
@@ -450,7 +455,7 @@ export default {
                 // newAssistantNum: item.newAssistantNum ? item.newAssistantNum : "",
                 newPrice: item.price ? item.price : "",
                 newNum: item.num ? item.num : "",
-                newExcludingTaxAmount: item.totalAmount ? item.totalAmount : "",
+                newTotalAmount: item.totalAmount ? item.totalAmount : "",
                 newDeliveryDate: item.deliveryDate ? item.deliveryDate : "",
                 newAsk: item.newAsk ? item.newAsk : "",
                 remark: item.remark ? item.remark : "",
@@ -484,8 +489,8 @@ export default {
           })
           a.forEach(item => {
             let obj = {
-              pairingModeName:item.pairingModeName ? item.pairingModeName : "",
-              contractNo:item.contractNo ? item.contractNo : "",
+              pairingModeName: item.pairingModeName ? item.pairingModeName : "",
+              contractNo: item.contractNo ? item.contractNo : "",
               productCode: item.productCode ? item.productCode : "",
               productName: item.productName ? item.productName : "",
               drawingNo: item.drawingNo ? item.drawingNo : "",
@@ -504,7 +509,7 @@ export default {
               // newAssistantNum: item.newAssistantNum ? item.newAssistantNum : "",
               newPrice: item.price ? item.price : "",
               newNum: item.num ? item.num : "",
-              newExcludingTaxAmount: item.totalAmount ? item.totalAmount : "",
+              newTotalAmount: item.totalAmount ? item.totalAmount : "",
               newDeliveryDate: item.deliveryDate ? item.deliveryDate : "",
               newAsk: item.newAsk ? item.newAsk : "",
               remark: item.remark ? item.remark : "",

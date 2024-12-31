@@ -74,8 +74,8 @@
 
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="所属销售" prop="salespersonId">
-                        <el-select v-model="dataForm.salespersonIdText" placeholder="请选择所属销售人员" clearable
+                      <el-form-item label="所属采购" prop="salespersonId">
+                        <el-select v-model="dataForm.salespersonIdText" placeholder="请选择所属采购人员" clearable
                           style="width: 100%;" :disabled="salesFlag" filterable @change="selectsales">
                           <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                             :value="item.id"></el-option>
@@ -1246,9 +1246,10 @@ export default {
         } else {
           this.salesList = []
         }
-
-
       })
+    },
+    selectsales(val) {
+      this.dataForm.salespersonId = val
     },
     handleConfirm() {
       console.log('表单', this.dataForm)

@@ -163,13 +163,13 @@ export default {
       })
     },
 
-    init(productsId, type, processName) {
+    init(drawingNo, type, processName) {
       if (type === 'inventoryFlag') { this.title = '可报工数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
       this.visible = true
       let tempListQuery = {
-        productsId: productsId,
+        productDrawingNo: drawingNo,
         processName:processName,
         productionPlanNo: "",
         orderNo: "",

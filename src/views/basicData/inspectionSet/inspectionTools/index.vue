@@ -326,7 +326,7 @@ export default {
         page: 1,
         limit: 999,
         keyword: '',
-        classAttribute: 'ispection_tools'
+        type: 'ispection_tools'
       }
       getCategoryTrees(listQuery)
         .then((res) => {
@@ -383,27 +383,27 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort()
-        ; (this.listQuery = {
-          unitCode: '',
-          name: '',
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'createTime'
-            }
-          ],
-          pageNum: 1,
-          pageSize: 20,
-          remark: '',
-          code: '',
-          classAttribute: 'inspect',
-          productCategoryId: ''
-        }),
-          this.getCategoryTree(true)
+      this.listQuery = {
+        unitCode: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        remark: '',
+        code: '',
+        classAttribute: 'inspect',
+        productCategoryId: ''
+      }
+      this.getCategoryTree(true)
       this.search()
     },
     handleNodeClick(data, node) {

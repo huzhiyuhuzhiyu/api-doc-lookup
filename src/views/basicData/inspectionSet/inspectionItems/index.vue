@@ -290,6 +290,7 @@ export default {
   },
   methods: {
     getcategoryTree(isInit) {
+      console.log(isInit,'isInit')
       this.treeLoading = true
 
       let listQuery = {
@@ -305,7 +306,7 @@ export default {
           // }
           this.$nextTick(() => {
             this.treeLoading = false
-            // if (isInit) this.initData()
+            if (isInit) this.initData()
           })
         })
         .catch(() => {

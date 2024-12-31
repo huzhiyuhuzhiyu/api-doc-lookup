@@ -145,7 +145,7 @@ export default {
   },
   created() {
     // getWorkFlowData({ workFlowDefId: this.$route.params.workFlowDefId }).then(({ data }) => {
-    // 	this.processConfig = data; 
+    // 	this.processConfig = data;
     let { flowPermission, directorMaxLevel, workFlowDef, tableId } = this.dataInit
     // this.nodeConfig = nodeConfig;
     this.flowPermission = flowPermission;
@@ -162,7 +162,7 @@ export default {
     toReturn() {
       //window.location.href = ""
     },
-    addNodeTypeAndNodeName(obj) { 
+    addNodeTypeAndNodeName(obj) {
       if (obj) {
         if (obj.name === "审核人") {
           obj.nodeType = 1;
@@ -230,7 +230,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    reErr({ childNode }) { 
+    reErr({ childNode }) {
       if (childNode) {
         let { nodeType, error, nodeName, conditionNodes, code } = childNode
         if (nodeType == 1 || nodeType == 2) {
@@ -254,8 +254,8 @@ export default {
       }
     },
     flattenNodes(node, flattenedNodes = [], previousCode = '') {
-      if (node) { 
-        this.count++ 
+      if (node) {
+        this.count++
         if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null });
         if (node.type === 'node') {
 
@@ -294,18 +294,18 @@ export default {
         this.tipVisible = true;
         this.btnLoading = false
         return;
-      } 
+      }
       // console.log(this.flowPermission);
       this.processConfig.flowPermission = this.flowPermission
       let data = JSON.parse(JSON.stringify(this.nodeConfig))
-      let flattenedNodes = this.flattenNodes(data); 
+      let flattenedNodes = this.flattenNodes(data);
       flattenedNodes.splice(0, 1)
       // return
       if (!flattenedNodes.length) {
         this.$message.error('请至少添加一个节点！')
         this.btnLoading = false
         return
-      } 
+      }
       flattenedNodes = flattenedNodes.map(item => {
         return {
           ...item,
@@ -363,7 +363,7 @@ export default {
           approvalTemplateLineCode:item.approvalTemplateLineCode ? item.approvalTemplateLineCode :  item.code,
           id: item.id ? item.id : ''
         }
-      }) 
+      })
       let nodeJudg = []
       if (nodeJudgmentList.length) {
         nodeJudg = nodeJudgmentList.map(item => {
@@ -380,7 +380,7 @@ export default {
           }
         })
       }
- 
+
       this.workFlowTemplate.documentStatus = submitType
       let msg = this.workFlowTemplate.documentStatus == 'draft' ? '保存成功' : '提交成功'
       let _data = {
@@ -388,9 +388,9 @@ export default {
         nodeJudgmentList: nodeJudg,
         template: this.workFlowTemplate,
         templateLineList
-      } 
+      }
       // return
-      let res = await addApprovalFlow(_data) 
+      let res = await addApprovalFlow(_data)
       if (res.msg === 'Success') {
         this.$message({
           message: msg,
@@ -416,7 +416,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "./css/workflow.css";
+//@import "./css/workflow.css";
 
 .error-modal-list {
   width: 455px;

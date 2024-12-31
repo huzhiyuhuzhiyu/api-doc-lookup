@@ -520,7 +520,7 @@ th {
 table,
 td,
 th {
-    border: 1px solid
+    border: 1px solid  !important;
 }
 </style>
 <style lang="scss" scoped>

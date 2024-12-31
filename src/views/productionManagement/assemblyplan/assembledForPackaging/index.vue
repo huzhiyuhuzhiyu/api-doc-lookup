@@ -1,19 +1,24 @@
 <template>
     <div class="JNPF-common-layout" v-loading="tableLoading">
-        <div v-if="!formVisible" class="JNPF-common-layout-center JNPF-flex-main">
+        <div   class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="品名规格" clearable />
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="工序名称" clearable />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="4">
                         <el-form-item>
-                            <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
-                                            style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[1].fieldValue" placeholder="品名规格" clearable />
                         </el-form-item>
                     </el-col>
+                    <el-col :span="4">
+                        <el-form-item>
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[2].fieldValue" placeholder="生产任务单号" clearable />
+                        </el-form-item>
+                    </el-col>
+
 
                     <el-col :span="6">
                         <el-form-item>
@@ -23,7 +28,7 @@
                             <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
                         </el-form-item>
                     </el-col>
-                    <el-col v-if="!hasTableTopOpts" :span="6" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;float: right;line-height: 34px;padding-right: 16px !important;">
+                    <el-col :span="6" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;float: right;line-height: 34px;padding-right: 16px !important;">
                         <el-tooltip content="高级查询" placement="top">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" style="margin-left:12px" @click="superQueryVisibleShow" />
                         </el-tooltip>
@@ -37,103 +42,42 @@
                 </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-                <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box" v-if="hasTableTopOpts">
-                    <topOpts @add="addOrUpdateHandle(ModelType.ADD)">
-                        <el-button  type="danger" size="mini" v-has="BtnType.batchRemove.enCode" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-                    </topOpts>
-                    <div class="JNPF-common-head-right">
-                        <el-tooltip content="高级查询" placement="top" v-if="true">
-                            <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisibleShow" />
-                        </el-tooltip>
-                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun" />
-                        </el-tooltip>
-                        <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                            <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData" />
-                        </el-tooltip>
-                    </div>
-                </div>
+
                 <JNPF-table
-                    v-if="tableFlag"
                     v-loading="listLoading"
                     :data="tableData"
                     :fixedNO="true"
                     @sort-change="sortChange"
                     custom-column
                     enabled-checkbox-plus
-                    :hasC="hasTableTopOpts"
+                    :hasC="false"
                     ref="dataTable" :setColumnDisplayList="columnList">
                     <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
-                    <el-table-column prop="cooperativePartnerName" label="客户名称" width="120"  v-if="isCustomerProductPage" />
-                    <template v-if="!isNoProductPage || isImage">
-                        <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
-                        <el-table-column prop="productsCode" label="产品编码" min-width="120" />
-                        <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
-                    </template>
-                    <template  v-if="isNoProductPage">
-                        <el-table-column prop="categoryName" label="文件分类" min-width="120" />
-                    </template>
-                    <el-table-column prop="projectName" label="所属项目" width="120"  v-if="abProjectSwitchVisible" />
-
-                    <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
-                        <template slot-scope="{row}">
-                            <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
-                            <el-tag type="success" v-else-if="row.documentStatus === 'submit'">提交</el-tag>
-                            <el-tag type="danger"  v-else-if="row.documentStatus === 'back'">退回</el-tag>
+                    <el-table-column prop="processName" label="工序名称" width="120"  />
+                    <el-table-column prop="productCode" label="工序编码" min-width="305" />
+                    <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" />
+                    <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" />
+                    <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="120" />
+                    <el-table-column prop="unit" label="单位" width="120"/>
+                    <el-table-column prop="num" label="完成数量" width="120">
+                        <template slot-scope="scope">
+                            {{scope.row.pairingModeName ? scope.row.pairingModeNum : scope.row.num}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="version" label="版本号" width="80" v-if="!isNoProductPage" />
-                    <el-table-column prop="fileCount" label="文件数量" width="120" />
-                    <template v-if="!isNoProductPage">
-                        <el-table-column prop="versionCount" label="关联版本" width="120"  v-if="(isFileManagementPage || isFileCheckPage)">
-                            <template slot-scope="scope">
-                                <el-link :underline="false" type="primary" @click="searchVersion(scope.row.drawingNo)">{{scope.row.versionCount}}</el-link>
-                            </template>
-                        </el-table-column>
-                    </template>
-
+                    <el-table-column prop="packageNum" label="已包装数量" width="120"/>
+                    <el-table-column prop="packageMethod" label="包装方式" v-if="isHistory" width="120"/>
+                    <el-table-column prop="productTaskNo" label="生产任务单号" width="120"/>
+                    <el-table-column prop="drawingNo" label="品名规格" width="120"/>
+                    <el-table-column prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
+                    <el-table-column prop="code" label="产品编码" v-if="isAssemble" width="120"/>
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
-                    <template v-if="!isNoProductPage">
-                        <el-table-column prop="status" label="启用状态" width="120" align="center" v-if="(isFileManagementPage || isFileCheckPage)">
-                            <template slot-scope="scope">
-                                <el-switch @change="changeState(scope.row)" v-model="scope.row.enabledMark" :disabled="isFileCheckPage"
-                                           :active-value="true" :inactive-value="false">
-                                </el-switch>
-                            </template>
-                        </el-table-column>
-                    </template>
 
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-                            <tableOpts
-                                v-if="!isFileCheckPage"
-                                :isJudgePer="true"
-                                :del-disabled="getDelDisabled(scope)"
-                                :edit-disabled="getDelDisabled(scope)"
-                                :edit-text="tableOptsEditText"
-                                :del-text="tableOptsDelText"
-                                :has-del="tableOptsDelShow"
-                                @edit="tableOptsEditHandle(ModelType.EDIT,scope.row.id)"
-                                @del="handleDel(scope.row.id)">
-                                <el-dropdown hide-on-click>
-                                                  <span class="el-dropdown-link">
-                                                    <el-button type="text" size="mini">
-                                                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                                                    </el-button>
-                                                  </span>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item v-if="isFileManagementPage" @click.native="copy2FileUpload(scope.row.id)">
-                                            复制
-                                        </el-dropdown-item>
-                                        <el-dropdown-item @click.native="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">
-                                            查看详情
-                                        </el-dropdown-item>
-
-                                    </el-dropdown-menu>
-                                </el-dropdown>
-                            </tableOpts>
-                            <el-button v-if="isFileCheckPage" type="text" size="mini" @click="addOrUpdateHandle(ModelType.VIEW,scope.row.id)">查看详情</el-button>
+                            <el-button size="mini" type="text" @click="reportFun(scope.row)">报工</el-button>
+                            <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">导出</el-button>
                         </template>
                     </el-table-column>
                 </JNPF-table>
@@ -141,137 +85,124 @@
                             @pagination="initData" />
             </div>
         </div>
-        <slot name="editForm" :data="this">
-            <EditWorkingInstructionUpload
-                v-if="formVisible && recreateFlag" @recreate="recreate"
-                :flowCode="flowCode"
-                :type="uploadType"
-                :id.sync="fileUploadId"
-                :applicationType="applicationType"
-                :isFileManagementPage="isFileManagementPage"
-                :isFileTrashPage="isFileTrashPage"
-                :isFileUploadPage="isFileUploadPage"
-                :page-type="pageType"
-                :isFileCheckPage="isFileCheckPage"
-                :isNoProductPage="isNoProductPage"
-                :isCustomerProductPage="isCustomerProductPage"
-                @back="editBack" />
-        </slot>
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-        <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
+        <el-dialog title="报工" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="reportFormVisible"
+                   @close="reportFormVisible = false" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" append-to-body>
+            <el-row :gutter="20">
+
+                <el-form ref="reportRef" :model="reportForm" :rules="reportFormProps" label-width="120px" label-position="top">
+                    <el-row :gutter="20">
+                        <el-col :span="24">
+                            <el-form-item label="包装方式" prop="packagingMethod">
+                                <el-select v-model="reportForm.packagingMethod" placeholder="包装方式" style="width: 100%;">
+                                    <el-option v-for="(item, index) in packagingMethodList" :key="index" :label="item.label"
+                                               :value="item.value"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="24">
+                            <el-form-item label="包装人" prop="packagePersonId">
+                                <user-select v-model="reportForm.packagePersonId" placeholder="请选择包装人" clearable style="width: 100%"  @change="handlePackagePerson">
+                                </user-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="24">
+                            <el-form-item label="包装数量" prop="packageNum">
+                                <el-input v-model="reportForm.packageNum" placeholder="包装数量" />
+                            </el-form-item>
+                        </el-col>
+
+                    </el-row>
+                </el-form>
+            </el-row>
+
+            <span slot="footer" class="dialog-footer">
+      <el-button @click="reportFormVisible">{{ $t('common.cancelButton') }}</el-button>
+      <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitReportFun()">
+        提交</el-button>
+    </span>
+        </el-dialog>
+        <PersonSelect v-if="choosePersonVisible" ref="personnelRef"  placeholder="请选择所属人员" style="width: 100%;"/>
+
     </div>
 </template>
 
 <script>
 import {
-    uploadDimProductsModel
-} from '@/api/masterDataManagement/index'
+    getbimProductAttributesList,
+} from '@/api/masterDataManagement/index';
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import { mapGetters, mapState } from 'vuex'
+
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import EditWorkingInstructionUpload from "@/views/esop/fileUpload/workinginstruction/Form.vue";
 import {
-    addBimFileUpload, backBimFileUpload,
-    batchDeleteBimFileUpload,
-    deleteBimFileUpload, detailBimFileUpload,
     getBimFileUpload, switchEnableMark
 } from "@/api/esop/fileUpload/workinginstruction";
-import moment from "moment";
-import {
-    ApplicationType,
-    DocumentStatus,
-    FileCheckPageSet,
-    FileManagementPageType2FileUploadUrl,
-    FileManagePageSet,
-    FileTrashPageSet,
-    FileUploadPageSet, isModelType,
-    ModelType, ORDER_CODE_FILE_UPLOAD,
-    PageType,
 
-} from "@/views/esop/fileUpload/workinginstruction/utils/constant";
-import {FlowCode} from "@/views/esop/utils/constants";
 import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from "@/utils";
-import RecreateMixin from "@/views/esop/utils/RecreateMixin";
 import {
-    BtnType,
     executeQueryTime,
-    getTimeForSearchTimeType,
-    getUploadFileSaveData,
-    isNoProductPage
 } from "@/views/esop/utils/utils";
-import {getBimRecycleBin, revertBimRecycleBin} from "@/api/esop/fileTrash";
-import {getBusinessFlowInfo} from "@/api/workFlow/FlowEngine";
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
+import ProductNameFlagMixin from '@/mixins/generator/ProductNameFlagMixin';
 
 
 
 export default {
-    components: {EditWorkingInstructionUpload, ExportForm, SuperQuery },
-    name:"FileUploadWorkingInstruction",
+    components: {   ExportForm, SuperQuery },
+    name:"historyPackageRecord",
+    mixins:[AbProjectMixin,ProductNameFlagMixin],
     props:{
-        pageType:{
-            type:String,
-            default:PageType.FileUploadWork
-        },
-        applicationType:{
-            type:String,
-            default:ApplicationType.WORK
-        },
-        flowCode:{
-            type: String,
-            default: FlowCode.WORK
-        },
-        documentStatus:{
-            type:String,
-            default:DocumentStatus.DRAFT
-        },
-        approvalStatus:{
-            type:String,
-            default:""
+        isHistory:{
+            type:Boolean,
+            default:false
         }
     },
-    watch:{
-        "$route.query.id":{
-            immediate:true,
-            handler(val){
-                if(!this.isFileUploadPage && !this.isFileManagementPage){
-                    return
-                }
-                const type = this.$route.query.type
-                if(isModelType(type) && notEmpty(val)){
-                    if(type === ModelType.SEARCH){
-                        return this.modelTypeSearchHandler(type,this.$route.query)
-                    }
-                    return this.modelTypeDefaultHandler(type,this.$route.query)
-                }
-            }
+    computed:{
+        isAssemble(){
+            return !this.isHistory
         }
     },
-    mixins:[RecreateMixin,AbProjectMixin],
     data() {
         return {
+            choosePersonVisible:false,
+            reportForm:{
+                packagingMethod:"",
+                packagePersonId:"",
+                packagePersonName:"",
+                packageNum:100,
+                computedNum:100,
+                packagedNum:0,
+            },
+            btnLoading:false,
+            packagingMethodList:[],
+            reportFormProps:{
+                packagingMethod:[
+                    { required: true, message: '请选择包装模式', trigger: 'change' },
+                ],
+                packagePerson:[
+                    { required: true, message: '请选择包装人', trigger: 'change' },
+                ],
+                packageNum:[
+                    { required: true, message: '请输入包装数量', trigger: 'blur' },
+                ],
+            },
+            reportFormVisible: false,
             tableLoading: false,
-            tableFlag:false,
             recreateFlag: true,
-            ModelType,
-            uploadType:ModelType.ADD,
             fileUploadId:"",
             tableFormVisible: false,
             exportFormVisible: false,
-            columnList: ['remark', 'createByName'],
+            columnList: ['remark', 'createByName','code'],
             createTimeArr: [],
             title: '更多查询',
             visible: false,
             tableData: [],
             listLoading: false,
             listQuery: this.getOriginListQuery(),
-            formType:ModelType.ADD,
             total: 0,
             formVisible: false,
-
-            uploadVisib: false,
             superQueryVisible: false,
             superQueryJson: [
                 {
@@ -299,170 +230,52 @@ export default {
             ],
         }
     },
-    computed: {
-
-        isImage(){
-            return this.applicationType === ApplicationType.IMAGE
-        },
-        isNoProductPage(){
-            return isNoProductPage(this.applicationType)
-        },
-        isCustomerProductPage(){
-            return this.applicationType === ApplicationType.CUSTOMER_PRODUCT
-        },
-        getListFn(){
-            if(this.isFileTrashPage){
-                return getBimRecycleBin
-            }
-            return getBimFileUpload
-        },
-        BtnType() {
-            return BtnType
-        },
-        ...mapGetters(['userInfo']),
-        ...mapState('user', ['token']),
-        isFileManagementPage(){
-            return  FileManagePageSet.has(this.pageType)
-        },
-        isFileTrashPage(){
-            return FileTrashPageSet.has(this.pageType)
-        },
-        isFileUploadPage(){
-            return FileUploadPageSet.has(this.pageType)
-        },
-        isFileCheckPage(){
-            return FileCheckPageSet.has(this.pageType)
-        },
-        hasTableTopOpts(){
-            return this.isFileUploadPage
-        },
-        tableOptsDelText(){
-            return this.isFileTrashPage ? '还原' : '删除'
-        },
-        tableOptsDelShow(){
-            return !this.isFileTrashPage
-        },
-        tableOptsEditText(){
-            if(this.isFileManagementPage){
-                return '退回'
-            }
-            if(this.isFileTrashPage){
-                return '还原'
-            }
-            return '编辑'
-        },
-        tableOptsEditHandle(){
-            if(this.isFileManagementPage){
-                return this.backFileUpload
-            }
-            if(this.isFileTrashPage){
-                return this.revertBimRecycle
-            }
-            return this.addOrUpdateHandle
-        },
-    },
-    async created() {
-        if(notEmpty(this.$route.query.type)){
-            return
-        }
+    async mounted() {
         try {
             this.tableLoading = true
-            this.initData()
-            await this.awaitAbProject()
+            await Promise.all([
+                this.initData(),
+                this.awaitAbProject(),
+                this.awaitGetProductNameFlag()
+            ])
         }catch (e) {
 
         }finally {
             this.tableLoading = false
-            this.tableFlag = true
+            this.$refs.dataTable.doLayout()
         }
-
-
     },
     methods: {
-        getDelDisabled(scope){
-            if(this.isNoProductPage){
-                return false
-            }
-            return this.isFileManagementPage && scope.row.enabledMark
-        },
-        modelTypeDefaultHandler(type, {id}){
-            return this.addOrUpdateHandle(type,id)
-        },
-        modelTypeSearchHandler(type,{searchTimeType}){
-            if(isEmpty(searchTimeType)){
-                return
-            }
-            const [startTime,endTime]= getTimeForSearchTimeType(searchTimeType)
-            this.createTimeArr = [startTime,endTime]
-            this.search()
-        },
-        async getFlowData(){
-            const resObj ={
-                flowData:null,
-                approvalFlag:false
-            }
-            try{
-                const res = await getBusinessFlowInfo(this.flowCode)
-                if (res.data) {
-                    resObj.approvalFlag = res.data.enabledMark
-                    resObj.flowData = res.data.enabledMark? res.data : null
-                }
+       async handlePackagePerson(){
+           await this.$nextTick()
+           this.$refs.reportRef.validateField('packagePersonId')
+       },
+       async reportFun(){
 
-            }catch (e) {
-            }
-            return resObj
+            const res = await getbimProductAttributesList({
+                pageNum: -1,
+                pageSize: 20,
+                typeCode: 'pa015',
+                orderItems: [
+                    {
+                        asc: false,
+                        column: ''
+                    },
+                    {
+                        asc: false,
+                        column: 'code'
+                    }
+                ]
+            })
+
+           this.packagingMethodList = res.data.records.map((item) => ({
+                    label: item.name,
+                    value: item.name
+            }))
+
+            this.reportFormVisible = true
         },
-        async copy2FileUpload(id){
-            this.listLoading = true
-            try {
-                const [{data}, {number},{ flowData,approvalFlag }] =
-                    await Promise.all([
-                        detailBimFileUpload(id),
-                        this.jnpf.getBillRuleConfigFun(ORDER_CODE_FILE_UPLOAD),
-                        this.getFlowData()
-                    ])
-
-                data.id = null
-                notEmpty(data.bimFileUploadLineVOList) &&
-                data.bimFileUploadLineVOList.forEach(item=>{
-                    item.id = null
-                    item.fileUploadId = null
-                })
-                data.orderNo = number
-                data.documentStatus = DocumentStatus.DRAFT
-                data.flowData =flowData
-                data.approvalFlag = approvalFlag
-                data.bimFileUploadLineList =  data.bimFileUploadLineVOList
-
-                const res = await addBimFileUpload(getUploadFileSaveData(data))
-                if(res.data){
-                    getSuccessInfo()
-                    this.$router.push({
-                        path: FileManagementPageType2FileUploadUrl[this.pageType],
-                        query:{
-                            id:res.data,
-                            type:ModelType.EDIT
-                        }
-                    })
-                }
-            }catch (e) {
-                this.$message.error(e.message)
-            }finally {
-                this.listLoading = false
-            }
-
-
-        },
-        async backFileUpload(type,id){
-            console.log('type',type)
-            try {
-                await getQueryConfirm(this,'是否要退回此记录？')
-                const res = await backBimFileUpload(id)
-                getSuccessInfo()
-                this.initData()
-            }catch (e) {
-                this.$message.error(e.message)
-            }
+        submitReportFun(){
 
         },
         superQueryVisibleShow(){
@@ -526,11 +339,6 @@ export default {
             ]
             this.superQueryVisible = true
         },
-        async changeState({productsCode,id,enabledMark}) {
-            const {data} = await switchEnableMark(id)
-            this.$message.success('操作成功')
-            this.initData()
-        },
         getOriginListQuery() {
             return {
                 applicationType:this.applicationType,
@@ -554,7 +362,17 @@ export default {
                 superQuery: {
                     condition: [
                         {
+                            field: "processName",
+                            fieldValue: "",
+                            symbol: "like"
+                        },
+                        {
                             field: "drawingNo",
+                            fieldValue: "",
+                            symbol: "like"
+                        },
+                        {
+                            field: "code",
                             fieldValue: "",
                             symbol: "like"
                         },
@@ -564,11 +382,7 @@ export default {
                 totalRowFlag: false
             }
         },
-        editBack() {
-            this.formVisible = false
-            this.tableFlag = true
-            this.search()
-        },
+
         superQuerySearch(query) {
             this.superQueryVisible = false
             this.search({superQuery:query})
@@ -601,25 +415,16 @@ export default {
             const params = {...this.listQuery,...query}
             params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
             this.executeUploadPageParams(params)
-            const {data} = await this.getListFn(params)
+            const {data} = await getBimFileUpload(params)
             this.tableData = data.records
             this.total = data.total
             this.listLoading = false
         },
-        searchVersion(drawingNo) {
-            this.createTimeArr = []
-            this.listQuery.superQuery.condition[0].fieldValue = drawingNo
-            this.search()
-        },
+
         search(query) {
             trim(executeQueryTime(this.listQuery, this.createTimeArr))
             this.listQuery.pageNum = 1
             this.initData(query)
-        },
-        refresh(isrRefresh) {
-            this.formVisible = false
-            this.tableFormVisible = false
-            if (isrRefresh) this.reset()
         },
         reset() {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
@@ -628,68 +433,9 @@ export default {
             this.$refs.SuperQuery.conditionList = []
             this.initData()
         },
-        async addOrUpdateHandle(type, id) {
-            this.fileUploadId = id
-            this.uploadType = type
-            if(this.formVisible){
-                this.formVisible =false
-                await this.$nextTick()
-            }
-            this.formVisible = true
-        },
-        /**
-         * 此处的type 无意义 仅为参数归一化
-         * @param type
-         * @param id
-         * @returns {Promise<void>}
-         */
-        async revertBimRecycle(type, id) {
-            try {
-                await getQueryConfirm(this, '是否要还原此记录？')
-                const res = revertBimRecycleBin(id)
-                getSuccessInfo()
-                this.initData()
-            } catch (e) {
 
-            }
-        },
 
-        async handleDel(id) {
-            try {
-                await getQueryConfirm(this)
-                const {msg} = await deleteBimFileUpload(id)
-                if (msg === 'Success') {
-                    this.initData()
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功',
-                        duration: 1500
-                    })
-                }
-            } catch (e) {
 
-            }
-        },
-        async batchDelete() {
-            const arr = this.$refs.dataTable.getCurrentSelection()
-            if (isEmpty(arr)) {
-                return this.$message.info('请选择要删除的数据')
-            }
-            try {
-                await getQueryConfirm(this)
-                const {msg} = await batchDeleteBimFileUpload(arr.map(({id}) => id))
-                if (msg === 'Success') {
-                    this.initData()
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功',
-                        duration: 1500
-                    })
-                }
-            } catch (e) {
-
-            }
-        }
     }
 }
 </script>

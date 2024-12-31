@@ -1,0 +1,474 @@
+<template>
+  <div class="popupSelect-container">
+    <div class="el-select" @click.stop="openDialog">
+      <div class="el-select__tags" v-if="multiple" ref="tags"
+        :style="{ 'max-width': inputWidth - 32 + 'px', width: '100%', cursor: 'pointer' }">
+        <span v-if="collapseTags && tagsList.length">
+          <el-tag :closable="!selectDisabled" :size="collapseTagSize" type="info" @close="deleteTag($event, 0)"
+            disable-transitions>
+            <span class="el-select__tags-text">{{ tagsList[0] }}</span>
+          </el-tag>
+          <el-tag v-if="tagsList.length > 1" :closable="false" type="info" disable-transitions>
+            <span class="el-select__tags-text">+ {{ tagsList.length - 1 }}</span>
+          </el-tag>
+        </span>
+        <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
+          <el-tag v-for="(item, i) in tagsList" :key="item" :size="collapseTagSize" :closable="!selectDisabled"
+            type="info" @close="deleteTag($event, i)" disable-transitions>
+            <span class="el-select__tags-text">{{ item }}</span>
+          </el-tag>
+        </transition-group>
+      </div>
+      <el-input ref="reference" v-model="innerValue" type="text" :placeholder="currentPlaceholder" :disabled="isdisabled"
+        readonly :validate-event="false" :tabindex="(multiple) ? '-1' : null" @mouseenter.native="inputHovering = true"
+        @mouseleave.native="inputHovering = false">
+        <template slot="suffix">
+          <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
+          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick"></i>
+        </template>
+      </el-input>
+    </div>
+    <el-dialog title="选择所属分类" :close-on-click-modal="false" :visible.sync="visible"
+      class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body width="800px"
+      :modal-append-to-body="false" @close="onClose">
+      <div class="transfer__body">
+        <div class="transfer-pane">
+          <div class="transfer-pane__tools">
+            <el-input placeholder="请输入关键词查询" v-model="keyword" @keyup.enter.native="search" clearable class="search-input"
+              maxlength="20">
+              <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+            </el-input>
+          </div>
+          <div class="transfer-pane__body">
+            <el-tree :data="treeData" :props="props" check-on-click-node :expand-on-click-node="false" default-expand-all
+              @node-click="handleNodeClick" class="JNPF-common-el-tree" node-key="id" v-loading="loading" ref="tree"
+              :filter-node-method="filterNode">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <i :class="data.icon"></i>
+                <span class="text">{{ node.label }}</span>
+              </span>
+            </el-tree>
+          </div>
+        </div>
+        <div class="transfer-pane">
+          <div class="transfer-pane__tools">
+            <span>已选</span>
+            <el-button @click="removeAll" type="text" class="removeAllBtn">清空列表</el-button>
+          </div>
+          <div class="transfer-pane__body shadow right-pane">
+            <template>
+              <div v-for="(item, index) in selectedData" :key="index" class="selected-item">
+                <span :title="item">{{ item }}</span>
+                <i class="el-icon-delete" @click="removeData(index)"></i>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="confirm">{{ $t('common.confirmButton') }}</el-button>
+      </span>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
+import { getcategoryTree } from '@/api/basicData/materialSettings'
+
+export default {
+  name: 'comSelect3',
+  inject: {
+    elForm: {
+      default: ''
+    },
+    elFormItem: {
+      default: ''
+    }
+  },
+  props: {
+    value: {
+      default: () => []
+    },
+    placeholder: {
+      type: String,
+      default: '请选择'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    collapseTags: {
+      type: Boolean,
+      default: false
+    },
+    clearable: {
+      type: Boolean,
+      default: false
+    },
+    auth: {
+      type: Boolean,
+      default: false
+    },
+    isOnlyOrg: {
+      type: Boolean,
+      default: false
+    },
+    size: String,
+    currOrgId: {
+      default: '0'
+    },
+    parentId: {
+      default: ''
+    },
+    type: {
+      default: ''
+    },
+    classAttribute: {
+      default: ''
+    },
+    isdisabled: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      treeData: [],
+      allList: [],
+      keyword: '',
+      innerValue: this.value,
+      visible: false,
+      loading: false,
+      props: {
+        children: 'childrenList',
+        label: 'name',
+        isLeaf: 'isLeaf'
+      },
+      selectedData: [],
+      selectedIds: [],
+      tagsList: [],
+      inputHovering: false,
+      inputWidth: 0,
+      initialInputHeight: 0,
+      rSelectData: []
+    }
+  },
+  computed: {
+    showClose() {
+      let hasValue = Array.isArray(this.value) && this.value.length > 0
+      let criteria = this.clearable &&
+        !this.selectDisabled &&
+        this.inputHovering &&
+        hasValue;
+      return criteria;
+    },
+    currentPlaceholder() {
+      if (this.multiple && Array.isArray(this.value) && this.value.length) {
+        return ''
+      } else {
+        return this.placeholder
+      }
+    },
+    selectDisabled() {
+      return this.disabled || (this.elForm || {}).disabled;
+    },
+    _elFormItemSize() {
+      return (this.elFormItem || {}).elFormItemSize;
+    },
+    selectSize() {
+      return this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+    },
+    collapseTagSize() {
+      return ['small', 'mini'].indexOf(this.selectSize) > -1
+        ? 'mini'
+        : 'small';
+    },
+  },
+  created() {
+    this.getData()
+  },
+  mounted() {
+    addResizeListener(this.$el, this.handleResize);
+
+    const reference = this.$refs.reference;
+    if (reference && reference.$el) {
+      const sizeMap = {
+        medium: 36,
+        small: 32,
+        mini: 28
+      };
+      const input = reference.$el.querySelector('input');
+      this.initialInputHeight = input.getBoundingClientRect().height || sizeMap[this.selectSize];
+    }
+    if (this.multiple) {
+      this.resetInputHeight();
+    }
+    this.$nextTick(() => {
+      if (reference && reference.$el) {
+        this.inputWidth = reference.$el.getBoundingClientRect().width;
+      }
+    });
+    this.setDefault()
+  },
+  beforeDestroy() {
+    if (this.$el && this.handleResize) removeResizeListener(this.$el, this.handleResize);
+  },
+  watch: {
+    value(val) {
+      this.innerValue = val
+      this.setDefault()
+    },
+    selectDisabled() {
+      this.$nextTick(() => {
+        this.resetInputHeight();
+      });
+    },
+    allList: {
+      handler: function (val) {
+        this.setDefault()
+      },
+      deep: true
+    }
+  },
+  methods: {
+    async getData() {
+
+      const topItem = {
+        fullName: "顶级节点",
+        hasChildren: true,
+        id: "-1",
+        icon: "icon-ym icon-ym-tree-organization3",
+        organize: '顶级节点',
+        organizeIds: ['-1']
+      }
+      this.allList = [...this.$store.getters.departmentList, topItem]
+      if (this.auth) {
+        if (this.isOnlyOrg && this.parentId === '-1') {
+          this.treeData = [topItem]
+          return
+        }
+        if (!this.classAttribute) {
+          this.treeData = []
+          return
+        }
+        const method = getcategoryTree
+        let obj = { type: this.classAttribute }
+        method(obj).then(res => {
+          this.treeData = res.data
+          this.allList = [...this.treeData]
+        })
+      }
+    },
+    onClose() { },
+    clear() {
+      if (this.selectDisabled) return
+      this.innerValue = ''
+      this.selectedData = []
+      this.selectedIds = []
+      this.rSelectData = []
+      this.tagsList = []
+      this.$emit('input', [])
+      this.$emit('change', [], [])
+    },
+    openDialog() {
+      if (this.isdisabled) return
+      this.keyword = ''
+      this.treeData = []
+      this.getData()
+      this.setDefault()
+      this.visible = true
+    },
+    search() {
+      this.$refs.tree && this.$refs.tree.filter(this.keyword)
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data[this.props.label].indexOf(value) !== -1;
+    },
+    getNodePath(node) {
+      let fullPath = []
+      const loop = (node) => {
+        if (node.level) fullPath.unshift(node.data)
+        if (node.parent) loop(node.parent)
+      }
+      loop(node)
+      return fullPath
+    },
+    handleNodeClick(data) {
+      if (data.disabled) return
+      let currId = data.id
+      let currData = data.name
+      if (this.multiple) {
+        const boo = this.selectedIds.some(o => o === currId)
+        if (boo) return
+        this.selectedIds.push(currId)
+        this.selectedData.push(currData)
+      } else {
+        this.selectedIds = [currId]
+        this.selectedData = [currData]
+      }
+      let selectedData = []
+      for (let i = 0; i < this.selectedIds.length; i++) {
+        let item = []
+        let selectedNames = this.selectedData[i]
+        for (let j = 0; j < this.selectedIds.length; j++) {
+          item.push({
+            id: this.selectedIds[i],
+            name: selectedNames,
+          })
+        }
+        selectedData.push(item)
+      }
+      this.rSelectData = selectedData
+      // console.log("选中",this.selectedIds,this.selectedData,selectedData);
+    },
+    removeAll() {
+      this.selectedData = []
+      this.selectedIds = []
+      this.rSelectData = []
+    },
+    removeData(index) {
+      this.selectedData.splice(index, 1)
+      this.selectedIds.splice(index, 1)
+      this.rSelectData.splice(index, 1)
+    },
+    confirm() {
+      let selectedData = []
+      for (let i = 0; i < this.selectedIds.length; i++) {
+        let item = []
+        let selectedNames = this.selectedData[i]
+        for (let j = 0; j < this.selectedIds.length; j++) {
+          item.push({
+            id: this.selectedIds[i],
+            name: selectedNames,
+          })
+        }
+        selectedData.push(item)
+      }
+      if (this.multiple) {
+        this.innerValue = ''
+        this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
+        this.$emit('input', this.selectedIds)
+        this.$emit('change', this.selectedIds, selectedData)
+      } else {
+        this.innerValue = this.selectedData[0]
+        this.$emit('input', this.selectedIds[0])
+        this.$emit('change', this.selectedIds[0], selectedData[0])
+      }
+      this.visible = false
+    },
+    findIdByName(data, name) {
+      // 遍历数据数组
+      for (let item of data) {
+        // 如果当前项的name匹配目标name，则返回当前项的id
+        if (item.name === name) {
+          return item.id;
+        }
+        // 如果当前项有子项，则递归查找子项中的name
+        if (item.childrenList && item.childrenList.length > 0) {
+          let result = this.findIdByName(item.childrenList, name);
+          // 如果找到了对应的id，则返回该结果
+          if (result) {
+            return result;
+          }
+        }
+      }
+      // 如果没有找到对应的id，则返回null或其他特定的值
+      return null;
+    },
+    setDefault() {
+      if (!this.innerValue || !this.innerValue.length) {
+        this.innerValue = ''
+        this.selectedIds = []
+        this.selectedData = []
+        this.rSelectData = []
+
+        this.tagsList = []
+        return
+      }
+      let selectedIds = this.multiple ? this.innerValue : [this.innerValue]
+      this.selectedData = JSON.parse(JSON.stringify(selectedIds))
+      selectedIds[0] =  this.findIdByName(this.allList,selectedIds[0])
+      if (selectedIds[0]!= null){
+        this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
+        let textList = []
+        textList = JSON.parse(JSON.stringify(this.rSelectData))
+      }
+      // for (let i = 0; i < selectedIds.length; i++) {
+      //   const item = selectedIds[i];
+      //   let textItem = JSON.parse(JSON.stringify(item))
+      //   for (let j = 0; j < item.length; j++) {
+      //     inner: for (let ii = 0; ii < this.allList.length; ii++) {
+      //       if (item[j] === this.allList[ii].id) {
+      //         textItem[j] = this.allList[ii].fullName
+      //         break inner
+      //       }
+      //     }
+      //   }
+      //   textList.push(textItem)
+      // }
+      // this.selectedData = textList.map(o => o)
+      // if (this.multiple) {
+      //   this.innerValue = ''
+      //   this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
+      //   this.$nextTick(() => {
+      //     this.resetInputHeight();
+      //   })
+      // } else {
+      //   this.innerValue = this.selectedData.join(',')
+      // }
+    },
+    deleteTag(event, index) {
+      this.selectedData.splice(index, 1)
+      this.selectedIds.splice(index, 1)
+      this.confirm()
+      event.stopPropagation();
+    },
+    handleClearClick(event) {
+      this.selectedData = []
+      this.selectedIds = []
+      this.rSelectData = []
+
+      this.confirm()
+      event.stopPropagation();
+    },
+    resetInputWidth() {
+      this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
+    },
+    handleResize() {
+      this.resetInputWidth();
+      if (this.multiple) this.resetInputHeight();
+    },
+    resetInputHeight() {
+      if (this.collapseTags) return;
+      this.$nextTick(() => {
+        if (!this.$refs.reference) return;
+        let inputChildNodes = this.$refs.reference.$el.childNodes;
+        let input = [].filter.call(inputChildNodes, item => item.tagName === 'INPUT')[0];
+        const tags = this.$refs.tags;
+        const tagsHeight = tags ? Math.round(tags.getBoundingClientRect().height) : 0;
+        const sizeInMap = this.initialInputHeight || 40;
+        input.style.height = this.selectedData.length === 0
+          ? sizeInMap + 'px'
+          : Math.max(
+            tags ? (tagsHeight + (tagsHeight > sizeInMap ? 6 : 0)) : 0,
+            sizeInMap
+          ) + 'px';
+      });
+    },
+    resetInputWidth() {
+      this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
+    },
+    handleResize() {
+      this.resetInputWidth();
+      if (this.multiple) this.resetInputHeight();
+    }
+  }
+}
+</script>

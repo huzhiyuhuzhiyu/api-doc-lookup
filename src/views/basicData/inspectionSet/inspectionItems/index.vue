@@ -294,7 +294,7 @@ export default {
 
       let listQuery = {
         keyword: '',
-        classAttribute: 'inspection_items'
+        type: 'inspection_items'
       }
       getCategoryTrees(listQuery)
         .then((res) => {

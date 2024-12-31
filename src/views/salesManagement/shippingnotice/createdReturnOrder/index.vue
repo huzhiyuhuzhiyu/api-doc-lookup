@@ -209,7 +209,7 @@
                           v-if="sealingCoverTypingFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -219,7 +219,7 @@
                         <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false">
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false">
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -228,7 +228,7 @@
                         <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -238,7 +238,7 @@
                         <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oil" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -248,7 +248,7 @@
                         <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -258,7 +258,7 @@
                         <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -269,7 +269,7 @@
                           v-if="packagingMethodFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -279,7 +279,7 @@
                         <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -289,7 +289,7 @@
                         <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.material" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
@@ -299,7 +299,7 @@
                         <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.colour" placeholder="请选择" clearable
-                              :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
+                            filterable allow-create :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
                               style="width: 100%;">
                               <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
                                 :value="item.name"></el-option>

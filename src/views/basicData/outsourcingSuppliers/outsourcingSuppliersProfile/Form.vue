@@ -855,9 +855,10 @@ export default {
         } else {
           this.salesList = []
         }
-
-
       })
+    },
+    selectsales(val) {
+      this.dataForm.salespersonId = val
     },
     changeCountry(e, index) {
       this.dataForm.country = e.code

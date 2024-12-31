@@ -138,6 +138,8 @@
           <el-table-column prop="contacts" label="联系人" min-width="160" />
           <el-table-column prop="phone" label="电话" min-width="160" />
           <el-table-column prop="mobilePhone" label="手机号" min-width="160" />
+          <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" min-width="120" />
+          <el-table-column prop="salespersonIdText" label="所属外协" sortable="custom" min-width="120" />
           <el-table-column prop="fax" label="传真" min-width="160" />
           <el-table-column prop="zipCode" label="邮编" min-width="160" />
           <el-table-column prop="email" label="邮箱" min-width="160" />

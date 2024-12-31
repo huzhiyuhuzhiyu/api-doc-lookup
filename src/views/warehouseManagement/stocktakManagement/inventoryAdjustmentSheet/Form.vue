@@ -619,9 +619,10 @@ import Process from '@/components/Process/Preview'
 import flowMixin from '@/mixins/generator/flowMixin'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
+import PaginationTable from '@/components/no_mount/Pagination-table/index.vue'
 export default {
   // components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  components: { Process, recordList },
+    components: { Process, recordList,PaginationTable },
   mixins: [flowMixin, busFlow],
   data() {
     return {

@@ -1431,8 +1431,7 @@ export default {
     // 选择配对方式 强行将单位改成对
     changePairingMode(value,scope) {
       if (value) {
-          this.productData[scope.$index].mainUnit="对"
-          this.productData[scope.$index].deputyUnit="对"
+        this.productData[scope.$index].deputyUnit=this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
       }
     },
 
@@ -2988,15 +2987,15 @@ export default {
                   })
                   break
                 }
-                if (!item.taxRate) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的税率不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
+                // if (!item.taxRate) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的税率不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
               }
             }
             console.log("productData", this.productData);

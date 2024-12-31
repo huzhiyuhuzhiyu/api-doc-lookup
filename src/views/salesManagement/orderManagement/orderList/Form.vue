@@ -1767,8 +1767,8 @@ export default {
           // this.productData.push(res.data.records[0])
           if (res.data.records.length) {
             if(res.data.records[0].pairingModeId){
-              res.data.records[0].mainUnit="对"
-              res.data.records[0].deputyUnit="对"
+              res.data.records[0].deputyUnit=res.data.records[0].mainUnit=this.pairingModeList.filter(items => items.id === res.data.records[0].pairingModeId)[0].unit
+              
             }
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
             this.$set(this.productData, index, res.data.records[0])
@@ -2213,8 +2213,9 @@ export default {
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
         if(item.pairingModeId){
-          item.mainUnit="对"
-          item.deputyUnit="对"
+       
+          item.deputyUnit=item.mainUnit=this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].unit
+
         }
         this.$set(item, 'pairingModeName', '')
         if (item.taxRate) {

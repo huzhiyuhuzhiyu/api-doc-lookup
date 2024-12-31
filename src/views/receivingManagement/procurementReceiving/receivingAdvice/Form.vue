@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-            ? '新建收货单'
-            : btnType == 'edit'
-              ? '编辑收货单'
-              : btnType == 'copy'
-                ? '新建收货单'
-                : '查看收货单'
+          ? '新建收货单'
+          : btnType == 'edit'
+            ? '编辑收货单'
+            : btnType == 'copy'
+              ? '新建收货单'
+              : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                          ? true
+                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                            ? false
+                            : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -131,18 +131,42 @@
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="receivedQuantity" label="收货数量" width="130" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
                         收货数量
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
+                          :rules="productRules.receivedQuantity">
                           <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
-                            style="width: 145px;"></el-input>
+                            style="width: 145px;">
+                            {{ scope.row.receivedQuantity }}
+                          </el-input>
                         </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.weight" placeholder="重量"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.proportion" placeholder="比重"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
                     </el-table-column>
                     <el-table-column prop="price" label="含税单价" width="130">
@@ -252,10 +276,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                        ? true
-                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                          ? false
-                          : true
+                      ? true
+                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                        ? false
+                        : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -363,6 +387,25 @@
                         {{ scope.row.receivedQuantity }}
                       </el-input>
                     </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="weight" label="重量(kg)" width="140" :key="737" v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.weight" placeholder="重量"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="proportion" label="比重" width="140" :key="727" v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.proportion" placeholder="比重"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                  v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column prop="price" label="含税单价" width="130">
@@ -678,6 +721,7 @@ export default {
     return {
       isProjectSwitch: '',
       isProductNameSwitch: '',
+      isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       isattachmentswitch: '',
@@ -944,12 +988,10 @@ export default {
       },
       dataRule: {
         salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
-        partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
+        partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }],
-        logisticsCompany: [{ required: true, message: '物流公司不能为空', trigger: 'change' }],
-        logisticsNumber: [{ required: true, message: '物流单号不能为空', trigger: 'change' }]
       },
       customerData: {},
       treeLoading: false,
@@ -1018,6 +1060,7 @@ export default {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getBimBusinessDetail()
     this.getDeputyUnit()
     // this.handleChange()
@@ -1049,6 +1092,11 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     warehouseIdChange(e) {
@@ -1163,6 +1211,7 @@ export default {
     //数量验证
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
+      console.log(12332222);
       return (rule, value, callback) => {
         console.log(value, 'p')
         let index = Number(rule.field.match(/\d+/)[0])
@@ -1590,7 +1639,12 @@ export default {
         }
       })
     },
-
+    computedNumFun(data, index) {
+      if (data.proportion && data.weight) {
+        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
+        this.watchNum(data, index)
+      }
+    },
     search() {
       this.form.pageNum = 1
       this.initData()
@@ -1721,6 +1775,7 @@ export default {
           console.log('ooooooo', item)
           item.ordersNo = item.orderNo
           this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+          this.$set(item, 'discount', 1)
         })
       }
       if (this.dataForm.id) {
@@ -1833,6 +1888,7 @@ export default {
         this.dataForm.documentStatus = value
         if (!valid) {
           submitFlag = false
+          this.btnLoading = false
         }
       })
       console.log(this.$refs['productForm'], 'kkkk')
@@ -1840,6 +1896,7 @@ export default {
         console.log(valid, 'p999')
         if (!valid) {
           submitFlag = false
+          this.btnLoading = false
         }
       })
       if (submitFlag) {
@@ -1877,6 +1934,7 @@ export default {
           console.log(item.productsId, 'item')
           if (!item.receivedQuantity && item.productsId) {
             submitFlag = false
+            this.btnLoading = false
             this.$message({
               message: '请输入第' + (index + 1) + '行产品的收货数量',
               type: 'error',
@@ -1886,6 +1944,7 @@ export default {
           }
           if (Number(item.receivedQuantity) == 0) {
             submitFlag = false
+            this.btnLoading = false
             this.$message({
               message: '第' + (index + 1) + '行产品的收货数量必须大于0',
               type: 'error',
@@ -1910,7 +1969,9 @@ export default {
             // notificationType: item.notificationType,
             oil: item.oil,
             oilQuantity: item.oilQuantity,
-
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount,
             packagingMethod: item.packagingMethod,
             packingQuantity: item.packingQuantity,
             processId: item.processId,
@@ -1974,7 +2035,10 @@ export default {
             taxRate: item.taxRate ? item.taxRate : '',
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount,
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)
@@ -1992,6 +2056,9 @@ export default {
           formMethod = addpurPurchaseReceiptReturnGoods
         }
         console.log(obj, 'obj')
+
+      }
+      if (submitFlag) {
         formMethod(obj)
           .then((res) => {
             // let msg = "";

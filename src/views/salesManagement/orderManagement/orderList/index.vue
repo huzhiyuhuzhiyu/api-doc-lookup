@@ -46,6 +46,8 @@
             <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
+                <el-button :disabled="tableData.length <= 0" size="mini" type="primary" icon="iconfont  icon-chehui1" @click="backFn">撤回</el-button>
+
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -62,6 +64,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+                      hasC
+                      :checkSelectable="checkSelectable"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
@@ -112,7 +116,7 @@
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" 
+                <el-button size="mini" type="text"
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
 
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
@@ -170,7 +174,7 @@
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, closeOrders } from '@/api/salesManagement/assemblyOrders'
+import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, closeOrders ,batchRevokeSaleOrder} from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -178,6 +182,9 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import {getQueryConfirm} from '@/utils';
+import {batchRevokeOrder} from '@/api/purchasingAndOutsourcingOrders';
+import {ApprovalStatus, DocumentStatus} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
   name: 'orderList',
   components: { Form, ExportForm, SuperQuery,      PrintBrowse,
@@ -429,6 +436,29 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+      checkSelectable(row) {
+          return row.orderState === 'not_finish'
+              && row.documentStatus === DocumentStatus.SUBMIT
+              && row.approvalStatus !== ApprovalStatus.ING
+      },
+      async backFn(){
+          await getQueryConfirm(this,'是否确认撤回')
+          const arr =this.$refs.dataTable.getCurrentSelection()
+
+          if(arr.length === 0){
+              this.$message.error('请选择要撤回的数据')
+              return
+          }
+          console.log(arr);
+          const res =await batchRevokeSaleOrder(arr.map(item=>item.id))
+          if(res.code === 200){
+              this.$message.success('撤回成功')
+              this.initData()
+          }else{
+              this.$message.error(res.msg)
+          }
+
+      },
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -445,9 +475,9 @@ export default {
       });
     },
     printFun(id) {
-      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项
       this.formId = id
-      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)

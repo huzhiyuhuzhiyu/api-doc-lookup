@@ -148,6 +148,27 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.weight" placeholder="重量"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.proportion" placeholder="比重"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="price" label="含税单价" width="130">
                       <template slot="header">
                         <span class="required">*</span>
@@ -396,6 +417,27 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
+                <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.weight" placeholder="重量"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.proportion" placeholder="比重"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                      </template>
+                    </el-table-column>
                 <el-table-column prop="price" label="含税单价" width="130">
                   <template slot="header">
                     <span class="required">*</span>
@@ -738,6 +780,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
+      isProportionSwitch:'',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -1042,6 +1085,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getOrderFiledMap()
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
     // this.handleChange()
@@ -1093,6 +1137,11 @@ export default {
         this.isDeputyUnitSwitch = res.data.configValue1
       })
     },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -1109,6 +1158,12 @@ export default {
       this.$nextTick(() => {
         this.$refs.inputRef.$refs.input.focus()
       })
+    },
+    computedNumFun(data, index) {
+      if (data.proportion && data.weight) {
+        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
+        this.watchNum(data, index)
+      }
     },
     closeScanDiaFun() {
       this.scanDialog = false
@@ -1181,6 +1236,7 @@ export default {
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
       return (rule, value, callback) => {
+        console.log(value,'kkk')
         let index = Number(rule.field.match(/\d+/)[0])
         let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
         if (!value || value == 0) {
@@ -1765,6 +1821,7 @@ export default {
           console.log('ooooooo', item)
           item.ordersNo = item.orderNo
           this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+          this.$set(item, 'discount', 1)
         })
       }
       if (this.dataForm.id) {
@@ -1871,11 +1928,13 @@ export default {
         this.dataForm.documentStatus = value
         if (!valid) {
           submitFlag = false
+          this.btnLoading = false
         }
       })
       this.$refs['productForm'].validate((valid) => {
         if (!valid) {
           submitFlag = false
+          this.btnLoading = false
         }
       })
       if (submitFlag) {
@@ -1911,6 +1970,7 @@ export default {
           const item = this.dataFormTwo.productData[index]
           if (!item.receivedQuantity && item.productsId) {
             submitFlag = false
+            this.btnLoading = false
             this.$message({
               message: '请输入第' + (index + 1) + '行产品的收货数量',
               type: 'error',
@@ -1920,6 +1980,7 @@ export default {
           }
           if (Number(item.receivedQuantity) == 0) {
             submitFlag = false
+            this.btnLoading = false
             this.$message({
               message: '第' + (index + 1) + '行产品的收货数量必须大于0',
               type: 'error',
@@ -1943,6 +2004,9 @@ export default {
             // notificationType: item.notificationType,
             oil: item.oil,
             oilQuantity: item.oilQuantity,
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount,
             ordersLineId: item.ordersLineId,
             packagingMethod: item.packagingMethod,
             packingQuantity: item.packingQuantity,
@@ -2005,7 +2069,10 @@ export default {
             taxRate: item.taxRate ? item.taxRate : '',
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount,
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)
@@ -2022,16 +2089,12 @@ export default {
           // obj.notice.deliveryStatus = 'not_returned'
           formMethod = addpurPurchaseReceiptReturnGoods
         }
+
+      }
+      if (submitFlag) {
         formMethod(obj)
           .then((res) => {
-            // let msg = "";
-            // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-            //   msg = "新建成功"
-            // } else if (value == 'draft') {
-            //   msg = "保存成功"
-            // } else if (value == 'submit') {
-            //   msg = '提交成功'
-            // }
+        
             if (value == 'draft') {
               this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {

@@ -43,6 +43,7 @@
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
+                <el-button :disabled="tableDataList.length <= 0" size="mini" type="primary" icon="iconfont  icon-chehui1" @click="backFn">撤回</el-button>
             </topOpts>
 
             <div class="JNPF-common-head-right">
@@ -118,12 +119,12 @@
 <script>
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
-  purchaseOrderList,
-  purPurchaseOrderdetail,
-  purPurchaseBatch,
-  purPurchaseBatchLine,
-  deletePurPurchaseOrder
-} from '@/api/purchasingAndOutsourcingOrders/index'
+    purchaseOrderList,
+    purPurchaseOrderdetail,
+    purPurchaseBatch,
+    purPurchaseBatchLine,
+    deletePurPurchaseOrder, batchRevokeOrder,
+} from '@/api/purchasingAndOutsourcingOrders/index';
 import JNPFForm from './Form'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
@@ -135,6 +136,8 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { CreateForm } from '../orderCreation/index.vue'
+import {getQueryConfirm} from '@/utils';
+import {ApprovalStatus, DocumentStatus} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
   name: 'orderList',
   components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, CreateForm },
@@ -320,6 +323,23 @@ export default {
   },
 
   methods: {
+    async backFn(){
+          await getQueryConfirm(this,'是否确认撤回')
+          const arr =this.$refs.tableForm.getCurrentSelection()
+          if(arr.length === 0){
+              this.$message.error('请选择要撤回的数据')
+              return
+          }
+          console.log(arr);
+          const res =await batchRevokeOrder(arr.map(item=>item.id))
+          if(res.code === 200){
+              this.$message.success('撤回成功')
+              this.initData()
+          }else{
+              this.$message.error(res.msg)
+          }
+
+  },
     // 获取合计数据
     getOrderLineReportFun() {
       let count = 0
@@ -372,6 +392,8 @@ export default {
     },
     checkSelectable(row) {
       return row.receivingStatus == 'not_finished'
+          && row.documentStatus === DocumentStatus.SUBMIT
+          && row.approvalStatus !== ApprovalStatus.ING
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleFinshData(val) {

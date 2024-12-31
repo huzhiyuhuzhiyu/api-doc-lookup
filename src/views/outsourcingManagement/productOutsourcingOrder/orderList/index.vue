@@ -43,6 +43,7 @@
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
+            <el-button :disabled="tableDataList.length <= 0" size="mini" type="primary" icon="iconfont  icon-chehui1" @click="backFn">撤回</el-button>
             </topOpts>
 
             <div class="JNPF-common-head-right">
@@ -76,6 +77,13 @@
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="180" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" width="120" sortable="custom" />
             <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
+              <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+                  <template slot-scope="scope">
+                      <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>
+                      <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.SUBMIT">提交</el-tag>
+                      <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
+                  </template>
+              </el-table-column>
             <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'not_finished'">
@@ -91,8 +99,8 @@
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
-                  :editDisabled="scope.row.documentStatus !== 'draft'"
-                  :delDisabled="scope.row.documentStatus !== 'draft'">
+                  :editDisabled="scope.row.documentStatus === DocumentStatus.SUBMIT"
+                  :delDisabled="scope.row.documentStatus === DocumentStatus.SUBMIT">
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                     查看详情
                   </el-button>
@@ -118,12 +126,12 @@
 <script>
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
-  purchaseOrderList,
-  purPurchaseOrderdetail,
-  purPurchaseBatch,
-  purPurchaseBatchLine,
-  deletePurPurchaseOrder
-} from '@/api/purchasingAndOutsourcingOrders/index'
+    purchaseOrderList,
+    purPurchaseOrderdetail,
+    purPurchaseBatch,
+    purPurchaseBatchLine,
+    deletePurPurchaseOrder, batchRevokeOrder,
+} from '@/api/purchasingAndOutsourcingOrders/index';
 import JNPFForm from './Form'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
@@ -134,8 +142,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { CreateForm } from '../orderCreation/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import {ApprovalStatus, DocumentStatus} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
+import {getQueryConfirm} from '@/utils';
 export default {
   name: 'orderList',
+    computed: {
+        DocumentStatus() {
+            return DocumentStatus
+        }
+    },
   components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, CreateForm },
   data() {
     return {
@@ -319,6 +334,23 @@ export default {
   },
 
   methods: {
+    async backFn(){
+        await getQueryConfirm(this,'是否确认撤回')
+        const arr =this.$refs.tableForm.getCurrentSelection()
+        if(arr.length === 0){
+            this.$message.error('请选择要撤回的数据')
+            return
+        }
+        console.log(arr);
+        const res =await batchRevokeOrder(arr.map(item=>item.id))
+        if(res.code === 200){
+            this.$message.success('撤回成功')
+            this.initData()
+        }else{
+            this.$message.error(res.msg)
+        }
+
+    },
     // 获取合计数据
     getOrderLineReportFun() {
       let count = 0
@@ -371,6 +403,8 @@ export default {
     },
     checkSelectable(row) {
       return row.receivingStatus == 'not_finished'
+          && row.documentStatus === DocumentStatus.SUBMIT
+          && row.approvalStatus !== ApprovalStatus.ING
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleFinshData(val) {

@@ -1,6 +1,15 @@
 import request from '@/utils/request'
 // 销售订单-根据条件查询 订单列表
 
+export function batchRevokeSaleOrder(data) {
+    return request({
+        url: `/api/erp/sale/orders/revoke`,
+        method: 'POST',
+        data
+    })
+}
+
+
 export function getsaleOrderList(data) {
     return request({
       url: `/api/erp/sale/orders/list`,
@@ -146,7 +155,7 @@ export function distribute(data) {
     method: 'post',
     data: data
   })
-} 
+}
 
 
 // 一键分配转计划
@@ -157,7 +166,7 @@ export function distributeTransferPlan(data) {
     method: 'post',
     data: data
   })
-} 
+}
 
 // 销售订单明细-报表
 
@@ -167,7 +176,7 @@ export function getOrderLineReport(data) {
     method: 'post',
     data: data
   })
-} 
+}
 
 
 // 销售订单  新增订单时 保存所选的产品属性
@@ -177,7 +186,7 @@ export function addBimProductAttributesRecord(data) {
     method: 'post',
     data: data
   })
-} 
+}
 // 获取历史属性数据
 export function getBimProductAttributesRecordList(data) {
   return request({
@@ -185,7 +194,7 @@ export function getBimProductAttributesRecordList(data) {
     method: 'post',
     data: data
   })
-} 
+}
 // 删除历史属性
 
 export const delBimProductAttributesRecord = (id) => {

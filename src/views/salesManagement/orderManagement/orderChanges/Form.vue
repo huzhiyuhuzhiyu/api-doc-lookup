@@ -484,6 +484,8 @@ export default {
           })
           a.forEach(item => {
             let obj = {
+              pairingModeName:item.pairingModeName ? item.pairingModeName : "",
+              contractNo:item.contractNo ? item.contractNo : "",
               productCode: item.productCode ? item.productCode : "",
               productName: item.productName ? item.productName : "",
               drawingNo: item.drawingNo ? item.drawingNo : "",

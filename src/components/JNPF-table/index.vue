@@ -160,7 +160,7 @@ export default {
   methods: {
   /**
    * 获取表格实例 在此promise后可以获取到表格实例
-   * @returns {null}
+   * @returns {ElTable}
    */
     getTableRef(){
         return this.tableRealRefPromise
@@ -318,12 +318,10 @@ export default {
       }
       return arr
     },
-    doLayout() {
-      setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs && this.$refs.JNPFTable && this.$refs.JNPFTable.doLayout()
-        })
-      }, 50)
+    async doLayout() {
+          await this.getColumns()
+          const ref = await this.getTableRef()
+          ref.doLayout()
     },
     setColumn(list) {
       // 如果list没有带有minWidth属性的项，则给所有的展示项的width都改为minWidth

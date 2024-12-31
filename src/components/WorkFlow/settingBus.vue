@@ -112,22 +112,22 @@ export default {
   },
   created() {
     let {  directorMaxLevel, tableId ,flowPermission} = this.dataInit
-    this.directorMaxLevel = directorMaxLevel; 
+    this.directorMaxLevel = directorMaxLevel;
     this.flowPermission = this.nodeFirst
-    this.busType = 'busing' 
+    this.busType = 'busing'
     this.codeList = []
 
   },
   methods: {
     ...mapMutations('workflow', ['SET_TABLE_ID', 'SET_IS_TRIED']),
-  
-    initData(type,btnType) { 
+
+    initData(type,btnType) {
       // this.$store.commit('workflow/SET_TABLE_ID', id)
       // this.btnType = btnType
       // console.log(this.btnType,'__________');
     },
     // 节点未填错误提示
-    reErr({ childNode }) { 
+    reErr({ childNode }) {
       if (childNode) {
         let { nodeType, error, nodeName, conditionNodes, code } = childNode
         if (nodeType == 1 || nodeType == 2) {
@@ -151,8 +151,8 @@ export default {
       }
     },
     flattenNodes(node, flattenedNodes = [],previousCode = '') {
-      if (node) { 
-   
+      if (node) {
+
         if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null });
         if (node.type === 'node') {
 
@@ -164,7 +164,7 @@ export default {
         } else if (node.type === 'condition' && node.name === '路由') {
           if (node.conditionNodes) {
             for (let i = 0; i < node.conditionNodes.length; i++) {
-              
+
                 // let previousCode = node.conditionNodes[i].code
                 node.conditionNodes[i].previousCode = previousCode
               this.flattenNodes(node.conditionNodes[i], flattenedNodes,node.conditionNodes[i].code);
@@ -191,18 +191,18 @@ export default {
         this.tipVisible = true;
         this.btnLoading = false
         return;
-      } 
+      }
       // console.log(this.flowPermission);
       this.processConfig.flowPermission = this.flowPermission
       let data = JSON.parse(JSON.stringify(this.nodeConfig))
-      let flattenedNodes = this.flattenNodes(data); 
+      let flattenedNodes = this.flattenNodes(data);
       flattenedNodes.splice(0, 1)
       // return
       if (!flattenedNodes.length) {
         this.$message.error('请至少添加一个节点！')
         this.btnLoading = false
         return
-      } 
+      }
       flattenedNodes = flattenedNodes.map(item => {
         return {
           ...item,
@@ -215,7 +215,7 @@ export default {
       let ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
       // 条件节点数组 nodeJudgmentList
       let nodeJudgmentList = flattenedNodes.filter(item => item.type === 'condition')
- 
+
       // console.log(nodeJudgmentList[0].conditionNodes, '条件');
       // 找到第一个类型为"condition"的数据项的上一个数据项的"code"值
       // let previousCode = "";
@@ -235,7 +235,7 @@ export default {
       //   if (i!== 0 && flattenedNodes[i].type === "condition" && flattenedNodes[i].priorityLevel !== "" && flattenedNodes[i].priorityLevel !== '1') {
       //     flattenedNodes[i].previousCode = previousCode;
       //   }
-      // } 
+      // }
       // return
       templateLineList = flattenedNodes.map((item, index) => {
         return {
@@ -273,7 +273,7 @@ export default {
           }
         })
       }
- 
+
       this.workFlowTemplate.documentStatus = submitType
       let msg = this.workFlowTemplate.documentStatus == 'draft' ? '保存成功' : '提交成功'
       let _data = {
@@ -281,10 +281,10 @@ export default {
         nodeJudgmentList: nodeJudg,
         template: this.workFlowTemplate,
         templateLineList
-      } 
+      }
 
       // return
-      let res = await addApprovalFlow(_data) 
+      let res = await addApprovalFlow(_data)
       if (res.msg === 'Success') {
         this.$message({
           message: msg,
@@ -310,7 +310,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "./css/workflow.css";
+//@import "./css/workflow.css";
 
 .error-modal-list {
   width: 455px;

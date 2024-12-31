@@ -95,13 +95,13 @@ export default {
               if (tableList.length) {
                 for (let j = 0; j < tableList.length; j++) {
                   const tableObj = tableList[j];
-                  tableObj.style.border = '1px solid gray'
+                  // tableObj.style.border = '1px solid gray'
                   let tds = []
                   let newTable = []
                   for (let i = 0; i < tableObj.rows.length; i++) {
                     tds = tableObj.rows[i]
                     tds.style.height = '22px'
-                    tds.style.border = '1px solid gray'
+                    // tds.style.border = '1px solid gray'
                     const dataTag = this.isChildTable(tds.cells)
                     if (dataTag) {
                       this.retrieveData(dataTag, tableObj, tds, newTable, t)
@@ -121,12 +121,13 @@ export default {
             if (tableList.length) {
               for (let j = 0; j < tableList.length; j++) {
                 const tableObj = tableList[j];
-                tableObj.style.border = '1px solid gray'
+                // tableObj.style.border = '1px solid gray'
                 let tds = []
                 let newTable = []
                 for (let i = 0; i < tableObj.rows.length; i++) {
                   tds = tableObj.rows[i]
                   tds.style.height = '22px'
+                  // tds.style.border = '1px solid gray'
                   const dataTag = this.isChildTable(tds.cells)
                   if (dataTag) {
                     this.retrieveDataTwo(dataTag, tableObj, tds, newTable)
@@ -211,7 +212,7 @@ export default {
       outer: for (let j = 0; j < cells.length; j++) {
         const cell = cells[j];
         cell.style.height = '22px'
-        cell.style.border = '1px solid gray'
+        // cell.style.border = '1px solid gray'
         let spanList = cells[j].getElementsByTagName('span')
         if (!spanList.length) break outer;
         let hasChildTable = false
@@ -236,7 +237,7 @@ export default {
       for (let key in data) {
         for (let j = 0; j < tds.cells.length; j++) {
           tds.cells[j].style.height = '22px'
-          tds.cells[j].style.border = '1px solid gray'
+          // tds.cells[j].style.border = '1px solid gray'
           let spanList = tds.cells[j].getElementsByTagName('span')
           for (let i = 0; i < spanList.length; i++) {
             if (`{${key}}` === spanList[i].innerHTML) {
@@ -379,7 +380,7 @@ export default {
         iframe.setAttribute('style', 'position: absolute; width: 0;height: 0;');
         document.body.appendChild(iframe);
         const doc = iframe.contentWindow.document;
-        // 4. 写入内容// 
+        // 4. 写入内容//
         doc.write('<style media="print"> @page {margin: 5mm; padding: 0;}</style>');
         doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`);
         doc.write(newStr);
@@ -515,6 +516,11 @@ export default {
 th {
   border: 1px solid gray !important;
 
+}
+table,
+td,
+th {
+    border: 1px solid
 }
 </style>
 <style lang="scss" scoped>

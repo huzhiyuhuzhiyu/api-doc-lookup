@@ -122,7 +122,7 @@ export default {
         }],
         pageNum: 1,
         pageSize: -1,
-        classAttribute: 'inspection_items',
+        type: 'inspection_items',
       },
       requestObjTwo: {
         orderItems: [{

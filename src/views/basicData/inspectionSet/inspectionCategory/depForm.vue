@@ -11,7 +11,7 @@
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
         label-position="top" label-width="120px" hide-required-asterisk="fasle">
         <el-form-item label="上级分类" prop="parentName">
-          <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
+          <inspectionComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
             :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.type" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
@@ -45,8 +45,9 @@
 
 <script>
 import { detailCategory, updateCategory, addCategory, checkCategoryCode } from "@/api/basicData/materialSettings"
-
+import inspectionComSelect3 from "./component/ComSelect3";
 export default {
+  components:{inspectionComSelect3},
   data() {
     return {
       visible: false,

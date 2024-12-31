@@ -74,6 +74,16 @@ export default {
     }
   },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {
+      }
+    },
     init(id, parentId) {
       this.visible = true
       this.dataForm.id = id || ''
@@ -89,12 +99,14 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
+          this.fetchData("JYLX", false)
           detailCategory(this.dataForm.id).then((res) => {
             this.dataForm = res.data
             this.organizeIdTree = res.data
             this.formLoading = false
           })
         } else {
+          this.fetchData("JYLX", true)
           this.formLoading = false
         }
       })

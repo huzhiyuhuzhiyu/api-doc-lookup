@@ -20,7 +20,7 @@
                   <el-col :span="6">
                     <el-form-item label="检验类型编码" prop="code">
                       <el-input v-model="dataForm.code" placeholder="请输入类型编码" maxlength="20"
-                        :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+                        :disabled="btntype ? true : codeConfig.modifyFlag == true ? false : true" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
@@ -262,12 +262,12 @@ export default {
       ],
       productParams: {
         code: '',
-        classAttribute: 'material',
+        type: 'material',
         // classAttributeList:["raw_material", "semi_finished", "finish_product", "accessories"],
         orderItems: [
           {
             asc: false,
-            column: 'createTime'
+            column: 'create_time'
           }
         ],
         pageNum: 1,
@@ -277,10 +277,10 @@ export default {
       productCategoryName: '', // 产品分类名称
       ProductMethodArr: [
         {
-          label: '物料分类',
-          classAttribute: 'material',
+          label: '产品分类',
+          type: 'material',
           method: getcategoryTree,
-          requestObj: { classAttribute: 'material' }
+          requestObj: { type: 'material' }
         }
       ],
       ProductListRequestObj: {
@@ -307,16 +307,15 @@ export default {
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'spec', label: '规格型号' },
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
         // { prop: 'processName', label: '工序名称' },
         { prop: 'classAttributeText', label: '产品分类' },
         { prop: 'mainUnit', label: '主单位' }
       ],
       ProductTableSearchList: [
-        { prop: 'code', label: '产品编码', type: 'input' },
-        { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'drawingNo', label: '品名规格', type: 'input' }
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productName', label: '产品名称', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
       requestObj: {
         orderItems: [

@@ -856,7 +856,7 @@ export default {
       console.log(msg, 'ooo')
       if (msg) {
       } else {
-        this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
+        this.$message.error(`请配置毛坯产品所对应主产品的BOM！`)
       }
       return msg
     },
@@ -869,7 +869,7 @@ export default {
           let item = list[i]
           console.log(item.externalProductsId, 'item.externalProductsId')
           if (!item.externalProductsId) {
-            this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
+            this.$message.error(`请配置毛坯产品所对应主产品的BOM！`)
             return false
           }
         }

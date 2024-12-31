@@ -480,7 +480,7 @@ export default {
             this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch)
           })
         } else {
-          this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
+          this.$message.error(`请配置毛坯产品所对应主产品的BOM！`)
         }
       }
     }

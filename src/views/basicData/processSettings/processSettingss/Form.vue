@@ -51,40 +51,7 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-                        <!-- <el-col :span="12">
-                          <el-form-item label="按工艺顺序报工" prop="reportRulesFlag">
-                            <el-select v-model="dataForm.reportRulesFlag" style="width:100%" :disabled="type == 'look'">
-                              <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                :value="item.value"></el-option>
-                            </el-select>
-                          </el-form-item>
-                        </el-col> -->
-                        <!-- <el-col :span="12">
-                      <el-form-item label="工艺状态" prop="state">
-                        <el-select v-model="dataForm.state" style="width:100%" :disabled="type == 'look'">
-
-                          <el-option label="启用" value="enable" />
-                          <el-option label="禁用" value="disable" />
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
-                        <!-- <el-col :span="12">
-                                    <el-form-item label="审批状态" prop="status">
-                                        <el-select v-model="dataForm.status" style="width:100%">
-                                            <el-option label="审批中" value="in_approval" />
-                                            <el-option label="审批通过" value="approved" />
-                                            <el-option label="审批未通过" value="review_failed" />
-                                        </el-select>
-                                    </el-form-item>
-                                </el-col> -->
-                        <!-- <el-col :span="12">
-                                    <el-form-item label="单据状态" prop="documentStatus">
-                                        <el-select v-model="dataForm.documentStatus">
-                                            <el-option label="草稿" value="draft" />
-                                            <el-option label="提交" value="submit" />
-                                        </el-select>
-                                    </el-form-item>
-                                </el-col> -->
+   
                         <el-col :span="12">
                           <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
                             <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"
@@ -159,6 +126,12 @@
                           </template>
                           <template v-if="scope.row.processType == 'pairs'">
                             配对工序
+                          </template>
+                          <template v-if="scope.row.processType == 'grinding'">
+                            磨孔工序
+                          </template>
+                          <template v-if="scope.row.processType == 'accuracy'">
+                            精度工序
                           </template>
                         </template>
                       </el-table-column>
@@ -453,6 +426,12 @@
                       </template>
                       <template v-if="scope.row.processType == 'pairs'">
                         配对工序
+                      </template>
+                      <template v-if="scope.row.processType == 'grinding'">
+                        磨孔工序
+                      </template>
+                      <template v-if="scope.row.processType == 'accuracy'">
+                        精度工序
                       </template>
                     </template>
                   </el-table-column>
@@ -958,6 +937,10 @@ export default {
           item.processTypeName = '包装工序'
         } else if (item.processType == 'pairs') {
           item.processTypeName = '配对工序'
+        } else if (item.processType == 'grinding') {
+          item.processTypeName = '磨孔工序'
+        } else if (item.processType == 'accuracy') {
+          item.processTypeName = '精度工序'
         }
         return item
       })
@@ -1553,8 +1536,8 @@ export default {
     },
     // 抽屉提交
     handlerConfirm(data) {
-        console.log('抽屉提交');
-        console.log(this.dataFormTwo[this.currntIndex],data);
+      console.log('抽屉提交');
+      console.log(this.dataFormTwo[this.currntIndex], data);
       this.dataFormTwo[this.currntIndex].bimRoutingProcessResourceDTOList = data
       this.sourceVisibled = false
     },

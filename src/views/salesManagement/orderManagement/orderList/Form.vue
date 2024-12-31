@@ -1466,8 +1466,7 @@ export default {
     // 选择配对方式 强行将单位改成对
     changePairingMode(value,scope) {
       if (value) {
-          this.productData[scope.$index].mainUnit="对"
-          this.productData[scope.$index].deputyUnit="对"
+        this.productData[scope.$index].deputyUnit=this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
       }
     },
 
@@ -1803,8 +1802,8 @@ export default {
           // this.productData.push(res.data.records[0])
           if (res.data.records.length) {
             if(res.data.records[0].pairingModeId){
-              res.data.records[0].mainUnit="对"
-              res.data.records[0].deputyUnit="对"
+              res.data.records[0].deputyUnit=res.data.records[0].mainUnit=this.pairingModeList.filter(items => items.id === res.data.records[0].pairingModeId)[0].unit
+              
             }
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
             this.$set(this.productData, index, res.data.records[0])
@@ -2249,8 +2248,9 @@ export default {
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
         if(item.pairingModeId){
-          item.mainUnit="对"
-          item.deputyUnit="对"
+       
+          item.deputyUnit=item.mainUnit=this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].unit
+
         }
         this.$set(item, 'pairingModeName', '')
         if (item.taxRate) {
@@ -3023,15 +3023,15 @@ export default {
                   })
                   break
                 }
-                if (!item.taxRate) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的税率不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
+                // if (!item.taxRate) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的税率不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
               }
             }
             console.log("productData", this.productData);

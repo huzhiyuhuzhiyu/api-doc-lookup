@@ -151,6 +151,8 @@
           <el-table-column prop="contacts" label="联系人" width="90" />
           <el-table-column prop="phone" label="电话" width="100" />
           <el-table-column prop="mobilePhone" label="手机号" width="120" />
+          <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" min-width="120" />
+          <el-table-column prop="salespersonIdText" label="所属采购" sortable="custom" min-width="120" />
           <!-- <el-table-column prop="fax" label="传真" width="160" /> -->
           <!-- <el-table-column prop="zipCode" label="邮编" width="160" /> -->
           <el-table-column prop="email" label="邮箱" width="100" />

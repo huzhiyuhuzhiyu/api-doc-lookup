@@ -191,17 +191,15 @@
                       <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
-                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :disabled="btnType == 'look' ? true : false"  @change="(value) => changePairingMode(value,scope)">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" 
                               :value="item.id">
                             </el-option>
                           </el-select>
                         </template>
                       </el-table-column>
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120">
-                        <template slot-scope="scope">
-                          <div>{{ scope.row.pairingModeId ? '对' : scope.row.mainUnit }}</div>
-                        </template>
+                   
                       </el-table-column>
 
                       <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
@@ -215,9 +213,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1">
-                        <template slot-scope="scope">
-                          <div>{{ scope.row.pairingModeId ? '对' : scope.row.deputyUnit }}</div>
-                        </template>
+                    
                       </el-table-column>
                       <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                       <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="8" />
@@ -949,6 +945,11 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
+    changePairingMode(value,scope) {
+      if (value) {
+        this.productData[scope.$index].deputyUnit=this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
+      }
+    },
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -1925,15 +1926,7 @@ export default {
           // 自动聚焦未使用则提交
           if (submitFlag) {
             this.dataForm.documentStatus = submitModel
-            this.productData.forEach(item => {
-              item.id = ""
-              if (item.pairingModeId) {
-                item.mainUnit = "对"
-                item.deputyUnit = "对"
-              }
-            }
-
-            )
+         
             const formMethod = this.dataForm.id ? updateWarehouseData : addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))

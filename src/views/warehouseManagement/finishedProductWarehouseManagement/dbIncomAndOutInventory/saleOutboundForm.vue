@@ -1107,6 +1107,7 @@ export default {
             item.costPrice = item.price
             item.num = item.waitDeliverNum
             item.ordersLineId = item.id
+            this.$set(item,'sourceNo',item.orderNo)
             item.taxRates = item.taxRate + "%"
             item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
             let taxrate = 1 * 1 + (item.taxRate) / 100 * 1

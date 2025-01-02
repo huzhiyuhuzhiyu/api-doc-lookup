@@ -15,3 +15,16 @@ export function planImport(data) {
       data
   })
 }
+
+/**
+ * 获取完工记录列表  type	类型 0待包装 1已包装
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function getWorkFinishList(data){
+    return request({
+        url: `/api/zgt/proWorkFinish/package/page`,
+        method: 'post',
+        data
+    })
+}

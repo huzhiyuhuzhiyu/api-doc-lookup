@@ -5,17 +5,17 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[0].fieldValue" placeholder="工序名称" clearable />
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.processName" placeholder="工序名称" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[1].fieldValue" placeholder="品名规格" clearable />
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.drawingNo" placeholder="品名规格" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.superQuery.condition[2].fieldValue" placeholder="生产任务单号" clearable />
+                            <el-input @clear="search" @keyup.enter.native="search" v-model="listQuery.productionOrderNo" placeholder="生产任务单号" clearable />
                         </el-form-item>
                     </el-col>
 
@@ -49,30 +49,32 @@
                     :fixedNO="true"
                     @sort-change="sortChange"
                     custom-column
-                    enabled-checkbox-plus
                     :hasC="false"
                     ref="dataTable" :setColumnDisplayList="columnList">
-                    <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
-                    <el-table-column prop="processName" label="工序名称" width="120"  />
-                    <el-table-column prop="productCode" label="工序编码" min-width="305" />
-                    <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" />
-                    <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="120" />
-                    <el-table-column prop="unit" label="单位" width="120"/>
-                    <el-table-column prop="num" label="完成数量" width="120">
+                    <el-table-column sortable="custom" prop="processName" label="工序名称" width="120"  />
+                    <el-table-column sortable="custom" prop="processCode" label="工序编码" min-width="305" />
+                    <el-table-column sortable="custom" prop="planStartDate" label="计划开始日期" min-width="160" />
+                    <el-table-column sortable="custom" prop="planEndDate" label="计划结束日期" min-width="160" />
+                    <el-table-column sortable="custom" prop="vibrationLevel" label="振动等级" min-width="120" />
+                    <el-table-column sortable="custom" prop="pairingModeName" label="配对方式" min-width="120" />
+                    <template v-if="mainUnitFlag">
+                        <el-table-column sortable="custom" prop="mainUnit" label="单位（主）" width="120" />
+                        <el-table-column sortable="custom" prop="deputyUnit" label="单位（副）" width="120" />
+                    </template>
+                    <el-table-column  sortable="custom" v-else prop="mainUnit" label="单位" width="120" />
+                    <el-table-column sortable="custom" prop="num" label="完成数量" width="120">
                         <template slot-scope="scope">
-                            {{scope.row.pairingModeName ? scope.row.pairingModeNum : scope.row.num}}
+                            {{scope.row.pairingModeId ? scope.row.matchedQuantity : scope.row.completedQuantity}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="packageNum" label="已包装数量" width="120"/>
-                    <el-table-column prop="packageMethod" label="包装方式" v-if="isHistory" width="120"/>
-                    <el-table-column prop="productTaskNo" label="生产任务单号" width="120"/>
-                    <el-table-column prop="drawingNo" label="品名规格" width="120"/>
-                    <el-table-column prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
-                    <el-table-column prop="code" label="产品编码" v-if="isAssemble" width="120"/>
-                    <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-                    <el-table-column prop="createByName" label="创建人" width="100" />
+                    <el-table-column sortable="custom" prop="packagingQuantity" label="已包装数量" width="120"/>
+                    <el-table-column sortable="custom" prop="packagingMethod" label="包装方式" v-if="isHistory" width="120"/>
+                    <el-table-column sortable="custom" prop="productionOrderNo" label="生产任务单号" width="180"/>
+                    <el-table-column sortable="custom" prop="drawingNo" label="品名规格" width="120"/>
+                    <el-table-column sortable="custom" prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
+                    <el-table-column sortable="custom" prop="productCode" label="产品编码" v-if="isAssemble" width="120"/>
+                    <el-table-column sortable="custom" prop="createTime" label="创建时间"  width="180" />
+                    <el-table-column sortable="custom" prop="createByName" label="创建人" width="100" />
 
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
@@ -123,14 +125,13 @@
         提交</el-button>
     </span>
         </el-dialog>
-        <PersonSelect v-if="choosePersonVisible" ref="personnelRef"  placeholder="请选择所属人员" style="width: 100%;"/>
 
     </div>
 </template>
 
 <script>
 import {
-    getbimProductAttributesList,
+    getbimProductAttributesList, getbimProductAttributesListMap,
 } from '@/api/masterDataManagement/index';
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -140,19 +141,23 @@ import {
     getBimFileUpload, switchEnableMark
 } from "@/api/esop/fileUpload/workinginstruction";
 
-import {getQueryConfirm, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from "@/utils";
+import {getQueryConfirm, getSortField, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from '@/utils';
 import {
-    executeQueryTime,
-} from "@/views/esop/utils/utils";
+    executeQueryTime, filterArr,
+} from '@/views/esop/utils/utils';
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import ProductNameFlagMixin from '@/mixins/generator/ProductNameFlagMixin';
+import MainUnitFlagMixin from '@/mixins/generator/MainUnitFlagMixin';
+import {getWorkFinishList} from '@/api/productionManagement';
+import BusinessFieldMixin from '@/mixins/generator/BusinessFieldMixin';
+import jnpf from '@/utils/jnpf';
 
 
 
 export default {
     components: {   ExportForm, SuperQuery },
     name:"historyPackageRecord",
-    mixins:[AbProjectMixin,ProductNameFlagMixin],
+    mixins:[AbProjectMixin,ProductNameFlagMixin,MainUnitFlagMixin,BusinessFieldMixin],
     props:{
         isHistory:{
             type:Boolean,
@@ -194,7 +199,7 @@ export default {
             fileUploadId:"",
             tableFormVisible: false,
             exportFormVisible: false,
-            columnList: ['remark', 'createByName','code'],
+            columnList: ['createByName'],
             createTimeArr: [],
             title: '更多查询',
             visible: false,
@@ -204,30 +209,69 @@ export default {
             total: 0,
             formVisible: false,
             superQueryVisible: false,
-            superQueryJson: [
+            superQueryJson:filterArr([
                 {
-                    prop: '上传单编码',
-                    label: '型号',
-                    type: 'orderNo'
+                    prop: 'processName',
+                    label: '工序名称',
+                    type: 'input'
+                },{
+                    prop: 'processCode',
+                    label: '工序编码',
+                    type: 'input'
+                }, {
+                    prop: 'planStartDate',
+                    label: '计划开始日期',
+                    type: 'date',
+                    valueFormat: 'yyyy-MM-dd',
+                    pickerOptions: this.global.timePicker
                 },
                 {
+                    prop: 'planEndDate',
+                    label: '计划结束日期',
+                    type: 'date',
+                    valueFormat: 'yyyy-MM-dd',
+                    pickerOptions: this.global.timePicker
+                },{
+                    prop: 'vibrationLevel',
+                    label: '振动等级',
+                    type: 'select',
+                    options: []
+                },{
+                    prop: 'pairingModeId',
+                    label: '配对方式',
+                    type: 'select',
+                    options: []
+                },{
+                    prop: 'packagingMethod',
+                    label: '包装方式',
+                    type: 'select',
+                    options: [],
+                    visible: this.isHistory
+                }, {
+                    prop: 'productionOrderNo',
+                    label: '生产任务单号',
+                    type: 'input',
+                },{
                     prop: 'drawingNo',
                     label: '品名规格',
-                    type: 'input'
-                },
-
-                {
-                    prop: 'productsCode',
+                    type: 'input',
+                },{
+                    prop: 'productName',
+                    label: '产品名称',
+                    type: 'input',
+                },{
+                    prop: 'productCode',
                     label: '产品编码',
-                    type: 'input'
+                    type: 'input',
+                    visible: !this.isHistory
+                },{
+                    prop: 'createTime',
+                    label: '创建时间',
+                    type: 'date',
+                    valueFormat: 'yyyy-MM-dd',
+                    pickerOptions: this.global.timePicker
                 },
-                {
-                    prop: 'productsCategoryName',
-                    label: '产品分类',
-                    type: 'input'
-                },
-
-            ],
+            ]) ,
         }
     },
     async mounted() {
@@ -236,10 +280,12 @@ export default {
             await Promise.all([
                 this.initData(),
                 this.awaitAbProject(),
-                this.awaitGetProductNameFlag()
+                this.awaitGetProductNameFlag(),
+                this.awaitMainUnitFlag(),
+                this.getBusinessFieldFlag()
             ])
         }catch (e) {
-
+            console.log(e);
         }finally {
             this.tableLoading = false
             this.$refs.dataTable.doLayout()
@@ -278,108 +324,57 @@ export default {
         submitReportFun(){
 
         },
-        superQueryVisibleShow(){
-            const common =[     {
-                prop: 'documentStatus',
-                label: "单据状态",
-                type: 'select',
-                options: [
-                    { label: '草稿', value: 'draft' },
-                    { label: '提交', value: 'submit' },
-                    { label: '退回', value: 'back' }
-                ]
-            },
+       async superQueryVisibleShow(){
+           const res=   await this.jnpf.getpairingModeListFun()
+            this.superQueryJson.forEach(item=>{
+                if(item.prop === 'vibrationLevel') {
+                    item.options = this.vibrationLevelList
 
-                {
-                    prop: 'createTime',
-                    label: '创建时间',
-                    type: 'daterange',
-                    valueFormat: 'yyyy-MM-dd HH:mm:ss',
-                    startPlaceholder: '开始日期',
-                    endPlaceholder: '结束日期',
-                    pickerOptions: this.global.timePickerOptions
-                },
-                {
-                    prop: 'createByName',
-                    label: '创建人',
-                    type: 'input'
-                },]
-
-            let res =[];
-            if(!this.isNoProductPage || this.isImage){
-                res=[
-                    {
-                        prop: 'drawingNo',
-                        label: '品名规格',
-                        type: 'input'
-                    },  {
-                        prop: 'productsCode',
-                        label: '产品编码',
-                        type: 'input'
-                    },{
-                        prop: 'productsCategoryName',
-                        label: '产品分类',
-                        type: 'input'
-                    },
-                ]
-            }else{
-
-
-                res =[
-                    {
-                        prop: 'categoryName',
-                        label: '文件分类',
-                        type: 'input'
-                    },
-                ]
-            }
-            this.superQueryJson =[
-                ...res,
-                ...common
-            ]
+                }else if(item.prop === 'pairingModeId') {
+                    item.options = res.map(item => ({
+                        label: item.name,
+                        value: item.id
+                    }))
+                } else if(item.prop === 'packagingMethod') {
+                    item.options = this.packagingMethodList
+                }
+            })
             this.superQueryVisible = true
         },
         getOriginListQuery() {
-            return {
-                applicationType:this.applicationType,
-                approvalStatus: this.approvalStatus,
+            return{
                 createByName: "",
-                documentStatus: this.documentStatus,
+                drawingNo: "",
                 endTime: "",
                 endUpdateTime: "",
                 keyword: "",
+                orderEndDate: "",
                 orderItems: [
                     {
                         asc: false,
                         column: "create_time"
                     }
                 ],
-                orderNo: "",
+                orderStartDate: "",
                 pageNum: 1,
                 pageSize: 20,
+                processName: "",
+                productionOrderNo: "",
+                projectId: 0,
                 startTime: "",
                 startUpdateTime: "",
                 superQuery: {
                     condition: [
                         {
-                            field: "processName",
+                            field: "",
                             fieldValue: "",
-                            symbol: "like"
-                        },
-                        {
-                            field: "drawingNo",
-                            fieldValue: "",
-                            symbol: "like"
-                        },
-                        {
-                            field: "code",
-                            fieldValue: "",
-                            symbol: "like"
-                        },
-                    ],
+                            symbol: ""
+                        }
+                     ],
                     matchLogic: ""
                 },
-                totalRowFlag: false
+                totalRowFlag: false,
+                type: +this.isHistory
             }
         },
 
@@ -393,29 +388,17 @@ export default {
             console.log('this.$refs.dataTable', this.$refs.dataTable)
             this.$refs.dataTable.showDrawer()
         },
-        sortChange({prop, order}) {
-            let newProp = ''
-            if (prop == 'steelBall' || prop == 'outerCircle' || prop == 'innerCircle' || prop == 'createByName') {
-                newProp = prop
-            } else {
-                newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-            }
-            this.listQuery.orderItems[0].asc = order === 'ascending'
-            this.listQuery.orderItems[0].column = order === null ? '' : newProp
+        sortChange(item) {
+            this.listQuery.orderItems[0] = getSortField(item,
+                ['drawingNo','pairingModeName','processCode','processName','productCode','productName','productionOrderNo'])
+
             this.initData()
         },
-        executeUploadPageParams(params) {
-            if (this.isFileUploadPage) {
-                params.uploadListFlag = 1
-                delete params.documentStatus
-            }
-        },
+
         async initData(query={}) {
             this.listLoading = true
             const params = {...this.listQuery,...query}
-            params.superQuery.condition[0].fieldValue === '' && delete params.superQuery
-            this.executeUploadPageParams(params)
-            const {data} = await getBimFileUpload(params)
+            const {data} = await getWorkFinishList(params)
             this.tableData = data.records
             this.total = data.total
             this.listLoading = false
@@ -427,7 +410,7 @@ export default {
             this.initData(query)
         },
         reset() {
-            this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+            // this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
             this.createTimeArr = []
             this.listQuery = this.getOriginListQuery()
             this.$refs.SuperQuery.conditionList = []

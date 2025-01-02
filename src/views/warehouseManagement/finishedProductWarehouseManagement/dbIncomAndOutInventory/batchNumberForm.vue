@@ -88,8 +88,7 @@
             <el-table-column prop="clearance" label="游隙" min-width="120" 
               sortable="custom"></el-table-column>
             <el-table-column prop="aperture" label="孔径" min-width="120"  sortable="custom"></el-table-column>
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
-              sortable="custom"></el-table-column>
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120"  />
             <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
               sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">

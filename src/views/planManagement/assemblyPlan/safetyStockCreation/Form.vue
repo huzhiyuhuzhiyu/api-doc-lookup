@@ -85,7 +85,7 @@
                   <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                        :disabled="btnType == 'look' ? true : false">
+                        :disabled="btnType == 'look' ? true : false" >
                         <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                           :value="item.id">
                         </el-option>

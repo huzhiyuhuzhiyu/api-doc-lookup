@@ -46,7 +46,7 @@
             <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
-                <el-button :disabled="tableData.length <= 0" size="mini" type="primary" icon="iconfont  icon-chehui1" @click="backFn">撤回</el-button>
+                <el-button :disabled="tableData.length <= 0" size="mini" type="primary" icon="iconfont-menu  icon-chehui" @click="backFn">撤回</el-button>
 
             </topOpts>
             <div class="JNPF-common-head-right">
@@ -101,6 +101,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+                <div v-if="scope.row.documentStatus == 'back'"><el-tag type="danger">撤回</el-tag></div>
               </template>
             </el-table-column>
 
@@ -115,10 +116,10 @@
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text"
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft'||scope.row.documentStatus=='back' ? false : true"
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
 
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.documentStatus == 'draft'||scope.row.documentStatus=='back' ? false : true"
                   @click="handleDel(scope.row.id)">删除</el-button>
                 <!-- :disabled="scope.row.documentStatus == 'draft' ? false : true" -->
                 <el-dropdown hide-on-click>

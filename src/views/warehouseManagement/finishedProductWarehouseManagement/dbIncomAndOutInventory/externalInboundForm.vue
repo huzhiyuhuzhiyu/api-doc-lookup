@@ -810,7 +810,7 @@ export default {
     },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
+        this.productData[index].num = Math.floor(data.proportion * data.weight)
         this.watchNum(data, index)
       }
     },

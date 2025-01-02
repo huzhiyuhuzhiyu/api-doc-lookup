@@ -51,7 +51,7 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-   
+
                         <el-col :span="12">
                           <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
                             <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"
@@ -1195,6 +1195,84 @@ export default {
         flag = false
         return
       }
+      if (this.dataFormTwo.length > 1) {
+        // 判断是否存在 "vibrate" 和 "accuracy"  
+        let hasVibrate = this.dataFormTwo.some(item => item.processType === "vibrate");
+        let hasAccuracy = this.dataFormTwo.some(item => item.processType === "accuracy");
+
+        let bothExist = hasVibrate && hasAccuracy;
+        if (bothExist) {
+          this.$message.error('测振工序与精度工序不能同时存在，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+        // 筛选出 processType 为 "vibrate" 的元素  
+        let vibrateItems = arr.filter(item => item.processType === "vibrate");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoreVibrate = vibrateItems.length >= 2;
+        if (hasTwoOrMoreVibrate) {
+          this.$message.error('存在多条测振工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+
+        let heatTrearmentItems = arr.filter(item => item.processType === "heat_treatment");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoreHeatTrearmentItems = heatTrearmentItems.length >= 2;
+        if (hasTwoOrMoreHeatTrearmentItems) {
+          this.$message.error('存在多条热工工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+
+        let packingItems = arr.filter(item => item.processType === "packing");
+        // 判断是否有两条及以上  
+        let hasTwoOrMorepacking = packingItems.length >= 2;
+        if (hasTwoOrMorepacking) {
+          this.$message.error('存在多条包装工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+        let pairsItems = arr.filter(item => item.processType === "pairs");
+        // 判断是否有两条及以上  
+        let hasTwoOrMorepairs = pairsItems.length >= 2;
+        if (hasTwoOrMorepairs) {
+          this.$message.error('存在多条配对工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+        let grindingItems = arr.filter(item => item.processType === "grinding");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoregrinding = grindingItems.length >= 2;
+        if (hasTwoOrMoregrinding) {
+          this.$message.error('存在多条磨孔工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+        let accuracyItems = arr.filter(item => item.processType === "accuracy");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoreaccuracy = accuracyItems.length >= 2;
+        if (hasTwoOrMoreaccuracy) {
+          this.$message.error('存在多条精度工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+      }
+
+
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {

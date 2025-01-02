@@ -4,6 +4,7 @@ import { getPositionListAll, getPositionSelector } from '@/api/permission/positi
 import { getRoleSelector } from '@/api/permission/role'
 import { getPrintDevSelector } from '@/api/system/printDev'
 import jnpf from '@/utils/jnpf';
+import { getOrderFiledMap } from '@/api/basicData'
 
 const state = {
   dictionaryList: [],
@@ -14,7 +15,8 @@ const state = {
   roleList: [],
   roleTree: [],
   printFlowTree: [],
-  printFormTree: []
+  printFormTree: [],
+  configGlobal:{}
 }
 
 const mutations = {
@@ -44,6 +46,9 @@ const mutations = {
   },
   SET_PRINT_FORM_TREE: (state, printTree) => {
     state.printFormTree = printTree
+  },
+  SET_CONFIG_GLOBAL: (state, configGlobal) => {
+    state.configGlobal = configGlobal
   }
 }
 
@@ -231,6 +236,16 @@ const actions = {
         resolve(state.printFormTree)
       }
     })
+  },
+  getBusinessConfig({ commit },type) {
+        return new Promise((resolve, reject) => {
+            getOrderFiledMap(type).then(res => {
+                if (type === 'gobal') commit('SET_CONFIG_GLOBAL', res.data)
+                resolve(res.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
   },
 }
 

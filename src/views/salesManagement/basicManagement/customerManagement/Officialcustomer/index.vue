@@ -224,6 +224,7 @@ export default {
         startTime: "",
         endTime: "",
         type: "customer",
+        saleFlag:1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -695,6 +696,33 @@ export default {
       this.programmefrom = {}
       this.programmetitle = ''
       this.filterText = ''
+      this.dataForm = {
+        partnerCategoryId: '',
+        code: "",
+        name: "",
+        taxId: "",
+        contacts: "",
+        phone: "",
+        mobilePhone: "",
+        departmentId: "",
+        salespersonIdText: "",
+        salespersonId: "",
+        internalStaffId: "",
+        startTime: "",
+        endTime: "",
+        type: "customer",
+        saleFlag:1,
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        superQuery: {}
+      }
       this.getcategoryTree()
     },
 

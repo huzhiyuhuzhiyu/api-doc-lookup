@@ -25,6 +25,11 @@
                         <el-input readonly placeholder="请选择订单" :disabled="btnType == 'look' ? true : false" v-model="dataForm.ordersNo" @focus="openOrderDia"></el-input>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                      <el-form-item label="客户合同号" prop="contractNo">
+                        <el-input placeholder="" disabled v-model="dataForm.contractNo"></el-input>
+                      </el-form-item>
+                    </el-col>
                     <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="来源单号" prop="sourceOrderNo">
                         <el-input placeholder="请输入来源单号" :disabled="btnType == 'look'" v-model="dataForm.sourceOrderNo"></el-input>
@@ -204,7 +209,7 @@ export default {
       selectFlag: false,
       sleeveItems: [
         { prop: "customerProductNo", label: "客户料号", value: "", type: 'view', width: "120", },
-        { prop: "contractNo", label: "客户合同号", value: "", type: 'view', width: "120", },
+        { prop: "contractNo", label: "客户合同号", value: "", type: 'view', width: "120", render: this.$store.getters.configGlobal.customerContractNo === '0' },
         // { prop: "customerProductDrawingNo", label: `客户规格型号`, value: "", type: 'view', width: "180", },
         { prop: "productCode", label: "产品编码", value: "", type: 'view', width: "140", },
         { prop: "productName", label: "产品名称", value: "", type: 'view', width: "120", },
@@ -421,6 +426,7 @@ export default {
           type: 'warning'
         }).then(() => {
           this.dataForm.ordersNo = row.orderNo
+          this.dataForm.contractNo = row.contractNo
           this.dataForm.sourceOrderNo = row.sourceOrderNo
           this.dataForm.ordersId = row.id
           this.orderDetailData = []

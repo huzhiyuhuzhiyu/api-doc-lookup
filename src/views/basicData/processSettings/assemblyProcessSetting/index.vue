@@ -187,13 +187,13 @@
               <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                 v-if="isTechnicalSwitch === '1'">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求" ></el-input>
+                  <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"></el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                 v-if="isCheckingSwitch === '1'">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息" ></el-input>
+                  <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"></el-input>
                 </template>
               </el-table-column>
             </JNPF-table>
@@ -235,6 +235,7 @@
     </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
+    <SetForm v-if="setFormVisible" ref="setForm" @refresh="refresh" @close="closeForm" />
   </div>
 </template>
 
@@ -257,9 +258,10 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProcessList, detailProcess } from '@/api/basicData/processSettingss'
 import getProjectList from '@/mixins/generator/getProjectList'
+import SetForm from './setForm.vue'
 export default {
   name: 'ProductionResource',
-  components: { ExportForm, SuperQuery, JNPFForm },
+  components: { ExportForm, SuperQuery, JNPFForm, SetForm },
   mixins: [getProjectList],
   data() {
     return {

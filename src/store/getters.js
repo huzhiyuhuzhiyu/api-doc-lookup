@@ -23,7 +23,7 @@ const getters = {
     leftMenuList: state => state.user.leftMenuList,
     sysConfig: state => state.settings.sysConfig,
     systemVO: state => state.settings.systemVO,
-
+    configGlobal: state => state.base.configGlobal,
     newDate: state => state.jx.newDate,
     newTimestamp: state => state.jx.newTimestamp,
     iot_data: state => state.jx.iot_data,

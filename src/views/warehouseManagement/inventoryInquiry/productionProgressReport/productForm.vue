@@ -1,36 +1,22 @@
 <template>
-  <el-dialog title="查看领料明细" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="生产任务" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
       <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="listLoading">
-        <!-- <el-row class="JNPF-common-search-box" :gutter="16">
-          <el-form @submit.native.prevent>
-            <el-col :span="6">
-              <el-form-item>
-                <el-input v-model="form.productCode" placeholder="产品编码" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-input v-model="form.productDrawingNo" placeholder="品名规格" clearable />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}
-                </el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                  {{ $t('common.reset') }}
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </el-row> -->
+   
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table :data="tableDataList" :fixedNO="true">
+          <div class="JNPF-common-head">
+            <div></div>
+            <div class="JNPF-common-head-right">
+
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+            </div>
+          </div>
+          <JNPF-table custom-column ref="dataTable" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="orderNo" label="任务单号" width="180" />
             <el-table-column prop="orderType" label="任务类型" width="120">
               <template slot-scope="scope">
@@ -42,7 +28,6 @@
             <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
               sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
 
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
@@ -78,7 +63,11 @@ export default {
   data() {
     return {
       customerVisible: false,
-
+      orderTypeList: [
+        { label: "正常任务", value: "normal", },
+        { label: "返工任务", value: "rework", },
+        { label: "手动创建任务", value: "manually", },
+      ],
       form: {
         orderNo: "",
         orderType: "",
@@ -103,6 +92,10 @@ export default {
   },
   async created() { },
   methods: {
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     init(productDrawingNo) {
       this.productDrawingNo = productDrawingNo
       this.form.productDrawingNo = productDrawingNo

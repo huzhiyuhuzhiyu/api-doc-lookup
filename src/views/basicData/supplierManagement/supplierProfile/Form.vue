@@ -76,7 +76,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="所属采购" prop="salespersonId">
                         <el-select v-model="dataForm.salespersonIdText" placeholder="请选择所属采购人员" clearable
-                          style="width: 100%;" :disabled="salesFlag" filterable @change="selectsales">
+                          style="width: 100%;" :disabled="btnType ? true : false" filterable @change="selectsales">
                           <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                             :value="item.id"></el-option>
                         </el-select>
@@ -636,7 +636,7 @@ export default {
       visible: false,
       btnLoading: false,
       formLoading: false,
-      organizeIdTrees: '',
+      organizeIdTrees: [],
       dataForm: {
         // 合作伙伴
         code: '',
@@ -1201,6 +1201,20 @@ export default {
               }
             })
             this.dataForm = res.data.cooperativePartner
+            if (this.dataForm.departmentId) {
+              getOrganizeInfo(this.dataForm.departmentId).then(sss => {
+                this.organizeIdTrees = sss.data.organizeIdTree || []
+                this.organizeIdTrees.push(this.dataForm.departmentId)
+              })
+              getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
+                if (res.data.length > 0) {
+                  res.data.forEach(item => {
+                    item.name = item.fullName.split('/')[0]
+                  });
+                }
+                this.salesList = res.data
+              })
+            }
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push({

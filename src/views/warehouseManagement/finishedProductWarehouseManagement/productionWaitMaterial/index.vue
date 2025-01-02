@@ -337,15 +337,7 @@ export default {
       })
     },
     advancedQueryFun() {
-      // sealingCoverTyping //打字内容
-      //     accuracyLevel //精度等级
-      //     vibrationLevel //振动等级
-      //     oil //油脂
-      //     oilQuantity //油脂量
-      //     clearance //游隙
-      //     packagingMethod //包装方式          
-      //     specialRequire //特殊要求
-      //     material //保持架材质          
+      //     material //保持架材质
       //     colour //颜色
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'processCode')
       this.superQueryJson.splice(classIndex + 1, 0, {
@@ -370,12 +362,23 @@ export default {
           }
         })
       })
-
-
     },
     sortChange({ prop, order }) {
       let newProp
-      if (['productionOrderNo', 'lineEdgeName'].includes(prop)) {
+      if (
+        [
+          'productionOrderNo',
+          'prodCode',
+          'prodDrawingNo',
+          'prodName',
+          'productCode',
+          'productName',
+          'productDrawingNo',
+          'processName',
+          'processCode',
+          'lineEdgeName'
+        ].includes(prop)
+      ) {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

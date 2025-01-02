@@ -1158,10 +1158,10 @@ export default {
               shipmentList(obj).then(res => {
                 console.log(res, 'ooo')
                 this.linesList = [...this.linesList, ...res.data.records]
-                item.outShipmentVOList = res.data.records
+                item.outShipmentList = res.data.records
               })
             })
-            // this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+            // this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentList
             if (this.type === 'edit') {
               this.getBusInfo()
             } else {
@@ -1194,14 +1194,14 @@ export default {
     // 配置资源
     handlerOpenSource(index, type) {
       console.log(this.dataFormTwo.data, 'this.dataFormTwo.data[index].id')
-      console.log(this.dataFormTwo.data[index].outShipmentVOList, '[][]')
+      console.log(this.dataFormTwo.data[index].outShipmentList, '[][]')
       if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
       console.log(index, 'index')
       this.sourceVisibled = true
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
 
-      this.sourceData = this.dataFormTwo.data[index].outShipmentVOList
+      this.sourceData = this.dataFormTwo.data[index].outShipmentList
       console.log(this.sourceData, '1111')
 
       if (this.sourceData.length === 0) {

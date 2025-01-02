@@ -175,6 +175,7 @@ export default {
         orderNo: "",
         orderStatus: "normal",
         classAttribute: "semi_finished",
+        workReportFlag: true,
         pageNum: 1,
         pageSize: 20,
         superQuery: {

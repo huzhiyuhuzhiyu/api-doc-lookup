@@ -89,7 +89,7 @@
                   {{ scope.row.waitRubHole }}
                 </el-link>
                 <template v-else>
-                  {{ scope.row.transitSuperfine }}
+                  {{ scope.row.waitRubHole }}
                 </template>
               </template>
             </el-table-column>
@@ -100,7 +100,7 @@
                   {{ scope.row.transitRubHole }}
                 </el-link>
                 <template v-else>
-                  {{ scope.row.transitSuperfine }}
+                  {{ scope.row.transitRubHole }}
                 </template>
               </template>
             </el-table-column>
@@ -113,7 +113,7 @@
                   {{ scope.row.waitTestHole }}
                 </el-link>
                 <template v-else>
-                  {{ scope.row.transitSuperfine }}
+                  {{ scope.row.waitTestHole }}
                 </template>
               </template>
             </el-table-column>
@@ -124,7 +124,7 @@
                   {{ scope.row.transitTestHole }}
                 </el-link>
                 <template v-else>
-                  {{ scope.row.transitSuperfine }}
+                  {{ scope.row.transitTestHole }}
                 </template>
               </template>
             </el-table-column>
@@ -173,7 +173,7 @@
             <el-table-column prop="waitRollingResearch" label="待滚研" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.transitSuperfine }}
+                  {{ scope.row.waitRollingResearch }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈滚研-领料')">
@@ -184,10 +184,10 @@
             <el-table-column prop="transitRollingResearch" label="滚研在制" width="130" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.transitSuperfine }}
+                  {{ scope.row.transitRollingResearch }}
                 </template>
                 <el-link type="primary" v-else @click.native="viewProductFun(scope.row.drawingNo, 'inventoryFlag')">
-                  {{ scope.row.transitSuperfine }}
+                  {{ scope.row.transitRollingResearch }}
                 </el-link>
               </template>
             </el-table-column>

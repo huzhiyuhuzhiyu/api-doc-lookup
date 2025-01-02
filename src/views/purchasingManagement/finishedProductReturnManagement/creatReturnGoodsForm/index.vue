@@ -14,7 +14,7 @@
           <!-- <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
+      <div class="main" ref="main" v-loading="formLoading">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="订单信息" name="orderInfo">
             <el-collapse v-model="activeNames">
@@ -147,7 +147,7 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData" height="400px">
+                    @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -828,6 +828,8 @@ export default {
       warehouseIdList: [],
       flowTemplateJson: {},
       flowData: {},
+      customStyleData: 0,
+      formLoading: true
     }
   },
   computed: {
@@ -881,14 +883,16 @@ export default {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    this.getDeputyUnit()
-    this.getReturnswitch()
+    await this.getDeputyUnit()
+    await this.getReturnswitch()
     this.getBimBusinessDetail()
     // this.handleChange()
     this.getProductClassFun()
     this.getAttributeline()
     this.getClassAttribute()
     this.getWarehouseList()
+    await this.switchStyleheight()
+    this.formLoading = false
   },
   mounted() {
     this.init()
@@ -897,7 +901,29 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
 
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 430
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1668,66 +1694,14 @@ export default {
         }
 
         this.dataFormTwo.productData.forEach((item, index) => {
+          item.notificationType = 'procure'
+          item.ordersLineId = item.ordersLineId ? item.ordersLineId : item.id
+          item.returnDeliveryNoticeId = this.dataForm.id ? this.dataForm.id : ''
 
-          let dep = {
-            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
-            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-            mainUnit: item.mainUnit ? item.mainUnit : '',
-            ordersId: item.ordersId,
-            notificationType: 'procure',
-            id: item.id ? item.id : '',
-            productsId: item.productsId ? item.productsId : '',
-            classAttribute: item.classAttribute ? item.classAttribute : '',
-            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-            purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
-            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-            ratio: item.ratio ? item.ratio : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            remark: item.remark ? item.remark : '',
-            returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
-            price: item.price ? item.price : '',
-            totalAmount: item.totalAmount ? item.totalAmount : '',
-            taxRate: item.taxRate ? item.taxRate : '',
-            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-            taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-          }
-          let dep1 = {
-            billStatus: item.billStatus ? item.billStatus : '',
-            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
-            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-            mainUnit: item.mainUnit ? item.mainUnit : '',
-            ordersId: item.ordersId,
-            notificationType: 'procure',
-            id: item.id ? item.id : '',
-            productsId: item.productsId ? item.productsId : '',
-            classAttribute: item.classAttribute ? item.classAttribute : '',
-            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-            purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
-            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-            ratio: item.ratio ? item.ratio : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            remark: item.remark ? item.remark : '',
-            returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
-            price: item.price ? item.price : '',
-            totalAmount: item.totalAmount ? item.totalAmount : '',
-            taxRate: item.taxRate ? item.taxRate : '',
-            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-            taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-          }
           if (this.btnType == 'add' || this.btnType == 'copy') {
-            obj.lines.push(dep)
+            obj.lines = this.dataFormTwo.productData
           } else {
-            obj.lines.push(dep1)
+            obj.lines = this.dataFormTwo.productData
           }
         })
         this.btnLoading = true

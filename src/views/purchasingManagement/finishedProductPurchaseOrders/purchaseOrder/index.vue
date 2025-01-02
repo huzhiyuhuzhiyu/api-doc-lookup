@@ -102,6 +102,13 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.SUBMIT">提交</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
@@ -181,6 +188,7 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
+import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
@@ -368,6 +376,11 @@ export default {
       this.showAppCodeFlag = false
     }
     this.initData()
+  },
+  computed: {
+    DocumentStatus() {
+      return DocumentStatus
+    }
   },
   methods: {
     // 导出

@@ -86,6 +86,13 @@
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.SUBMIT">提交</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
@@ -321,7 +328,11 @@ export default {
   created() {
     this.initData()
   },
-
+  computed: {
+    DocumentStatus() {
+      return DocumentStatus
+    }
+  },
   methods: {
     async backFn(){
           await getQueryConfirm(this,'是否确认撤回')

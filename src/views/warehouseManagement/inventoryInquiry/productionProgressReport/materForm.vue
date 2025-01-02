@@ -4,33 +4,20 @@
     @close="customerVisible = false">
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
       <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="listLoading">
-        <!-- <el-row class="JNPF-common-search-box" :gutter="16">
-          <el-form @submit.native.prevent>
-            <el-col :span="6">
-              <el-form-item>
-                <el-input v-model="form.productCode" placeholder="产品编码" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-input v-model="form.productDrawingNo" placeholder="品名规格" clearable />
-              </el-form-item>
-            </el-col>
 
-            <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}
-                </el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                  {{ $t('common.reset') }}
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </el-row> -->
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table :data="tableDataList" :fixedNO="true">
+
+          <div class="JNPF-common-head">
+            <div></div>
+            <div class="JNPF-common-head-right">
+
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+            </div>
+          </div>
+          <JNPF-table custom-column ref="dataTable" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="productCode" label="产品编码" sortable="custom"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="领料单号" sortable="custom"></el-table-column>
@@ -75,6 +62,10 @@ export default {
   },
   async created() { },
   methods: {
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     init(id) {
       this.id = id
       this.form.productsId = id

@@ -416,6 +416,7 @@ export default {
         partnerCategoryId: '',
         pageNum: 1,
         pageSize: 20,
+        saleFlag:1,
         orderItems: [
           {
             asc: false,
@@ -739,6 +740,7 @@ export default {
         partnerCategoryId: '',
         pageNum: 1,
         pageSize: 20,
+        saleFlag:1,
         orderItems: [
           {
             asc: false,

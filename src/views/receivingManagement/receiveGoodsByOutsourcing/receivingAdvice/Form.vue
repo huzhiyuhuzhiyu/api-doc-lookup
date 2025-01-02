@@ -1829,6 +1829,12 @@ export default {
         })
         .catch(() => { })
     }
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>

@@ -359,8 +359,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="processId" label="工序" min-width="120"
-                          v-if="this.dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
+                        <el-table-column prop="processId" label="工序" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.processId" placeholder="请选择" clearable>

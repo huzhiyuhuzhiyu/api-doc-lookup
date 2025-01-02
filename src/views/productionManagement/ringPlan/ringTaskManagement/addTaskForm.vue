@@ -704,7 +704,7 @@ export default {
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
       if(!data.routingId) return
-      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.routingId)
 
     },
 
@@ -875,7 +875,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.id,this.dataForm.routingId) 
+      this.getRoutingDetail(this.dataForm.routingId) 
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1101,8 +1101,8 @@ export default {
     },
 
     // 获取工艺详情
-    getRoutingDetail(productsId,id) {
-      detailResourceProcess(productsId,id).then(res => {
+    getRoutingDetail(id) {
+      detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {

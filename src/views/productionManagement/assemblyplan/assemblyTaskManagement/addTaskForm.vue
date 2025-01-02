@@ -61,7 +61,7 @@
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="配对方式" prop="pairingModeName">
                       <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                        :disabled="btnType == 'look' ? true : false">
+                        :disabled="btnType == 'look' ? true : false" >
                         <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                           :value="item.id">
                         </el-option>
@@ -851,9 +851,10 @@ export default {
       this.$set(this.dataForm, 'pairingModeId', pairingModeId)
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
+      this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
       if (!data.routingId) return
-      this.getRoutingDetail(this.dataForm.id, this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.routingId)
     },
     getWarehouseListFun() {
       let obj = {
@@ -1013,7 +1014,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.id, this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1209,8 +1210,8 @@ export default {
       });
     },
     // 获取工艺详情
-    getRoutingDetail(productsId, id) {
-      detailResourceProcess(productsId, id).then(res => {
+    getRoutingDetail(id) {
+      detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
@@ -1308,6 +1309,7 @@ export default {
         })
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
+      if(!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       let arr = []
       // if (this.dataForm.autoMaterialFlag) {
       //   this.dataForm.lineEdgeList.forEach(item => {

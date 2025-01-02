@@ -1216,8 +1216,8 @@ export default {
       });
     },
     // 获取工艺详情
-    getRoutingDetail(productsId, id) {
-      detailResourceProcess(productsId, id).then(res => {
+    getRoutingDetail(id) {
+      detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {

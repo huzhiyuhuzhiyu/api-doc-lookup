@@ -129,7 +129,7 @@ export default {
       console.log("init", id, processData);
       this.customerVisible = true
       this.id = id
-      this.getProcessList(processData.id, id)
+      this.getProcessList(id)
       this.processData = processData
     },
     selectProcess(val) {
@@ -274,9 +274,9 @@ export default {
       // 如果当前行未选中，则调用toggleRowSelection方法选中该行
     },
 
-    getProcessList(productsId, id) {
+    getProcessList(id) {
       this.listLoading = true
-      detailResourceProcess(productsId, id).then(res => {
+      detailProcess(id).then(res => {
         this.listLoading = false
         console.log("工艺详情", res);
         let linesData = res.data.routingLineList

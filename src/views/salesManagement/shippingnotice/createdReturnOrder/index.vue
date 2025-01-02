@@ -968,11 +968,11 @@ export default {
       } catch (error) { }
     },
 
-    // 选择配对方式 强行将单位改成对
+    // 选择配对方式  将单位改为所选配对方式对应的单位
     changePairingMode(value, scope) {
       if (value) {
-        this.dataFormTwo.productData[scope.$index].mainUnit = "对"
-        this.dataFormTwo.productData[scope.$index].deputyUnit = "对"
+ 
+         this.dataFormTwo.productData[scope.$index].deputyUnit= this.dataFormTwo.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
       }
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)

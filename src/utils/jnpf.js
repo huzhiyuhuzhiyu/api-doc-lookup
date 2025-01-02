@@ -18,10 +18,10 @@ const jnpf = {
 
   getpairingModeListFun() {
     let obj = {
-      "pageNum":-1,
+      "pageNum": -1,
       "pageSize": -1,
     }
-   
+
     return new Promise((resolve, reject) => {
       getpairingModeList(obj).then(res => {
         resolve(res.data.records)
@@ -51,7 +51,7 @@ const jnpf = {
     })
   },
 
-        
+
 
   // 获取单号
   getBillRuleConfigFun(code) {
@@ -561,14 +561,29 @@ const jnpf = {
     }
     return formatQuery
   },
-  // 高精度计算 math(<计算方法>, <参数数组>)
-  math(calcMethod, paramsArr) {
+  // // 高精度计算 math(<计算方法>, <参数数组>)
+  // math(calcMethod, paramsArr) {
+  //   if (!calcMethod) return mathjs // 如果不传递参数，返回mathjs实例
+  //   const formatArr = paramsArr.map(item => mathjs.bignumber(item || 0))
+  //   if (!(['add', 'subtract', 'multiply', 'divide'].includes(calcMethod))) console.error(`参数 ${calcMethod} 不在可用范围内。\b可用值： add 加、 subtract 减、 multiply 乘、 divide 除`)
+  //   let result = formatArr[0]
+  //   for (let i = 1; i < formatArr.length; i++) { result = mathjs[calcMethod](result, formatArr[i]) }
+  //   return Number(mathjs.format(result))
+  // },
+  // 高精度计算 math(<计算方法>, <参数数组>, <精确小数位>)
+  math(calcMethod, paramsArr, decimalDigits) {
     if (!calcMethod) return mathjs // 如果不传递参数，返回mathjs实例
+    if (calcMethod === '+') calcMethod = 'add'
+    else if (calcMethod === '-') calcMethod = 'subtract'
+    else if (calcMethod === '*') calcMethod = 'multiply'
+    else if (calcMethod === '/') calcMethod = 'divide'
     const formatArr = paramsArr.map(item => mathjs.bignumber(item || 0))
     if (!(['add', 'subtract', 'multiply', 'divide'].includes(calcMethod))) console.error(`参数 ${calcMethod} 不在可用范围内。\b可用值： add 加、 subtract 减、 multiply 乘、 divide 除`)
     let result = formatArr[0]
     for (let i = 1; i < formatArr.length; i++) { result = mathjs[calcMethod](result, formatArr[i]) }
-    return Number(mathjs.format(result))
+    result = Number(mathjs.format(result))
+    if (!isNaN(Number(decimalDigits))) result = jnpf.numberFormat(result, decimalDigits)
+    return result
   },
   // 判断同概念
   isSame(a, b) {

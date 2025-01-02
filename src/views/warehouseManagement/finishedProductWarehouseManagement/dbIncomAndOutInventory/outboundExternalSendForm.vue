@@ -710,7 +710,7 @@ export default {
     },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
+        this.productData[index].num = Math.floor(data.proportion * data.weight)
         this.watchNum(data, index)
       }
     },
@@ -1164,6 +1164,11 @@ export default {
               if (!item.num) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
+                break
+              }
+              if(!item.batchNumber){
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
                 break
               }
               if (Number(item.num) > Number(item.availableBatchNumber)) {

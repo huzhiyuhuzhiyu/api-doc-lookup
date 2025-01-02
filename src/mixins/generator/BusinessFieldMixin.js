@@ -39,7 +39,6 @@ export default {
             return res.data
         },
         async getBusinessFieldFlag(needList=true) {
-            console.log('getBusinessFieldFlag');
             let bimProductAttributesList = {
                 pa001: [],
                 pa002: [],
@@ -60,7 +59,6 @@ export default {
             }
             await Promise.all([
                 getOrderFiledMap('sale').then(res => {
-                    console.log("产品属性", res);
                     this.accuracyLevelFlag = res.data.accuracyLevel === '1' //list1
                     if (this.accuracyLevelFlag) {
                         this.accuracyLevelList = bimProductAttributesList.pa006.map((item) => {
@@ -124,10 +122,8 @@ export default {
                             }
                         })
                     }
-                    console.log(' res.data.vibrationLevel', res.data.vibrationLevel);
                     this.vibrationLevelFlag = res.data.vibrationLevel === '1'
                     if (this.vibrationLevelFlag) {
-                        console.log('bimProductAttributesList.pa005', bimProductAttributesList.pa005);
                         this.vibrationLevelList = bimProductAttributesList.pa005.map((item) => {
                             return {
                                 label: item.name,

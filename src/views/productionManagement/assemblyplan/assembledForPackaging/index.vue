@@ -51,30 +51,30 @@
                     custom-column
                     :hasC="false"
                     ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column sortable="custom" prop="processName" label="工序名称" width="120"  />
-                    <el-table-column sortable="custom" prop="processCode" label="工序编码" min-width="305" />
-                    <el-table-column sortable="custom" prop="planStartDate" label="计划开始日期" min-width="160" />
-                    <el-table-column sortable="custom" prop="planEndDate" label="计划结束日期" min-width="160" />
-                    <el-table-column sortable="custom" prop="vibrationLevel" label="振动等级" min-width="120" />
-                    <el-table-column sortable="custom" prop="pairingModeName" label="配对方式" min-width="120" />
+                    <el-table-column sortable="custom" :key="111" prop="processName" label="工序名称" width="120"  />
+                    <el-table-column sortable="custom" :key="112" prop="processCode" label="工序编码" min-width="120" />
+                    <el-table-column sortable="custom" :key="113" prop="planStartDate" label="计划开始日期" min-width="160" />
+                    <el-table-column sortable="custom" :key="114" prop="planEndDate" label="计划结束日期" min-width="160" />
+                    <el-table-column sortable="custom" :key="115" prop="vibrationLevel" label="振动等级" min-width="120" />
+                    <el-table-column sortable="custom" :key="116" prop="pairingModeName" label="配对方式" min-width="120" />
                     <template v-if="mainUnitFlag">
-                        <el-table-column sortable="custom" prop="mainUnit" label="单位（主）" width="120" />
-                        <el-table-column sortable="custom" prop="deputyUnit" label="单位（副）" width="120" />
+                        <el-table-column sortable="custom"  :key="117"  prop="mainUnit" label="单位（主）" width="120" />
+                        <el-table-column sortable="custom"  :key="118" prop="deputyUnit" label="单位（副）" width="120" />
                     </template>
-                    <el-table-column  sortable="custom" v-else prop="mainUnit" label="单位" width="120" />
-                    <el-table-column sortable="custom"  label="完成数量" width="120">
+                    <el-table-column  sortable="custom" v-else :key="119"  prop="mainUnit" label="单位" width="120" />
+                    <el-table-column prop="matchedQuantity" :key="120"  label="完成数量" width="120">
                         <template slot-scope="scope">
                             {{scope.row.pairingModeId ? scope.row.matchedQuantity : scope.row.completedQuantity}}
                         </template>
                     </el-table-column>
-                    <el-table-column sortable="custom" prop="packagingQuantity" label="已包装数量" width="120"/>
-                    <el-table-column sortable="custom" prop="packagingMethod" label="包装方式" v-if="isHistory" width="120"/>
-                    <el-table-column sortable="custom" prop="productionOrderNo" label="生产任务单号" width="180"/>
-                    <el-table-column sortable="custom" prop="drawingNo" label="品名规格" width="120"/>
-                    <el-table-column sortable="custom" prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
-                    <el-table-column sortable="custom" prop="productCode" label="产品编码" v-if="isAssemble" width="120"/>
-                    <el-table-column sortable="custom" prop="createTime" label="创建时间"  width="180" />
-                    <el-table-column  prop="createByName" label="创建人" width="100" />
+                    <el-table-column sortable="custom" :key="121"  prop="packagingQuantity" label="已包装数量" width="120"/>
+                    <el-table-column sortable="custom" :key="122"  prop="packagingMethod" label="包装方式" v-if="isHistory" width="120"/>
+                    <el-table-column sortable="custom" :key="123"  prop="productionOrderNo" label="生产任务单号" width="180"/>
+                    <el-table-column sortable="custom" :key="124"  prop="drawingNo" label="品名规格" width="120"/>
+                    <el-table-column sortable="custom" :key="125"  prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
+                    <el-table-column sortable="custom" :key="126"  prop="productCode" label="产品编码" v-if="isAssemble" width="120"/>
+                    <el-table-column sortable="custom" :key="127"  prop="createTime" label="创建时间"  width="180" />
+                    <el-table-column sortable="custom" :key="128"   prop="createByName" label="创建人" width="100" />
 
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
@@ -97,21 +97,21 @@
                     <el-row :gutter="20">
                         <el-col :span="24">
                             <el-form-item label="包装方式" prop="packagingMethod">
-                                <el-select v-model="reportForm.packagingMethod" placeholder="包装方式" style="width: 100%;">
+                                <el-select :disabled="packagingMethodDisabled" v-model="reportForm.packagingMethod" placeholder="包装方式" style="width: 100%;">
                                     <el-option v-for="(item, index) in packagingMethodList" :key="index" :label="item.label"
                                                :value="item.value"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="24">
-                            <el-form-item label="包装人" prop="packagePersonId">
-                                <user-select v-model="reportForm.packagePersonId" placeholder="请选择包装人" clearable style="width: 100%"  @change="handlePackagePerson">
+                            <el-form-item label="包装人" prop="producerId">
+                                <user-select v-model="reportForm.producerId" placeholder="请选择包装人" clearable style="width: 100%"  @change="handlePackagePerson">
                                 </user-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="24">
-                            <el-form-item label="包装数量" prop="packageNum">
-                                <el-input v-model="reportForm.packageNum" placeholder="包装数量" />
+                            <el-form-item :label="`包装数量（${reportForm.mainUint}）`" prop="reportingQuantity">
+                                <el-input v-model.number="reportForm.reportingQuantity" placeholder="包装数量" />
                             </el-form-item>
                         </el-col>
 
@@ -182,24 +182,25 @@ export default {
         return {
             reportForm:{
                 packagingMethod:"",
-                packagePersonId:"",
-                packagePersonName:"",
-                packageNum:100,
-                computedNum:100,
-                packagedNum:0,
+                producerId:"",
+                reportingQuantity:"",
                 mainUint:'',
+                pairingModeQuantity:1,
+                id:'',
             },
             btnLoading:false,
             packagingMethodList:[],
+            packagingMethodDisabled:false,
             reportFormProps:{
                 packagingMethod:[
                     { required: true, message: '请选择包装模式', trigger: 'change' },
                 ],
-                packagePerson:[
+                producerId:[
                     { required: true, message: '请选择包装人', trigger: 'change' },
                 ],
-                packageNum:[
+                reportingQuantity:[
                     { required: true, message: '请输入包装数量', trigger: 'blur' },
+                    { type: 'number', message: '请输入数字', trigger: 'blur' },
                 ],
             },
             reportFormVisible: false,
@@ -308,10 +309,36 @@ export default {
     methods: {
        async handlePackagePerson(){
            await this.$nextTick()
-           this.$refs.reportRef.validateField('packagePersonId')
+           this.$refs.reportRef.validateField('producerId')
        },
        async reportFun(item){
-          const res = await getbimProductAttributesList({
+
+            try{
+                const formData =  await this.reportWork(item)
+                formData.reportingQuantity = +formData.reportingQuantity * formData.pairingModeQuantity
+                console.log('formData', formData);
+                const res = await reportPackageWork(formData)
+
+                if(res.code === 200){
+                    this.$message.success('报工成功')
+
+                    this.initData()
+
+                }else{
+                    this.$message.error(res.message)
+                }
+            }catch (e) {
+                console.error(e);
+            }finally {
+                this.closeReportForm()
+            }
+        },
+        async reportWork(item){
+           if(this.reportFormPromise !== null){
+               return this.reportFormPromise
+           }
+            this.reportFormVisible = true
+             getbimProductAttributesList({
                 pageNum: -1,
                 pageSize: 20,
                 typeCode: 'pa015',
@@ -325,23 +352,25 @@ export default {
                         column: 'code'
                     }
                 ]
-            })
-          this.packagingMethodList = res.data.records
-              .map((item) => ({label: item.name, value: item.name}))
-            try{
-                const res =  await this.reportWork(item)
-                console.log(res);
-            }catch (e) {
-                console.error(e);
-            }
-        },
-        reportWork(item){
-           if(this.reportFormPromise !== null){
-               return this.reportFormPromise
-           }
-            this.reportFormVisible = true
-            this.setReportFormPromise(true)
+            }).then(res=>{
+                 this.packagingMethodList = res.data.records
+                 .map((item) => ({label: item.name, value: item.name}))
+             })
 
+
+
+            this.setReportFormPromise(true)
+            this.packagingMethodDisabled = notEmpty(item.packagingMethod)
+            this.reportForm = {
+                packagingMethod: this.packagingMethodDisabled ? item.packagingMethod : "",
+                producerId:"",
+                reportingQuantity: item.completedQuantity - item.packagingQuantity,
+                id:item.id,
+                mainUint:item.mainUnit,
+                pairingModeQuantity: item.packagingMethod ? item.pairingModeQuantity : 1,
+            }
+            await this.$nextTick()
+            this.$refs.reportRef.resetFields()
             return this.reportFormPromise
         },
         async submitReportFun(){
@@ -349,12 +378,12 @@ export default {
             if(!res){
                 return
             }
-            this.reportFormResolve(this.reportForm)
+            this.reportFormResolve({...this.reportForm})
             this.setReportFormPromise()
         },
         closeReportForm(){
             this.reportFormVisible = false
-            this.reportFormReject("cancel")
+            this.reportFormReject && this.reportFormReject("cancel")
             this.setReportFormPromise()
         },
         setReportFormPromise(setPromise=false){

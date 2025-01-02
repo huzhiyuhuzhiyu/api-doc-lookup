@@ -62,7 +62,7 @@
                         <el-table-column sortable="custom" prop="deputyUnit" label="单位（副）" width="120" />
                     </template>
                     <el-table-column  sortable="custom" v-else prop="mainUnit" label="单位" width="120" />
-                    <el-table-column sortable="custom" prop="num" label="完成数量" width="120">
+                    <el-table-column sortable="custom"  label="完成数量" width="120">
                         <template slot-scope="scope">
                             {{scope.row.pairingModeId ? scope.row.matchedQuantity : scope.row.completedQuantity}}
                         </template>
@@ -74,12 +74,12 @@
                     <el-table-column sortable="custom" prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
                     <el-table-column sortable="custom" prop="productCode" label="产品编码" v-if="isAssemble" width="120"/>
                     <el-table-column sortable="custom" prop="createTime" label="创建时间"  width="180" />
-                    <el-table-column sortable="custom" prop="createByName" label="创建人" width="100" />
+                    <el-table-column  prop="createByName" label="创建人" width="100" />
 
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                             <el-button size="mini" type="text" @click="reportFun(scope.row)">报工</el-button>
-                            <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">导出</el-button>
+<!--                            <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">导出</el-button>-->
                         </template>
                     </el-table-column>
                 </JNPF-table>
@@ -90,7 +90,7 @@
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
         <el-dialog title="报工" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="reportFormVisible"
-                   @close="reportFormVisible = false" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" append-to-body>
+                   @close="closeReportForm" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" append-to-body>
             <el-row :gutter="20">
 
                 <el-form ref="reportRef" :model="reportForm" :rules="reportFormProps" label-width="120px" label-position="top">
@@ -120,7 +120,7 @@
             </el-row>
 
             <span slot="footer" class="dialog-footer">
-      <el-button @click="reportFormVisible">{{ $t('common.cancelButton') }}</el-button>
+      <el-button @click="closeReportForm">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitReportFun()">
         提交</el-button>
     </span>
@@ -141,22 +141,31 @@ import {
     getBimFileUpload, switchEnableMark
 } from "@/api/esop/fileUpload/workinginstruction";
 
-import {getQueryConfirm, getSortField, getSuccessInfo, isEmpty, mapIfNonePutArr, notEmpty, trim} from '@/utils';
+import {
+    getPromise,
+    getQueryConfirm,
+    getSortField,
+    getSuccessInfo,
+    isEmpty,
+    mapIfNonePutArr,
+    notEmpty,
+    trim,
+} from '@/utils';
 import {
     executeQueryTime, filterArr,
 } from '@/views/esop/utils/utils';
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import ProductNameFlagMixin from '@/mixins/generator/ProductNameFlagMixin';
 import MainUnitFlagMixin from '@/mixins/generator/MainUnitFlagMixin';
-import {getWorkFinishList} from '@/api/productionManagement';
+import {getWorkFinishList, reportPackageWork} from '@/api/productionManagement';
 import BusinessFieldMixin from '@/mixins/generator/BusinessFieldMixin';
 import jnpf from '@/utils/jnpf';
 
 
 
 export default {
-    components: {   ExportForm, SuperQuery },
-    name:"historyPackageRecord",
+    components: { ExportForm, SuperQuery },
+    name:"AssembledForPackaging",
     mixins:[AbProjectMixin,ProductNameFlagMixin,MainUnitFlagMixin,BusinessFieldMixin],
     props:{
         isHistory:{
@@ -171,7 +180,6 @@ export default {
     },
     data() {
         return {
-            choosePersonVisible:false,
             reportForm:{
                 packagingMethod:"",
                 packagePersonId:"",
@@ -179,6 +187,7 @@ export default {
                 packageNum:100,
                 computedNum:100,
                 packagedNum:0,
+                mainUint:'',
             },
             btnLoading:false,
             packagingMethodList:[],
@@ -209,6 +218,10 @@ export default {
             total: 0,
             formVisible: false,
             superQueryVisible: false,
+            reportFormPromise: null,
+            reportFormResolve: null,
+            reportFormReject: null,
+
             superQueryJson:filterArr([
                 {
                     prop: 'processName',
@@ -278,12 +291,13 @@ export default {
         try {
             this.tableLoading = true
             await Promise.all([
-                this.initData(),
+
                 this.awaitAbProject(),
                 this.awaitGetProductNameFlag(),
                 this.awaitMainUnitFlag(),
                 this.getBusinessFieldFlag()
             ])
+            await this.initData()
         }catch (e) {
             console.log(e);
         }finally {
@@ -296,9 +310,8 @@ export default {
            await this.$nextTick()
            this.$refs.reportRef.validateField('packagePersonId')
        },
-       async reportFun(){
-
-            const res = await getbimProductAttributesList({
+       async reportFun(item){
+          const res = await getbimProductAttributesList({
                 pageNum: -1,
                 pageSize: 20,
                 typeCode: 'pa015',
@@ -313,15 +326,48 @@ export default {
                     }
                 ]
             })
-
-           this.packagingMethodList = res.data.records.map((item) => ({
-                    label: item.name,
-                    value: item.name
-            }))
-
-            this.reportFormVisible = true
+          this.packagingMethodList = res.data.records
+              .map((item) => ({label: item.name, value: item.name}))
+            try{
+                const res =  await this.reportWork(item)
+                console.log(res);
+            }catch (e) {
+                console.error(e);
+            }
         },
-        submitReportFun(){
+        reportWork(item){
+           if(this.reportFormPromise !== null){
+               return this.reportFormPromise
+           }
+            this.reportFormVisible = true
+            this.setReportFormPromise(true)
+
+            return this.reportFormPromise
+        },
+        async submitReportFun(){
+            const res=  await this.$refs.reportRef.validate()
+            if(!res){
+                return
+            }
+            this.reportFormResolve(this.reportForm)
+            this.setReportFormPromise()
+        },
+        closeReportForm(){
+            this.reportFormVisible = false
+            this.reportFormReject("cancel")
+            this.setReportFormPromise()
+        },
+        setReportFormPromise(setPromise=false){
+            if(setPromise){
+                const {promise,resolve,reject} = getPromise()
+                this.reportFormPromise = promise
+                this.reportFormResolve = resolve
+                this.reportFormReject = reject
+                return;
+            }
+            this.reportFormPromise = null
+            this.reportFormResolve = null
+            this.reportFormReject = null
 
         },
        async superQueryVisibleShow(){
@@ -360,7 +406,7 @@ export default {
                 pageSize: 20,
                 processName: "",
                 productionOrderNo: "",
-                projectId: 0,
+                projectId: null,
                 startTime: "",
                 startUpdateTime: "",
                 superQuery: {
@@ -389,15 +435,17 @@ export default {
             this.$refs.dataTable.showDrawer()
         },
         sortChange(item) {
-            this.listQuery.orderItems[0] = getSortField(item,
-                ['drawingNo','pairingModeName','processCode','processName','productCode','productName','productionOrderNo'])
-
+            const noSnakeCase =['drawingNo','pairingModeName','processCode','processName','productCode','productName','productionOrderNo']
+            this.listQuery.orderItems[0] = getSortField(item,noSnakeCase)
             this.initData()
         },
 
         async initData(query={}) {
             this.listLoading = true
             const params = {...this.listQuery,...query}
+            if(this.abProjectFlag){
+                params.projectId = this.abProjectId
+            }
             const {data} = await getWorkFinishList(params)
             this.tableData = data.records
             this.total = data.total

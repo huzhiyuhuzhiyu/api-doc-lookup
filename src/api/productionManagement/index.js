@@ -28,3 +28,16 @@ export function getWorkFinishList(data){
         data
     })
 }
+
+/**
+ * 包装报工
+ * @param data
+ * @returns {*}
+ */
+export function reportPackageWork(data){
+    return request({
+        url:'/api/mrp/work/report/package/add',
+        method:'post',
+        data
+    })
+}

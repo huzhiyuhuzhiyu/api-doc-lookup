@@ -19,7 +19,12 @@ export default {
     },
     data(){
       return {
+          /**
+           * @deprecated 不要再使用此属性了，因为命名不符合习惯
+           * @see {abProjectFlag}
+           */
           abProjectSwitch:false,
+          abProjectFlag:false,
           abProjectList:[],
           abProjectNoCommonList:[],
           [promiseName]:null
@@ -38,6 +43,7 @@ export default {
              this[promiseName] = promise
              this.jnpf.getMainUnitFun('system', 'project').then(async flag=>{
                  this.abProjectSwitch = flag
+                 this.abProjectFlag = flag === '1'
                  if(!this.abProjectSwitchVisible){
                      return resolve(this.abProjectSwitchVisible)
                  }

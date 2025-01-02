@@ -1935,6 +1935,10 @@ export default {
     next() {
       if (!this.dataForm.arithmeticNo) return this.$message.error("运算单号不能为空")
       if (!this.tableData.length) return this.$message.error("已选择的计划数据不能为空")
+      let hasFalseBomFlag = arr.some(item => !item.bomFlag )
+      if(hasFalseBomFlag&&this.dataForm.calcBomLevel!=='not_calc_bom') return this.$message.error("存在无BOM的数据，BOM计算级别错误，请检查后重试")
+   
+     
       let obj = {
         arithmetic: {
           arithmeticNo: this.dataForm.arithmeticNo,

@@ -560,6 +560,7 @@ export default {
     }
   },
   async created() {
+    await this.$store.dispatch('base/getBusinessConfig','gobal') 
     const res = await this.jnpf.getBusInfo('b062')
     if (res) {
       this.showAppCodeFlag = res.enabledMark

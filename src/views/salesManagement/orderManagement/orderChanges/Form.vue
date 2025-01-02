@@ -426,6 +426,7 @@ export default {
           type: 'warning'
         }).then(() => {
           this.dataForm.ordersNo = row.orderNo
+          this.dataForm.contractNo = row.contractNo
           this.dataForm.sourceOrderNo = row.sourceOrderNo
           this.dataForm.ordersId = row.id
           this.orderDetailData = []

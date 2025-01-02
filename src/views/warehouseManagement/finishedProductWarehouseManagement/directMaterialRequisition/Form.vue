@@ -734,6 +734,7 @@ export default {
         data.forEach(item=>{
           item.inShelfSpaceName = item.lineEdgeName
           item.inWarehouseId = item.lineEdgeId
+          this.$set(item,'num',item.materialsUsedQuantity - item.receivedQuantity)
         })
         this.productData = data
       }

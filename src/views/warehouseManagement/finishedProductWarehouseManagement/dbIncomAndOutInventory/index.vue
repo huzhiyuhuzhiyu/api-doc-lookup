@@ -587,6 +587,8 @@
           <div>
             <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
               v-show="categoryType == 'outbound_sale_send' && saleFlag" @click="batchOutbound">批量出库</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
+              v-show="categoryType == 'outbound_sale_send' && saleFlag" @click="batchPrint">批量打印</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_external' && externalFlag" @click="externalBatchInbound">批量入库</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus"
@@ -1523,7 +1525,9 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -1578,6 +1582,9 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
 import { mapGetters, mapState } from 'vuex'
 import { getBimProcessList } from '@/api/bimProcess/index'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index"
@@ -1592,13 +1599,18 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm, ToolForm, SparePartsForm, EquipmentForm, EquipmentOutboundForm, ToolFormS, EquipmentFormS, SparePartsFormS, EquipmentInboundForm
+    ExternalMaterOutboundForm, ToolForm, SparePartsForm, EquipmentForm, EquipmentOutboundForm, ToolFormS, EquipmentFormS, SparePartsFormS, EquipmentInboundForm,PrintDialog,PrintBrowse
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printVisible: false,
+      printBrowseVisible: false,
       isProjectSwitchFlag: false,
       isProjectSwitch: "",
       equipmentInboundVisible: false,
@@ -2538,8 +2550,38 @@ export default {
     handeleselectSale(val) {
       this.selectSaleList = val
     },
+    printWarehouse(enCode) {
+      if (!this.selectSaleList.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectSaleList.map(item => item.id).join(',')
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    batchPrint(){
+    
+      if (!this.selectSaleList.length) return this.$message.error("请选择您要打印的数据")
+      this.enCode = 'p031' // 筛选出 businessType 等于 type 的项  
+ 
+      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项  
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+       
+    },
+    closePrint() {
+            this.printVisible = false
+        },
     // 批量出库
     batchOutbound() {
+   
       if (!this.selectSaleList.length) return this.$message.error("请选择您要出库的数据")
       let flag = this.hasDifferentCooperativePartnerCode(this.selectSaleList)
       if (flag) return this.$message.error("只能选择相同客户的数据")

@@ -97,9 +97,9 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="download(scope.row.id)">
+                    <!-- <el-dropdown-item @click.native="download(scope.row.id)">
                       下载检验报告
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>

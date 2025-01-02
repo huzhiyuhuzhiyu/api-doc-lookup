@@ -409,8 +409,38 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.qualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.unqualifiedQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
+          itemDisabled: ['qualified', 'unqualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults) || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'unqualifiedQuantity',
@@ -418,8 +448,38 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`不合格数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.unqualifiedQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
+          itemDisabled: ['qualified', 'unqualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults) || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'scrapQuantity',
@@ -429,6 +489,37 @@ export default {
           sm: 6,
           render:
             !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType),
+            itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`报废数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           // itemDisabled: this.scrapQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
@@ -440,6 +531,36 @@ export default {
           sm: 6,
           render:
             !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType),
+            itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg) => {
+                    this.$message.error(`返修数量${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            {
+              validator: (rule, value, callback) => {
+                console.log(value, 'val')
+                if (!value) {
+                  callback()
+                } else if (
+                  Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
+                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                ) {
+                  callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           // itemDisabled: this.repairQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },

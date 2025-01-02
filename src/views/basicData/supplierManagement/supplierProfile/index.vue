@@ -413,6 +413,7 @@ export default {
         email: '',
         grade: '',
         type: 'supplier',
+        saleFlag:1,
         partnerCategoryId: '',
         pageNum: 1,
         pageSize: 20,
@@ -1056,6 +1057,7 @@ export default {
         grade: '',
         type: 'supplier',
         partnerCategoryId: '',
+        saleFlag:1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [

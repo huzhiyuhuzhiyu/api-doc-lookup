@@ -21,7 +21,7 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
+      <div class="main" ref="main" v-loading="formLoading">
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
@@ -112,42 +112,24 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
+                    @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="0" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" 
-                      show-overflow-tooltip />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                      width="110"  />
+                      width="110" />
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
+                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                       />
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
-                      key="789">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        收货数量
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
-                          :rules="productRules.receivedQuantity">
-                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
-                            :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
-                            style="width: 145px;">
-                            {{ scope.row.receivedQuantity }}
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
+
                     <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                       v-if="isProportionSwitch === '1'">
                       <template slot-scope="scope">
@@ -167,6 +149,22 @@
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                      key="789">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        收货数量
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
+                          :rules="productRules.receivedQuantity">
+                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
+                            :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)">
+                            {{ scope.row.receivedQuantity }}
+                          </el-input>
+                        </el-form-item>
                       </template>
                     </el-table-column>
                     <el-table-column prop="price" label="含税单价" width="130">
@@ -246,27 +244,24 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" 
+                    <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容"
                       v-if="sealingCoverTypingFlag === '1'" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 
+                    <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"
                       v-if="accuracyLevelFlag === '1'" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
+                    <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"
                       v-if="vibrationLevelFlag === '1'" />
-                    <el-table-column prop="oil" label="油脂" min-width="120"  v-if="oilFlag === '1'" />
-                    <el-table-column prop="oilQuantity" label="油脂量" min-width="140" 
-                      v-if="oilQuantityFlag === '1'" />
-                    <el-table-column prop="clearance" label="游隙" min-width="120" 
-                      v-if="clearanceFlag === '1'" />
-                    <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
+                    <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag === '1'" />
+                    <el-table-column prop="oilQuantity" label="油脂量" min-width="140" v-if="oilQuantityFlag === '1'" />
+                    <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag === '1'" />
+                    <el-table-column prop="packagingMethod" label="包装方式" min-width="120"
                       v-if="packagingMethodFlag === '1'" />
-                    <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
+                    <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
                       v-if="specialRequireFlag === '1'" />
-                    <el-table-column prop="material" label="材质" width="130" 
+                    <el-table-column prop="material" label="材质" width="130"
                       v-if="materialFlag === '1'"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" 
-                      v-if="colourFlag === '1'"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="130" v-if="colourFlag === '1'"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="160" />
-                    <el-table-column prop="ordersNo" label="订单号" width="200"  />
+                    <el-table-column prop="ordersNo" label="订单号" width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -383,24 +378,41 @@
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData">
+                @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="0" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="200" 
-                  show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                  width="110"  />
+                  width="110" />
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
-                  v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                   />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
+
+                <el-table-column prop="weight" label="重量(kg)" width="140" :key="737" v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.weight" placeholder="重量"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="proportion" label="比重" width="140" :key="727" v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.proportion" placeholder="比重"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                  v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -411,33 +423,12 @@
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
                       :rules="productRules.receivedQuantity">
                       <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量" :disabled="btnType == 'look'"
-                        maxlength="11" @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
+                        maxlength="11" @input="watchnums(scope.row, scope.$index)">
                         {{ scope.row.receivedQuantity }}
                       </el-input>
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.weight" placeholder="重量"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="proportion" label="比重" width="140" :key="727"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.proportion" placeholder="比重"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
-                      </template>
-                    </el-table-column>
                 <el-table-column prop="price" label="含税单价" width="130">
                   <template slot="header">
                     <span class="required">*</span>
@@ -515,27 +506,20 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" 
+                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容"
                   v-if="sealingCoverTypingFlag === '1'" />
-                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 
-                  v-if="accuracyLevelFlag === '1'" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
-                  v-if="vibrationLevelFlag === '1'" />
-                <el-table-column prop="oil" label="油脂" min-width="120"  v-if="oilFlag === '1'" />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" 
-                  v-if="oilQuantityFlag === '1'" />
-                <el-table-column prop="clearance" label="游隙" min-width="120" 
-                  v-if="clearanceFlag === '1'" />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag === '1'" />
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag === '1'" />
+                <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag === '1'" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" v-if="oilQuantityFlag === '1'" />
+                <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag === '1'" />
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120"
                   v-if="packagingMethodFlag === '1'" />
-                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
-                  v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="材质" width="130" 
-                  v-if="materialFlag === '1'"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="130" 
-                  v-if="colourFlag === '1'"></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag === '1'" />
+                <el-table-column prop="material" label="材质" width="130" v-if="materialFlag === '1'"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="130" v-if="colourFlag === '1'"></el-table-column>
                 <el-table-column prop="processName" label="工序" width="160" />
-                <el-table-column prop="ordersNo" label="订单号" width="180"  />
+                <el-table-column prop="ordersNo" label="订单号" width="180" />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -674,39 +658,31 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
-                <el-table-column prop="orderNo" label="订单号" min-width="220" 
-                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="orderNo" label="订单号" min-width="220" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="140"  />
-                <el-table-column prop="drawingNo" label="品名规格" width="160"  />
+                <el-table-column prop="productCode" label="产品编码" width="140" />
+                <el-table-column prop="drawingNo" label="品名规格" width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
-                <el-table-column prop="purchaseQuantity" label="数量" width="160"  />
-                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160"  />
+                <el-table-column prop="purchaseQuantity" label="数量" width="160" />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" />
                 <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
 
-                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容" 
+                <el-table-column prop="sealingCoverTyping" min-width="120" label="打字内容"
                   v-if="sealingCoverTypingFlag === '1'" />
-                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" 
-                  v-if="accuracyLevelFlag === '1'" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
-                  v-if="vibrationLevelFlag === '1'" />
-                <el-table-column prop="oil" label="油脂" min-width="120"  v-if="oilFlag === '1'" />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" 
-                  v-if="oilQuantityFlag === '1'" />
-                <el-table-column prop="clearance" label="游隙" min-width="120" 
-                  v-if="clearanceFlag === '1'" />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" 
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag === '1'" />
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag === '1'" />
+                <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag === '1'" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="140" v-if="oilQuantityFlag === '1'" />
+                <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag === '1'" />
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120"
                   v-if="packagingMethodFlag === '1'" />
-                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" 
-                  v-if="specialRequireFlag === '1'" />
-                <el-table-column prop="material" label="材质" width="130" 
-                  v-if="materialFlag === '1'"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="130" 
-                  v-if="colourFlag === '1'"></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag === '1'" />
+                <el-table-column prop="material" label="材质" width="130" v-if="materialFlag === '1'"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="130" v-if="colourFlag === '1'"></el-table-column>
                 <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
-                <el-table-column prop="createTime" label="创建时间" width="180"  />
+                <el-table-column prop="createTime" label="创建时间" width="180" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="searchProductFun" />
@@ -780,7 +756,7 @@ export default {
   data() {
     return {
       isProjectSwitch: '',
-      isProportionSwitch:'',
+      isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -1030,6 +1006,8 @@ export default {
       vibrationLevelFlag: "",
       materialFlag: '',
       colourFlag: '',
+      customStyleData: 0,
+      formLoading: true
     }
   },
   computed: {
@@ -1086,7 +1064,9 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getOrderFiledMap()
     await this.getProportionSwitch('warehouse', 'proportion')
-    this.getDeputyUnit()
+    await this.getDeputyUnit()
+    await this.switchStyleheight()
+    this.formLoading = false
     this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
@@ -1100,6 +1080,29 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 470
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.materialFlag = res.data.material
@@ -1161,7 +1164,7 @@ export default {
     },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
-        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.proportion, data.weight]), 2))
+        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight)
         this.watchNum(data, index)
       }
     },
@@ -1236,7 +1239,7 @@ export default {
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
       return (rule, value, callback) => {
-        console.log(value,'kkk')
+        console.log(value, 'kkk')
         let index = Number(rule.field.match(/\d+/)[0])
         let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
         if (!value || value == 0) {
@@ -2089,12 +2092,8 @@ export default {
           // obj.notice.deliveryStatus = 'not_returned'
           formMethod = addpurPurchaseReceiptReturnGoods
         }
-
-      }
-      if (submitFlag) {
         formMethod(obj)
           .then((res) => {
-        
             if (value == 'draft') {
               this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {
@@ -2115,6 +2114,7 @@ export default {
           .catch(() => {
             this.btnLoading = false
           })
+
       }
     },
     // 测试审批流
@@ -2175,6 +2175,12 @@ export default {
         })
         .catch(() => { })
     }
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>

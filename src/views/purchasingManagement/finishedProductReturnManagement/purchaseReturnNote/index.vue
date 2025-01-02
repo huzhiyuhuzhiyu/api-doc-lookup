@@ -85,7 +85,8 @@
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">
                   编辑
                 </el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">
                   删除
                 </el-button>
                 <el-dropdown hide-on-click>

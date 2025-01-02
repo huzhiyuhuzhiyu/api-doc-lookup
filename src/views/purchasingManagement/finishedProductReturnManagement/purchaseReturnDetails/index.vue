@@ -738,6 +738,7 @@ export default {
       this.initData()
     },
     reset() {
+      this.tableFlag = true
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.orderDateArr = []

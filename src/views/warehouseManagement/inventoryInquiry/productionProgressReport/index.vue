@@ -52,14 +52,14 @@
           <el-table-column label="平面磨" align="center">
             <el-table-column prop="waitSurface" label="待磨平面" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '热处理-入库')">
+                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-领料')">
                   {{ scope.row.waitSurface }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="transitSurface" label="平面磨在制" width="130" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-领料')">
+                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-入库')">
                   {{ scope.row.transitSurface }}
                 </el-link>
               </template>
@@ -68,14 +68,14 @@
           <el-table-column label="无心磨" align="center">
             <el-table-column prop="waitCenterLess" label="待无心磨" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-入库')">
+                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-领料')">
                   {{ scope.row.waitCenterLess }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="transitCenterLess" label="无心磨在制" width="130" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-领料')">
+                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '无心磨-入库')">
                   {{ scope.row.transitCenterLess }}
                 </el-link>
               </template>
@@ -84,32 +84,48 @@
           <el-table-column label="磨孔" align="center">
             <el-table-column prop="waitRubHole" label="待磨孔" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '无心磨-入库')">
+                <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨孔-领料')">
                   {{ scope.row.waitRubHole }}
                 </el-link>
+                <template v-else>
+                  {{ scope.row.waitRubHole }}
+                </template>
               </template>
             </el-table-column>
             <el-table-column prop="transitRubHole" label="磨孔在制" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨孔-领料')">
+                <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨孔-入库')">
                   {{ scope.row.transitRubHole }}
                 </el-link>
+                <template v-else>
+                  {{ scope.row.transitRubHole }}
+                </template>
               </template>
             </el-table-column>
           </el-table-column>
           <el-table-column label="测孔" align="center">
             <el-table-column prop="waitTestHole" label="待测孔" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨孔-入库')">
+                <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈测孔-领料')">
                   {{ scope.row.waitTestHole }}
                 </el-link>
+                <template v-else>
+                  {{ scope.row.waitTestHole }}
+                </template>
               </template>
             </el-table-column>
             <el-table-column prop="transitTestHole" label="测孔在制" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈测孔-领料')">
+                <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈测孔-入库')">
                   {{ scope.row.transitTestHole }}
                 </el-link>
+                <template v-else>
+                  {{ scope.row.transitTestHole }}
+                </template>
               </template>
             </el-table-column>
           </el-table-column>
@@ -117,7 +133,7 @@
             <el-table-column prop="waitRubChannel" label="待磨沟" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈测孔-入库' : '无心磨-入库')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈磨沟-领料' : '外圈磨沟-领料')">
                   {{ scope.row.waitRubChannel }}
                 </el-link>
               </template>
@@ -125,7 +141,7 @@
             <el-table-column prop="transitRubChannel" label="磨沟在制" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈磨沟-领料' : '外圈磨沟-领料')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈磨沟-入库' : '外圈磨沟-入库')">
                   {{ scope.row.transitRubChannel }}
                 </el-link>
               </template>
@@ -135,15 +151,19 @@
             <el-table-column prop="waitSuperfine" label="待超精" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈磨沟-入库' : '外圈磨沟-入库')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈超精-领料' : '外圈超精-领料')">
                   {{ scope.row.waitSuperfine }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="transitSuperfine" label="超精在制" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈超精-领料' : '外圈超精-领料')">
+                <el-link type="primary" v-if="scope.row.classType === 'inner_ring'"
+                  @click.native="viewProductFun(scope.row.drawingNo, 'inventoryFlag', scope.row.classType === 'inner_ring' ? '内圈超精-领料' : '外圈超精-入库')">
+                  {{ scope.row.transitSuperfine }}
+                </el-link>
+                <el-link type="primary" v-else
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈超精-入库')">
                   {{ scope.row.transitSuperfine }}
                 </el-link>
               </template>
@@ -152,14 +172,21 @@
           <el-table-column label="外圈滚研" align="center">
             <el-table-column prop="waitRollingResearch" label="待滚研" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈超精-入库')">
+                <template v-if="scope.row.classType === 'inner_ring'">
+                  {{ scope.row.waitRollingResearch }}
+                </template>
+                <el-link v-else type="primary"
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈滚研-领料')">
                   {{ scope.row.waitRollingResearch }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="transitRollingResearch" label="滚研在制" width="130" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈滚研-领料')">
+                <template v-if="scope.row.classType === 'inner_ring'">
+                  {{ scope.row.transitRollingResearch }}
+                </template>
+                <el-link type="primary" v-else @click.native="viewProductFun(scope.row.drawingNo, 'inventoryFlag')">
                   {{ scope.row.transitRollingResearch }}
                 </el-link>
               </template>
@@ -174,6 +201,7 @@
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
     <TaskForm v-if="taskFormVisible" ref="TaskForm" @refreshDataList="initData" />
     <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
+    <ProductForm v-if="productFormVisible" ref="productFormRef"></ProductForm>
   </div>
 </template>
 <script>
@@ -181,14 +209,16 @@ import { inventoryWarehouseReport, inventoryWarehouseExport } from '@/api/wareho
 import Form from '../../finishedProductWarehouseManagement/inventory/Form.vue'
 import TaskForm from './taskForm.vue'
 import MaterForm from './materForm.vue'
+import ProductForm from "./productForm.vue";
 export default {
   name: 'productionProgressReport',
-  components: { Form, TaskForm, MaterForm },
+  components: { Form, TaskForm, MaterForm, ProductForm },
   data() {
     return {
       formVisible: false,
       taskFormVisible: false,
       materFormVisible: false,
+      productFormVisible: false,
       tableData: [],
       listLoading: false,
       listQuery: {},
@@ -235,7 +265,13 @@ export default {
         this.$refs.TaskForm.init(drawingNo, type, processName)
       })
     },
-
+    viewProductFun(id) {
+      if (!id) id = 0
+      this.productFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.productFormRef.init(id)
+      })
+    },
     initData() {
       this.listLoading = true
       Object.keys(this.listQuery).forEach((key) => {

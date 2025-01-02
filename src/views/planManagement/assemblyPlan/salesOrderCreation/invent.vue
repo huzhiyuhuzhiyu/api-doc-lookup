@@ -56,6 +56,7 @@
               <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
               <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" sortable="custom" />
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" /> 
               <el-table-column prop="weight" label="重量(KG)" min-width="120" sortable="custom" />
               <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
               <el-table-column prop="processName" label="工序名称" min-width="120" />
@@ -416,7 +417,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productCode'||prop=='partnerCode'||prop=='partnerName'||prop=='productDrawingNo' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'shelfSpaceName' || prop == 'warehouseName') { newProp = prop }
+      if (prop === 'productCode'||prop=='pairingModeName'||prop=='partnerCode'||prop=='partnerName'||prop=='productDrawingNo' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'shelfSpaceName' || prop == 'warehouseName') { newProp = prop }
       else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp

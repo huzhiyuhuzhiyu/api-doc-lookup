@@ -478,6 +478,26 @@ export function getQueryConfirm(vm,tip=""){
     })
 }
 
+/**
+ * 排序方法封装
+ * @param item 排序字段，el-table-column的传入值
+ * @param noSnakeCaseFieldList 不需要转换驼峰的字段
+ * @returns {{asc: boolean, column: (string|*)}}
+ */
+export function getSortField(item,noSnakeCaseFieldList=[]){
+    const {prop,order} = item
+    let newProp = ''
+    if (noSnakeCaseFieldList.includes(prop)) {
+        newProp = prop
+    } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+    }
+    return {
+        asc: order === 'ascending',
+        column:order === null ? '' : newProp
+    }
+}
+
 export function getSuccessInfo(tip="操作成功"){
     return  Message.success(tip)
 }

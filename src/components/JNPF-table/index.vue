@@ -18,13 +18,13 @@
       <template v-else>
         <slot />
       </template>
-      <el-table-column align="center" fixed="right" width="1" v-if="customColumn">
-        <template slot="header">
-          <el-tooltip content="表头设置" placement="top">
-            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="showDrawer" />
-          </el-tooltip>
-        </template>
-      </el-table-column>
+<!--      <el-table-column align="center" fixed="right" width="1" v-if="customColumn">-->
+<!--        <template slot="header">-->
+<!--          <el-tooltip content="表头设置" placement="top">-->
+<!--            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="showDrawer" />-->
+<!--          </el-tooltip>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <template slot="empty">
         <el-empty description="暂无数据" :image-size="120"></el-empty>
       </template>
@@ -158,6 +158,14 @@ export default {
     if (this.refreshTable) this.refreshTable = false
   },
   methods: {
+      /**
+       * 清除排序
+       * @returns {Promise<void>}
+       */
+   async clearSort(){
+       const tableRef = await this.getTableRef()
+       tableRef.clearSort()
+   },
   /**
    * 获取表格实例 在此promise后可以获取到表格实例
    * @returns {ElTable}

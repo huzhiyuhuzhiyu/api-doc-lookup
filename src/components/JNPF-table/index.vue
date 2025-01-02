@@ -271,12 +271,11 @@ export default {
       }
       return this.$slots && this.$slots.default && this.$slots.default.reduce(checkForContent, false)
     },
-    getColumns() {
-      console.log(this.customColumn,'customColumn')
+    async getColumns() {
       if (!this.customColumn) return
       this.hasSlotContent = this.checkForSlotContent()
       if (!this.hasSlotContent) return
-      this.$nextTick(() => {
+      await this.$nextTick()
         this.columns = this.$slots.default // 代码传入的列
         let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
         this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) //
@@ -309,7 +308,7 @@ export default {
           }).filter(item => item)
           this.columnList = this.mergeArray(columnList, list) // 实际展示的列
         }
-      })
+
 
     },
     mergeArray(arr1, arr2) {

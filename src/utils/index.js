@@ -481,13 +481,13 @@ export function getQueryConfirm(vm,tip=""){
 /**
  * 排序方法封装
  * @param item 排序字段，el-table-column的传入值
- * @param noSnakeCaseFieldList 不需要转换驼峰的字段
+ * @param snakeCaseFieldList 需要转下划线的字段
  * @returns {{asc: boolean, column: (string|*)}}
  */
-export function getSortField(item,noSnakeCaseFieldList=[]){
+export function getSortField(item,snakeCaseFieldList=[]){
     const {prop,order} = item
     let newProp = ''
-    if (noSnakeCaseFieldList.includes(prop)) {
+    if (!snakeCaseFieldList.includes(prop)) {
         newProp = prop
     } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

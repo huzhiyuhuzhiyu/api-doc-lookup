@@ -464,7 +464,9 @@ export default {
             this.$refs.dataTable.showDrawer()
         },
         sortChange(item) {
-            const noSnakeCase =['drawingNo','pairingModeName','processCode','processName','productCode','productName','productionOrderNo']
+            const noSnakeCase =['accuracyLevel','classAttribute','completedQuantity','createTime','matchedQuantity','packagingMethod','packagingQuantity',
+                'pairingModeId','productionOrderId','receivedQuantity','vibrationLevel',
+            ]
             this.listQuery.orderItems[0] = getSortField(item,noSnakeCase)
             this.initData()
         },

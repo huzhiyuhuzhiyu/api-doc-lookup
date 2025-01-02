@@ -1205,7 +1205,7 @@ export default {
               shipmentList(obj).then(res => {
                 console.log(res, 'ooo')
                 this.linesList = [...this.linesList, ...res.data.records]
-                item.outShipmentVOList = res.data.records
+                item.outShipmentList = res.data.records
               })
             })
 

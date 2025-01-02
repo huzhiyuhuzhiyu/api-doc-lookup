@@ -21,13 +21,13 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
+      <div class="main" ref="main" v-loading="formLoading">
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
           <el-tab-pane label="订单信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
+                  <el-row :gutter="30" style="padding: 0 10px;">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
@@ -47,24 +47,6 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="退货标识" prop="exchangeGoodsFlag">
-                        <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="仓库" prop="warehouseId">
-                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable>
-                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -112,9 +94,6 @@
                     选择产品
                   </el-button>
                   |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-                  :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择订单</el-button>| -->
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除
@@ -122,12 +101,11 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
+                    @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                    <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                    <!-- </el-table-column> -->
+                
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
@@ -295,7 +273,7 @@
         <el-collapse v-model="activeNames" v-else>
           <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
+              <el-row :gutter="30" style="padding: 0 10px;">
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
@@ -315,24 +293,6 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="退货标识" prop="exchangeGoodsFlag">
-                        <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
-                <!-- <el-col :sm="6" :xs="24">
-                  <el-form-item label="仓库" prop="warehouseId">
-                    <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false" clearable>
-                      <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
-                        :value="item.id"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col> -->
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="供应商名称" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -379,9 +339,6 @@
                 选择产品
               </el-button>
               |
-              <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-                  :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择订单</el-button>| -->
-              <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
               <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                 :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                 批量删除
@@ -389,12 +346,10 @@
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData">
+                @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                <!-- </el-table-column> -->
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
@@ -825,10 +780,7 @@ export default {
         productCode: '',
         productName: ''
       },
-      // orderList: [
-      //   { label: "外协通知", value: "external" },
-      //   { label: "采购通知", value: "sale" },
-      // ],
+
       inspectionStatusList: [
         { label: '待检验', value: 'unInspect' },
         { label: '已检验', value: 'inspected' },
@@ -847,25 +799,7 @@ export default {
         { label: '审批拒绝', value: 'rebut' }
       ],
       orderListtf: [{ label: '退货', value: 'back' }, { label: '发货', value: 'delivery' }],
-      orderListdd: [
-        { label: '外贸', value: 'foreign_trade' },
-        { label: '内销', value: 'domestic_market' },
-        { label: '总成', value: 'assembly' }
-      ],
-      orderListfhfs: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
-      ],
-      orderList: [
-        { label: '正常任务', value: 'normal' },
-        { label: '预测订单', value: 'prediction' },
-        { label: '样品订单', value: 'sample' },
-        { label: '备货订单', value: 'stock_up' },
-        { label: '急件订单', value: 'urgent' }
-      ],
+
       productRules: {
         receivedQuantity: [
           {
@@ -1017,7 +951,7 @@ export default {
       isdisabled: false,
       visible: false,
       btnLoading: false,
-      formLoading: false,
+      formLoading: true,
       dataForm: {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
@@ -1032,7 +966,6 @@ export default {
         deliverDate: '',
         partnerName: '',
         orderNo: '',
-        logisticsNumber: '',
         //   phone: '',
         //   country: '',
         //   province: '',
@@ -1059,7 +992,7 @@ export default {
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '退货日期不能为空', trigger: 'change' }],
         logisticsCompany: [{ required: true, message: '物流公司不能为空', trigger: 'change' }],
-        logisticsNumber: [{ required: true, message: '物流单号不能为空', trigger: 'change' }]
+
       },
       customerData: {},
       treeLoading: false,
@@ -1069,7 +1002,8 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      customStyleData: 0
     }
   },
   computed: {
@@ -1119,23 +1053,48 @@ export default {
       deep: true
     }
   },
+
   async created() {
-    await this.getProjectSwitch('system', 'project')
     await this.getOrderFiledMap()
-    this.getReturnswitch()
+    await this.getProjectSwitch('system', 'project')
+    await this.getReturnswitch()
+    await this.getDeputyUnit()
+    await this.switchStyleheight()
     this.getProductClassFun()
-    // this.handleChange()
-    this.getDeputyUnit()
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
+ 
+ 
   },
   mounted() {
-    let tBody = document.querySelectorAll('.el-table')[1]
-    tBody.style.height = 'auto'
-    tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
+   
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 480
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      this.formLoading = false
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -1654,7 +1613,7 @@ export default {
               //   logisticsCompany: '',
               //   ordersId: '',
               //   deliverDate: '',
-              //   logisticsNumber: '',
+
               //   cooperativePartnerId: '',
               //   remark: '',
               //   orderNo: this.codeConfig.number
@@ -1686,7 +1645,7 @@ export default {
           //   ordersId: '',
           //   orderNo: this.codeConfig.number,
           //   deliverDate: '',
-          //   logisticsNumber: '',
+
           //   cooperativePartnerId: '',
           //   remark: ''
           // }
@@ -1877,10 +1836,8 @@ export default {
       if (btnType == 'add' || btnType == 'copy') {
         console.log(55555)
         this.dataForm.salesman = this.userInfo.userName
-        this.formLoading = true
         this.getBusInfo()
         setTimeout(() => {
-          this.formLoading = false
           this.fetchData('CGTH')
         }, 500)
       }
@@ -1916,7 +1873,7 @@ export default {
         deliverDate: '',
         partnerName: '',
         orderNo: '',
-        logisticsNumber: '',
+
         //   phone: '',
         //   country: '',
         //   province: '',
@@ -2136,6 +2093,12 @@ export default {
         })
         .catch(() => { })
     }
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>
@@ -2266,7 +2229,7 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  // padding: 10px;
   border-top: none !important;
 }
 

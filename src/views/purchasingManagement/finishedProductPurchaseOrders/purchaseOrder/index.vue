@@ -113,36 +113,26 @@
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
 
-            <el-table-column label="操作" min-width="90" fixed="right">
+            <el-table-column label="操作" width="350" fixed="right">
               <template slot-scope="scope">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
-                      @click.native="withdrawnAddHandle(scope.row.id, 'add')">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
-                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
-                      下载订货单
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="printView(scope.row, 'p006')">
-                      打印订货单
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
+                <el-button size="mini" type="text"
+                  v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
+                  @click.native="withdrawnAddHandle(scope.row.id, 'add')">
+                  重新提交
+                </el-button>
+                <el-button size="mini" type="text" v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
+                  @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                  审批撤回
+                </el-button>
+                <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                  查看详情
+                </el-button>
+                <el-button size="mini" type="text" @click.native="orderFormDownload(scope.row.id)">
+                  下载订货单
+                </el-button>
+                <el-button size="mini" type="text" @click.native="printView(scope.row, 'p006')">
+                  打印订货单
+                </el-button>
               </template>
             </el-table-column>
           </JNPF-table>

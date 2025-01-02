@@ -537,6 +537,7 @@ export default {
     }
 
     this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
+    this.tableFlag = true
     this.search()
   },
   watch: {
@@ -648,7 +649,7 @@ export default {
       purPurchaseReceiptReturnGoodsDetailList(this.orderForm)
         .then((res) => {
           this.tableData = res.data.records
-          this.tableFlag = true
+         
 
           this.total = res.data.total
           this.listLoading = false
@@ -683,6 +684,8 @@ export default {
       this.initData()
     },
     reset() {
+      this.tableFlag = true
+      console.log(this.$refs,'ll')
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.orderDateArr = []

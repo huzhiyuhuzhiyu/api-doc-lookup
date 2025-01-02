@@ -76,11 +76,8 @@ const ApplicationType2PathSuffix={
  *  @readonly
  *  @enum {string}
  *  @property {string} ING - 审批中
- *  @property {string} NO - 不通过
  *  @property {string} OK - 通过
  *  @property {string} REBUT - 驳回
- *  @property {string} TRANSFERRED - 转交
- *  @property {string} WAIT - 待审批
  *  @property {string} WITHDRAWN - 已撤回
  */
 export const ApprovalStatus ={

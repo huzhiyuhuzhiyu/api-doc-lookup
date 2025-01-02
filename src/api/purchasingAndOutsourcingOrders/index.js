@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-// 采购 和 外协订单单 
+// 采购 和 外协订单单
 // 采购订单 新增
 export function insertPurchaseOrder(data) {
     return request({
@@ -9,7 +9,18 @@ export function insertPurchaseOrder(data) {
     })
   }
 // 外协订单生成
-
+/**
+ * 批量撤回
+ * @param data
+ * @returns {*}
+ */
+export function batchRevokeOrder(data) {
+    return request({
+        url: `/api/erp/purPurchaseOrder/revoke`,
+        method: 'POST',
+        data
+    })
+}
 export function insertOutOrder(data) {
   return request({
     url: `/api/erp/purPurchaseOrder/insertOutOrder`,
@@ -50,7 +61,7 @@ export function insertOutOrder(data) {
       method: 'delete'
     })
   }
-  
+
     // 采购和外协订单明细-报表
     export function purchaseOrderReport(data) {
       return request({
@@ -120,7 +131,7 @@ export function insertOutOrder(data) {
     })
   }
   // 产品单价列表
- 
+
   export const priceList = (id) => {
     return request({
       url: `/api/erp/purProcurementDemandPool/priceList/${id}`,
@@ -148,7 +159,7 @@ export function insertOutOrder(data) {
   }
 
   // 进度跟踪
- 
+
   export function orderSchedule(data) {
     return request({
       url: `/api/erp/purPurchaseOrder/schedule/list`,
@@ -174,7 +185,7 @@ export function insertOutOrder(data) {
     })
   }
 
-  
+
   // 采购和外协订单明细-发料清单列表
   export function shipmentList(data) {
     return request({

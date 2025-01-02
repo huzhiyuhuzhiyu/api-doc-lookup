@@ -1,6 +1,6 @@
 <template>
     <div class="JNPF-common-layout" v-loading="tableLoading">
-        <div v-if="!formVisible" class="JNPF-common-layout-center JNPF-flex-main">
+        <div   class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
@@ -69,17 +69,22 @@
                     ref="dataTable" :setColumnDisplayList="columnList">
                     <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
                     <el-table-column prop="processName" label="工序名称" width="120"  />
-                    <el-table-column prop="code" label="工序编码" min-width="305" />
+                    <el-table-column prop="productCode" label="工序编码" min-width="305" />
                     <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" />
                     <el-table-column prop="planEndDate" label="计划完成日期" min-width="160" />
                     <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
                     <el-table-column prop="pairingModeName" label="配对方式" min-width="120" />
                     <el-table-column prop="unit" label="单位" width="120"/>
-                    <el-table-column prop="unit" label="完成数量" width="120"/>
-                    <el-table-column prop="unit" label="已包装数量" width="120"/>
-                    <el-table-column prop="unit" label="生产任务单号" width="120"/>
-                    <el-table-column prop="unit" label="品名规格" width="120"/>
+                    <el-table-column prop="num" label="完成数量" width="120">
+                        <template slot-scope="scope">
+                             {{scope.row.pairingModeName ? scope.row.pairingModeNum : scope.row.num}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="packageNum" label="已包装数量" width="120"/>
+                    <el-table-column prop="productTaskNo" label="生产任务单号" width="120"/>
+                    <el-table-column prop="drawingNo" label="品名规格" width="120"/>
                     <el-table-column prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
+                    <el-table-column prop="code" label="产品编码" width="120"/>
                     <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                     <el-table-column prop="createByName" label="创建人" width="100" />
 
@@ -120,25 +125,8 @@
                             @pagination="initData" />
             </div>
         </div>
-        <slot name="editForm" :data="this">
-            <EditWorkingInstructionUpload
-                v-if="formVisible && recreateFlag" @recreate="recreate"
-                :flowCode="flowCode"
-                :type="uploadType"
-                :id.sync="fileUploadId"
-                :applicationType="applicationType"
-                :isFileManagementPage="isFileManagementPage"
-                :isFileTrashPage="isFileTrashPage"
-                :isFileUploadPage="isFileUploadPage"
-                :page-type="pageType"
-                :isFileCheckPage="isFileCheckPage"
-                :isNoProductPage="isNoProductPage"
-                :isCustomerProductPage="isCustomerProductPage"
-                @back="editBack" />
-        </slot>
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
                     @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-        <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
     </div>
 </template>
 
@@ -217,7 +205,7 @@ export default {
             fileUploadId:"",
             tableFormVisible: false,
             exportFormVisible: false,
-            columnList: ['remark', 'createByName'],
+            columnList: ['remark', 'createByName','code'],
             createTimeArr: [],
             title: '更多查询',
             visible: false,

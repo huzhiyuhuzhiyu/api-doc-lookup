@@ -50,6 +50,7 @@
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
+                <el-button :disabled="tableDataList.length <= 0" size="mini" type="primary" icon="iconfont  icon-chehui1" @click="backFn">撤回</el-button>
             </div>
 
             <div class="JNPF-common-head-right">
@@ -106,6 +107,13 @@
                 <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
                   <el-tag type="warning">审批撤回</el-tag>
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.SUBMIT">提交</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />
@@ -168,13 +176,13 @@
 <script>
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
-  purchaseOrderList,
-  detailpurchaseOrderList,
-  purPurchaseOrderExport,
-  purPurchaseOrderdetail,
-  purPurchaseBatch,
-  purPurchaseBatchLine
-} from '@/api/purchasingAndOutsourcingOrders/index'
+    purchaseOrderList,
+    detailpurchaseOrderList,
+    purPurchaseOrderExport,
+    purPurchaseOrderdetail,
+    purPurchaseBatch,
+    purPurchaseBatchLine, batchRevokeOrder,
+} from '@/api/purchasingAndOutsourcingOrders/index';
 import JNPFForm from './Form'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
@@ -188,6 +196,8 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
+import {getQueryConfirm} from '@/utils';
+import {ApprovalStatus, DocumentStatus} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
@@ -382,7 +392,30 @@ export default {
     }
     this.initData()
   },
+  computed: {
+    DocumentStatus() {
+      return DocumentStatus
+    }
+  },
   methods: {
+      async backFn(){
+          await getQueryConfirm(this,'是否确认撤回')
+          const arr =this.$refs.tableForm.getCurrentSelection()
+
+          if(arr.length === 0){
+              this.$message.error('请选择要撤回的数据')
+              return
+          }
+          console.log(arr);
+          const res =await batchRevokeOrder(arr.map(item=>item.id))
+          if(res.code === 200){
+              this.$message.success('撤回成功')
+              this.initData()
+          }else{
+              this.$message.error(res.msg)
+          }
+
+      },
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
@@ -422,6 +455,8 @@ export default {
     },
     checkSelectable(row) {
       return row.receivingStatus == 'not_finished'
+          && row.documentStatus === DocumentStatus.SUBMIT
+          && row.approvalStatus !== ApprovalStatus.ING
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleFinshData(val) {

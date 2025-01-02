@@ -16,6 +16,10 @@ export default {
         configKeyLabel: '生产扣减料顺序',
         description: '启用首道自制工序扣减料，首道自制工序报工时，则会扣减线边仓库的料;启用生产产品入库扣减料，生产产品入库时，则会扣减线边仓库的料。'
     },
+    blank_auto_order: {
+        configKeyLabel: '毛坯生成任务',
+        description: '内外圈毛坯入库后自动生成套圈生产任务'
+    },
     technical_requirement: {
         configKeyLabel: '启用工艺路线技术要求',
         description: '启用工艺路线技术要求后，新建、编辑工艺路线时，将会显示技术要求输入字段，对应工单也将显示技术要求字段。'

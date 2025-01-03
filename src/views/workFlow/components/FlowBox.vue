@@ -313,6 +313,7 @@ export default {
         'b004': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
         'b006': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
         'b023': 'basicData/bomSettings/productionBom/Form.vue',
+        'b021': 'salesManagement/orderManagement/orderChanges/Form.vue',
         'b024': 'basicData/processSettings/processSettingss/Form.vue',
         'b025': 'salesManagement/orderManagement/orderList/Form.vue',
         'b026': 'salesManagement/shippingnotice/saleMetalworking/Form.vue',

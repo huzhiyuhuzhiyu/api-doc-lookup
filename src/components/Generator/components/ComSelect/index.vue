@@ -237,11 +237,11 @@ export default {
     async getData() {
       const treeData = await this.$store.dispatch('generator/getDepTree')
       const topItem = {
-        fullName: "顶级节点",
+        fullName: "",
         hasChildren: true,
         id: "-1",
         icon: "icon-ym icon-ym-tree-organization3",
-        organize: '顶级节点',
+        organize: '',
         organizeIds: ['-1']
       }
       this.allList = [...this.$store.getters.departmentList, topItem]
@@ -364,7 +364,7 @@ export default {
         }
         textList.push(textItem)
       }
-      this.selectedData = textList.map(o => o.join('/'))
+      this.selectedData = textList.filter(item=>item).map(o => o.join('/'))
       if (this.multiple) {
         this.innerValue = ''
         this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
@@ -411,13 +411,6 @@ export default {
           ) + 'px';
       });
     },
-    resetInputWidth() {
-      this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
-    },
-    handleResize() {
-      this.resetInputWidth();
-      if (this.multiple) this.resetInputHeight();
-    }
   }
 }
 </script>

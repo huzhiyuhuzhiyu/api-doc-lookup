@@ -521,7 +521,9 @@ import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
-
+import {
+  BOMLineList
+} from "@/api/calculationList/MRPOperation";
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   mixins: [getProjectList],
@@ -1125,6 +1127,12 @@ export default {
       if (this.dataForm.autoMaterialFlag) {
         this.getWarehouseListFun()
       }
+      if(this.dataForm.bomId){
+          BOMLineList(this.dataForm.bomId).then(res=>{
+            console.log("bom详情",res);
+            
+          })
+      }
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
@@ -1200,6 +1208,8 @@ export default {
         this.dataForm.materialFlag = false
 
       }
+      if(!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
+
       console.log("表单", this.dataForm);
       console.log("工序", this.dataFormTwo.data);
       if (submitFlag === false) return

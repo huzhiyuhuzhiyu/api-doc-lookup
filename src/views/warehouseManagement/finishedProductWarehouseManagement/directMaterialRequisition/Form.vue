@@ -750,7 +750,9 @@ export default {
           this.dataForm = res.data.picking
           res.data.lines.forEach(item => {
             item.warehouseName = item.outWarehouseName
+            item.warehouseId = item.outWarehouseId
             item.shelfSpaceName = item.outShelfSpaceName
+            item.shelfSpaceId = item.outShelfSpaceId
           });
           this.productData = res.data.lines.map(item=>{
               return {

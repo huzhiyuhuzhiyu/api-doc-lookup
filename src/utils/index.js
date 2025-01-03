@@ -504,13 +504,18 @@ export function getQueryConfirm(vm,tip=""){
  * 排序方法封装
  * @param item 排序字段，el-table-column的传入值
  * @param snakeCaseFieldList 需要转下划线的字段
+ * @param createByConvert
  * @returns {{asc: boolean, column: (string|*)}}
  */
-export function getSortField(item,snakeCaseFieldList=[]){
+export function getSortField(item,snakeCaseFieldList=[],createByConvert=true){
     const {prop,order} = item
     let newProp = ''
     if (!snakeCaseFieldList.includes(prop)) {
-        newProp = prop
+        if (prop === 'createByName') {
+            newProp = 'create_by'
+        }else{
+            newProp = prop
+        }
     } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
     }

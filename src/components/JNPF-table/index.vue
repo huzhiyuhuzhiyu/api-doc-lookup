@@ -38,7 +38,8 @@
 import JnpfTableColumn from './Column'
 import ColumnSettings from './ColumnSettings'
 import Sortable from 'sortablejs'
-import {deepClone, getPromise} from "@/utils";
+import {createUUID, deepClone, getPromise} from '@/utils';
+import {generateUuid} from '@/api/basicData/interfaceSettings';
 export default {
   name: 'JNPF-table',
   components: { JnpfTableColumn, ColumnSettings },
@@ -124,7 +125,7 @@ export default {
     data: {
       handler(val) {
         if (!val) return
-        this.doLayout()
+        this.doLayout(false)
       },
       deep: true
     }
@@ -240,7 +241,7 @@ export default {
 
     // 当列宽拖动结束时调用
     handleHeaderDragEnd(val, oldVal, initiator, column) {
-      this.$nextTick(() => { this.doLayout()})
+      this.$nextTick(() => { this.doLayout(false)})
     },
     setShowOverflowTooltip() {
       const children = this.$slots.default || [];
@@ -325,12 +326,14 @@ export default {
       }
       return arr
     },
-    async doLayout() {
-          this.columns =[]
-          await this.$nextTick()
-          await this.getColumns()
-          const ref = await this.getTableRef()
-          ref.doLayout()
+    async doLayout(flag=true) {
+        if(flag){
+            this.columns =[]
+            await this.$nextTick()
+            await this.getColumns()
+        }
+        const ref = await this.getTableRef()
+        ref.doLayout()
     },
     setColumn(list) {
       // 如果list没有带有minWidth属性的项，则给所有的展示项的width都改为minWidth

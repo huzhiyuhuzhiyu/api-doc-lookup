@@ -467,6 +467,17 @@ export function getMonthFirstDay(format="YYYY-MM-DD 00:00:00"){
 }
 
 /**
+ * 获取近一个月的时间
+ * @returns {string[]}
+ */
+export function nearMonth() {
+    const end = new Date()
+    const start = new Date()
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+    return [moment(start).format('YYYY-MM-DD'), moment(end).format('YYYY-MM-DD')]
+}
+
+/**
  * 获取询问提示框
  * @param { Vue } vm
  * @param tip

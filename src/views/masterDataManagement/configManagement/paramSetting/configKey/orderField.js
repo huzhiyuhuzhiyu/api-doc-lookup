@@ -131,7 +131,7 @@ export default {
     },
     sale_customerContractNo: {
         configKeyLabel: '启用客户合同号',
-        description: '启用后，在销售订单、订单进度会显示客户合同号；关闭则在销售订单详情中明细列表展示客户合同号。',
+        description: '启用后，在销售订单、订单进度、订单变更会显示客户合同号；关闭则在销售订单详情中明细列表展示客户合同号。',
         mainModule: '销售管理'
     },
 

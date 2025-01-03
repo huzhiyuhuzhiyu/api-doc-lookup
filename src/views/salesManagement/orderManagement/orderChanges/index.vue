@@ -264,7 +264,7 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customerContractNoSwitch="customerContractNoSwitch" />
   </div>
 </template>
 
@@ -272,6 +272,7 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { deleteOrdersChange, getOrdersChangeList, getOrdersChangeLineList } from '@/api/salesManagement/orderChanges'
 import Form from './Form'
+import { getOrderFiledMap } from '@/api/basicData/index'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 export default {
   name: 'carrierProfile',
@@ -551,6 +552,7 @@ export default {
       total: 0,
       formVisible: false,
       filterText: '',
+      customerContractNoSwitch: null,
 
     }
   },
@@ -560,7 +562,16 @@ export default {
     }
   },
   async created() {
-    await this.$store.dispatch('base/getBusinessConfig','gobal') 
+    // await this.$store.dispatch('base/getBusinessConfig','gobal')
+    await Promise.all([
+      getOrderFiledMap('sale'),
+    ]).then(([
+      saleRes,
+    ]) => {
+      this.customerContractNoSwitch = saleRes.data.customerContractNo
+    }).catch(error => {
+      console.error('请求失败:', error);
+    });
     const res = await this.jnpf.getBusInfo('b062')
     if (res) {
       this.showAppCodeFlag = res.enabledMark

@@ -880,7 +880,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
+      this.getRoutingDetail(this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1105,8 +1105,8 @@ export default {
     },
 
     // 获取工艺详情
-    getRoutingDetail(productsId, id) {
-      detailResourceProcess(productsId, id).then(res => {
+    getRoutingDetail(id) {
+      detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
@@ -1150,7 +1150,7 @@ export default {
       this.getProductionLineListFun()
       this.fetchData("PROD")
 
-      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.productsId, this.dataForm.routingId)
+      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code) {
       try {

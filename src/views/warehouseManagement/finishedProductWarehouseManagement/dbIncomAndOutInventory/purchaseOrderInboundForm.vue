@@ -840,7 +840,7 @@ export default {
     computedNumFun(data, index) {
       if (data.discount && data.proportion && data.weight) {
         if (Number(data.discount) > 1 || Number(data.discount) < 0) return this.$message.error("请输入合理的折扣值，0~1范围内")
-        this.productData[index].num = Math.floor(this.jnpf.numberFormat(this.jnpf.math('multiply', [data.discount, data.proportion, data.weight]), 2)) + ''
+        this.productData[index].num = Math.floor(data.proportion * data.weight)
         this.watchNum(data, index)
       }
     },

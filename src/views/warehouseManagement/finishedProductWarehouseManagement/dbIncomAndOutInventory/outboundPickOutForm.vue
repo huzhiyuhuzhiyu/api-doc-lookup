@@ -1227,7 +1227,11 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行领料数量不能为空")
                 break
               }
-
+              if(!item.batchNumber){
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
+                break
+              }
 
 
               if (Number(item.num) > Number(item.unReceiveQuantity)) {

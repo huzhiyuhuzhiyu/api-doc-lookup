@@ -1306,7 +1306,7 @@ export default {
         console.log(666);
         this.dataFormTwo.data = []
       }
-      detailResourceProcess(this.dataForm.id, this.dataForm.routingId).then(res => {
+      detailProcess(this.dataForm.routingId).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
       })
     },

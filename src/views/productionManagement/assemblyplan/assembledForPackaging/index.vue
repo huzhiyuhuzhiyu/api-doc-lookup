@@ -51,30 +51,30 @@
                     custom-column
                     :hasC="false"
                     ref="dataTable" :setColumnDisplayList="columnList">
-                    <el-table-column sortable="custom" :key="111" prop="processName" label="工序名称" width="120"  />
-                    <el-table-column sortable="custom" :key="112" prop="processCode" label="工序编码" min-width="120" />
-                    <el-table-column sortable="custom" :key="113" prop="planStartDate" label="计划开始日期" min-width="160" />
-                    <el-table-column sortable="custom" :key="114" prop="planEndDate" label="计划结束日期" min-width="160" />
-                    <el-table-column sortable="custom" :key="115" prop="vibrationLevel" label="振动等级" min-width="120" />
-                    <el-table-column sortable="custom" :key="116" prop="pairingModeName" label="配对方式" min-width="120" />
+                    <el-table-column sortable="custom"  prop="processName" label="工序名称" width="120"  />
+                    <el-table-column sortable="custom"  prop="processCode" label="工序编码" min-width="120" />
+                    <el-table-column sortable="custom"  prop="planStartDate" label="计划开始日期" min-width="160" />
+                    <el-table-column sortable="custom"  prop="planEndDate" label="计划结束日期" min-width="160" />
+                    <el-table-column sortable="custom"  prop="vibrationLevel" label="振动等级" min-width="120" />
+                    <el-table-column sortable="custom"  prop="pairingModeName" label="配对方式" min-width="120" />
                     <template v-if="mainUnitFlag">
-                        <el-table-column sortable="custom"  :key="117"  prop="mainUnit" label="单位（主）" width="120" />
-                        <el-table-column sortable="custom"  :key="118" prop="deputyUnit" label="单位（副）" width="120" />
+                        <el-table-column sortable="custom"    prop="mainUnit" label="单位（主）" width="120" />
+                        <el-table-column sortable="custom"   prop="deputyUnit" label="单位（副）" width="120" />
                     </template>
-                    <el-table-column  sortable="custom" v-else :key="119"  prop="mainUnit" label="单位" width="120" />
-                    <el-table-column prop="matchedQuantity" :key="120"  label="完成数量" width="120">
+                    <el-table-column  sortable="custom" v-else  prop="mainUnit" label="单位" width="120" />
+                    <el-table-column prop="matchedQuantity"   label="完成数量" width="120">
                         <template slot-scope="scope">
                             {{scope.row.pairingModeId ? scope.row.matchedQuantity : scope.row.completedQuantity}}
                         </template>
                     </el-table-column>
-                    <el-table-column sortable="custom" :key="121"  prop="packagingQuantity" label="已包装数量" width="120"/>
-                    <el-table-column sortable="custom" :key="122"  prop="packagingMethod" label="包装方式" v-if="isHistory" width="120"/>
-                    <el-table-column sortable="custom" :key="123"  prop="productionOrderNo" label="生产任务单号" width="180"/>
-                    <el-table-column sortable="custom" :key="124"  prop="drawingNo" label="品名规格" width="120"/>
-                    <el-table-column sortable="custom" :key="125"  prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
-                    <el-table-column sortable="custom" :key="126"  prop="productCode" label="产品编码" v-if="isAssemble" width="120"/>
-                    <el-table-column sortable="custom" :key="127"  prop="createTime" label="创建时间"  width="180" />
-                    <el-table-column sortable="custom" :key="128"   prop="createByName" label="创建人" width="100" />
+                    <el-table-column sortable="custom" prop="packagingQuantity" label="已包装数量" width="120"/>
+                    <el-table-column sortable="custom" prop="packagingMethod" label="包装方式" v-if="isHistory" width="120"/>
+                    <el-table-column sortable="custom" prop="productionOrderNo" label="生产任务单号" width="180"/>
+                    <el-table-column sortable="custom" prop="drawingNo" label="品名规格" width="120"/>
+                    <el-table-column sortable="custom" prop="productName" label="产品名称" width="120" v-if="productNameFlag"/>
+                    <el-table-column sortable="custom" prop="productCode" label="产品编码" v-if="isAssemble" width="120"/>
+                    <el-table-column sortable="custom" prop="createTime" label="创建时间"  width="180" />
+                    <el-table-column sortable="custom"  prop="createByName" label="创建人" width="100" />
 
                     <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
@@ -201,6 +201,19 @@ export default {
                 reportingQuantity:[
                     { required: true, message: '请输入包装数量', trigger: 'blur' },
                     { type: 'number', message: '请输入数字', trigger: 'blur' },
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value <= 0) {
+                               return callback(new Error('包装数量必须大于0'));
+                            }
+                            if(value > (this.currentReportRow.completedQuantity - this.currentReportRow.packagingQuantity)) {
+                              return  callback(new Error('包装数量不能大于可包装数量'));
+                            }
+                            callback();
+
+                        },
+                        trigger: 'blur'
+                    }
                 ],
             },
             reportFormVisible: false,
@@ -222,7 +235,7 @@ export default {
             reportFormPromise: null,
             reportFormResolve: null,
             reportFormReject: null,
-
+            currentReportRow:null,
             superQueryJson:filterArr([
                 {
                     prop: 'processName',
@@ -314,10 +327,16 @@ export default {
        async reportFun(item){
 
             try{
+                this.currentReportRow = item
                 const formData =  await this.reportWork(item)
+                console.log(this.reportForm);
                 formData.reportingQuantity = +formData.reportingQuantity * formData.pairingModeQuantity
                 console.log('formData', formData);
-                const res = await reportPackageWork(formData)
+                const res = await reportPackageWork({
+                    ...item,
+                    ...formData,
+                    workFinishId:item.id,
+                })
 
                 if(res.code === 200){
                     this.$message.success('报工成功')
@@ -331,6 +350,7 @@ export default {
                 console.error(e);
             }finally {
                 this.closeReportForm()
+                this.currentReportRow = null
             }
         },
         async reportWork(item){
@@ -361,13 +381,15 @@ export default {
 
             this.setReportFormPromise(true)
             this.packagingMethodDisabled = notEmpty(item.packagingMethod)
+            console.log(item.completedQuantity,item.packagingQuantity,'-');
+            const defaultReportingQuantity = item.completedQuantity - item.packagingQuantity
             this.reportForm = {
                 packagingMethod: this.packagingMethodDisabled ? item.packagingMethod : "",
                 producerId:"",
-                reportingQuantity: item.completedQuantity - item.packagingQuantity,
-                id:item.id,
+                reportingQuantity: defaultReportingQuantity  <= 0 ? 0 : defaultReportingQuantity,
+                id:"",
                 mainUint:item.mainUnit,
-                pairingModeQuantity: item.packagingMethod ? item.pairingModeQuantity : 1,
+                pairingModeQuantity: item.pairingModeId ? item.pairingModeQuantity : 1,
             }
             await this.$nextTick()
             this.$refs.reportRef.resetFields()

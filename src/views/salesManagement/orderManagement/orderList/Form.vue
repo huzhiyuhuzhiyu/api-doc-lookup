@@ -245,7 +245,7 @@
                           @select="handleSelect(scope.row, scope.$index, $event)"
                           @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           :disabled="status"></el-autocomplete>
-                        <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" 
+                        <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入"
                           @select="handleSelect(scope.row, scope.$index, $event)"
                           @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           >{{ scope.row.drawingNo }}
@@ -1803,7 +1803,7 @@ export default {
           if (res.data.records.length) {
             if(res.data.records[0].pairingModeId){
               res.data.records[0].deputyUnit=res.data.records[0].mainUnit=this.pairingModeList.filter(items => items.id === res.data.records[0].pairingModeId)[0].unit
-              
+
             }
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
             this.$set(this.productData, index, res.data.records[0])
@@ -2218,7 +2218,7 @@ export default {
       console.log("productArr", productArr);
       this.productData = productArr
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -2248,7 +2248,7 @@ export default {
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
         if(item.pairingModeId){
-       
+
           item.deputyUnit=item.mainUnit=this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].unit
 
         }
@@ -2284,7 +2284,7 @@ export default {
     openSeleceCustomerProductDialog() {
       if (this.dataForm.cooperativePartnerId) {
         // this.productVisible = true
-        // this.getcooperativeProduct() 
+        // this.getcooperativeProduct()
         this.$refs["comSelect-page"].openDialog()
       } else {
         this.$message({
@@ -2737,11 +2737,6 @@ export default {
                 if (this.btnType != 'look') {
                   this.salesFlag = false
                 }
-                getOrganizeInfo(this.dataForm.departmentId).then(sss => {
-                  console.log(6854, res);
-                  this.organizeIdTrees = sss.data.organizeIdTree || []
-                  this.organizeIdTrees.push(this.dataForm.departmentId)
-                })
                 getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
                   console.log(9834, res);
                   this.salesList = res.data
@@ -3037,12 +3032,12 @@ export default {
             console.log("productData", this.productData);
             filteredArr = this.productData.filter(item => item.drawingNo && item.productsId);
             // filteredArr.forEach(item => {
-            //   // 从 arr1 找到匹配的对象  
+            //   // 从 arr1 找到匹配的对象
             //   let match = this.pairingModeList.find(a => a.id === item.pairingModeId);
 
-            //   // 如果找到了匹配的对象  
+            //   // 如果找到了匹配的对象
             //   if (match) {
-            //     // 将对应的 num 乘以 arr2 中的 num，并赋值给 arr2 的 num  
+            //     // 将对应的 num 乘以 arr2 中的 num，并赋值给 arr2 的 num
             //     item.num = item.num * match.quantity;
             //   }
             // });

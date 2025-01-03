@@ -149,7 +149,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="525"
+                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="525"
                           v-if="btnType != 'look'">
                         </el-table-column>
 
@@ -999,7 +999,7 @@ export default {
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
-        item.num = item.waitReceiptNum
+        item.num = item.requiredReceivedQuantity
         item.taxRates = item.taxRate + "%"
 
 
@@ -1249,7 +1249,7 @@ export default {
         setTimeout(() => {
           data.forEach((item, index) => {
             item.productDrawingNo = item.drawingNo
-            item.num = item.waitReceiptNum
+            item.num = item.requiredReceivedQuantity
             item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
             item.costPrice = item.price
             item.taxRates = item.taxRate + "%"
@@ -1260,9 +1260,7 @@ export default {
             item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
             item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
             item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-            this.$set(item, 'discount', '')
-            this.$set(item, 'proportion', '')
-            this.$set(item, 'weight', '')
+         
             if (this.mainUnitFlag == 1) {
               if (item.calculationDirection == 'multiplication') {
                 this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

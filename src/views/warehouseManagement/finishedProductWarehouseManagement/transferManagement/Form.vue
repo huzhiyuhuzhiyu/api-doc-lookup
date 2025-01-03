@@ -66,7 +66,7 @@
                         <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                         v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                        <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                        <el-table-column prop="projectName" label="所属项目" min-width="120"
                         v-if="isProjectSwitch == 1" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                         <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -190,7 +190,7 @@
                   </div>
 
                   <JNPF-table ref="product" :data="productData" :fixedNO="true"
-                    @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                    @selection-change="handeleProductInfoData" :hasC="btnType !== 'look'" border :key="165" style="width: 100%;">
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -341,7 +341,7 @@
                 </el-table-column>
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
-              
+
                 <el-table-column prop="standardValue" label="规值" min-width="120" v-if="standardValueFlag == 1" />
                     <el-table-column prop="colour" label="颜色" min-width="120" v-if="colourFlag == 1" />
                     <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"
@@ -419,7 +419,7 @@ import flowMixin from '@/mixins/generator/flowMixin'
 import WareHouseForm from './wareHouseForm.vue'
 export default {
   components: { WareHouseForm, Process, recordList },
-  mixins: [flowMixin, busFlow,getProjectList], 
+  mixins: [flowMixin, busFlow,getProjectList],
   data() {
     return {
       scanDialog: false,
@@ -518,14 +518,14 @@ export default {
       processFlag: "",
     }
   },
- 
-   
+
+
   async created() {
     this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
 
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -553,7 +553,7 @@ export default {
     },
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     async getMainUnitFun(code, type) {
@@ -634,7 +634,7 @@ export default {
       this.dataForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },

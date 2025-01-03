@@ -1104,10 +1104,10 @@ export default {
               }
             })
         }
-        this.superForm.superQuery = this.basicQuery
+        this.form.superQuery = this.basicQuery
       }
       if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
+        this.form.superQuery = this.superQuery
       }
       console.log(55555);
       this.initData()

@@ -929,7 +929,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
       if (this.colourFlag === '1') {
@@ -1628,7 +1628,10 @@ export default {
       this.searchList1 = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
-      ],
+      ]
+        if (this.isProductNameSwitch == 1) {
+            this.searchList1.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+        }
         this.getassembleData('basic')
     },
     // 生产列表数据
@@ -1720,11 +1723,14 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      },
+      }
         this.searchList2 = [
           { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
           { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
         ]
+        if (this.isProductNameSwitch == 1) {
+            this.searchList2.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+        }
       this.$refs.SuperQuery.conditionList = []
       this.getproduceData('basic')
     },
@@ -1812,6 +1818,9 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
+      if (this.isProductNameSwitch == 1) {
+         this.searchList3.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+      }
       this.$refs.SuperQuery.conditionList = []
       this.getpurchaseData('basic')
     },
@@ -1909,7 +1918,10 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
       ]
-      this.getouteData('basic')
+        if (this.isProductNameSwitch == 1) {
+            this.searchList4.splice(0, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
+        }
+        this.getouteData('basic')
     },
 
     // 排序
@@ -2306,7 +2318,7 @@ export default {
             item.urgentFlag = false;
             item.insertOrderSort = "";
             // item.outputQuantity = Number(item.outputQuantity);
-            // item.planProductionQuantity = item.outputQuantity 
+            // item.planProductionQuantity = item.outputQuantity
 
             item.outputQuantity = Number(item.outputQuantity);
             item.issuedQuantity = Number(item.issuedQuantity);
@@ -2327,7 +2339,7 @@ export default {
           //   return acc;
           // }, {});
 
-          // const result = Object.values(mergedData); 
+          // const result = Object.values(mergedData);
           // result.forEach((item, index) => {
           //   item.index = index
           // })
@@ -2433,7 +2445,7 @@ export default {
           //         ? earliest
           //         : current;
           //     });
-          //     existingItem.deliveryDates = earliestDate.deliveryDates; 
+          //     existingItem.deliveryDates = earliestDate.deliveryDates;
           //   } else {
           //     acc.push(curr);
           //   }
@@ -2465,7 +2477,7 @@ export default {
 
           this.purchaseArr.forEach((item, index) => {
             item.materialDemandId = item.id;
-            // this.purchaseArrList[index].materialDemandId = item.id; 
+            // this.purchaseArrList[index].materialDemandId = item.id;
             this.$set(item, 'deliveryDates', item.deliveryDate)
             // item.deliveryDate = "";
             item.poolType = "procure";

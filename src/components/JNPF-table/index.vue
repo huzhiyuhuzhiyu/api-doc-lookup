@@ -326,6 +326,8 @@ export default {
       return arr
     },
     async doLayout() {
+          this.columns =[]
+          await this.$nextTick()
           await this.getColumns()
           const ref = await this.getTableRef()
           ref.doLayout()

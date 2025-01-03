@@ -57,7 +57,7 @@
 
         <!-- 单个日期选择器 -->
         <el-date-picker v-else-if="item.type === 'date'" type="date" value-format="yyyy-MM-dd" style="width: 100%"
-          v-bind="$attrs" :placeholder="Placeholder" v-on="$listeners" :disabled="item.disabled" :readonly="item.readonly"
+          v-bind="$attrs" :placeholder="Placeholder" v-on="$listeners" :disabled="item.disabled || readOnly" :readonly="item.readonly"
           :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''" />

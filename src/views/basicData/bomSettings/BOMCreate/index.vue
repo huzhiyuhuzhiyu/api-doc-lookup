@@ -157,20 +157,44 @@ export default {
           sm: 12,
           readOnly: true
         },
-        // {
-        //   prop: 'pickingWay',
-        //   label: '领料方式',
-        //   value: 'production_order',
-        //   type: 'select',
-        //   options: [
-        //     { label: '按生产订单领料', value: 'production_order' },
-        //     { label: '按工单领料', value: 'dispatch_list' }
-        //   ],
-        //   itemRules: [{ required: true, trigger: 'change' }],
-        //   sm: 12
-        // },
+        {
+          prop: 'pickingWay',
+          label: '领料方式',
+          value: 'production_order',
+          type: 'select',
+          options: [
+            { label: '按生产订单领料', value: 'production_order' },
+            { label: '按工单领料', value: 'dispatch_list' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 12,
+          change:(e)=>{
+             const item = this.linesListItems.find(item=>item.prop === 'reduceType')
+              if(!item){
+                  return ;
+              }
+                if(e === 'dispatch_list') {
+                    item.options = [
+                        {label: '生成领料单', value: 'picking'},
+                        {label: '都不是', value: 'none'}
+                    ]
+                }else{
+                    item.options = [
+                        {label: '生成领料单', value: 'picking'},
+                        {label: '自动扣减料', value: 'auto'},
+                        {label: '都不是', value: 'none'}
+                    ]
+                }
+              const arr =item.options.map(item=>item.value)
+              this.linesList.forEach(item=>{
+                  if(!arr.includes(item.reduceType)){
+                      item.reduceType = ""
+                  }
+              })
+          },
+        },
         // { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
-        { prop: 'remark', label: '备注', value: '', type: 'textarea' }
+        { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
       ],
       linesList: [],
 
@@ -258,12 +282,12 @@ export default {
           value: 'picking',
           type: 'select',
           options: [
-            { label: '生成领料单', value: 'picking' },
-            { label: '自动扣减料', value: 'auto' },
-            { label: '都不是', value: 'none' }
+            // { label: '生成领料单', value: 'picking' },
+            // { label: '自动扣减料', value: 'auto' },
+            // { label: '都不是', value: 'none' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 160
+          minWidth: 160,
         },
         { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
       ],
@@ -771,7 +795,7 @@ export default {
         // this.dataForm.version = this.dataForm.hasOwnProperty('version') ? (this.dataForm.version + 1) : 1
         // this.dataForm.approvalStatus = this.dataForm.documentStatus === "submit" ? this.dataForm.approvalStatus : ""
         this.dataForm.documentStatus = submitModel
-        this.dataForm.pickingWay = 'production_order'
+        // this.dataForm.pickingWay = 'production_order'
         const formMethod = this.dataForm.id ? updateBomData : addBomData
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {

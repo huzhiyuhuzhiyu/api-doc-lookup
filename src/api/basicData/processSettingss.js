@@ -69,6 +69,23 @@ export function importProcess(data) {
     })
   }
 
+  // 工艺路线-批量设置工艺
+export function batchProcess(data) {
+    return request({
+        url: `/api/mes/bimRouting/setting/batch`,
+        method: 'POST',
+        data
+    })
+}
+
+  // 工艺路线-批量删除
+  export function delProcess(data) {
+    return request({
+        url: `/api/mes/bimRouting/del/batch`,
+        method: 'PUT',
+        data
+    })
+}
 
 export function getWorkListMap(data) {
   return request({

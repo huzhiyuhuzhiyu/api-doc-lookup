@@ -1208,7 +1208,7 @@ export default {
           return
         }
         // 筛选出 processType 为 "vibrate" 的元素  
-        let vibrateItems = arr.filter(item => item.processType === "vibrate");
+        let vibrateItems = this.dataFormTwo.filter(item => item.processType === "vibrate");
         // 判断是否有两条及以上  
         let hasTwoOrMoreVibrate = vibrateItems.length >= 2;
         if (hasTwoOrMoreVibrate) {
@@ -1219,7 +1219,7 @@ export default {
         }
 
 
-        let heatTrearmentItems = arr.filter(item => item.processType === "heat_treatment");
+        let heatTrearmentItems = this.dataFormTwo.filter(item => item.processType === "heat_treatment");
         // 判断是否有两条及以上  
         let hasTwoOrMoreHeatTrearmentItems = heatTrearmentItems.length >= 2;
         if (hasTwoOrMoreHeatTrearmentItems) {
@@ -1230,7 +1230,7 @@ export default {
         }
 
 
-        let packingItems = arr.filter(item => item.processType === "packing");
+        let packingItems = this.dataFormTwo.filter(item => item.processType === "packing");
         // 判断是否有两条及以上  
         let hasTwoOrMorepacking = packingItems.length >= 2;
         if (hasTwoOrMorepacking) {
@@ -1240,7 +1240,7 @@ export default {
           return
         }
 
-        let pairsItems = arr.filter(item => item.processType === "pairs");
+        let pairsItems = this.dataFormTwo.filter(item => item.processType === "pairs");
         // 判断是否有两条及以上  
         let hasTwoOrMorepairs = pairsItems.length >= 2;
         if (hasTwoOrMorepairs) {
@@ -1250,7 +1250,7 @@ export default {
           return
         }
 
-        let grindingItems = arr.filter(item => item.processType === "grinding");
+        let grindingItems = this.dataFormTwo.filter(item => item.processType === "grinding");
         // 判断是否有两条及以上  
         let hasTwoOrMoregrinding = grindingItems.length >= 2;
         if (hasTwoOrMoregrinding) {
@@ -1260,7 +1260,7 @@ export default {
           return
         }
 
-        let accuracyItems = arr.filter(item => item.processType === "accuracy");
+        let accuracyItems = this.dataFormTwo.filter(item => item.processType === "accuracy");
         // 判断是否有两条及以上  
         let hasTwoOrMoreaccuracy = accuracyItems.length >= 2;
         if (hasTwoOrMoreaccuracy) {

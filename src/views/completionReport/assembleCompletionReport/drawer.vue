@@ -184,13 +184,11 @@
                   <el-input v-model="form.reworkQuantity" placeholder="返工数量" class="ipt" />
                 </el-form-item>
               </el-col>
-              <!-- <el-col :sm="24" :xs="24">
-              <el-form-item label="报工时间" prop="reportingTime" class="iptLabel">
-                <el-date-picker v-model="form.reportingTime" :default-value="new Date()" type="datetime"
-                  value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择报工时间" class="ipt">
-                </el-date-picker>
-              </el-form-item>
-            </el-col> -->
+            <el-col :sm="24" :xs="24">
+                    <el-form-item label="报工时间" class="iptLabel">
+                  <el-date-picker v-model="form.reportingTime" value-format="yyyy-MM-dd" @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;"  placeholder="选择报工时间"> </el-date-picker>
+                </el-form-item>
+                  </el-col>
               <el-col :sm="24" :xs="24" class="iptLabel">
                 <el-form-item label="生产人" prop="producerName" v-if="form.taskMethod != 'not_appoint'">
                   <el-select v-model="form.producerName" placeholder="生产人" style="width: 100%;" class="ipt">
@@ -374,6 +372,9 @@ export default {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
 
     },
+    reportingTimeChange(e){
+      this.form.reportingTime = e + ' 00:00:00'
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -439,7 +440,7 @@ export default {
         this.producePersonListFun(res.data.id)
 
         const end = new Date();//获取当前的日期
-        this.form.reportingTime = this.dateFormat(end)
+        this.$set(this.form,'reportingTime',this.dateFormat(end))
       })
     },
     // 获取生产人员数据

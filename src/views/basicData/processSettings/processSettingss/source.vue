@@ -813,6 +813,9 @@ export default {
       if (this.activeName == 'personnel') {
         this.actTitle = '人员'
       }
+      if (this.activeName == 'inspect_personnel') {
+        this.actTitle = '检验人员'
+      }
       if (this.activeName == 'work_group') {
         this.actTitle = '班组'
 

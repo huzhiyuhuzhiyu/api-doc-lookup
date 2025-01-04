@@ -282,9 +282,9 @@ export default {
           value: 'picking',
           type: 'select',
           options: [
-            // { label: '生成领料单', value: 'picking' },
-            // { label: '自动扣减料', value: 'auto' },
-            // { label: '都不是', value: 'none' }
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160,

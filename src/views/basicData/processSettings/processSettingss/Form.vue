@@ -799,12 +799,16 @@ export default {
     await this.switchStyleheight()
     console.log(this.isProjectSwitch)
     if (this.isProjectSwitch === '1') {
-      console.log(this.projectIdData, 'lllljj')
-      this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
       this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目', fixed: 'left' })
-    } else {
-      this.dataForm.projectId = this.userInfo.projectId
+      if (this.userInfo.projectId === '1') {
+        console.log(this.projectIdData, 'lllljj')
+        this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
+
+      } else {
+        this.dataForm.projectId = this.userInfo.projectId
+      }
     }
+
     if (this.isCheckingSwitch === '1') {
       this.ProductTableItems.push({ prop: 'inspectionInformation', label: '检验信息', fixed: 'left' })
     }

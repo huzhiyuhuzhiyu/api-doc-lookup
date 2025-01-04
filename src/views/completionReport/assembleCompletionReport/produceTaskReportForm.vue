@@ -287,6 +287,12 @@
                       <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24">
+                    <el-form-item label="报工时间" class="iptLabel">
+                  <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd" @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;"  placeholder="选择报工时间"> </el-date-picker>
+                </el-form-item>
+                  </el-col>
+               
                   <el-col :sm="24" :xs="24" class="iptLabel">
                     <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'"
                       :style="{ marginBottom: producerMargin }">
@@ -697,6 +703,9 @@ export default {
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
+    reportingTimeChange(e){
+      this.currentProcess.reportingTime = e + ' 00:00:00'
+    },
     commonFun() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
       if (this.currentProcessType === 2) {
@@ -716,7 +725,7 @@ export default {
       }
       this.producePersonListFun(this.currentProcess.id)
       const end = new Date();//获取当前的日期
-      this.currentProcess.reportingTime = this.dateFormat(end)
+      this.$set(this.currentProcess,'reportingTime',this.dateFormat(end))
     },
 
     // 获取生产人员数据

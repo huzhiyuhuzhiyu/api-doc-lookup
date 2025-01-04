@@ -754,8 +754,11 @@ export default {
       this.$set(this.productData[index], 'specialRequire', data.specialRequire)
       this.$set(this.productData[index], 'material', data.material)
       this.$set(this.productData[index], 'colour', data.colour)
+      this.$set(this.productData[index], 'protrusion', data.protrusion)
+      this.$set(this.productData[index], 'preload', data.preload)
+      this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
                          
-    },
+    }, 
 
 
 
@@ -1273,8 +1276,8 @@ export default {
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.productData.forEach(item => {
-              item.packagingMethod=""
-              item.specialRequire=""
+           
+                  
             });
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {

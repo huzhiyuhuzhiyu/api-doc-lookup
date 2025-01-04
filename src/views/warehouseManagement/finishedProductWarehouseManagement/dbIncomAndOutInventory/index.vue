@@ -587,7 +587,7 @@
           <div>
             <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
               v-show="categoryType == 'outbound_sale_send' && saleFlag" @click="batchOutbound">批量出库</el-button>
-              <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
+            <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
               v-show="categoryType == 'outbound_sale_send' && saleFlag" @click="batchPrint">批量打印</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_external' && externalFlag" @click="externalBatchInbound">批量入库</el-button>
@@ -774,10 +774,12 @@
             v-if="packagingMethodFlag == 1" />
           <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
             v-if="specialRequireFlag == 1" />
-            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-                      v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
-                      v-if="colourFlag == 1"></el-table-column>
+          <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+            v-if="materialFlag == 1"></el-table-column>
+          <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+            v-if="colourFlag == 1"></el-table-column>
+          <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
+
           <el-table-column prop="remark" label="备注" min-width="160" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
 
@@ -921,22 +923,18 @@
           <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="requiredReceivedQuantity" label="待收货数量" min-width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-          <el-table-column prop="standardValue"  label="规值" min-width="160"
-            sortable="custom" />
-         
-          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
-             />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
-           />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-             />
-          <el-table-column prop="oil" label="油脂" width="100" sortable="custom"  />
+          <el-table-column prop="standardValue" label="规值" min-width="160" sortable="custom" />
+
+          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
           <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" /> -->
-          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"  />
-          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"/>
+          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
           <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
-          <el-table-column prop="material" label="材质" width="130" sortable="custom" ></el-table-column>
-          <el-table-column prop="colour" label="颜色" width="130" sortable="custom" ></el-table-column>
+          <el-table-column prop="material" label="材质" width="130" sortable="custom"></el-table-column>
+          <el-table-column prop="colour" label="颜色" width="130" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序" min-width="160" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="120" />
@@ -1229,14 +1227,15 @@
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="productInbound(scope.row,'inbound_order_production')">入库</el-button>
+              <el-button size="mini" type="text"
+                @click="productInbound(scope.row, 'inbound_order_production')">入库</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
 
         <!-- 翻库入库 -->
-        <JNPF-table :partentOrChild="'dataTableFilpRef'" ref="dataTableFilpRef" v-loading="listLoading" v-if="isProjectSwitchFlag"
-          :data="filpData" :fixedNO="true" custom-column :setColumnDisplayList="filpColumns"
+        <JNPF-table :partentOrChild="'dataTableFilpRef'" ref="dataTableFilpRef" v-loading="listLoading"
+          v-if="isProjectSwitchFlag" :data="filpData" :fixedNO="true" custom-column :setColumnDisplayList="filpColumns"
           v-show="categoryType == 'inbound_flip'">
           <el-table-column prop="orderNo" label="任务单号" width="180" />
           <el-table-column prop="orderType" label="任务类型" width="120">
@@ -1273,7 +1272,7 @@
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="productInbound(scope.row,'inbound_flip')">入库</el-button>
+              <el-button size="mini" type="text" @click="productInbound(scope.row, 'inbound_flip')">入库</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -1525,7 +1524,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
@@ -1599,7 +1598,7 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm, ToolForm, SparePartsForm, EquipmentForm, EquipmentOutboundForm, ToolFormS, EquipmentFormS, SparePartsFormS, EquipmentInboundForm,PrintDialog,PrintBrowse
+    ExternalMaterOutboundForm, ToolForm, SparePartsForm, EquipmentForm, EquipmentOutboundForm, ToolFormS, EquipmentFormS, SparePartsFormS, EquipmentInboundForm, PrintDialog, PrintBrowse
   },
   props: {
     warehouseCode: "",
@@ -1817,7 +1816,7 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
-        stockFlag :true,
+        stockFlag: true,
       },
 
       purchaseFormVisible: false,
@@ -1862,7 +1861,7 @@ export default {
       productForm: {
         orderNo: "",
         orderType: "",
-        orderTypeList: ['normal', 'rework','manually'],
+        orderTypeList: ['normal', 'rework', 'manually'],
 
         productDrawingNo: "",
         stockFlag: true,
@@ -2229,7 +2228,7 @@ export default {
       getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
-     
+
     },
     advancedQueryFuns(prop) {
       // sealingCoverTyping //打字内容
@@ -2242,34 +2241,133 @@ export default {
       //     specialRequire //特殊要求
       console.log(this.categoryType);
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === prop)
-     
+
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'colour',
+        label: '颜色',
+        type: 'select',
+        options: this.bimProductAttributesList.pa010.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'material',
+        label: '材质',
+        type: 'select',
+        options: this.bimProductAttributesList.pa021.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'specialRequire',
+        label: '特殊要求',
+        type: 'select',
+        options: this.bimProductAttributesList.pa016.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'packagingMethod',
+        label: '包装方式',
+        type: 'select',
+        options: this.bimProductAttributesList.pa015.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'clearance',
+        label: '游隙',
+        type: 'select',
+        options: this.bimProductAttributesList.pa001.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+
+      // this.superQueryJson.splice(classIndex + 1, 0, {
+      //   prop: 'oilQuantity',
+      //   label: '油脂量',
+      //   type: 'select',
+      //   options: this.bimProductAttributesList.pa003.map((item) => {
+      //     return {
+      //       label: item.name,
+      //       value: item.name
+      //     }
+      //   })
+      // })
+
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'oil',
+        label: '油脂',
+        type: 'select',
+        options: this.bimProductAttributesList.pa002.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'vibrationLevel',
+        label: '振动等级',
+        type: 'select',
+        options: this.bimProductAttributesList.pa005.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'accuracyLevel',
+        label: '精度等级',
+        type: 'select',
+        options: this.bimProductAttributesList.pa006.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+
+
+      this.superQueryJson.splice(classIndex + 1, 0, {
+        prop: 'sealingCoverTyping',
+        label: '打字内容',
+        type: 'select',
+        options: this.bimProductAttributesList.pa007.map((item) => {
+          return {
+            label: item.name,
+            value: item.name
+          }
+        })
+      })
+      if (this.categoryType == 'inbound_purchase') {
+
+
         this.superQueryJson.splice(classIndex + 1, 0, {
-            prop: 'colour',
-            label: '颜色',
-            type: 'select',
-            options: this.bimProductAttributesList.pa010.map((item) => {
-              return {
-                label: item.name,
-                value: item.name
-              }
-            })
-          })
-          this.superQueryJson.splice(classIndex + 1, 0, {
-            prop: 'material',
-            label: '材质',
-            type: 'select',
-            options: this.bimProductAttributesList.pa021.map((item) => {
-              return {
-                label: item.name,
-                value: item.name
-              }
-            })
-          })
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'specialRequire',
-          label: '特殊要求',
+          prop: 'standardValue',
+          label: '规值',
           type: 'select',
-          options: this.bimProductAttributesList.pa016.map((item) => {
+          options: this.bimProductAttributesList.pa008.map((item) => {
             return {
               label: item.name,
               value: item.name
@@ -2277,107 +2375,8 @@ export default {
           })
         })
 
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: this.bimProductAttributesList.pa015.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: this.bimProductAttributesList.pa001.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-  
-        // this.superQueryJson.splice(classIndex + 1, 0, {
-        //   prop: 'oilQuantity',
-        //   label: '油脂量',
-        //   type: 'select',
-        //   options: this.bimProductAttributesList.pa003.map((item) => {
-        //     return {
-        //       label: item.name,
-        //       value: item.name
-        //     }
-        //   })
-        // })
-      
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: this.bimProductAttributesList.pa002.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
 
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: this.bimProductAttributesList.pa005.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: this.bimProductAttributesList.pa006.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
- 
-
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: this.bimProductAttributesList.pa007.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-        if (this.categoryType == 'inbound_purchase') {
-         
-  
-         this.superQueryJson.splice(classIndex + 1, 0, {
-           prop: 'standardValue',
-           label: '规值',
-           type: 'select',
-           options: this.bimProductAttributesList.pa008.map((item) => {
-             return {
-               label: item.name,
-               value: item.name
-             }
-           })
-         })
-    
-
-     }
+      }
 
     },
 
@@ -2458,7 +2457,7 @@ export default {
       this.exterMaterForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
 
       this.exterMaterForm.blankClassAttributeList = this.classAttributeList
-      this.exterMaterForm.documentStatus='submit'
+      this.exterMaterForm.documentStatus = 'submit'
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
         if (this.mainUnitFlag == 1) {
           res.data.records.forEach(item => {
@@ -2566,24 +2565,24 @@ export default {
         this.printBrowseVisible = false
       });
     },
-    batchPrint(){
-    
+    batchPrint() {
+
       if (!this.selectSaleList.length) return this.$message.error("请选择您要打印的数据")
       this.enCode = 'p031' // 筛选出 businessType 等于 type 的项  
- 
+
       this.fullName = "销售单" // 筛选出 businessType 等于 type 的项  
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
       })
-       
+
     },
     closePrint() {
-            this.printVisible = false
-        },
+      this.printVisible = false
+    },
     // 批量出库
     batchOutbound() {
-   
+
       if (!this.selectSaleList.length) return this.$message.error("请选择您要出库的数据")
       let flag = this.hasDifferentCooperativePartnerCode(this.selectSaleList)
       if (flag) return this.$message.error("只能选择相同客户的数据")
@@ -3407,7 +3406,7 @@ export default {
         //   this.searchWorkDta(type)
         // }
       }
-      if(this.categoryType=='inbound_flip'){
+      if (this.categoryType == 'inbound_flip') {
         this.searchFilpData(type)
       }
       // 资产领用 
@@ -3612,13 +3611,13 @@ export default {
       this.selectWorkList = val
     },
     // 生产产品单条入库
-    productInbound(row,type) {
+    productInbound(row, type) {
       let arr = []
       arr.push(row)
       this.productInboundFormVisible = true
       this.$nextTick(() => {
         console.log(555);
-        this.$refs.productInboundREFForm.init(arr, 'add', this.classAttributeList, this.warehouseCode,type)
+        this.$refs.productInboundREFForm.init(arr, 'add', this.classAttributeList, this.warehouseCode, type)
       })
     },
     // 生产工单单条入库
@@ -4709,8 +4708,8 @@ export default {
             deliveryStartTime: "",
             deliveryEndTime: "",
             cooperativePartnerName: "",
-        stockFlag :true,
-        customerProductNo: "",
+            stockFlag: true,
+            customerProductNo: "",
             orderItems: [{
               asc: false,
               column: ""
@@ -5002,7 +5001,7 @@ export default {
           { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
           { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         ]
-        
+
         this.searchProductData('basic')
       }
       if (this.categoryType == 'inbound_production') {

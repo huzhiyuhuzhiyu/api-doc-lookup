@@ -141,7 +141,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
-                           
+
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -161,10 +161,10 @@
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="130" 
-                     ></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" 
-                     ></el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="130"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
+                        <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
+                          :key="10201"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -277,7 +277,8 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                          show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
 
@@ -317,7 +318,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
-                          
+
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -337,10 +338,11 @@
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="130" 
-                        ></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" 
-                     ></el-table-column>
+                        <el-table-column prop="material" label="保持架材质" width="130"></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
+                        <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
+                          :key="10201"></el-table-column>
+
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -1013,7 +1015,7 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
-       this.allocationFlag = data[0].all.locationStatus !== 'disabled'
+      this.allocationFlag = data[0].all.locationStatus !== 'disabled'
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
@@ -1107,7 +1109,7 @@ export default {
             item.costPrice = item.price
             item.num = item.waitDeliverNum
             item.ordersLineId = item.id
-            this.$set(item,'sourceNo',item.orderNo)
+            this.$set(item, 'sourceNo', item.orderNo)
             item.taxRates = item.taxRate + "%"
             item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
             let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
@@ -1186,7 +1188,7 @@ export default {
       } catch (error) {
       }
     },
-    async handleConfirm(submitModel,type) {
+    async handleConfirm(submitModel, type) {
       console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
@@ -1210,14 +1212,14 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-              if(!item.batchNumber){
+              if (!item.batchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
                 break
               }
 
 
-              
+
               if (Number(item.num) > Number(item.availableBatchNumber)) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
@@ -1262,8 +1264,8 @@ export default {
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.productData.forEach(item => {
-              item.packagingMethod=""
-              item.specialRequire=""
+              item.packagingMethod = ""
+              item.specialRequire = ""
             });
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {
@@ -1320,8 +1322,8 @@ export default {
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)
                 })
-              }else{
-              this.tipsvisible = true
+              } else {
+                this.tipsvisible = true
 
               }
               this.btnLoading = false

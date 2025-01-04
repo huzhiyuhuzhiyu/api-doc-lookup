@@ -146,7 +146,8 @@
                       <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false"   @change="(value) => changePairingMode(value,scopew)">
+                            :disabled="btnType == 'look' ? true : false"
+                            @change="(value) => changePairingMode(value, scopew)">
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                               :value="item.id">
                             </el-option>
@@ -198,11 +199,13 @@
                         v-if="materialFlag == 1"></el-table-column>
                       <el-table-column prop="colour" label="颜色" width="120" :key="1020"
                         v-if="colourFlag == 1"></el-table-column>
+                      <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
+
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
                     </el-table>
                   </div>
                   <el-table ref="product"
-                    v-else-if="(btnType == 'edit' || btnType == 'add'||btnType=='copy') && isProjectSwitchFlag == true"
+                    v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
                     :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
                     @row-click="rowclick" key="165" style="width: 100%;">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
@@ -239,14 +242,15 @@
                     <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false"   @change="(value) => changePairingMode(value,scope)">
+                          :disabled="btnType == 'look' ? true : false"
+                          @change="(value) => changePairingMode(value, scope)">
                           <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                             :value="item.id">
                           </el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch=== '1'" />
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'" />
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                       <template slot="header">
@@ -312,8 +316,8 @@
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
                       v-if="sealingCoverTypingFlag == 1" :key="211">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                        filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable
+                          allow-create style="width: 100%;">
                           <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -322,7 +326,8 @@
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
                       :key="123">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable allow-create>
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable
+                          allow-create>
                           <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -331,7 +336,8 @@
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
                       :key="17">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable filterable
+                          allow-create style="width: 100%;">
                           <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -339,7 +345,8 @@
                     </el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable filterable allow-create
+                          style="width: 100%;">
                           <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -347,7 +354,8 @@
                     </el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable filterable allow-create
+                          style="width: 100%;">
                           <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -355,7 +363,8 @@
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable filterable allow-create
+                          style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -364,7 +373,8 @@
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
                       :key="101">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable filterable
+                          allow-create style="width: 100%;">
                           <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -373,7 +383,8 @@
                     <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
                       :key="101">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable
+                          allow-create style="width: 100%;">
                           <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -381,7 +392,8 @@
                     </el-table-column>
                     <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.material" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.material" placeholder="请选择" clearable filterable allow-create
+                          style="width: 100%;">
                           <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
@@ -389,12 +401,19 @@
                     </el-table-column>
                     <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create
+                          style="width: 100%;">
                           <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="receivingAddress" label="收货地址" width="200" :key="1288">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.receivingAddress" placeholder="请输入" maxlength="200" />
+                      </template>
+                    </el-table-column>
+
                     <el-table-column prop="remark" label="备注" width="200" :key="128">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -553,7 +572,8 @@
                   <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                        :disabled="btnType == 'look' ? true : false" @change="(value) => changePairingMode(value,scope)">
+                        :disabled="btnType == 'look' ? true : false"
+                        @change="(value) => changePairingMode(value, scope)">
                         <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                           :value="item.id">
                         </el-option>
@@ -604,11 +624,14 @@
                     v-if="materialFlag == 1"></el-table-column>
                   <el-table-column prop="colour" label="颜色" width="120" :key="1020"
                     v-if="colourFlag == 1"></el-table-column>
+                  <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
+
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                   </el-table-column>
                 </el-table>
               </div>
-              <el-table ref="product" v-else-if="(btnType == 'edit' || btnType == 'add'||btnType=='copy') && isProjectSwitchFlag == true"
+              <el-table ref="product"
+                v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
                 :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
                 @row-click="rowclick" :key="165" style="width: 100%;">
                 <el-table-column type="selection" width="55" fixed="left" :key="2">
@@ -640,7 +663,7 @@
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false"  @change="(value) => changePairingMode(value,scope)">
+                      :disabled="btnType == 'look' ? true : false" @change="(value) => changePairingMode(value, scope)">
                       <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                         :value="item.id">
                       </el-option>
@@ -712,7 +735,8 @@
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag == 1"
                   :key="211">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable
+                      allow-create style="width: 100%;">
                       <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -729,7 +753,8 @@
                 <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
                   :key="17">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -737,7 +762,8 @@
                 </el-table-column>
                 <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.oil" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.oil" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -745,7 +771,8 @@
                 </el-table-column>
                 <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -753,7 +780,8 @@
                 </el-table-column>
                 <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.clearance" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.clearance" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -762,7 +790,8 @@
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
                   :key="101">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -771,7 +800,8 @@
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
                   :key="101">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -779,7 +809,8 @@
                 </el-table-column>
                 <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.material" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.material" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
@@ -787,10 +818,16 @@
                 </el-table-column>
                 <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create
+                      style="width: 100%;">
                       <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="receivingAddress" label="收货地址" width="200" :key="1288">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.receivingAddress" placeholder="请输入" maxlength="200" />
                   </template>
                 </el-table-column>
                 <el-table-column prop="remark" label="备注" width="200" :key="128">
@@ -1429,9 +1466,9 @@ export default {
 
   methods: {
     // 选择配对方式 强行将单位改成对
-    changePairingMode(value,scope) {
+    changePairingMode(value, scope) {
       if (value) {
-        this.productData[scope.$index].deputyUnit=this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
+        this.productData[scope.$index].deputyUnit = this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
       }
     },
 
@@ -1766,8 +1803,8 @@ export default {
           console.log(777, this.productData);
           // this.productData.push(res.data.records[0])
           if (res.data.records.length) {
-            if(res.data.records[0].pairingModeId){
-              res.data.records[0].deputyUnit=res.data.records[0].mainUnit=this.pairingModeList.filter(items => items.id === res.data.records[0].pairingModeId)[0].unit
+            if (res.data.records[0].pairingModeId) {
+              res.data.records[0].deputyUnit = res.data.records[0].mainUnit = this.pairingModeList.filter(items => items.id === res.data.records[0].pairingModeId)[0].unit
 
             }
             res.data.records[0].taxRate = res.data.records[0].taxRate * 1
@@ -2212,9 +2249,9 @@ export default {
       console.log("all", allArray);
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
-        if(item.pairingModeId){
+        if (item.pairingModeId) {
 
-          item.deputyUnit=item.mainUnit=this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].unit
+          item.deputyUnit = item.mainUnit = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].unit
 
         }
         this.$set(item, 'pairingModeName', '')
@@ -2680,8 +2717,8 @@ export default {
               res.data.order.approvalStatus = ""
               this.dataForm = res.data.order
               if (this.btnType === 'edit') {
-              this.ProductListRequestObjs.partnerId = this.dataForm.cooperativePartnerId
-              this.getBusInfo()
+                this.ProductListRequestObjs.partnerId = this.dataForm.cooperativePartnerId
+                this.getBusInfo()
               } else {
                 // 流程信息和流转记录
                 if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
@@ -2772,14 +2809,14 @@ export default {
               this.salesFlag = true
             }
             res.data.orderLines.forEach(item => {
-                if (this.mainUnitFlag == 1) {
-                  if (item.calculationDirection == 'multiplication') {
-                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
-                  } else {
-                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
-                  }
+              if (this.mainUnitFlag == 1) {
+                if (item.calculationDirection == 'multiplication') {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                } else {
+                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
                 }
-              });
+              }
+            });
             this.productData = res.data.orderLines
             if (btnType == 'add') {
               this.dataForm.deliveryDate = ""

@@ -210,6 +210,8 @@
                       <el-table-column prop="colour" label="颜色" width="120" :key="1020"
                         v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="ordersNo" label="订单号" width="160" />
+                      <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
+                        :key="10201"></el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -1801,15 +1803,15 @@ export default {
                 remark: item.remark ? item.remark : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
                 sealingCoverTyping: item.sealingCoverTyping ? item.sealingCoverTyping : '',
-              accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
-              vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
-              oil: item.oil ? item.oil : '',
-              oilQuantity: item.oilQuantity ? item.oilQuantity : '',
-              clearance: item.clearance ? item.clearance : '',
-              packagingMethod: item.packagingMethod ? item.packagingMethod : '',
-              specialRequire: item.specialRequire ? item.specialRequire : '',
-              material: item.material ? item.material : '',
-              colour: item.colour ? item.colour : '',
+                accuracyLevel: item.accuracyLevel ? item.accuracyLevel : '',
+                vibrationLevel: item.vibrationLevel ? item.vibrationLevel : '',
+                oil: item.oil ? item.oil : '',
+                oilQuantity: item.oilQuantity ? item.oilQuantity : '',
+                clearance: item.clearance ? item.clearance : '',
+                packagingMethod: item.packagingMethod ? item.packagingMethod : '',
+                specialRequire: item.specialRequire ? item.specialRequire : '',
+                material: item.material ? item.material : '',
+                colour: item.colour ? item.colour : '',
                 sourceNoticeLineList: [
                   {
                     id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',

@@ -46,16 +46,6 @@
                     </el-form-item>
                   </el-col>
 
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="编排任务方式" prop="taskMethod">
-                      <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
-                        @change="selectTaskMethod">
-                        <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-
 
 
                   <el-col :sm="12" :xs="24">
@@ -68,7 +58,7 @@
               </el-form>
             </el-collapse-item>
 
-            <el-collapse-item title="领料信息" name="pickbasicInfo" class="orderInfo" v-if="allocationFlag">
+            <el-collapse-item title="领料信息" name="pickbasicInfo" class="orderInfo">
               <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
                 label-position="top">
                 <el-row :gutter="30" class="custom-row">
@@ -194,7 +184,6 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
-      taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       reduceTypeList: [
         { label: "生成领料单", value: "picking" },
         { label: "自动扣减料", value: "auto" },
@@ -271,7 +260,7 @@ export default {
       activeNames: ["productInfo", "basicInfo"],
       routingVisible: false,
       dataForm: {
-        taskMethod: "appoint",
+        taskMethod: "not_appoint",
         planDate: [],
         orderNo: "",
         productsDrawingNo: "",
@@ -478,13 +467,7 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    selectTaskMethod() {
-      if (this.dataForm.taskMethod == 'not_appoint') {
-        this.naturalResourcesFlag = false
-      } else {
-        this.naturalResourcesFlag = true
-      }
-    },
+ 
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -593,7 +576,7 @@ export default {
     selectProductFun(data) {
       console.log("所选返工产品", data);
       this.dataForm = data
-      this.$set(this.dataForm, 'taskMethod', 'appoint')
+      this.$set(this.dataForm, 'taskMethod', 'not_appoint')
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderType', 'rework')
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
@@ -627,8 +610,8 @@ export default {
       },
         this.dataFormSubmit();
     },
- 
- 
+
+
     openRoutingFun() {
       if (!this.dataForm.drawingNo) return this.$message.error("请先选择返工产品")
       this.routingVisible = true
@@ -638,7 +621,7 @@ export default {
 
       })
     },
-  
+
     search() {
       this.form.pageNum = 1
       this.initData()
@@ -679,7 +662,7 @@ export default {
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
-    
+
     },
     async fetchData(code, flag) {
       try {
@@ -716,39 +699,7 @@ export default {
           } else {
             this.dataForm.materialFlag = false
           }
-          if (this.naturalResourcesFlag) {
-            for (let index = 0; index < this.dataFormTwo.data.length; index++) {
-              const item = this.dataFormTwo.data[index];
-              if (item.reportFlag) {
-                if (
-                  !item.workGroupId &&
-                  !item.personId && item.processingType == "self_produced"
-                ) {
-                  submitFlag = false;
-                  this.$message({
-                    message: "第" + (index + 1) + "行班组、人员需要必填一项",
-                    type: "error",
-                  });
-                  break;
-                }
-              } else {
-                if (!item.personId && item.processingType == "self_produced") {
-                  submitFlag = false;
-                  this.$message({
-                    message: "第" + (index + 1) + "行工序需配置人员信息",
-                    type: "error",
-                  });
-                  break;
-                }
-              }
-            }
-          } else {
-            this.dataFormTwo.data.forEach(item => {
-              item.personId = ""
-              item.equipmentId = ""
-              item.workGroupId = ""
-            });
-          }
+         
           this.dataFormTwo.data.forEach(item => {
             this.$set(item, 'productionQuantity', this.dataForm.productionQuantity)
             this.$set(item, 'planEndDate', this.dataForm.planEndDate)

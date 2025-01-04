@@ -962,9 +962,7 @@ export default {
         item.ordersId = item.purchaseOrderId
         item.noticeId = item.purchaseReceiptReturnGoodsId
         item.noticeLineId = item.id
-        this.$set(item, 'discount', '')
-        this.$set(item, 'proportion', '')
-        this.$set(item, 'weight', '')
+   
         if (this.mainUnitFlag == 1) {
           if (item.calculationDirection == 'multiplication') {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
@@ -1268,9 +1266,7 @@ export default {
               this.$set(item, 'warehouseId', this.dataForm.warehouseId)
               this.$set(item, 'warehouseName', this.dataForm.warehouseName)
               this.$set(item, 'warehouseType', this.dataForm.warehouseType)
-              this.$set(item, 'discount', '')
-              this.$set(item, 'proportion', '')
-              this.$set(item, 'weight', '')
+             
             });
           }
 

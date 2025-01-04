@@ -207,6 +207,7 @@ export default {
         colourFlag: "",
         processFlag: "",
         projectId:"",
+        warehouseId:"",
     }
   },
   async created() {
@@ -334,6 +335,7 @@ export default {
       console.log(id, type, flag,projectId);
       this.getProductClassFun()
       this.fieldFlag = flag || true
+      this.warehouseId=flag
       this.projectId=projectId
       console.log("projecty",this.projectId);
       if (type === 'inventoryFlag') { this.title = '库存数明细' }
@@ -392,6 +394,7 @@ export default {
       this.listQuery.projectId=this.isProjectSwitch==1?this.projectId:""
       console.log("this.fileFlag",this.fieldFlag);
       // this.listQuery.excludeProcessFlag=!this.fieldFlag
+      this.listQuery.warehouseId=this.warehouseId
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false

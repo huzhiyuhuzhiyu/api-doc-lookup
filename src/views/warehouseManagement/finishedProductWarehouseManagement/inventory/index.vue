@@ -272,6 +272,7 @@ export default {
       tableDataFlag: false,
       isProjectSwitch: '',
       projectId:"",
+      warehouseInfo:{},
     }
   },
   watch: {
@@ -301,6 +302,7 @@ export default {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
         // 获取仓库详情信息
         this.projectId= this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+        this.warehouseInfo=res.data[0]
         this.getclassAttributeList()
       })
     },
@@ -396,6 +398,7 @@ export default {
       this.tableQuery.classAttributeList = this.classAttributeList
       this.listLoading = true 
       this.tableQuery.projectId=this.projectId
+      this.tableQuery.warehouseId=this.warehouseInfo.id
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         this.tableData = res.data.whPage.records || []

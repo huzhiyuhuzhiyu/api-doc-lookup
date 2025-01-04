@@ -1938,7 +1938,7 @@ export default {
       cgDateArr: [],
       cgTotal: 0,
       cgForm: {
-        documentStatus: "sibmit",
+        documentStatus: "submit",
         deliverDateStart: "",
         deliverDateEnd: "",
         notificationType: "procure",
@@ -1967,7 +1967,7 @@ export default {
         pageSize: 20,
         returnDeliveryType: '',
         deliveryStatus: "not_finished",
-        documentStatus: "sibmit",
+        documentStatus: "submit",
         notifyType: "sale",
         rdeDate: "",
         rdsDate: "",
@@ -1987,7 +1987,7 @@ export default {
       wxshForm: {
         pageNum: 1,
         pageSize: 20,
-        documentStatus: "sibmit",
+        documentStatus: "submit",
         deliverDateStart: "",
         deliverDateEnd: "",
         externalFlag: true,
@@ -2020,7 +2020,7 @@ export default {
       wxflForm: {
         pageNum: 1,
         pageSize: 20,
-        documentStatus: "sibmit",
+        documentStatus: "submit",
         rdeDate: "",
         rdsDate: "",
         externalFlag: true,
@@ -2458,6 +2458,7 @@ export default {
       this.exterMaterForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
 
       this.exterMaterForm.blankClassAttributeList = this.classAttributeList
+      this.exterMaterForm.documentStatus='submit'
       detailpurchaseOrderList(this.exterMaterForm).then(res => {
         if (this.mainUnitFlag == 1) {
           res.data.records.forEach(item => {
@@ -4736,7 +4737,7 @@ export default {
             pageSize: 20,
             returnDeliveryType: '',
             deliveryStatus: "not_finished",
-            documentStatus: "sibmit",
+            documentStatus: "submit",
             notifyType: "sale",
             rdeDate: "",
             rdsDate: "",
@@ -4762,7 +4763,7 @@ export default {
         if ((this.categoryType == 'inbound_purchase' && !this.purchaseFlag) || this.categoryType == 'outbound_purchase') {
           this.cgDateArr = []
           this.superForm = this.cgForm = {
-            documentStatus: "sibmit",
+            documentStatus: "submit",
             classAttributeList: this.classAttributeList,
             deliverDateStart: "",
             deliverDateEnd: "",
@@ -4818,7 +4819,7 @@ export default {
         if (!this.outboundExternalSendFlag) {
           this.wxflDateArr = []
           this.superForm = this.wxflForm = {
-            documentStatus: "sibmit",
+            documentStatus: "submit",
             classAttributeList: this.classAttributeList,
 
             rdeDate: "",
@@ -4906,7 +4907,7 @@ export default {
             pageSize: 20,
             returnDeliveryType: 'delivery',
             deliveryStatus: "not_finished",
-            documentStatus: "sibmit",
+            documentStatus: "submit",
             externalFlag: true,
             rdeDate: "",
             rdsDate: "",

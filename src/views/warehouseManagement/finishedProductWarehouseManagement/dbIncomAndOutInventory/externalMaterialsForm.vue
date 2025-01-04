@@ -166,16 +166,9 @@
                               v-model="scope.row.proportion" placeholder="比重"></el-input>
                           </template> -->
                         </el-table-column>
-                        <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
-                          v-if="dataForm.weightFlag == true">
-                          <template slot="header">
-                            <span class="required">*</span>折扣(0~1)
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                              v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
-                          </template>
-                        </el-table-column> -->
+                        <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717" v-if="dataForm.weightFlag == true">
+                          
+                        </el-table-column>
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发料数量(主)' : '发料数量'" min-width="160">
@@ -367,16 +360,9 @@
                               v-model="scope.row.proportion" placeholder="比重"></el-input>
                           </template> -->
                         </el-table-column>
-                        <!-- <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
-                          v-if="dataForm.weightFlag == true">
-                          <template slot="header">
-                            <span class="required">*</span>折扣(0~1)
-                          </template>
-                          <template slot-scope="scope">
-                            <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                              v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
-                          </template>
-                        </el-table-column> -->
+                        <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717" v-if="dataForm.weightFlag == true">
+                           
+                        </el-table-column>
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="num" :label="mainUnitFlag == 1 ? '发料数量(主)' : '发料数量'" min-width="160">
@@ -774,8 +760,8 @@ export default {
       this.$emit('close', true)
     },
     computedNumFun(data, index) {
-      if (data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(data.proportion * data.weight)
+      if (data.proportion && data.weight&&data.discount) {
+        this.productData[index].num = Math.floor(data.proportion * data.weight*data.discount)
         this.watchNum(data, index)
       }
     },
@@ -815,6 +801,7 @@ export default {
       // this.$set(this.productData[index], 'discount', data.discount)
       this.$set(this.productData[index], 'proportion', data.proportion)
       this.$set(this.productData[index], 'weight', data.weight)
+      this.$set(this.productData[index], 'discount', data.discount)
 
       // this.$set(this.productData[index], 'weight', this.jnpf.numberFormat(this.jnpf.math('divide', [ this.productData[index].num, data.proportion]), 2))
 

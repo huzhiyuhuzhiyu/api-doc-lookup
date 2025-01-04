@@ -258,7 +258,17 @@
 
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcess.processType === 'packing' && currentProcess.reportFlag">
+                    <el-form-item label="包装方式:" prop="packagingMethod">
+                      <el-select v-model="currentProcess.packagingMethod" placeholder="请选择包装方式"  
+                        style="width: 100%;" class="ipt">
+                        <el-option v-for="(item, index) in packagingMethodList" :key="item.id" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
 
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -439,6 +449,7 @@ export default {
 
       ],
       vibrationLevelList: [],
+      packagingMethodList:[],
       pairingModeList: [],
       pairingModeListCopy: [],
       pairingModeNum: 0,
@@ -765,8 +776,30 @@ export default {
         this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
           this.targetHeight = height;
-        });
-        console.log(666666, this.currentProcess);
+        }); 
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa015",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj4).then(res => {
+        this.packagingMethodList = res.data.records
+
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        }); 
       })
     },
 

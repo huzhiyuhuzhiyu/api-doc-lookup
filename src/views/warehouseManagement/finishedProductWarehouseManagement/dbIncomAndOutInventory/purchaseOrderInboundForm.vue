@@ -1017,9 +1017,7 @@ export default {
 
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
-        this.$set(item, 'discount', '')
-        this.$set(item, 'proportion', '')
-        this.$set(item, 'weight', '')
+
         if (this.mainUnitFlag == 1) {
           if (item.calculationDirection == 'multiplication') {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

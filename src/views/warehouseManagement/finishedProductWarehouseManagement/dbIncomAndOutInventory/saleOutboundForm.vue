@@ -744,6 +744,17 @@ export default {
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
       this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+
+      this.$set(this.productData[index], 'sealingCoverTyping', data.sealingCoverTyping)
+      this.$set(this.productData[index], 'accuracyLevel', data.accuracyLevel)
+      this.$set(this.productData[index], 'vibrationLevel', data.vibrationLevel)
+      this.$set(this.productData[index], 'oil', data.oil)
+      this.$set(this.productData[index], 'clearance', data.clearance)
+      this.$set(this.productData[index], 'packagingMethod', data.packagingMethod)
+      this.$set(this.productData[index], 'specialRequire', data.specialRequire)
+      this.$set(this.productData[index], 'material', data.material)
+      this.$set(this.productData[index], 'colour', data.colour)
+                         
     },
 
 

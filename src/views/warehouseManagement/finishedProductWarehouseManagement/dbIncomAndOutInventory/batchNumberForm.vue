@@ -214,20 +214,27 @@ export default {
       this.cpData = JSON.parse(JSON.stringify(data))
       this.cpIndex = JSON.parse(JSON.stringify(index))
       this.form.productsId = data.productsId
-      this.form.vibrationLevel = data.vibrationLevel
-      this.form.sealingCoverTyping = data.sealingCoverTyping
-      this.form.oil = data.oil
-      this.form.processId = data.processId ? data.processId : ""
-      this.form.clearance = data.clearance
-      this.form.accuracyLevel = data.accuracyLevel
-      this.form.warehouseId = data.warehouseId
+      this.form.vibrationLevel = ""
+      this.form.sealingCoverTyping = ""
+      // this.form.vibrationLevel = data.vibrationLevel
+      // this.form.sealingCoverTyping = data.sealingCoverTyping
+      // this.form.clearance = data.clearance
+      // this.form.oil = data.oil
+      // this.form.accuracyLevel = data.accuracyLevel
       // this.form.packagingMethod = data.packagingMethod
-      this.form.packagingMethod = ""
       // this.form.specialRequire = data.specialRequire
+      // this.form.material = data.material
+      // this.form.standardValue = data.standardValue
+      this.form.oil = ""
+      this.form.processId = data.processId ? data.processId : ""
+      this.form.clearance = ""
+      this.form.accuracyLevel = ""
+      this.form.warehouseId = data.warehouseId
+      this.form.packagingMethod = ""
       this.form.specialRequire = ""
       this.form.pairingModeId = data.pairingModeId
-      this.form.material = data.material
-      this.form.standardValue = data.standardValue
+      this.form.material = ""
+      this.form.standardValue = ""
 
       this.dataForm = data
       if (!requestFlag) {

@@ -108,6 +108,13 @@
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
+              <el-table-column prop="inspectionStatus" label="检验状态" width="120">
+                  <template slot-scope="scope">
+                      <div v-if="scope.row.inspectionStatus === 'unInspect'"><el-tag type="warning">待检验</el-tag></div>
+                      <div v-if="scope.row.inspectionStatus === 'inspecting'"><el-tag>检验中</el-tag></div>
+                      <div v-if="scope.row.inspectionStatus === 'inspected'"><el-tag type="success">已检验</el-tag></div>
+                  </template>
+              </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
 
@@ -283,7 +290,8 @@ export default {
           ],
           matchLogic: ''
         },
-        totalRowFlag: false
+        totalRowFlag: false,
+        receiptInboundFlag:1
       },
 
       detailTotal: 0,
@@ -438,7 +446,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       //     material // 保持架材质
       //     colour  //  颜色

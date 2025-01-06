@@ -156,7 +156,7 @@ export default {
     handeleProductInfoData(val) {
 
 
-      this.producerIdList = val.map(item => item.producerId);
+      this.producerIdList = val.map(item => item.id);
     },
     recalculate() {
       if (!this.producerIdList.length) return this.$message.error("请先选择数据")

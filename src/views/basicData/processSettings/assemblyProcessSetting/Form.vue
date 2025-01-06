@@ -285,12 +285,12 @@
             <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
-            <!-- <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
+            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
             <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
               <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
-            </el-tab-pane> -->
+            </el-tab-pane>
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="工艺信息" name="modelInfo" class="orderInfo">
@@ -1055,7 +1055,7 @@ export default {
             } else {
               // 流程信息和流转记录
 
-              // if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
             this.loading = false
             if (res.data.attachmentList) {

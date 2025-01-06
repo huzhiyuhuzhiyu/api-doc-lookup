@@ -3,18 +3,12 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
-          <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="新建装配任务" />
+          <div style="font-size:18px" >新建装配任务</div>
           <div class="options">
-            <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
-              @click="handleConfirm('draft')">
-              保存草稿
-            </el-button>
             <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('submit')">
               保存并提交
             </el-button>
-            <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <div class="main" v-loading="formLoading">

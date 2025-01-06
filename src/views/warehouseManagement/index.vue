@@ -1,6 +1,8 @@
 <template>
   <div class="JNPF-common-layout">
-    <component :is="listPageComponent" :warehouseCode="warehouseCode" v-if="depFormVisible" ref="depForm" @close="close" />
+      <keep-alive>
+        <component :is="listPageComponent" :warehouseCode="warehouseCode" ref="depForm" @close="close" />
+      </keep-alive>
   </div>
 </template>
 
@@ -10,15 +12,16 @@ import directInandOutWarehouse from "@/views/warehouseManagement/finishedProduct
 import inventory from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventory"
 import inventoryList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList"
 import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryDetaisList"
-import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
-import productionWaitMaterial from "@/views/warehouseManagement/finishedProductWarehouseManagement/productionWaitMaterial" 
-import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
+import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement"
+import productionWaitMaterial from "@/views/warehouseManagement/finishedProductWarehouseManagement/productionWaitMaterial"
+import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition"
 import awaitInspectionInventory from'@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
 import modalShift from'@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
 import InventoryAssembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly'
 import lnventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly'
+import { getConfigData } from '@/api/onlineDev/visualDev'
 export default {
-  name: 'quality',
+  name: 'inventoryDetaisList',
   components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,productionWaitMaterial,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,lnventoryDisassembly},
   data() {
     return {
@@ -47,13 +50,16 @@ export default {
   },
   watch: {
   },
-  created() {
+    beforeCreate() {
+      this.$options.name = this.$route.name
+    },
+    created() {
     console.log("this",this.$route);
     let path=this.$route.path
     let pathInfo=this.$route
     this.warehouseCode=pathInfo.fullPath.split("?")[1]
     let arr=path.split('/')
-    this.businessType=arr[arr.length-1] 
+    this.businessType=arr[arr.length-1]
     if(this.businessType=='dbIncomAndOutInventory'){
       this.listPageComponent=dbIncomAndOutInventory
     }
@@ -91,13 +97,12 @@ export default {
       this.listPageComponent=lnventoryDisassembly
     }
     // if()
-
   },
   methods: {
    close(){
 
    },
-   
+
   }
 }
 </script>

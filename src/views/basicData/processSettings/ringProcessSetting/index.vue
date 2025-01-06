@@ -56,15 +56,15 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -113,8 +113,7 @@
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
-          <el-table-column prop="routingName" label="工艺路线名称" min-width="180" sortable="custom" />
-          <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
+          <el-table-column prop="name" label="工艺路线名称" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
           <el-table-column label="操作" width="140" fixed="right">
@@ -133,80 +132,7 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <!-- 批量设置工艺 -->
-    <el-dialog v-if="analyseDialog" title="批量设置工艺" :close-on-click-modal="false" append-to-body
-      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll :width="analyseDialogWidth">
-      <el-row :gutter="15" style="margin-top: 0px;">
-        <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
-          <el-row :gutter="30">
-            <el-col :sm="24">
-              <el-form-item prop="routingId" label="工艺路线">
-                <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable style="width: 100%;"
-                  @change="routingChange">
-                  <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
-                    :value="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <JNPF-table hasNO style="border: 1px solid #e3e7ee;" ref="processRef" v-loading="responseLoading"
-              :data="routingLineList" size="mini" id="table" row-key="code">
-              <el-table-column prop="projectName" label="所属项目" width="120"
-                v-if="isProjectSwitch === '1'"></el-table-column>
-              <el-table-column prop="processCode" label="工序编码" min-width="140" />
-              <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip></el-table-column>
 
-              <el-table-column prop="processType" label="工序类型" width="120">
-                <template slot-scope="scope">
-                  <template v-if="scope.row.processType == 'normal'">
-                    正常工序
-                  </template>
-                  <template v-if="scope.row.processType == 'vibrate'">
-                    测振工序
-                  </template>
-                  <template v-if="scope.row.processType == 'heat_treatment'">
-                    热工工序
-                  </template>
-                  <template v-if="scope.row.processType == 'packing'">
-                    包装工序
-                  </template>
-                  <template v-if="scope.row.processType == 'pairs'">
-                    配对工序
-                  </template>
-                </template>
-              </el-table-column>
-              <el-table-column prop="processingType" label="加工类型" width="100">
-                <template slot-scope="scope">
-                  <template v-if="scope.row.processingType === 'self_produced'">
-                    自制
-                  </template>
-                  <template v-if="scope.row.processingType === 'external_production'">
-                    外协
-                  </template>
-                </template>
-              </el-table-column>
-              <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
-                v-if="isTechnicalSwitch === '1'">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求" ></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
-                v-if="isCheckingSwitch === '1'">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息" ></el-input>
-                </template>
-              </el-table-column>
-            </JNPF-table>
-          </el-row>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="analyseDialog = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
-          {{ $t('common.submitButton') }}
-        </el-button>
-      </span>
-    </el-dialog>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -235,18 +161,17 @@
     </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
+    <SetForm v-if="setFormVisible" ref="setForm" @refresh="refresh" @close="closeForm" />
   </div>
 </template>
 
 <script>
 import {
-  getProductionResource,
+  
   batchProductionResource,
-  deleteProductionResource,
-  saleUploadroutingModel,
+
   importRoutingModel,
-  errordatalist,
-  deleteresourcebatch
+
 } from '@/api/basicData/productionResourceSetting'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -255,11 +180,12 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import JNPFForm from '../assemblyProcessSetting/Form.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import { getProcessList, detailProcess } from '@/api/basicData/processSettingss'
+import { getProcessList, detailProcess, delProcess } from '@/api/basicData/processSettingss'
 import getProjectList from '@/mixins/generator/getProjectList'
+import SetForm from '../assemblyProcessSetting/setForm.vue'
 export default {
   name: 'ProductionResource',
-  components: { ExportForm, SuperQuery, JNPFForm },
+  components: { ExportForm, SuperQuery, JNPFForm, SetForm },
   mixins: [getProjectList],
   data() {
     return {
@@ -334,6 +260,7 @@ export default {
       visible: false,
       tableDataList: [],
       formVisible: false,
+      setFormVisible: false,
       listLoading: false,
       routingFlagOptions: [
         {
@@ -349,10 +276,11 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: 'createTime'
+            column: 'create_time'
           }
         ],
         classAttribute: 'semi_finished',
+        routeType: 'productProcess',
         productCode: '',
         productName: '',
         productDrawingNo: '',
@@ -403,7 +331,7 @@ export default {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
       if (this.selectedData.some((item) => !item.routingFlag)) return this.$message.error('所选数据没有工艺路线')
       let idList = this.selectedData.map((item) => item.id)
-      deleteresourcebatch(idList).then((res) => {
+      delProcess(idList).then((res) => {
         this.$message.success('清空成功')
         this.initData()
       })
@@ -661,7 +589,12 @@ export default {
       this.getProcessList()
       this.dataForm.routingId = ''
       this.routingLineList = []
-      this.analyseDialog = true
+      // this.analyseDialog = true
+      this.setFormVisible = true
+
+      this.$nextTick(() => {
+        this.$refs.setForm.init(this.selectedData, '')
+      })
     },
     hasDifferentProjectId(arr) {
       const codes = new Set()
@@ -672,52 +605,14 @@ export default {
 
       return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
-    async dataFormSubmit() {
-      this.btnLoading = true
-      let submitFlag = true
 
-      const form_1 = this.$refs.elForm
-      const valid_1 = await form_1.validate().catch((err) => false)
-      if (!valid_1 && submitFlag) {
-        submitFlag = false
-        this.jnpf.focusErrValidItem(form_1.fields)
-      }
-
-      if (submitFlag) {
-        this.selectedData.forEach((item) => {
-          item.classAttribute = item.classAttribute
-          item.id = item.id
-          item.productsId = item.productsId
-          item.routingId = this.dataForm.routingId
-        })
-        let obj = {
-          prodResList: this.selectedData,
-          routingLineList: this.routingLineList
-        }
-
-        batchProductionResource(obj)
-          .then((res) => {
-            this.$message.success('工艺设置成功')
-            this.selectedData = []
-            this.$refs.tableForm.$refs.JNPFTable.clearSelection()
-            this.analyseDialog = false
-            this.btnLoading = false
-            this.dataForm = {
-              routingId: '',
-              remark: ''
-            }
-            this.search()
-          })
-          .catch((err) => {
-            this.btnLoading = false
-          })
-      } else {
-        this.btnLoading = false
-      }
-    },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/_([a-zA-Z])/g, (match, letter) => letter.toUpperCase())
-
+      let newProp
+      if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      }
       console.log(newProp)
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
@@ -727,6 +622,7 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.setFormVisible = false
       if (isRefresh) {
         this.initData()
       }
@@ -741,7 +637,7 @@ export default {
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
       }
-      getProductionResource(this.listQuery)
+      getProcessList(this.listQuery)
         .then((res) => {
           console.log(res, '生产资源列表')
           this.tableDataList = res.data.records
@@ -767,10 +663,11 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: 'createTime'
+            column: 'create_time'
           }
         ],
         classAttribute: 'semi_finished',
+        routeType: 'productProcess',
         routingFlag: 0,
         productCode: '',
         productName: '',
@@ -800,27 +697,11 @@ export default {
         })
       }
     },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          deleteProductionResource(id).then((res) => {
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: '删除成功',
-              duration: 1500
-            })
-          })
-        })
-        .catch(() => { })
-    },
     handleUserRelation(row, type) {
       // if (!row.routingId) return this.$message.error('请先设置工艺');
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(row, type)
+        this.$refs.JNPFForm.init(row.id, type)
       })
     }
   }

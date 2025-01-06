@@ -16,6 +16,15 @@ export function editSalaryList(data) {
         data: data
     })
 }
+// 重新计算异常工资
+
+export function updateSalaryList(data) {
+    return request({
+        url: '/api/mrp/work/report/price/update',
+        method: 'put',
+        data: data
+    })
+}
 
 // 工资明细
 

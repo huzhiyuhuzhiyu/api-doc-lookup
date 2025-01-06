@@ -2,58 +2,36 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `工艺`" />
+        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
+          <el-page-header @back="goBack" content="批量设置工艺" />
           <div class="options" v-if="type != 'look'">
             <!-- <el-button type="success" :disabled="dataForm.documentStatus == 'submit'" :loading="btnLoading"
-              @click="dataFormSubmit('draft')">
+              @click="handleSubmit('draft')">
               保存草稿
             </el-button> -->
-            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
+            <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
               保存并提交
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
 
-        <div class="main">
-          <el-tabs v-model="activeName">
-            <el-tab-pane label="基础信息" name="jcInfo" style="padding:10px 0">
+        <div class="main" ref="main" v-loading="responseLoading">
+          <el-tabs v-model="activeName" v-if="!approvalFlag">
+            <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="modelInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" style="padding: 0 10px;">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <template v-if="!loading">
-                        <el-col :span="12">
-                          <el-form-item label="品名规格" prop="productDrawingNo">
-                            <el-input v-model="dataForm.productDrawingNo" placeholder="请输入品名规格" clearable
-                              :style="{ width: '100%' }" maxlength="20" disabled></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                          <el-form-item label="产品编码" prop="productCode">
-                            <el-input v-model="dataForm.productCode" placeholder="请输入工艺路线名称" clearable
-                              :style="{ width: '100%' }" maxlength="20" disabled></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="12" v-if="dataForm.id">
-                          <el-form-item label="工艺路线编码" prop="routingCode" ref="routingCode">
-                            <el-input v-model="dataForm.routingCode" placeholder="请输入工艺路线编码" clearable
-                              :style="{ width: '100%' }" maxlength="20" disabled></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                          <el-form-item label="工艺路线名称" prop="routingName" ref="routingName" v-if="dataForm.id">
-                            <el-input v-model="dataForm.routingName" placeholder="请输入工艺路线名称" clearable
-                              :style="{ width: '100%' }" maxlength="20" disabled></el-input>
-                          </el-form-item>
-                        </el-col>
-
                         <el-col :span="24">
-                          <el-form-item label="备注" prop="remark" v-if="dataForm.id">
-                            <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
-                              maxlength="200" disabled></el-input>
+                          <el-form-item label="工艺路线" prop="routingId">
+                            <el-select v-model="dataForm.routingId" filterable placeholder="请选择工艺路线" clearable
+                              style="width: 100%;" @change="routingChange">
+                              <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
+                                :value="item.id"></el-option>
+                            </el-select>
                           </el-form-item>
                         </el-col>
                       </template>
@@ -61,17 +39,39 @@
                   </el-row>
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="processInfo">
-                  <el-col :span="24" v-if="dataFormTwo.length !== 0">
-                    <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
-                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
-                      size="mini" id="table">
-                      <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                  <el-col :span="24">
+                    <div v-if="type !== 'look'">
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        icon="el-icon-plus" :disabled="type == 'look' ? true : false"
+                        @click="openSeleceProcessDialog(dataFormTwo.length, 'add')">
+                        选择工序
+                      </el-button>
+                      |
+
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                        批量删除
+                      </el-button>
+                      |
+                    </div>
+
+                    <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                      @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
+                      row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData">
+                      <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                      <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
+                        <template slot="header">
+                          <span class="required">*</span>
+                          工序名称
+                        </template>
+                        <template slot-scope="scope">
+                          {{ scope.row.name }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="code" label="工序编码" min-width="140" />
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
-                      <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
-                      </el-table-column>
-                      <el-table-column prop="processCode" label="工序编码" min-width="140" />
                       <el-table-column prop="processType" label="工序类型" width="120">
                         <template slot-scope="scope">
                           <template v-if="scope.row.processType == 'normal'">
@@ -89,6 +89,12 @@
                           <template v-if="scope.row.processType == 'pairs'">
                             配对工序
                           </template>
+                          <template v-if="scope.row.processType == 'grinding'">
+                            磨孔工序
+                          </template>
+                          <template v-if="scope.row.processType == 'accuracy'">
+                            精度工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -105,17 +111,17 @@
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
-                            :disabled="type === 'look'"></el-input>
+                            :disabled="disabled"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
-                            :disabled="type === 'look'"></el-input>
+                            :disabled="disabled"></el-input>
                         </template>
                       </el-table-column>
-                      <!-- <el-table-column prop="firstFlag" label="是否首道工序" width="120">
+                      <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                             <el-form-item prop="firstFlag" ref="firstFlag">
@@ -180,6 +186,17 @@
                         </template>
                       </el-table-column>
 
+                      <!-- <el-table-column prop="checkFlag" label="是否检验工序" min-width="140">
+                          <template slot-scope="{row}">
+                            <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                              <el-form-item prop="checkFlag" ref="checkFlag">
+                                <el-checkbox v-model="row.checkFlag" :true-label="1" :disabled="type == 'look'"
+                                  :false-label="0"></el-checkbox>
+                              </el-form-item>
+                            </el-form>
+                          </template>
+                        </el-table-column> -->
+
                       <el-table-column prop="stockFlag" label="是否入库" width="90">
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
@@ -216,70 +233,101 @@
                             </el-form-item>
                           </el-form>
                         </template>
-                      </el-table-column> -->
+                      </el-table-column>
                       <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-                          <el-button type="text" @click="handlerOpenSource(scope.$index, 'look')">
-                            查看资源配置
+                          <el-button type="text" class="JNPF-table-delBtn"
+                            :disabled="type == 'look' || dataForm.documentStatus == 'submit'"
+                            @click="delequipment_process_relList(scope.$index)">
+                            删除
+                          </el-button>
+                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)"
+                            :disabled="scope.row.processingType === 'external_production'">
+                            工艺资源配置
                           </el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
-                  </el-col>
-                  <el-col :span="24" v-else>
-                    <div style="color:#aaa" :style="{ textAlign: 'center', padding: '10%' }">
-                      请先设置工艺
-                    </div>
+                    </JNPF-table>
+                    <!-- <div class="table-actions" @click="handlerOpenDialog(dataFormTwo.length, 'add')"
+                          v-if="type != 'look'">
+                          <el-button type="text" icon="el-icon-plus">添加</el-button>
+                        </div> -->
+                    <!-- </el-form-item>   -->
                   </el-col>
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <!-- <el-tab-pane label="审批流程" name="approvalProcess">
-            </el-tab-pane> -->
-            <el-tab-pane label="附件" name="annex" style="padding:10px 0" v-if="isattachmentswitch == '1'">
+
+            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
+            </el-tab-pane>
+            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+            </el-tab-pane>
+            <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+              <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
             </el-tab-pane>
           </el-tabs>
         </div>
       </div>
     </transition>
+    <process-dialog v-if="processVisibled" ref="processRef" @dataFormSubmit="submit"></process-dialog>
     <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
+
     <ComSelect-page ref="ComSelect-page" @change="submit" :tableItems="ProductTableItems" title="选择工序" treeTitle="工序分类"
       :methodArr="ProductMethodArr" :listMethod="getBimProcessList" :listRequestObj="ProductListRequestObj"
       :searchList="ProductTableSearchList" :elementShow="false" multiple :listDataFormatting="listDataFormatting" />
   </div>
 </template>
 <script>
-import { updateApproval } from '@/api/basicData/approvalBusinessConditions'
-import { addProcess, detailResourceProcess, checkBimRoutingCode, updateProcess } from '@/api/basicData/processSettingss'
+import { getProcessList, batchProcess, detailProcess, checkBimRoutingCode, updateProcess } from '@/api/basicData/processSettingss'
+import ProcessDialog from '../processSettingss/process-dialog.vue'
 import SourceArea from '../processSettingss/source.vue'
-import { getOrganizeInfo, getOrganizeList } from '@/api/permission/organize'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow'
+import recordList from '@/views/workFlow/components/RecordList.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { editProductionResource, detailProductionResourceData } from '@/api/basicData/productionResourceSetting'
 export default {
   components: {
-    SourceArea
+    ProcessDialog,
+    SourceArea,
+    Process,
+    recordList
   },
+  mixins: [busFlow, getProjectList],
   props: [],
-  mixins: [getProjectList],
   data() {
     return {
       isProjectSwitch: '',
       isTechnicalSwitch: '',
       isCheckingSwitch: '',
+      projectIdData: [],
       activeName: 'jcInfo',
       activeNames: ['modelInfo', 'processInfo'],
       datafilelist: [],
       getBimProcessList,
+      options: [
+        {
+          value: true,
+          label: '是'
+        },
+        {
+          value: false,
+          label: '否'
+        }
+      ],
+      selectedData: [],
+      projectId: '',
       ProductMethodArr: [
         {
           label: '工序分类',
-          classAttribute: 'process',
+          type: 'process',
           method: getcategoryTree,
-          requestObj: { classAttribute: 'process' }
+          requestObj: { type: 'process' }
         }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
@@ -303,6 +351,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '工序编码', fixed: 'left' },
         { prop: 'name', label: '工序名称', fixed: 'left' },
+        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
         { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
@@ -322,91 +371,28 @@ export default {
       index: null,
       needDisabled: false,
       dataForm: {
+        projectId: '',
         id: '',
-        code: '', //  编码
-        name: '', //  名称
-        state: 'enable', //  状态
-        // status: "", //  状态
-        documentStatus: '', //  状态
-        reasonRejection: '', //  驳回原因
-        personName: '', // 人员试验
-        remark: ''
-      },
-      requestObj2: {
-        orderItems: [
-          {
-            asc: false,
-            column: 'createTime'
-          }
-        ],
-        pageNum: 1,
-        pageSize: -1,
-        type: 'outsourcing_suppliers'
+        routingId: '', //  工艺路线Id
+
+        approvalFlag: false
       },
       // cooperativePartnerName: '',
       type: '',
       dataFormTwo: [],
       codeConfig: {},
       rules: {
-        name: [
+        routingId: [
           {
             required: true,
-            message: '请输入工艺路线名称',
-            trigger: ['blur']
-          }
-        ],
-        code: [
-          {
-            required: true,
-            message: '请输入工艺路线编码',
-            trigger: ['blur']
-          },
-          {
-            validator: (rule, value, callback) => {
-              checkBimRoutingCode(value, this.dataForm.id)
-                .then((res) => {
-                  if (res.data) {
-                    callback(new Error('工艺路线编码重复'))
-                  } else {
-                    callback()
-                  }
-                })
-                .catch((error) => { })
-            },
-            trigger: 'blur'
-          }
-        ],
-        state: [{ required: true, message: '请选择工艺状态', trigger: 'change' }]
-      },
-      rulesTwo: {
-        ratio: [
-          {
-            required: true,
-            message: '请输入转换系数',
-            trigger: ['blur']
-          },
-          {
-            validator: (rule, value, callback) => {
-              const num = parseFloat(value)
-              if (!isNaN(num) && Math.abs(num) <= 9999999.999999) {
-                callback()
-              } else {
-                this.$message.error('转换系数只能是数字')
-                callback(new Error('请输入-9999999.999999到9999999.999999之间的值'))
-              }
-            },
-            trigger: ['blur']
-          }
-        ],
-        targetName: [
-          {
-            required: true,
-            message: '请选择转换后单位名称',
+            message: '请选择工艺路线',
             trigger: ['change']
           }
-        ]
+        ],
+
+        projectId: [{ required: true, message: '请选择所属项目', trigger: 'change' }],
       },
-      formItems: [{ ref: 'code', message: '请输入业务编码' }, { ref: 'name', message: '请输入单位名称' }],
+
       defaultProps: {
         children: 'children',
         label: 'fullName'
@@ -418,17 +404,131 @@ export default {
       types: '',
       sourceData: [],
       processArr: [],
-      responseLoading: false,
-      isattachmentswitch: ''
+      responseLoading: true,
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false, // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0,
+      isattachmentswitch: '',
+      categoryId: '',
+      customStyleData: 0,
+      customStyleData2: 0
     }
+  },
+  mounted() {
+
+    // 页面发生缩放，触发明细表格表单的resize
+    this.clientResize = () => {
+      if (!this.$refs.processRef) return
+      this.$nextTick(() => {
+        this.$refs.processRef.doLayout()
+      })
+    }
+    window.addEventListener('resize', this.clientResize)
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
-    await this.getBimBusinessDetail()
+    await this.getProcessList()
+    await this.switchStyleheight()
+    this.responseLoading = false
+    console.log(this.isProjectSwitch)
+    if (this.isProjectSwitch === '1') {
+      console.log(this.projectIdData, 'lllljj')
+      this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
+      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目', fixed: 'left' })
+    } else {
+      this.dataForm.projectId = this.userInfo.projectId
+    }
+    if (this.isCheckingSwitch === '1') {
+      this.ProductTableItems.push({ prop: 'inspectionInformation', label: '检验信息', fixed: 'left' })
+    }
+    if (this.isTechnicalSwitch === '1') {
+      this.ProductTableItems.push({ prop: 'technicalRequirement', label: '技术要求', fixed: 'left' })
+    }
+    this.getBimBusinessDetail()
   },
   methods: {
+    getProcessList() {
+      let obj = {
+        approvalStatus: 'ok',
+        routeType: 'processLibrary',
+        pageNum: 1,
+        pageSize: -1
+      }
+      console.log(this.isProjectSwitch, 'is')
+
+      if (this.isProjectSwitch === '1') {
+        obj.projectId = this.selectedData[0].projectId
+      }
+      console.log(obj, 'obb')
+      getProcessList(obj).then((res) => {
+        console.log(res, 'res')
+        this.routingIdOptions = res.data.records
+      })
+    },
+    routingChange(val) {
+      this.dataForm.routingId = val
+
+      if (this.dataForm.routingId) {
+        detailProcess(val).then((res) => {
+          console.log(res, 'kkk')
+          this.dataForm = {
+            ...this.dataForm,
+            ...res.data.routing
+          }
+          res.data.routingLineList.forEach((item) => {
+            item.name = item.processName
+            item.code = item.processCode
+            item.processType = item.processType
+          })
+          this.dataFormTwo = res.data.routingLineList
+
+          this.dataFormTwo = this.dataFormTwo.map((item) => {
+            return {
+              ...item,
+              bimRoutingProcessResourceDTOList: item.routingProResList
+            }
+          })
+          this.dataFormTwo.forEach((item) => {
+            item.bimRoutingProcessResourceDTOList.forEach((it) => {
+              it.jobNumber = it.resourceCode
+            })
+          })
+
+          this.dataFormTwo.sort((a, b) => a.sort - b.sort);
+        })
+      } else {
+        this.dataFormTwo = []
+      }
+    },
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight = mainHeight1 - 350
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      this.customStyleData2 = maxHeight + 70
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -439,6 +539,68 @@ export default {
         this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
+    projectIdChange(val) {
+      this.dataForm.projectId = val
+      if (this.isProjectSwitch === '1') {
+        this.dataFormTwo = []
+      }
+    },
+    changeMove(data) {
+      data.forEach((item) => {
+        console.log(item, 'ooooo')
+        item.sort = item.sortCode
+
+      })
+      this.dataFormTwo = this.dataFormTwo.map((item, index) => {
+        console.log(index, 'in')
+        // 复制当前的item
+        let newItem = { ...item }
+        newItem.sort = index
+        // 如果存在下一个元素，则添加 nextId
+        if (index === 0) {
+
+          newItem.firstFlag = true
+          newItem.lastFlag = false
+          newItem.reportFlag = false
+          newItem.stockFlag = false
+        }
+        if (index === this.dataFormTwo.length - 1) {
+
+          newItem.firstFlag = false
+          newItem.lastFlag = true
+          newItem.reportFlag = true
+          newItem.stockFlag = true
+        }
+        if (index < this.dataFormTwo.length - 1 && index !== 0) {
+
+          newItem.firstFlag = false
+          newItem.lastFlag = false
+          newItem.reportFlag = false
+          newItem.stockFlag = false
+        }
+
+        // 如果存在上一个元素，则添加 previousId
+        if (index > 0 && index !== this.dataFormTwo.length - 1) {
+
+          newItem.firstFlag = false
+          newItem.lastFlag = false
+          newItem.reportFlag = false
+          newItem.stockFlag = false
+        }
+
+        return newItem // 返回修改后的对象
+      })
+      console.log(this.dataFormTwo)
+    },
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+      } catch (error) { }
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -446,6 +608,7 @@ export default {
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
+        this.categoryId = res.data.configValue2
       })
     },
     listDataFormatting(res) {
@@ -455,6 +618,21 @@ export default {
         } else if (item.processingType == 'external_production') {
           item.processingTypeName = '外协'
         }
+        if (item.processType == 'normal') {
+          item.processTypeName = '正常工序'
+        } else if (item.processType == 'vibrate') {
+          item.processTypeName = '测振工序'
+        } else if (item.processType == 'heat_treatment') {
+          item.processTypeName = '热工工序'
+        } else if (item.processType == 'packing') {
+          item.processTypeName = '包装工序'
+        } else if (item.processType == 'pairs') {
+          item.processTypeName = '配对工序'
+        } else if (item.processType == 'grinding') {
+          item.processTypeName = '磨孔工序'
+        } else if (item.processType == 'accuracy') {
+          item.processTypeName = '精度工序'
+        }
         return item
       })
       return treeData
@@ -462,10 +640,81 @@ export default {
 
     handleNodeClick(value) { },
 
+    // 可以多选工序
+    openSeleceProcessDialog(e, type) {
+      // this.index = e
+      // this.types = type
+      // this.processVisibled = true
+      // this.$nextTick(() => {
+      //   this.$refs.processRef.init()
+      // })
+      if (this.isProjectSwitch === '1') {
+        if (!this.dataForm.routingId) {
+          this.$message.error('请先选择工艺路线')
+          return
+        }
+        this.ProductListRequestObj.projectId = this.selectedData[0].projectId
+      }
+      this.$refs['ComSelect-page'].openDialog()
+    },
     handeleProductInfoData(val) {
       this.processArr = val
     },
+    // 批量删除
+    batchDelete() {
+      // 遍历选中的行的数据
+      if (this.processArr.length < 1) {
+        this.$message({
+          message: '请选择你要删除的数据',
+          type: 'error',
+          duration: 1500
+        })
+      }
+      for (let i = 0; i < this.processArr.length; i++) {
+        const row = this.processArr[i]
+        const index = this.dataFormTwo.indexOf(row)
+        if (index > -1) {
+          this.dataFormTwo.splice(index, 1) // 从tableData中删除选中的行
+        }
+      }
+      this.processArr = [] // 清空选中的行的数据
+      this.dataFormTwo.forEach((item, index) => {
+        if (index == this.dataFormTwo.length - 1) {
+          item.lastFlag = true
+          item.stockFlag = true
+          if (this.dataFormTwo[index].processingType == 'external_production') {
+            item.reportFlag = false
+          } else {
+            item.reportFlag = true
+          }
+        } else {
+          item.lastFlag = false
+          item.stockFlag = false
+          item.reportFlag = false
+        }
+        if (index === 0) {
+          item.firstFlag = true
+        } else {
+          item.firstFlag = false
+        }
+        if (item.processingType === 'external_production') {
+          if (index != 0 && this.dataFormTwo[index - 1].processingType != 'external_production') {
+            this.dataFormTwo[index - 1].reportFlag = 1
+            this.dataFormTwo[index - 1].stockFlag = 1
+            // this.$set()
+            this.dataFormTwo[index - 1].defaultFlag = true
+          }
+          this.dataFormTwo[index].defaultReport = true
+        }
+      })
+      this.calcHeight()
+    },
 
+    // 提交校验
+    equipment_process_relExist() {
+      let isOk = true
+      return isOk
+    },
     clearData() {
       this.dataForm.id = ''
       this.dataForm.name = ''
@@ -476,37 +725,40 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(rowData, type) {
-      console.log(rowData, 'ddd')
+    init(data, type, approvalFlag) {
+      this.selectedData = data
+      console.log(data, 'kkk')
       // rowData = JSON.parse(rowData)
       // 此处判断用户选择新增还是编辑
-      this.dataForm.id = rowData.id || ''
+      this.approvalFlag = approvalFlag
       this.visible = true
-
+      this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
 
         if (!this.dataForm.id) {
           this.clearData()
-          this.dataForm = rowData
-          // this.fetchData('bm_gy_gylx', true)
+          this.fetchData('bm_gy_gylx', true)
+          this.getBusInfo()
         } else {
-          if (this.type === 'edit') {
-            this.dialogTitle = `编辑`
-          } else if (this.type === 'look') {
-            this.dialogTitle = `查看`
-          }
           this.loading = true
           // this.dataForm = rowData
           // 获取当前项详情
-          // this.fetchData('bm_gy_gylx', false)
-          detailProductionResourceData(this.dataForm.id).then((res) => {
-            this.dataForm = res.data.prodRes
+          this.fetchData('bm_gy_gylx', false)
+          detailProcess(this.dataForm.id).then((res) => {
+            this.dataForm = {
+              ...this.dataForm,
+              ...res.data.routing
+            }
 
-            console.log(this.dataForm, 'foe')
-
+            res.data.routingLineList.forEach((item) => {
+              item.name = item.processName
+              item.code = item.processCode
+              item.processType = item.processType
+            })
             this.dataFormTwo = res.data.routingLineList
+
             this.dataFormTwo = this.dataFormTwo.map((item) => {
               return {
                 ...item,
@@ -518,9 +770,16 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
-            this.dataFormTwo.sort((a, b) => a.sort - b.sort)
-            console.log(this.dataFormTwo, 'tttt')
 
+            this.dataFormTwo.sort((a, b) => a.sort - b.sort);
+
+            if (this.type === 'edit') {
+              this.getBusInfo()
+            } else {
+              // 流程信息和流转记录
+
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
             this.loading = false
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
@@ -538,77 +797,10 @@ export default {
       })
     },
     // 表单提交
-    dataFormSubmit(type) {
+    handleSubmit(type) {
       this.request(type)
     },
-    // 校验与聚焦
-    checkAndFocus() {
-      let isOk = true // 决定是否满足发送请求的条件
-      let focu = true // 判断自动聚焦是否已经使用了
 
-      // 校验dataForm
-      let checkDataForm = () => {
-        this.$refs['elForm'].validate((valid) => {
-          let focusFirstChild = (el) => {
-            if (el && el.nodeType === 1) {
-              if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                el.focus()
-              } else {
-                const children = el.childNodes
-                for (let i = 0; i < children.length; i++) {
-                  const child = children[i]
-                  if (child.nodeType === 1) {
-                    focusFirstChild(child)
-                    break
-                  }
-                }
-              }
-            }
-          }
-          if (!valid) {
-            isOk = false
-            focu = false
-            // 表单验证失败，聚焦到第一个验证失败的表单项
-            for (let i = 0; i < this.formItems.length; i++) {
-              const formItem = this.$refs[this.formItems[i].ref]
-              if (formItem.validateState === 'error') {
-                focusFirstChild(formItem.$children[1].$el)
-                break
-              }
-            }
-          }
-        })
-      }
-      // checkDataForm()
-
-      // 校验tableForm
-      let checkTableForm = () => {
-        // 生成一个对应多个ratio和targetName的数组
-        let refTotal = this.dataFormTwo.length
-        for (let i = 0; i < refTotal; i++) {
-          let refList = [this.$refs['tableForm_1_' + i], this.$refs['tableForm_2_' + i]]
-          refList.forEach((item) => {
-            item.validate((valid) => {
-              if (!valid) {
-                if (focu) {
-                  if (item.$children[0].validateMessage == '请选择转换后单位名称') {
-                    // 聚焦并展开el-select
-                    // item.$children[0].focus()
-                    // item.$children[0].showPopper()
-                    // item.$children[0].showMessage()
-                  }
-                  item.$el[0].focus()
-                  focu = false
-                }
-                isOk = false
-              }
-            })
-          })
-        }
-      }
-      // checkTableForm()
-      return isOk
-    },
     request(type) {
       let flag = true
       this.btnLoading = true
@@ -622,82 +814,216 @@ export default {
           }
         }
       }
-      // if (this.dataFormTwo.length == 1 && this.dataFormTwo[0].processingType === 'external_production') {
-      //   this.$message.error('至少添加一道自制工序')
-      //   this.btnLoading = false
-      //   flag = false
-      //   return
-      // }
+      if (this.dataFormTwo.length == 1 && this.dataFormTwo[0].processingType === 'external_production') {
+        this.$message.error('至少添加一道自制工序')
+        this.btnLoading = false
+        flag = false
+        return
+      }
+      if (this.dataFormTwo.length > 1) {
+        // 判断是否存在 "vibrate" 和 "accuracy"  
+        let hasVibrate = this.dataFormTwo.some(item => item.processType === "vibrate");
+        let hasAccuracy = this.dataFormTwo.some(item => item.processType === "accuracy");
+
+        let bothExist = hasVibrate && hasAccuracy;
+        if (bothExist) {
+          this.$message.error('测振工序与精度工序不能同时存在，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+        // 筛选出 processType 为 "vibrate" 的元素  
+        let vibrateItems = this.dataFormTwo.filter(item => item.processType === "vibrate");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoreVibrate = vibrateItems.length >= 2;
+        if (hasTwoOrMoreVibrate) {
+          this.$message.error('存在多条测振工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+
+        let heatTrearmentItems = this.dataFormTwo.filter(item => item.processType === "heat_treatment");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoreHeatTrearmentItems = heatTrearmentItems.length >= 2;
+        if (hasTwoOrMoreHeatTrearmentItems) {
+          this.$message.error('存在多条热工工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+
+        let packingItems = this.dataFormTwo.filter(item => item.processType === "packing");
+        // 判断是否有两条及以上  
+        let hasTwoOrMorepacking = packingItems.length >= 2;
+        if (hasTwoOrMorepacking) {
+          this.$message.error('存在多条包装工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+        let pairsItems = this.dataFormTwo.filter(item => item.processType === "pairs");
+        // 判断是否有两条及以上  
+        let hasTwoOrMorepairs = pairsItems.length >= 2;
+        if (hasTwoOrMorepairs) {
+          this.$message.error('存在多条配对工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+        let grindingItems = this.dataFormTwo.filter(item => item.processType === "grinding");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoregrinding = grindingItems.length >= 2;
+        if (hasTwoOrMoregrinding) {
+          this.$message.error('存在多条磨孔工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+        let accuracyItems = this.dataFormTwo.filter(item => item.processType === "accuracy");
+        // 判断是否有两条及以上  
+        let hasTwoOrMoreaccuracy = accuracyItems.length >= 2;
+        if (hasTwoOrMoreaccuracy) {
+          this.$message.error('存在多条精度工序的数据，请检查后重试')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+
+      }
+
+
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
-            businessType: 'customer',
+            businessType: 'system_attachment',
+            configKey: 'fj_gylx',
+            categoryId: this.categoryId,
             documentId: item.id,
             fileFlag: '',
             sort: index
           }
         })
       }
+      if (this.dataFormTwo.length > 1) {
+        this.dataFormTwo = this.dataFormTwo.map((item, index) => {
+          // 复制当前的item
+          let newItem = { ...item }
+          newItem.sort = index
+          // 如果存在下一个元素，则添加 nextId
+          if (index === 0) {
+            newItem.previousId = ''
+            newItem.nextId = this.dataFormTwo[index + 1].processId
+            newItem.firstFlag = true
+            newItem.lastFlag = false
+          }
+          if (index === this.dataFormTwo.length - 1) {
+            newItem.previousId = this.dataFormTwo[index - 1].processId
+            newItem.nextId = ''
+            newItem.firstFlag = false
+            newItem.lastFlag = true
+          }
+          if (index < this.dataFormTwo.length - 1 && index !== 0) {
+            newItem.nextId = this.dataFormTwo[index + 1].processId
+            newItem.firstFlag = false
+            newItem.lastFlag = false
+          }
 
-      this.dataFormTwo = this.dataFormTwo.map((item, index) => {
-        // 复制当前的item
-        let newItem = { ...item }
-        newItem.sort = index
-        // 如果存在下一个元素，则添加 nextId
-        if (index < this.dataFormTwo.length - 1) {
-          newItem.nextId = this.dataFormTwo[index + 1].processId
-        }
+          // 如果存在上一个元素，则添加 previousId
+          if (index > 0 && index !== this.dataFormTwo.length - 1) {
+            newItem.previousId = this.dataFormTwo[index - 1].processId
+            newItem.firstFlag = false
+            newItem.lastFlag = false
+          }
 
-        // 如果存在上一个元素，则添加 previousId
-        if (index > 0) {
-          newItem.previousId = this.dataFormTwo[index - 1].processId
-        }
+          return newItem // 返回修改后的对象
+        })
+      }
 
-        return newItem // 返回修改后的对象
-      })
+      this.btnLoading = false
+      // return
       let newArr = []
+      console.log(this.dataForm.id,'id')
       if (this.dataForm.id) {
         newArr = this.dataFormTwo.map((item) => {
-          console.log(item, 'item')
-
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
           return {
-            prodResLine: {
-              customColumn: {},
+            routingLine: {
+              checkFlag: item.checkFlag,
+              customColumn: item.customColumn,
+              firstFlag: item.firstFlag,
+              firstInspection: item.firstInspection,
               id: item.id,
-              inspectionInformation: item.inspectionInformation,
+              lastFlag: item.lastFlag,
+              workOrderFlag: item.workOrderFlag,
+              nextId: item.nextId,
+              pickingFlag: item.pickingFlag,
+              previousId: item.previousId,
               processId: item.processId,
-              productsId: this.dataForm.productsId,
+              processType: item.processType,
+              processingType: item.processingType,
+              remark: item.remark,
+              reportFlag: item.reportFlag,
               routingId: item.routingId,
-              technicalRequirement: item.technicalRequirement
+              sort: item.sort,
+              stockFlag: item.stockFlag,
+              technicalRequirement: item.technicalRequirement,
+              inspectionInformation: item.inspectionInformation
             },
-
+            routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
           }
         })
-        console.log(newArr, 'kk')
-        // return
       } else {
         newArr = this.dataFormTwo.map((item) => {
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
           return {
-            prodResLine: {
-              customColumn: {},
-              id: item.id,
-              inspectionInformation: item.inspectionInformation,
+            routingLine: {
+              index: item.index,
+              name: item.name,
+              code: item.code,
+              processType: item.processType,
               processId: item.processId,
-              productsId: this.dataForm.productsId,
-              routingId: item.routingId,
-              technicalRequirement: item.technicalRequirement
+              reportFlag: item.reportFlag,
+              checkFlag: item.checkFlag,
+              processingType: item.processingType,
+              cooperativePartnerId: item.cooperativePartnerId,
+              cooperativePartnerName: item.cooperativePartnerName,
+              departmentId: item.departmentId,
+              stockFlag: item.stockFlag,
+              firstInspection: item.firstInspection,
+              pickingFlag: item.pickingFlag,
+              firstFlag: item.firstFlag,
+              lastFlag: item.lastFlag,
+              workOrderFlag: item.workOrderFlag,
+              defaultFlag: item.defaultFlag,
+              defaultReport: item.defaultReport,
+              sort: item.sort,
+              nextId: item.nextId,
+              previousId: item.previousId,
+              technicalRequirement: item.technicalRequirement,
+              inspectionInformation: item.inspectionInformation
             },
+            routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
           }
         })
       }
 
       this.dataForm.documentStatus = type
+      this.productsIds = this.selectedData.map(item => {
+        return item.productsId
+      })
       let _data = {
-        prodRes: this.dataForm,
+        routing: this.dataForm,
         // documentStatus: type,
-        prodResLineList: newArr,
+        productsIds: this.productsIds,
+        routingLineList: newArr,
+        attachmentList: this.datafilelist,
+        flowData: this.flowData
       }
 
       let msgs = ''
@@ -707,67 +1033,35 @@ export default {
         msgs = '提交成功'
       }
       if (flag) {
-        this.$refs['elForm'].validate((valid) => {
-          if (valid) {
-            if (this.dataFormTwo.length === 0) {
-              this.$message.error('请至少选择一条工序')
+        if (this.dataFormTwo.length === 0) {
+          this.$message.error('请至少选择一条工序')
+          this.btnLoading = false
+        } else {
+
+          batchProcess(_data)
+            .then((res) => {
+              if (res.msg === 'Success') res.msg = '新建成功'
               this.btnLoading = false
-            } else {
-              if (!this.dataForm.id) {
-                addProcess(_data)
-                  .then((res) => {
-                    if (res.msg === 'Success') res.msg = '新建成功'
-                    this.btnLoading = false
-                    this.$message({
-                      message: msgs,
-                      type: 'success',
-                      duration: 1000,
-                      onClose: () => {
-                        this.visible = false
-                        this.btnLoading = false
-                        this.$emit('close', true)
-                      }
-                    })
-                    // this.visible = false
-                  })
-                  .catch(() => {
-                    this.btnLoading = false
-                  })
-              } else {
-                editProductionResource(_data)
-                  .then((res) => {
-                    if (res.msg === 'Success') res.msg = '修改成功'
-                    this.$message({
-                      message: msgs,
-                      type: 'success',
-                      duration: 1000,
-                      onClose: () => {
-                        this.visible = false
-                        this.btnLoading = false
-                        this.$emit('close', true)
-                      }
-                    })
-                  })
-                  .catch(() => {
-                    this.btnLoading = false
-                  })
-              }
-            }
-          } else {
-            this.btnLoading = false
-          }
-        })
+              this.$message({
+                message: msgs,
+                type: 'success',
+                duration: 1000,
+                onClose: () => {
+                  this.visible = false
+                  this.btnLoading = false
+                  this.$emit('close', true)
+                }
+              })
+              // this.visible = false
+            })
+            .catch(() => {
+              this.btnLoading = false
+            })
+
+        }
       }
     },
-    // checkRepart(dataTwo,data){
-    //   dataTwo.forEach((item,index)=>{
-    //     data.forEach((e)=>{
-    //       if (item.processId === e.id){
-    //         this.dataFormTwo.splice(index,1)
-    //       }
-    //     })
-    //   })
-    // },
+
     submit(id, data) {
       let list = data.map((item) => item.all)
       if (list.length) {
@@ -781,8 +1075,11 @@ export default {
         }
         list = list.sort((a, b) => a._index - b._index)
         list.forEach((item, index) => {
+          console.log(item, 'kkk')
           let obj = {
             index: item._index,
+            projectName: item.projectName, // 所属项目名称
+            projectId: item.projectId, // 所属项目Id
             name: item.name, // 工序名称
             code: item.code,
             processType: item.processType,
@@ -798,7 +1095,10 @@ export default {
             stockFlag: 0, // 是否入库
             firstInspection: 0, // 是否首检
             firstFlag: false, //是否首道工序
-            lastFlag: false // 是否末道工序
+            lastFlag: false, // 是否末道工序
+            workOrderFlag: 1, // 是否生成工单
+            technicalRequirement: item.technicalRequirement,
+            inspectionInformation: item.inspectionInformation
           }
           responseFlag = true
 
@@ -841,6 +1141,7 @@ export default {
             })
           })
         })
+
         this.dataFormTwo.forEach((item) => {
           getBimProcessDetail(item.processId)
             .then((res) => {
@@ -911,15 +1212,17 @@ export default {
       //     })
       //     return
       // }
-
+      console.log(this.dataFormTwo[index], 'this.dataFormTwo[index]')
       this.currntIndex = index
       this.sourceVisibled = true
       this.$nextTick(() => {
-        this.$refs['sourceRef'].init([this.dataFormTwo[index]], type)
+        this.$refs['sourceRef'].init([this.dataFormTwo[index]], 'edit')
       })
     },
     // 抽屉提交
     handlerConfirm(data) {
+      console.log('抽屉提交');
+      console.log(this.dataFormTwo[this.currntIndex], data);
       this.dataFormTwo[this.currntIndex].bimRoutingProcessResourceDTOList = data
       this.sourceVisibled = false
     },
@@ -930,6 +1233,65 @@ export default {
         tBody.style.height = 'auto'
         tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
       })
+    },
+    // 测试审批流
+    getBusInfo() {
+      getBusinessFlowInfo('b024')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
+          } else {
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+          }
+        })
+        .catch(() => { })
+    },
+    // 流程信息 && 流转记录
+    getFlowDetail(id) {
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
+                }
+                loop(this.flowTemplateJson)
+              }
+            }
+          }
+        })
+        .catch(() => { })
     }
   }
 }
@@ -962,13 +1324,9 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-tabs__header {
-  margin-bottom: -5px;
-}
-
-::v-deep .el-table__body-wrapper.is-scrolling-left {
+/* ::v-deep .el-table__body-wrapper.is-scrolling-left {
   height: auto !important;
-}
+} */
 
 ::v-deep .JNPF-preview-main .el-table--mini td {
   padding: 8px 0 !important;
@@ -1006,11 +1364,9 @@ export default {
   line-height: 33px;
   font-size: 18px;
   border-top: 1px solid rgb(220, 223, 230);
-  // background: #dcdfe6;
   background: rgb(250, 250, 250);
   padding-left: 5px;
   font-weight: 700;
-  // border-bottom:none;
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
@@ -1019,12 +1375,24 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  // padding: 0 10px 0px;
   border-top: none !important;
 }
 
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
 }
 
 ::v-deep .JNPF-common-page-header {
@@ -1049,11 +1417,7 @@ export default {
   border-bottom: none !important;
 }
 
-::v-deep .el-tabs__item {
-  padding: 0 10px !important;
-}
-
-::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important;
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

@@ -1704,6 +1704,7 @@ export default {
           mobilePhone: '',
           pageNum: 1,
           pageSize: 20,
+          saleFlag:1,
           partnerCategoryId: "",
           type: "supplier",
         } // 意向客户列表入参
@@ -1723,6 +1724,7 @@ export default {
           mobilePhone: '',
           pageNum: 1,
           pageSize: 20,
+          saleFlag:1,
           partnerCategoryId: "",
           type: "outsourcing_suppliers",
         } // 意向客户列表入参

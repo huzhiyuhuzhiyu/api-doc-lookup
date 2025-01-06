@@ -129,6 +129,7 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
+            <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
             <el-table-column label="操作" width="320" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'feed')">投料信息</el-button>

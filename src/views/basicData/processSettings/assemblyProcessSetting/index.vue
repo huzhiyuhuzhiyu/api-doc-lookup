@@ -611,7 +611,12 @@ export default {
       return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/_([a-zA-Z])/g, (match, letter) => letter.toUpperCase())
+      let newProp
+      if (prop === 'createByName') {
+        newProp = 'create_by'
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      }
 
       console.log(newProp)
       this.listQuery.orderItems[0].asc = order !== 'descending'

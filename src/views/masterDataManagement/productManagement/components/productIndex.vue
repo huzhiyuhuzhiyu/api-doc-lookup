@@ -645,6 +645,9 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
+    beforeCreate() {
+        this.$options.name = this.$route.name
+    },
   mounted() {
     this.getProductClassFun()
   },

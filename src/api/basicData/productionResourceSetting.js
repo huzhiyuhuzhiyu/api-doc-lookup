@@ -63,7 +63,7 @@ export function saleUploadroutingModel(data) {
 // 导入
 export function importRoutingModel(data) {
   return request({
-    url: `/api/mes/production/resource/import`,
+    url: `/api/mes/bimRouting/setting/import`,
     method: 'post',
     data
   })

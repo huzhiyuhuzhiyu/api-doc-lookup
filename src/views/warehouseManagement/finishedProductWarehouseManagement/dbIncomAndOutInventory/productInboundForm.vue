@@ -1516,7 +1516,7 @@ export default {
             const formMethod = this.dataForm.id ? updateWarehouseData : addWarehouseData
             // const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
-            this.productData.forEach(element => {
+            this.productData.forEach(item => {
               this.$set(item,'ordersLineId',item.id)
               item.warehouseType = this.dataForm.warehouseType
             });

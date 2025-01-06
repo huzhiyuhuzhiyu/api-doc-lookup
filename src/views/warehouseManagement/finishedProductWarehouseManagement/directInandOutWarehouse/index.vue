@@ -53,6 +53,15 @@
                               :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
                           </el-form-item>
                         </el-col>
+                          <el-col :sm="6" :xs="24" v-if="['inbound_sale_return','inbound_purchase','inbound_external','inbound_return_materials','inbound_order_production','inbound_production','inbound_flip','inbound_return'].includes(dataForm.businessType)">
+                              <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                                  <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                                             style="width: 100%;">
+                                      <el-option v-for="(item, index) in diffBatchList" :key="index"
+                                                 :label="item.label" :value="item.value"></el-option>
+                                  </el-select>
+                              </el-form-item>
+                          </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="仓库" prop="warehouseName">
                             <ComSelect-list
@@ -132,7 +141,7 @@
                       <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
-                        v-if="dataForm.documentType == 'inbound'">
+                        v-if="dataForm.documentType == 'inbound' && !dataForm.diffBatchNumFlag">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                           </el-input>
@@ -192,14 +201,14 @@
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false"  @change="(value) => changePairingMode(value,scope)">
-                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" 
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                               :value="item.id">
                             </el-option>
                           </el-select>
                         </template>
                       </el-table-column>
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120">
-                   
+
                       </el-table-column>
 
                       <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
@@ -213,7 +222,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1">
-                    
+
                       </el-table-column>
                       <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                       <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="8" />
@@ -222,7 +231,7 @@
                           <span class="required">*</span>数量
                         </template>
                         <template slot-scope="scope">
-                          <el-input :disabled="btnType == 'look'" 
+                          <el-input :disabled="btnType == 'look'"
                             v-model="scope.row.num" placeholder="数量"></el-input>
                         </template>
                       </el-table-column> -->
@@ -677,6 +686,9 @@ export default {
         ["inbound_mock_production", "生产入库"],
         ["outbound_use", "资产领用"],
         ["inbound_return", "资产归还"],
+        ["inbound_receive_material", "直接领料入库"],
+        ["outbound_receive_material", "直接领料出库"],
+ 
       ])),
       list: [],
       batchNumVisible: false,
@@ -717,6 +729,7 @@ export default {
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
+        diffBatchNumFlag:1
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -748,7 +761,7 @@ export default {
           { required: true, message: '领(退)料人不能为空', trigger: 'change' }
         ],
       },
-      orderForm: { //获取产品数据 
+      orderForm: { //获取产品数据
         productDrawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
@@ -898,6 +911,10 @@ export default {
       colourFlag: "",
       processFlag: "",
       pairingModeList: [],
+        diffBatchList:[
+            {label:'产品生成同批次号',value:0},
+            {label:'产品生成不同批次号',value:1},
+        ]
     }
   },
   computed: {
@@ -1038,7 +1055,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       console.log(this.dataForm.businessType, this.bimProductAttributesList);
       if (this.dataForm.businessType == 'inbound_purchase') {
@@ -1297,7 +1314,7 @@ export default {
       let data = JSON.parse(JSON.stringify(row))
       this.productData.splice(index + 1, 0, data);
     },
-    // 点击选择产品 
+    // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
@@ -1671,7 +1688,7 @@ export default {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")
       }
-      // 如果选的是销售发退货、采购收退货、直接出入库、生产产品入库  
+      // 如果选的是销售发退货、采购收退货、直接出入库、生产产品入库
       if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
         this.partnerFlag = true
         this.partnerTitle = '客户'
@@ -1928,7 +1945,7 @@ export default {
           // 自动聚焦未使用则提交
           if (submitFlag) {
             this.dataForm.documentStatus = submitModel
-         
+
             const formMethod = this.dataForm.id ? updateWarehouseData : addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
@@ -1961,12 +1978,12 @@ export default {
               this.$message.success(msg)
               if (type) {
                 let codes = this.arr
-                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项  
-                  .map(item => item.code); // 提取满足条件的 code 值  
+                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项
+                  .map(item => item.code); // 提取满足条件的 code 值
                 this.enCode = codes
                 this.formId = res.data.id
                 this.fullName = this.arr
-                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项  
+                  .filter(item => item.businessType === this.dataForm.businessType) // 筛选出 businessType 等于 type 的项
                   .map(item => item.fullName);
                 this.printVisible = true
                 this.$nextTick(() => {

@@ -46,7 +46,15 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-
+                            <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
+                                <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                                    <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                                               style="width: 100%;">
+                                        <el-option v-for="(item, index) in diffBatchList" :key="index"
+                                                   :label="item.label" :value="item.value"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
 
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
@@ -116,14 +124,14 @@
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
+                        <el-table-column v-if="!dataForm.diffBatchNumFlag" prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
+                        <el-table-column prop="shelfSpaceName" label="库位" min-width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header">
                             <span class="required">*</span>库位
@@ -212,7 +220,15 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-
+                            <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
+                                <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                                    <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                                               style="width: 100%;">
+                                        <el-option v-for="(item, index) in diffBatchList" :key="index"
+                                                   :label="item.label" :value="item.value"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
 
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
@@ -282,14 +298,14 @@
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
+                        <el-table-column  v-if="!dataForm.diffBatchNumFlag" prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
+                        <el-table-column prop="shelfSpaceName" label="库位" min-width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header">
                             <span class="required">*</span>库位
@@ -343,7 +359,7 @@
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
                   </UploadWj>
                 </el-tab-pane>
-                 
+
               </el-tabs>
             </div>
           </div>
@@ -505,6 +521,7 @@ export default {
         inspectionResults: "",
         orderDate: this.jnpf.getToday(),
         projectId: "",
+        diffBatchNumFlag:1
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -598,7 +615,10 @@ export default {
       endTime: 0,
       productNameFlag: null,
       tableDataFlag: false,
-
+        diffBatchList:[
+            {label:'产品生成同批次号',value:0},
+            {label:'产品生成不同批次号',value:1},
+        ]
     }
   },
   async created() {
@@ -693,13 +713,13 @@ export default {
 
     },
 
-    // 点击选择产品 销售发货 
+    // 点击选择产品 销售发货
     openSeleceProductDialog() {
 
       this.productVisible = true
       this.searchProductFun()
     },
-    //  
+    //
     searchProductFun() {
       this.productForm.orderNo = this.dataForm.sourceNo
       this.productForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
@@ -711,13 +731,13 @@ export default {
             this.$set(item, 'awitNum', this.jnpf.numberFormat(this.jnpf.math('subtract', [item.requisitionNum, item.incomingOutgoingNum]), 2))
             this.$set(item, 'warehouseCodeLineList', [])
             item.equipments.forEach(equipment => {
-              // 创建新的对象并赋值  
+              // 创建新的对象并赋值
               const newObj = {
-                assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode  
-                moveId: "", // 根据需要设置  
-                moveLineId: "" // 根据需要设置  
+                assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode
+                moveId: "", // 根据需要设置
+                moveLineId: "" // 根据需要设置
               };
-              // 将新对象添加到 warehouseCodeLineList  
+              // 将新对象添加到 warehouseCodeLineList
               item.warehouseCodeLineList.push(newObj);
             });
             if (this.mainUnitFlag == 1) {
@@ -1042,13 +1062,13 @@ export default {
                 });
               }
               item.equipments.forEach(equipment => {
-                // 创建新的对象并赋值  
+                // 创建新的对象并赋值
                 const newObj = {
-                  assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode  
-                  moveId: "", // 根据需要设置  
-                  moveLineId: "" // 根据需要设置  
+                  assetCode: equipment.equipmentCode, // 将 equipmentCode 赋值给 assetCode
+                  moveId: "", // 根据需要设置
+                  moveLineId: "" // 根据需要设置
                 };
-                // 将新对象添加到 warehouseCodeLineList  
+                // 将新对象添加到 warehouseCodeLineList
                 item.warehouseCodeLineList.push(newObj);
                 if (this.mainUnitFlag == 1) {
                   if (item.calculationDirection == 'multiplication') {

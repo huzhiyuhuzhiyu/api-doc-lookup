@@ -45,7 +45,15 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-
+                            <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
+                                <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                                    <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                                               style="width: 100%;">
+                                        <el-option v-for="(item, index) in diffBatchList" :key="index"
+                                                   :label="item.label" :value="item.value"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
@@ -90,7 +98,7 @@
                         style="width: 100%;">
 
 
-                     
+
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
@@ -99,14 +107,14 @@
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="processName" label="工序" width="120" />
-                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
+                        <el-table-column v-if="!dataForm.diffBatchNumFlag" prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
+                        <el-table-column prop="shelfSpaceName" label="库位" min-width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header">
                             <span class="required">*</span>库位
@@ -188,7 +196,15 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-
+                            <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
+                                <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                                    <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                                               style="width: 100%;">
+                                        <el-option v-for="(item, index) in diffBatchList" :key="index"
+                                                   :label="item.label" :value="item.value"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
@@ -233,7 +249,7 @@
                         style="width: 100%;">
 
 
-                     
+
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
@@ -242,14 +258,14 @@
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="processName" label="工序" width="120" />
-                        <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132">
+                        <el-table-column  v-if="!dataForm.diffBatchNumFlag" prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
                               placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
+                        <el-table-column prop="shelfSpaceName" label="库位" min-width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header">
                             <span class="required">*</span>库位
@@ -442,6 +458,7 @@ export default {
         sourceNo: "",
         orderDate: this.jnpf.getToday(),
         projectId:"",
+        diffBatchNumFlag:1
       },
       getWarehouseList,
       sourceTypeList: [ //业务类型
@@ -521,9 +538,12 @@ export default {
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
+        diffBatchList:[
+            {label:'产品生成同批次号',value:0},
+            {label:'产品生成不同批次号',value:1},
+        ],
 
 
- 
       productNameFlag: null,
       tableDataFlag: false,
 
@@ -603,13 +623,13 @@ export default {
 
 
 
-    // 点击选择产品 
+    // 点击选择产品
     openSeleceProductDialog() {
 
       this.productVisible = true
       this.searchProductFun()
     },
-    //  
+    //
     searchProductFun() {
 
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : ''
@@ -639,7 +659,7 @@ export default {
       //   { label: "外协发料", value: "outbound_external_send" },
       //   { label: "外协退料", value: "inbound_external_return" },
       //   { label: "外协收货", value: "inbound_external" },
-      //   { label: "外协退货", value: "outbound_external" },  
+      //   { label: "外协退货", value: "outbound_external" },
 
 
 

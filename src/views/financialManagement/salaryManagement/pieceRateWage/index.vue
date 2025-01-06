@@ -110,9 +110,7 @@
 </template>
 
 <script>
-import { excelExport } from '@/api/basicData/index'
-import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getSalaryList, editSalaryList, getSalaryReportList } from '@/api/salaryManagement'
+import { getSalaryList, editSalaryList, updateSalaryList } from '@/api/salaryManagement'
 import Form from './Form'
 export default {
   name: 'pieceRateWage',
@@ -168,11 +166,8 @@ export default {
     },
     recalculate() {
       if (!this.producerIdList.length) return this.$message.error("请先选择数据")
-      // let obj = {
-      //   month: this.listQuery.month,
-      //   producerIdList: this.producerIdList
-      // }
-      editSalaryList(this.producerIdList).then(res => {
+      updateSalaryList(this.producerIdList).then(res => {
+        console.log("res",);
         this.$message.success("重新计算异常工资成功")
         this.selectArr = []
         this.initData()

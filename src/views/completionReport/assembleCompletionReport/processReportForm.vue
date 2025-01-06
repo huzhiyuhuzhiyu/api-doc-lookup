@@ -18,7 +18,34 @@
 
                 <div>
                   <div class="JNPF-common-head">
-                    <div></div>
+                    <div>
+                      <el-row class="JNPF-common-search-box orderNosearch" :gutter="16">
+                        <el-form @submit.native.prevent>
+                          <el-col :span="6">
+                            <el-form-item>
+                              <el-input v-model="form.productionOrderNo" @keyup.enter.native="search()"
+                                placeholder="生产任务单号" clearable />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :span="6">
+                            <el-form-item>
+                              <el-input v-model="form.productDrawingNo" @keyup.enter.native="search()"
+                                placeholder="品名规格" clearable />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :span="8">
+                            <el-form-item>
+                              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                                {{ $t('common.search') }}</el-button>
+                              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
+                                $t('common.reset') }}
+                              </el-button>
+                            </el-form-item>
+                          </el-col>
+
+                        </el-form>
+                      </el-row>
+                    </div>
                     <div class="JNPF-common-head-right">
 
                       <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -120,6 +147,8 @@ export default {
       codeConfig: {},//单据规则配置
       workList: [],
       form: {
+        productionOrderNo:"",
+        productDrawingNo:"",
         processId: "",
         prodOrderStatus: 'normal',
         workReportFlag: true,
@@ -160,7 +189,19 @@ export default {
       this.form.processId = row.id
       this.getWorkListFun()
     },
+    search(){
+      this.getWorkListFun()
+    },
+    reset(){
+      this.form.productionOrderNo = ""
+      this.form.productDrawingNo = ""
+      this.search()
+    },
     getWorkListFun() {
+      Object.keys(this.form).forEach(key => {
+        let item = this.form[key]
+        this.form[key] = typeof item === 'string' ? item.trim() : item
+      })
       getWorkList(this.form).then(res => {
         
         this.workList = res.data.records
@@ -195,6 +236,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.orderNosearch{
+  padding-left: 0px;
+}
 // .main {
 //   padding: 10px 30px 0;
 // }

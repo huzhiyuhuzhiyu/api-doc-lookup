@@ -808,7 +808,6 @@ export default {
         this.dataForm.projectId = this.userInfo.projectId
       }
     }
-
     if (this.isCheckingSwitch === '1') {
       this.ProductTableItems.push({ prop: 'inspectionInformation', label: '检验信息', fixed: 'left' })
     }

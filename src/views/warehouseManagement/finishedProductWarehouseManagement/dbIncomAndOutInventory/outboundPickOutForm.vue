@@ -141,7 +141,7 @@
                               <div> {{ scope.row.shelfSpaceName }}</div>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"
+                          <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
 
 
@@ -340,7 +340,7 @@
                               <div> {{ scope.row.shelfSpaceName }}</div>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"
+                          <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
 
 
@@ -748,7 +748,7 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
+      this.$set(this.productData[index], 'batchAvailableQuantity', data.inventoryQuantity)
 
       this.$set(this.productData[index], 'specSize', data.specSize)
       this.$set(this.productData[index], 'logo', data.logo)
@@ -1242,7 +1242,7 @@ export default {
                 break
               }
 
-              if (Number(item.num) > Number(item.availableBatchNumber)) {
+              if (Number(item.num) > Number(item.batchAvailableQuantity)) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行领料数量不能超过批次库存数量")
                 break
@@ -1251,7 +1251,7 @@ export default {
               //   totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
               // }
               // if (!totalNum[item.ordersLineId]) {
-              //   totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
+              //   totalNum[item.ordersLineId] = { totalNum: 0, batchAvailableQuantity: item.batchAvailableQuantity };
               // }
               // totals[item.ordersLineId].totalNum += Number(item.num)
               // totalNum[item.ordersLineId].totalNum += Number(item.num);

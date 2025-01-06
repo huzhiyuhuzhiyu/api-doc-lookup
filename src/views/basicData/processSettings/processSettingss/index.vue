@@ -342,6 +342,7 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
+        routeType:'processLibrary',
         code: '',
         name: '',
         state: '',

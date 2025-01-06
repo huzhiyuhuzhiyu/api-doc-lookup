@@ -154,3 +154,12 @@ export function dispatchListMap(data) {
     data
   })
 }
+
+// 生产订单-新增装配领料任务
+export function addProdPickOrder(data) {
+  return request({
+    url: `/api/mrp/prod/order/add/assemble/pick`,
+    method: 'POST',
+    data
+  })
+}

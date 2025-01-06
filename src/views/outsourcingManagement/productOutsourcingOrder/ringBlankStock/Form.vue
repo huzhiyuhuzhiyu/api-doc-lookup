@@ -15,12 +15,12 @@
             <el-button @click="goBack" v-if="!!dialogTitle">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
-        <div class="main">
+        <div class="main" ref="main">
           <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" style="padding: 0 10px;">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :sm="6" :xs="24">
@@ -61,25 +61,34 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <div v-if="type !== 'look'">
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      icon="el-icon-plus" :disabled="type == 'look' ? true : false" @click="openSeleceProductDialog()">
-                      选择产品
-                    </el-button>
-                    |
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
-                      批量删除
-                    </el-button>
-                    |
+
+                  <div class="JNPF-common-head">
+                    <div v-if="type !== 'look'">
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        icon="el-icon-plus" :disabled="type == 'look' ? true : false"
+                        @click="openSeleceProductDialog()">
+                        选择产品
+                      </el-button>
+                      |
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                        批量删除
+                      </el-button>
+                      |
+                    </div>
+                    <div v-else></div>
+                    <div class="JNPF-common-head-right">
+                      <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                        <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                          @click="columnSetFun()" />
+                      </el-tooltip>
+                    </div>
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true" ref="multipleTable"
+
+                    <JNPF-table style="border: 1px solid #e3e7ee;" custom-column :fixedNO="true" ref="multipleTable"
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                      id="table" border height="460">
-                      <el-table-column type="selection" width="55" align="center" fixed="left"
-                        :key="0"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" :key="1" />
+                      id="table" border :height="customStyleData">
                       <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                         :key="2"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
@@ -97,7 +106,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="工序名称" min-width="190" show-overflow-tooltip :key="5">
+                      <el-table-column prop="processName" label="工序名称" min-width="190" show-overflow-tooltip :key="5">
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
@@ -117,7 +126,7 @@
                       </el-table-column>
                       <el-table-column prop="weight" label="重量(kg)" width="90" />
                       <el-table-column prop="proportion" label="比重" width="80" />
-                      <el-table-column prop="deliveryDate" label="交货日期" width="195" :key="6">
+                      <el-table-column prop="deliveryDate" label="交货日期" min-width="195" :key="6">
                         <template slot="header">
                           <span class="required">*</span>
                           交货日期
@@ -125,14 +134,12 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
                             :rules="productRules.deliveryDate">
-                            <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                              style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                            <el-date-picker v-model="scope.row.deliveryDate" type="date" style="width: 100%;"
+                              value-format="yyyy-MM-dd" placeholder="请选择交货日期"></el-date-picker>
                           </el-form-item>
                         </template>
                       </el-table-column>
-
-
-                      <el-table-column label="待外协数量" width="110" :key="7">
+                      <el-table-column prop="awiOutsourcingQuantity" label="待外协数量" width="110" :key="7">
                         <template slot-scope="scope">
                           <el-form-item>
                             <div class="viewData">
@@ -271,7 +278,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
@@ -690,7 +697,9 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      customStyleData: 0,
+      formLoading: true
     }
   },
   computed: {
@@ -762,14 +771,40 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
+    await this.getDeputyUnit()
+    await this.switchStyleheight()
     this.getBimBusinessDetail()
-    this.getDeputyUnit()
+
     this.fetchData('EPDH')
     this.getBusInfo()
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 445
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1166,6 +1201,9 @@ export default {
         }
       }
       this.productArr = [] // 清空选中的行的数据
+    },
+    columnSetFun() {
+      this.$refs.multipleTable.showDrawer()
     },
     // 选中的产品信息
     handeleProductInfoData(val) {
@@ -1598,7 +1636,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  /* padding: 10px; */
   border-top: none !important;
 }
 

@@ -106,6 +106,8 @@
               v-if="materialFlag == 1"></el-table-column>
             <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
               v-if="colourFlag == 1"></el-table-column>
+            <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
+
             <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
@@ -662,7 +664,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName') {
+      if (prop === 'productName' || prop == 'pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop == 'salesName') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -703,7 +705,7 @@ export default {
 
               } else {
 
-                this.$set(item, 'assistantNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6)) 
+                this.$set(item, 'assistantNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
               }
             }
           });

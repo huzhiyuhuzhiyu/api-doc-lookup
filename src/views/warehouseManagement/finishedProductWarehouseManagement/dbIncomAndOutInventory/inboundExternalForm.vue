@@ -136,7 +136,7 @@
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column v-if="!dataForm.diffBatchNumFlag" prop="batchNumber" label="批次号" width="200" :key="10111">
+                        <el-table-column  prop="batchNumber" label="批次号" width="200" :key="10111">
                           <template slot="header">
                             <span class="required">*</span>批次号
                           </template>
@@ -368,7 +368,7 @@
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column  v-if="!dataForm.diffBatchNumFlag" prop="batchNumber" label="批次号" width="200" :key="10111">
+                        <el-table-column   prop="batchNumber" label="批次号" width="200" :key="10111">
                           <template slot="header">
                             <span class="required">*</span>批次号
                           </template>

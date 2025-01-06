@@ -110,13 +110,15 @@
                       <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.technicalRequirement }}
+                          <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
+                            :disabled="disabled"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.inspectionInformation }}
+                          <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
+                            :disabled="disabled"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="firstFlag" label="是否首道工序" width="120">
@@ -946,6 +948,7 @@ export default {
       this.btnLoading = false
       // return
       let newArr = []
+      console.log(this.dataForm.id,'id')
       if (this.dataForm.id) {
         newArr = this.dataFormTwo.map((item) => {
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
@@ -968,7 +971,9 @@ export default {
               reportFlag: item.reportFlag,
               routingId: item.routingId,
               sort: item.sort,
-              stockFlag: item.stockFlag
+              stockFlag: item.stockFlag,
+              technicalRequirement: item.technicalRequirement,
+              inspectionInformation: item.inspectionInformation
             },
             routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
           }
@@ -999,7 +1004,9 @@ export default {
               defaultReport: item.defaultReport,
               sort: item.sort,
               nextId: item.nextId,
-              previousId: item.previousId
+              previousId: item.previousId,
+              technicalRequirement: item.technicalRequirement,
+              inspectionInformation: item.inspectionInformation
             },
             routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
           }
@@ -1068,6 +1075,7 @@ export default {
         }
         list = list.sort((a, b) => a._index - b._index)
         list.forEach((item, index) => {
+          console.log(item, 'kkk')
           let obj = {
             index: item._index,
             projectName: item.projectName, // 所属项目名称

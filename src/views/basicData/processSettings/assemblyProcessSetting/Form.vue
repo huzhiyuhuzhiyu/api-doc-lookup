@@ -134,13 +134,15 @@
                       <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.technicalRequirement }}
+                          <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
+                            :disabled="type == 'look'"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.inspectionInformation }}
+                          <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
+                            :disabled="type == 'look'"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="firstFlag" label="是否首道工序" width="120">
@@ -283,12 +285,12 @@
             <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
+            <!-- <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
             <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
               <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
-            </el-tab-pane>
+            </el-tab-pane> -->
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="工艺信息" name="modelInfo" class="orderInfo">
@@ -410,13 +412,15 @@
                   <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                     v-if="isTechnicalSwitch === '1'">
                     <template slot-scope="scope">
-                      {{ scope.row.technicalRequirement }}
+                      <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
+                        :disabled="type == 'look'"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                     v-if="isCheckingSwitch === '1'">
                     <template slot-scope="scope">
-                      {{ scope.row.inspectionInformation }}
+                      <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
+                        :disabled="type == 'look'"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="firstFlag" label="是否首道工序" width="120">
@@ -1051,7 +1055,7 @@ export default {
             } else {
               // 流程信息和流转记录
 
-              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+              // if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
             this.loading = false
             if (res.data.attachmentList) {
@@ -1310,7 +1314,9 @@ export default {
               reportFlag: item.reportFlag,
               routingId: item.routingId,
               sort: item.sort,
-              stockFlag: item.stockFlag
+              stockFlag: item.stockFlag,
+              technicalRequirement: item.technicalRequirement,
+              inspectionInformation: item.inspectionInformation
             },
             routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
           }
@@ -1341,7 +1347,9 @@ export default {
               defaultReport: item.defaultReport,
               sort: item.sort,
               nextId: item.nextId,
-              previousId: item.previousId
+              previousId: item.previousId,
+              technicalRequirement: item.technicalRequirement,
+              inspectionInformation: item.inspectionInformation
             },
             routingProcResList: item.bimRoutingProcessResourceDTOList || [] // Add this check for existing resources
           }

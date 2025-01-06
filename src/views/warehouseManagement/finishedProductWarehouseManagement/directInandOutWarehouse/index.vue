@@ -686,6 +686,9 @@ export default {
         ["inbound_mock_production", "生产入库"],
         ["outbound_use", "资产领用"],
         ["inbound_return", "资产归还"],
+        ["inbound_receive_material", "直接领料入库"],
+        ["outbound_receive_material", "直接领料出库"],
+ 
       ])),
       list: [],
       batchNumVisible: false,

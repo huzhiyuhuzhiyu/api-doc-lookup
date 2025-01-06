@@ -132,8 +132,7 @@
                           min-width="160" />
                           <el-table-column  prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
-                              placeholder="批次号">
+                            <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
@@ -358,13 +357,13 @@
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
-                          show-overflow-tooltip> </el-table-column>
+                          show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                           <el-table-column   prop="batchNumber" label="批次号" min-width="200" :key="101132">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.batchNumber"   :disabled="btnType == 'look'"
-                              placeholder="批次号">
+                            <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                             </el-input>
                           </template>
                         </el-table-column>
@@ -825,7 +824,7 @@ export default {
     },
     computedNumFun(data, index) {
       if (data.discount && data.proportion && data.weight) {
-        this.productData[index].num = Math.floor(data.proportion * data.weight)
+        this.productData[index].num = Math.floor(data.proportion * data.weight * data.discount)
         this.watchNum(data, index)
       }
     },
@@ -1248,56 +1247,112 @@ export default {
         })
       } else {
         this.getWarehouseListFun()
-        this.dataForm.cooperativePartnerId = data.cooperativePartnerId
-        this.dataForm.partnerName = data.partnerName
-        this.$set(this.dataForm, 'sourceNo', data.orderNo)
         this.fetchData("RKDH", true)
         this.getBusInfo('b045')
-        this.title = '新建入库单'
-        this.datafilelist = []
-        getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
-          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.qualifiedQuantity > item.receiptQuantity);
 
-          console.log("filteredArray", filteredArray);
 
-          // if(businessType == 'inbound_purchase'){
-          //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
-          // }
-          if (filteredArray.length) {
-            filteredArray.forEach(item => {
-              item.sourceNo = this.dataForm.sourceNo
-              item.moveId = this.dataForm.id
-              item.num = item.requiredReceivedQuantity
-              item.ordersId = item.purchaseOrderId
-              item.noticeId = item.purchaseReceiptReturnGoodsId
-              item.noticeLineId = item.id
-              item.taxRates = item.taxRate + "%"
+        // if (Array.isArray(data)) {
+        //   this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+        //   this.dataForm.partnerName = data[0].partnerName
+        //   // this.$set(this.dataForm, 'sourceNo', data[0].orderNo)
 
-              item.costPrice = item.price
-              item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
-              let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
-              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
-              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-              if (this.mainUnitFlag == 1) {
-                if (item.calculationDirection == 'multiplication') {
-                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
-                } else {
-                  this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+        //   this.title = '新建入库单'
+        //   this.datafilelist = []
+        //   data.forEach(items => {
+        //     getpurPurchaseReceiptReturnGoodsdetail(items.id).then(res => {
+        //       let filteredArray = res.data.noticeLineList.filter(is => classAttributeList.includes(is.classAttribute) && is.qualifiedQuantity > is.receiptQuantity);
+  
+        //       console.log("filteredArray", filteredArray);
+  
+            
+        //       if (filteredArray.length) {
+        //         filteredArray.forEach(item => {
+        //           // item.sourceNo = this.dataForm.sourceNo
+        //           // item.moveId = this.dataForm.id
+        //           item.num = item.requiredReceivedQuantity
+        //           item.ordersId = item.purchaseOrderId
+        //           item.noticeId = item.purchaseReceiptReturnGoodsId
+        //           item.noticeLineId = item.id
+        //           item.taxRates = item.taxRate + "%"
+  
+        //           item.costPrice = item.price
+        //           item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
+        //           let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+        //           item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+        //           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
+        //           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+        //           item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+        //           if (this.mainUnitFlag == 1) {
+        //             if (item.calculationDirection == 'multiplication') {
+        //               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+        //             } else {
+        //               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+        //             }
+        //           }
+        //           this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+        //           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+        //           this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+  
+        //         });
+        //       }
+  
+        //       this.productData = [...this.productData,...filteredArray]
+        //       // this.dataForm.id = this.productData[0].returnDeliveryNoticeId
+        //       this.formLoading = false
+        //     }).catch(() => { this.formLoading = false })
+        //   });
+        // } else {
+
+          this.dataForm.cooperativePartnerId = data.cooperativePartnerId
+          this.dataForm.partnerName = data.partnerName
+          this.$set(this.dataForm, 'sourceNo', data.orderNo)
+
+          this.title = '新建入库单'
+          this.datafilelist = []
+          getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
+            let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.qualifiedQuantity > item.receiptQuantity);
+
+            console.log("filteredArray", filteredArray);
+
+            // if(businessType == 'inbound_purchase'){
+            //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
+            // }
+            if (filteredArray.length) {
+              filteredArray.forEach(item => {
+                item.sourceNo = this.dataForm.sourceNo
+                item.moveId = this.dataForm.id
+                item.num = item.requiredReceivedQuantity
+                item.ordersId = item.purchaseOrderId
+                item.noticeId = item.purchaseReceiptReturnGoodsId
+                item.noticeLineId = item.id
+                item.taxRates = item.taxRate + "%"
+
+                item.costPrice = item.price
+                item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
+                let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+                item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+                item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
+                item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+                item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+                if (this.mainUnitFlag == 1) {
+                  if (item.calculationDirection == 'multiplication') {
+                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
+                  } else {
+                    this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
+                  }
                 }
-              }
-              this.$set(item, 'warehouseId', this.dataForm.warehouseId)
-              this.$set(item, 'warehouseName', this.dataForm.warehouseName)
-              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
+                this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+                this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+                this.$set(item, 'warehouseType', this.dataForm.warehouseType)
 
-            });
-          }
+              });
+            }
 
-          this.productData = filteredArray
-          this.dataForm.id = this.productData[0].returnDeliveryNoticeId
-          this.formLoading = false
-        }).catch(() => { this.formLoading = false })
+            this.productData = filteredArray
+            this.dataForm.id = this.productData[0].returnDeliveryNoticeId
+            this.formLoading = false
+          }).catch(() => { this.formLoading = false })
+        // }
       }
     },
 
@@ -1464,6 +1519,8 @@ export default {
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)
                 })
+              } else {
+                this.tipsvisible = true
               }
               this.btnLoading = false
 

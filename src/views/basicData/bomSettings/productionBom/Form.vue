@@ -168,18 +168,18 @@ export default {
           sm: 12,
           readOnly: true
         },
-        // {
-        //   prop: 'pickingWay',
-        //   label: '领料方式',
-        //   value: '',
-        //   type: 'select',
-        //   options: [
-        //     { label: '按生产订单领料', value: 'production_order' },
-        //     { label: '按工单领料', value: 'dispatch_list' }
-        //   ],
-        //   itemRules: [{ required: true, trigger: 'change' }],
-        //   sm: 12
-        // },
+        {
+          prop: 'pickingWay',
+          label: '领料方式',
+          value: '',
+          type: 'select',
+          options: [
+            { label: '按生产订单领料', value: 'production_order' },
+            { label: '按工单领料', value: 'dispatch_list' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 12
+        },
         // { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
         { prop: 'remark', label: '备注', value: '', type: 'textarea' }
       ],

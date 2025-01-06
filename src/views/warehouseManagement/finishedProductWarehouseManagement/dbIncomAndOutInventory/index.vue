@@ -594,6 +594,9 @@
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag"
               @click="externalMaterBatchOutbound">批量出库</el-button>
+            <!-- <el-button type="primary" size="mini" icon="el-icon-plus"
+              v-show="categoryType == 'inbound_purchase' && !purchaseFlag"
+              @click="purchaseNoticeBatchInbound">批量入库</el-button> -->
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_purchase' && purchaseFlag" @click="purchaseBatchInbound">批量入库</el-button>
           </div>
@@ -865,9 +868,10 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货通知单 -->
+        <!-- hasC @selection-change="handeleselectPurchaseNotice" -->
         <JNPF-table :partentOrChild="'cgshtabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="cgTableList" v-show="categoryType == 'inbound_purchase' && !purchaseFlag" custom-column
-          ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
+          ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList" >
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
 
@@ -2146,6 +2150,7 @@ export default {
       colourFlag: "",
       processFlag: "",
       processList: [],
+      selectPurchaseNoticeList: [],
     }
   },
   watch: {
@@ -2542,11 +2547,24 @@ export default {
         this.$refs.purchaseOrderInboundREFForm.init(this.selectPurchaseList, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
       })
     },
+    // purchaseNoticeBatchInbound() {
+    //   if (!this.selectPurchaseNoticeList.length) return this.$message.error("请选择您要入库的数据")
+    //   let flag = this.hasDifferentCooperativePartnerCode(this.selectPurchaseNoticeList)
+    //   if (flag) return this.$message.error("只能选择相同供应商的数据")
+    //   this.inboundPurchaseFormVisible = true
+    //   this.$nextTick(() => {
+    //     this.$refs.inboundPurchaseREFForm.init(this.selectPurchaseNoticeList, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
+    //   })
+    // },
     // 采购收货  按订单  勾选数据
     handeleselectPurchase(val) {
       this.selectPurchaseList = val
 
     },
+    // handeleselectPurchaseNotice(val) {
+    //   this.selectPurchaseNoticeList = val
+
+    // },
     // 销售发货  按订单  勾选数据
     handeleselectSale(val) {
       this.selectSaleList = val

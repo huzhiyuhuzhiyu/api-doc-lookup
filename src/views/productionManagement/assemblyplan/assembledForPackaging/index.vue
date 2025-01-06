@@ -68,8 +68,8 @@
                     <el-table-column sortable="custom" prop="vibrationLevel" label="振动等级" min-width="120"/>
                     <el-table-column sortable="custom" prop="pairingModeName" label="配对方式" min-width="120"/>
                     <template v-if="mainUnitFlag">
-                        <el-table-column sortable="custom" prop="mainUnit" label="单位（主）" width="120"/>
-                        <el-table-column sortable="custom" prop="deputyUnit" label="单位（副）" width="120"/>
+                        <el-table-column sortable="custom" prop="mainUnit" label="单位（主）" width="140"/>
+                        <el-table-column sortable="custom" prop="deputyUnit" label="单位（副）" width="140"/>
                     </template>
                     <el-table-column sortable="custom" v-else prop="mainUnit" label="单位" width="120"/>
                     <el-table-column prop="matchedQuantity" label="完成数量" width="120">

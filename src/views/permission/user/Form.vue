@@ -24,7 +24,7 @@
                       <ComSelect-page :dataFormatting="dataFormatting" v-model="dataForm.name" @change="partnerChange"
                         :tableItems="partnerTableItems" dialogTitle="选择员工" treeTitle="部门" placeholder="请选择员工"
                         :methodArr="ProductMethodArr" :listMethod="getbaseEmployee" :listRequestObj="partnerRequestObj"
-                        :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="onlyRead" />
+                        :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="onlyRead" :listDataFormatting="listDataFormatting"/>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="isval ? 8 : 12" :xs="24">
@@ -166,7 +166,7 @@ export default {
       partnerTableItems: [
         { prop: 'jobNumber', label: '工号' },
         { prop: 'name', label: '姓名' },
-        { prop: 'sex', label: '性别' },
+        { prop: 'sexText', label: '性别' },
         { prop: 'organizeName', label: '所属部门' }
       ],
       activeNames: ['basicInfo'],
@@ -215,6 +215,19 @@ export default {
     }
   },
   methods: {
+    listDataFormatting(res) {
+      let treeData = res.data.records.map((item) => {
+        if (item.sex == '1') {
+          item.sexText = '男'
+        } else if (item.sex == '2') {
+          item.sexText = '女'
+        } else {
+          item.sexText = '保密'
+        }
+        return item
+      })
+      return treeData
+    },
     getProjectSwitch() {
       let obj = {
         businessCode: 'system',
@@ -272,7 +285,7 @@ export default {
     dataFormatting(res) {
       let treeData = res.data.list.map((item) => {
         item.name = item.fullName
-        item.childrenList = this.transform(item.children)
+        item.childrenList = item.children ? this.transform(item.children) : []
         return item
       })
       return treeData

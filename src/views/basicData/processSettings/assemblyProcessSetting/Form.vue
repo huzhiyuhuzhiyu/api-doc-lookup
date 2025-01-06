@@ -134,13 +134,15 @@
                       <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                         v-if="isTechnicalSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.technicalRequirement }}
+                          <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
+                          :disabled="disabled"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                         v-if="isCheckingSwitch === '1'">
                         <template slot-scope="scope">
-                          {{ scope.row.inspectionInformation }}
+                          <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
+                          :disabled="disabled"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="firstFlag" label="是否首道工序" width="120">
@@ -410,13 +412,15 @@
                   <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                     v-if="isTechnicalSwitch === '1'">
                     <template slot-scope="scope">
-                      {{ scope.row.technicalRequirement }}
+                      <el-input v-model="scope.row.technicalRequirement" placeholder="请输入技术要求"
+                          :disabled="disabled"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
                     v-if="isCheckingSwitch === '1'">
                     <template slot-scope="scope">
-                      {{ scope.row.inspectionInformation }}
+                      <el-input v-model="scope.row.inspectionInformation" placeholder="请输入检验信息"
+                          :disabled="disabled"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="firstFlag" label="是否首道工序" width="120">

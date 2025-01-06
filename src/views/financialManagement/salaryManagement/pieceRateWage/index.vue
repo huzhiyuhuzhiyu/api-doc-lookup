@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { getSalaryList, editSalaryList } from '@/api/salaryManagement'
+import { getSalaryList, editSalaryList, updateSalaryList } from '@/api/salaryManagement'
 import Form from './Form'
 import { log } from 'mathjs'
 export default {
@@ -156,15 +156,11 @@ export default {
     handeleProductInfoData(val) {
 
 
-      this.producerIdList = val.map(item => item.producerId);
+      this.producerIdList = val.map(item => item.id);
     },
     recalculate() {
       if (!this.producerIdList.length) return this.$message.error("请先选择数据")
-      let obj = {
-        month: this.listQuery.month,
-        producerIdList: this.producerIdList
-      }
-      editSalaryList(obj).then(res => {
+      updateSalaryList(this.producerIdList).then(res => {
         console.log("res",);
         this.$message.success("重新计算异常工资成功")
         this.selectArr = []

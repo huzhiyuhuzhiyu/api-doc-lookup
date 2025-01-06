@@ -25,7 +25,7 @@
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <template v-if="!loading">
-                        <el-col :span="12" v-if="dataForm.routeType === 'processLibrary'">
+                        <el-col :span="12">
                           <el-form-item label="工艺路线编码" prop="code" ref="code">
                             <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'

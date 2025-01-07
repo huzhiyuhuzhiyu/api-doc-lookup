@@ -167,7 +167,7 @@
 
 <script>
 import {
-  
+
   batchProductionResource,
 
   importRoutingModel,
@@ -317,7 +317,6 @@ export default {
     await this.getProjectList()
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
-    await this.getProcessList()
     if (this.isTechnicalSwitch === '1' || this.isCheckingSwitch === '1') {
       this.analyseDialogWidth = '60%'
     } else {
@@ -328,7 +327,7 @@ export default {
     this.initData()
   },
   methods: {
-    getProcessList() {
+    async getProcessList() {
       let obj = {
         approvalStatus: 'ok',
         routeType: 'processLibrary',
@@ -338,13 +337,13 @@ export default {
       console.log(this.isProjectSwitch, 'is')
 
       if (this.isProjectSwitch === '1') {
-        obj.projectId = this.userInfo.projectId
+        obj.projectId = this.projectId
       }
       console.log(obj, 'obb')
-      getProcessList(obj).then((res) => {
-        console.log(res, 'res')
-        this.routingIdOptions = res.data.records
-      })
+      const res = await getProcessList(obj)
+      console.log(res, 'res98877')
+      this.routingIdOptions = res.data.records
+
     },
     handleBatchDelete() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
@@ -586,20 +585,20 @@ export default {
     currentChange(data) {
       this.selectedData = data
     },
-    handleBatch() {
+    async handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
       console.log(this.selectedData, 'selectedData')
       let flag = this.hasDifferentProjectId(this.selectedData)
       if (flag) return this.$message.error('只能选择相同所属项目的工艺数据')
       this.projectId = this.selectedData[0].projectId
-      this.getProcessList()
+      await this.getProcessList()
       this.dataForm.routingId = ''
       this.routingLineList = []
       // this.analyseDialog = true
       this.setFormVisible = true
-      
+
       this.$nextTick(() => {
-        this.$refs.setForm.init(this.selectedData, '',JSON.stringify(this.routingIdOptions))
+        this.$refs.setForm.init(this.selectedData, '', JSON.stringify(this.routingIdOptions))
       })
     },
     hasDifferentProjectId(arr) {
@@ -655,7 +654,7 @@ export default {
           this.listLoading = false
         })
     },
-    routingFlagChange(val){
+    routingFlagChange(val) {
       this.listQuery.routingFlag = val
       this.initData()
     },

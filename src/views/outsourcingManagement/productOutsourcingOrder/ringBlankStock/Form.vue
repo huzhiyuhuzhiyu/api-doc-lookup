@@ -93,7 +93,8 @@
                         :key="2"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
                         :key="3"></el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         :key="4">
                         <template slot="header">
@@ -107,7 +108,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="processName" label="工序名称" min-width="190" show-overflow-tooltip :key="5">
+                      <el-table-column prop="processName" label="工序名称" min-width="190" show-overflow-tooltip :key="5"
+                        v-if="orderType === 'external_process'">
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
@@ -912,7 +914,7 @@ export default {
         }
         list.forEach((item, index) => {
           selectArr.push({
-            productCategoryName:item.productCategoryName,
+            productCategoryName: item.productCategoryName,
             materialProductsId: item.productsId,
             projectName: item.projectName,
             projectId: item.projectId,

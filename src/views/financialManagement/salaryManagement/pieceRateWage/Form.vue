@@ -23,8 +23,8 @@
               </el-col>
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="请输入产品图号"
-                    clearable />
+                  <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()"
+                    :placeholder="`请输入${$store.getters.productDrawingNo}`" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="4">
@@ -154,8 +154,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="产品图号">
-                <el-input v-model="listQuery.productDrawingNo" placeholder="请输入产品图号" clearable />
+              <el-form-item :label="`${$store.getters.productDrawingNo}`">
+                <el-input v-model="listQuery.productDrawingNo" :placeholder="`请输入${$store.getters.productDrawingNo}`"
+                  clearable />
               </el-form-item>
             </el-col>
             <el-col :span="12">

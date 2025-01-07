@@ -799,6 +799,9 @@ export default {
             .then((res) => {
               this.btnLoading = false
               this.$message.success('新建装配任务成功')
+              this.dataForm ={}
+              this.collect ={}
+              this.dataFormOne.collectData = []
               setTimeout(() => {
                 this.$emit('close')
               }, 1500)

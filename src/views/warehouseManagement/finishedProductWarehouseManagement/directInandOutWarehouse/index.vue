@@ -141,7 +141,7 @@
                       <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
-                        v-if="dataForm.documentType == 'inbound' && !dataForm.diffBatchNumFlag">
+                        v-if="dataForm.documentType == 'inbound'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                           </el-input>
@@ -686,6 +686,9 @@ export default {
         ["inbound_mock_production", "生产入库"],
         ["outbound_use", "资产领用"],
         ["inbound_return", "资产归还"],
+        ["inbound_receive_material", "直接领料入库"],
+        ["outbound_receive_material", "直接领料出库"],
+ 
       ])),
       list: [],
       batchNumVisible: false,

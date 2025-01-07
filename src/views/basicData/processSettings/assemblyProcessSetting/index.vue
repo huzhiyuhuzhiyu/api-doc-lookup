@@ -44,7 +44,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.routingFlag" placeholder="请选择">
+              <el-select v-model="listQuery.routingFlag" placeholder="请选择" @change="routingFlagChange">
                 <el-option v-for="item in routingFlagOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -320,6 +320,7 @@ export default {
     await this.getProjectList()
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
+    await this.getProcessList()
     if (this.isTechnicalSwitch === '1' || this.isCheckingSwitch === '1') {
       this.analyseDialogWidth = '60%'
     } else {
@@ -581,14 +582,13 @@ export default {
       if (flag) return this.$message.error('只能选择相同所属项目的工艺数据')
       this.projectId = this.selectedData[0].projectId
       console.log(this.selectedData, 'selectedData')
-      this.getProcessList()
       this.dataForm.routingId = ''
       this.routingLineList = []
       // this.analyseDialog = true
       this.setFormVisible = true
 
       this.$nextTick(() => {
-        this.$refs.setForm.init(this.selectedData, '')
+        this.$refs.setForm.init(this.selectedData, '',JSON.stringify(this.routingIdOptions))
       })
 
     },
@@ -653,6 +653,28 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
+    },
+    getProcessList() {
+      let obj = {
+        approvalStatus: 'ok',
+        routeType: 'processLibrary',
+        pageNum: 1,
+        pageSize: -1
+      }
+      console.log(this.isProjectSwitch, 'is')
+
+      if (this.isProjectSwitch === '1') {
+        obj.projectId = this.selectedData[0].projectId
+      }
+      console.log(obj, 'obb')
+      getProcessList(obj).then((res) => {
+        console.log(res, 'res')
+        this.routingIdOptions = res.data.records
+      })
+    },
+    routingFlagChange(val){
+      this.listQuery.routingFlag = val
+      this.initData()
     },
     search() {
       Object.keys(this.listQuery).forEach((key) => {

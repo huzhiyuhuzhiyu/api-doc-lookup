@@ -66,6 +66,7 @@
                           v-if="isProjectSwitch === '1'"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120"
                           v-if="isProductNameSwitch === '1'"></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                           <template slot="header">
                             <span class="required">*</span>

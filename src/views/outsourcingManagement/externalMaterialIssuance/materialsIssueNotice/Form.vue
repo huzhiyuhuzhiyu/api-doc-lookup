@@ -145,6 +145,7 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                         show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" width="220" key="5"
                         show-overflow-tooltip></el-table-column>
 
@@ -433,6 +434,7 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip key="5"></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="7"
                     show-overflow-tooltip></el-table-column>
 
@@ -1211,6 +1213,7 @@ export default {
         console.log(list, 'lioo')
         list.forEach((item, index) => {
           selectArr.push({
+            productCategoryName:item.productCategoryName,
             productSource: item.productSource, // 产品来源 采购
             orderType: item.orderType,
             classAttribute: item.classAttribute,

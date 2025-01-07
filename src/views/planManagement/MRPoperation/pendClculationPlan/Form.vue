@@ -111,6 +111,7 @@
               <el-table-column prop="productCode" label="产品编码" min-width="180" />
               <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                 show-overflow-tooltip></el-table-column>
+              <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
               <el-table-column prop="pairingModeName" label="配对方式" width="160" />
@@ -256,6 +257,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="pairingModeName" label="配对方式" width="160"  />
 
@@ -357,6 +359,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -446,6 +449,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -549,6 +553,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
 
@@ -625,6 +630,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
 
@@ -726,6 +732,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -815,6 +822,7 @@
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">

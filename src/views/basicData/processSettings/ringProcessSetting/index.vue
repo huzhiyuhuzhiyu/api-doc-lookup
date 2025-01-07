@@ -44,7 +44,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.routingFlag" placeholder="请选择">
+              <el-select v-model="listQuery.routingFlag" placeholder="请选择" @change="routingFlagChange">
                 <el-option v-for="item in routingFlagOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -317,6 +317,7 @@ export default {
     await this.getProjectList()
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
+    await this.getProcessList()
     if (this.isTechnicalSwitch === '1' || this.isCheckingSwitch === '1') {
       this.analyseDialogWidth = '60%'
     } else {
@@ -327,6 +328,20 @@ export default {
     this.initData()
   },
   methods: {
+    getProcessList() {
+      let obj = {
+        approvalStatus: 'ok',
+        pageNum: 1,
+        pageSize: -1
+      }
+      if (this.isProjectSwitch === '1') {
+        obj.projectId = this.projectId
+      }
+      getProcessList(obj).then((res) => {
+        console.log(res, 'res')
+        this.routingIdOptions = res.data.records
+      })
+    },
     handleBatchDelete() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
       if (this.selectedData.some((item) => !item.routingFlag)) return this.$message.error('所选数据没有工艺路线')
@@ -593,7 +608,7 @@ export default {
       this.setFormVisible = true
 
       this.$nextTick(() => {
-        this.$refs.setForm.init(this.selectedData, '')
+        this.$refs.setForm.init(this.selectedData, '',this.routingIdOptions)
       })
     },
     hasDifferentProjectId(arr) {
@@ -648,6 +663,10 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
+    },
+    routingFlagChange(val){
+      this.listQuery.routingFlag = val
+      this.initData()
     },
     search() {
       Object.keys(this.listQuery).forEach((key) => {

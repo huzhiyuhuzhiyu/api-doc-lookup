@@ -26,10 +26,9 @@
                         :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="isProductNameSwitch==1">
+                  <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
                     <el-form-item label="产品名称" prop="productsName">
-                      <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled
-                        >
+                      <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -84,7 +83,8 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="计划生产开始—结束日期" prop="planDate"  :style="dataForm.taskMethod == 'appoint' ? 'margin-bottom: 20px;' : ''">
+                    <el-form-item label="计划生产开始—结束日期" prop="planDate"
+                      :style="dataForm.taskMethod == 'appoint' ? 'margin-bottom: 20px;' : ''">
                       <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                         style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                       </el-date-picker>
@@ -92,14 +92,22 @@
                   </el-col>
 
                   <el-col :sm="6" :xs="24">
-                    <el-form-item label="工艺路线名称" prop="routingName"  >
+                    <el-form-item label="工艺路线名称" prop="routingName">
                       <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                         @focus="openRoutingFun"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="dataForm.autoMaterialFlag">
+                  <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'production_order' && dataForm.autoMaterialFlag">
                     <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                       <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
+                        <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'production_order'">
+                    <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
+                      <el-select v-model="dataForm.lineEdgeList" placeholder="请选择" style="width: 100%;">
                         <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
                         </el-option>
                       </el-select>
@@ -222,7 +230,7 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                  <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
                     v-if="isTechnicalSwitch === '1'">
 
                   </el-table-column>
@@ -499,7 +507,7 @@ import {
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import SelectProductForm from './selectProductForm.vue'
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange,detailResourceProcess } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
@@ -625,7 +633,7 @@ export default {
       warehouseList: [],
       isProjectSwitch: "",
       projectIdData: [],
-      isProductNameSwitch:"",
+      isProductNameSwitch: "",
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
     }
@@ -679,7 +687,7 @@ export default {
     },
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     openSelectProductFun() {
@@ -706,7 +714,7 @@ export default {
       if (this.dataForm.autoMaterialFlag) {
         this.getWarehouseListFun()
       }
-      if(!data.routingId) return
+      if (!data.routingId) return
       this.getRoutingDetail(this.dataForm.routingId)
 
     },
@@ -862,7 +870,7 @@ export default {
       }
     },
     openRoutingFun() {
-      if(!this.dataForm.id) return this.$message.error("请先选择产品")
+      if (!this.dataForm.id) return this.$message.error("请先选择产品")
       this.routingVisible = true
       if (this.isProjectSwitch == 1) {
         this.$nextTick(() => {
@@ -878,7 +886,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
-      this.getRoutingDetail(this.dataForm.routingId) 
+      this.getRoutingDetail(this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1229,7 +1237,7 @@ export default {
         collect: this.collectForm,
         lineEdgeList: arr
       }
-      this.btnLoading=true
+      this.btnLoading = true
       addProdOrder(obj).then(res => {
         this.btnLoading = false
         this.$message.success("手动新建任务成功")

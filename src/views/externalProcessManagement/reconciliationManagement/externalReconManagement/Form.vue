@@ -96,6 +96,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="receiptReturnType" label="收/退货类型" width="110" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptReturnType'">

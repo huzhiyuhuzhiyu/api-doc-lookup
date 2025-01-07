@@ -87,6 +87,7 @@
                         :key="7"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
                         :key="9"></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         :key="11">
                         <template slot="header">
@@ -847,6 +848,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
+            productCategoryName:item.productCategoryName,
             productDrawingNo: item.productDrawingNo,
             productCode: item.productCode,
             deliveryDate: item.deliveryDate,

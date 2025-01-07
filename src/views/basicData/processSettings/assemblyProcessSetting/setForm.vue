@@ -2,13 +2,9 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
+        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
           <el-page-header @back="goBack" content="批量设置工艺" />
           <div class="options" v-if="type != 'look'">
-            <!-- <el-button type="success" :disabled="dataForm.documentStatus == 'submit'" :loading="btnLoading"
-              @click="handleSubmit('draft')">
-              保存草稿
-            </el-button> -->
             <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
               保存并提交
             </el-button>
@@ -17,7 +13,7 @@
         </div>
 
         <div class="main" ref="main" v-loading="responseLoading">
-          <el-tabs v-model="activeName" v-if="!approvalFlag">
+          <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="modelInfo" class="orderInfo">
@@ -47,7 +43,6 @@
                         选择工序
                       </el-button>
                       |
-
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                         批量删除
@@ -248,24 +243,9 @@
                         </template>
                       </el-table-column>
                     </JNPF-table>
-                    <!-- <div class="table-actions" @click="handlerOpenDialog(dataFormTwo.length, 'add')"
-                          v-if="type != 'look'">
-                          <el-button type="text" icon="el-icon-plus">添加</el-button>
-                        </div> -->
-                    <!-- </el-form-item>   -->
                   </el-col>
                 </el-collapse-item>
               </el-collapse>
-            </el-tab-pane>
-
-            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
-              <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
-            </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
-              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-            </el-tab-pane>
-            <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-              <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -374,8 +354,6 @@ export default {
         projectId: '',
         id: '',
         routingId: '', //  工艺路线Id
-
-        approvalFlag: false
       },
       // cooperativePartnerName: '',
       type: '',
@@ -407,7 +385,6 @@ export default {
       responseLoading: true,
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
@@ -432,12 +409,11 @@ export default {
     await this.getProjectList()
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
-    await this.getProcessList()
+
     await this.switchStyleheight()
     this.responseLoading = false
-    console.log(this.isProjectSwitch)
+ 
     if (this.isProjectSwitch === '1') {
-      console.log(this.projectIdData, 'lllljj')
       this.projectIdData = this.projectIdData.filter(item => item.id !== '1')
       this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目', fixed: 'left' })
     } else {
@@ -452,30 +428,12 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
-    getProcessList() {
-      let obj = {
-        approvalStatus: 'ok',
-        routeType: 'processLibrary',
-        pageNum: 1,
-        pageSize: -1
-      }
-      console.log(this.isProjectSwitch, 'is')
 
-      if (this.isProjectSwitch === '1') {
-        obj.projectId = this.selectedData[0].projectId
-      }
-      console.log(obj, 'obb')
-      getProcessList(obj).then((res) => {
-        console.log(res, 'res')
-        this.routingIdOptions = res.data.records
-      })
-    },
     routingChange(val) {
       this.dataForm.routingId = val
 
       if (this.dataForm.routingId) {
         detailProcess(val).then((res) => {
-          console.log(res, 'kkk')
           this.dataForm = {
             ...this.dataForm,
             ...res.data.routing
@@ -547,12 +505,10 @@ export default {
     },
     changeMove(data) {
       data.forEach((item) => {
-        console.log(item, 'ooooo')
         item.sort = item.sortCode
 
       })
       this.dataFormTwo = this.dataFormTwo.map((item, index) => {
-        console.log(index, 'in')
         // 复制当前的item
         let newItem = { ...item }
         newItem.sort = index
@@ -590,7 +546,6 @@ export default {
 
         return newItem // 返回修改后的对象
       })
-      console.log(this.dataFormTwo)
     },
     async fetchData(code, flag) {
       try {
@@ -725,76 +680,13 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data, type, approvalFlag) {
+    init(data, type, routingIdOptions) {
       this.selectedData = data
-      console.log(data, 'kkk')
-      // rowData = JSON.parse(rowData)
+  
+      this.routingIdOptions = JSON.parse(routingIdOptions)
       // 此处判断用户选择新增还是编辑
-      this.approvalFlag = approvalFlag
       this.visible = true
-      this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
-      this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
-
-        if (!this.dataForm.id) {
-          this.clearData()
-          this.fetchData('bm_gy_gylx', true)
-          this.getBusInfo()
-        } else {
-          this.loading = true
-          // this.dataForm = rowData
-          // 获取当前项详情
-          this.fetchData('bm_gy_gylx', false)
-          detailProcess(this.dataForm.id).then((res) => {
-            this.dataForm = {
-              ...this.dataForm,
-              ...res.data.routing
-            }
-
-            res.data.routingLineList.forEach((item) => {
-              item.name = item.processName
-              item.code = item.processCode
-              item.processType = item.processType
-            })
-            this.dataFormTwo = res.data.routingLineList
-
-            this.dataFormTwo = this.dataFormTwo.map((item) => {
-              return {
-                ...item,
-                bimRoutingProcessResourceDTOList: item.routingProResList
-              }
-            })
-            this.dataFormTwo.forEach((item) => {
-              item.bimRoutingProcessResourceDTOList.forEach((it) => {
-                it.jobNumber = it.resourceCode
-              })
-            })
-
-            this.dataFormTwo.sort((a, b) => a.sort - b.sort);
-
-            if (this.type === 'edit') {
-              this.getBusInfo()
-            } else {
-              // 流程信息和流转记录
-
-              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-            }
-            this.loading = false
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push({
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                })
-              })
-            }
-          })
-        }
-      })
     },
     // 表单提交
     handleSubmit(type) {
@@ -948,7 +840,7 @@ export default {
       this.btnLoading = false
       // return
       let newArr = []
-      console.log(this.dataForm.id,'id')
+   
       if (this.dataForm.id) {
         newArr = this.dataFormTwo.map((item) => {
           // Create a new object with the routingLine and bimRoutingProcessResourceDTOList
@@ -1075,7 +967,7 @@ export default {
         }
         list = list.sort((a, b) => a._index - b._index)
         list.forEach((item, index) => {
-          console.log(item, 'kkk')
+       
           let obj = {
             index: item._index,
             projectName: item.projectName, // 所属项目名称
@@ -1234,65 +1126,6 @@ export default {
         tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
       })
     },
-    // 测试审批流
-    getBusInfo() {
-      getBusinessFlowInfo('b024')
-        .then((res) => {
-          if (res.data) {
-            if (res.data.enabledMark) {
-              this.flowData = res.data
-              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-              this.dataForm.approvalFlag = res.data.enabledMark
-            } else {
-              this.flowTemplateJson = {}
-              this.dataForm.approvalFlag = false
-              this.$message.error('未找到审批流程！')
-            }
-          } else {
-            this.flowTemplateJson = {}
-            this.dataForm.approvalFlag = false
-          }
-        })
-        .catch(() => { })
-    },
-    // 流程信息 && 流转记录
-    getFlowDetail(id) {
-      getBusinessFlowDetail(id)
-        .then((res) => {
-          if (res.data) {
-            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
-              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
-              : null
-            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-            let flowTaskNodeList = res.data.flowTaskNodeList
-            if (flowTaskNodeList.length) {
-              for (let i = 0; i < flowTaskNodeList.length; i++) {
-                const nodeItem = flowTaskNodeList[i]
-                const loop = (data) => {
-                  if (Array.isArray(data)) data.forEach((d) => loop(d))
-                  if (data.nodeId === nodeItem.nodeCode) {
-                    if (nodeItem.type == 0) data.state = 'state-past'
-                    if (nodeItem.type == 1) data.state = 'state-curr'
-                    if (
-                      nodeItem.nodeType === 'approver' ||
-                      nodeItem.nodeType === 'start' ||
-                      nodeItem.nodeType === 'subFlow'
-                    )
-                      data.content = nodeItem.userName
-                    if (nodeItem.nodeType === 'approver') data.processingTime = nodeItem.processingTime
-                    return
-                  }
-                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                  if (data.childNode) loop(data.childNode)
-                }
-                loop(this.flowTemplateJson)
-              }
-            }
-          }
-        })
-        .catch(() => { })
-    }
   }
 }
 </script>

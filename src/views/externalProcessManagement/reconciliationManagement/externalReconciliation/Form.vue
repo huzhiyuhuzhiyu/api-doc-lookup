@@ -108,6 +108,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="reconciliationUnitPrice" label="对账数量" width="110">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
@@ -302,6 +303,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">

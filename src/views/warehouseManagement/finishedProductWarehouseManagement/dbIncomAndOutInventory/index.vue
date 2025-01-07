@@ -594,9 +594,9 @@
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'outbound_external_send' && outboundExternalSendFlag"
               @click="externalMaterBatchOutbound">批量出库</el-button>
-            <!-- <el-button type="primary" size="mini" icon="el-icon-plus"
+            <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_purchase' && !purchaseFlag"
-              @click="purchaseNoticeBatchInbound">批量入库</el-button> -->
+              @click="purchaseNoticeBatchInbound">批量入库</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_purchase' && purchaseFlag" @click="purchaseBatchInbound">批量入库</el-button>
           </div>
@@ -868,10 +868,10 @@
           </el-table-column>
         </JNPF-table>
         <!-- 采购收货通知单 -->
-        <!-- hasC @selection-change="handeleselectPurchaseNotice" -->
         <JNPF-table :partentOrChild="'cgshtabForm'" v-loading="listLoading" @sort-change="sortChange"
           :data="cgTableList" v-show="categoryType == 'inbound_purchase' && !purchaseFlag" custom-column
-          ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList" >
+          ref="cgshtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList" hasC
+          @selection-change="handeleselectPurchaseNotice">
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
 
@@ -1531,6 +1531,51 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+    <el-dialog title="采购收货入库" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="batchInboundVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="batchForm" :rules="dataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="仓库" prop="warehouseName">
+              <ComSelect-list
+                :requestObj="{ type: 'normal', virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? projectId || '' : '' }"
+                :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="batchForm.warehouseName"
+                :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" v-if="allocationFlag">
+            <el-form-item label="库位" prop="shelfSpaceName">
+              <el-input v-model="batchForm.shelfSpaceName" readonly :disabled="btnType == 'look'"
+                @focus="openSeleceWareDialog" placeholder="库位">
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+              <el-select v-model="batchForm.diffBatchNumFlag" placeholder="请选择批次号生成规则" style="width: 100%;">
+                <el-option v-for="(item, index) in diffBatchList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="单据日期" prop="orderDate">
+              <el-date-picker v-model="batchForm.orderDate" type="date" :clearable="false"
+                :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd" style="width: 100%;"
+                placeholder="请选择单据日期"></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="batchInboundVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
+    <!-- 选库位 -->
+    <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
+    </WareHouseForm>
   </div>
 </template>
 
@@ -1538,8 +1583,9 @@
 import { getQuotationdatasendlist, getStockMovelist } from '@/api/salesManagement/index'
 import { purPurchaseReceiptReturnGoodsList, detailpurchaseOrderList } from "@/api/purchasingAndOutsourcingOrders/index"
 import { ordershengchanList, detailordershengchan, getWorkPage } from '@/api/productOrdes/index.js'
-import { getBimBusinessSwitchConfigList, getWarehouseInfo, getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getWarehouseInfo, getOrderFiledMap, getWarehouseList, batchInboundList } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
+import WareHouseForm from './wareHouseForm.vue'
 import Form from './Form'
 import mixin from '@/mixins/generator/index'
 import { Release } from '@/api/onlineDev/visualDev'
@@ -1602,13 +1648,34 @@ export default {
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     SaleForm, SaleOutboundForm, PurchaseOrderInboundForm, PurchaseForm, ProductExternalForm, ExternalInboundForm,
-    ExternalMaterOutboundForm, ToolForm, SparePartsForm, EquipmentForm, EquipmentOutboundForm, ToolFormS, EquipmentFormS, SparePartsFormS, EquipmentInboundForm, PrintDialog, PrintBrowse
+    ExternalMaterOutboundForm, ToolForm, SparePartsForm, EquipmentForm, EquipmentOutboundForm, ToolFormS, EquipmentFormS, SparePartsFormS, EquipmentInboundForm, PrintDialog, PrintBrowse, WareHouseForm
   },
   props: {
     warehouseCode: "",
   },
   data() {
     return {
+      getWarehouseList,
+      diffBatchList: [
+        { label: '产品生成同批次号', value: 0 },
+        { label: '产品生成不同批次号', value: 1 },
+      ],
+      dataRule: {
+
+
+        warehouseName: [
+          { required: true, message: '仓库不能为空', trigger: 'change' }
+        ],
+        shelfSpaceName: [
+          { required: true, message: '库位不能为空', trigger: 'change' }
+
+        ],
+        orderDate: [
+          { required: true, message: '单据日期不能为空', trigger: 'change' }
+        ],
+      },
+      wareHouseVisible: false,
+      batchInboundVisible: false,
       prindId: '',
       formId: '',
       enCode: "",
@@ -2151,6 +2218,20 @@ export default {
       processFlag: "",
       processList: [],
       selectPurchaseNoticeList: [],
+      warehouseInfo: {},
+      batchForm: {
+        warehouseId: "",
+        warehouseName: "",
+        warehouseType: "",
+        shelfSpaceName: "",
+        shelfSpaceId: "",
+        diffBatchNumFlag: 1,
+        sourceType: "notice",
+        bizIdList: [],
+        businessType: "inbound_purchase",
+        orderDate: this.jnpf.getToday(),
+      },
+      allocationFlag: false,
     }
   },
   watch: {
@@ -2211,6 +2292,55 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    submitFun() {
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          this.btnLoading = true
+          this.batchForm.bizIdList = this.selectPurchaseNoticeList.map(item => item.id); 
+          console.log(this.batchForm);
+          
+          batchInboundList(this.batchForm).then(res => {
+            this.$message.success("批量入库成功")
+            this.getTabdataList('basic')
+          this.btnLoading = false
+          this.batchInboundVisible=false
+          })
+          
+        }
+      })
+
+    },
+    // 打开选择库位弹框
+    openSeleceWareDialog(type) {
+      if (!this.batchForm.warehouseId) return this.$message.error("请先选择仓库!")
+      this.wareHouseVisible = true
+      this.$nextTick(() => {
+        this.$refs.WareHouseForms.initData(this.batchForm.warehouseId, type)
+      })
+    },
+    // 所选的库位信息
+    selectWareHouseFun(data, type) {
+      console.log("库位信息", data);
+
+      this.batchForm.shelfSpaceId = data.id
+      this.batchForm.shelfSpaceName = data.name
+    },
+    // 切换仓库
+    changeWarehousex(val, data) {
+      console.log("data", data);
+      if (!val && !data.length) {
+        this.batchForm.warehouseId = ''
+        this.batchForm.warehouseName = ''
+        this.batchForm.warehouseType = ""
+        return
+      }
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
+      this.batchForm.warehouseId = data[0].id
+      this.batchForm.warehouseName = data[0].name
+      this.batchForm.warehouseType = data[0].all.type
+      this.batchForm.projectId = data[0].all.projectId
+
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -2394,12 +2524,16 @@ export default {
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
-        // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => {
-          this.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
-          this.getPickingConfig()
+        console.log("仓库详情", res);
+        this.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
+        this.batchForm.warehouseName = res.data[0].name
+        this.batchForm.warehouseId = res.data[0].id
+        this.batchForm.warehouseType = res.data[0].type
+        this.warehouseInfo = res.data[0]
+        this.allocationFlag = res.data[0].locationStatus == 'disabled' ? false : true
+        // 获取仓库详情信息 
+        this.getPickingConfig()
 
-        })
       })
     },
     async getMainUnitFun(code, type) {
@@ -2547,24 +2681,25 @@ export default {
         this.$refs.purchaseOrderInboundREFForm.init(this.selectPurchaseList, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
       })
     },
-    // purchaseNoticeBatchInbound() {
-    //   if (!this.selectPurchaseNoticeList.length) return this.$message.error("请选择您要入库的数据")
-    //   let flag = this.hasDifferentCooperativePartnerCode(this.selectPurchaseNoticeList)
-    //   if (flag) return this.$message.error("只能选择相同供应商的数据")
-    //   this.inboundPurchaseFormVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs.inboundPurchaseREFForm.init(this.selectPurchaseNoticeList, 'add', this.categoryType, this.classAttributeList, this.warehouseCode)
-    //   })
-    // },
+    purchaseNoticeBatchInbound() {
+      if (!this.selectPurchaseNoticeList.length) return this.$message.error("请选择您要入库的数据")
+      this.batchInboundVisible = true
+      this.batchForm.shelfSpaceId = ""
+      this.batchForm.shelfSpaceName = ""
+      this.batchForm.diffBatchNumFlag = 1
+      this.batchForm.warehouseName = this.warehouseInfo.name
+      this.batchForm.warehouseId = this.warehouseInfo.id
+      this.batchForm.warehouseType = this.warehouseInfo.type
+    },
     // 采购收货  按订单  勾选数据
     handeleselectPurchase(val) {
       this.selectPurchaseList = val
 
     },
-    // handeleselectPurchaseNotice(val) {
-    //   this.selectPurchaseNoticeList = val
+    handeleselectPurchaseNotice(val) {
+      this.selectPurchaseNoticeList = val
 
-    // },
+    },
     // 销售发货  按订单  勾选数据
     handeleselectSale(val) {
       this.selectSaleList = val

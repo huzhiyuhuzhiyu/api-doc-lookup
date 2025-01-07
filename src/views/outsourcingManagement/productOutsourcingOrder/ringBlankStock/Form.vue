@@ -93,6 +93,7 @@
                         :key="2"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
                         :key="3"></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         :key="4">
                         <template slot="header">
@@ -170,7 +171,7 @@
                         :key="10" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="含税单价" width="180">
+                      <el-table-column prop="price" label="含税单价" min-width="180">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -338,6 +339,7 @@ export default {
 
   data() {
     return {
+      orderType: '',
       isProjectSwitch: '',
       isProductNameSwitch: '',
       isProportionSwitch: '',
@@ -778,7 +780,7 @@ export default {
     await this.switchStyleheight()
     this.getBimBusinessDetail()
 
-    this.fetchData('EPDH')
+
     this.getBusInfo()
   },
   methods: {
@@ -910,6 +912,7 @@ export default {
         }
         list.forEach((item, index) => {
           selectArr.push({
+            productCategoryName:item.productCategoryName,
             materialProductsId: item.productsId,
             projectName: item.projectName,
             projectId: item.projectId,
@@ -1265,9 +1268,15 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data, type, isProjectSwitch) {
+    init(data, type, isProjectSwitch, orderType) {
       let arr = []
       this.isProjectSwitch = isProjectSwitch
+      this.orderType = orderType
+      if (this.orderType === 'external') {
+        this.fetchData('WXDH')
+      } else {
+        this.fetchData('EPDH')
+      }
       arr = data.map((item) => {
         console.log(data, 'pp')
         return {
@@ -1432,7 +1441,7 @@ export default {
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
           flowData: this.flowData,
-          orderType: 'external_process'
+          orderType: this.orderType
         }
       }
       if (this.type === 'edit' || this.type === 'look') {
@@ -1444,7 +1453,7 @@ export default {
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
-          orderType: 'external_process'
+          orderType: this.orderType
         }
       }
 

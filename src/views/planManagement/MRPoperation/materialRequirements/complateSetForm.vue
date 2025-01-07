@@ -73,7 +73,7 @@
             <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" />
             <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="140" show-overflow-tooltip>
             </el-table-column>
-      
+            <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" key="productDrawingNo" label="品名规格" min-width="350"
               show-overflow-tooltip> </el-table-column>
               <el-table-column prop="projectName" label="所属项目" min-width="120" 

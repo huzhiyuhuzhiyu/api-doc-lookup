@@ -219,6 +219,7 @@
                         <el-table-column prop="productCode" label="产品编码" width="200" :key="4" />
                         <el-table-column prop="productName" label="产品名称" width="200" :key="5">
                         </el-table-column>
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="drawingNo" label="产品图号" min-width="220" :key="6" />
                         <el-table-column prop="availableQuantity" label="可用库存(主)" width="200" :key="121"
                           v-if="btnType != 'look'">
@@ -325,6 +326,7 @@
                     <el-table-column prop="productCode" label="产品编码" width="200" :key="4" />
                     <el-table-column prop="productName" label="产品名称" width="200" :key="5">
                     </el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="产品图号" min-width="320" :key="6" />
                     <el-table-column prop="availableQuantity" label="可用库存(主)" width="200" :key="121"
                       v-if="btnType != 'look'">

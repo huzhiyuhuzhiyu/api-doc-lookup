@@ -99,7 +99,7 @@
 <script>
 import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
 import moment from 'moment'
-import Form from './Form.vue'
+import Form from '../ringBlankStock/Form.vue'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -107,7 +107,7 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
-  name: 'ringBlankStock',
+  name: 'ringBlanksInventory',
   components: { ExportForm, Form, SuperQuery },
   mixins: [getProjectList],
 
@@ -477,10 +477,10 @@ export default {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
-            this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch,'external_process')
+            this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch,'external')
           })
         } else {
-          this.$message.error(`请配置毛坯产品所对应主产品的BOM！`)
+          this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
         }
       }
     }

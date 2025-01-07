@@ -359,6 +359,7 @@ export default {
         'b062': 'warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly/Form.vue',
         'b063': 'warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly/Form.vue',
         'b064': 'warehouseManagement/finishedProductWarehouseManagement/modalShift/Form.vue',
+        'b067': 'planManagement/MRPoperation/pendClculationPlan/ReplaceRulesForm.vue'
       },
       inspectionTypeList: [
         // 不良品

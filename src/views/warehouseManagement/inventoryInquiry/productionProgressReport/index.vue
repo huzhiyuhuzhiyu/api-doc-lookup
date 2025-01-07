@@ -224,7 +224,7 @@ export default {
       listQuery: {},
       initListQuery: {
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 50,
         orderItems: [
           {
             asc: true,

@@ -184,7 +184,7 @@ import { getProcessList, detailProcess, delProcess } from '@/api/basicData/proce
 import getProjectList from '@/mixins/generator/getProjectList'
 import SetForm from '../assemblyProcessSetting/setForm.vue'
 export default {
-  name: 'ProductionResource',
+  name: 'ringProcessSetting',
   components: { ExportForm, SuperQuery, JNPFForm, SetForm },
   mixins: [getProjectList],
   data() {

@@ -198,6 +198,7 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  name:'processSettingss',
   components: { JNPFForm, ExportForm, SuperQuery },
   mixins: [getProjectList],
   data() {

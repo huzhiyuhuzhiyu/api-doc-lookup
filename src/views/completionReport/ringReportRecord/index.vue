@@ -135,8 +135,9 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
       ], 
       columnList: ["productionOrderNo", "productsCode",],
 
@@ -421,10 +422,10 @@ export default {
               }
             })
         }
-        this.superForm.superQuery = this.basicQuery
+        this.orderForm.superQuery = this.basicQuery
       }
       if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
+        this.orderForm.superQuery = this.superQuery
       }
       this.orderForm.pageNum = 1 // 重置页码
 
@@ -433,12 +434,13 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-      this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
       this.searchList=[
         { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')

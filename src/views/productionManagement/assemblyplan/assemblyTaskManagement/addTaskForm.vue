@@ -99,9 +99,17 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.autoMaterialFlag">
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='production_order'&&dataForm.autoMaterialFlag">
                         <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                           <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
+                            <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='production_order'">
+                        <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
+                          <el-select v-model="dataForm.lineEdgeList"  placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
                             </el-option>
                           </el-select>

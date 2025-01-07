@@ -331,12 +331,16 @@ export default {
     getProcessList() {
       let obj = {
         approvalStatus: 'ok',
+        routeType: 'processLibrary',
         pageNum: 1,
         pageSize: -1
       }
+      console.log(this.isProjectSwitch, 'is')
+
       if (this.isProjectSwitch === '1') {
-        obj.projectId = this.projectId
+        obj.projectId = this.userInfo.projectId
       }
+      console.log(obj, 'obb')
       getProcessList(obj).then((res) => {
         console.log(res, 'res')
         this.routingIdOptions = res.data.records
@@ -425,19 +429,6 @@ export default {
           this.treeLoading = false
           this.listLoading = false
         })
-    },
-    getProcessList() {
-      let obj = {
-        approvalStatus: 'ok',
-        pageNum: 1,
-        pageSize: -1
-      }
-      if (this.isProjectSwitch === '1') {
-        obj.projectId = this.projectId
-      }
-      getProcessList(obj).then((res) => {
-        this.routingIdOptions = res.data.records
-      })
     },
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
@@ -606,9 +597,9 @@ export default {
       this.routingLineList = []
       // this.analyseDialog = true
       this.setFormVisible = true
-
+      
       this.$nextTick(() => {
-        this.$refs.setForm.init(this.selectedData, '',this.routingIdOptions)
+        this.$refs.setForm.init(this.selectedData, '',JSON.stringify(this.routingIdOptions))
       })
     },
     hasDifferentProjectId(arr) {

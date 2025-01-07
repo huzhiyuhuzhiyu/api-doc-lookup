@@ -412,20 +412,6 @@ export default {
       this.listQuery.productCategoryCode = data.code
       this.search()
     },
-    getProcessList() {
-      let obj = {
-        approvalStatus: 'ok',
-        pageNum: 1,
-        pageSize: -1
-      }
-      if (this.isProjectSwitch === '1') {
-        obj.projectId = this.projectId
-      }
-      getProcessList(obj).then((res) => {
-        console.log(res, 'res')
-        this.routingIdOptions = res.data.records
-      })
-    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -588,7 +574,7 @@ export default {
       this.setFormVisible = true
 
       this.$nextTick(() => {
-        this.$refs.setForm.init(this.selectedData, '',JSON.stringify(this.routingIdOptions))
+        this.$refs.setForm.init(this.selectedData, '', JSON.stringify(this.routingIdOptions))
       })
 
     },
@@ -664,7 +650,7 @@ export default {
       console.log(this.isProjectSwitch, 'is')
 
       if (this.isProjectSwitch === '1') {
-        obj.projectId = this.selectedData[0].projectId
+        obj.projectId = this.userInfo.projectId
       }
       console.log(obj, 'obb')
       getProcessList(obj).then((res) => {
@@ -672,7 +658,7 @@ export default {
         this.routingIdOptions = res.data.records
       })
     },
-    routingFlagChange(val){
+    routingFlagChange(val) {
       this.listQuery.routingFlag = val
       this.initData()
     },

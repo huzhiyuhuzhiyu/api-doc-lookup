@@ -1895,3 +1895,13 @@ export function getpairingModeList(data) {
         data
     })
 }
+
+
+
+export function batchInboundList(data) {
+  return request({
+      url: `/api/wms/stock/move/inbound/batch`,
+      method: 'post',
+      data
+  })
+}

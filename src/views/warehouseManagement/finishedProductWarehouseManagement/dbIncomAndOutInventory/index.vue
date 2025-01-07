@@ -1583,9 +1583,8 @@
 import { getQuotationdatasendlist, getStockMovelist } from '@/api/salesManagement/index'
 import { purPurchaseReceiptReturnGoodsList, detailpurchaseOrderList } from "@/api/purchasingAndOutsourcingOrders/index"
 import { ordershengchanList, detailordershengchan, getWorkPage } from '@/api/productOrdes/index.js'
-import { getBimBusinessSwitchConfigList, getWarehouseInfo, getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, getWarehouseInfo, getOrderFiledMap, getWarehouseList, batchInboundList } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
-import { getWarehouseList } from '@/api/basicData/index'
 import WareHouseForm from './wareHouseForm.vue'
 import Form from './Form'
 import mixin from '@/mixins/generator/index'
@@ -2230,7 +2229,7 @@ export default {
         sourceType: "notice",
         bizIdList: [],
         businessType: "inbound_purchase",
-        orderDate:this.jnpf.getToday(),
+        orderDate: this.jnpf.getToday(),
       },
       allocationFlag: false,
     }
@@ -2293,6 +2292,24 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    submitFun() {
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          this.btnLoading = true
+          this.batchForm.bizIdList = this.selectPurchaseNoticeList.map(item => item.id); 
+          console.log(this.batchForm);
+          
+          batchInboundList(this.batchForm).then(res => {
+            this.$message.success("批量入库成功")
+            this.getTabdataList('basic')
+          this.btnLoading = false
+          this.batchInboundVisible=false
+          })
+          
+        }
+      })
+
+    },
     // 打开选择库位弹框
     openSeleceWareDialog(type) {
       if (!this.batchForm.warehouseId) return this.$message.error("请先选择仓库!")
@@ -2513,6 +2530,7 @@ export default {
         this.batchForm.warehouseId = res.data[0].id
         this.batchForm.warehouseType = res.data[0].type
         this.warehouseInfo = res.data[0]
+        this.allocationFlag = res.data[0].locationStatus == 'disabled' ? false : true
         // 获取仓库详情信息 
         this.getPickingConfig()
 

@@ -126,6 +126,7 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -358,6 +359,7 @@
 
                 <el-table-column prop="drawingNo" label="品名规格" width="200"  show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -1178,6 +1180,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
+            productCategoryName:item.productCategoryName,
             projectName: item.projectName, // 所属项目
             productSource: item.productSource, // 产品来源 采购
             classAttribute: item.classAttribute,

@@ -123,7 +123,7 @@
         </div>
       </div>
     </div>
-    <!--    <div class="login-foot">Copyright 宁波圣泽网络科技有限公司, All Rights Reserved. 沪ICP备17044791号-1-->
+    <!--    <div class="login-foot">Copyright 宁波聚轩信息科技有限公司, All Rights Reserved. 沪ICP备17044791号-1-->
     <!--      助力企业和团队快速实现目标</div>-->
   </div>
 </template>

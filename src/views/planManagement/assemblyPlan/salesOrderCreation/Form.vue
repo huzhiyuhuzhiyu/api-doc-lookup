@@ -130,7 +130,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="合格率" prop="qualificationRate" style="margin-bottom: 19px;">
+                        <el-form-item label="合格率" prop="qualificationRate" style="margin-bottom: 20px;">
                           <el-input v-model="planForm.qualificationRate" placeholder="请输入合格率"
                             :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
                             @blur="watchRate(planForm.qualificationRate)">

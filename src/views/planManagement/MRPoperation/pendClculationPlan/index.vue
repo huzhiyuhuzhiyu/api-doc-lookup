@@ -649,8 +649,8 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.superForm = this.deliveryDateArr = []
-      this.orderForm = {
+       this.deliveryDateArr = []
+       this.superForm =this.orderForm = {
         planNo: "",
         documentStatus: "submit",
         productDrawingNo: "",

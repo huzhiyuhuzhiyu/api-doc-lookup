@@ -134,8 +134,18 @@
               v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="120" fixed="right">
+            <el-table-column prop="replaceStatus" label="替换状态" sortable="custom" width="120" align="center">
+               <template slot-scope="scope">
+                   <div v-if="scope.row.replaceStatus === 'not_replace'"><el-tag type="warning">未替换</el-tag>
+                   </div>
+                   <div v-else-if="scope.row.replaceStatus === 'replacing'"><el-tag>替换中</el-tag></div>
+                   <div v-else-if="scope.row.replaceStatus === 'replaced'"><el-tag type="success">已替换</el-tag></div>
+               </template>
+            </el-table-column>
+            <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
+                <el-button size="mini" type="text" :disabled="scope.row.replaceStatus === 'replacing'"
+                  @click.native="sendReplaceRequest(scope.row)">发起替换申请</el-button>
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row, 'look')">查看详情</el-button>
 
@@ -163,6 +173,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <ReplaceRulesForm v-if="ReplaceRulesFormVisible" ref="ReplaceRulesForm" @refreshDataList="initData"
+                        @close="closeForm" />
   </div>
 </template>
 
@@ -179,12 +191,16 @@ import {
 } from "@/api/masterDataManagement/index";
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import ReplaceRulesForm from '@/views/planManagement/MRPoperation/pendClculationPlan/ReplaceRulesForm.vue'
 export default {
   name: 'pendClculationPlan',
-  components: { PlanForm, Form, ExportForm, SuperQuery },
+  components: { ReplaceRulesForm, PlanForm, Form, ExportForm, SuperQuery },
   mixins: [getProjectList],
   data() {
     return {
+        /**设置替换规则表单 */
+      replaceRulesVisibie: false,
+      ReplaceRulesFormVisible: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -397,7 +413,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
       if (this.colourFlag === '1') {
@@ -539,6 +555,8 @@ export default {
     },
     calculationFun() {
       if (!this.selectList.length) return this.$message.error("请选择您要进行计算的计划数据")
+      let replacingFlag = this.selectList.some((item) => item.replaceStatus === 'replacing')
+      if (replacingFlag) return this.$message.error("您选择的计划数据存在产品正在替换中，请检查！")
       this.mrpForm = true
       this.$nextTick(() => {
         this.$refs.MRPForm.init(this.selectList)
@@ -592,6 +610,7 @@ export default {
     closeForm(isRefresh) {
       console.log(1111);
       this.formVisible = false
+      this.ReplaceRulesFormVisible = false
       this.mrpForm = false
       if (isRefresh) {
         this.keyword = ''
@@ -722,7 +741,12 @@ export default {
         if (!res.data.url) return
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
-    }
+    },
+      /**发起替代申请 */
+      sendReplaceRequest(planData) {
+          this.ReplaceRulesFormVisible = true
+          this.$nextTick(() => { this.$refs.ReplaceRulesForm.init(planData, 'add') })
+      },
   }
 }
 </script>

@@ -60,3 +60,35 @@ export function getPlanSchedule(id) {
     method: 'GET'
   })
 }
+
+/**mrp替代申请单-新增 */
+export function addMrpReplaceApply(data) {
+    return request({
+        url: `/api/mrp/replace/apply/add`,
+        method: 'POST',
+        data
+    })
+}
+/**mrp替代申请单-详情 */
+export function detailMrpReplaceApply(id) {
+    return request({
+        url: `/api/mrp/replace/apply/detail/${id}`,
+        method: 'GET',
+    })
+}
+/**mrp替代申请单-列表 */
+export function getMrpReplaceApplyList(data) {
+    return request({
+        url: `/api/mrp/replace/apply/list`,
+        method: 'POST',
+        data
+    })
+}
+/**mrp替代申请单-修改 */
+export function modifyMrpReplaceApply(data) {
+    return request({
+        url: `/api/mrp/replace/apply/modify`,
+        method: 'PUT',
+        data
+    })
+}

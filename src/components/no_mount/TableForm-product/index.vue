@@ -10,7 +10,7 @@
 } -->
 <!-- hasToolbar 是否展示工具栏（布尔值 默认true） -->
 <!-- hasActionbar 是否展示操作栏（布尔值 默认true） -->
-<!-- tableItems 渲染的列表字段 
+<!-- tableItems 渲染的列表字段
   完整参数：
   prop 绑定变量 - 必传
   label 显示内容 - 必传
@@ -38,7 +38,7 @@
 <!-- addth 新增行 -->
 <!-- deleteth 删除行 -->
 
-<!-- 
+<!--
   引用方式：import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue' // 附带产品多选的表格表单组件
  -->
 
@@ -66,7 +66,7 @@
             </template>
             <template slot-scope="scope">
               <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
-               
+
                 :value="JNPFColTableData.data[scope.$index][scope.column.property]"
                 @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
                 :openMode="realOpenMode" :scope="scope" :paramsObj="{ scope }" />
@@ -103,8 +103,10 @@
 
 <script>
 import FormItem from "@/components/JNPF-col-table/item"
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import {
+    getProductList,
+} from '@/api/masterDataManagement/productManage'
 export default {
   components: { FormItem },
   name: 'TableForm-product',
@@ -142,9 +144,9 @@ export default {
         { prop: 'classAttributeText', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: "code", label: "产品编码", type: 'input' },
-        { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "drawingNo", label: "品名规格", type: 'input' }
+        { prop: "productCode", label: "产品编码", type: 'input' },
+        { prop: "productName", label: "产品名称", type: 'input' },
+        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
     }
   },

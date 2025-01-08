@@ -22,7 +22,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="列表" name="contacts">
-          <!-- <el-button type="primary" @click="enterRouter">主要按钮</el-button> -->
+          <el-button type="primary" @click="enterRouter">主要按钮</el-button>
           <el-input v-model="listQuery.keyword" placeholder="搜索：请输入关键词" clearable @keyup.enter.native="search()"
             class="search-input">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="search" title="搜索" />
@@ -66,7 +66,7 @@ export default {
       },
       rules: {
         name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { required: true, message: '请输入名称', trigger: 'blur' },
         ],
 
       },
@@ -114,7 +114,21 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          this.$confirm('此操作将新建收藏, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: '新建成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消新建'
+            });
+          });
         } else {
           console.log('error submit!!');
           return false;
@@ -122,6 +136,7 @@ export default {
       });
     },
     enterRouter() {
+      this.drawer = false
       this.$router.push({
         path: "/basicData/supplierManagement/supplierProfile",
 

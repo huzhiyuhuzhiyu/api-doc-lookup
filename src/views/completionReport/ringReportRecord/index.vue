@@ -100,7 +100,9 @@
 
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="initData" />
+            @pagination="initData" >
+            <span style="font-weight:500;margin-right:10px">报工数量总计：{{ totalData.reportingQuantity }}</span>
+          </pagination>
         </div>
       </div>
 
@@ -124,6 +126,7 @@ import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import { getSalaryDetailList } from '@/api/salaryManagement'
 export default {
   name: 'assemblyplanManagement',
   components: { SuperQuery, ExportForm },
@@ -173,7 +176,7 @@ export default {
       },
 
 
-
+      totalData:{},
       total: 0,
       formVisible: false,
       selectArr: [],
@@ -391,13 +394,14 @@ export default {
       
  
      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-     getWorkReportList(this.orderForm).then(res => {
+     getSalaryDetailList(this.orderForm).then(res => {
         console.log("报工记录", res);
         // res.data.records.forEach(item => {
         //   item.selectFlag = false
         // })
-        this.tableData = res.data.records
-        this.total = res.data.total
+        this.tableData = res.data.page.records
+        this.total = res.data.page.total
+        this.totalData = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false

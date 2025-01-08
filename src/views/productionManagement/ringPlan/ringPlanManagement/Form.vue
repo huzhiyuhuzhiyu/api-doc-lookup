@@ -745,7 +745,7 @@ export default {
           }); 
         } else {
           this.materialList.forEach(item => {
-            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
+            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)),  item.qty]), 6)
             let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
             this.$set(item, 'materialsUsedQuantity', totalNum)
           });
@@ -1207,7 +1207,7 @@ export default {
                 this.materialList = res.data
                 if (!this.materialList.length) return
                 this.materialList.forEach(item => {
-                  let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
+                  let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)),  item.qty]), 6)
                   let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
                   this.$set(item, 'materialsUsedQuantity', totalNum)
                 });

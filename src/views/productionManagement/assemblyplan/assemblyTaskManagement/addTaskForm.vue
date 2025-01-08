@@ -940,9 +940,7 @@ export default {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
 
       }
-      if (this.dataForm.autoMaterialFlag) {
         this.getWarehouseListFun()
-      }
       if (!data.routingId) return
       this.getRoutingDetail(this.dataForm.routingId)
     },
@@ -1398,14 +1396,12 @@ export default {
       });
       if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       let arr = []
-      if (this.dataForm.autoMaterialFlag) {
         this.dataForm.lineEdgeList.forEach(item => {
           arr.push({
             productionOrderId: "",
             warehouseId: item
           })
         })
-      }
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,

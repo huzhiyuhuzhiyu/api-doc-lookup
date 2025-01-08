@@ -752,9 +752,7 @@ export default {
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
-      if (this.dataForm.autoMaterialFlag) {
         this.getWarehouseListFun()
-      }
       if(!this.dataForm.bomId){
         this.$message.error("该产品没有BOM，请配置BOM后再试")
       }
@@ -1319,7 +1317,6 @@ export default {
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
       let arr = []
-      if (this.dataForm.autoMaterialFlag) {
 
         this.dataForm.lineEdgeList.forEach(item => {
           arr.push({
@@ -1327,7 +1324,6 @@ export default {
             warehouseId: item
           })
         })
-      }
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,

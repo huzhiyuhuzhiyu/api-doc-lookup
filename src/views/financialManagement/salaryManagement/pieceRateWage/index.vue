@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { getSalaryList, editSalaryList, updateSalaryList } from '@/api/salaryManagement'
+import { getSalaryList, updateSalaryList, getSalaryReportList } from '@/api/salaryManagement'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index.vue';
 import { excelExport } from '@/api/basicData';

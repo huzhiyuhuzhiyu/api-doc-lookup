@@ -1038,7 +1038,7 @@ export default {
     },
 
 
-    // 获取等级、付款方式数据
+    // 获取等级、付款方式数据 （数据字典管理配置）
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list

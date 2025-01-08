@@ -557,6 +557,7 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  name:'assemblyProcessSetting',
   components: {
     ProcessDialog,
     SourceArea,

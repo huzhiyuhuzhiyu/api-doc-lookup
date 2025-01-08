@@ -175,6 +175,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
+  name:'processPrice',
   components: { SuperQuery },
   mixins: [getProjectList],
   data() {

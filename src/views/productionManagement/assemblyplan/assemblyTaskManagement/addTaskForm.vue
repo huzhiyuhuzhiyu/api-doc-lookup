@@ -99,7 +99,8 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='production_order'&&dataForm.autoMaterialFlag">
+                      <el-col :sm="6" :xs="24"
+                        v-if="dataForm.pickingWay == 'production_order' && dataForm.autoMaterialFlag">
                         <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                           <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
@@ -107,9 +108,9 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='production_order'">
-                        <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
-                          <el-select v-model="dataForm.lineEdgeList"  placeholder="请选择" style="width: 100%;">
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'dispatch_list'">
+                        <el-form-item label="线边仓库" prop="lineEdgeId" ref="organizeIdTree">
+                          <el-select v-model="dataForm.lineEdgeId" placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
                             </el-option>
                           </el-select>
@@ -634,6 +635,7 @@ export default {
       dataForm: {
         planDate: [],
         lineEdgeList: [],
+        lineEdgeId: "",
         orderNo: "",
         productsDrawingNo: "",
         productsCode: "",
@@ -672,6 +674,7 @@ export default {
       formLoading: false,
       dataRule: {
         lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
+        lineEdgeId: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
@@ -778,7 +781,7 @@ export default {
     compount() {
       if (this.dataForm.productionQuantity) {
         this.materialList.forEach(item => {
-          let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)),  item.qty]), 6)
+          let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
           let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
           this.$set(item, 'materialsUsedQuantity', totalNum)
         });
@@ -930,15 +933,16 @@ export default {
           this.materialList = res.data
           if (!this.materialList.length) return
           this.materialList.forEach(item => {
-            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)),  item.qty]), 6)
+            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
             let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
             this.$set(item, 'materialsUsedQuantity', totalNum)
           });
         })
+      } else {
+        this.$message.error("该产品没有BOM，请配置BOM后再试")
+
       }
-      if (this.dataForm.autoMaterialFlag) {
-        this.getWarehouseListFun()
-      }
+      this.getWarehouseListFun()
       if (!data.routingId) return
       this.getRoutingDetail(this.dataForm.routingId)
     },
@@ -1341,6 +1345,7 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
+      console.log("this.dataForm.lineEdgeList", this.dataForm.lineEdgeList);
       let submitFlag = null;
       this.dataForm.productsId = this.dataForm.id
       this.dataForm.planStartDate = this.dataForm.planDate[0]
@@ -1394,7 +1399,13 @@ export default {
       });
       if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       let arr = []
-      if (this.dataForm.autoMaterialFlag) {
+      if (this.dataForm.pickingWay == 'dispatch_list') {
+        arr.push({
+            productionOrderId: "",
+            warehouseId: this.dataForm.lineEdgeId
+          })
+      } else {
+
         this.dataForm.lineEdgeList.forEach(item => {
           arr.push({
             productionOrderId: "",

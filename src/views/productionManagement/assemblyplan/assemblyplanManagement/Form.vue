@@ -125,7 +125,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='production_order'">
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='dispatch_list'">
                         <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                           <el-select v-model="dataForm.lineEdgeList"  placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
@@ -1173,7 +1173,10 @@ export default {
             this.$set(item, 'materialsUsedQuantity', totalNum)
           });
         })
-      }
+      }else {
+              this.$message.error("该产品没有BOM，请配置BOM后再试")
+
+            }
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
@@ -1261,7 +1264,13 @@ export default {
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
       let arr = []
-      if (this.dataForm.autoMaterialFlag) {
+
+      if (this.dataForm.pickingWay == 'dispatch_list') {
+        arr.push({
+            productionOrderId: "",
+            warehouseId: this.dataForm.lineEdgeId
+          })
+      } else {
 
         this.dataForm.lineEdgeList.forEach(item => {
           arr.push({

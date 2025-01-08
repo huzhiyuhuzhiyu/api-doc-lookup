@@ -112,6 +112,8 @@
 <script>
 import { getSalaryList, editSalaryList, updateSalaryList } from '@/api/salaryManagement'
 import Form from './Form'
+import ExportForm from '@/components/no_mount/ExportBox/index.vue';
+import { excelExport } from '@/api/basicData';
 export default {
   name: 'pieceRateWage',
   components: { Form, ExportForm },

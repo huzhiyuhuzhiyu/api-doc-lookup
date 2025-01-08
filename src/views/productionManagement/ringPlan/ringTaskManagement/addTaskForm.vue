@@ -752,8 +752,8 @@ export default {
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
-        this.getWarehouseListFun()
-      if(!this.dataForm.bomId){
+      this.getWarehouseListFun()
+      if (!this.dataForm.bomId) {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
       }
       if (!data.routingId) return
@@ -1318,12 +1318,20 @@ export default {
       });
       let arr = []
 
+      if (this.dataForm.pickingWay == 'dispatch_list') {
+        arr.push({
+            productionOrderId: "",
+            warehouseId: this.dataForm.lineEdgeId
+          })
+      } else {
+
         this.dataForm.lineEdgeList.forEach(item => {
           arr.push({
             productionOrderId: "",
             warehouseId: item
           })
         })
+      }
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,

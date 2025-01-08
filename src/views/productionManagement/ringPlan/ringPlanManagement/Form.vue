@@ -116,7 +116,8 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='production_order'&&dataForm.autoMaterialFlag">
+                      <el-col :sm="6" :xs="24"
+                        v-if="dataForm.pickingWay == 'production_order' && dataForm.autoMaterialFlag">
                         <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                           <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
@@ -124,9 +125,9 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay=='production_order'">
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'production_order'">
                         <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
-                          <el-select v-model="dataForm.lineEdgeList"  placeholder="请选择" style="width: 100%;">
+                          <el-select v-model="dataForm.lineEdgeList" placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
                             </el-option>
                           </el-select>
@@ -689,7 +690,9 @@ export default {
       isProductNameSwitch: "",
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
-      materialList:[],
+      materialList: [],
+      hasWorkOrderFlagFalse: null,
+      workFlagFalseInfo: {},
     }
 
   },
@@ -733,14 +736,20 @@ export default {
 
   },
   methods: {
-      // 输入编排数量，重新计算投料数量
-      compount() {
+    // 输入编排数量，重新计算投料数量
+    compount() {
       if (this.dataForm.productionQuantity) {
-        this.materialList.forEach(item => {
-          let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
-          let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-          this.$set(item, 'materialsUsedQuantity', totalNum)
-        });
+        if (this.hasWorkOrderFlagFalse) {
+          this.materialList.forEach(item => {
+            this.$set(item, 'materialsUsedQuantity', this.dataForm.productionQuantity)
+          }); 
+        } else {
+          this.materialList.forEach(item => {
+            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
+            let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+            this.$set(item, 'materialsUsedQuantity', totalNum)
+          });
+        }
       }
     },
     async getTechnicalSwitch(code, type) {
@@ -1151,7 +1160,7 @@ export default {
       detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
-        this.materialList=[]
+        this.materialList = []
         res.data.routingLineList.forEach((item) => {
 
           if (item.routingProResMap) {
@@ -1179,9 +1188,9 @@ export default {
           let processList = res.data.routingLineList.sort((a, b) => a.sort - b.sort);
 
 
-          let hasWorkOrderFlagFalse = processList.some(item => !item.workOrderFlag);
+          this.hasWorkOrderFlagFalse = processList.some(item => !item.workOrderFlag);
 
-          if (!hasWorkOrderFlagFalse) {
+          if (!this.hasWorkOrderFlagFalse) {
             // 都生成工单 产品的bom作为料
             // 返回 false  
             this.workFlag = true
@@ -1193,7 +1202,7 @@ export default {
                   this.$set(item, 'productsCode', item.productCode)
                   this.$set(item, 'productsName', item.productName)
                   this.$set(item, 'productsDrawingNo', item.productDrawingNo)
-                  
+
                 });
                 this.materialList = res.data
                 if (!this.materialList.length) return
@@ -1209,24 +1218,24 @@ export default {
             // 产品+该道工序作为料
             // 存在不生成工单的数据，并找出最后一道不生成工单的数据
             // 找到 sort 最大的对象  
-            let maxSortItem = processList.reduce((maxItem, item) => {
+            maxSortItem = processList.reduce((maxItem, item) => {
               return item.sort > maxItem.sort ? item : maxItem;
             });
 
             // 返回 sort 最大值的数据  
-            console.log(6666,maxSortItem);
+            console.log(6666, maxSortItem);
             this.workFlagFalseInfo = maxSortItem
-            let obj={
-              processName:maxSortItem.processName,
-              processId:maxSortItem.processId,
-              productsCode:this.dataForm.productsCode,
-              productsName:this.dataForm.productsName,
-              productsDrawingNo:this.dataForm.productsDrawingNo,
-              materialsUsedQuantity:this.dataForm.productionQuantity,
-              mainUnit:this.dataForm.mainUnit,
+            let obj = {
+              processName: maxSortItem.processName,
+              processId: maxSortItem.processId,
+              productsCode: this.dataForm.productsCode,
+              productsName: this.dataForm.productsName,
+              productsDrawingNo: this.dataForm.productsDrawingNo,
+              materialsUsedQuantity: this.dataForm.productionQuantity,
+              mainUnit: this.dataForm.mainUnit,
             }
-            console.log("obj",obj);
-            this.materialList=[...this.materialList,obj]
+            console.log("obj", obj);
+            this.materialList = [...this.materialList, obj]
           }
         }
         res.data.routingLineList.sort((a, b) => a.sort - b.sort);

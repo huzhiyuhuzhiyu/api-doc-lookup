@@ -49,7 +49,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" :fixedNO="true" v-if="showFlag"
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" :fixedNO="true" v-show="showFlag"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">

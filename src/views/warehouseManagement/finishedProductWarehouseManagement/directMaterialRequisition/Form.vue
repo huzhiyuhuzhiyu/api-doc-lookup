@@ -17,7 +17,143 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
               :element-loading-text="loadingText">
-              <el-collapse v-model="activeNames">
+              <el-tabs v-model="activeName" v-if="!approvalFlag && dataForm.approvalFlag">
+                <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
+                  <el-collapse v-model="activeNames">
+                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
+                        label-position="top">
+                        <el-row :gutter="30" class="custom-row">
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="单号" prop="orderNo">
+                              <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
+                                :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
+                                maxlength="300" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="领料日期" prop="pickingDate">
+                              <el-date-picker v-model="dataForm.pickingDate" type="date" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="领料日期" :disabled="btnType == 'look' ? true : false">
+                              </el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="12" :xs="24">
+                            <el-form-item label="备注" prop="remark">
+                              <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
+                                maxlength="200" />
+                            </el-form-item>
+                          </el-col>
+                        </el-row>
+                      </el-form>
+                    </el-collapse-item>
+                    <el-collapse-item title="产品信息" name="productInfo">
+                      <div>
+                        <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                            class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                          @click="openSeleceProductDialog()">选择产品</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                          @click="batchDelete">批量删除</el-button>
+                      </div>
+
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                        <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                          v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+                        <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
+                        <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
+                          v-if="btnType != 'look'" />
+                        <el-table-column prop="num" label="领料数量" width="140" :key="8088">
+                          <template slot="header">
+                            <span class="required">*</span>领料数量
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.num" placeholder="领料数量" :disabled="btnType == 'look'"
+                              oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                              @blur="computedTotal(scope.row, scope.$index)">
+                            </el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="price" label="单价" width="160" :key="181" />
+                        <el-table-column prop="totalAmount" label="总金额" width="160" :key="182" />
+                        <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
+                          <template slot="header">
+                            <span class="required">*</span>目标仓库
+                          </template>
+                          <template slot-scope="scope">
+                            <ComSelect-list
+                              :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '' }"
+                              :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
+                              :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
+                              @change="changeWarehousex"></ComSelect-list>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112"
+                          v-if="allocationFlag">
+                          <template slot="header">
+                            <span class="required">*</span>目标库位
+                          </template>
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
+                              @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
+                            </el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
+                        <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
+                        <el-table-column prop="standardValue" label="规值" min-width="120"
+                          v-if="standardValueFlag == 1" />
+                        <el-table-column prop="colour" label="颜色" min-width="120" v-if="colourFlag == 1" />
+                        <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"
+                          v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                        <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"
+                          v-if="accuracyLevelFlag == 1"></el-table-column>
+                        <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"
+                          v-if="vibrationLevelFlag == 1"></el-table-column>
+                        <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"></el-table-column>
+                        <el-table-column prop="clearance" label="游隙" min-width="120"
+                          v-if="clearanceFlag == 1"></el-table-column>
+                        <el-table-column prop="aperture" label="孔径" min-width="120"
+                          v-if="apertureFlag == 1"></el-table-column>
+                        <el-table-column prop="packagingMethod" label="包装方式" min-width="120"
+                          v-if="packagingMethodFlag == 1"></el-table-column>
+                        <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
+                          v-if="specialRequireFlag == 1"></el-table-column>
+                        <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
+
+                        <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
+                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
+                          <template slot-scope="scope">
+                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                          </template>
+                        </el-table-column>
+                      </JNPF-table>
+                      <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;"
+                        class="text">
+                        <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
+                      </div>
+                    </el-collapse-item>
+
+                  </el-collapse>
+                </el-tab-pane>
+
+                <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+                  <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+                </el-tab-pane>
+                <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+                  <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+                </el-tab-pane>
+              </el-tabs>
+              <el-collapse v-model="activeNames" v-else>
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -139,7 +275,6 @@
                 </el-collapse-item>
 
               </el-collapse>
-
             </div>
           </div>
         </div>
@@ -215,7 +350,7 @@
                 </el-table-column>
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
-              <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
                 <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" min-width="160"
                   :key="601"></el-table-column>
                 <el-table-column prop="logo" label="logo" width="120" sortable="custom" min-width="160"
@@ -226,7 +361,7 @@
                   :key="604"></el-table-column>
 
                 <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
-                <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120"   />
+                <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"
                   v-if="sealingCoverTypingFlag == 1" sortable="custom"></el-table-column>
                 <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
@@ -294,7 +429,7 @@
 <script>
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
-import { getCooperativeData, deleteCooperative, excelExport,getOrderFiledMap } from '@/api/basicData/index'
+import { getCooperativeData, deleteCooperative, excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProductList } from '@/api/masterDataManagement/productManage'
@@ -332,7 +467,8 @@ export default {
         remark: "",
         id: "",
         documentStatus: "",
-        classAttribute: ""
+        classAttribute: "",
+        approvalFlag: false,
       },
       // 选择全部产品参数
       allProVisible: false,
@@ -341,6 +477,7 @@ export default {
       allproductData: [],
       allProductTotal: 0,
       wareHouseVisible: false,
+      approvalFlag: false,   // 待办事宜等页面 需要
       ProductListRequestObj: {
         classAttribute: "",
         productDrawingNo: "",
@@ -719,7 +856,7 @@ export default {
       this.$emit('close', true)
     },
 
-    init(id, btnType, classAttributeList, warehouseCode,data) {
+    init(id, btnType, classAttributeList, warehouseCode, data) {
       console.log(classAttributeList);
       // this.visible = true
       this.formLoading = true
@@ -730,11 +867,11 @@ export default {
       this.warehouseCode = warehouseCode
       this.btnType = btnType
       console.log("btnty", btnType);
-      if (data&& data.length) {
-        data.forEach(item=>{
+      if (data && data.length) {
+        data.forEach(item => {
           item.inShelfSpaceName = item.lineEdgeName
           item.inWarehouseId = item.lineEdgeId
-          this.$set(item,'num',item.materialsUsedQuantity - item.receivedQuantity)
+          this.$set(item, 'num', item.materialsUsedQuantity - item.receivedQuantity)
         })
         this.productData = data
       }
@@ -748,17 +885,18 @@ export default {
           console.log("详情", res);
           this.formLoading = false
           this.dataForm = res.data.picking
-          res.data.lines.forEach(item => {
+        if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+        res.data.lines.forEach(item => {
             item.warehouseName = item.outWarehouseName
             item.warehouseId = item.outWarehouseId
             item.shelfSpaceName = item.outShelfSpaceName
             item.shelfSpaceId = item.outShelfSpaceId
           });
-          this.productData = res.data.lines.map(item=>{
-              return {
-                ...item,
-                price:item.costPrice,
-              }
+          this.productData = res.data.lines.map(item => {
+            return {
+              ...item,
+              price: item.costPrice,
+            }
           })
 
         }).catch(() => { this.formLoading = false })
@@ -781,6 +919,7 @@ export default {
         this.dataForm.pickingDate = formattedDate;
         this.title = '新建直接领料单'
         this.fetchData("ZJDH", true)
+        this.getBusInfo('b066')
 
 
 
@@ -868,17 +1007,17 @@ export default {
               picking: this.dataForm,
               lines: []
             }
-            let arr = this.productData.map(item=>{
-                return {
-                    ...item,
-                    id: this.dataForm.id ? item.id : "",
-                    deputyNum: item.calculationDirection == 'multiplication' ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6) : this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6),
-                    outAreaId: item.areaId,
-                    outGoodsShelvesId: item.goodsShelvesId,
-                    outShelfSpaceId: item.shelfSpaceId,
-                    outWarehouseId: item.warehouseId,
-                    costPrice:item.costPrice ? item.costPrice : item.price,
-                }
+            let arr = this.productData.map(item => {
+              return {
+                ...item,
+                id: this.dataForm.id ? item.id : "",
+                deputyNum: item.calculationDirection == 'multiplication' ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6) : this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6),
+                outAreaId: item.areaId,
+                outGoodsShelvesId: item.goodsShelvesId,
+                outShelfSpaceId: item.shelfSpaceId,
+                outWarehouseId: item.warehouseId,
+                costPrice: item.costPrice ? item.costPrice : item.price,
+              }
             })
             // this.productData.forEach(item => {
             //   let obj = {

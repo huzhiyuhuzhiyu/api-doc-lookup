@@ -55,7 +55,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable"   :data="tableData"  v-if="showFlag"
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable"   :data="tableData"  v-show="showFlag"
             :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">

@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="编排" />
+          <el-page-header @back="goBack" content="新建任务" />
           <div class="options">
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
               @click="handleConfirm('submit')">提交</el-button>
@@ -16,38 +16,16 @@
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="生产计划单号" prop="productionPlanNo">
-                          <el-input v-model="dataForm.productionPlanNo" disabled />
-                        </el-form-item>
-                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
-                        <el-form-item label="所属项目" prop="projectId">
-                          <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
-                            disabled>
-                            <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="产品编码" prop="productsCode">
-                          <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="产品名称" prop="productsName" v-if="isProductNameSwitch == 1">
+                      <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
+                        <el-form-item label="产品名称" prop="productsName">
                           <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
                           </el-input>
                         </el-form-item>
@@ -58,6 +36,15 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
+                        <el-form-item label="所属项目" prop="projectId">
+                          <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
+                            disabled>
+                            <el-option v-for="(item, index) in projectIdData" :key="index" :label="item.label"
+                              :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
@@ -65,28 +52,24 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产数量" prop="planProductionQuantity">
-                          <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
+                        <el-form-item label="生产数量" prop="productionQuantity">
+                          <el-input v-model="dataForm.productionQuantity" placeholder="生产数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="可编排数量" prop="availableArrangeQuantity">
-                          <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="编排数量" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="编排数量" @blur="compount">
-                          </el-input>
+                        <el-form-item label="配对方式" prop="pairingModeName">
+                          <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                              :value="item.id">
+                            </el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="编排任务方式" prop="taskMethod">
-                          <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
+                          <el-select v-model="dataForm.taskMethod" placeholder="请选择编排任务方式" style="width: 100%;"
                             @change="selectTaskMethod">
                             <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
@@ -103,33 +86,85 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate"
+                          :style="dataForm.taskMethod != 'appoint' ? 'margin-bottom: 20px;' : ''">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"
-                        v-if="dataForm.pickingWay == 'production_order' && dataForm.autoMaterialFlag">
-                        <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
-                          <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
-                            <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
-                            </el-option>
+
+                      <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
+                        <el-form-item label="打字内容" prop="sealingCoverTyping">
+                          <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
+                            style="width: 100%;">
+                            <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'production_order'">
-                        <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
-                          <el-select v-model="dataForm.lineEdgeList" placeholder="请选择" style="width: 100%;">
-                            <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
-                            </el-option>
+                      <el-col :sm="6" :xs="24" v-if="accuracyLevelFlag == 1">
+                        <el-form-item label="精度等级" prop="accuracyLevel">
+                          <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="vibrationLevelFlag == 1">
+                        <el-form-item label="振动等级" prop="vibrationLevel">
+                          <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
+                            style="width: 100%;">
+                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="oilFlag == 1">
+                        <el-form-item label="油脂" prop="oil">
+                          <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="oilQuantityFlag == 1">
+                        <el-form-item label="油脂量" prop="oilQuantity">
+                          <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="clearanceFlag == 1">
+                        <el-form-item label="游隙" prop="clearance">
+                          <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="包装方式" v-if="packagingMethodFlag == 1">
+                          <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
+                            style="width: 100%;">
+                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="特殊要求" v-if="specialRequireFlag == 1">
+                          <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
+                            style="width: 100%;">
+                            <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
@@ -142,10 +177,36 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-
+                <el-collapse-item title="领料信息" name="pickInfo" v-if="allocationFlag">
+                  <el-form ref="collectForm" :model="collectForm" :rules="pickDataRule" label-width="160px"
+                    label-position="top">
+                    <el-row :gutter="30" class="custom-row">
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="领料单号" prop="orderNo">
+                          <el-input v-model="collectForm.orderNo"
+                            :disabled="collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="领料人" prop="personId">
+                          <el-input v-model="collectForm.personId" :disabled="btnType == 'look' ? true : false"
+                            placeholder="领料人" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="领料日期" prop="operationDate">
+                          <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()" type="date"
+                            value-format="yyyy-MM-dd" style="width: 100%;" placeholder="领料日期"
+                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
+                </el-collapse-item>
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading">
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -156,7 +217,6 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="personId" label="人员" min-width="150" v-if="naturalResourcesFlag == true">
-
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.personId" placeholder="" clearable
                             style="width: 60%; display: none" class="applySelect" disabled>
@@ -187,7 +247,6 @@
                       </el-table-column>
                       <el-table-column prop="equipmentId" label="设备" min-width="150"
                         v-if="naturalResourcesFlag == true">
-
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
                             style="width:70%;display:none" class="applySelect" disabled>
@@ -201,13 +260,18 @@
                             {{ scope.row.equipmentId ? scope.row.equipmentCode ?
                               scope.row.equipmentName + "(" + scope.row.equipmentCode + ")" : scope.row.equipmentName :
                               "请选择设备" }}
-
                           </el-button>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+                        v-if="isTechnicalSwitch === '1'">
 
+                      </el-table-column>
+                      <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+                        v-if="isCheckingSwitch === '1'">
+
+                      </el-table-column>
                       <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
-
                         <template slot-scope="scope">
                           <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable
                             :disabled="scope.row.processingType != 'self_produced'">
@@ -225,14 +289,6 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
-                        v-if="isTechnicalSwitch === '1'">
-
-                      </el-table-column>
-                      <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
-                        v-if="isCheckingSwitch === '1'">
-
-                      </el-table-column>
                       <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                         <template slot-scope="scope">
                           <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -264,15 +320,13 @@
                         </template>
                       </el-table-column>
                     </JNPF-table>
-
                   </el-form>
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="领料清单" name="annex">
+            <el-tab-pane label="领料信息" name="annex">
               <el-collapse v-model="activeNamess">
-
-                <el-collapse-item title="领料信息" name="pickInfo" class="orderInfo" v-if="allocationFlag">
+                <el-collapse-item title="领料信息" name="pickInfo" v-if="allocationFlag">
                   <el-form ref="collectForm" :model="collectForm" :rules="pickDataRule" label-width="160px"
                     label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -296,7 +350,6 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-
                     </el-row>
                   </el-form>
                 </el-collapse-item>
@@ -304,11 +357,11 @@
                   :style="!allocationFlag ? 'margin-top:5px' : ''">
 
                   <JNPF-table ref="product" :data="materialList" fixedNO v-loading="tableloading">
-                    <el-table-column prop="productsCode" label="产品编码"></el-table-column>
-                    <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
+                    <el-table-column prop="productCode" label="产品编码"></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productsDrawingNo" label="品名规格" />
-                    <el-table-column prop="processName" label="工序名称" />
+                    <el-table-column prop="productDrawingNo" label="品名规格" />
+
                     <el-table-column prop="mainUnit" label="单位"></el-table-column>
                     <el-table-column prop="materialsUsedQuantity" label="投料数量">
 
@@ -333,42 +386,23 @@
                 </p>
                 <div v-if="totalData[item].length > 1">
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{
-                      totalData[item][0].planStartDate ?
-                        totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                          ".") : '' }}-
-                    {{
-                      totalData[item][0].planStartDate ?
-                        totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                          ".") : '' }}
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
+                    {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{
-                      totalData[item][1].planStartDate ?
-                        totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                          ".") : '' }}-
-                    {{
-                      totalData[item][1].planStartDate ?
-                        totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                          ".") : '' }}
+                    {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
+                    {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                     {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity }}个
                   </p>
                 </div>
                 <div v-else-if="totalData[item].length == 1">
                   <p style="margin-top: 4px; font-size: 12px">
-                    {{
-                      totalData[item][0].planStartDate ?
-                        totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                          ".") : "" }}-
-                    {{
-                      totalData[item][0].planEndDate ?
-                        totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                          ".") : '' }}
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                      ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
-
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
                   工单截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
                     .replace("-", ".")
@@ -417,7 +451,6 @@
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
-
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
                   工单截止：{{ totalData[item][totalData[item].length -
                     1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
@@ -445,7 +478,6 @@
                       .replace('-', '.') }}
                     {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
                     }}个
-
                   </p>
                   <p style="margin-top:4px; font-size:12px">
                     {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}-
@@ -464,7 +496,6 @@
                     }}个
                   </p>
                 </div>
-
                 <p v-if="totalData[item].length" style="margin-top:4px; font-size:12px">工单截止：{{
                   totalData[item][totalData[item].length -
                     1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }} <el-button class="elbutton" type="text"
@@ -473,9 +504,6 @@
                 </p>
               </div>
             </el-col>
-
-
-
           </el-row>
         </el-dialog>
         <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
@@ -489,7 +517,6 @@
                     placeholder="工单号" clearable />
                 </el-form-item>
               </el-col>
-
               <el-col :span="4">
                 <el-form-item>
                   <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
@@ -502,7 +529,6 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-
               <el-col :span="5">
                 <el-form-item>
                   <el-button type="primary" size="mini" icon="el-icon-search" @click="dataFormSubmit()">
@@ -521,6 +547,14 @@
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
+            <el-table-column prop="technicalRequirement" label="技术要求" width="180" show-overflow-tooltip
+              v-if="isTechnicalSwitch === '1'">
+
+            </el-table-column>
+            <el-table-column prop="inspectionInformation" label="检验信息" width="180" show-overflow-tooltip
+              v-if="isCheckingSwitch === '1'">
+
+            </el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
             <el-table-column prop="productionQuantity" label="生产数量" width="100" />
@@ -538,19 +572,14 @@
             <span style="font-weight:500;margin-right:10px">不合格数量：{{ totalUnqualifiedQuantity }}</span>
           </div>
         </el-dialog>
-
-
-
-
-
-
         <RoutingForm v-if="routingVisible" ref="routingForm" @selectRouting="selectRoutingFun">
         </RoutingForm>
+        <SelectProductForm v-if="productVisible" ref="productForm" @selectProduct="selectProductFun">
+        </SelectProductForm>
       </div>
     </transition>
   </div>
 </template>
-
 <script>
 import {
   getprodOrderList,
@@ -561,11 +590,12 @@ import {
   dispatchListMap,
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
+import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
-import { getWarehouseList } from '@/api/basicData/index'
+import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
+import { getBimBusinessDetail,getBomByProductId } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import {
@@ -574,10 +604,11 @@ import {
 export default {
   mixins: [getProjectList],
   components: {
-    RoutingForm
+    RoutingForm,
   },
   data() {
     return {
+      productVisible: false,
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       activeNames: ["productInfo", "basicInfo"],
@@ -590,7 +621,6 @@ export default {
         personId: "",
       },
       collectConfig: {
-
       },
       pickDataRule: {
         orderNo: [
@@ -599,20 +629,26 @@ export default {
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
         ],
-
       },
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
+      list5: [],
+      list6: [],
+      list7: [],
+      list8: [],
       dataForm: {
-        taskMethod: "",
         planDate: [],
         lineEdgeList: [],
         orderNo: "",
         productsDrawingNo: "",
         productsCode: "",
         mainUnit: "",
-        productionLineId: "",
         planProductionQuantity: "",
         availableArrangeQuantity: "",
         productionQuantity: "",
+        taskMethod: "appoint",
         planStartDate: "",
         planEndDate: "",
         routingName: "",
@@ -628,12 +664,16 @@ export default {
         remark: "",
         bomId: "",
         projectId: "",
+        orderType: "manually",
+        stockInventoryLineId: "",
+        classAttribute: "finish_product",
+        productsId: "",
         pairingModeId: "",
+
       },
       dataFormTwo: {
         data: [],
       },
-      productionLineList: [],
       listLoading: false,
       activeName: "orderInfo",
       isdisabled: false,
@@ -646,16 +686,18 @@ export default {
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
         productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["编排数量不能为空", (errMsg, index) => { this.$message.error(`编排数量：${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["生产数量不能为空", (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '编排数量必须大于0', (errMsg, index) => { this.$message.error(`编排数量：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '生产数量必须大于0', (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }), trigger: 'blur' }
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
+        ],
+        productsDrawingNo: [
+          { required: true, message: '品名规格不能为空', trigger: 'blur' }
         ]
       },
       selectArr: [],
-
       totalData: [],
       index: "",
       currentWorkgroupId: "",
@@ -667,7 +709,7 @@ export default {
       deviceData: [],
       personnelData: [],
       workstationList: [],
-      lineList: [],
+      productionLineList: [],
       codeConfig: {},
       dispatchSearchForm: {
         resIdList: [],
@@ -684,17 +726,27 @@ export default {
         fontWeight: 'bold'
       },
       naturalResourcesFlag: true,
+      processList: [],
       warehouseList: [],
       isProjectSwitch: "",
       projectIdData: [],
       isProductNameSwitch: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
+      pairingModeList: [],
       materialList: [],
-      hasWorkOrderFlagFalse: null,
-      workFlagFalseInfo: {},
-    }
 
+    }
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -722,6 +774,10 @@ export default {
     },
   },
   async created() {
+    await this.getpairingModeListFun()
+
+    await this.getProductClassFun()
+    await this.getProductAttributeFun()
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -729,28 +785,23 @@ export default {
     await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
   },
-
-  mounted() {
-
-    this.getWarehouseListFun()
-
-  },
   methods: {
-    // 输入编排数量，重新计算投料数量
-    compount() {
+      // 输入编排数量，重新计算投料数量
+      compount() {
       if (this.dataForm.productionQuantity) {
-        if (this.hasWorkOrderFlagFalse) {
-          this.materialList.forEach(item => {
-            this.$set(item, 'materialsUsedQuantity', this.dataForm.productionQuantity)
-          }); 
-        } else {
-          this.materialList.forEach(item => {
-            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
-            let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-            this.$set(item, 'materialsUsedQuantity', totalNum)
-          });
-        }
+        this.materialList.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
+          let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+          this.$set(item, 'materialsUsedQuantity', totalNum)
+        });
       }
+    },
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
     },
     async getTechnicalSwitch(code, type) {
       try {
@@ -762,10 +813,118 @@ export default {
         this.isCheckingSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    async getProductClassFun() {
+      // 产品属性
+      await getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    },
+    // 获取业务参数中 属性字段动态显示
+    async getProductAttributeFun() {
+      await getOrderFiledMap('sale').then(res => {
+        console.log("产品属性", res, this.bimProductAttributesList);
+        // sealingCoverTypingFlag list1  pa007
+        // accuracyLevelFlag list2  pa006
+        // vibrationLevelFlag list3 pa005
+        // oilFlag list4 pa002
+        // oilQuantityFlag list5 pa003
+        // clearanceFlag list6 pa001
+        // packagingMethodFlag list7 pa015
+        // specialRequireFlag list8 pa016
+        this.accuracyLevelFlag = res.data.accuracyLevel //list1
+        if (this.accuracyLevelFlag == 1) {
+          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.clearanceFlag = res.data.clearance
+        if (this.clearanceFlag == 1) {
+          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        console.log("this.list6", this.list6);
+        this.oilFlag = res.data.oil
+        if (this.oilFlag == 1) {
+          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.oilQuantityFlag = res.data.oilQuantity
+        if (this.oilQuantityFlag == 1) {
+          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.packagingMethodFlag = res.data.packagingMethod
+        if (this.packagingMethodFlag == 1) {
+          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        if (this.sealingCoverTypingFlag == 1) {
+          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.specialRequireFlag = res.data.specialRequire
+        if (this.specialRequireFlag == 1) {
+          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+        }
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        if (this.vibrationLevelFlag == 1) {
+          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              name: item.name
+            }
+          })
+          console.log(this.list3);
+        }
+
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
+    },
+
+    // 选择产品
+    selectProductFun(data) {
+      this.$set(data, 'orderNo', this.dataForm.orderNo)
+      console.log("所选返工产品", data);
+      this.dataForm = data
+      this.$set(this.dataForm, 'orderType', 'manually')
+      this.$set(this.dataForm, 'taskMethod', 'appoint')
+      this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
+      this.$set(this.dataForm, 'planDate', [])
+
     },
     getWarehouseListFun() {
       let obj = {
@@ -778,7 +937,15 @@ export default {
         this.warehouseList = res.data
       })
     },
-
+    getBimBusinessDetail() {
+      let obj = {
+        businessCode: 'attachment',
+        configKey: 'fj_assembleArrange'
+      }
+      getBimBusinessDetail(obj).then(res => {
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     selectLine(e) {
       console.log(e);
       getProductionLineInfo(e).then(res => {
@@ -806,10 +973,8 @@ export default {
               this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
             }
             if (item.routingProResMap.device) {
-
               this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
               this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
-
             }
           } else {
           }
@@ -818,15 +983,6 @@ export default {
         });
       })
     },
-    // getBimBusinessDetail() {
-    //   let obj = {
-    //     businessCode: 'attachment',
-    //     configKey: 'fj_ringArrange'
-    //   }
-    //   getBimBusinessDetail(obj).then(res => {
-    //     this.isattachmentswitch = res.data.configValue1
-    //   })
-    // },
     selectTaskMethod() {
       if (this.dataForm.taskMethod == 'not_appoint') {
         this.naturalResourcesFlag = false
@@ -836,16 +992,11 @@ export default {
     },
     // 获取领料设置 领料是否自动生成领料单
     getPickingConfig() {
-
       let obj = { "pageSize": -1, "businessCode": "produce" }
       getBimBusinessSwitchConfigList(obj).then(res => {
         this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
         this.fetchData("PODH")
-        // if (this.allocationFlag) {
-        //   this.activeNames = ['pickInfo', "productInfo", "basicInfo"]
-        // } else {
-        //   this.activeNames = ["productInfo", "basicInfo"]
-        // }
+       
       })
     },
     //领料人
@@ -855,8 +1006,6 @@ export default {
       })
       this.collectForm.personId = e
     },
-
-
     // 通过查询条件查询未完成的派工单
     dataFormSubmit() {
       if (this.daterangeList.length) {
@@ -914,7 +1063,6 @@ export default {
         this.currentDeviceId = item.split("_")[0];
       }
     },
-
     openRoutingFun() {
       this.routingVisible = true
       if (this.isProjectSwitch == 1) {
@@ -992,7 +1140,6 @@ export default {
           })
         } else {
           this.$message.error("当前工序没有配置设备资源")
-
         }
       } else {
         this.$message.error("当前工序没有配置设备资源")
@@ -1001,7 +1148,6 @@ export default {
     //  选择人员
     selectPersonnelFun(scope) {
       console.log(scope.row);
-
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.personnel) {
           this.currentPersonId = scope.row.personId;
@@ -1020,7 +1166,6 @@ export default {
           this.totalData = []
           getWorkListMap(obj).then((res) => {
             console.log("人员数据", res);
-
             this.personnelData = Object.keys(res.data).sort();
             this.totalData = res.data;
           });
@@ -1053,7 +1198,6 @@ export default {
         this.dataFormTwo.data[this.index].equipmentId = item.split("_")[0];
         this.dataFormTwo.data[this.index].equipmentName = item.split("_")[1];
         this.dataFormTwo.data[this.index].equipmentCode = item.split("_")[2];
-
         // this.dataFormTwo.data[this.index].routingProResMap.device.forEach((item) => {
         //     if (item.resourceId == this.dataFormTwo.data[this.index].equipmentId) {
         //         this.dataFormTwo.data[this.index].equipmentName =
@@ -1073,13 +1217,9 @@ export default {
         console.log("工位", res);
         this.workstationList = res.data.returnList;
         console.log(this.workstationList);
-
         this.$forceUpdate();
       });
     },
-
-
-
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -1093,33 +1233,13 @@ export default {
     handeleProductInfoData(val) {
       this.selectRows = val
     },
-
-
-
-
-
-
-
-
-
-
-
-
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
     },
-
-
-
-
-
-
-
     search() {
       this.form.pageNum = 1
       this.initData()
     },
-
     initData() {
       this.listLoading = true
       getCooperativeData(this.form).then(res => {
@@ -1154,15 +1274,12 @@ export default {
         this.productionLineList = res.data.records;
       });
     },
-
     // 获取工艺详情
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
-        this.materialList = []
         res.data.routingLineList.forEach((item) => {
-
           if (item.routingProResMap) {
             if (item.routingProResMap.personnel) {
               this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
@@ -1173,93 +1290,51 @@ export default {
               this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
             }
             if (item.routingProResMap.device) {
-
               this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
               this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
-
             }
           } else {
           }
-
-
-
         });
-        if (res.data.routingLineList.length) {
-          let processList = res.data.routingLineList.sort((a, b) => a.sort - b.sort);
-
-
-          this.hasWorkOrderFlagFalse = processList.some(item => !item.workOrderFlag);
-
-          if (!this.hasWorkOrderFlagFalse) {
-            // 都生成工单 产品的bom作为料
-            // 返回 false  
-            this.workFlag = true
-            if (this.dataForm.bomId) {
-
-              BOMLineList(this.dataForm.bomId).then(res => {
-                console.log("产品BOM", res);
-                res.data.forEach(item => {
-                  this.$set(item, 'productsCode', item.productCode)
-                  this.$set(item, 'productsName', item.productName)
-                  this.$set(item, 'productsDrawingNo', item.productDrawingNo)
-
-                });
-                this.materialList = res.data
-                if (!this.materialList.length) return
-                this.materialList.forEach(item => {
-                  let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
-                  let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-                  this.$set(item, 'materialsUsedQuantity', totalNum)
-                });
-              })
-            }
-            //               console.log(false);
-          } else {
-            // 产品+该道工序作为料
-            // 存在不生成工单的数据，并找出最后一道不生成工单的数据
-            // 找到 sort 最大的对象  
-            maxSortItem = processList.reduce((maxItem, item) => {
-              return item.sort > maxItem.sort ? item : maxItem;
-            });
-
-            // 返回 sort 最大值的数据  
-            console.log(6666, maxSortItem);
-            this.workFlagFalseInfo = maxSortItem
-            let obj = {
-              processName: maxSortItem.processName,
-              processId: maxSortItem.processId,
-              productsCode: this.dataForm.productsCode,
-              productsName: this.dataForm.productsName,
-              productsDrawingNo: this.dataForm.productsDrawingNo,
-              materialsUsedQuantity: this.dataForm.productionQuantity,
-              mainUnit: this.dataForm.mainUnit,
-            }
-            console.log("obj", obj);
-            this.materialList = [...this.materialList, obj]
-          }
-        }
         res.data.routingLineList.sort((a, b) => a.sort - b.sort);
         this.dataFormTwo.data = res.data.routingLineList
+        this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
       })
     },
-    init(data) {
-      console.log("传递数据", data);
-      this.$set(data[0], 'productionQuantity', '')
-      this.dataForm = data[0]
-      this.$set(this.dataForm, 'taskMethod', 'appoint')
-      this.$set(this.dataForm, 'pairingModeId', data[0].pairingModeId)
-      this.$set(this.dataForm, 'orderNo', '')
-      // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
-      // this.$set(this.dataForm,'productionQuantity',num)
-      this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
-      this.$set(this.dataForm, 'planDate', [])
-      this.$set(this.dataForm, 'productionPlanId', data[0].id)
-      console.log(this.$refs.dataForm);
-      this.$refs.dataForm.clearValidate('planDate');
+    init(data, btnType) {
+      console.log(data);
       this.getProductionLineListFun()
+      this.dataForm = data[0]
+      this.$set(this.dataForm, 'orderNo', '')
+      this.$set(data[0], 'productionQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
+      this.$set(this.dataForm, 'planDate', [])
+      this.$set(this.dataForm, 'routingId', "")
+      this.$set(this.dataForm, 'routingName', "")
+      this.$refs.dataForm.clearValidate('planDate');
+      this.$refs.dataForm.clearValidate('routingName');
+    
+      if (this.dataForm.bomId) {
+        BOMLineList(this.dataForm.bomId).then(res => {
+          console.log("bom详情", res);
+          this.materialList = res.data
+          if (!this.materialList.length) return
+          this.materialList.forEach(item => {
+            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
+            let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+            this.$set(item, 'materialsUsedQuantity', totalNum)
+          });
+        })
+      }
+      this.$set(this.dataForm, 'taskMethod', 'appoint')
+      this.dataForm.productsName = data[0].productName
+      this.dataForm.productsDrawingNo = data[0].productDrawingNo
+      this.dataForm.projectId = data[0].projectId
+      this.dataForm.mainUnit = data[0].mainUnit
+      // this.dataForm.productionQuantity=data[0].inventoryQuantity 
+      this.dataForm.stockInventoryLineId = data[0].id
+      this.dataForm.productsId = data[0].productsId
+      this.$set(this.dataForm, 'orderType', 'flipping')
       this.fetchData("PROD")
-
-      if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code) {
       try {
@@ -1267,30 +1342,25 @@ export default {
         if (code == 'PROD') {
           this.codeConfig = data
           this.dataForm.orderNo = data.number
-
         }
         if (code == 'PODH') {
           this.collectConfig = data
           this.collectForm.orderNo = data.number
-
         }
-
       } catch (error) {
       }
     },
-
     goBack() {
       this.$emit('close', true)
     },
     checkFun() {
-      if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
       let submitFlag = null;
+      this.dataForm.planStartDate = this.dataForm.planDate[0]
+      this.dataForm.planEndDate = this.dataForm.planDate[1]
       if (this.naturalResourcesFlag) {
-
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];
           if (item.reportFlag) {
-
             if (
               !item.workGroupId &&
               !item.personId && item.processingType == "self_produced"
@@ -1324,7 +1394,6 @@ export default {
         this.dataForm.materialFlag = true
       } else {
         this.dataForm.materialFlag = false
-
       }
       console.log("表单", this.dataForm);
       console.log("工序", this.dataFormTwo.data);
@@ -1336,34 +1405,34 @@ export default {
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
       let arr = []
-      if (this.dataForm.autoMaterialFlag) {
-
-        this.dataForm.lineEdgeList.forEach(item => {
-          arr.push({
-            productionOrderId: "",
-            warehouseId: item
-          })
-        })
-      }
+      // if (this.dataForm.autoMaterialFlag) {
+      //   this.dataForm.lineEdgeList.forEach(item => {
+      //     arr.push({
+      //       productionOrderId: "",
+      //       warehouseId: item
+      //     })
+      //   })
+      // }
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
-        lineEdgeList: arr
+        lineEdgeList: arr,
+        materialList:this.materialList,
       }
-      addProdPlanArrange(obj).then(res => {
+      this.btnLoading = true
+      addProdOrder(obj).then(res => {
         this.btnLoading = false
-        this.$message.success("生成编排成功")
+        this.$message.success("新建任务成功")
         setTimeout(() => {
-          this.$emit('close')
+          this.$emit('close', true)
         }, 1500);
       }).catch(error => {
         this.btnLoading = false
-
       })
     },
     handleConfirm(value) {
-
+      console.log(this.dataForm);
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
@@ -1376,12 +1445,6 @@ export default {
           } else {
             this.checkFun()
           }
-
-
-
-
-
-
         }
       })
     }
@@ -1538,7 +1601,6 @@ $footerPadding: '10px';
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 .productInfo ::v-deep .el-collapse-item__wrap {
@@ -1549,7 +1611,6 @@ $footerPadding: '10px';
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
-
 
 .import_t {
   font-size: 22px;
@@ -1587,8 +1648,6 @@ $footerPadding: '10px';
 .underline-button {
   text-decoration: underline;
 }
-
-
 
 .personBox p {
   text-align: center;

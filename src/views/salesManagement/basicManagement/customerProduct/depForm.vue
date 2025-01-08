@@ -80,7 +80,7 @@
                     </el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productsCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                       <template slot="header">
                         <span class="required">*</span> 品名规格
@@ -369,7 +369,7 @@
                 </el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productsCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                   <template slot="header">
                     <span class="required">*</span> 品名规格
@@ -1214,7 +1214,7 @@ export default {
     submitAllProduct() {
       this.allProVisible = false
       this.selectArr.forEach(item => {
-        item.productsCategoryName = item.productCategoryName
+        item.productCategoryName = item.productCategoryName
         item.productName = item.name
         item.productCode = item.code
         item.productsId = item.id
@@ -1572,7 +1572,7 @@ export default {
       let customerDrawingNumber
       let obj = JSON.parse(JSON.stringify(this.createdData))
       obj.taxRate = this.taxRate * 1
-      this.dataFormTwo.lines[index].productsCategoryName = item.data.productCategoryName
+      this.dataFormTwo.lines[index].productCategoryName = item.data.productCategoryName
       this.dataFormTwo.lines[index].productDrawingNo = item.data.drawingNo
       this.dataFormTwo.lines[index].mainUnit = item.data.mainUnit
       this.dataFormTwo.lines[index].productsId = item.data.id

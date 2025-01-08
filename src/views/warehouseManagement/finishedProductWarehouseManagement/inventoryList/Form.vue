@@ -105,6 +105,7 @@
                         <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                           v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase'">
                           <template slot="header">
@@ -281,6 +282,7 @@
                         <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                           v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase'">
                           <template slot="header">

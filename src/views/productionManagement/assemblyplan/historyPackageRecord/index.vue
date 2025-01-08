@@ -236,7 +236,7 @@ export default {
                     type: 'input'
                 },
                 {
-                    prop: 'productsCategoryName',
+                    prop: 'productCategoryName',
                     label: '产品分类',
                     type: 'input'
                 },
@@ -453,7 +453,7 @@ export default {
                         label: '产品编码',
                         type: 'input'
                     },{
-                        prop: 'productsCategoryName',
+                        prop: 'productCategoryName',
                         label: '产品分类',
                         type: 'input'
                     },

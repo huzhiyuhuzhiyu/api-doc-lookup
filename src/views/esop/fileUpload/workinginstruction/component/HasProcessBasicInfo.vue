@@ -31,7 +31,7 @@ export default {
                 approvalStatus:'',
                 enabledMark:false,
                 orderNo:'',
-                productsCategoryName:'',
+                productCategoryName:'',
                 productCategoryId:'',
                 productsId:'',
                 drawingNo:'',
@@ -416,7 +416,7 @@ export default {
             this.dataForm.productsId = id
             this.dataForm.drawingNo = drawingNo
             this.dataForm.productCategoryId = productCategoryId
-            this.dataForm.productsCategoryName = productCategoryName
+            this.dataForm.productCategoryName = productCategoryName
             this.dataForm.routingId = routingId
             this.changeRoutingName(routingName)
             this.changeProductsCode(code)
@@ -426,7 +426,7 @@ export default {
             this.dataForm.drawingNo = all.drawingNo
             this.dataForm.productsCode = all.productCode
             this.dataForm.productCategoryId = ""
-            this.dataForm.productsCategoryName =  all.productsCategoryName
+            this.dataForm.productCategoryName =  all.productCategoryName
         }
     },
 
@@ -550,7 +550,7 @@ export default {
                                     </el-col>
                                     <el-col :span="6">
                                         <el-form-item label="产品分类">
-                                            <el-input  :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
+                                            <el-input  :value="dataForm.productCategoryName" placeholder="请选择产品分类" readonly/>
                                         </el-form-item>
                                     </el-col>
                                     <el-col :span="6" v-if="!isFileUploadPage && !isNoProductPage">

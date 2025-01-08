@@ -220,7 +220,7 @@
                   <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
-                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" />
                   <!-- <el-table-column prop="documentStatus" label="单据状态" width="120" align="center">
                     <template slot-scope="{row}">
                       <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>
@@ -253,7 +253,7 @@
                   <el-table-column prop="drawingNo" label="品名规格" min-width="300"  show-overflow-tooltip/>
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
-                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" />
                   <el-table-column prop="enabledMark" label="启用状态" width="120" align="center">
                     <template slot-scope="{row}">
                       <el-tag type="danger" v-if="row.enabledMark === false">禁用</el-tag>
@@ -280,7 +280,7 @@
                   <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
 
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
-                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" />
                   <el-table-column prop="categoryName" label="文件分类" min-width="120" />
                   <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
                     <template slot-scope="{row}">
@@ -307,7 +307,7 @@
                   <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
                   <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />
-                  <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" />
                   <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
                     <template slot-scope="{row}">
                       <el-tag type="warning" v-if="row.documentStatus === 'draft'">草稿</el-tag>

@@ -68,7 +68,7 @@
                     <template v-if="!isNoProductPage || isImage">
                         <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                         <el-table-column prop="productsCode" label="产品编码" min-width="120" />
-                        <el-table-column prop="productsCategoryName" label="产品分类" width="140" />
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140" />
                     </template>
                     <template  v-if="isNoProductPage">
                         <el-table-column prop="categoryName" label="文件分类" min-width="120" />
@@ -292,7 +292,7 @@ export default {
                     type: 'input'
                 },
                 {
-                    prop: 'productsCategoryName',
+                    prop: 'productCategoryName',
                     label: '产品分类',
                     type: 'input'
                 },
@@ -505,7 +505,7 @@ export default {
                         label: '产品编码',
                         type: 'input'
                     },{
-                        prop: 'productsCategoryName',
+                        prop: 'productCategoryName',
                         label: '产品分类',
                         type: 'input'
                     },

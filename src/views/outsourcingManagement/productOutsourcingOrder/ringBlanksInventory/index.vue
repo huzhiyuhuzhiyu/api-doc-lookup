@@ -272,9 +272,9 @@ export default {
         'taxAmount',
         'receivingStatus',
         'createByName',
-        'weight',
-        'proportion',
-        'discount'
+        // 'weight',
+        // 'proportion',
+        // 'discount'
       ]
     }
   },

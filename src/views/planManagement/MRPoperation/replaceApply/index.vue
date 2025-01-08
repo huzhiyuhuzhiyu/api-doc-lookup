@@ -143,7 +143,7 @@ export default {
     },
     created() {
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-        // this.initData()
+        this.initData()
     },
     methods: {
         columnSetFun() {

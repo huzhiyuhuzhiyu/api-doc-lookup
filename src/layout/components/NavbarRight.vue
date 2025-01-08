@@ -1,9 +1,9 @@
 <template>
     <div class="right-menu">
-        <el-tooltip content="收藏" placement="bottom">
+        <!-- <el-tooltip content="收藏" placement="bottom">
             <i class="el-icon-star-off right-menu-item hover-effect" @click="openRouterList()"
                 :class="{ 'twinkle': isTwinkle }"></i>
-        </el-tooltip>
+        </el-tooltip> -->
         <!-- <template v-if="device !== 'mobile'"> -->
         <template v-if="showSearch">
             <search id="header-search" class="right-menu-item hover-effect" />

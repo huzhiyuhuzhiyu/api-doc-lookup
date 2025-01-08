@@ -116,6 +116,7 @@
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="processName" label="工序名称" width="160" :key="222"
                           v-if="dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
                         </el-table-column>

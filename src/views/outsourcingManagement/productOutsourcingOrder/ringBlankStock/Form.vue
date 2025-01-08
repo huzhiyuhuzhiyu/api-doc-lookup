@@ -87,8 +87,8 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
 
                     <JNPF-table style="border: 1px solid #e3e7ee;" custom-column :fixedNO="true" ref="multipleTable"
-                      @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                      id="table" border :height="customStyleData">
+                      @selection-change="handeleProductInfoData" :hasC="type != 'look'" hasNO fixedNO
+                      v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" border :height="customStyleData">
                       <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                         :key="2"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
@@ -273,7 +273,7 @@
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" :disabled="sourceDisabled"
                             @click="handlerOpenSource(scope.$index, 'source')">
-                            配置发料清单
+                            查看发料清单
                           </el-button>
                           <el-button size="mini" type="text" class="JNPF-table-delBtn"
                             v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
@@ -1000,7 +1000,7 @@ export default {
       }
       return true
     },
-    // 配置资源
+    // 查看资源
     handlerOpenSource(index, type) {
       if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
 
@@ -1604,9 +1604,6 @@ export default {
         .catch(() => { })
     }
   },
-  updated() {
-    this.$refs['multipleTable'].doLayout()
-  }
 }
 </script>
 <style scoped>

@@ -56,16 +56,15 @@
                         批量删除
                       </el-button>
                       |
-                      <el-table :header-cell-style="{ background: '#F5F7FA', color: '#606266' }" :fixedNO="true" hasC
-                        ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
-                        :data="dataFormTwo.data" border :height="customStyleData">
-                        <el-table-column type="selection" width="55" fixed="left" align="center"></el-table-column>
-                        <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <JNPF-table :fixedNO="true" hasC ref="multipleTable" @selection-change="handeleProductInfoData"
+                        hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" border
+                        :height="customStyleData">
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                           key="1"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
                           key="3" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                           key="5">
                           <template slot="header">
@@ -387,7 +386,7 @@
                             </el-button>
                           </template>
                         </el-table-column>
-                      </el-table>
+                      </JNPF-table>
                     </el-form>
                     <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin-right:10px;margin-left: 5px;">
@@ -1526,9 +1525,6 @@ export default {
       })
     }
     window.addEventListener('resize', this.clientResize)
-  },
-  updated() {
-    this.$refs['multipleTable'].doLayout()
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.clientResize)

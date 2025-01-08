@@ -757,6 +757,7 @@ export default {
       this.$set(this.productData[index], 'protrusion', data.protrusion)
       this.$set(this.productData[index], 'preload', data.preload)
       this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
+      this.$set(this.productData[index], 'angle', data.angle)
                          
     }, 
 

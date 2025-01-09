@@ -7,6 +7,14 @@ export function getSalaryList(data) {
         data: data
     })
 }
+// 月工资列表数据(总计)
+export function getMonthSalaryReportList(data) {
+    return request({
+        url: '/api/mrp/work/report/month/wages/report',
+        method: 'post',
+        data: data
+    })
+}
 // 工资管理列表数据(总计)
 export function getSalaryReportList(data) {
     return request({

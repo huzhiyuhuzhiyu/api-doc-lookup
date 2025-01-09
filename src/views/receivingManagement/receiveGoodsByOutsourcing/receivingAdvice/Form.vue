@@ -660,7 +660,7 @@ export default {
             }),
             trigger: ['blur']
           },
-          { validator: this.calcValidate(), trigger: 'blur' },
+          // { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },

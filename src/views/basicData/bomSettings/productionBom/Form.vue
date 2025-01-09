@@ -55,10 +55,9 @@
                     </el-collapse-item>
 
                     <el-collapse-item title="子件信息" name="productInfo">
-                      <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
-                        :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                        @deleteth="addOrDelLinesItem" customStyle :isProjectSwitch="isProjectSwitch"
-                        :projectId="dataForm.projectId" :isProductNameSwitch="isProductNameSwitch" />
+                        <TableForm-product :hasReplace="true" :value="linesList" @input="contentChanges" ref="tableForm"
+                                           :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
+                                           @deleteth="addOrDelLinesItem" customStyle @replaceBom="replaceBom"/>
                     </el-collapse-item>
                   </el-collapse>
                 </el-tab-pane>
@@ -79,15 +78,16 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="子件信息" name="productInfo">
-                  <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
+                  <TableForm-product :hasReplace="true" :value="linesList" @input="contentChanges" ref="tableForm"
                     :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                    @deleteth="addOrDelLinesItem" customStyle />
+                    @deleteth="addOrDelLinesItem" customStyle @replaceBom="replaceBom"/>
                 </el-collapse-item>
               </el-collapse>
             </div>
           </div>
         </div>
       </div>
+      <BomReplace @submitBomReplace="submitBomReplace" ref="BomReplace" v-if="bomReplaceVisible" :dataForm="dataForm" :projectId="dataForm.projectId" :btnType="btnType" :isProjectSwitch="isProjectSwitch" :isProductNameSwitch="isProductNameSwitch"></BomReplace>
     </div>
   </transition>
 </template>
@@ -116,11 +116,13 @@ import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
+import BomReplace from '@/views/basicData/bomSettings/BOMCreate/bomReplace.vue'
 export default {
-  components: { TableFormProduct, Process, recordList },
+  components: { BomReplace, TableFormProduct, Process, recordList },
   mixins: [busFlow, getProjectList],
   data() {
     return {
+      bomReplaceVisible: false,
       isattachmentswitch: '',
       isProductNameSwitch: '',
       categoryId: '',
@@ -883,7 +885,12 @@ export default {
           }
           if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
         }
-        this.linesList = JSON.parse(JSON.stringify(tempList))
+          this.linesList = tempList.map(item=>{
+              return {
+                  ...item,
+                  replaceLines:[]
+              }
+          })
         this.$nextTick(() => {
           this.$refs.tableForm.setDefaultValue()
           // 审批
@@ -978,7 +985,17 @@ export default {
           }
         })
         .catch(() => { })
-    }
+    },
+      replaceBom(data){
+          console.log(data,'替换子件')
+          this.bomReplaceVisible = true
+          this.$nextTick(() => {
+              this.$refs.BomReplace.init(data,this.linesList[data.$index].replaceLines)
+          })
+      },
+      submitBomReplace(replaceLines,index){
+          this.linesList[index].replaceLines = replaceLines
+      },
   }
 }
 </script>

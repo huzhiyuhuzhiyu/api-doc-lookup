@@ -29,10 +29,12 @@
                           </el-collapse-item>
 
                           <el-collapse-item title="子件信息" name="productInfo">
-                            <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
+                            <TableForm-product :hasReplace="true" :value="linesList" @input="contentChanges" ref="tableForm"
                               :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
                               @deleteth="addOrDelLinesItem" customStyle :isProjectSwitch="isProjectSwitch"
-                              :projectId="this.dataForm.projectId" :isProductNameSwitch="isProductNameSwitch" />
+                              :projectId="this.dataForm.projectId" :isProductNameSwitch="isProductNameSwitch"
+                              @replaceBom="replaceBom"
+                            />
                           </el-collapse-item>
                         </el-collapse>
                       </el-tab-pane>
@@ -66,6 +68,7 @@
           </div>
         </div>
       </div>
+      <BomReplace @submitBomReplace="submitBomReplace" ref="BomReplace" v-if="bomReplaceVisible" :dataForm="dataForm" :projectId="dataForm.projectId" :btnType="btnType" :isProjectSwitch="isProjectSwitch" :isProductNameSwitch="isProductNameSwitch"></BomReplace>
     </div>
   </transition>
 </template>
@@ -83,16 +86,7 @@ import {
 } from '@/api/basicData/index'
 
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import TableFormProduct from '../BOMCreate/component/TableForm-product/index.vue' // 产品选择组件
-import {
-  getApprovalTemplate,
-  getApprovalDetailTree,
-  busApprovalFlowTree,
-  getSaleBusDetail,
-  getBusDetail,
-  approvalTransferList
-} from '@/api/basicData/approvalAdministrator'
 import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { mapGetters, mapState } from 'vuex'
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
@@ -101,12 +95,14 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 Vue.prototype.$getLabel = getLabel
 import getProjectList from '@/mixins/generator/getProjectList'
+import BomReplace from '@/views/basicData/bomSettings/BOMCreate/bomReplace.vue'
 export default {
   name: 'BOMCreate',
-  components: { TableFormProduct, Process },
+  components: { BomReplace, TableFormProduct, Process },
   mixins: [getProjectList],
   data() {
     return {
+      bomReplaceVisible: false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       projectIdData: [],
@@ -117,8 +113,8 @@ export default {
       btnType: 'add',
       visible: true,
       btnLoading: false,
-      treeLoading: true,
-      formLoading: true,
+      treeLoading: false,
+      formLoading: false,
       title: '',
       autoCode: undefined,
       refreshTree: true,
@@ -335,7 +331,6 @@ export default {
         { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
-      formLoading: false,
       isDoubleFlag: false,
       approvalStatus: '',
       statusFlag: false,
@@ -535,34 +530,6 @@ export default {
           .catch(() => {
             this.btnLoading = false
           })
-        getSaleBusDetail(bomId).then((res) => {
-          if (res.data) {
-            this.firstOneNode = []
-            this.approvalForm = res.data.form
-            this.transferQuery.approvalFormId = this.approvalForm.id
-            this.firstOneNode.push({
-              name: res.data.form.createByName
-            })
-            let data = res.data.formNodeTree.childNode
-            if (data) {
-              this.addNodeTypeAndNodeName(data)
-
-              this.busNodeConfig.childNode = data
-              this.workVisible = true
-              // this.$nextTick(() => {
-              //   this.$refs.workflowRef.initData('busing', this.btnType)
-              // })
-            }
-            if (this.btnType == 'look') {
-              this.transferQuery.documentId = bomId
-              approvalTransferList(this.transferQuery).then((res) => {
-                this.transferData = res.data.records
-              })
-            }
-          } else {
-            this.busNodeConfig.childNode = null
-          }
-        })
         // 获取bom树
         if (!this.treeData.length) {
           getBomTree(bomId).then((res) => {
@@ -615,34 +582,6 @@ export default {
           .catch(() => {
             this.btnLoading = false
           })
-        getSaleBusDetail(approvalStatus.id).then((res) => {
-          if (res.data) {
-            this.firstOneNode = []
-            this.approvalForm = res.data.form
-            this.transferQuery.approvalFormId = this.approvalForm.id
-            this.firstOneNode.push({
-              name: res.data.form.createByName
-            })
-            let data = res.data.formNodeTree.childNode
-            if (data) {
-              this.addNodeTypeAndNodeName(data)
-
-              this.busNodeConfig.childNode = data
-              this.workVisible = true
-              // this.$nextTick(() => {
-              //   this.$refs.workflowRef.initData('busing', this.btnType)
-              // })
-            }
-            if (this.btnType == 'look') {
-              this.transferQuery.documentId = approvalStatus.id
-              approvalTransferList(this.transferQuery).then((res) => {
-                this.transferData = res.data.records
-              })
-            }
-          } else {
-            this.busNodeConfig.childNode = null
-          }
-        })
       } else if (productId && this.btnType == 'add') {
         this.firstId = this.firstId ? this.firstId : productId
         this.title = '新建BOM'
@@ -814,9 +753,8 @@ export default {
           bom: this.dataForm,
           lines: this.linesList,
           doubleSubmitFlag: this.isDoubleFlag,
-          flowData: this.flowData
+          flowData: this.flowData,
         }
-
         // 检查是否有循环问题
         let loopBugRes = await checkLoopBug(dataObj).catch((err) => { })
         if (!loopBugRes) {
@@ -921,7 +859,12 @@ export default {
           }
           if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
         }
-        this.linesList = JSON.parse(JSON.stringify(tempList))
+        this.linesList = tempList.map(item=>{
+            return {
+                ...item,
+                replaceLines:[]
+            }
+        })
         this.$nextTick(() => {
           this.$refs.tableForm.setDefaultValue()
           // 审批
@@ -1026,7 +969,17 @@ export default {
           }
         })
         .catch(() => { })
-    }
+    },
+    replaceBom(data){
+        console.log(data,'替换子件')
+        this.bomReplaceVisible = true
+        this.$nextTick(() => {
+            this.$refs.BomReplace.init(data,this.linesList[data.$index].replaceLines)
+        })
+    },
+    submitBomReplace(replaceLines,index){
+        this.linesList[index].replaceLines = replaceLines
+    },
   }
 }
 </script>

@@ -10,7 +10,7 @@
 } -->
 <!-- hasToolbar 是否展示工具栏（布尔值 默认true） -->
 <!-- hasActionbar 是否展示操作栏（布尔值 默认true） -->
-<!-- tableItems 渲染的列表字段 
+<!-- tableItems 渲染的列表字段
   完整参数：
   prop 绑定变量 - 必传
   label 显示内容 - 必传
@@ -38,14 +38,14 @@
 <!-- addth 新增行 -->
 <!-- deleteth 删除行 -->
 
-<!-- 
+<!--
   引用方式：import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue' // 附带产品多选的表格表单组件
  -->
 
 <template>
   <div class="TableForm_main">
     <div v-if="realOpenMode !== '只读' && hasToolbar" class="TableForm_title">
-      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择子件</el-button>
+      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择{{ hasReplace ? '子件' : '产品' }}</el-button>
       |
       <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
       |
@@ -76,9 +76,12 @@
           </el-table-column>
         </template>
 
-        <el-table-column label="操作" width="90" :fixed="fixedA ? 'right' : false"
+        <el-table-column label="操作" :width="hasReplace ? '180' : '90'" :fixed="fixedA ? 'right' : false"
           v-if="realOpenMode !== '只读' && hasActionbar" key="actionBar">
           <template slot-scope="scope">
+            <el-button type="text"  @click="replaceBom(scope)" v-if="hasReplace">
+              {{ realOpenMode === '只读' ? '查看替代产品' : '设置替代产品' }}
+            </el-button>
             <el-button type="text" class="JNPF-table-delBtn" :disabled="realOpenMode === '只读'" @click="deleteth(scope)">
               {{ $t(`common.delBtn`) }}
             </el-button>
@@ -212,6 +215,10 @@ export default {
     isProductNameSwitch: {
       type: String
     },
+    hasReplace:{
+        type: Boolean,
+        default: false
+    }
   },
   watch: {
     value: {
@@ -270,7 +277,7 @@ export default {
           item.classTypeName = '保持架'
         } else if (item.classType === 'sealing_cap') {
           item.classTypeName = '密封盖'
-        } 
+        }
       })
 
       return res.data.records
@@ -432,7 +439,10 @@ export default {
           item.querySelector('.el-table__body-wrapper').style.height = 'auto'
         })
       })
-    }
+    },
+    replaceBom(scope){
+        this.$emit('replaceBom', scope)
+    },
   }
 }
 </script>

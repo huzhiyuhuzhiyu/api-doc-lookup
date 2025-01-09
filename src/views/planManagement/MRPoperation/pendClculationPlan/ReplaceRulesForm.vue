@@ -45,28 +45,15 @@
                     </el-row>
                   </el-form>
                   <div style="height: calc(100% - 73px); position: relative;">
-                    <el-col :span="10">
-                        <div  class="TableForm_title" style="height: 34px">
-                        </div>
-                      <TableForm-product :value="dataForm.left" :ref="`linesForm_left`"
+                    <el-col :span="24">
+                      <TableForm-product :hasActionbar="false" :hasToolbar="false" :value="dataForm.left" :ref="`linesForm_left`"
                         :tableItems="linesFormItems_left" :btnType="btnType"
-                        @addth="(data) => { addth(data, null, 'left') }"
-                        @deleteth="(scope) => { deleteth(scope, null, 'left') }"
-                        @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null, 'left') }"
-                        btnType="look" />
+                        @addth="(data) => { addth(data, null, '') }"
+                        @deleteth="(scope) => { deleteth(scope, null, '') }"
+                        @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null, '') }"
+                        />
                     </el-col>
-                    <el-col :span="2" class="">
-                      <h1 style="text-align: center; font-size: 40px; font-weight: 700;">=></h1>
-                    </el-col>
-                    <el-col :span="12">
-                        <div  class="TableForm_title" style="height: 34px" v-if="btnType === 'look'">
-                        </div>
-                      <TableForm-product :value="dataForm.right" :ref="`linesForm_right`"
-                        :tableItems="linesFormItems_right" :btnType="btnType"
-                        @addth="(data) => { addth(data, null, 'right') }"
-                        @deleteth="(scope) => { deleteth(scope, null, 'right') }"
-                        @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null, 'right') }" />
-                    </el-col>
+
                   </div>
                 </el-tab-pane>
                 <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
@@ -98,27 +85,13 @@
                                 </el-row>
                             </el-form>
                    <div style="height: calc(100% - 73px); position: relative;">
-                                <el-col :span="10">
-                                    <div  class="TableForm_title" style="height: 34px">
-                                    </div>
-                                    <TableForm-product :value="dataForm.left" :ref="`linesForm_left`"
+                                <el-col :span="24">
+                                    <TableForm-product :hasActionbar="false" :hasToolbar="false" :value="dataForm.left" :ref="`linesForm_left`"
                                                        :tableItems="linesFormItems_left" :btnType="btnType"
-                                                       @addth="(data) => { addth(data, null, 'left') }"
-                                                       @deleteth="(scope) => { deleteth(scope, null, 'left') }"
-                                                       @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null, 'left') }"
-                                                       btnType="look" />
-                                </el-col>
-                                <el-col :span="2" class="">
-                                    <h1 style="text-align: center; font-size: 40px; font-weight: 700;">=></h1>
-                                </el-col>
-                                <el-col :span="12">
-                                    <div  class="TableForm_title" style="height: 34px" v-if="btnType === 'look'">
-                                    </div>
-                                    <TableForm-product :value="dataForm.right" :ref="`linesForm_right`"
-                                                       :tableItems="linesFormItems_right" :btnType="btnType"
-                                                       @addth="(data) => { addth(data, null, 'right') }"
-                                                       @deleteth="(scope) => { deleteth(scope, null, 'right') }"
-                                                       @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null, 'right') }" />
+                                                       @addth="(data) => { addth(data, null, '') }"
+                                                       @deleteth="(scope) => { deleteth(scope, null, '') }"
+                                                       @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null, '') }"
+                                                       />
                                 </el-col>
                             </div>
               </div>
@@ -154,39 +127,7 @@ export default {
         left: [],
         right: [],
       },
-      linesFormItems_left: [
-        // { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
-        // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 30 },
-        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
-        { prop: "qty", label: "数量", type: 'view', minWidth: 80 },
-        { prop: "reduceType", label: "扣减料方式", type: 'select', disabled:true,
-            options: [
-                { label: '生成领料单', value: 'picking' },
-                { label: '自动扣减料', value: 'auto' },
-                { label: '都不是', value: 'none' }
-            ], minWidth: 160 },
-      ],
-      linesFormItems_right: [
-        // { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
-        // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 120 },
-        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
-        {
-          prop: "qty", label: "数量", value: "", type: 'input', width: 180,
-          itemRules: [
-            { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`目标产品列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
-            { required: true, message: '', trigger: 'blur' },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`目标产品列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
-            { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`目标产品列表第${index + 1}行：数量${errMsg}`) }), trigger: 'blur' }
-          ]
-        },
-        { prop: "reduceType", label: "扣减料方式", type: 'select',itemRules: [{ required: true, trigger: 'change' }],
-              options: [
-                  { label: '生成领料单', value: 'picking' },
-                  { label: '自动扣减料', value: 'auto' },
-                  { label: '都不是', value: 'none' }
-              ],
-         minWidth: 160 },
-      ],
+      linesFormItems_left:[],
       dataFormRules: {
         businessCode: [
           { validator: this.formValidate({ type: 'noEmtry', params: [" ", (errMsg) => { this.$message.error('请先选择主产品类型') }] }), trigger: 'change' },
@@ -210,6 +151,43 @@ export default {
   },
   created() { },
   methods: {
+    setLinesFormItems_left(){
+      this.linesFormItems_left = [
+        // { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
+        // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 30 },
+        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "qty", label: "数量", type: 'view', minWidth: 80 },
+        { prop: "reduceType", label: "扣减料方式", type: 'select', disabled:true,
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ], minWidth: 160 },
+        { prop: "replaceProductDrawingNo", label: "替换子件规格", value: "", type: 'select', minWidth: 150,options:(scope)=>{
+            console.log(scope,'scope')
+            return  scope.row.replaceLines.map(item=>{
+              return {
+                ...item,
+                label: item.drawingNo,
+                value: item.drawingNo
+              }
+            })
+
+          },change:(val,scope)=>{
+            let currentRow = scope.row.replaceLines.find(item=>item.drawingNo === val)
+            this.dataForm.left[scope.$index].replaceQty = currentRow.qty
+            this.dataForm.left[scope.$index].replaceReduceType = currentRow.reduceType
+          }
+        },
+        { prop: "replaceQty", label: "替换子件数量", value: "", type: 'view', minWidth: 80},
+        { prop: "replaceReduceType", label: "替换扣减料方式", type: 'select', disabled:true,
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ], minWidth: 160 },
+      ]
+    },
     async fetchData(code, flag) {
         try {
               const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -243,28 +221,21 @@ export default {
         this.fetchData("RADH", true)
         // 根据BOMid获取BOM
         detailBomData(idOrPlanData.bomId).then(res => {
-          this.dataForm.left = res.data.lines.map(item => ({
-            bomId: item.bomId,
-            bomLineId: item.id,
-            productsId: item.productId,
-            productDrawingNo: item.drawNo,
-            reduceType: item.reduceType,
-            qty: item.qty || '1',
-          }))
-          this.dataForm.right = res.data.lines.map(item => ({
-            // bomId: item.bomId,
-            // bomLineId: item.id,
-            productsId: item.productId,
-            productDrawingNo: item.drawNo,
-            qty: item.qty || '1',
-            // productCode: item.productCode,
-            // productName: item.productName,
-            calculationDirection: item.calculationDirection,
-            mainUnit: item.mainUnit,
-            reduceType: item.reduceType,
-            ratio: item.ratio,
-          }))
-
+          this.dataForm.left = res.data.lines.map(item => {
+            return {
+              ...item,
+              bomId: item.bomId,
+              bomLineId: item.id,
+              productsId: item.productId,
+              productDrawingNo: item.drawNo,
+              reduceType: item.reduceType,
+              qty: item.qty || '1',
+              replaceProductDrawingNo:'',
+              replaceQty:'',
+              replaceReduceType:'',
+            }
+          })
+          this.setLinesFormItems_left()
           this.formLoading = false
         })
         this.getBusInfo('b067')
@@ -286,7 +257,20 @@ export default {
             routingName: btnType === 'anew' ? '' : res.data.apply.routingName,
             routingId: res.data.apply.routingId,
             projectId: res.data.apply.projectId,
-            left: res.data.originBomList,
+            left: res.data.originBomList.map((item,index)=>{
+              return {
+                ...item,
+                replaceProductDrawingNo:res.data.replaceBomList[index].productDrawingNo,
+                replaceQty:res.data.replaceBomList[index].qty,
+                replaceReduceType:res.data.replaceBomList[index].reduceType,
+                replaceLines:res.data.replaceBomList.map(item=>{
+                  return {
+                    ...item,
+                    drawingNo: item.productDrawingNo,
+                  }
+                })
+              }
+            }),
             right: res.data.replaceBomList,
           }
           this.formLoading = false
@@ -297,6 +281,7 @@ export default {
               // 流程信息和流转记录
              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           }
+          this.setLinesFormItems_left()
         })
         if (btnType === 'anew') {
             this.fetchData("RADH", true)
@@ -311,22 +296,21 @@ export default {
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 
-      // if (submitFlag && (!this.dataForm.left.length || !this.dataForm.right.length)) {
-      //   this.$message.error(`替代源产品和目标产品都不能为空！`)
-      //   submitFlag = false
-      // }
-
       // 校验表单
       let form_1 = this.$refs['dataForm']
       let valid_1 = await form_1.validate().catch(err => false)
       if (!valid_1 && submitFlag) {
         submitFlag = false
+        this.btnLoading = false
         this.jnpf.focusErrValidItem(form_1.fields)
       }
 
-      if (submitFlag && !this.dataForm.right.length) {
-        this.$message.error(`替代目标产品不能为空！`)
-        submitFlag = false
+      if (submitFlag && this.dataForm.left.length) {
+        submitFlag = this.dataForm.left.some(item=>item.replaceProductDrawingNo)
+        if (!submitFlag) {
+          this.btnLoading = false
+          return this.$message.error('请至少选择一条替换子件规格')
+        }
       }
 
       // if (submitFlag) {
@@ -352,15 +336,23 @@ export default {
       // }
 
       // 校验表单表格（子数据列表）
-      let form_2 = this.$refs['linesForm_right'].$refs.main
+      let form_2 = this.$refs['linesForm_left'].$refs.main
       let valid_2 = await form_2.validate().catch(err => false)
       if (!valid_2 && submitFlag) {
         submitFlag = false
+        this.btnLoading = false
         this.jnpf.focusErrValidItem(form_2.fields)
       }
 
       // 自动聚焦未使用则提交
       if (submitFlag) {
+        const replaceBomList = []
+        const replaceList = this.dataForm.left.filter(item=>item.replaceProductDrawingNo)
+        const replaceLists = this.dataForm.left.filter(item=>!item.replaceProductDrawingNo)
+        replaceList.forEach(item=>{
+          let lines = item.replaceLines.find(line=>line.drawingNo === item.replaceProductDrawingNo)
+          replaceBomList.push({...lines,productsId:lines.productId,bomId:item.bomId})
+        })
         const _data = {
           apply: {
             // id: this.dataForm.id,
@@ -374,10 +366,9 @@ export default {
             orderNo: this.dataForm.orderNo,
           },
           originBomList: this.dataForm.left,
-          replaceBomList: this.dataForm.right,
+          replaceBomList: [...replaceBomList,...replaceLists],
           flowData: this.flowData,
         }
-
         addMrpReplaceApply(_data).then(res => {
           this.$message({
             message: '提交成功',
@@ -422,7 +413,6 @@ export default {
       this.$emit('close')
     },
     addth(data, index, type) {
-      if (!type) return
       let tempList = JSON.parse(JSON.stringify(this.dataForm[type]))
       // 新数据替代旧数据
       let hasItemList = []
@@ -459,10 +449,10 @@ export default {
     linesChange(dataOrIndex, prop, value, index, type) {
       console.log({ dataOrIndex, prop, value, index, type });
       if (Array.isArray(dataOrIndex)) {
-        this.dataForm[type] = JSON.parse(JSON.stringify(dataOrIndex))
+        this.dataForm.left = JSON.parse(JSON.stringify(dataOrIndex))
         // this.$set(this.dataForm, type, JSON.parse(JSON.stringify(dataOrIndex)))
       } else if (prop) {
-        this.dataForm[type][dataOrIndex][prop] = value
+        this.dataForm.left[dataOrIndex][prop] = value
       }
     },
   }

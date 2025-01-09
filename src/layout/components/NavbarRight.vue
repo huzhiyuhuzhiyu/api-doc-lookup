@@ -1,9 +1,13 @@
 <template>
     <div class="right-menu">
-        <!-- <el-tooltip content="收藏" placement="bottom">
-            <i class="el-icon-star-off right-menu-item hover-effect" @click="openRouterList()"
+        <el-tooltip content="收藏" placement="bottom">
+            <i class="el-icon-star-off right-menu-item hover-effect" @click="openAddList()"
                 :class="{ 'twinkle': isTwinkle }"></i>
-        </el-tooltip> -->
+        </el-tooltip>
+        <el-tooltip content="收藏夹" placement="bottom">
+            <i class="el-icon-collection right-menu-item hover-effect" @click="openRouterList()"
+                :class="{ 'twinkle': isTwinkle }"></i>
+        </el-tooltip>
         <!-- <template v-if="device !== 'mobile'"> -->
         <template v-if="showSearch">
             <search id="header-search" class="right-menu-item hover-effect" />
@@ -126,6 +130,7 @@
         <MessageList ref="MessageList" @read='read' />
         <Settings ref="Settings" />
         <UserList ref="UserList" @changeTwinkle='changeTwinkle' />
+        <AddList ref="AddList" @changeTwinkle='changeTwinkle' />
         <RouterList ref="RouterList" @changeTwinkle='changeTwinkle' />
     </div>
 </template>
@@ -143,7 +148,8 @@ import Search from '@/components/HeaderSearch'
 import MessageList from './MessageList'
 import Settings from './settings'
 import UserList from './userList/UserList'
-import RouterList from './userList/routerList.vue'
+import AddList from '../components/routerList/add.vue'
+import RouterList from '../components/routerList/routerList.vue'
 import dragDialog from "@/directive/el-drag-dialog";
 import ReconnectingWebSocket from 'reconnecting-websocket'
 // import Notify from '@/utils/notify';
@@ -161,6 +167,7 @@ export default {
         Search,
         MessageList,
         UserList,
+        AddList,
         RouterList,
         Settings,
         activeIndex2: '2',
@@ -438,6 +445,9 @@ export default {
         },
         openUserList() {
             this.$refs.UserList.init()
+        },
+        openAddList() {
+            this.$refs.AddList.init()
         },
         openRouterList() {
             this.$refs.RouterList.init()

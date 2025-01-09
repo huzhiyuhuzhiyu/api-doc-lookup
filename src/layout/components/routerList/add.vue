@@ -1,50 +1,20 @@
 <template>
   <div>
-    <el-drawer title="超链接" :visible.sync="drawer" direction="rtl" class="contacts-drawer JNPF-common-drawer"
-      size="280px" :modal="true" :before-close="handleClose" ref="drawer">
-      <el-tabs v-model="activeTab">
-        <el-tab-pane label="收藏" name="reply">
-          <div class="userList replyList" v-loading="replyLoading && listQuery.currentPage == 1">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="60px" style="margin: 0 10px;">
-              <el-form-item label="名称" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
-              </el-form-item>
-              <el-form-item label="路由">
-                <el-input v-model="ruleForm.router" disabled></el-input>
-              </el-form-item>
-              <el-form-item>
-                <div style="display: flex;justify-content: flex-end">
-                  <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-                </div>
-
-              </el-form-item>
-            </el-form>
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="列表" name="contacts">
-          <el-button type="primary" @click="enterRouter">主要按钮</el-button>
-          <el-input v-model="listQuery.keyword" placeholder="搜索：请输入关键词" clearable @keyup.enter.native="search()"
-            class="search-input">
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="search" title="搜索" />
-          </el-input>
-          <div class="userList" v-loading="loading && listQuery.currentPage == 1" ref="userList">
-            <div v-if="userList.length">
-              <div v-for="(item, i) in userList" :key="i" class="userList-item" @click="readInfo(item)">
-                <el-avatar :size="36" :src="define.comUrl + item.headIcon">
-                </el-avatar>
-                <div class="userList-txt">
-                  <p class="title">{{ item.realName }}/{{ item.account }}</p>
-                  <p class="name">
-                    <span>{{ item.department }}</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <p class="noData-txt" v-else>{{ $t('common.noData') }}</p>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-    </el-drawer>
+    <el-dialog title="收藏" :visible.sync="addVisible" width="30%" :close-on-click-modal="false"
+      :close-on-press-escape="false" :show-close="false">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="60px" style="margin: 0 10px;">
+        <el-form-item label="名称" prop="urlName">
+          <el-input v-model="ruleForm.urlName"></el-input>
+        </el-form-item>
+        <el-form-item label="路由">
+          <el-input v-model="ruleForm.urlAddress" disabled></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+      </span>
+    </el-dialog>
 
 
   </div>
@@ -52,7 +22,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getImUser } from '@/api/permission/user'
+import { addUserFavorites } from '@/api/permission/user'
 import dragDialog from "@/directive/el-drag-dialog";
 import { getIMReply, deleteChatRecord, relocation } from '@/api/system/message'
 export default {
@@ -61,11 +31,11 @@ export default {
   data() {
     return {
       ruleForm: {
-        name: '',
-        router: ''
+        urlName: '',
+        urlAddress: ''
       },
       rules: {
-        name: [
+        urlName: [
           { required: true, message: '请输入名称', trigger: 'blur' },
         ],
 
@@ -74,7 +44,7 @@ export default {
       left: 0,
       selectedTag: {},
       visitedViews: '',
-      drawer: false,
+      addVisible: false,
       activeTab: 'reply',
       userList: [],
       replyList: [],
@@ -114,21 +84,34 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$confirm('此操作将新建收藏, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
+          // this.$confirm('此操作将新建收藏, 是否继续?', '提示', {
+          //   confirmButtonText: '确定',
+          //   cancelButtonText: '取消',
+          //   type: 'warning'
+          // }).then(() => {
+          //   this.ruleForm.userId = this.userInfo.userId
+          //   addUserFavorites(this.ruleForm).then(res => {
+          //     this.addVisible = false
+          //     this.$message({
+          //       type: 'success',
+          //       message: '新建成功!'
+          //     });
+          //   })
+
+          // }).catch(() => {
+          //   this.$message({
+          //     type: 'info',
+          //     message: '已取消新建'
+          //   });
+          // });
+          this.ruleForm.userId = this.userInfo.userId
+          addUserFavorites(this.ruleForm).then(res => {
+            this.addVisible = false
             this.$message({
               type: 'success',
               message: '新建成功!'
             });
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消新建'
-            });
-          });
+          })
         } else {
           console.log('error submit!!');
           return false;
@@ -164,12 +147,12 @@ export default {
 
     init() {
       this.finish = false
-      this.drawer = true
+      this.addVisible = true
       this.listQuery.currentPage = 1
       this.listQuery.keyword = ''
       this.activeTab = 'reply'
-      this.ruleForm.name = ''
-      this.ruleForm.router = window.location.pathname
+      this.ruleForm.urlName = this.$router.currentRoute.meta.zhTitle
+      this.ruleForm.urlAddress = window.location.pathname
       console.log(this.ruleForm, 'jjj')
       this.userList = []
       this.replyList = []

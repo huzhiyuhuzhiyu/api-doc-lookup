@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建收货单'
-          : btnType == 'edit'
-            ? '编辑收货单'
-            : btnType == 'copy'
-              ? '新建收货单'
-              : '查看收货单'
+            ? '新建收货单'
+            : btnType == 'edit'
+              ? '编辑收货单'
+              : btnType == 'copy'
+                ? '新建收货单'
+                : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -17,6 +17,9 @@
           </el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
+          </el-button>
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">
+            提交并打印
           </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -31,10 +34,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -130,9 +133,9 @@
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                      width="110"  />
+                      width="110" />
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
+                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
@@ -266,10 +269,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                      ? true
-                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                        ? false
-                        : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -357,16 +360,15 @@
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
 
-                <el-table-column prop="drawingNo" label="品名规格" width="200"  show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                  width="110"  />
+                  width="110" />
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
-                  v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
                 <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                    /> -->
                 <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -513,6 +515,10 @@
           </div>
         </div>
       </el-dialog>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+        @closePrintPage="closePrintPage" />
     </div>
   </transition>
 </template>
@@ -542,9 +548,11 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { Process, recordList },
+  components: { Process, recordList, PrintBrowse, PrintDialog },
   mixins: [busFlow, getProjectList],
   data() {
     return {
@@ -654,7 +662,7 @@ export default {
             }),
             trigger: ['blur']
           },
-          { validator: this.calcValidate(), trigger: 'blur' },
+          // { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
@@ -1472,7 +1480,7 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
-      console.log(data,'kk')
+      console.log(data, 'kk')
       if (data) {
         data.forEach((item) => {
           item.ordersNo = item.orderNo
@@ -1581,7 +1589,7 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
-    handleConfirm(value) {
+    handleConfirm(value, type) {
       let submitFlag = true
 
       this.$refs['dataForm'].validate((valid) => {
@@ -1757,7 +1765,19 @@ export default {
             } else if (value == 'submit') {
               this.submitmethodsTitle = '提交成功'
             }
-            this.tipsvisible = true
+            if (type) {
+              this.enCode = 'p018'
+              this.formId = res.data.id
+              this.fullName = '采购收货单'
+
+              this.printVisible = true
+              this.$nextTick(() => {
+                this.$refs.printTemplate.init(this.enCode)
+              })
+            } else {
+              this.tipsvisible = true
+            }
+
             // this.$message({
             //   message: msg,
             //   type: 'success',
@@ -1773,6 +1793,25 @@ export default {
             this.btnLoading = false
           })
       }
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode)
+        .then((res) => {
+          if (res.data) {
+            this.printVisible = false
+            this.prindId = res.data.id
+            this.printBrowseVisible = true
+          } else {
+            this.$message.warning('未找到相应打印模版')
+          }
+        })
+        .catch(() => {
+          this.printBrowseVisible = false
+        })
+    },
+    closePrint() {
+      this.btnLoading = false
+      this.printVisible = false
     },
     // 测试审批流
     getBusInfo() {
@@ -1836,8 +1875,8 @@ export default {
   beforeUpdate() {
     this.$nextTick(() => {
       //在数据加载完，重新渲染表格
-      this.$refs['product'].doLayout();
-    });
+      this.$refs['product'].doLayout()
+    })
   }
 }
 </script>

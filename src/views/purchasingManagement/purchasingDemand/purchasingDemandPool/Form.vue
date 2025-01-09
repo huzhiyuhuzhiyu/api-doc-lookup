@@ -1459,6 +1459,7 @@ export default {
       });
     },
     closePrint() {
+      this.btnLoading =false
       this.printVisible = false
     },
     closePrintPage() {

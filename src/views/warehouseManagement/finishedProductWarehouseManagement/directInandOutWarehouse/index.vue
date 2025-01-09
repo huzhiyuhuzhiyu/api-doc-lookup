@@ -140,7 +140,7 @@
                       </div>
                     </div>
 
-                    <JNPF-table ref="product" custom-column :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+                    <JNPF-table ref="product" custom-column :data="productData" :setColumnDisplayList="columnList"  :fixedNO="true" :hasC="btnType != 'look'"
                       @selection-change="handeleProductInfoData" border style="width: 100%;">
                       <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
@@ -678,6 +678,7 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
+      columnList:[],
       datafilelist: [],
       isattachmentswitch: '',
       attachmentData: {},

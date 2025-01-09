@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建收货单'
-          : btnType == 'edit'
-            ? '编辑收货单'
-            : btnType == 'copy'
-              ? '新建收货单'
-              : '查看收货单'
+            ? '新建收货单'
+            : btnType == 'edit'
+              ? '编辑收货单'
+              : btnType == 'copy'
+                ? '新建收货单'
+                : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -17,6 +17,9 @@
           </el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
+          </el-button>
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">
+            提交并打印
           </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -31,10 +34,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -276,10 +279,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                      ? true
-                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                        ? false
-                        : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -685,6 +688,10 @@
           </div>
         </div>
       </el-dialog>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+        @closePrintPage="closePrintPage" />
     </div>
   </transition>
 </template>
@@ -714,9 +721,11 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { Process, recordList },
+  components: { Process, recordList, PrintBrowse, PrintDialog },
   mixins: [busFlow, getProjectList],
   data() {
     return {
@@ -992,7 +1001,7 @@ export default {
         partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
-        deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }],
+        deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
       },
       customerData: {},
       treeLoading: false,
@@ -1005,7 +1014,12 @@ export default {
       endTime: 0,
       selectArr: [],
       customStyleData: 0,
-      formLoading: true
+      formLoading: true,
+      prindId: '',
+      formId: '',
+      enCode: '',
+      printBrowseVisible: false,
+      printVisible: false
     }
   },
   computed: {
@@ -1239,7 +1253,7 @@ export default {
     //数量验证
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
-      console.log(12332222);
+      console.log(12332222)
       return (rule, value, callback) => {
         console.log(value, 'p')
         let index = Number(rule.field.match(/\d+/)[0])
@@ -1669,7 +1683,7 @@ export default {
     },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
-        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight*data.discount)
+        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight * data.discount)
         this.watchNum(data, index)
       }
     },
@@ -1909,7 +1923,7 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
-    handleConfirm(value) {
+    handleConfirm(value, type) {
       let submitFlag = true
       console.log(this.$refs['dataForm'])
       this.$refs['dataForm'].validate((valid) => {
@@ -2066,7 +2080,7 @@ export default {
             excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
             weight: item.weight,
             proportion: item.proportion,
-            discount: item.discount,
+            discount: item.discount
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)
@@ -2099,7 +2113,18 @@ export default {
             } else if (value == 'submit') {
               this.submitmethodsTitle = '提交成功'
             }
-            this.tipsvisible = true
+            if (type) {
+              this.enCode = 'p018'
+              this.formId = res.data.id
+              this.fullName = '采购收货单'
+
+              this.printVisible = true
+              this.$nextTick(() => {
+                this.$refs.printTemplate.init(this.enCode)
+              })
+            } else {
+              this.tipsvisible = true
+            }
             this.$message({
               message: msg,
               type: 'success',
@@ -2114,8 +2139,26 @@ export default {
           .catch(() => {
             this.btnLoading = false
           })
-
       }
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode)
+        .then((res) => {
+          if (res.data) {
+            this.printVisible = false
+            this.prindId = res.data.id
+            this.printBrowseVisible = true
+          } else {
+            this.$message.warning('未找到相应打印模版')
+          }
+        })
+        .catch(() => {
+          this.printBrowseVisible = false
+        })
+    },
+    closePrint() {
+      this.btnLoading = false
+      this.printVisible = false
     },
     // 测试审批流
     getBusInfo() {
@@ -2179,8 +2222,8 @@ export default {
   beforeUpdate() {
     this.$nextTick(() => {
       //在数据加载完，重新渲染表格
-      this.$refs['product'].doLayout();
-    });
+      this.$refs['product'].doLayout()
+    })
   }
 }
 </script>

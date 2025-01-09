@@ -1473,7 +1473,6 @@ export default {
       })
     },
       addth(data, index, type) {
-          if (!type) return
           let tempList = JSON.parse(JSON.stringify(this.materialList))
           let hasItemList = []
           for (let i = 0; i < data.length; i++) {

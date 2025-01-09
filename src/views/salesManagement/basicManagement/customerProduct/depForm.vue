@@ -1438,7 +1438,7 @@ export default {
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
-        configKey: 'fj_quotation'
+        configKey: 'fj_customerproducts'
       }
       return getBimBusinessDetail(obj).then(res => {
         this.isattachmentswitch = res.data.configValue1
@@ -1942,6 +1942,19 @@ export default {
         let obj = JSON.parse(JSON.stringify(this.createdData))
         this.dataFormTwo.lines.push(obj)
       } else {
+        if (this.row.attachmentList) {
+          this.row.attachmentList.forEach((item) => {
+            this.datafilelist.push(
+              {
+                name: item.document.fullName,
+                fileSize: item.document.fileSize,
+                filename: item.document.filePath,
+                id: item.document.id,
+                url: item.url
+              }
+            )
+          })
+        }
         this.dataForm.validDateArr = [row.dateOrderStart, row.dateOrderStop]
         this.dataFormTwo.lines.push(this.row)
       }
@@ -2028,19 +2041,19 @@ export default {
           this.dataForm.dateOrderStart = this.dataForm.validDateArr[0]
           this.dataForm.dateOrderStop = this.dataForm.validDateArr[1]
         }
-        // if (this.datafilelist.length) {
-        //   this.datafilelist.map((item, index) => {
-        //     item.bimAttachments = {
-        //       businessType: '',
-        //       documentId: item.id,
-        //       fileFlag: '',
-        //       sort: index
-        //     }
-        //   })
-        // }
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
         let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
         let obj = {
-          // attachmentList: this.datafilelist,
+          attachmentList: this.datafilelist,
           // sale: this.dataForm,
           cooperativePartnerId: this.dataForm.cooperativePartnerId,
           dateOrderStart: this.dataForm.dateOrderStart,

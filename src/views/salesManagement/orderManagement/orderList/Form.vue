@@ -1803,7 +1803,7 @@ export default {
               var arr = []
               restaurants.forEach((item, index) => {
                 arr.push({
-                  value: item.drawingNo,
+                  value: item.drawingNo + '(' + item.inventoryQuantity + ')',
                   data: item,
                 })
               })

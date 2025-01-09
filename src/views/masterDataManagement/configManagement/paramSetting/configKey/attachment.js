@@ -129,6 +129,11 @@ export default {
         description: '开启后，在请购单新建、编辑、查看都会显示附件操作。',
         mainModule: '请购单'
     },
+    fj_customerproducts: {
+      configKeyLabel: '启用客户产品附件',
+      description: '开启后，在客户产品新建、编辑、查看都会显示附件操作。',
+      mainModule: '销售管理'
+    },
     fj_quotation: {
         configKeyLabel: '启用销售报价附件',
         description: '开启后，在销售报价新建、编辑、查看都会显示附件操作。',

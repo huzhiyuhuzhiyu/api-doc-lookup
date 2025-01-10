@@ -77,12 +77,12 @@
         </template>
 
         <el-table-column label="操作" :width="hasReplace ? '180' : '90'" :fixed="fixedA ? 'right' : false"
-          v-if="realOpenMode !== '只读' && hasActionbar" key="actionBar">
+          v-if="(realOpenMode !== '只读' && hasActionbar) || hasReplace" key="actionBar">
           <template slot-scope="scope">
             <el-button type="text"  @click="replaceBom(scope)" v-if="hasReplace">
               {{ realOpenMode === '只读' ? '查看替代产品' : '设置替代产品' }}
             </el-button>
-            <el-button type="text" class="JNPF-table-delBtn" :disabled="realOpenMode === '只读'" @click="deleteth(scope)">
+            <el-button v-if="realOpenMode !== '只读'" type="text" class="JNPF-table-delBtn" :disabled="realOpenMode === '只读'" @click="deleteth(scope)">
               {{ $t(`common.delBtn`) }}
             </el-button>
           </template>

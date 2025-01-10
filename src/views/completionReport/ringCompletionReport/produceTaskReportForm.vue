@@ -111,6 +111,10 @@
                     style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
                     }}]</span>
+                    <span v-if="dataForm.pickingWay=='dispatch_list'"
+                    style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">可领库存数：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.availableStockNum
+                    }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
 
@@ -351,6 +355,7 @@ export default {
         this.$set(this.currentProcess, 'reportingQuantity', 0)
         this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
+        this.$set(this.currentProcess, 'availableStockNum', 0)
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
@@ -366,7 +371,8 @@ export default {
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
-      this.$set(this.currentProcess, 'materialWasteQuantity', 0)
+        this.$set(this.currentProcess, 'availableStockNum', 0)
+        this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
       this.$set(this.currentProcess, 'reworkQuantity', 0)
       this.$set(this.currentProcess, 'utilizeQuantity', 0)

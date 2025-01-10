@@ -59,7 +59,7 @@
             </div>
           </div>
           <el-col :span="11" class="fixedInfo" ref="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
-            style="width: 48%!important;position: relative;">
+            style="width: 38%!important;position: relative;">
             <img src="@/assets/images/extend.png" alt="" v-if="processInfo.processingType == 'external_production'"
               class="extend">
             <img src="@/assets/images/noReport.png" alt=""
@@ -215,16 +215,18 @@
                       <span class="pairNum" v-if="currentProcess.pairingModeId">配对基本数量：{{ pairingModeNum }}</span>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcessType !== 1">
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcessType !== 1 && currentProcess.vibrateReportFlag">
                     <el-form-item label="测振等级:" prop="vibrationLevel" :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.vibrationLevel" placeholder="请选择测振等级" style="width: 100%;"
-                        @change="(value) => handleSelectionChange(value)" class="ipt">
+                        @change="(value) => handleSelectionChangeZD(value)" class="ipt">
                         <el-option v-for="(item, index) in vibrationLevelList" :key="index" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
 
                     </el-form-item>
                   </el-col>
+                
                   <el-col :sm="24" :xs="24" v-if="currentProcessType === 4 || currentProcessType === 5">
                     <el-form-item label="总配对数量(对):" prop="matchedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -233,7 +235,7 @@
                         @blur="countQualifiedQuantity" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24">
+                  <el-col :sm="24" :xs="24"  v-if="currentProcessType !== 6 ">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity"
@@ -261,8 +263,8 @@
                   <el-col :sm="24" :xs="24" class="iptLabel"
                     v-if="currentProcess.processType === 'packing' && currentProcess.reportFlag">
                     <el-form-item label="包装方式:" prop="packagingMethod">
-                      <el-select v-model="currentProcess.packagingMethod" placeholder="请选择包装方式"  
-                        style="width: 100%;" class="ipt">
+                      <el-select v-model="currentProcess.packagingMethod" placeholder="请选择包装方式" style="width: 100%;"
+                        class="ipt">
                         <el-option v-for="(item, index) in packagingMethodList" :key="item.id" :label="item.name"
                           :value="item.name"></el-option>
                       </el-select>
@@ -289,10 +291,12 @@
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
-                  <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd" @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;"  placeholder="选择报工时间"> </el-date-picker>
-                </el-form-item>
+                      <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
+                        @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;" placeholder="选择报工时间">
+                      </el-date-picker>
+                    </el-form-item>
                   </el-col>
-               
+
                   <el-col :sm="24" :xs="24" class="iptLabel">
                     <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'"
                       :style="{ marginBottom: producerMargin }">
@@ -321,6 +325,69 @@
                       </el-select>
                       <!-- equipmentId -->
                     </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcessType == 6 && currentProcess.accuracyReportFlag">
+                    <div style="width: 100%;">
+                      <div style="width: 49%;display: inline-block;">
+                        <p class="accTitle">02精度</p>
+                        <JNPF-table v-loading="listLoading" ref="dataTable" custom-column :data="tableDataList"
+                          :fixedNO="true">
+                          <el-table-column prop="accuracyLevel" label="精度等级">
+                            <template slot-scope="scope">
+                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;">
+                                <el-option v-for="(item, index) in accuracyLevelList" :key="index" :label="item.name"
+                                  :value="item.name"></el-option>
+                              </el-select>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="num" label="数量">
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.num" />
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="操作" width="100" fixed="right">
+                            <template slot-scope="scope">
+                              <el-button size="mini" type="text" @click="addFun">新增</el-button>
+                              <el-button size="mini" type="text" @click="delFun"  style=" color: #ff3a3a" :disabled="tableDataList.length===1">删除</el-button>
+                            </template>
+                          </el-table-column>
+                        </JNPF-table>
+                      </div>
+                      <div style="width: 49%;display: inline-block;margin-left: 2%;vertical-align: top;">
+                        <p class="accTitle">01精度</p>
+                        <JNPF-table v-loading="listLoading" ref="dataTables" custom-column :data="tableDataList2"
+                          :fixedNO="true">
+                          <el-table-column prop="accuracyLevel" label="精度等级">
+                            <template slot-scope="scope">
+                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;">
+                                <el-option v-for="(item, index) in accuracyLevelList2" :key="index" :label="item.name"
+                                  :value="item.name"></el-option>
+                              </el-select>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="num" label="数量">
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.num" />
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="操作" width="100" fixed="right">
+                            <template slot-scope="scope">
+                              <el-button size="mini" type="text" @click="addFun2">新增</el-button>
+                              <el-button size="mini" type="text" @click="delFun2"  style=" color: #ff3a3a" :disabled="tableDataList.length===1">删除</el-button>
+                            </template>
+                          </el-table-column>
+                        </JNPF-table>
+                      </div>
+                    </div>
+                    <!-- <el-form-item label="精度等级:" prop="accuracyLevel" :style="{ marginBottom: producerMargin }">
+                      <el-select v-model="currentProcess.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
+                        @change="(value) => handleSelectionChangeJD(value)" class="ipt">
+                        <el-option v-for="(item, index) in accuracyLevelList" :key="index" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+
+                    </el-form-item> -->
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
@@ -398,6 +465,14 @@ export default {
   },
   data() {
     return {
+      tableDataList: [
+        { accuracyLevel: "", num: "" }
+
+      ],
+      accuracyLevelList2: [],
+      tableDataList2: [
+        { accuracyLevel: "", num: "" }
+      ],
       targetHeight: "",
       targetHeight2: "",
       processOutFormVisible: false,
@@ -449,7 +524,7 @@ export default {
 
       ],
       vibrationLevelList: [],
-      packagingMethodList:[],
+      packagingMethodList: [],
       pairingModeList: [],
       pairingModeListCopy: [],
       pairingModeNum: 0,
@@ -465,6 +540,7 @@ export default {
       vibrationLevelFlag: "",
       materialFlag: '',
       colourFlag: '',
+      accuracyLevelList: [],
     }
   },
 
@@ -474,8 +550,46 @@ export default {
   mounted() {
     this.getInboundVal()
     this.getOrderFiledMap()
+    this.getPackmethods()
   },
   methods: {
+    // 02精度新增
+    addFun(scope) {
+      let len = this.tableDataList.length
+      if (len >= this.accuracyLevelList.length) return this.$message.error("表格数据条数已达到精度等级可选种类数量")
+      this.tableDataList.push({ accuracyLevel: "", num: "", })
+    console.log("this.$refs.mycol",this.$refs.mycol);
+      this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height+49;
+        });
+    },
+    // 02精度删除
+    delFun(scope) { 
+      this.tableDataList.splice(scope.$index, 1)
+      this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height+49;
+        });
+    },
+     // 01精度新增
+     addFun2(scope) {
+      let len = this.tableDataList2.length
+      if (len >= this.accuracyLevelList.length) return this.$message.error("表格数据条数已达到精度等级可选种类数量")
+      this.tableDataList2.push({ accuracyLevel: "", num: "", })
+      this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height+49;
+        });
+    },
+    // 01精度删除
+    delFun2(scope) { 
+      this.tableDataList2.splice(scope.$index, 1)
+      this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height+49;
+        });
+    },
     // 获取是否入库下拉框
     getInboundVal() {
       this.$store.dispatch('base/getDictionaryData', { sort: 'NextProductionMethod' }).then((res) => {
@@ -484,15 +598,15 @@ export default {
 
         res.forEach(item => {
           if (item.enCode === "0") {
-            this.$set(item,'value',item.enCode*1)
+            this.$set(item, 'value', item.enCode * 1)
             this.stockFlagList = [...this.stockFlagList, item]
           }
           if (item.enCode === "2") {
-            this.$set(item,'value',item.enCode*1)
+            this.$set(item, 'value', item.enCode * 1)
             this.stockFlagList = [...this.stockFlagList, item]
           }
         });
-          console.log("stock", this.stockFlagList);
+        console.log("stock", this.stockFlagList);
         this.stockFlag = 0
       })
     },
@@ -502,16 +616,19 @@ export default {
       }
     },
     // 定义当前工序的类型
-    //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序
+    //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
     setProcessType() {
-      if (this.currentProcess.vibrateReportFlag) {
+      if (this.currentProcess.vibrateReportFlag || this.currentProcess.accuracyReportFlag) {
         if (this.currentProcess.processType == 'vibrate') {
           this.currentProcessType = 2
-        } else if (!this.currentProcess.pairsReportFlag) {
-          this.currentProcessType = 3
         } else if (this.currentProcess.processType == 'pairs') {
           this.currentProcessType = 4
 
+        } else if (this.currentProcess.processType == 'accuracy') {
+          this.currentProcessType = 6
+
+        } else if (!this.currentProcess.pairsReportFlag) {
+          this.currentProcessType = 3
         } else {
           this.currentProcessType = 5
         }
@@ -580,11 +697,22 @@ export default {
         this.vibrationLevelList = res.data
       })
     },
-    handleSelectionChange(value) {
+    handleSelectionChangeZD(value) {
       console.log("value", value);
       if (this.currentProcessType !== 2) {
-
+        //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
         const selectedItem = this.vibrationLevelList.find(item => item.name === value);
+        console.log("selectedItem", selectedItem);
+        this.currentProcess.waitReportNum = selectedItem.waitReportNum
+      }
+
+
+    },
+    handleSelectionChangeJD(value) {
+      console.log("value", value);
+      if (this.currentProcessType !== 6) {
+        //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
+        const selectedItem = this.accuracyLevelList.find(item => item.name === value);
         console.log("selectedItem", selectedItem);
         this.currentProcess.waitReportNum = selectedItem.waitReportNum
       }
@@ -636,6 +764,7 @@ export default {
 
       this.setProcessType()
       this.stockFlag = 0
+      //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
       if (this.currentProcessType == 5) {
         this.currentProcess.pairingModeId = ''
         this.getPrvePairingModelListFun()
@@ -703,13 +832,21 @@ export default {
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
-    reportingTimeChange(e){
+    reportingTimeChange(e) {
       this.currentProcess.reportingTime = e + ' 00:00:00'
     },
     commonFun() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
-      if (this.currentProcessType === 2) {
+      // 如果是测振工序 则获取测振工序等级
+      if (this.currentProcessType === 2 && this.currentProcess.vibrateReportFlag) {
         this.getvibrationLevelFun()
+
+      }
+      // 如果是测振工序 则获取测振工序等级
+      console.log(999, this.currentProcessType, this.currentProcess.accuracyReportFlag);
+      if (this.currentProcessType === 6 && this.currentProcess.accuracyReportFlag) {
+        console.log("精度工序");
+        this.getaccuracyFun()
 
       }
 
@@ -725,7 +862,7 @@ export default {
       }
       this.producePersonListFun(this.currentProcess.id)
       const end = new Date();//获取当前的日期
-      this.$set(this.currentProcess,'reportingTime',this.dateFormat(end))
+      this.$set(this.currentProcess, 'reportingTime', this.dateFormat(end))
     },
 
     // 获取生产人员数据
@@ -753,7 +890,6 @@ export default {
     },
     // 获取振动等级数据
     getvibrationLevelFun() {
-
       let obj3 = {
         pageNum: -1,
         pageSize: 20,
@@ -770,14 +906,44 @@ export default {
         ]
       };
       getbimProductAttributesList(obj3).then(res => {
-        console.log("进来了么2");
         this.vibrationLevelList = res.data.records
 
         this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
           this.targetHeight = height;
-        }); 
+        });
       })
+
+    },
+    getaccuracyFun() {
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa006",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj3).then(res => {
+        this.accuracyLevelList = res.data.records
+        console.log("精度工序", res);
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
+      })
+
+    },
+
+    // 获取包装方式
+    getPackmethods() {
       let obj4 = {
         pageNum: -1,
         pageSize: 20,
@@ -795,14 +961,13 @@ export default {
       };
       getbimProductAttributesList(obj4).then(res => {
         this.packagingMethodList = res.data.records
-
+        console.log("this.包装方式", this.packagingMethodList);
         this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
           this.targetHeight = height;
-        }); 
+        });
       })
     },
-
     goBack() {
       this.$emit("close", false)
     },
@@ -840,7 +1005,7 @@ export default {
           let arr = []
           if (this.currentProcess.vibrateReportFlag) {
             let obj = {}
-            if (this.currentProcessType === 2) {
+            if (this.currentProcessType === 2) {//1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
               // 测震工序
               console.log("测震工序");
               obj.classAttribute = this.currentProcess.classAttribute
@@ -1356,7 +1521,7 @@ box-card:nth-child(n+3) {
 }
 
 .rightInfo {
-  width: 52%;
+  width: 62%;
   /* border: 1px solid; */
   border-radius: 4px;
   // margin-left: 20px;
@@ -1466,5 +1631,18 @@ box-card:nth-child(n+3) {
   padding-left: 10px;
   font-size: 18px;
   color: #fff;
+}
+
+::v-deep .el-table--scrollable-y .el-table__body-wrapper {
+  height: auto !important;
+}
+
+.accTitle {
+  height: 30px;
+  line-height: 30px;
+  background: rgb(242, 242, 242);
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
 }
 </style>

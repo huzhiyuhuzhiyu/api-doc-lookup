@@ -59,7 +59,7 @@
 
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="生产数量" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="生产数量" @blur="compount" @blur="compount">
+                          <el-input v-model="dataForm.productionQuantity" placeholder="生产数量" @blur="compount">
                           </el-input>
                         </el-form-item>
                       </el-col>

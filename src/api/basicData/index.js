@@ -1905,3 +1905,10 @@ export function batchInboundList(data) {
       data
   })
 }
+//合作伙伴产品 详情
+export const getcooperativeproductInfo = (id) => {
+  return request({
+    url: `/api/erp/cooperative/partner/product/detail/${id}`,
+    method: 'get'
+  })
+}

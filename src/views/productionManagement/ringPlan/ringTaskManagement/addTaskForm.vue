@@ -1391,15 +1391,20 @@ export default {
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
       let arr = []
-      if (this.dataForm.autoMaterialFlag) {
+        if (this.dataForm.pickingWay == 'dispatch_list') {
+            arr.push({
+                productionOrderId: "",
+                warehouseId: this.dataForm.lineEdgeId
+            })
+        } else if(this.dataForm.pickingWay === 'production_order' && this.dataForm.autoMaterialFlag) {
 
-        this.dataForm.lineEdgeList.forEach(item => {
-          arr.push({
-            productionOrderId: "",
-            warehouseId: item
-          })
-        })
-      }
+            this.dataForm.lineEdgeList.forEach(item => {
+                arr.push({
+                    productionOrderId: "",
+                    warehouseId: item
+                })
+            })
+        }
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,

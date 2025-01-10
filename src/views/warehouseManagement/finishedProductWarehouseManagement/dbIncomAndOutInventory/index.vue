@@ -2782,6 +2782,7 @@ export default {
         classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
+      console.log("obj",obj);
       getStockMovelist(obj.classAttributeList, obj.projectId, this.warehouseCode).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {

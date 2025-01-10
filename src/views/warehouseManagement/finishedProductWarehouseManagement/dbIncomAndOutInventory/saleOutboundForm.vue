@@ -1263,7 +1263,7 @@ export default {
               }
 
 
-              if ((Number(item.num) > Number(item.availableBatchNumber))&&!this.totalStockOutboundFlag) {
+              if ((Number(item.num) > Number(item.availableBatchNumber))&&!this.dataForm.totalStockOutboundFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break

@@ -314,3 +314,38 @@ export const getrecordInfo = (id) => {
     method: 'GET'
   })
 }
+
+// 用户主页收藏-新增
+export const addUserFavorites = (data) => {
+  return request({
+    url: `/api/zgt/bimUserFavorites/add`,
+    method: 'post',
+    data
+  })
+}
+
+// 用户主页收藏-列表
+export const getUserFavorites = (data) => {
+  return request({
+    url: `/api/zgt/bimUserFavorites/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 用户主页收藏-修改
+export const updateUserFavorites = (data) => {
+  return request({
+    url: `/api/zgt/bimUserFavorites/update`,
+    method: 'put',
+    data
+  })
+}
+
+// 删除用户
+export const delUserFavorites = (id) => {
+  return request({
+    url: `/api/zgt/bimUserFavorites/del/${id}`,
+    method: 'DELETE'
+  })
+}

@@ -144,7 +144,7 @@
             </el-table-column>
             <el-table-column label="操作" min-width="220" fixed="right">
               <template slot-scope="scope">
-                <el-button v-has="'btn_replaceApply'" size="mini" type="text" :disabled="scope.row.replaceStatus === 'replacing'"
+                <el-button v-has="'btn_replaceApply'" size="mini" type="text" :disabled="scope.row.replaceStatus === 'replacing' || !scope.row.bomFlag"
                   @click.native="sendReplaceRequest(scope.row)">发起替换申请</el-button>
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row, 'look')">查看详情</el-button>
@@ -690,8 +690,7 @@ export default {
           condition: [],
           matchLogic: ""
         },
-      },
-        this.$refs.SuperQuery.conditionList = []
+      }
       this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },

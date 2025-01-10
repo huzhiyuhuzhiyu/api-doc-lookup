@@ -564,8 +564,8 @@ export default {
   }
 
   .noDataTip {
-    text-align: 'center';
-    padding: '10%';
+    text-align: center;
+    padding: 10%;
     color: #aaa;
   }
 

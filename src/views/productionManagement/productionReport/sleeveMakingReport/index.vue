@@ -31,7 +31,7 @@
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
           @sort-change="sortChange" show-summary :summary-method="getSummaries">
-          <el-table-column prop="drawingNo" label="毛坯规格型号" width="150" sortable="custom" fixed="right"></el-table-column>
+          <el-table-column prop="drawingNo" label="毛坯规格型号" width="180" sortable="custom" fixed="left"></el-table-column>
           <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
             <template slot-scope="scope">
               <el-link type="primary"

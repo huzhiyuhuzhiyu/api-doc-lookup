@@ -1415,7 +1415,12 @@ export default {
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
         lineEdgeList: arr,
-        materialList: this.materialList,
+        materialList: this.materialList.map(item=>{
+              return {
+                  ...item,
+                  productsId:item.productId
+              }
+        }),
       }
       this.btnLoading = true
       addProdOrder(obj).then(res => {

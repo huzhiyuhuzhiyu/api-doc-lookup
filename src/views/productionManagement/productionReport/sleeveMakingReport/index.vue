@@ -31,7 +31,7 @@
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
           @sort-change="sortChange" show-summary :summary-method="getSummaries">
-          <el-table-column prop="drawingNo" label="毛坯规格型号" width="150" sortable="custom"></el-table-column>
+          <el-table-column prop="drawingNo" label="毛坯规格型号" width="150" sortable="custom" fixed="right"></el-table-column>
           <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -68,7 +68,7 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="waitOuterSuperfine" label="待外圆超精"" width=" 120" align="center">
+          <el-table-column prop="waitOuterSuperfine" label="待外圆超精" width=" 120" align="center">
             <template slot-scope="scope">
               <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
                 @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈无心磨加工')">
@@ -216,7 +216,7 @@ export default {
     viewTask(drawingNo, type, processName) {
       this.taskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.TaskForm.init(drawingNo, type, processName)
+        this.$refs.TaskForm.init('', type, processName)
       })
     },
     initData() {

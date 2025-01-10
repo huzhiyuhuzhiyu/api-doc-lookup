@@ -2,12 +2,10 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
-        <el-page-header @back="$emit('close')"
-          :content="(btnType === 'add' ? '新建' : btnType === 'edit' ? '编辑' : '查看') + '客户产品价格'" />
+        <el-page-header @back="$emit('close')" :content="(btnType === 'add' ? '新建' : btnType === 'edit' ? '编辑' : '查看') + '客户产品价格'" />
         <div class="options">
 
-          <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading"
-            @click="handleConfirm('submit')">
+          <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             提交</el-button>
           <el-button size="mini" @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -22,22 +20,14 @@
 
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="客户" prop="cooperativePartnerIdText">
-                        <ComSelect-page key="partner" ref="ComSelect-page" :value="dataForm.cooperativePartnerIdText"
-                          @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类"
-                          placeholder="请选择客户"
-                          :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }"
-                          :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj"
-                          :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
-                          :isdisabled="btnType !== 'add'" />
+                        <ComSelect-page key="partner" ref="ComSelect-page" :value="dataForm.cooperativePartnerIdText" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType !== 'add'" />
                       </el-form-item>
                     </el-col>
 
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="有效时间起止" prop="validDateArr">
 
-                        <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd"
-                          :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起"
-                          end-placeholder="有效时间止" clearable>
+                        <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd" :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起" end-placeholder="有效时间止" clearable>
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
@@ -45,64 +35,48 @@
                 </el-form>
               </el-collapse-item>
 
-
-
               <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                 <div v-if="btnType === 'add'">
-                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                    icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                    icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
-                    icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
-                    icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
+                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important" icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important" icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
                 </div>
 
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
-                     v-bind="customStyleData">
-                    <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'"
-                      key="1" />
+                  <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" v-bind="customStyleData">
+                    <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                     <el-table-column prop="customerProductNo" label=" 客户料号" min-width="160">
                       <template slot="header">
                         <span class="required">*</span> 客户料号
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'"
-                          :rules='productRules.customerProductNo'>
-                          <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo"
-                            placeholder="请输入" :disabled="btnType !== 'add'">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
+                          <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType !== 'add'">
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                      show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productsCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                       <template slot="header">
                         <span class="required">*</span> 品名规格
                       </template>
                       <template slot-scope="scope">
-                        <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
-                          placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
-                          @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
-                          :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
+                        <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
 
                       </template>
                       <!-- @select="handleSelect(scope.row, scope.$index, $event)" -->
                     </el-table-column>
                     <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
-                          <template slot-scope="scope">
-                              <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                                         :disabled="btnType == 'look' ? true : false">
-                                  <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                                             :value="item.id">
-                                  </el-option>
-                              </el-select>
-                          </template>
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </template>
 
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
@@ -113,9 +87,7 @@
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
-                          <el-input v-model="scope.row.price" placeholder="单价" :disabled="btnType === 'look'"
-                            maxlength="20" @input="watchPrice(scope.row, scope.$index)"
-                            oninput="value=value.replace(/[^0-9.]/g,'')">
+                          <el-input v-model="scope.row.price" placeholder="单价" :disabled="btnType === 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" oninput="value=value.replace(/[^0-9.]/g,'')">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -132,10 +104,8 @@
                         </el-form-item>
                       </template> -->
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
-                          :disabled="btnType === 'look'" @change="changeTaxRate(scope.row, scope.$index)">
-                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                            :value="item.taxRate"></el-option>
+                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;" :disabled="btnType === 'look'" @change="changeTaxRate(scope.row, scope.$index)">
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" :value="item.taxRate"></el-option>
                         </el-select>
                       </template>
 
@@ -145,139 +115,106 @@
                     <!-- <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                     </el-table-column> -->
 
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
-                      v-if="sealingCoverTypingFlag === '1'" :key="211">
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag === '1'" :key="211">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.sealingCoverTyping"
-                          placeholder="请选择" clearable filterable allow-create style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag === '1'"
-                      :key="123">
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag === '1'" :key="123">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.accuracyLevel" filterable allow-create placeholder="请选择"
-                          clearable>
-                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.accuracyLevel" filterable allow-create placeholder="请选择" clearable>
+                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag === '1'"
-                      :key="17">
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag === '1'" :key="17">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.vibrationLevel" filterable allow-create placeholder="请选择"
-                          clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.vibrationLevel" filterable allow-create placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag === '1'" :key="61">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.oil" filterable allow-create placeholder="请选择" clearable
-                          style="width: 100%;">
-                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.oil" filterable allow-create placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag === '1'"
-                      :key="51">
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag === '1'" :key="51">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.oilQuantity" placeholder="请选择"
-                        filterable allow-create clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.oilQuantity" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag === '1'" :key="100">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.clearance" placeholder="请选择"
-                        filterable allow-create clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.clearance" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag === '1'"
-                      :key="101">
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag === '1'" :key="101">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.packagingMethod" placeholder="请选择"
-                        filterable allow-create clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.packagingMethod" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag === '1'"
-                      key="specialRequire">
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag === '1'" key="specialRequire">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择"
-                        filterable allow-create clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="material" label="保持架材质" width="120" :key="102" v-if="materialFlag === '1'">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.material" placeholder="请选择"
-                        filterable allow-create clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.material" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="colour" label="颜色" width="120" :key="105" v-if="colourFlag === '1'">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择"  clearable
-                        filterable allow-create style="width: 100%;">
-                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="protrusion" label="凸出量" width="120" :key="103" v-if="protrusionFlag === '1'">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择"
-                        filterable allow-create clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list11" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list11" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="preload" label="预负荷" width="120" :key="104" v-if="preloadFlag === '1'">
                       <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.preload" placeholder="请选择"
-                        filterable allow-create  clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in list12" :key="index" :label="item.name"
-                            :value="item.name"></el-option>
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.preload" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list12" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                      <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'">
-                          <template slot-scope="scope">
-                              <el-select :disabled="btnType === 'look'" v-model="scope.row.angle" placeholder="请选择" clearable
-                              filterable allow-create  style="width: 100%;">
-                                  <el-option v-for="(item, index) in list13" :key="index" :label="item.name"
-                                             :value="item.name"></el-option>
-                              </el-select>
-                          </template>
-                      </el-table-column>
-                      <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'">
-                          <template slot-scope="scope">
-                              <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />
-                          </template>
-                      </el-table-column>
+                    <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'">
+                      <template slot-scope="scope">
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.angle" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                          <el-option v-for="(item, index) in list13" :key="index" :label="item.name" :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />
+                      </template>
+                    </el-table-column>
 
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btnType === 'look'"
-                          maxlength="200" />
+                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btnType === 'look'" maxlength="200" />
                       </template>
                     </el-table-column>
 
@@ -314,19 +251,12 @@
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="客户" prop="cooperativePartnerIdText">
-                    <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
-                      @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类"
-                      placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }"
-                      :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj"
-                      :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
-                      :isdisabled="btnType === 'look'" />
+                    <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="有效时间起止" prop="validDateArr">
-                    <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起"
-                      end-placeholder="有效时间止" clearable>
+                    <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd" :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起" end-placeholder="有效时间止" clearable>
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -334,65 +264,49 @@
             </el-form>
           </el-collapse-item>
 
-
-
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType == 'add'">
-              <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
-                icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
-                icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
-                icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
-                icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
+              <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important" icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
             </div>
 
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
-                 v-bind="customStyleData">
-                <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'"
-                  key="1" />
+              <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" v-bind="customStyleData">
+                <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType === 'add'" key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                 <el-table-column prop="customerProductNo" label=" 客户料号" min-width="120">
                   <template slot="header">
                     <span class="required">*</span> 客户料号
                   </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'"
-                      :rules='productRules.customerProductNo'>
-                      <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo"
-                        placeholder="请输入" :disabled="btnType !== 'add'">
+                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
+                      <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType !== 'add'">
                       </el-input>
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productsCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
                   <template slot="header">
                     <span class="required">*</span> 品名规格
                   </template>
                   <template slot-scope="scope">
-                    <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
-                      placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;"
-                      @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
-                      :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)" ></el-autocomplete>
+                    <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
 
                     <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                             style="width: 100%;"  /> -->
                   </template>
                 </el-table-column>
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
-                      <template slot-scope="scope">
-                          <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                                     :disabled="btnType == 'look' ? true : false">
-                              <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                                         :value="item.id">
-                              </el-option>
-                          </el-select>
-                      </template>
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </template>
 
                 </el-table-column>
 
@@ -417,8 +331,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
-                      <el-input v-model="scope.row.price" placeholder="单价" :disabled="btnType === 'look'" maxlength="20"
-                        @input="watchPrice(scope.row, scope.$index)" oninput="value=value.replace(/[^0-9.]/g,'')">
+                      <el-input v-model="scope.row.price" placeholder="单价" :disabled="btnType === 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" oninput="value=value.replace(/[^0-9.]/g,'')">
                       </el-input>
                     </el-form-item>
                   </template>
@@ -435,10 +348,8 @@
                         </el-form-item>
                       </template> -->
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
-                      :disabled="btnType === 'look'" @change="changeTaxRate(scope.row, scope.$index)">
-                      <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                        :value="item.taxRate"></el-option>
+                    <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;" :disabled="btnType === 'look'" @change="changeTaxRate(scope.row, scope.$index)">
+                      <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" :value="item.taxRate"></el-option>
                     </el-select>
                   </template>
 
@@ -451,132 +362,101 @@
                   </el-table-column>
                   <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
                   </el-table-column> -->
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
-                  v-if="sealingCoverTypingFlag === '1'" :key="211">
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag === '1'" :key="211">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.sealingCoverTyping" placeholder="请选择"
-                      clearable filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list1" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag === '1'"
-                  :key="123">
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag === '1'" :key="123">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.accuracyLevel" placeholder="请选择"
-                      clearable filterable allow-create>
-                      <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable allow-create>
+                      <el-option v-for="(item, index) in list2" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag === '1'"
-                  :key="17">
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag === '1'" :key="17">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.vibrationLevel" placeholder="请选择"
-                      clearable filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.vibrationLevel" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list3" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag === '1'" :key="61">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.oil" placeholder="请选择" clearable
-                    filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.oil" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list4" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag === '1'" :key="51">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.oilQuantity" placeholder="请选择"
-                      clearable filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.oilQuantity" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list5" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag === '1'" :key="100">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.clearance" placeholder="请选择" clearable
-                    filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.clearance" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list6" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag === '1'"
-                  :key="101">
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag === '1'" :key="101">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.packagingMethod" placeholder="请选择"
-                      clearable filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.packagingMethod" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list7" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag === '1'"
-                  :key="101">
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag === '1'" :key="101">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择"
-                      clearable filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list8" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="material" label="保持架材质" width="120" :key="102" v-if="materialFlag === '1'">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.material" placeholder="请选择" clearable
-                    filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.material" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list9" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="colour" label="颜色" width="120" :key="105" v-if="colourFlag === '1'">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择" clearable
-                    filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list10" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="protrusion" label="凸出量" width="120" :key="103" v-if="protrusionFlag === '1'">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" clearable
-                    filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list11" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list11" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="preload" label="预负荷" width="120" :key="104" v-if="preloadFlag === '1'">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.preload" placeholder="请选择" clearable
-                    filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list12" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.preload" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list12" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'">
                   <template slot-scope="scope">
-                    <el-select :disabled="btnType === 'look'" v-model="scope.row.angle" placeholder="请选择" clearable
-                    filterable allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list13" :key="index" :label="item.name"
-                        :value="item.name"></el-option>
+                    <el-select :disabled="btnType === 'look'" v-model="scope.row.angle" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
+                      <el-option v-for="(item, index) in list13" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'">
-                      <template slot-scope="scope">
-                          <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />
-                      </template>
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />
+                  </template>
                 </el-table-column>
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
@@ -600,10 +480,8 @@
 
         </el-collapse>
       </div>
-      <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-        <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-          :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+      <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+        <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1" :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text"><em>点击选取文件上传</em></div>
           <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件
@@ -618,8 +496,7 @@
             提交</el-button>
         </span>
       </el-dialog>
-      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
         <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
             {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
 
@@ -634,9 +511,7 @@
         </span>
       </el-dialog>
 
-      <el-dialog title="历史价格" :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="historyVisiblt" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
-        append-to-body>
+      <el-dialog title="历史价格" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="historyVisiblt" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
 
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
 
@@ -674,8 +549,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <el-button type="primary" size="mini" icon="el-icon-download"
-                  @click="exportForm('dataTable')">导出</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
               </div>
               <JNPF-table :data="historyPriceData" ref="dataTable" custom-column>
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
@@ -697,15 +571,13 @@
                 <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
 
               </JNPF-table>
-              <pagination :total="historyPriceTotal" :page.sync="historyPriceRequestObj.pageNum"
-                :limit.sync="historyPriceRequestObj.pageSize" @pagination="getHistoryPriceFun" />
+              <pagination :total="historyPriceTotal" :page.sync="historyPriceRequestObj.pageNum" :limit.sync="historyPriceRequestObj.pageSize" @pagination="getHistoryPriceFun" />
             </div>
           </div>
         </div>
 
       </el-dialog>
-      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible"
-        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
+      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
 
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
           <div class="JNPF-common-layout-left">
@@ -724,12 +596,9 @@
             </div>
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-              <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
-                class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
+              <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                 <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-                  <i
-                    :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+                  <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
                   <span class="text" :title="data.name">{{ data.name }}</span>
                 </span>
               </el-tree>
@@ -769,15 +638,12 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="allproductData" hasC
-                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+              <JNPF-table v-loading="listLoading" :data="allproductData" hasC @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" />
                 <el-table-column prop="productCategoryName" label="所属分类" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                  v-if="isProjectSwitch == 1" />
+                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="inventoryQuantity" label="库存数量">
                   <template slot-scope="scope">
@@ -788,8 +654,7 @@
                 </el-table-column>
 
               </JNPF-table>
-              <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
-                :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
+              <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum" :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
             </div>
           </div>
         </div>
@@ -831,7 +696,7 @@ import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import flowMixin from '@/mixins/generator/flowMixin'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import { excelExport, addPartnerOrProductData, importCustomerProduct } from '@/api/basicData/index'
+import { excelExport, addPartnerOrProductData, importCustomerProduct, getcooperativeproductInfo } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: { ExportForm, Process, recordList },
@@ -968,8 +833,8 @@ export default {
         customerProductNo: "",
         productName: "",
         productDrawingNo: "",
-        pairingModeName:'',
-        pairingModeId:'',
+        pairingModeName: '',
+        pairingModeId: '',
         mainUnit: "",
         price: "",
         taxRate: "",
@@ -987,8 +852,8 @@ export default {
         colour: "",
         protrusion: "",
         preload: "",
-        angle:'',
-        centerDiameter:'',
+        angle: '',
+        centerDiameter: '',
         remark: "",
       },
       codeConfig: {},
@@ -1011,7 +876,7 @@ export default {
       ],
       allproductData: [],
       allProductTotal: 0,
-      pairingModeList:[],
+      pairingModeList: [],
       ProductTreeData: [],
       ProductListRequestObj: {
         classAttributeList: [],
@@ -1056,7 +921,7 @@ export default {
       materialFlag: '',
       colourFlag: '',
       angleFlag: '',
-      centerDiameterFlag:'',
+      centerDiameterFlag: '',
       bimProductAttributesList: [],
       row: null
     }
@@ -1095,13 +960,13 @@ export default {
     }
   },
   methods: {
-      // 获取配对方式
-      async getpairingModeListFun() {
-          try {
-              this.pairingModeList = await this.jnpf.getpairingModeListFun()
-              console.log("this.par", this.pairingModeList);
-          } catch (error) { }
-      },
+    // 获取配对方式
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
+      } catch (error) { }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1579,18 +1444,18 @@ export default {
       this.dataFormTwo.lines[index].productName = item.data.name
       this.dataFormTwo.lines[index].productCode = item.data.code
       this.dataFormTwo.lines[index].taxRate = item.data.taxRate * 1 || this.taxRate * 1
-      let exists = this.taxRateList.some(line => line.taxRate === item.data.taxRate *1);
-            if (!exists && item.data.taxRate) {
-              let obj = {
-                taxRate: item.data.taxRate * 1,
-                fullName: item.data.taxRate + '%',
-                enCode: item.data.taxRate + '%',
-              }
-              this.taxRateList.push(obj)
-            }
+      let exists = this.taxRateList.some(line => line.taxRate === item.data.taxRate * 1);
+      if (!exists && item.data.taxRate) {
+        let obj = {
+          taxRate: item.data.taxRate * 1,
+          fullName: item.data.taxRate + '%',
+          enCode: item.data.taxRate + '%',
+        }
+        this.taxRateList.push(obj)
+      }
       if (this.dataFormTwo.lines[index].customerProductNo) customerDrawingNumber = JSON.parse(JSON.stringify(this.dataFormTwo.lines[index].customerProductNo))
       if (item.value) {
-          this.dataFormTwo.lines.push(obj)
+        this.dataFormTwo.lines.push(obj)
       }
     },
 
@@ -1728,7 +1593,7 @@ export default {
             }
             lineArr.forEach(item => {
               let excludingTaxPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, 1 + item.taxRate / 100]), 2)
-              this.$set(item,'excludingTaxPrice',excludingTaxPrice)
+              this.$set(item, 'excludingTaxPrice', excludingTaxPrice)
             });
             this.dataFormTwo.lines = lineArr
 
@@ -1942,19 +1807,21 @@ export default {
         let obj = JSON.parse(JSON.stringify(this.createdData))
         this.dataFormTwo.lines.push(obj)
       } else {
-        if (this.row.attachmentList) {
-          this.row.attachmentList.forEach((item) => {
-            this.datafilelist.push(
-              {
-                name: item.document.fullName,
-                fileSize: item.document.fileSize,
-                filename: item.document.filePath,
-                id: item.document.id,
-                url: item.url
-              }
-            )
-          })
-        }
+        getcooperativeproductInfo(row.id).then(res => {
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
+        })
         this.dataForm.validDateArr = [row.dateOrderStart, row.dateOrderStop]
         this.dataFormTwo.lines.push(this.row)
       }
@@ -2157,13 +2024,13 @@ export default {
   margin-bottom: 5px !important;
 }
 
-
 ::v-deep .workNode {
   background-color: #f5f5f7 !important;
 }
 
 //.el-button--small {
-// padding: 1;</style>
+// padding: 1;
+</style>
 <style scoped>
 ::v-deep .el-tabs {
   height: 100% !important;
@@ -2272,11 +2139,11 @@ $footerPadding: '10px';
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 
 ::v-deep .el-collapse-item__header {
@@ -2298,13 +2165,11 @@ $footerPadding: '10px';
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
-
 
 .import_t {
   font-size: 22px;
@@ -2324,7 +2189,7 @@ $footerPadding: '10px';
 }
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
-  border-bottom: none !important
+  border-bottom: none !important;
 }
 
 .productInfo ::v-deep.el-collapse-item__wrap {

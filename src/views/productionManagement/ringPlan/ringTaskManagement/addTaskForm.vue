@@ -1413,7 +1413,7 @@ export default {
           materialList: this.materialList.map(item=>{
               return {
                   ...item,
-                  productsId:item.productId
+                  productsId:item.productsId || item.productId
               }
           }),
       }

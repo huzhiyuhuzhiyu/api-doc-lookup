@@ -214,7 +214,7 @@ export default {
       getMonthSalaryReportList(this.listQuery).then(res => {
         this.tableData = res.data.page.records
         this.total = res.data.page.total
-        this.totalData = res.data.total
+        this.totalData = res.data.total || {}
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false

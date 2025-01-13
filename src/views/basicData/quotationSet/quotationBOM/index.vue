@@ -15,17 +15,17 @@
                     </el-col> -->
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="query.customerProductNo" placeholder="请输入客户物料号" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="query.customerProductNo" placeholder="请输入客户物料号" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="query.customerDrawingNumber" placeholder="请输入客户图号" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="query.customerDrawingNumber" placeholder="请输入客户图号" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="query.materialCode" placeholder="请输入产品图号" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="query.materialCode" placeholder="请输入产品图号" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">

@@ -40,17 +40,17 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="编码" clearable />
+              <el-input v-model="form.code" placeholder="编码" clearable  @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="名称" clearable />
+              <el-input v-model="form.name" placeholder="名称" clearable  @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.taxId" placeholder="税号" clearable />
+              <el-input v-model="form.taxId" placeholder="税号" clearable  @keyup.enter.native="search()"/>
             </el-form-item>
 
           </el-col>

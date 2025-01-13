@@ -5,12 +5,12 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="tableQuery.businessCode" placeholder="请输入业务编码" clearable />
+                            <el-input v-model.trim="tableQuery.businessCode" placeholder="请输入业务编码" clearable  @keyup.enter.native="search()"/>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="tableQuery.businessName" placeholder="请输入业务名称" clearable />
+                            <el-input v-model.trim="tableQuery.businessName" placeholder="请输入业务名称" clearable  @keyup.enter.native="search()"/>
                         </el-form-item>
                     </el-col>
                     <!-- <el-col :span="4" v-if="tableQuery.openStateFlag == 'switch'">

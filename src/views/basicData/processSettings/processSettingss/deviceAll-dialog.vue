@@ -35,12 +35,12 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="DeviceListRequestObj.code" placeholder="请输入设备编码" clearable />
+                <el-input @keyup.native.enter="searchAllProduct()"  v-model="DeviceListRequestObj.code" placeholder="请输入设备编码" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="DeviceListRequestObj.name" placeholder="请输入设备名称" clearable />
+                <el-input @keyup.native.enter="searchAllProduct()"  v-model="DeviceListRequestObj.name" placeholder="请输入设备名称" clearable />
               </el-form-item>
             </el-col>
 

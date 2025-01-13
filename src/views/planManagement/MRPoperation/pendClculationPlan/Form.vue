@@ -915,12 +915,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="planForm.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input @keyup.native.enter="searchPlan()"  v-model="planForm.planNo" placeholder="请输入计划单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="planForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchPlan()"  v-model="planForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

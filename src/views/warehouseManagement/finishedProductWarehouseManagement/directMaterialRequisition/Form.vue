@@ -291,17 +291,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="ProductListRequestObj.batchNumber" placeholder="请输入批次号" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.batchNumber" placeholder="请输入批次号" clearable />
                   </el-form-item>
                 </el-col>
 

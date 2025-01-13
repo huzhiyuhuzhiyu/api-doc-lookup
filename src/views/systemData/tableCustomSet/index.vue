@@ -6,7 +6,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listquery.tableName" placeholder="请输入表名" clearable />
+              <el-input @keyup.native.enter="search()"  v-model="listquery.tableName" placeholder="请输入表名" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">

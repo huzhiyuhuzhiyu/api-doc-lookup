@@ -52,7 +52,7 @@
           </el-col> -->
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="名称" clearable />
+              <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="名称" clearable />
             </el-form-item>
           </el-col>
 

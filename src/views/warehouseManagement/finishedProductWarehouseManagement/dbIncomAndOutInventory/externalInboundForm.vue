@@ -509,12 +509,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.cooperativePartnerName" placeholder="供应商名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.cooperativePartnerName" placeholder="供应商名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

@@ -571,17 +571,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="请输入供应商编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.name" placeholder="请输入供应商名称" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="请输入供应商名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="请输入税号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -622,23 +622,23 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6" v-if="isReturnSwitch === '0'">
                   <el-form-item>
-                    <el-input v-model="productForm.productCode" placeholder="产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productCode" placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isProductNameSwitch === '1'">
                   <el-form-item>
-                    <el-input v-model="productForm.productName" placeholder="产品名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productName" placeholder="产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isReturnSwitch === '1'">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6" v-if="isReturnSwitch === '0'">
                   <el-form-item>
-                    <el-input v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isReturnSwitch === '1'">

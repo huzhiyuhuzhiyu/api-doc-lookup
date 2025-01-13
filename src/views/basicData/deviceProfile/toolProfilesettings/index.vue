@@ -30,12 +30,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入工具编码" clearable />
+              <el-input v-model="listQuery.code" placeholder="请输入工具编码" clearable  @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.name" placeholder="请输入工具名称" clearable />
+              <el-input v-model.trim="listQuery.name" placeholder="请输入工具名称" clearable  @keyup.enter.native="search()"/>
             </el-form-item>
           </el-col>
           <el-col :span="4">

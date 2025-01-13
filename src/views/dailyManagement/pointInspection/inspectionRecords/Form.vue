@@ -183,12 +183,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="productForm.name" placeholder="请输入项目名称" clearable />
+                    <el-input @keyup.native.enter="searchcusProduct()"  v-model="productForm.name" placeholder="请输入项目名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="productForm.code" placeholder="请输入项目编码" clearable />
+                    <el-input @keyup.native.enter="searchcusProduct()"  v-model="productForm.code" placeholder="请输入项目编码" clearable />
                   </el-form-item>
                 </el-col>
                 <!-- <el-col :span="4">

@@ -370,18 +370,18 @@
                 <el-col :span="6"
                   v-if="this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return'">
                   <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6"
                   v-if="this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'inbound_purchase'">
                   <el-form-item>
-                    <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.orderNo" placeholder="请输入单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

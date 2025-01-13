@@ -264,12 +264,12 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -323,12 +323,12 @@
               <el-form @submit.native.prevent v-if="dataForm.businessType == 'outbound_external_send'">
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.orderNo" placeholder="发料单号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.orderNo" placeholder="发料单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -364,18 +364,18 @@
                 v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.processName" placeholder="工序名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.processName" placeholder="工序名称" clearable />
                   </el-form-item>
                 </el-col>
                 <!-- { label: "销售发货", value: "outbound_sale_send" },

@@ -454,7 +454,7 @@
 
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
+                  <el-input @keyup.native.enter="dataFormSubmit()"  v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="8">

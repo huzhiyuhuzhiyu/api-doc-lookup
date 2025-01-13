@@ -15,7 +15,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">

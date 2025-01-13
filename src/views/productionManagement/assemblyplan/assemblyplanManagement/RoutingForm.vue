@@ -10,12 +10,12 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.code" placeholder="工艺路线编码" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="工艺路线编码" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.name" placeholder="工艺路线名称" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="工艺路线名称" clearable />
               </el-form-item>
             </el-col>
 

@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="图标名称">
-              <el-input v-model="keyword" placeholder="请输入图标名称" clearable />
+              <el-input @keyup.native.enter="search()"  v-model="keyword" placeholder="请输入图标名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">

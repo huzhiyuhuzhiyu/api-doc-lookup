@@ -8,12 +8,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="form.transferNo" placeholder="请输入组装单号" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model.trim="form.transferNo" placeholder="请输入组装单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="form.transferByName" placeholder="请输入组装人" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model.trim="form.transferByName" placeholder="请输入组装人" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

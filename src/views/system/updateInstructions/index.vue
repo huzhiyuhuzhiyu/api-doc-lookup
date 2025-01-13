@@ -12,7 +12,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="更新内容">
-              <el-input v-model="listQuery.updateContent" placeholder="请输入" clearable></el-input>
+              <el-input @keyup.native.enter="search()"  v-model="listQuery.updateContent" placeholder="请输入" clearable></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">

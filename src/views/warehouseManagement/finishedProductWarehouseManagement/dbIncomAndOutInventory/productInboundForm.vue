@@ -554,12 +554,12 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

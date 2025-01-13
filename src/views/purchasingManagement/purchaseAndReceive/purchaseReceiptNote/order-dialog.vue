@@ -8,17 +8,17 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="请输入采购单号" clearable />
+                <el-input @keyup.native.enter="searchAllProduct()"  v-model="listQuery.orderNo" placeholder="请输入采购单号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable />
+                <el-input @keyup.native.enter="searchAllProduct()"  v-model="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable />
+                <el-input @keyup.native.enter="searchAllProduct()"  v-model="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">

@@ -581,17 +581,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="请输入客户编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="请输入税号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -634,12 +634,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -759,17 +759,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isProductNameSwitch == 1">
                   <el-form-item>
-                    <el-input v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
 

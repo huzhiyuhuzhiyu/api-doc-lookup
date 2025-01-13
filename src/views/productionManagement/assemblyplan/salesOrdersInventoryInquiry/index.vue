@@ -574,7 +574,12 @@ export default {
     initData() {
       this.listLoading = true
       if (this.isProjectSwitch === '1') {
-        this.listQuery.projectId = this.userInfo.projectId
+        if (this.userInfo.projectId === '1') {
+          this.listQuery.projectId = ''
+        } else {
+          this.listQuery.projectId = this.userInfo.projectId
+        }
+
       }
       getSalesOrdersInventoryLineReport(this.listQuery)
         .then((res) => {
@@ -644,7 +649,7 @@ export default {
       if (this.selectData.length > 1) return this.$message.error('只能选择一条数据')
       if (!this.selectData[0].inventoryQuantity) {
         return this.$message({
-          message: '请选择库存数量不为0的任务数据',
+          message: '请选择库存数量不为0的销售订单',
           type: 'error',
           duration: 1500
         })

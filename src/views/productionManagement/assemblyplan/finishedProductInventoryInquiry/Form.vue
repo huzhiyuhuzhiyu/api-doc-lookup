@@ -177,33 +177,7 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="领料信息" name="pickInfo" v-if="allocationFlag">
-                  <el-form ref="collectForm" :model="collectForm" :rules="pickDataRule" label-width="160px"
-                    label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料单号" prop="orderNo">
-                          <el-input v-model="collectForm.orderNo"
-                            :disabled="collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料人" prop="personId">
-                          <el-input v-model="collectForm.personId" :disabled="btnType == 'look' ? true : false"
-                            placeholder="领料人" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="领料日期" prop="operationDate">
-                          <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()" type="date"
-                            value-format="yyyy-MM-dd" style="width: 100%;" placeholder="领料日期"
-                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
+          
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading">
@@ -774,6 +748,7 @@ export default {
     },
   },
   async created() {
+    this.formLoading = true
     await this.getpairingModeListFun()
 
     await this.getProductClassFun()
@@ -783,6 +758,7 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
+    this.formLoading = false
     this.getPickingConfig()
   },
   methods: {

@@ -5,12 +5,12 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="tableQuery.name" placeholder="不良名称" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.name" placeholder="不良名称" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="tableQuery.code" placeholder="不良编码" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.code" placeholder="不良编码" clearable />
                         </el-form-item>
                     </el-col>
 

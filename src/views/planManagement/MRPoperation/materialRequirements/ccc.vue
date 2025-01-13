@@ -8,7 +8,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="assembleFormSQ.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="getassembleData()"  v-model="assembleFormSQ.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -18,7 +18,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="assembleFormSQ.planNo" placeholder="计划单号" clearable />
+                    <el-input @keyup.native.enter="getassembleData()"  v-model="assembleFormSQ.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -116,12 +116,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="produceFormSQ.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="getproduceData()"  v-model="produceFormSQ.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="produceFormSQ.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input @keyup.native.enter="getproduceData()"  v-model="produceFormSQ.planNo" placeholder="请输入计划单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -252,7 +252,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="purchaseFormSQ.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="getpurchaseData()"  v-model="purchaseFormSQ.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -266,7 +266,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="purchaseFormSQ.planNo" placeholder="计划单号" clearable />
+                    <el-input @keyup.native.enter="getpurchaseData()"  v-model="purchaseFormSQ.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -391,7 +391,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="outFormSQ.planNo" placeholder="计划单号" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="outFormSQ.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

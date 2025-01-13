@@ -5,12 +5,12 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="query.formulaNumber" placeholder="请输入公式编码" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="query.formulaNumber" placeholder="请输入公式编码" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model.trim="query.formulaName" placeholder="请输入公式名称" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="query.formulaName" placeholder="请输入公式名称" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">

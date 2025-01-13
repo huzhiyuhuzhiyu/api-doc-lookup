@@ -42,28 +42,32 @@
           </el-table-column>
           <el-table-column prop="transitHeat" label="热处理在制" width="130" align="center">
             <template slot-scope='scope'>
-              <el-link type="primary" @click.native="viewDetailFun(scope.row.productsId)">{{
-                scope.row.transitHeat
-              }}</el-link>
+              <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '热处理')">
+                {{ scope.row.transitHeat }}
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="waitSurface" label="待平面磨" width="120" align="center">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '热处理')">
+              <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-领料')">
                 {{ scope.row.waitSurface }}
               </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="transitSurface" label="平面磨在制" width="130" align="center">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨-领料')">
+              <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨')">
                 {{ scope.row.transitSurface }}
               </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="waitCenterLess" label="待无心磨" width="120" align="center">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '平面磨')">
+              <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
+                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈无心磨加工')">
+                {{ scope.row.waitCenterLess }}
+              </el-link>
+              <el-link v-else type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈无心磨加工')">
                 {{ scope.row.waitCenterLess }}
               </el-link>
             </template>
@@ -71,18 +75,18 @@
           <el-table-column prop="waitOuterSuperfine" label="待外圆超精" width=" 120" align="center">
             <template slot-scope="scope">
               <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈无心磨加工')">
+                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈外圆超精加工')">
                 {{ scope.row.waitOuterSuperfine }}
               </el-link>
-              <el-link v-else type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈无心磨加工')">
+              <template v-else>
                 {{ scope.row.waitOuterSuperfine }}
-              </el-link>
+              </template>
             </template>
           </el-table-column>
           <el-table-column prop="waitRubHole" label="待内圈磨孔/201" width="140" align="center">
             <template slot-scope="scope">
               <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈外圆超精加工')">
+                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨孔')">
                 {{ scope.row.waitRubHole }}
               </el-link>
               <template v-else>
@@ -93,7 +97,7 @@
           <el-table-column prop="waitInnerRubChannel" label="待内圈磨沟/131" width="140" align="center">
             <template slot-scope="scope">
               <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨孔')">
+                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈外圆超精加工')">
                 {{ scope.row.waitInnerRubChannel }}
               </el-link>
               <template v-else>
@@ -104,46 +108,37 @@
           <el-table-column prop="waitOuterRubChannel" label="待外圈磨沟/143" width="140" align="center">
             <template slot-scope="scope">
               <el-link v-if="scope.row.classType === 'outer_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈外圆超精加工')">
+                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨沟')">
                 {{ scope.row.waitOuterRubChannel }}
               </el-link>
-              <template v-else>
+              <el-link v-else type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈磨沟')">
                 {{ scope.row.waitOuterRubChannel }}
-              </template>
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="waitSuperfine" label="待超精" width="120" align="center">
             <template slot-scope="scope">
               <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈磨沟')">
+                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈超精')">
                 {{ scope.row.waitSuperfine }}
               </el-link>
-              <el-link v-else type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈磨沟')">
+              <template v-else>
                 {{ scope.row.waitSuperfine }}
-              </el-link>
+              </template>
             </template>
           </el-table-column>
           <el-table-column prop="waitRollingResearch" label="待外圈修磨" width="120" align="center">
             <template slot-scope="scope">
               <el-link v-if="scope.row.classType === 'outer_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈超精')">
+                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈超精')">
                 {{ scope.row.waitRollingResearch }}
               </el-link>
-              <template v-else>
+              <el-link v-else type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈修磨')">
                 {{ scope.row.waitRollingResearch }}
-              </template>
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="waitStock" label="待入库" width="120" align="center">
-            <template slot-scope="scope">
-              <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈超精')">
-                {{ scope.row.waitStock }}
-              </el-link>
-              <el-link v-else type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈修磨')">
-                {{ scope.row.waitStock }}
-              </el-link>
-            </template>
           </el-table-column>
           <el-table-column prop="total" label="合计" align="center"></el-table-column>
         </JNPF-table>

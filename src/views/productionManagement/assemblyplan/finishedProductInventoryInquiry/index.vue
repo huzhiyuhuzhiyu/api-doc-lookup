@@ -577,6 +577,9 @@ export default {
         this.listQuery.lsSd = ''
         this.listQuery.lsEd = ''
       }
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       getInventoryLineReport(this.listQuery)
         .then((res) => {
           console.log(res, '外协订单列表')

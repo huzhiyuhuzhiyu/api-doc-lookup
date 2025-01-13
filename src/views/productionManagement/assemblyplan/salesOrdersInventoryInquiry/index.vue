@@ -60,7 +60,7 @@
             :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
-            <el-table-column prop="orderNo" label="订单号" width="150" sortable="custom" />
+            <el-table-column prop="orderNo" label="订单号" width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="客户名称" width="150" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" width="150" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
@@ -104,17 +104,6 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
-            <div style="display: flex;">
-              <div class="text" style="margin-right: 10px;">
-                <span>库存数量:{{ inventoryQuantityNum }}</span>
-              </div>
-              <div class="text" style="margin-right: 10px;">
-                <span>可用数量:{{ availableQuantityNum }}</span>
-              </div>
-              <div class="text">
-                <span>占用数量:{{ occupancyQuantityNum }}</span>
-              </div>
-            </div>
           </pagination>
         </div>
       </div>
@@ -267,7 +256,7 @@ export default {
           },
           {
             asc: false,
-            column: ''
+            column: 'latest_storage_time'
           }
         ]
       },
@@ -276,7 +265,6 @@ export default {
       computedValue: 0,
       computedValue2: 0,
       createRequirementDate: [],
-      deliveryDate: [],
 
       selectData: [],
       pages: 0, // 总页数
@@ -566,12 +554,15 @@ export default {
     sortChange({ prop, order }) {
       let newProp
       if (
-        prop === 'productDrawingNo' ||
-        prop == 'productDrawingNo' ||
-        prop === 'productCode' ||
-        prop === 'productCategoryName'
+        // prop === 'productDrawingNo' ||
+        // prop == 'productDrawingNo' ||
+        prop === 'productCode'
       ) {
         newProp = prop
+      } else if (
+        prop === 'warehouseName'
+      ) {
+        newProp = 'ware_house_name'
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
@@ -582,11 +573,25 @@ export default {
 
     initData() {
       this.listLoading = true
-
+      if (this.isProjectSwitch === '1') {
+        this.listQuery.projectId = this.userInfo.projectId
+      }
       getSalesOrdersInventoryLineReport(this.listQuery)
         .then((res) => {
           console.log(res, '外协订单列表')
-          this.tableDataList = res.data.records
+          this.tableDataList = res.data.records.map(item => {
+            if (!item.inventoryQuantity) {
+              item.inventoryQuantity = 0
+            }
+            if (!item.availableQuantity) {
+              item.availableQuantity = 0
+            }
+            if (!item.occupancyQuantity) {
+              item.occupancyQuantity = 0
+            }
+            return item
+          })
+          console.log(this.tableDataList, 'this.tableDataList')
           this.tableFlag = true
 
           this.total = res.data.total
@@ -613,18 +618,11 @@ export default {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
-        productName: '',
-        productDrawingNo: '',
-        warehouseName: '',
-        batchNumber: '',
-        classAttribute: 'finish_product',
-        flipFlag: true,
-        availableBatch: true,
-        excludeProcessFlag: true,
-        // orderType: 'external', //	订单类型 采购 procure、外协 external
+        orderNo: "",
+        cooperativePartnerName: "",
+        productDrawingNo: "",
         pageNum: 1,
         pageSize: 20,
-        startTime: '',
         orderItems: [
           {
             asc: false,
@@ -635,10 +633,8 @@ export default {
             column: 'latest_storage_time'
           }
         ]
-        // receivingStatus: 'receiving'
       }
-      this.time = []
-      this.deliveryDate = []
+
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },

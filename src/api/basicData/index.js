@@ -1912,3 +1912,12 @@ export const getcooperativeproductInfo = (id) => {
     method: 'get'
   })
 }
+
+// 库存明细报表
+export function getSalesOrdersInventoryLineReport(data) {
+  return request({
+    url: `/api/erp/sale/orders/line/stock/pageList`,
+    method: 'post',
+    data
+  })
+}

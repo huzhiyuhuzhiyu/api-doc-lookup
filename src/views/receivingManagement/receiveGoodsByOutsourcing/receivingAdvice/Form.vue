@@ -767,6 +767,11 @@ export default {
       visible: false,
       btnLoading: false,
       formLoading: false,
+      prindId: '',
+      formId: '',
+      enCode: '',
+      printBrowseVisible: false,
+      printVisible: false,
       dataForm: {
         exchangeGoodsFlag: false,
         inspectionStatus: '',

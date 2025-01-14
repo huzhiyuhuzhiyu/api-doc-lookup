@@ -45,7 +45,7 @@
                     </el-radio>
                   </el-radio-group>
                 </div>
-                <div v-else-if="scope.row.businessCode === 'produce'">
+                <div v-else>
                   <template v-if="scope.row.configKey == 'auto_material'">
                     <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
                       <el-radio :label="0" style="margin-bottom: 7px;">
@@ -58,18 +58,15 @@
                   </template>
                   <template v-else>
                     <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
+                    <el-input style="width: 150px;margin-left: 10px;" v-if="
+                      (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
+                      (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
+                    " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
+                      <template slot="append">
+                        %
+                      </template>
+                    </el-input>
                   </template>
-                </div>
-                <div v-else>
-                  <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
-                  <el-input style="width: 150px;margin-left: 10px;" v-if="
-                    (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
-                    (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
-                  " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
-                    <template slot="append">
-                      %
-                    </template>
-                  </el-input>
                 </div>
               </template>
             </el-table-column>

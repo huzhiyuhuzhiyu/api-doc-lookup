@@ -7,6 +7,7 @@
           <el-radio-button label="product">产品设置</el-radio-button>
           <el-radio-button label="orderField">产品属性设置</el-radio-button>
           <el-radio-button label="produce">生产设置</el-radio-button>
+          <el-radio-button label="price">价格设置</el-radio-button>
           <el-radio-button label="warehouse">仓库设置</el-radio-button>
           <el-radio-button label="return">退货设置</el-radio-button>
           <el-radio-button label="attachment">附件开关</el-radio-button>
@@ -35,7 +36,7 @@
             </el-table-column>
             <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
               <template slot-scope="scope">
-                <div v-if="scope.row.businessCode === 'warehouse'">
+                <div v-if="['warehouse', 'price'].includes(scope.row.businessCode)">
                   <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
                     <el-radio :label="0">
                       {{ scope.row.radioOff }}
@@ -161,8 +162,11 @@ export default {
           // }
           width = 200
         }
-        if (item.configKey == 'inbound_purchase' || item.configKey == 'inbound_external') {
+        if (['inbound_purchase', 'inbound_external'].includes(item.configKey)) {
           width = 290
+        }
+        if (['packaging'].includes(item.configKey)) {
+          width = 340
         }
         // if (flag) {
         //   if (item.configKey == 'collect_exceed_picking') {
@@ -286,6 +290,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'departmentalset'
         this.getData(10)
+      } else if (this.activeName === 'price') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'price'
+        this.getData(11)
       }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -336,6 +344,8 @@ export default {
             list.forEach(item => {
               item.configKey = `${item.configValue2}_${item.configKey}`
             })
+          } else if (this.activeName === 'price') {
+            list = res.data.price
           }
 
           list.forEach((item) => {
@@ -361,6 +371,14 @@ export default {
             } else if (item.configKey === 'auto_material') {
               item.radioOff = '首道自制工序扣减料'
               item.radioOn = '生产产品入库扣减料'
+            } else if (item.configKey === 'vibration') {
+              console.log(item, 'item')
+              item.radioOff = '按加工工序计价'
+              item.radioOn = '按工序属性计价'
+            } else if (item.configKey === 'packaging') {
+              console.log(item, 'item')
+              item.radioOff = '按加工工序计价'
+              item.radioOn = '按工序属性计价'
             }
             const configKeyObj = ConfigKey[item.configKey]
             console.log(configKeyObj, 'obj')

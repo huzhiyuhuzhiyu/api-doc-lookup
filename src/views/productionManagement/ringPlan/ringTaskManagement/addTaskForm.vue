@@ -1434,29 +1434,37 @@ export default {
 
       })
     },
-    handleConfirm(value) {
+    async handleConfirm(value) {
       console.log(this.dataForm);
-
-      this.$refs['dataForm'].validate((valid) => {
-        this.dataForm.documentStatus = value
-        if (valid) {
-          if (this.allocationFlag) {
-            this.$refs['collectForm'].validate((valid2) => {
-              if (valid2) {
-                this.checkFun()
-              }
-            })
-          } else {
-            this.checkFun()
-          }
-
-
-
-
-
-
+      try {
+        try {
+          await this.$refs['dataForm'].validate()
+          this.dataForm.documentStatus = value
+        } catch (e) {
+          console.log('基础信息');
+          console.log(e);
+          throw new Error('orderInfo')
         }
-      })
+        if (!this.allocationFlag) {
+          return this.checkFun()
+        }
+        try {
+          await this.$refs['collectForm'].validate()
+          this.checkFun()
+        } catch (e) {
+          console.log('领料清单');
+          console.log(e);
+          throw new Error('annex')
+        }
+      } catch (e) {
+        const name = e.message
+        if (this.activeName === name) {
+          return;
+        }
+        this.activeName = name
+        this.$message.info('已为您自动切换到未填页，请补充完成后再试')
+      }
+
     },
       addth(data, index, type) {
           let tempList = JSON.parse(JSON.stringify(this.materialList))

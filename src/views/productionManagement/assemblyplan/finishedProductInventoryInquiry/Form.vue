@@ -177,7 +177,7 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-          
+
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading">
@@ -569,7 +569,7 @@ import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
-import { getBimBusinessDetail,getBomByProductId } from '@/api/basicData/index'
+import { getBimBusinessDetail, getBomByProductId } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import {
@@ -762,8 +762,8 @@ export default {
     this.getPickingConfig()
   },
   methods: {
-      // 输入编排数量，重新计算投料数量
-      compount() {
+    // 输入编排数量，重新计算投料数量
+    compount() {
       if (this.dataForm.productionQuantity) {
         this.materialList.forEach(item => {
           let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
@@ -972,7 +972,7 @@ export default {
       getBimBusinessSwitchConfigList(obj).then(res => {
         this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
         this.fetchData("PODH")
-       
+
       })
     },
     //领料人
@@ -1288,7 +1288,7 @@ export default {
       this.$set(this.dataForm, 'routingName', "")
       this.$refs.dataForm.clearValidate('planDate');
       this.$refs.dataForm.clearValidate('routingName');
-    
+
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
           console.log("bom详情", res);
@@ -1394,7 +1394,7 @@ export default {
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
         lineEdgeList: arr,
-        materialList:this.materialList,
+        materialList: this.materialList,
       }
       this.btnLoading = true
       addProdOrder(obj).then(res => {
@@ -1407,23 +1407,39 @@ export default {
         this.btnLoading = false
       })
     },
-    handleConfirm(value) {
+    async handleConfirm(value) {
       console.log(this.dataForm);
-      this.$refs['dataForm'].validate((valid) => {
-        this.dataForm.documentStatus = value
-        if (valid) {
-          if (this.allocationFlag) {
-            this.$refs['collectForm'].validate((valid2) => {
-              if (valid2) {
-                this.checkFun()
-              }
-            })
-          } else {
-            this.checkFun()
-          }
+      try {
+        try {
+          await this.$refs['dataForm'].validate()
+          this.dataForm.documentStatus = value
+        } catch (e) {
+          console.log('基础信息');
+          console.log(e);
+          throw new Error('orderInfo')
         }
-      })
+        if (!this.allocationFlag) {
+          return this.checkFun()
+        }
+        try {
+          await this.$refs['collectForm'].validate()
+          this.checkFun()
+        } catch (e) {
+          console.log('领料清单');
+          console.log(e);
+          throw new Error('annex')
+        }
+      } catch (e) {
+        const name = e.message
+        if (this.activeName === name) {
+          return;
+        }
+        this.activeName = name
+        this.$message.info('已为您自动切换到未填页，请补充完成后再试')
+      }
+
     }
+
   }
 }
 </script>

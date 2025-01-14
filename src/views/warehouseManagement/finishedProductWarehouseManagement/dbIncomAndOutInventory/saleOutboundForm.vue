@@ -69,6 +69,16 @@
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
+                           
+                          <el-col :sm="6" :xs="24" >
+                            <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" style="width: 100%;" :disabled="btnType=='look'"
+                                 >
+                                <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
                               <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -100,12 +110,13 @@
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
 
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111" v-if="!dataForm.totalStockOutboundFlag">
                           <template slot="header">
                             <span class="required">*</span>批次号
                           </template>
@@ -116,12 +127,14 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
+                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="!dataForm.totalStockOutboundFlag">
                           <template slot-scope="scope">
                             <div>{{ scope.row.shelfSpaceName }}</div>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
+                        <el-table-column prop="inventoryQuantity" label="总库存数量" width="160"  v-if="dataForm.totalStockOutboundFlag&&btnType!=='look'"
+                          :key="7"></el-table-column>
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"  v-if="btnType != 'look'&&!dataForm.totalStockOutboundFlag"
                           :key="7"></el-table-column>
 
                         <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" :key="777"
@@ -239,6 +252,15 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
+                            <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" style="width: 100%;" :disabled="btnType=='look'"
+                                 >
+                                <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="单据日期" prop="orderDate">
                               <el-date-picker v-model="dataForm.orderDate" type="date" :clearable="false"
                                 :disabled="btnType == 'look' ? true : false" value-format="yyyy-MM-dd"
@@ -276,13 +298,14 @@
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
 
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111" v-if="!dataForm.totalStockOutboundFlag">
                           <template slot="header">
                             <span class="required">*</span>批次号
                           </template>
@@ -293,14 +316,15 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
+                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="!dataForm.totalStockOutboundFlag">
                           <template slot-scope="scope">
                             <div>{{ scope.row.shelfSpaceName }}</div>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
-                          :key="7"></el-table-column>
-
+                        <el-table-column prop="inventoryQuantity" label="总库存数量" width="160"  v-if="dataForm.totalStockOutboundFlag&&btnType!=='look'"
+                        :key="7"></el-table-column>
+                          <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"  v-if="btnType != 'look'&&!dataForm.totalStockOutboundFlag"
+                          :key="17"></el-table-column>
                         <el-table-column prop="waitDeliverNum" label="待发货数量" width="140" :key="777"
                           v-if="btnType != 'look'">
                         </el-table-column>
@@ -386,12 +410,12 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="客户料号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="客户料号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -565,6 +589,7 @@ export default {
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
         projectId: "",
+        totalStockOutboundFlag:false,
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -582,7 +607,11 @@ export default {
         { label: "生产入库", value: "inbound_mock_production" },
 
       ],
+      totalStockOutboundList:[
+        {label:"是",value:true,},
+        {label:"否",value:false,},
 
+      ],
       dataRule: {
         cooperativePartnerId: [
           { required: true, message: '客户不能为空', trigger: 'change' }
@@ -759,6 +788,7 @@ export default {
       this.$set(this.productData[index], 'protrusion', data.protrusion)
       this.$set(this.productData[index], 'preload', data.preload)
       this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
+      this.$set(this.productData[index], 'angle', data.angle)
                          
     }, 
 
@@ -1226,15 +1256,17 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-              if (!item.batchNumber) {
+              if (!item.batchNumber&&!this.dataForm.totalStockOutboundFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
                 break
               }
+              if(this.dataForm.totalStockOutboundFlag){
+                item.batchNumber=""
+              }
 
 
-
-              if (Number(item.num) > Number(item.availableBatchNumber)) {
+              if ((Number(item.num) > Number(item.availableBatchNumber))&&!this.dataForm.totalStockOutboundFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break
@@ -1277,10 +1309,13 @@ export default {
             // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
-            this.productData.forEach(item => {
-           
-                  
-            });
+            if(this.dataForm.totalStockOutboundFlag){
+
+              this.productData.forEach(item => {
+                this.$set(item,'warehouseId',this.dataForm.warehouseId)
+                    
+              })
+            }
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType

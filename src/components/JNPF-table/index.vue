@@ -103,6 +103,10 @@ export default {
       type: String,
       default: 'partent'
     },
+    customKey: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -136,7 +140,10 @@ export default {
     },
     selection(){
         return this.$refs.JNPFTable.selection
-    }
+    },
+    _customKey() {
+      return this.customKey || this.partentOrChild
+    },
 
   },
     created() {
@@ -282,7 +289,7 @@ export default {
         this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) //
         let list = JSON.parse(JSON.stringify(this.defaultColumns))
 
-        const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
+        const cacheList = this.jnpf.storageGet(this.menuId + this._customKey)
 
         if (!cacheList) {
           list.forEach(item => {
@@ -364,7 +371,7 @@ export default {
         }
       })
       // this.loading = true
-      this.jnpf.storageSet({ [this.menuId + this.partentOrChild]: list })
+      this.jnpf.storageSet({ [this.menuId + this._customKey]: list })
       this.columnList = list
       this.$forceUpdate()
       this.refreshTable = true

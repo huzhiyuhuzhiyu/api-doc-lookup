@@ -187,12 +187,12 @@
             <el-form @submit.native.prevent>
               <el-col :span="6">
                 <el-form-item>
-                  <el-input v-model="orderForm.name" placeholder="类别名称" clearable />
+                  <el-input @keyup.native.enter="searchProductClassAttribute()"  v-model="orderForm.name" placeholder="类别名称" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item>
-                  <el-input v-model="orderForm.code" placeholder="类别编码" clearable />
+                  <el-input @keyup.native.enter="searchProductClassAttribute()"  v-model="orderForm.code" placeholder="类别编码" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6">

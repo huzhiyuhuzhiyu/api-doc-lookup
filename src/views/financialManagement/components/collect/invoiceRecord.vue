@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4" v-for="item in searchList" :key="item.prop">
             <el-form-item>
-              <el-input v-if="item.type === 'input'" v-model="listQuery[item.prop]" :placeholder="'请输入' + item.label"
+              <el-input @keyup.native.enter="search()"  v-if="item.type === 'input'" v-model="listQuery[item.prop]" :placeholder="'请输入' + item.label"
                 clearable />
               <el-select v-else-if="item.type === 'select'" v-model="listQuery[item.prop]"
                 :placeholder="'请选择' + item.label" style="width: 100%;">

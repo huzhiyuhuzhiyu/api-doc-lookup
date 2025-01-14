@@ -42,7 +42,7 @@
         <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
     </div>
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-loading="listLoading">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="listLoading">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
 
@@ -95,14 +95,14 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"  v-if="isProjectSwitchFlag"
-          @sort-change="sortChange">
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
+          v-if="isProjectSwitchFlag" @sort-change="sortChange">
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="330" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
-         
+            v-if="isProjectSwitch == 1" />
+
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -132,7 +132,8 @@
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
           <el-table-column prop="warehouseName" label="仓库名称/库位名称" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <div>{{  scope.row.shelfSpaceName?scope.row.warehouseName + '/' + scope.row.shelfSpaceName:scope.row.warehouseName }}</div>
+              <div>{{ scope.row.shelfSpaceName ? scope.row.warehouseName + '/' +
+                scope.row.shelfSpaceName : scope.row.warehouseName }}</div>
             </template>
           </el-table-column>
           <!-- <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom"/> -->
@@ -219,13 +220,13 @@ export default {
         productCode: "",
         shelfSpaceName: "",
         superQuery: {},
-        inventoryFlag :1,
+        inventoryFlag: 1,
       },
       selectedNodeKey: "",
       totalData: {
-        totalInventory:0,
-        totalAvailable:0,
-        totalOccupancy:0,
+        totalInventory: 0,
+        totalAvailable: 0,
+        totalOccupancy: 0,
       },
       superQueryJson: [
         {
@@ -286,8 +287,8 @@ export default {
 
 
       ],
-      isProjectSwitchFlag:false,
-      isProjectSwitch:"",
+      isProjectSwitchFlag: false,
+      isProjectSwitch: "",
     }
   },
   watch: {
@@ -295,14 +296,14 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
- 
+
   computed: {
     ...mapGetters(['userInfo'])
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
+    this.isProjectSwitchFlag = true
     this.superForm = this.tableQuery
     this.getWarehouseTree(true)
     if (localStorage.getItem("locationInventoryFlag")) {
@@ -312,7 +313,7 @@ export default {
       this.toggleExpand(locationInventoryFlag)
 
     }
-    
+
   },
   methods: {
     // 导出
@@ -419,13 +420,11 @@ export default {
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         this.tableData = res.data.whPage.records
-        if (res.data.stockSts) {
 
-          this.totalData = res.data.stockSts||{
-        totalInventory:0,
-        totalAvailable:0,
-        totalOccupancy:0,
-      }
+        this.totalData = res.data.stockSts || {
+          totalInventory: 0,
+          totalAvailable: 0,
+          totalOccupancy: 0,
         }
         this.total = res.data.whPage.total
         this.listLoading = false
@@ -507,7 +506,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'productDrawingNo'||prop=='mainUnit'||prop=='projectName' || prop == 'productCode' || prop == 'warehouseName') {
+      if (prop == 'productDrawingNo' || prop == 'mainUnit' || prop == 'projectName' || prop == 'productCode' || prop == 'warehouseName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

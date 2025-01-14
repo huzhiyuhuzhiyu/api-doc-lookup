@@ -32,17 +32,17 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="tableQuery.code" placeholder="请输入产品编码" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model="tableQuery.code" placeholder="请输入产品编码" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="tableQuery.name" placeholder="请输入产品名称" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model="tableQuery.name" placeholder="请输入产品名称" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="tableQuery.drawingNo" placeholder="请输入产品图号" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model="tableQuery.drawingNo" placeholder="请输入产品图号" clearable />
                         </el-form-item>
                     </el-col>
 

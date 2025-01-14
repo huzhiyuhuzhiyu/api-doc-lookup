@@ -464,7 +464,7 @@
 
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
+                  <el-input @keyup.native.enter="dataFormSubmit()"  v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -561,7 +561,7 @@ export default {
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       activeNames: ["productInfo", "basicInfo"],
-      activeNamess:['pickInfo','productInfos'],
+      activeNamess: ['pickInfo', 'productInfos'],
       allocationFlag: false,
       routingVisible: false,
       collectForm: {
@@ -830,6 +830,9 @@ export default {
         }
         this.dataForm.productsDrawingNo = data.drawingNo
         this.getWarehouseListFun()
+        if (!this.dataForm.bomId) {
+        this.$message.error("该产品没有BOM，请配置BOM后再试")
+      }
       if (!data.routingId) return
       this.getRoutingDetail(this.dataForm.routingId)
 
@@ -1375,6 +1378,7 @@ export default {
           item.workGroupId = ""
         });
       }
+      if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       if (this.allocationFlag) {
         this.dataForm.materialFlag = true
       } else {

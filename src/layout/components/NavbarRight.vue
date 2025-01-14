@@ -1,33 +1,41 @@
 <template>
     <div class="right-menu">
+        <el-tooltip content="收藏" placement="bottom">
+            <i class="el-icon-star-off right-menu-item hover-effect" @click="openAddList()"
+                :class="{ 'twinkle': isTwinkle }"></i>
+        </el-tooltip>
+        <el-tooltip content="收藏夹" placement="bottom">
+            <i class="el-icon-collection right-menu-item hover-effect" @click="openRouterList()"
+                :class="{ 'twinkle': isTwinkle }"></i>
+        </el-tooltip>
         <!-- <template v-if="device !== 'mobile'"> -->
-            <template v-if="showSearch">
-                <search id="header-search" class="right-menu-item hover-effect" />
-            </template>
-            <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
-            <el-tooltip :content="$t('navbar.chat')" placement="bottom">
-                <i class="icon-ym icon-ym-header-IM right-menu-item hover-effect" @click="openUserList()"
-                    :class="{ 'twinkle': isTwinkle }"></i>
-            </el-tooltip>
-            <el-tooltip :content="$t('navbar.notice')" placement="bottom">
-                <div class="right-menu-item hover-effect" @click="$refs.MessageList.init()">
-                    <el-badge :value="messageCount" :hidden="!messageCount" :max="99">
-                        <i class="icon-ym icon-ym-header-message"></i>
-                    </el-badge>
-                </div>
-            </el-tooltip>
-            <div class="right-menu-item hover-effect">
-                <i @click="enter_full_screen" v-if="!full" class="ym-custom ym-custom-fullscreen"
-                    style="font-size:26px"></i>
-                <i @click="exitFullscreen" v-else class="ym-custom ym-custom-fullscreen-exit" style="font-size:26px"></i>
+        <template v-if="showSearch">
+            <search id="header-search" class="right-menu-item hover-effect" />
+        </template>
+        <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
+        <el-tooltip :content="$t('navbar.chat')" placement="bottom">
+            <i class="icon-ym icon-ym-header-IM right-menu-item hover-effect" @click="openUserList()"
+                :class="{ 'twinkle': isTwinkle }"></i>
+        </el-tooltip>
+        <el-tooltip :content="$t('navbar.notice')" placement="bottom">
+            <div class="right-menu-item hover-effect" @click="$refs.MessageList.init()">
+                <el-badge :value="messageCount" :hidden="!messageCount" :max="99">
+                    <i class="icon-ym icon-ym-header-message"></i>
+                </el-badge>
             </div>
-            <!-- <template v-if="showLanguage">
+        </el-tooltip>
+        <div class="right-menu-item hover-effect">
+            <i @click="enter_full_screen" v-if="!full" class="ym-custom ym-custom-fullscreen"
+                style="font-size:26px"></i>
+            <i @click="exitFullscreen" v-else class="ym-custom ym-custom-fullscreen-exit" style="font-size:26px"></i>
+        </div>
+        <!-- <template v-if="showLanguage">
                 <lang-select class="right-menu-item hover-effect" />
             </template> -->
-            <template v-if="showSwitch">
-                <system-select class="right-menu-item hover-effect" key="system-select" />
-            </template>
-            <!-- </template> -->
+        <template v-if="showSwitch">
+            <system-select class="right-menu-item hover-effect" key="system-select" />
+        </template>
+        <!-- </template> -->
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger='click'>
             <div class="avatar-wrapper">
                 <el-avatar :size="26" :src="define.comUrl + userInfo.headIcon" class="user-avatar"
@@ -122,7 +130,8 @@
         <MessageList ref="MessageList" @read='read' />
         <Settings ref="Settings" />
         <UserList ref="UserList" @changeTwinkle='changeTwinkle' />
-
+        <AddList ref="AddList" @changeTwinkle='changeTwinkle' />
+        <RouterList ref="RouterList" @changeTwinkle='changeTwinkle' />
     </div>
 </template>
 
@@ -139,6 +148,8 @@ import Search from '@/components/HeaderSearch'
 import MessageList from './MessageList'
 import Settings from './settings'
 import UserList from './userList/UserList'
+import AddList from '../components/routerList/add.vue'
+import RouterList from '../components/routerList/routerList.vue'
 import dragDialog from "@/directive/el-drag-dialog";
 import ReconnectingWebSocket from 'reconnecting-websocket'
 // import Notify from '@/utils/notify';
@@ -156,6 +167,8 @@ export default {
         Search,
         MessageList,
         UserList,
+        AddList,
+        RouterList,
         Settings,
         activeIndex2: '2',
         SystemSelect
@@ -432,6 +445,12 @@ export default {
         },
         openUserList() {
             this.$refs.UserList.init()
+        },
+        openAddList() {
+            this.$refs.AddList.init()
+        },
+        openRouterList() {
+            this.$refs.RouterList.init()
         },
         changeTwinkle(boo) {
             this.isTwinkle = boo

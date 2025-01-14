@@ -35,17 +35,17 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入设备商编码" clearable />
+              <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="请输入设备商编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="请输入设备商名称" clearable />
+              <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="请输入设备商名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
+              <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="请输入税号" clearable />
             </el-form-item>
 
           </el-col>

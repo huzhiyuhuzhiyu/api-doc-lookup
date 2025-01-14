@@ -53,15 +53,16 @@
                               :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
                           </el-form-item>
                         </el-col>
-                          <el-col :sm="6" :xs="24" v-if="['inbound_sale_return','inbound_purchase','inbound_external','inbound_return_materials','inbound_order_production','inbound_production','inbound_flip','inbound_return'].includes(dataForm.businessType)">
-                              <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
-                                  <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
-                                             style="width: 100%;">
-                                      <el-option v-for="(item, index) in diffBatchList" :key="index"
-                                                 :label="item.label" :value="item.value"></el-option>
-                                  </el-select>
-                              </el-form-item>
-                          </el-col>
+                        <el-col :sm="6" :xs="24"
+                          v-if="['inbound_sale_return', 'inbound_purchase', 'inbound_external', 'inbound_return_materials', 'inbound_order_production', 'inbound_production', 'inbound_flip', 'inbound_return'].includes(dataForm.businessType)">
+                          <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                            <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in diffBatchList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="仓库" prop="warehouseName">
                             <ComSelect-list
@@ -118,22 +119,34 @@
                     </el-form>
                   </el-collapse-item>
                   <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-                    <div v-if="btnType != 'look'">
-                      <el-button type="text" style="margin-right:8px;font-size:14px!important"
-                        :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                          class="iconfont-menu icon-saoma"></i>扫码录入</el-button>|
-                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                        icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                        @click="openSeleceProductDialog()">选择产品</el-button>|
-                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                        :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                        @click="batchDelete">批量删除</el-button>
+                    <div class="JNPF-common-head">
+                      <div v-if="btnType != 'look'">
+                        <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                            class="iconfont-menu icon-saoma"></i>扫码录入</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                          @click="openSeleceProductDialog()">选择产品</el-button>|
+                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                          @click="batchDelete">批量删除</el-button>
+                      </div>
+                      <!-- <div class="JNPF-common-head-right">
+
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun()" />
+                        </el-tooltip>
+                      </div> -->
                     </div>
-                    <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
+
+                    <JNPF-table ref="product"  :data="productData"   :fixedNO="true" :hasC="btnType != 'look'"
                       @selection-change="handeleProductInfoData" border style="width: 100%;">
+                      <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
                       <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"
                         v-if="productNameFlag == '1'" />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" key="productDrawingNo"
                         v-if="dataForm.documentType == 'outbound'" />
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
@@ -200,7 +213,8 @@
                       <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false"  @change="(value) => changePairingMode(value,scope)">
+                            :disabled="btnType == 'look' ? true : false"
+                            @change="(value) => changePairingMode(value, scope)">
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                               :value="item.id">
                             </el-option>
@@ -520,9 +534,20 @@
               </el-col>
             </el-form>
           </el-row>
-          <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <div class="JNPF-common-head">
+              <div></div>
+              <div class="JNPF-common-head-right">
+
+                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                  <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                    @click="productColumnSetFun()" />
+                </el-tooltip>
+              </div>
+            </div>
+            <JNPF-table ref="productVisible" :partentOrChild="'child'" custom-column v-loading="listLoading" :data="productList" hasC :fixedNO="true"
               @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
+              <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" sortable="custom" />
               <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
@@ -542,7 +567,7 @@
                 v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="mainUnit" />
-              <el-table-column prop="mainUnit" label="单位(副)" width="120" sortable="custom"
+              <el-table-column prop="deputyUnit" label="单位(副)" width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && mainUnitFlag == 1" key="mainUnit" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="inventoryQuantity" />
@@ -653,6 +678,7 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
+      columnList:[],
       datafilelist: [],
       isattachmentswitch: '',
       attachmentData: {},
@@ -688,7 +714,7 @@ export default {
         ["inbound_return", "资产归还"],
         ["inbound_receive_material", "直接领料入库"],
         ["outbound_receive_material", "直接领料出库"],
- 
+
       ])),
       list: [],
       batchNumVisible: false,
@@ -729,7 +755,7 @@ export default {
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
-        diffBatchNumFlag:1
+        diffBatchNumFlag: 1
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -911,10 +937,10 @@ export default {
       colourFlag: "",
       processFlag: "",
       pairingModeList: [],
-        diffBatchList:[
-            {label:'产品生成同批次号',value:0},
-            {label:'产品生成不同批次号',value:1},
-        ]
+      diffBatchList: [
+        { label: '产品生成同批次号', value: 0 },
+        { label: '产品生成不同批次号', value: 1 },
+      ]
     }
   },
   computed: {
@@ -962,9 +988,9 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
-    changePairingMode(value,scope) {
+    changePairingMode(value, scope) {
       if (value) {
-        this.productData[scope.$index].deputyUnit=this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
+        this.productData[scope.$index].deputyUnit = this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
       }
     },
     // 获取配对方式
@@ -1178,7 +1204,7 @@ export default {
     computedNumFun(data, index) {
       if (data.discount && data.proportion && data.weight) {
         if (Number(data.discount) > 1 || Number(data.discount) < 0) return this.$message.error("请输入合理的折扣值，0~1范围内")
-        this.productData[index].num = Math.floor(data.proportion * data.weight*data.discount)
+        this.productData[index].num = Math.floor(data.proportion * data.weight * data.discount)
         this.watchNum(data, index)
       }
     },
@@ -1277,6 +1303,8 @@ export default {
     // 选择批次
     selectBatchNumberFun(data, index) {
       console.log("data", data, index);
+      this.$set(this.productData[index], 'cooperativePartnerId', data.cooperativePartnerId)  // 供应商Id
+      this.$set(this.productData[index], 'partnerName', data.partnerName) // 供应商名称
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
@@ -1403,7 +1431,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productDrawingNo' || prop === 'productName' || prop === 'productCode') {
+      if (prop === 'partnerName' || prop === 'productDrawingNo' || prop === 'productName' || prop === 'productCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -1432,6 +1460,8 @@ export default {
         this.$set(item, 'warehouseName', this.dataForm.warehouseName)
         this.$set(item, 'warehouseType', this.dataForm.warehouseType)
         this.$set(item, 'productCategoryName', item.productCategoryName)
+        this.$set(item, 'partnerName', item.partnerName)  //供应商名称
+        this.$set(item, 'cooperativePartnerId', item.cooperativePartnerId) //供应商Id
         item.classAttribute = item.classAttribute
         item.ordersId = ""
         item.ordersLineId = ""
@@ -1505,6 +1535,14 @@ export default {
         this.productData.push(item)
         console.log("this.productData", this.productData);
       });
+    },
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.product.showDrawer()
+    },
+    productColumnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.productVisible.showDrawer()
     },
     // 产品信息列表多选
     handeleProductInfoData(val) {
@@ -1721,7 +1759,7 @@ export default {
           mobilePhone: '',
           pageNum: 1,
           pageSize: 20,
-          saleFlag:1,
+          saleFlag: 1,
           partnerCategoryId: "",
           type: "supplier",
         } // 意向客户列表入参
@@ -1741,7 +1779,7 @@ export default {
           mobilePhone: '',
           pageNum: 1,
           pageSize: 20,
-          saleFlag:1,
+          saleFlag: 1,
           partnerCategoryId: "",
           type: "outsourcing_suppliers",
         } // 意向客户列表入参

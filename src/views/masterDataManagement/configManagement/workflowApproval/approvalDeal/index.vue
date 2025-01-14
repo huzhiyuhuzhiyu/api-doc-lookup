@@ -8,7 +8,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="listQuery.orderNo" placeholder="请输入审批单号" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="listQuery.orderNo" placeholder="请输入审批单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -21,7 +21,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="listQuery.businessName" placeholder="请输入所属业务" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="listQuery.businessName" placeholder="请输入所属业务" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">

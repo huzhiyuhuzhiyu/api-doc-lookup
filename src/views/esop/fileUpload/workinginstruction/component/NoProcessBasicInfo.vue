@@ -27,7 +27,7 @@ export default {
                 categoryId:'',
                 enabledMark:false,
                 approvalStatus:'',
-                productsCategoryName:'',
+                productCategoryName:'',
                 productCategoryId:'',
                 productsId:'',
                 drawingNo:'',
@@ -112,7 +112,7 @@ export default {
             this.dataForm.productsId = id
             this.dataForm.drawingNo = drawingNo
             this.dataForm.productCategoryId = productCategoryId
-            this.dataForm.productsCategoryName = productCategoryName
+            this.dataForm.productCategoryName = productCategoryName
             this.dataForm.productsCode = code
         },
     },
@@ -211,7 +211,7 @@ export default {
                                     </el-col>
                                     <el-col :span="6">
                                         <el-form-item label="产品分类">
-                                            <el-input @click.native="chooseProduct" :value="dataForm.productsCategoryName" placeholder="请选择产品分类" readonly/>
+                                            <el-input @click.native="chooseProduct" :value="dataForm.productCategoryName" placeholder="请选择产品分类" readonly/>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>

@@ -188,6 +188,7 @@
                       <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity}}</span></div>
                       <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.qualifiedQuantity}}</span></div>
                       <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.unqualifiedQuantity }}</span></div>
+                      <div class="label_title bold" style="color: #993255;"> 可报工数量:<span>{{ item.waitReportNum }}</span></div>
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="ProcessReportFun(item)">报 工</el-button>
                       </div>

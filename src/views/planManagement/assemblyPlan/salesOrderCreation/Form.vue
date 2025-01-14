@@ -749,7 +749,7 @@ export default {
         this.countFun1()
       } else {
         let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]), 6)
-        if (Number(total) > Number(this.planForm.relaxQuantity * this.pairingModeNum)) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        if (Number(total) > Number(this.planForm.relaxQuantity * (this.pairingModeNum?this.pairingModeNum:1))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
         this.countFun1()
       }
     },
@@ -782,11 +782,11 @@ export default {
           this.planForm.purchaseQuantity = 0
         } else {
           this.planForm.utilizationQuantity = this.planForm.availableQuantity
-          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, , this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity,  this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
         }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, , this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity * this.pairingModeNum
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity,  this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity * this.pairingModeNum
           ]), 6)
         }
       }

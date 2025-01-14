@@ -5,12 +5,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入类型编码" clearable maxlength="20"> </el-input>
+              <el-input v-model="listQuery.code" placeholder="请输入类型编码" clearable maxlength="20" @keyup.enter.native="search()"> </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入类型名称" clearable maxlength="20"></el-input>
+              <el-input v-model="listQuery.name" placeholder="请输入类型名称" clearable maxlength="20" @keyup.enter.native="search()"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">

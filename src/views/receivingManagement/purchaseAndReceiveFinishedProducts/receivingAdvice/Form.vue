@@ -18,6 +18,9 @@
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
           </el-button>
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">
+            提交并打印
+          </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -121,6 +124,7 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -386,6 +390,7 @@
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -575,17 +580,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="请输入客户编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="请输入税号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -626,12 +631,12 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -722,6 +727,10 @@
           </div>
         </div>
       </el-dialog>
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+        :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
+        @closePrintPage="closePrintPage" />
     </div>
   </transition>
 </template>
@@ -750,8 +759,11 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { Process, recordList },
+  components: { Process, recordList, PrintBrowse, PrintDialog },
   mixins: [busFlow, getProjectList],
   data() {
     return {
@@ -810,7 +822,7 @@ export default {
             }),
             trigger: ['blur']
           },
-          { validator: this.calcValidate(), trigger: 'blur' },
+          // { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
@@ -1007,7 +1019,12 @@ export default {
       materialFlag: '',
       colourFlag: '',
       customStyleData: 0,
-      formLoading: true
+      formLoading: true,
+      prindId: '',
+      formId: '',
+      enCode: '',
+      printBrowseVisible: false,
+      printVisible: false
     }
   },
   computed: {
@@ -1164,7 +1181,7 @@ export default {
     },
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
-        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight*data.discount)
+        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight * data.discount)
         this.watchNum(data, index)
       }
     },
@@ -1924,7 +1941,7 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
-    handleConfirm(value) {
+    handleConfirm(value, type) {
       let submitFlag = true
 
       this.$refs['dataForm'].validate((valid) => {
@@ -2099,7 +2116,18 @@ export default {
             } else if (value == 'submit') {
               this.submitmethodsTitle = '提交成功'
             }
-            this.tipsvisible = true
+            if (type) {
+              this.enCode = 'p018'
+              this.formId = res.data.id
+              this.fullName = '采购收货单'
+
+              this.printVisible = true
+              this.$nextTick(() => {
+                this.$refs.printTemplate.init(this.enCode)
+              })
+            } else {
+              this.tipsvisible = true
+            }
             this.$message({
               message: msg,
               type: 'success',
@@ -2116,6 +2144,25 @@ export default {
           })
 
       }
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode)
+        .then((res) => {
+          if (res.data) {
+            this.printVisible = false
+            this.prindId = res.data.id
+            this.printBrowseVisible = true
+          } else {
+            this.$message.warning('未找到相应打印模版')
+          }
+        })
+        .catch(() => {
+          this.printBrowseVisible = false
+        })
+    },
+    closePrint() {
+      this.btnLoading = false
+      this.printVisible = false
     },
     // 测试审批流
     getBusInfo() {

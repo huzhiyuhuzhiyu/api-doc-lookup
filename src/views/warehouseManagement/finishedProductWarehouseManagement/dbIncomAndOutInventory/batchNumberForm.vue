@@ -10,17 +10,17 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.batchNumber" placeholder="请输入批次号" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.batchNumber" placeholder="请输入批次号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.shelfSpaceName" placeholder="请输入库位" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.shelfSpaceName" placeholder="请输入库位" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">

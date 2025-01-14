@@ -88,7 +88,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="planQuantity" label="数量" min-width="200" key="planQuantity">
                         <template slot="header">
                           <span class="required">*</span>
@@ -262,7 +262,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="planQuantity" label="数量" min-width="200" key="planQuantity">
                     <template slot="header">
                       <span class="required">*</span>

@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="query.customerMaterialCode" placeholder="请输入客户图号" clearable />
+              <el-input @keyup.native.enter="search()"  v-model.trim="query.customerMaterialCode" placeholder="请输入客户图号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="query.productDrawingNo" placeholder="请输入产品图号" clearable />
+              <el-input @keyup.native.enter="search()"  v-model.trim="query.productDrawingNo" placeholder="请输入产品图号" clearable />
             </el-form-item>
           </el-col>
 

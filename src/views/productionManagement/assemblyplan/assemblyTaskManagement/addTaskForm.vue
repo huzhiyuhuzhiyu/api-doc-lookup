@@ -99,23 +99,23 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                        <el-col :sm="6" :xs="24"
-                                v-if="dataForm.pickingWay === 'production_order' && dataForm.autoMaterialFlag">
-                            <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
-                                <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
-                                    <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay === 'dispatch_list'">
-                            <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
-                                <el-select v-model="dataForm.lineEdgeList" placeholder="请选择" style="width: 100%;">
-                                    <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
+                      <el-col :sm="6" :xs="24"
+                        v-if="dataForm.pickingWay == 'production_order' && dataForm.autoMaterialFlag">
+                        <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
+                          <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
+                            <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'dispatch_list'">
+                        <el-form-item label="线边仓库" prop="lineEdgeId" ref="organizeIdTree">
+                          <el-select v-model="dataForm.lineEdgeId" placeholder="请选择" style="width: 100%;">
+                            <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
@@ -515,7 +515,7 @@
               </el-col>
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
+                  <el-input @keyup.native.enter="dataFormSubmit()"  v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -643,6 +643,7 @@ export default {
       dataForm: {
         planDate: [],
         lineEdgeList: [],
+        lineEdgeId: "",
         orderNo: "",
         productsDrawingNo: "",
         productsCode: "",
@@ -681,6 +682,7 @@ export default {
       formLoading: false,
       dataRule: {
         lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
+        lineEdgeId: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
@@ -1375,6 +1377,7 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
+      console.log("this.dataForm.lineEdgeList", this.dataForm.lineEdgeList);
       let submitFlag = null;
       if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       this.dataForm.productsId = this.dataForm.id

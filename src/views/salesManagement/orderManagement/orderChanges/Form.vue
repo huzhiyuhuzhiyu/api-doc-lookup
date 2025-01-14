@@ -111,18 +111,18 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.orderNo" placeholder="请输入订单号" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="orderForm.orderNo" placeholder="请输入订单号" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.cooperativePartnerCode" placeholder="请输入客户编码" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="orderForm.cooperativePartnerCode" placeholder="请输入客户编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入客户名称" clearable />
+                    <el-input @keyup.native.enter="search()"  v-model="orderForm.cooperativePartnerName" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
                 <!-- <el-col :span="4">
@@ -216,6 +216,7 @@ export default {
         // { prop: "customerProductDrawingNo", label: `客户规格型号`, value: "", type: 'view', width: "180", },
         { prop: "productCode", label: "产品编码", value: "", type: 'view', width: "140", },
         { prop: "productName", label: "产品名称", value: "", type: 'view', width: "120", },
+        { prop: "productCategoryName", label: "产品分类", value: "", type: 'view', width: "140", },
         { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', width: "350", },
         { prop: "pairingModeName", label: "配对方式", value: "", type: 'view', width: "120", },
         { prop: "mainUnit", label: "单位", value: "", type: 'view', width: "180", },
@@ -444,6 +445,7 @@ export default {
             })
             a.forEach(item => {
               let obj = {
+                productCategoryName: item.productCategoryName ? item.productCategoryName : "",
                 pairingModeName: item.pairingModeName ? item.pairingModeName : "",
                 contractNo: item.contractNo ? item.contractNo : "",
                 productCode: item.productCode ? item.productCode : "",
@@ -500,6 +502,7 @@ export default {
           })
           a.forEach(item => {
             let obj = {
+              productCategoryName: item.productCategoryName ? item.productCategoryName : "",
               pairingModeName: item.pairingModeName ? item.pairingModeName : "",
               contractNo: item.contractNo ? item.contractNo : "",
               productCode: item.productCode ? item.productCode : "",

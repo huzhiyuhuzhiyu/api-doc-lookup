@@ -110,8 +110,10 @@
 </template>
 
 <script>
-import { getSalaryList, editSalaryList, updateSalaryList } from '@/api/salaryManagement'
+import { updateSalaryList, getMonthSalaryReportList } from '@/api/salaryManagement'
 import Form from './Form'
+import ExportForm from '@/components/no_mount/ExportBox/index.vue';
+import { excelExport } from '@/api/basicData';
 export default {
   name: 'pieceRateWage',
   components: { Form, ExportForm },
@@ -162,11 +164,15 @@ export default {
   },
   methods: {
     handeleProductInfoData(val) {
-      this.producerIdList = val.map(item => item.id);
+      this.producerIdList = val.map(item => item.producerId);
     },
     recalculate() {
       if (!this.producerIdList.length) return this.$message.error("请先选择数据")
-      updateSalaryList(this.producerIdList).then(res => {
+      let obj = {
+        month: this.listQuery.month,
+        producerIdList: this.producerIdList
+      }
+      updateSalaryList(obj).then(res => {
         console.log("res",);
         this.$message.success("重新计算异常工资成功")
         this.selectArr = []
@@ -205,10 +211,10 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getSalaryReportList(this.listQuery).then(res => {
+      getMonthSalaryReportList(this.listQuery).then(res => {
         this.tableData = res.data.page.records
         this.total = res.data.page.total
-        this.totalData = res.data.total
+        this.totalData = res.data.total || {}
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -295,7 +301,7 @@ export default {
         }
         let _data = {
           ...this.listQuery,
-          exportType: '1238',
+          exportType: '1242',
           exportName: '工资',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
@@ -311,4 +317,4 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped/>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />

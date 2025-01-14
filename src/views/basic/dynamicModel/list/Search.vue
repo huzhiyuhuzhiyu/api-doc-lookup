@@ -4,7 +4,7 @@
       <el-col :span="6" v-for="(item, index) in searchList" :key="index">
         <el-form-item :label="item.__config__.label" v-show="index<3 || (index>=3 && showAll)">
           <template v-if="useInputList.indexOf(item.__config__.jnpfKey)>-1">
-            <el-input v-model="item.value" :placeholder="item.__config__.label" clearable
+            <el-input @keyup.native.enter="search()"  v-model="item.value" :placeholder="item.__config__.label" clearable
               class="item">
             </el-input>
           </template>

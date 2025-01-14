@@ -226,17 +226,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6" v-if="materialType=='order'">
                   <el-form-item>
-                    <el-input v-model="MaterialListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                    <el-input @keyup.native.enter="search('order')"  v-model="MaterialListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="materialType=='order'">
                   <el-form-item>
-                    <el-input v-model="MaterialListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                    <el-input @keyup.native.enter="search('order')"  v-model="MaterialListRequestObj.productName" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="materialType=='order'">
                   <el-form-item>
-                    <el-input v-model="MaterialListRequestObj.productDrawingNo" placeholder="请输入产品图号" clearable />
+                    <el-input @keyup.native.enter="search('order')"  v-model="MaterialListRequestObj.productDrawingNo" placeholder="请输入产品图号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -244,20 +244,20 @@
 
                 <el-col :span="6" v-if="materialType=='procss'">
                   <el-form-item>
-                    <el-input v-model="processMaterialListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                    <el-input @keyup.native.enter="search('procss')"  v-model="processMaterialListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 
                 <el-col :span="6" v-if="materialType=='procss'">
                   <el-form-item>
-                    <el-input v-model="processMaterialListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                    <el-input @keyup.native.enter="search('procss')"  v-model="processMaterialListRequestObj.productName" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 
                 
                 <el-col :span="6" v-if="materialType=='procss'">
                   <el-form-item>
-                    <el-input v-model="processMaterialListRequestObj.productDrawingNo" placeholder="请输入产品图号" clearable />
+                    <el-input @keyup.native.enter="search('procss')"  v-model="processMaterialListRequestObj.productDrawingNo" placeholder="请输入产品图号" clearable />
                   </el-form-item>
                 </el-col>
  

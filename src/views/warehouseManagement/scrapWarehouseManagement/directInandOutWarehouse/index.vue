@@ -164,23 +164,23 @@
 
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
+                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.batchNumber" placeholder="请输入批次号" clearable />
+                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.batchNumber" placeholder="请输入批次号" clearable />
                 </el-form-item>
               </el-col>
 
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                 </el-form-item>
               </el-col>
               <!-- <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
@@ -190,7 +190,7 @@
               </el-col> -->
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
+                  <el-input @keyup.native.enter="searchProductFun()"  v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
                 </el-form-item>
               </el-col>
 

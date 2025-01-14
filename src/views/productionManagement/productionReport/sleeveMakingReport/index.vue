@@ -118,24 +118,24 @@
           </el-table-column>
           <el-table-column prop="waitSuperfine" label="待超精" width="120" align="center">
             <template slot-scope="scope">
-              <el-link v-if="scope.row.classType === 'outer_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.mainProdId, 'inventoryFlag', '外圈超精')">
+              <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
+                @click.native="viewTask(scope.row.mainProdId, 'inventoryFlag', '内圈超精')">
                 {{ scope.row.waitSuperfine }}
               </el-link>
-              <template v-else>
+              <el-link v-else type="primary" @click.native="viewTask(scope.row.mainProdId, 'inventoryFlag', '外圈超精')">
                 {{ scope.row.waitSuperfine }}
-              </template>
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="waitRollingResearch" label="待外圈修磨" width="120" align="center">
             <template slot-scope="scope">
-              <el-link v-if="scope.row.classType === 'inner_ring_blank'" type="primary"
-                @click.native="viewTask(scope.row.prodOrderStatus, 'inventoryFlag', '内圈超精')">
+              <el-link v-if="scope.row.classType === 'outer_ring_blank'" type="primary"
+                @click.native="viewTask(scope.row.mainProdId, 'inventoryFlag', '外圈修磨')">
                 {{ scope.row.waitRollingResearch }}
               </el-link>
-              <el-link v-else type="primary" @click.native="viewTask(scope.row.mainProdId, 'inventoryFlag', '外圈修磨')">
+              <template v-else>
                 {{ scope.row.waitRollingResearch }}
-              </el-link>
+              </template>
             </template>
           </el-table-column>
           <el-table-column prop="waitStock" label="待入库" width="120" align="center">
@@ -211,7 +211,7 @@ export default {
     viewTask(mainProdId, type, processName) {
       this.taskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.TaskForm.init('', type, processName)
+        this.$refs.TaskForm.init(mainProdId, type, processName)
       })
     },
     initData() {

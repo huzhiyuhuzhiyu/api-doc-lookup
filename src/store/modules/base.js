@@ -4,7 +4,7 @@ import { getPositionListAll, getPositionSelector } from '@/api/permission/positi
 import { getRoleSelector } from '@/api/permission/role'
 import { getPrintDevSelector } from '@/api/system/printDev'
 import jnpf from '@/utils/jnpf';
-import { getOrderFiledMap } from '@/api/basicData'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData'
 
 const state = {
   dictionaryList: [],
@@ -241,6 +241,19 @@ const actions = {
         return new Promise((resolve, reject) => {
             getOrderFiledMap(type).then(res => {
                 if (type === 'gobal') commit('SET_CONFIG_GLOBAL', res.data)
+                resolve(res.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+  },
+  getParamSetConfig({ commit },params) {
+        return new Promise((resolve, reject) => {
+            let obj = {
+                businessCode: params.code,
+                configKey: params.type
+            }
+            getBimBusinessDetail(obj).then(res => {
                 resolve(res.data)
             }).catch(error => {
                 reject(error)

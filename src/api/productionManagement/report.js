@@ -16,4 +16,21 @@ export function ringReport(data) {
   })
 }
 
+// 甬明套圈在制报表-列表
+export function getAssembleList(data) {
+  return request({
+    url: `/api/report/data/ym/transit/assemble/list`,
+    method: 'post',
+    data
+  })
+}
+// 甬明套圈在制报表-导出
+export function assembleReport(data) {
+  return request({
+      url: `/api/report/data/ym/transit/assemble/export`,
+      method: 'POST',
+      data
+  })
+}
+
 

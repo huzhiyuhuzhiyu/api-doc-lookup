@@ -5,11 +5,11 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.priceStatus" placeholder="计价类型" clearable style="width: 100%;">
+              <el-select v-model="listQuery.pricingFlag" placeholder="计价类型" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in [
-                  { label: '无单价', value: '0' },
-                  { label: '有单价', value: '1' },
-                  { label: '所有', value: '2' }
+                  { label: '无单价', value: 0 },
+                  { label: '有单价', value: 1 },
+                  { label: '所有', value: '' }
                 ]" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -85,7 +85,9 @@
           <el-table-column prop="productsCode" label="产品编码" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
-
+          <el-table-column prop="effectiveDate" label="生效日期" :formatter="jnpf.tableDateFormatStrDay" min-width="120"
+            sortable="custom">
+          </el-table-column>
           <el-table-column prop="pricingType" label="计价类型" width="120" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.pricingType == 'by_time'">
@@ -125,6 +127,13 @@
             <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
               <el-form-item prop="unitPrice" label="计件单价">
                 <el-input v-model="dataForm.unitPrice" placeholder="请输入计件单价" />
+              </el-form-item>
+            </el-col>
+            <el-col :sm="24">
+              <el-form-item label="生效日期" prop="effectiveDate">
+                <el-date-picker v-model="dataForm.effectiveDate" type="date" format="yyyy-MM-dd" style="width: 100%;"
+                  value-format="yyyy-MM-dd" placeholder="请选择生效日期" :disabled="btnType ? true : false"
+                  :picker-options="effectiveDatePickerOptions"></el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
@@ -242,9 +251,11 @@ export default {
       listLoading: false,
       listQuery: {},
       initListQuery: {
-        priceStatus: '2',
+        pricingFlag: 1,
         drawingNo: '',
         processName: '',
+        priceType: 'process',
+        effectFlag: 1,
         orderItems: [
           {
             asc: false,
@@ -268,6 +279,7 @@ export default {
       btnLoading: false,
       dataForm: {
         pricingType: '',
+        effectiveDate: '',
         timePrice: '',
         unitPrice: ''
       },
@@ -280,7 +292,10 @@ export default {
         unitPrice: [
           { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
           { required: true, message: '正品单价不能为空', trigger: 'blur' }
-        ]
+        ],
+        effectiveDate: [
+          { required: true, message: '生效日期不能为空', trigger: 'change' }
+        ],
       },
       selectedData: [],
       basicQuery: {},
@@ -290,6 +305,16 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
+    }
+  },
+  computed: {
+    effectiveDatePickerOptions() {
+      return {
+        disabledDate: (date) => {
+          // 禁用早于第一个时间的日期
+          return date < new Date() - 8.64e7
+        }
+      }
     }
   },
   async created() {
@@ -621,12 +646,15 @@ export default {
       if (submitFlag) {
         this.selectedData.forEach((item) => {
           item.pricingType = this.dataForm.pricingType
+          item.effectiveDate = this.dataForm.effectiveDate + ' 00:00:00'
+          item.priceType = 'process'
           if (item.pricingType === 'by_time') {
             item.timePrice = this.dataForm.timePrice
           } else if (item.pricingType === 'by_piece') {
             item.unitPrice = this.dataForm.unitPrice
           }
         })
+        console.log(this.selectedData, 'this.selectedData')
 
         batchAddBimProductProcessPrice(this.selectedData)
           .then((res) => {

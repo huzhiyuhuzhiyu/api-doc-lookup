@@ -322,9 +322,18 @@ const jnpf = {
   },
   // 基于dayjs日期格式化, 精确到天，表格专用
   tableDateFormatDay(row, column, cellValue) {
+    console.log(cellValue,'cellValue')
     let format = 'YYYY-MM-DD'
     if (!cellValue) return ''
     return dayjs(Number(cellValue)).format(format)
+  },
+
+  // 基于dayjs 字符串日期格式化, 精确到天，表格专用
+  tableDateFormatStrDay(row, column, cellValue) {
+    console.log(cellValue,'cellValue')
+    let format = 'YYYY-MM-DD'
+    if (!cellValue) return ''
+    return dayjs(cellValue).format(format)
   },
   // 基于dayjs日期格式化, 精确到秒，表格专用
   tableDateFormatDayTime(row, column, cellValue) {

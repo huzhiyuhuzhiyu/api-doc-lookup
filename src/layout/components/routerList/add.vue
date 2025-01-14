@@ -89,9 +89,9 @@ export default {
     init() {
       this.finish = false
       this.addVisible = true
-
+      console.log(this.$router.currentRoute,'kk')
       this.ruleForm.urlName = this.$router.currentRoute.meta.zhTitle
-      this.ruleForm.urlAddress = window.location.pathname
+      this.ruleForm.urlAddress = this.$router.currentRoute.fullPath
       console.log(this.ruleForm, 'jjj')
     }
   }

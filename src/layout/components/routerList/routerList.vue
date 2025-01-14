@@ -80,7 +80,7 @@ export default {
     enterRouter(urlAddress) {
       this.dialogVisible = false
       this.$router.push({
-        path: urlAddress
+        path: '/warehouseManagement/${finish_product}/awaitInspectionInventory?finish_product'
       })
     },
     submitForm(formName) {

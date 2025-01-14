@@ -342,7 +342,7 @@ export const updateUserFavorites = (data) => {
   })
 }
 
-// 删除用户
+// 用户主页收藏-删除
 export const delUserFavorites = (id) => {
   return request({
     url: `/api/zgt/bimUserFavorites/del/${id}`,

@@ -215,8 +215,20 @@
                       <span class="pairNum" v-if="currentProcess.pairingModeId">配对基本数量：{{ pairingModeNum }}</span>
                     </el-form-item>
                   </el-col>
+      <!-- //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序 -->
+      <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcessType !== 1 && currentProcess.accuracyReportFlag">
+                    <el-form-item label="精度等级:" prop="accuracyLevel" :style="{ marginBottom: producerMargin }">
+                      <el-select v-model="currentProcess.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
+                        @change="(value) => handleSelectionChangeJD(value)" class="ipt">
+                        <el-option v-for="(item, index) in accuracyLevelList" :key="index" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType !== 1 && currentProcess.vibrateReportFlag">
+                    v-if="currentProcessType !== 1 && currentProcess.vibrateReportFlag&&currentProcessType!==6">
                     <el-form-item label="测振等级:" prop="vibrationLevel" :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.vibrationLevel" placeholder="请选择测振等级" style="width: 100%;"
                         @change="(value) => handleSelectionChangeZD(value)" class="ipt">
@@ -226,7 +238,7 @@
 
                     </el-form-item>
                   </el-col>
-                
+
                   <el-col :sm="24" :xs="24" v-if="currentProcessType === 4 || currentProcessType === 5">
                     <el-form-item label="总配对数量(对):" prop="matchedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -235,7 +247,7 @@
                         @blur="countQualifiedQuantity" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24"  v-if="currentProcessType !== 6 ">
+                  <el-col :sm="24" :xs="24" v-if="currentProcessType !== 6">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity"
@@ -248,9 +260,9 @@
                     </el-form-item>
                   </el-col>
 
+                  <!-- stockFlag 0否 继续生产 2包装入库 -->
                   <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType !== 1 && currentProcess.reportFlag">
-                    <!-- stockFlag 0否 继续生产 2包装入库 -->
+                    v-if="currentProcessType !== 1 && currentProcess.reportFlag&&currentProcessType">
                     <el-form-item label="是否入库:" prop="stockFlag">
                       <el-select v-model="stockFlag" placeholder="请选择是否入库" :disabled="currentProcess.lastFlag"
                         style="width: 100%;" class="ipt">
@@ -335,25 +347,28 @@
                           :fixedNO="true">
                           <el-table-column prop="accuracyLevel" label="精度等级">
                             <template slot-scope="scope">
-                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;">
-                                <el-option v-for="(item, index) in accuracyLevelList" :key="index" :label="item.name"
-                                  :value="item.name"></el-option>
+                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
+                                @change="(value) => handleSelectionChangeaccOne(value)">
+                                <el-option v-for="(item, index) in getFilteredAccuracyLevelList(scope.row)" :key="index"
+                                  :label="item.name" :value="item.name"></el-option>
                               </el-select>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="num" label="数量">
+                          <el-table-column prop="qualifiedQuantity" label="数量">
                             <template slot-scope="scope">
-                              <el-input v-model="scope.row.num" />
+                              <el-input v-model="scope.row.qualifiedQuantity" />
                             </template>
                           </el-table-column>
                           <el-table-column label="操作" width="100" fixed="right">
                             <template slot-scope="scope">
                               <el-button size="mini" type="text" @click="addFun">新增</el-button>
-                              <el-button size="mini" type="text" @click="delFun"  style=" color: #ff3a3a" :disabled="tableDataList.length===1">删除</el-button>
+                              <el-button size="mini" type="text" @click="delFun(scope)" style=" color: #ff3a3a"
+                                :disabled="tableDataList.length === 1">删除</el-button>
                             </template>
                           </el-table-column>
                         </JNPF-table>
                       </div>
+
                       <div style="width: 49%;display: inline-block;margin-left: 2%;vertical-align: top;">
                         <p class="accTitle">01精度</p>
                         <JNPF-table v-loading="listLoading" ref="dataTables" custom-column :data="tableDataList2"
@@ -361,20 +376,31 @@
                           <el-table-column prop="accuracyLevel" label="精度等级">
                             <template slot-scope="scope">
                               <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;">
-                                <el-option v-for="(item, index) in accuracyLevelList2" :key="index" :label="item.name"
-                                  :value="item.name"></el-option>
+                                <el-option v-for="(item, index) in getFilteredAccuracyLevelList2(scope.row)"
+                                  :key="index" :label="item.name" :value="item.name"></el-option>
                               </el-select>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="num" label="数量">
+                          <el-table-column prop="qualifiedQuantity" label="数量">
                             <template slot-scope="scope">
-                              <el-input v-model="scope.row.num" />
+                              <el-input v-model="scope.row.qualifiedQuantity" />
                             </template>
                           </el-table-column>
+                          <el-table-column prop="stockFlag" label="是否入库">
+                            <template slot-scope="scope">
+                              <el-select v-model="scope.row.stockFlag" placeholder="请选择是否入库"
+                                :disabled="currentProcess.lastFlag" style="width: 100%;">
+                                <el-option v-for="(item, index) in stockFlagList" :key="item.id" :label="item.fullName"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </template>
+                          </el-table-column>
+
                           <el-table-column label="操作" width="100" fixed="right">
                             <template slot-scope="scope">
                               <el-button size="mini" type="text" @click="addFun2">新增</el-button>
-                              <el-button size="mini" type="text" @click="delFun2"  style=" color: #ff3a3a" :disabled="tableDataList.length===1">删除</el-button>
+                              <el-button size="mini" type="text" @click="delFun2(scope)" style=" color: #ff3a3a"
+                                :disabled="tableDataList2.length === 1">删除</el-button>
                             </template>
                           </el-table-column>
                         </JNPF-table>
@@ -450,7 +476,7 @@
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { detailProcess, getvibrationList, getPairingModelList } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getvibrationList, getPairingModelList,getaccuracyList} from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
 import { log } from 'mathjs'
@@ -466,12 +492,11 @@ export default {
   data() {
     return {
       tableDataList: [
-        { accuracyLevel: "", num: "" }
-
+        { accuracyLevel: "", qualifiedQuantity: "" }
       ],
       accuracyLevelList2: [],
       tableDataList2: [
-        { accuracyLevel: "", num: "" }
+        { accuracyLevel: "", qualifiedQuantity: "", stockFlag: 0, }
       ],
       targetHeight: "",
       targetHeight2: "",
@@ -504,6 +529,9 @@ export default {
         ],
         producerName: [
           { required: true, message: '生产人不能为空', trigger: 'change' }
+        ],
+        accuracyLevel: [
+          { required: true, message: '精度等级不能为空', trigger: 'change' }
         ],
         producerId: [
           { required: true, message: '生产人不能为空', trigger: 'change' }
@@ -541,6 +569,7 @@ export default {
       materialFlag: '',
       colourFlag: '',
       accuracyLevelList: [],
+
     }
   },
 
@@ -553,47 +582,82 @@ export default {
     this.getPackmethods()
   },
   methods: {
+    // 选择02精度  再将选中的值赋值给到01精度可选项
+    handleSelectionChangeaccOne(value) {
+      //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
+      const selectedItem = this.accuracyLevelList.find(item => item.name === value);
+      console.log("selectedItem", selectedItem);
+      this.accuracyLevelList2 = [...this.accuracyLevelList2, selectedItem]
+
+
+    },
+    // 过滤已选择的数据
+    getFilteredAccuracyLevelList(currentRow) {
+      // 生成当前行可以选择的精度等级列表  
+      const selectedLevels = this.tableDataList
+        .filter(row => row !== currentRow) // 排除当前行  
+        .map(row => row.accuracyLevel); // 获取其他行的已选择项  
+
+      return this.accuracyLevelList.filter(item => !selectedLevels.includes(item.name));
+    },
     // 02精度新增
     addFun(scope) {
       let len = this.tableDataList.length
       if (len >= this.accuracyLevelList.length) return this.$message.error("表格数据条数已达到精度等级可选种类数量")
-      this.tableDataList.push({ accuracyLevel: "", num: "", })
-    console.log("this.$refs.mycol",this.$refs.mycol);
+      this.tableDataList.push({ accuracyLevel: "", qualifiedQuantity: "", })
       this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          this.targetHeight = height+49;
-        });
+        const height = this.$refs.mycol.$el.clientHeight
+        this.targetHeight = height + 49;
+      });
     },
     // 02精度删除
-    delFun(scope) { 
+    delFun(scope) {
       this.tableDataList.splice(scope.$index, 1)
       this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          this.targetHeight = height+49;
-        });
+        const height = this.$refs.mycol.$el.clientHeight
+        this.targetHeight = height;
+      });
+      let nameToFind = scope.row.accuracyLevel
+      if (!this.tableDataList2.length) return
+
+      const index = this.tableDataList2.findIndex(item => item.accuracyLevel === nameToFind);
+
+      // 输出结果  
+      if (index !== -1) {
+        this.tableDataList2[index] = { accuracyLevel: "", qualifiedQuantity: "" }
+      } else {
+      }
     },
-     // 01精度新增
-     addFun2(scope) {
+    // 过滤01精度已选择的数据
+    getFilteredAccuracyLevelList2(currentRow) {
+      // 生成当前行可以选择的精度等级列表  
+      const selectedLevels = this.tableDataList2
+        .filter(row => row !== currentRow) // 排除当前行  
+        .map(row => row.accuracyLevel); // 获取其他行的已选择项  
+
+      return this.accuracyLevelList2.filter(item => !selectedLevels.includes(item.name));
+    },
+    // 01精度新增
+    addFun2(scope) {
       let len = this.tableDataList2.length
-      if (len >= this.accuracyLevelList.length) return this.$message.error("表格数据条数已达到精度等级可选种类数量")
-      this.tableDataList2.push({ accuracyLevel: "", num: "", })
+      if (len >= this.tableDataList.length) return this.$message.error("表格数据条数已达到精度等级可选种类数量")
+      this.tableDataList2.push({ accuracyLevel: "", qualifiedQuantity: "", stockFlag: 0, })
       this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          this.targetHeight = height+49;
-        });
+        const height = this.$refs.mycol.$el.clientHeight
+        this.targetHeight = height + 49;
+      });
     },
     // 01精度删除
-    delFun2(scope) { 
+    delFun2(scope) {
       this.tableDataList2.splice(scope.$index, 1)
       this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          this.targetHeight = height+49;
-        });
+        const height = this.$refs.mycol.$el.clientHeight
+        this.targetHeight = height + 49;
+      });
     },
     // 获取是否入库下拉框
     getInboundVal() {
       this.$store.dispatch('base/getDictionaryData', { sort: 'NextProductionMethod' }).then((res) => {
-        console.log("下拉值", res);
 
 
         res.forEach(item => {
@@ -635,6 +699,7 @@ export default {
       } else {
         this.currentProcessType = 1
       }
+      console.log(this.currentProcessType);
     },
 
     // 获取配对方式
@@ -697,6 +762,18 @@ export default {
         this.vibrationLevelList = res.data
       })
     },
+     // 获取 可选的精度等级
+     getReprotNumJD(id) {
+      let obj = {
+        workOrderId: this.currentProcess.id,
+        pairingModeId: id,
+      }
+      getaccuracyList(obj).then(res => {
+        console.log("测振数据", res);
+        this.accuracyLevelList = res.data
+      })
+    },
+    
     handleSelectionChangeZD(value) {
       console.log("value", value);
       if (this.currentProcessType !== 2) {
@@ -785,6 +862,10 @@ export default {
         console.log("进来了");
         this.getReprotNum('')
       }
+      if (item.accuracyReportFlag === true && item.processType !== "accuracy") {
+        console.log("进来了2");
+        this.getReprotNumJD('')
+      }
       console.log("配对方式", this.pairingModeList, item.pairingModeId);
       if (this.currentProcess.pairingModeId && this.pairingModeList.length) this.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
       this.currentProcessId = item.processId
@@ -802,7 +883,6 @@ export default {
 
     handleBlur() {
       let total
-      console.log(this.jnpf.numberFormat(this.jnpf.math('divide', [this.currentProcess.qualifiedQuantity, this.pairingModeNum])));
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
@@ -842,7 +922,7 @@ export default {
         this.getvibrationLevelFun()
 
       }
-      // 如果是测振工序 则获取测振工序等级
+      // 如果是精度工序 则获取精度工序等级
       console.log(999, this.currentProcessType, this.currentProcess.accuracyReportFlag);
       if (this.currentProcessType === 6 && this.currentProcess.accuracyReportFlag) {
         console.log("精度工序");
@@ -933,7 +1013,7 @@ export default {
       };
       getbimProductAttributesList(obj3).then(res => {
         this.accuracyLevelList = res.data.records
-        console.log("精度工序", res);
+        console.log("精度等级", res);
         this.$nextTick(() => {
           const height = this.$refs.mycol.$el.clientHeight
           this.targetHeight = height;
@@ -986,22 +1066,90 @@ export default {
       // 先判断是否有测震工序(sort有值表示有测震工序)  
       // 如果有 拿当前工序排序值大于等于测震工序值 则表示是测震工序或测震后工序
       // 如果没有 则是测震前工序
-      console.log(this.currentProcess);
+      console.log("this.currentProcess", this.currentProcess);
+      console.log("this.tableDataList)", this.tableDataList);
+      console.log("this.tableDataList2)", this.tableDataList2);
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null
           if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
-            this.submitFlag = false
+            submitFlag = false
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
+          if(this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag){
+            if(!this.currentProcess.qualifiedQuantity) return this.$message.error("合格数量不能为空")
+          }
+          // 精度工序相关判断
+          if (this.currentProcessType === 6 && this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag) {
+            console.log(123);
+            // 使用 every 方法检查是否所有 accuracyLevel 都为空
+            var totalQualifiedQuantity, totalQualifiedQuantity2;
+            if (this.tableDataList.length) {
+              const allAccuracyLevelEmpty = this.tableDataList.every(item => item.accuracyLevel === "");
+              if (allAccuracyLevelEmpty) {
+                this.$message.error("请选择02精度等级")
+                submitFlag = false
+                return
+              }
+              for (let index = 0; index < this.tableDataList.length; index++) {
+                const item = this.tableDataList[index];
+                if (item.accuracyLevel && !item.qualifiedQuantity) {
+                  this.$message({
+                    message: "请输入02精度表格第" + (index + 1) + "行数量",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  submitFlag = false
+                  break
+                }
+              }
+              totalQualifiedQuantity = this.tableDataList.reduce((sum, item) => {
+                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
+              }, 0);
+              if (totalQualifiedQuantity > this.currentProcess.waitReportNum) {
+                this.$message.error("02精度总数量不能超过可报工数量")
+                return
+              }
+            }
+            if (this.tableDataList2.length) {
+              const allAccuracyLevelEmpty2 = this.tableDataList2.every(item => item.accuracyLevel === "");
+              if (allAccuracyLevelEmpty2) {
+                this.$message.error("请选择01精度等级")
+                submitFlag = false
+                return
+              }
+              for (let index = 0; index < this.tableDataList2.length; index++) {
+                const item = this.tableDataList2[index];
+                if (item.accuracyLevel && !item.qualifiedQuantity) {
+                  this.$message({
+                    message: "请输入01精度表格第" + (index + 1) + "行数量",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  submitFlag = false
+                  break
+                }
+              }
+              totalQualifiedQuantity2 = this.tableDataList2.reduce((sum, item) => {
+                return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
+              }, 0);
+              if (totalQualifiedQuantity > totalQualifiedQuantity2) {
+                this.$message.error("01精度总数量不能02精度总数量")
+                return
+              }
+            }
+          }
+
           if ((this.currentProcessType === 4 || this.currentProcessType === 5) && this.currentProcess.pairingModeId) {
+            console.log(1234);
             if (!this.currentProcess.matchedQuantity) return this.$messagea.error("总配对数量不能为空")
             let flag = this.isPositiveInteger(this.currentProcess.matchedQuantity)
             if (!flag) this.$message.error("总配对数量不能有小数")
             if (!flag) submitFlag = false
           }
           if (submitFlag === false) return
+          console.log(12345);
           let arr = []
           if (this.currentProcess.vibrateReportFlag) {
             let obj = {}
@@ -1106,7 +1254,129 @@ export default {
               obj.pairingModeId = this.currentProcess.pairingModeId
             }
             arr.push(obj)
-          } else {
+          } else if (this.currentProcess.accuracyReportFlag) {
+            if (this.currentProcessType === 6) {
+              console.log("this.table", this.tableDataList2);
+              this.tableDataList2.forEach(item => {
+                let obj = {}
+                this.$set(obj, 'classAttribute', this.currentProcess.classAttribute)
+                this.$set(obj, 'orderType', this.currentProcess.orderType)
+                this.$set(obj, 'productDrawingNo', this.currentProcess.productDrawingNo)
+                this.$set(obj, 'processName', this.currentProcess.processName)
+                this.$set(obj, 'productionQuantity', this.currentProcess.productionQuantity)
+                this.$set(obj, 'equipmentId', this.currentProcess.equipmentId)
+                this.$set(obj, 'remark', this.currentProcess.remark)
+                this.$set(obj, 'reportingTime', this.currentProcess.reportingTime)
+                this.$set(obj, 'reworkQuantity', this.currentProcess.reworkQuantity)
+                this.$set(obj, 'responsibilityWasteQuantity', this.currentProcess.responsibilityWasteQuantity)
+                this.$set(obj, 'materialWasteQuantity', this.currentProcess.materialWasteQuantity)
+                this.$set(obj, 'pricingType', this.currentProcess.pricingType)
+                this.$set(obj, 'processId', this.currentProcess.processId)
+                this.$set(obj, 'producerId', this.currentProcess.producerId)
+                this.$set(obj, 'productionOrderId', this.currentProcess.productionOrderId)
+                this.$set(obj, 'qualifiedQuantity', item.qualifiedQuantity)
+                this.$set(obj, 'reportingQuantity', item.qualifiedQuantity)
+                this.$set(obj, 'stockFlag', item.stockFlag)
+                this.$set(obj, 'reportingType', 'normal')
+                this.$set(obj, 'unqualifiedQuantity', this.currentProcess.unqualifiedQuantity)
+                this.$set(obj, 'vibrationLevel', this.currentProcess.vibrationLevel)
+                this.$set(obj, 'workOrderId', this.currentProcess.id)
+                this.$set(obj, 'matchedQuantity', this.currentProcess.matchedQuantity)
+                this.$set(obj, 'pairingModeId', this.currentProcess.pairingModeId)
+                this.$set(obj, 'accuracyLevel', item.accuracyLevel)
+
+
+
+
+                arr.push(obj)
+                console.log("精度报工", arr);
+              })
+            }else if (this.currentProcessType === 3) {
+              let obj={}
+              obj.classAttribute = this.currentProcess.classAttribute
+              obj.orderType = this.currentProcess.orderType
+              obj.productDrawingNo = this.currentProcess.productDrawingNo
+              obj.processName = this.currentProcess.processName
+              obj.productionQuantity = this.currentProcess.productionQuantity
+              obj.equipmentId = this.currentProcess.equipmentId
+              obj.remark = this.currentProcess.remark
+              obj.reportingTime = this.currentProcess.reportingTime
+              obj.reworkQuantity = 0
+              obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+              obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+              obj.pricingType = this.currentProcess.pricingType
+              obj.processId = this.currentProcess.processId
+              obj.producerId = this.currentProcess.producerId
+              obj.productionOrderId = this.currentProcess.productionOrderId
+              obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
+              obj.reportingQuantity = this.currentProcess.reportingQuantity
+              obj.reportingType = "normal"
+              obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.workOrderId = this.currentProcess.id
+              obj.stockFlag = this.stockFlag
+              obj.accuracyLevel=this.currentProcess.accuracyLevel
+              arr.push(obj)
+              console.log("测震到配对工序之间的工序");
+            } else if (this.currentProcessType === 4) {
+              let obj={}
+              obj.classAttribute = this.currentProcess.classAttribute
+              obj.orderType = this.currentProcess.orderType
+              obj.productDrawingNo = this.currentProcess.productDrawingNo
+              obj.processName = this.currentProcess.processName
+              obj.productionQuantity = this.currentProcess.productionQuantity
+              obj.equipmentId = this.currentProcess.equipmentId
+              obj.remark = this.currentProcess.remark
+              obj.reportingTime = this.currentProcess.reportingTime
+              obj.reworkQuantity = this.currentProcess.reworkQuantity
+              obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+              obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+              obj.pricingType = this.currentProcess.pricingType
+              obj.processId = this.currentProcess.processId
+              obj.producerId = this.currentProcess.producerId
+              obj.productionOrderId = this.currentProcess.productionOrderId
+              obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingType = "normal"
+              obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.workOrderId = this.currentProcess.id
+              obj.matchedQuantity = this.currentProcess.matchedQuantity
+              obj.pairingModeId = this.currentProcess.pairingModeId
+              obj.accuracyLevel=this.currentProcess.accuracyLevel
+              arr.push(obj)
+              console.log("配对工序");
+            }else {
+              let obj={}
+              console.log("配对后工序");
+              obj.classAttribute = this.currentProcess.classAttribute
+              obj.orderType = this.currentProcess.orderType
+              obj.productDrawingNo = this.currentProcess.productDrawingNo
+              obj.processName = this.currentProcess.processName
+              obj.productionQuantity = this.currentProcess.productionQuantity
+              obj.equipmentId = this.currentProcess.equipmentId
+              obj.remark = this.currentProcess.remark
+              obj.reportingTime = this.currentProcess.reportingTime
+              obj.reworkQuantity = this.currentProcess.reworkQuantity
+              obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+              obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+              obj.pricingType = this.currentProcess.pricingType
+              obj.processId = this.currentProcess.processId
+              obj.producerId = this.currentProcess.producerId
+              obj.productionOrderId = this.currentProcess.productionOrderId
+              obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingType = "normal"
+              obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.workOrderId = this.currentProcess.id
+              obj.matchedQuantity = this.currentProcess.matchedQuantity
+              obj.pairingModeId = this.currentProcess.pairingModeId
+              obj.accuracyLevel=this.currentProcess.accuracyLevel
+              arr.push(obj)
+            }
+          }
+          else {
             let obj = {
               "classAttribute": this.currentProcess.classAttribute,
               orderType: this.currentProcess.orderType,
@@ -1133,7 +1403,6 @@ export default {
             }
             arr.push(obj)
           }
-
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
             this.init(this.id)
@@ -1638,8 +1907,8 @@ box-card:nth-child(n+3) {
 }
 
 .accTitle {
-  height: 30px;
-  line-height: 30px;
+  height: 45px;
+  line-height: 45px;
   background: rgb(242, 242, 242);
   font-size: 18px;
   font-weight: 600;

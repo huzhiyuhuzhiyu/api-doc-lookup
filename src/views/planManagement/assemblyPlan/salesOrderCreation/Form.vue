@@ -215,7 +215,8 @@
                       </el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"
                         show-overflow-tooltip />
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
@@ -536,7 +537,7 @@ export default {
 
   },
   mounted() {
-    this.getBimBusinessDetail()
+    // this.getBimBusinessDetail()
   },
   beforeDestroy() {
   },
@@ -749,7 +750,7 @@ export default {
         this.countFun1()
       } else {
         let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.planForm.purchaseQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]), 6)
-        if (Number(total) > Number(this.planForm.relaxQuantity * (this.pairingModeNum?this.pairingModeNum:1))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
+        if (Number(total) > Number(this.planForm.relaxQuantity * (this.pairingModeNum ? this.pairingModeNum : 1))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
         this.countFun1()
       }
     },
@@ -782,11 +783,11 @@ export default {
           this.planForm.purchaseQuantity = 0
         } else {
           this.planForm.utilizationQuantity = this.planForm.availableQuantity
-          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity,  this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.utilizationQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
         }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
-          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity,  this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity * this.pairingModeNum
+          this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.utilizationQuantity * this.pairingModeNum
           ]), 6)
         }
       }
@@ -807,7 +808,7 @@ export default {
       }
 
     },
-    countFun2() {
+    countFun2(type) {
 
       if (this.planForm.productSource == 'assemble' || this.planForm.productSource == 'produce') {
 
@@ -816,7 +817,34 @@ export default {
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = 0
         } else {
         }
-        this.planForm.utilizationQuantity = this.pairingModeNum ? this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity])) / this.pairingModeNum : this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        if (this.planForm.availableQuantity !== '0') {
+          console.log(555);
+          this.planForm.utilizationQuantity = this.pairingModeNum ? this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity])) / this.pairingModeNum : this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        } else {
+          if (type == 'purchase') {
+
+            if (this.planForm.purchaseQuantity >= this.planForm.relaxQuantity) {
+              this.planForm.purchaseQuantity = this.planForm.relaxQuantity
+              this.planForm.productionQuantity = this.planForm.outsourcingQuantity = 0
+            } else {
+              if (this.planForm.outsourcingQuantity&& this.planForm.outsourcingQuantity > this.planForm.purchaseQuantity) {
+                this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+              }
+              this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
+            }
+          }
+          if (type == 'out') {
+            if (this.planForm.outsourcingQuantity >= this.planForm.relaxQuantity) {
+              this.planForm.outsourcingQuantity = this.planForm.relaxQuantity
+              this.planForm.productionQuantity = this.planForm.purchaseQuantity = 0
+            } else {
+              if (this.planForm.purchaseQuantit&& this.planForm.purchaseQuantity > this.planForm.outsourcingQuantity) {
+                this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
+              }
+              this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
+            }
+          }
+        }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
           this.planForm.finalPlanQuantity = this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity
@@ -832,7 +860,33 @@ export default {
           this.planForm.utilizationQuantity = this.planForm.relaxQuantity
           this.planForm.purchaseQuantity = 0
         } else {
+        }
+        if (this.planForm.availableQuantity !== '0') {
           this.planForm.utilizationQuantity = this.pairingModeNum ? this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity])) / this.pairingModeNum : this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        } else {
+          if (type == 'production') {
+
+            if (this.planForm.productionQuantity >= this.planForm.relaxQuantity) {
+              this.planForm.productionQuantity = this.planForm.relaxQuantity
+              this.planForm.purchaseQuantity = this.planForm.outsourcingQuantity = 0
+            } else {
+              if (this.planForm.outsourcingQuantity && this.planForm.outsourcingQuantity > this.planForm.productionQuantity) {
+                this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
+              }
+              this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity]))
+            }
+          }
+          if (type == 'out') {
+            if (this.planForm.outsourcingQuantity >= this.planForm.relaxQuantity) {
+              this.planForm.outsourcingQuantity = this.planForm.relaxQuantity
+              this.planForm.purchaseQuantity = this.planForm.productionQuantity = 0
+            } else {
+              if (this.planForm.productionQuantity && this.planForm.productionQuantity > this.planForm.outsourcingQuantity) {
+                this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.productionQuantity, this.planForm.outsourcingQuantity]))
+              }
+              this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.outsourcingQuantity, this.planForm.productionQuantity]))
+            }
+          }
         }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
@@ -846,7 +900,33 @@ export default {
           this.planForm.outsourcingQuantity = 0
         } else {
         }
-        this.planForm.utilizationQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.planForm.outsourcingQuantity]))
+        if (this.planForm.availableQuantity !== '0') {
+          this.planForm.utilizationQuantity = this.pairingModeNum ? this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity])) / this.pairingModeNum : this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.outsourcingQuantity, this.planForm.purchaseQuantity]))
+        } else {
+          if (type == 'production') {
+
+            if (this.planForm.productionQuantity >= this.planForm.relaxQuantity) {
+              this.planForm.productionQuantity = this.planForm.relaxQuantity
+              this.planForm.purchaseQuantity = this.planForm.outsourcingQuantity = 0
+            } else {
+              if (this.planForm.purchaseQuantity&& this.planForm.purchaseQuantity > this.planForm.productionQuantity) {
+                this.planForm.purchaseQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.purchaseQuantity, this.planForm.productionQuantity]))
+              }
+              this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity]))
+            }
+          }
+          if (type == 'purchase') {
+            if (this.planForm.purchaseQuantity >= this.planForm.relaxQuantity) {
+              this.planForm.purchaseQuantity = this.planForm.relaxQuantity
+              this.planForm.productionQuantity = this.planForm.outsourcingQuantity = 0
+            } else {
+              if (this.planForm.productionQuantity&& this.planForm.productionQuantity > this.planForm.purchaseQuantity) {
+                this.planForm.productionQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.productionQuantity, this.planForm.purchaseQuantity]))
+              }
+              this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.productionQuantity]))
+            }
+          }
+        }
         if (this.planForm.utilizationQuantity < 0) {
           this.planForm.utilizationQuantity = 0
           this.planForm.outsourcingQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity, this.planForm.productionQuantity, this.planForm.purchaseQuantity, this.pairingModeNum ? this.planForm.utilizationQuantity * this.pairingModeNum : this.planForm.utilizationQuantity]), 6)
@@ -861,11 +941,11 @@ export default {
         this.$message.error("采购数量不能超过宽放数量")
         this.planForm.purchaseQuantity = 0
         // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        this.countFun2()
+        this.countFun2('purchase')
         return
       } else {
         if (Nums > Number(this.planForm.relaxQuantity)) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
-        this.countFun2()
+        this.countFun2('purchase')
       }
 
     },
@@ -876,11 +956,11 @@ export default {
         this.$message.error("外协数量不能超过宽放数量")
         this.planForm.outsourcingQuantity = 0
         // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        this.countFun2()
+        this.countFun2('out')
         return
       } else {
         if ((Nums > Number(this.planForm.relaxQuantity))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
-        this.countFun2()
+        this.countFun2('out')
       }
     },
     // 生产数量监听
@@ -890,11 +970,11 @@ export default {
         this.$message.error("生产数量不能超过宽放数量")
         this.planForm.productionQuantity = 0
         // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-        this.countFun2()
+        this.countFun2('production')
         return
       } else {
         if ((Nums > Number(this.pairingModeNum ? this.planForm.relaxQuantity * this.pairingModeNum : this.planForm.relaxQuantity))) this.$message.error("采购数量、外协数量、生产数量、利用库存数量之和不能超过宽放数量")
-        this.countFun2()
+        this.countFun2('production')
       }
     },
 

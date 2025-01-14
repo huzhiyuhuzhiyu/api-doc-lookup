@@ -129,7 +129,7 @@ export default {
       console.log("init", id, processData);
       this.customerVisible = true
       this.id = id
-      this.getProcessList(processData.id)
+      this.getProcessList(id)
       this.processData = processData
     },
     selectProcess(val) {

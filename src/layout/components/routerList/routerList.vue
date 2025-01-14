@@ -55,7 +55,7 @@ export default {
       listQuery: {
         keyword: '',
         pageNum: 1,
-        pageSize: 5
+        pageSize: -1
       },
       ruleForm: {
         urlName: '',
@@ -80,7 +80,7 @@ export default {
     enterRouter(urlAddress) {
       this.dialogVisible = false
       this.$router.push({
-        path: '/warehouseManagement/${finish_product}/awaitInspectionInventory?finish_product'
+        path: urlAddress
       })
     },
     submitForm(formName) {

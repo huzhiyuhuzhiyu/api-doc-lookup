@@ -647,7 +647,8 @@ export default {
     addSupplier(id, type) {
       if (!this.selectData.length) return this.$message.error('请选择你要新建的任务数据')
       if (this.selectData.length > 1) return this.$message.error('只能选择一条数据')
-      if (!this.selectData[0].inventoryQuantity) {
+      console.log(this.selectData[0].inventoryQuantity, 'this.selectData[0].inventoryQuantity')
+      if (Number(this.selectData[0].inventoryQuantity) === 0) {
         return this.$message({
           message: '请选择库存数量不为0的销售订单',
           type: 'error',

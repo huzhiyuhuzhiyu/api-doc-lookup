@@ -55,7 +55,7 @@ export default {
       listQuery: {
         keyword: '',
         pageNum: 1,
-        pageSize: 5
+        pageSize: -1
       },
       ruleForm: {
         urlName: '',

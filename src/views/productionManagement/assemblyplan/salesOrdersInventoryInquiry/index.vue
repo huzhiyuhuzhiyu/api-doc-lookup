@@ -42,10 +42,10 @@
             </topOpts>
 
             <div class="JNPF-common-head-right">
-              <!-- <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
-              </el-tooltip> -->
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                   @click="columnSetFun()" />
@@ -181,15 +181,36 @@ export default {
           type: 'input'
         },
         {
-          prop: 'batchNumber',
-          label: '批次号',
-          type: 'input'
-        },
-        {
           prop: 'mainUnit',
           label: '单位',
           type: 'input'
         },
+        {
+          prop: 'num',
+          label: '订单数量',
+          type: 'input'
+        },
+        {
+          prop: 'inventoryQuantity',
+          label: '库存数量',
+          type: 'input'
+        },
+        {
+          prop: 'availableQuantity',
+          label: '可用数量',
+          type: 'input'
+        },
+        {
+          prop: 'occupancyQuantity',
+          label: '占用数量',
+          type: 'input'
+        },
+        {
+          prop: 'batchNumber',
+          label: '批次号',
+          type: 'input'
+        },
+
         {
           prop: 'batchNumber',
           label: '批次号',
@@ -293,19 +314,21 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isDeputyUnitSwitch === '1') {
+      let mainUnitIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
       this.superQueryJson.forEach((item) => {
         if (item.prop === 'mainUnit') {
           item.label = '单位(主)'
         }
       })
-      this.superQueryJson.splice(7, 0, {
+      this.superQueryJson.splice(mainUnitIndex + 1, 0, {
         prop: 'deputyUnit',
         label: '单位(副)',
         type: 'input'
       })
     }
     if (this.isProductNameSwitch === '1') {
-      this.superQueryJson.splice(1, 0, {
+      let productCodeIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productCode')
+      this.superQueryJson.splice(productCodeIndex + 1, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'

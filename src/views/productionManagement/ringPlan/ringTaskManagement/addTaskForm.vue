@@ -584,6 +584,7 @@ export default {
       dataForm: {
         planDate: [],
         lineEdgeList: [],
+        lineEdgeId:"",
         orderNo: "",
         productsDrawingNo: "",
         productsCode: "",
@@ -621,6 +622,7 @@ export default {
       formLoading: false,
       dataRule: {
         lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
+        lineEdgeId:[{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],

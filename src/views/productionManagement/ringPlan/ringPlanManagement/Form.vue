@@ -126,8 +126,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'dispatch_list'">
-                        <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
-                          <el-select v-model="dataForm.lineEdgeList" placeholder="请选择" style="width: 100%;">
+                        <el-form-item label="线边仓库" prop="lineEdgeId" ref="organizeIdTree">
+                          <el-select v-model="dataForm.lineEdgeId" placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
                             </el-option>
                           </el-select>
@@ -604,6 +604,7 @@ export default {
       dataForm: {
         taskMethod: "",
         planDate: [],
+        lineEdgeId:"",
         lineEdgeList: [],
         orderNo: "",
         productsDrawingNo: "",
@@ -642,6 +643,7 @@ export default {
       formLoading: false,
       dataRule: {
         lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
+        lineEdgeId:[{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],

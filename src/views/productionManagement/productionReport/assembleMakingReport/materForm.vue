@@ -166,9 +166,9 @@ export default {
     },
 
     init(drawingNo, type, processName) {
-      if (type === 'inventoryFlag') { this.title = '可报工数明细' }
-      else if (type === 'occupancyFlag') { this.title = '占用数明细' }
-      else if (type === 'availableFlag') { this.title = '可用数明细' }
+      if (type === 'inventoryFlag') { this.title = '齐套查询' }
+      else if (type === 'occupancyFlag') { this.title = '齐套查询' }
+      else if (type === 'availableFlag') { this.title = '齐套查询' }
       this.visible = true
       let tempListQuery = {
         drawingNo: drawingNo,

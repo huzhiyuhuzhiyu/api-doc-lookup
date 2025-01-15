@@ -1077,6 +1077,14 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
+          if(this.currentProcessType===1){
+            let total=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.qualifiedQuantity]), 6)
+            if(total<=0||!total){
+              submitFlag = false
+            this.$message.error("请填写合格数量、料废数量、责废数量")
+            return
+            }
+          }
           if(this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag){
             if(!this.currentProcess.qualifiedQuantity) return this.$message.error("合格数量不能为空")
           }
@@ -1150,6 +1158,7 @@ export default {
           }
           if (submitFlag === false) return
           console.log(12345);
+       
           let arr = []
           if (this.currentProcess.vibrateReportFlag) {
             let obj = {}
@@ -1375,8 +1384,7 @@ export default {
               obj.accuracyLevel=this.currentProcess.accuracyLevel
               arr.push(obj)
             }
-          }
-          else {
+          } else {
             let obj = {
               "classAttribute": this.currentProcess.classAttribute,
               orderType: this.currentProcess.orderType,

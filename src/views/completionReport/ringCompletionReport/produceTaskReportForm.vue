@@ -503,6 +503,12 @@ export default {
             this.$message.error("合格数量+不合格数量+利用数量+返工数量不能超过可报工数量")
             return
           }
+          let total=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.qualifiedQuantity,this.currentProcess.reworkQuantity]), 6)
+            if(total<=0||!total){
+              submitFlag = false
+            this.$message.error("请填写合格数量、料废数量、责废数量、返工数量")
+            return
+            }
           if (submitFlag === false) return
           if(this.currentProcess.materialWasteQuantity&&!this.materialWasteDataList.length) return this.$message.error("料废金额不能为空")
           let obj = {}

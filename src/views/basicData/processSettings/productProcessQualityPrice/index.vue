@@ -19,7 +19,7 @@ export default {
         pricingFlag: 1,
         drawingNo: '',
         processName: '',
-        priceType: 'process',
+        priceType: 'inspection',
         effectFlag: 1,
         orderItems: [
           {
@@ -85,7 +85,7 @@ export default {
     }
   },
   created() {
-   
+ 
     let index = this.superQueryJson.findIndex((obj) => obj.prop === 'productsCode')
     this.tableItems.splice(index + 1, 0, { prop: 'productsName', label: '产品名称', minWidth: '180' })
     this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '180' })

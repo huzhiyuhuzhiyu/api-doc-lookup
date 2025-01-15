@@ -1161,9 +1161,9 @@ export default {
       this.$set(this.dataForm, 'pairingModeId', data[0].pairingModeId)
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
-      if (this.dataForm.autoMaterialFlag) {
+      // if (this.dataForm.autoMaterialFlag) {
         this.getWarehouseListFun()
-      }
+      // }
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
           console.log("bom详情", res);

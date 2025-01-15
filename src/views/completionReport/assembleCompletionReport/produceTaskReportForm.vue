@@ -217,7 +217,7 @@
                   </el-col>
       <!-- //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序 -->
       <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType !== 1 && currentProcess.accuracyReportFlag">
+                    v-if="currentProcessType !== 1&&currentProcessType !== 6 && currentProcess.accuracyReportFlag">
                     <el-form-item label="精度等级:" prop="accuracyLevel" :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
                         @change="(value) => handleSelectionChangeJD(value)" class="ipt">
@@ -1077,15 +1077,7 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
-          if(this.currentProcessType===1){
-            let total=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.qualifiedQuantity]), 6)
-            if(total<=0||!total){
-              submitFlag = false
-            this.$message.error("请填写合格数量、料废数量、责废数量")
-            return
-            }
-          }
-          if(this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag){
+          if(this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag&&this.currentProcessType!==6){
             if(!this.currentProcess.qualifiedQuantity) return this.$message.error("合格数量不能为空")
           }
           // 精度工序相关判断
@@ -1142,7 +1134,7 @@ export default {
               totalQualifiedQuantity2 = this.tableDataList2.reduce((sum, item) => {
                 return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
               }, 0);
-              if (totalQualifiedQuantity > totalQualifiedQuantity2) {
+              if (totalQualifiedQuantity2 > totalQualifiedQuantity) {
                 this.$message.error("01精度总数量不能02精度总数量")
                 return
               }
@@ -1158,7 +1150,6 @@ export default {
           }
           if (submitFlag === false) return
           console.log(12345);
-       
           let arr = []
           if (this.currentProcess.vibrateReportFlag) {
             let obj = {}
@@ -1384,7 +1375,8 @@ export default {
               obj.accuracyLevel=this.currentProcess.accuracyLevel
               arr.push(obj)
             }
-          } else {
+          }
+          else {
             let obj = {
               "classAttribute": this.currentProcess.classAttribute,
               orderType: this.currentProcess.orderType,

@@ -841,6 +841,14 @@ export default {
     },
     batchDeleteProcess() {
       if (!this.selectProcessArr.length) return this.$message.error("请选择您要删除的数据")
+      for (let i = 0; i < this.selectProcessArr.length; i++) {
+        const row = this.selectProcessArr[i];
+        const index = this.dataFormTwo.data.indexOf(row);
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectProcessArr = []; // 清空选中的行的数据
     },
     // 输入编排数量，重新计算投料数量
     compount() {
@@ -1353,7 +1361,7 @@ export default {
           }
         });
         res.data.routingLineList.sort((a, b) => a.sort - b.sort);
-        this.dataFormTwo.data = [...this.dataFormTwo.data, ...res.data.routingLineList]
+        this.dataFormTwo.data = res.data.routingLineList
         let arr = JSON.parse(JSON.stringify(res.data.routingLineList))
         this.processList = [...this.processList, ...arr]
       })

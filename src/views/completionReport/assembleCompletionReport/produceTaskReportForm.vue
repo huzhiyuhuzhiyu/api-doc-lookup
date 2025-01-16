@@ -262,7 +262,7 @@
 
                   <!-- stockFlag 0否 继续生产 2包装入库 -->
                   <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType !== 1 && currentProcess.reportFlag&&currentProcessType">
+                    v-if="currentProcessType !== 1 && currentProcess.reportFlag&&currentProcessType!==6">
                     <el-form-item label="是否入库:" prop="stockFlag">
                       <el-select v-model="stockFlag" placeholder="请选择是否入库" :disabled="currentProcess.lastFlag"
                         style="width: 100%;" class="ipt">
@@ -375,7 +375,7 @@
                           :fixedNO="true">
                           <el-table-column prop="accuracyLevel" label="精度等级">
                             <template slot-scope="scope">
-                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;">
+                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;" @change="selectAccuracyFun(scope)">
                                 <el-option v-for="(item, index) in getFilteredAccuracyLevelList2(scope.row)"
                                   :key="index" :label="item.name" :value="item.name"></el-option>
                               </el-select>
@@ -628,6 +628,15 @@ export default {
       } else {
       }
     },
+    selectAccuracyFun(scope){
+      console.log(scope);
+      if(scope.row.accuracyLevel==='P0'){
+        this.tableDataList2[scope.$index].stockFlag=2
+      }else{
+        this.tableDataList2[scope.$index].stockFlag=0  
+
+      }
+    },
     // 过滤01精度已选择的数据
     getFilteredAccuracyLevelList2(currentRow) {
       // 生成当前行可以选择的精度等级列表  
@@ -838,7 +847,7 @@ export default {
     async getProcessFun(item) {
       this.currentProcess = item
       console.log("当前点击的工序", item);
-
+      this.$refs['reportRef'].clearValidate()
       this.setProcessType()
       this.stockFlag = 0
       //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序

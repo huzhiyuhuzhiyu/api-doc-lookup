@@ -2124,6 +2124,7 @@ export default {
         receiveType: "",
         orderNo: "",
         personName: "",
+        warehouseId:"",
         orderItems: [{
           asc: false,
           column: ""
@@ -3497,6 +3498,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
+        this.pickForm.warehouseId=this.warehouseInfo.warehouseId
         this.pickForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         WithdrawalList(this.pickForm).then(res => {
           console.log("领料", res);

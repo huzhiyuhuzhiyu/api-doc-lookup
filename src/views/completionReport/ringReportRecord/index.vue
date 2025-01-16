@@ -159,6 +159,7 @@ export default {
         orderNo: "",
         processName: "",
         productsDrawingNo: "",
+        reportingType:'normal',  // 报工类型 正常报工
         pageNum: 1,
         pageSize: 20,
         superQuery: {

@@ -544,7 +544,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
 
-    this.fetchData('QGD')
+ 
     this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
   },
@@ -713,7 +713,6 @@ export default {
     },
     init(id, type, approvalFlag) {
       console.log(id, type)
-      // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
@@ -722,6 +721,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
+          this.fetchData('QGD')
           this.clearData()
           this.getBusInfo()
         } else if (this.dataForm.id && this.type == 'add') {

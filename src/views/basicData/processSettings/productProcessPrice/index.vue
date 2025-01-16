@@ -1,20 +1,27 @@
 <template>
   <Index :priceType="listRequestObj.priceType" :listRequestObj="listRequestObj" :listMethod="getBimProductProcessPrice"
-    :batchMethod="batchAddBimProductProcessPrice" :uploadMethod="uploadBimProductProcessPrice" :tableItems="tableItems"
-    :searchList="searchList" :superQueryJson="superQueryJson" :columnList="columnList" />
+    :batchMethod="batchAddBimProductProcessPrice" :uploadMethod="uploadBimProductProcessPrice"
+    :delMethod="deleteBimProductProcessPrice" :tableItems="tableItems" :searchList="searchList"
+    :superQueryJson="superQueryJson" :columnList="columnList" />
 </template>
 
 <script>
-import { getBimProductProcessPrice, batchAddBimProductProcessPrice, uploadBimProductProcessPrice } from '@/api/bimProcess/index'
+import {
+  getBimProductProcessPrice,
+  batchAddBimProductProcessPrice,
+  uploadBimProductProcessPrice,
+  deleteBimProductProcessPrice
+} from '@/api/bimProcess/index'
 import Index from '../components/process/index.vue'
 export default {
-  name: 'productProcessQualityPrice',
+  name: 'productProcessPrice',
   components: { Index },
   data() {
     return {
       getBimProductProcessPrice,
       batchAddBimProductProcessPrice,
       uploadBimProductProcessPrice,
+      deleteBimProductProcessPrice,
       listRequestObj: {
         pricingFlag: 1,
         drawingNo: '',
@@ -31,23 +38,24 @@ export default {
         pageSize: 20
       },
       tableItems: [
-        { prop: 'productsCode', label: '产品编码', minWidth: '160' },
-        { prop: 'drawingNo', label: '品名规格', minWidth: '160' },
+        { prop: 'productsCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
+        { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
 
-        { prop: 'processName', label: '工序名称', minWidth: '180' },
-        { prop: 'processCode', label: '工序编码', minWidth: '160' },
-        { prop: 'effectiveDate', label: '生效日期', minWidth: '160' },
-        { prop: 'pricingType', label: '计价类型', minWidth: '160' },
-        { prop: 'price', label: '单价(元)', minWidth: '160' },
+        { prop: 'processName', label: '工序名称', minWidth: '140', sortable: 'custom' },
+        { prop: 'processCode', label: '工序编码', minWidth: '140', sortable: 'custom' },
+        { prop: 'effectiveDate', label: '生效日期', minWidth: '130' },
+        { prop: 'pricingType', label: '计价类型', minWidth: '120', sortable: 'custom' },
+        { prop: 'price', label: '单价(元)', minWidth: '100' }
       ],
       searchList: [
         {
-          prop: 'pricingFlag', label: '计价类型', type: 'select', options: [{ label: '无单价', value: 0 },
-          { label: '有单价', value: 1 },
-          { label: '所有', value: '' }]
+          prop: 'pricingFlag',
+          label: '计价类型',
+          type: 'select',
+          options: [{ label: '无单价', value: 0 }, { label: '有单价', value: 1 }, { label: '所有', value: '' }]
         },
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'processName', label: '工序名称', type: 'input' },
+        { prop: 'processName', label: '工序名称', type: 'input' }
       ],
       superQueryJson: [
         {
@@ -81,15 +89,18 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['productsCode', 'processCode'],
+      columnList: ['productsCode', 'processCode']
     }
   },
   created() {
-   
-    let index = this.superQueryJson.findIndex((obj) => obj.prop === 'productsCode')
-    this.tableItems.splice(index + 1, 0, { prop: 'productsName', label: '产品名称', minWidth: '180' })
-    this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '180' })
-  },
-
+    let index = this.tableItems.findIndex((obj) => obj.prop === 'productsCode')
+    this.tableItems.splice(index + 1, 0, {
+      prop: 'productsName',
+      label: '产品名称',
+      minWidth: '150',
+      sortable: 'custom'
+    })
+    this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '120' })
+  }
 }
 </script>

@@ -3,13 +3,51 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `详情`" />
+          <el-page-header @back="goBack" :content="dialogTitle + `价格`" />
         </div>
         <div class="main" ref="main">
           <div class="JNPF-common-layout-main JNPF-flex-main" :style="{ height: height + 'px' }">
-            <JNPF-table v-loading="listLoading" :fixedNO="true" ref="collectiontableForm" :data="tableData">
+            <div class="JNPF-common-head">
+              <el-row class="JNPF-common-search-box" style="margin-left: -27px;" :gutter="16">
+                <el-form @submit.native.prevent>
+                  <el-col :span="14">
+                    <el-form-item>
+                      <el-date-picker v-model="timeArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                        start-placeholder="请选择生效开始日期" end-placeholder="请选择生效结束日期">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item>
+                      <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                        {{ $t('common.search') }}
+                      </el-button>
+                      <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset')
+                        }}</el-button>
+                    </el-form-item>
+                  </el-col>
+                </el-form>
+              </el-row>
+
+              <div class="JNPF-common-head-right">
+                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                  <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                    @click="columnSetFun()" />
+                </el-tooltip>
+                <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                  <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                    @click="initData()" />
+                </el-tooltip>
+              </div>
+            </div>
+            <JNPF-table v-loading="listLoading" :fixedNO="true" ref="detailTableForm" :data="tableData" custom-column
+              :partentOrChild="'detailTableForm'" :setColumnDisplayList="columnList">
               <template v-for="item in tableItems">
                 <el-table-column v-if="item.prop == 'effectiveDate'" :prop="item.prop" :key="item.prop"
+                  :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center"
+                  :sortable="item.sortable" :formatter="jnpf.tableDateFormatStrDay">
+                </el-table-column>
+                <el-table-column v-else-if="item.prop == 'expiringDate'" :prop="item.prop" :key="item.prop"
                   :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center"
                   :sortable="item.sortable" :formatter="jnpf.tableDateFormatStrDay">
                 </el-table-column>
@@ -28,6 +66,11 @@
                 <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label"
                   :fixed="item.fixed || false" :min-width="item.minWidth || 130" :sortable="item.sortable" />
               </template>
+              <el-table-column label="操作" width="80" fixed="right">
+                <template slot-scope="scope">
+                  <tableOpts :hasEdit="false" @del="handleDel(scope.row.id)"></tableOpts>
+                </template>
+              </el-table-column>
             </JNPF-table>
             <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
               @pagination="initData" />
@@ -52,11 +95,7 @@ export default {
       required: true
     },
     /* 设置数据请求方法 */
-    batchMethod: {
-      required: true
-    },
-    /* 上传数据请求方法 */
-    uploadMethod: {
+    delMethod: {
       required: true
     },
     tableItems: {
@@ -95,6 +134,7 @@ export default {
   },
   data() {
     return {
+      timeArr: [],
       dialogTitle: '',
       loading: false,
       btnLoading: false,
@@ -120,9 +160,8 @@ export default {
 
   },
   created() {
-
-   
-
+    console.log(this.tableItems, 'tableItems123')
+    this.columnList.push('expiringDate')
   },
   mounted() {
     this.switchStyle()
@@ -131,10 +170,13 @@ export default {
     init(listQuery, type) {
       console.log(listQuery, type);
       this.listQuery = JSON.parse(listQuery)
-      this.dialogTitle =  `查看`
+      this.dialogTitle = `查看`
       this.type = type
       this.initData()
 
+    },
+    columnSetFun() {
+      this.$refs.detailTableForm.showDrawer()
     },
     //自适应窗口
     async switchStyle() {
@@ -154,25 +196,63 @@ export default {
         }, 100);
       };
     },
-    //  收款列表 请求
+
     initData() {
       this.listLoading = true
 
       this.listMethod(this.listQuery).then(res => {
         console.log(res, 'jjkk')
         this.tableData = res.data.records
-        this.tableData.forEach((item) => {
-          if (item.pricingType === 'by_time') {
-            item.price = item.timePrice
-          } else if (item.pricingType === 'by_piece') {
-            item.price = item.unitPrice
-          }
-        })
+        if (['process', 'inspection'].includes(this.priceType)) {
+          this.tableData.forEach((item) => {
+            if (item.pricingType === 'by_time') {
+              item.price = item.timePrice
+            } else if (item.pricingType === 'by_piece') {
+              item.price = item.unitPrice
+            }
+          })
+        }
         console.log(this.tableData, 'this.tableData')
-        console.log(this.$refs, 'collectiontableForm')
         this.total = res.data.total
         this.listLoading = false
       })
+    },
+    search(type) {
+      Object.keys(this.listQuery).forEach((key) => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuery.pageNum = 1
+      if (this.timeArr && this.timeArr.length) {
+        this.listQuery.startTime = this.timeArr[0]
+        this.listQuery.endTime = this.timeArr[1]
+      } else {
+        this.listQuery.startTime = ''
+        this.listQuery.endTime = ''
+      }
+
+      this.initData()
+    },
+    // 删除数据
+    handleDel(id) {
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        this.delMethod(id).then((res) => {
+          if (res.msg === 'Success') res.msg = '删除成功'
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: res.msg
+          })
+        })
+      }).catch(() => { })
+    },
+    reset() {
+      this.$refs['detailTableForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
+      this.timeArr = []
+      this.initData()
     },
     goBack() {
       this.$emit('close')

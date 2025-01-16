@@ -260,7 +260,7 @@ export default {
   },
   data() {
     return {
-      priceTypeName:'',
+      priceTypeName: '',
       importProjectId: '',
       isProjectSwitch: '',
       isProductNameSwitch: '',
@@ -348,7 +348,7 @@ export default {
     await this.getProjectList()
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
-    // 判断是产品工序 还是产品包装
+    // 判断是产品类型
     if (this.priceType === 'process') {
       this.priceTypeName = '工序'
       this.processFlag = true
@@ -434,7 +434,7 @@ export default {
       const a = document.createElement('a')
       a.setAttribute('download', '')
 
-      a.setAttribute('href', location.origin + '/static/产品工序单价导入模板.xlsx')
+      a.setAttribute('href', location.origin + `/static/产品${this.priceTypeName}单价导入模板.xlsx`)
 
       a.click()
     },
@@ -447,8 +447,13 @@ export default {
       if (this.isProjectSwitch === '1') {
         formData.append('projectId', this.importProjectId)
       }
+      if (this.processFlag) {
+        formData.append('priceType', this.priceType)
+      } else {
+        formData.append('attributeType', this.priceType)
+      }
       //调用上传文件接口
-      uploadBimProductProcessPrice(formData)
+      this.uploadMethod(formData)
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)
@@ -539,10 +544,7 @@ export default {
           newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
         }
       } else {
-
       }
-
-
 
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
@@ -680,10 +682,7 @@ export default {
             item.attributeType = this.priceType
             item.unitPrice = this.dataForm.unitPrice
           }
-
-
         })
-        console.log(arr, 'this.selectedData')
 
         this.batchMethod(arr)
           .then((res) => {
@@ -713,10 +712,10 @@ export default {
     },
     addOrUpdateHandle(row, type) {
       this.depVisibled = true
-      delete this.listQuery.effectFlag
-      this.listQuery.productsId = row.productsId
-      this.listQuery.processId = row.processId
-      console.log(this.listQuery, 'this.listQuery')
+      let listDetailQuery = { ...this.listQuery }
+      delete listDetailQuery.effectFlag
+      listDetailQuery.productsId = row.productsId
+      listDetailQuery.processId = row.processId
       console.log(this.tableItems, 'this.tableItems')
       this.detailTableItems = []
       this.detailTableItems = [...this.tableItems]
@@ -724,7 +723,7 @@ export default {
       let index = this.detailTableItems.findIndex((obj) => obj.prop === 'effectiveDate')
       this.detailTableItems.splice(index + 1, 0, { prop: 'expiringDate', label: '失效日期', minWidth: '160' })
       this.$nextTick(() => {
-        this.$refs.depForm.init(JSON.stringify(this.listQuery), type)
+        this.$refs.depForm.init(JSON.stringify(listDetailQuery), type)
       })
     },
     // 关闭 收款新建、编辑页面
@@ -733,7 +732,7 @@ export default {
       this.makeVisibled = false
       this.depVisibled = false
       if (isRefresh) {
-        this.getData()
+        this.initData()
       }
     }
   }

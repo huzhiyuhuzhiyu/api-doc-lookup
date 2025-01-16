@@ -250,7 +250,6 @@ export default {
     },
     reset() {
       this.$refs['detailTableForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
       this.timeArr = []
       this.initData()
     },

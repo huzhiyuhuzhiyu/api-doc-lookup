@@ -853,7 +853,10 @@ export default {
     async getProcessFun(item) {
       this.currentProcess = item
       console.log("当前点击的工序", item);
-      this.$refs['reportRef'].clearValidate()
+      this.$nextTick(()=>{
+        if(item.reportFlag) this.$refs['reportRef'].clearValidate()
+      })
+      
       this.setProcessType()
       this.stockFlag = 0
       //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序

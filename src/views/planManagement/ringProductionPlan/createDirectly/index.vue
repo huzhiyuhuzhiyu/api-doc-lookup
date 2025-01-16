@@ -331,7 +331,7 @@ export default {
   },
   mounted() {
     this.init() 
-    this.getBimBusinessDetail()
+    // this.getBimBusinessDetail()
 
   }, 
   methods: {

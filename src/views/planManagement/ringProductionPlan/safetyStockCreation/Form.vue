@@ -406,7 +406,7 @@ export default {
     }
   },
   mounted() { 
-    this.getBimBusinessDetail()
+    // this.getBimBusinessDetail()
 
   },
  

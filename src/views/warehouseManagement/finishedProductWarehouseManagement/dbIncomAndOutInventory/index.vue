@@ -2124,6 +2124,7 @@ export default {
         receiveType: "",
         orderNo: "",
         personName: "",
+        warehouseId:"",
         orderItems: [{
           asc: false,
           column: ""
@@ -2782,6 +2783,7 @@ export default {
         classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
+      console.log("obj",obj);
       getStockMovelist(obj.classAttributeList, obj.projectId, this.warehouseCode).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
@@ -3496,6 +3498,7 @@ export default {
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
+        this.pickForm.warehouseId=this.warehouseInfo.warehouseId
         this.pickForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         WithdrawalList(this.pickForm).then(res => {
           console.log("领料", res);

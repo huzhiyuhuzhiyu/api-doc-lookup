@@ -18,6 +18,12 @@
           </template>
           <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
         </el-form-item>
+        <el-form-item label="排序" prop="sortCode">
+          <template slot="label">
+            排序<span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.sortCode" type="text"  placeholder="请输入排序" />
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
         </el-form-item>
@@ -52,7 +58,8 @@ export default {
         name: '',
         remark: '',
         // code: '',
-        typeCode: ''
+        typeCode: '',
+        sortCode:"",
       },
       title: '',
       isdisabled: false,
@@ -61,6 +68,7 @@ export default {
       autoName: '',
       dataRule: {
         code: [{ required: true, message: '请输入编码', trigger: 'blur' }],
+        sortCode: [{ required: true, message: '请输入排序', trigger: 'blur' }],
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
           {
@@ -114,6 +122,7 @@ export default {
         this.dataForm = {
           name: '',
           remark: '',
+          sortCode:"",
           // code: '',
           typeCode: code,
           id: ''
@@ -135,6 +144,7 @@ export default {
           this.autoName = res.data.name
           this.dataForm.typeCode = res.data.typeCode
           this.dataForm.name = res.data.name
+          this.dataForm.sortCode = res.data.sortCode
           this.dataForm.remark = res.data.remark
           this.title = '新建产品属性'
 

@@ -84,7 +84,7 @@
 
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate"
-                          :style="dataForm.taskMethod == 'appoint' ? 'margin-bottom: 20px;' : ''">
+                          >
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -609,7 +609,7 @@ export default {
         bomId: "",
         projectId: "",
         orderType: "manually",
-
+        lineEdgeId:"",
       },
       dataFormTwo: {
         data: [],
@@ -622,7 +622,7 @@ export default {
       formLoading: false,
       dataRule: {
         lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
-        lineEdgeId:[{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
+        lineEdgeId: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],

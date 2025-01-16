@@ -111,6 +111,10 @@
                     style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
                     }}]</span>
+                    <span v-if="dataForm.pickingWay=='dispatch_list'"
+                    style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">可领库存数：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.availableStockNum
+                    }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
 
@@ -351,6 +355,7 @@ export default {
         this.$set(this.currentProcess, 'reportingQuantity', 0)
         this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
+        this.$set(this.currentProcess, 'availableStockNum', 0)
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
@@ -366,7 +371,8 @@ export default {
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
-      this.$set(this.currentProcess, 'materialWasteQuantity', 0)
+        this.$set(this.currentProcess, 'availableStockNum', 0)
+        this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
       this.$set(this.currentProcess, 'reworkQuantity', 0)
       this.$set(this.currentProcess, 'utilizeQuantity', 0)
@@ -497,6 +503,12 @@ export default {
             this.$message.error("合格数量+不合格数量+利用数量+返工数量不能超过可报工数量")
             return
           }
+          let total=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.qualifiedQuantity,this.currentProcess.reworkQuantity]), 6)
+            if(total<=0||!total){
+              submitFlag = false
+            this.$message.error("请填写合格数量、料废数量、责废数量、返工数量")
+            return
+            }
           if (submitFlag === false) return
           if(this.currentProcess.materialWasteQuantity&&!this.materialWasteDataList.length) return this.$message.error("料废金额不能为空")
           let obj = {}

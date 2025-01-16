@@ -123,9 +123,9 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+            <!-- <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>

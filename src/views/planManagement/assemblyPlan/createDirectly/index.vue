@@ -436,7 +436,7 @@ export default {
   mounted() {
     this.init()
     this.getProductClassFun()
-    this.getBimBusinessDetail()
+    // this.getBimBusinessDetail()
     
 
   },

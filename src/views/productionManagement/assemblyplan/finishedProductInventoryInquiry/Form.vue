@@ -190,7 +190,7 @@
                         @click="batchDeleteProcess">批量删除</el-button>|
                     </div>
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading" hasC
-                      @selection-change="delProcessFun"  hasMove @changeMove="changeMove"  row-key="processCode">
+                      @selection-change="delProcessFun" hasMove @changeMove="changeMove" row-key="processCode">
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -1422,7 +1422,7 @@ export default {
       let submitFlag = null;
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
-      if(!this.dataFormTwo.data.length) return this.$message.error("工序信息不能为空")
+      if (!this.dataFormTwo.data.length) return this.$message.error("工序信息不能为空")
       if (this.naturalResourcesFlag) {
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];
@@ -1456,28 +1456,36 @@ export default {
           item.workGroupId = ""
         });
       }
-      this.dataFormTwo.data.forEach((item, index) => {
-        item.sort = index
-        if (index == 0) {
-          item.firstFlag = true;
-          item.nextId=this.dataFormTwo.data[index+1].id
-          item.previousId = "";
-          item.lastFlag = false;
-          // nextId: "",
-          // previousId: "",
-        } else if (index == this.dataFormTwo.data.length - 1) {
-          item.stockFlag=true
-          item.lastFlag=true
-          item.firstFlag=false
-          item.previousId=this.dataFormTwo.data[index-1].id
-          item.nextId = "";
-        } else {
-          item.previousId=this.dataFormTwo.data[index-1].id
-          item.nextId = this.dataFormTwo.data[index+1].id;
-          item.firstFlag = false;
-          item.lastFlag = false;
-        }
-      });
+      if (this.dataFormTwo.data.length === 1) {
+        this.dataFormTwo.data[0].firstFlag=true
+        this.dataFormTwo.data[0].lastFlag=true
+        this.dataFormTwo.data[0].nextId=""
+        this.dataFormTwo.data[0].previousId=""
+      } else {
+        this.dataFormTwo.data.forEach((item, index) => {
+          item.sort = index
+          if (index == 0) {
+            item.firstFlag = true;
+            item.nextId = this.dataFormTwo.data[index + 1].id
+            item.previousId = "";
+            item.lastFlag = false;
+            // nextId: "",
+            // previousId: "",
+          } else if (index == this.dataFormTwo.data.length - 1) {
+            item.stockFlag = true
+            item.lastFlag = true
+            item.firstFlag = false
+            item.previousId = this.dataFormTwo.data[index - 1].id
+            item.nextId = "";
+          } else {
+            item.previousId = this.dataFormTwo.data[index - 1].id
+            item.nextId = this.dataFormTwo.data[index + 1].id;
+            item.firstFlag = false;
+            item.lastFlag = false;
+          }
+        });
+      }
+
       if (this.allocationFlag) {
         this.dataForm.materialFlag = true
       } else {

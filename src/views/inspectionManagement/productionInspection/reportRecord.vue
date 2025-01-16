@@ -58,33 +58,23 @@
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
+            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+              v-if="isProjectSwitch == 1" />
+            <el-table-column prop="inspectionOrderNo" label="检验单号" min-width="220" sortable="custom" />
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="220" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
-            <el-table-column prop="orderNo" label="报工单号" min-width="220" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
-            <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-              v-if="isProjectSwitch == 1" />
+
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
+            <el-table-column prop="processCode" label="工序编码" width="160" sortable="custom" />
             <el-table-column prop="reportingTime" label="报工时间" min-width="180" sortable="custom" />
             <el-table-column prop="producerName" label="生产人" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" sortable="custom" />
-            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
-            <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="orderStatus" label="任务状态" min-width="120">
-              <template slot-scope="scope">
-                <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
-                <div v-else-if="scope.row.orderStatus == 'normal'"><el-tag>进行中</el-tag></div>
-                <div v-else-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">已关闭</el-tag></div>
-              </template>
-            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -121,10 +111,9 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'inspectionOrderNo', fieldValue: '', label: '检验单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'workNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }
       ],
       columnList: ['productionOrderNo', 'productsCode'],
 
@@ -143,7 +132,7 @@ export default {
         orderNo: '',
         processName: '',
         productsDrawingNo: '',
-        reportingType:'inspection',  // 报工类型 质检报工
+        reportingType: 'inspection',  // 报工类型 质检报工
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -160,7 +149,7 @@ export default {
             column: 'create_time'
           }
         ],
-        classAttribute: 'finish_product'
+        classAttribute: ''
       },
 
       totalData: {},
@@ -169,6 +158,11 @@ export default {
       selectArr: [],
 
       superQueryJson: [
+        {
+          prop: 'inspectionOrderNo',
+          label: '检验单号',
+          type: 'input'
+        },
         {
           prop: 'productionOrderNo',
           label: '任务单号',
@@ -203,6 +197,11 @@ export default {
         {
           prop: 'processName',
           label: '工序名称',
+          type: 'input'
+        },
+        {
+          prop: 'processCode',
+          label: '工序编码',
           type: 'input'
         },
         {
@@ -363,7 +362,7 @@ export default {
           // })
           this.tableData = res.data.page.records
           this.total = res.data.page.total
-          this.totalData = res.data.total
+          this.totalData = res.data.total ? res.data.total : {}
           this.listLoading = false
         })
         .catch(() => {
@@ -403,10 +402,9 @@ export default {
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'inspectionOrderNo', fieldValue: '', label: '检验单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'workNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 }
       ]
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')

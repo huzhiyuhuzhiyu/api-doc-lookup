@@ -466,6 +466,7 @@ export default {
         let obj = {
           workNo: id,
           classAttribute: "finish_product",
+          reportingType:'normal',  // 报工类型 正常报工
           processId: "",
           "orderItems": [
             {

@@ -1465,7 +1465,7 @@ export default {
           item.lastFlag = false;
           // nextId: "",
           // previousId: "",
-        } else if (index == this.selectArr.length - 1) {
+        } else if (index == this.dataFormTwo.data.length - 1) {
           item.stockFlag=true
           item.lastFlag=true
           item.firstFlag=false

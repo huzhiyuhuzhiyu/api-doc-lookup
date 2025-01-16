@@ -348,7 +348,7 @@
                           <el-table-column prop="accuracyLevel" label="精度等级">
                             <template slot-scope="scope">
                               <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
-                                @change="(value) => handleSelectionChangeaccOne(value)">
+                                @change="(value) => handleSelectionChangeaccOne(scope,value)">
                                 <el-option v-for="(item, index) in getFilteredAccuracyLevelList(scope.row)" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
@@ -583,13 +583,19 @@ export default {
   },
   methods: {
     // 选择02精度  再将选中的值赋值给到01精度可选项
-    handleSelectionChangeaccOne(value) {
+    handleSelectionChangeaccOne(scope,value) {
+      console.log("vaue",scope);
       //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
       const selectedItem = this.accuracyLevelList.find(item => item.name === value);
       console.log("selectedItem", selectedItem);
-      this.accuracyLevelList2 = [...this.accuracyLevelList2, selectedItem]
-
-
+      this.$set(this.tableDataList[scope.$index],'sortCode',selectedItem.sortCode)
+      let arr=JSON.parse(JSON.stringify(this.tableDataList))
+      console.log("asrr",arr);
+      arr.sort((a, b) => a.sortCode-b.sortCode  );  
+      console.log("arr",arr);
+      let sort=arr[0].sortCode
+   console.log("sort",sort);
+      this.accuracyLevelList2=this.accuracyLevelList.filter(item => item.sortCode >= sort);  
     },
     // 过滤已选择的数据
     getFilteredAccuracyLevelList(currentRow) {
@@ -649,7 +655,7 @@ export default {
     // 01精度新增
     addFun2(scope) {
       let len = this.tableDataList2.length
-      if (len >= this.tableDataList.length) return this.$message.error("表格数据条数已达到精度等级可选种类数量")
+      // if (len >= this.tableDataList.length) return this.$message.error("表格数据条数已达到精度等级可选种类数量")
       this.tableDataList2.push({ accuracyLevel: "", qualifiedQuantity: "", stockFlag: 0, })
       this.$nextTick(() => {
         const height = this.$refs.mycol.$el.clientHeight

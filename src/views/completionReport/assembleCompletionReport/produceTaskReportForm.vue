@@ -1135,7 +1135,7 @@ export default {
                 return sum + parseInt(item.qualifiedQuantity, 10); // 将字符串转换为数字并累加  
               }, 0);
               if (totalQualifiedQuantity2 > totalQualifiedQuantity) {
-                this.$message.error("01精度总数量不能02精度总数量")
+                this.$message.error("01精度总数量不能超过02精度总数量")
                 return
               }
             }

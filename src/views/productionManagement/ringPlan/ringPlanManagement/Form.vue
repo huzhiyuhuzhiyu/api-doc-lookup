@@ -1348,13 +1348,15 @@ export default {
             warehouseId: this.dataForm.lineEdgeId
           })
       } else {
+        if(this.dataForm.autoMaterialFlag){
 
-        this.dataForm.lineEdgeList.forEach(item => {
-          arr.push({
-            productionOrderId: "",
-            warehouseId: item
+          this.dataForm.lineEdgeList.forEach(item => {
+            arr.push({
+              productionOrderId: "",
+              warehouseId: item
+            })
           })
-        })
+        }
       }
       let obj = {
         prodOrder: this.dataForm,

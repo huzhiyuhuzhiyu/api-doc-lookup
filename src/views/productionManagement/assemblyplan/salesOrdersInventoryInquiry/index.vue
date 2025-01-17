@@ -268,6 +268,7 @@ export default {
         orderNo: "",
         cooperativePartnerName: "",
         productDrawingNo: "",
+        classAttribute:"finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -649,6 +650,7 @@ export default {
         orderNo: "",
         cooperativePartnerName: "",
         productDrawingNo: "",
+        classAttribute:"finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [

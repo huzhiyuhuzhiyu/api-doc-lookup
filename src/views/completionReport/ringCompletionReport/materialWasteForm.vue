@@ -15,9 +15,9 @@
             <span style="font-weight:500;margin-right:10px">料废总数量：{{ num }}</span>
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
-            <el-table-column prop="name" label="报废类型" min-width="180" sortable="custom">
+            <el-table-column prop="name" label="料废类型" min-width="180" sortable="custom">
               <template slot="header">
-                <span class="required">*</span>报废类型
+                <span class="required">*</span>料废类型
               </template>
               <template slot-scope="scope">
                 <el-select v-model="scope.row.scrapId" placeholder="料废类型" style="width: 100%;" class="ipt"
@@ -158,8 +158,29 @@ export default {
     submitCodeFun() {
       console.log(444444);
       console.log(this.tableDataList);
+
       if(Number(this.totalNum)>Number(this.num)) return this.$message.error("料废数量之和不能超过料废总数量")
-      if(!this.tableDataList.length) return this.$message.error("料废金额数据不饿能为空")
+      if(!this.tableDataList.length) return this.$message.error("料废金额数据不能为空")
+      for (let index = 0; index < this.tableDataList.length; index++) {
+        const item = this.tableDataList[index];
+        if(!item.scrapId){
+          this.$message({
+          message: "请选择第" + (index + 1) + "行的料废类型",
+          type: 'error',
+          duration: 1500,
+        })          
+        break
+        }
+        if(!item.num){
+          this.$message({
+          message: "请输入第" + (index + 1) + "行数量",
+          type: 'error',
+          duration: 1500,
+        })          
+        break
+        }
+      }
+       
       this.customerVisible=false
       this.$emit('change', this.tableDataList)
     }

@@ -716,6 +716,12 @@ export default {
       delete listDetailQuery.effectFlag
       listDetailQuery.productsId = row.productsId
       listDetailQuery.processId = row.processId
+      listDetailQuery.orderItems = [
+        {
+          asc: true,
+          column: 'effective_date'
+        }
+      ]
       console.log(this.tableItems, 'this.tableItems')
       this.detailTableItems = []
       this.detailTableItems = [...this.tableItems]

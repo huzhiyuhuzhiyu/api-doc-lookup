@@ -161,6 +161,7 @@ export default {
 
       if(Number(this.totalNum)>Number(this.num)) return this.$message.error("料废数量之和不能超过料废总数量")
       if(!this.tableDataList.length) return this.$message.error("料废金额数据不能为空")
+      let flag=null;
       for (let index = 0; index < this.tableDataList.length; index++) {
         const item = this.tableDataList[index];
         if(!item.scrapId){
@@ -169,6 +170,7 @@ export default {
           type: 'error',
           duration: 1500,
         })          
+        flag=false
         break
         }
         if(!item.num){
@@ -177,10 +179,12 @@ export default {
           type: 'error',
           duration: 1500,
         })          
+        flag=false
         break
         }
       }
        
+      if(flag===false)return
       this.customerVisible=false
       this.$emit('change', this.tableDataList)
     }

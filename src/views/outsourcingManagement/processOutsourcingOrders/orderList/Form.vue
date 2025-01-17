@@ -93,7 +93,8 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                         show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
@@ -163,7 +164,7 @@
                       </el-table-column>
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="含税单价" min-width="120">
+                      <el-table-column prop="price" label="含税单价" min-width="120" v-if="!outInboundWarehouse">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -175,11 +176,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额" min-width="120">
-                        <template slot="header">
-                          <span class="required">*</span>
-                          金额(含税)
-                        </template>
+                      <el-table-column prop="totalAmount" label="金额" min-width="120" v-if="!outInboundWarehouse">
+
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                             <div class="viewData">
@@ -188,7 +186,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="140">
+                      <el-table-column prop="taxRate" label="税率" min-width="140" v-if="!outInboundWarehouse">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -205,7 +203,8 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150"
+                        v-if="!outInboundWarehouse">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -215,24 +214,7 @@
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column prop="excludingTaxAmount" label="总金额" min-width="160">
-                      <template slot="header">
-                        <span class="required">*</span>总金额
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxAmount }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column> -->
-
-                      <el-table-column prop="taxAmount" label="税额" min-width="100">
-                        <template slot="header">
-                          <span class="required">*</span>
-                          税额
-                        </template>
+                      <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="!outInboundWarehouse">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
 
@@ -242,14 +224,10 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
-                        <template slot="header">
-                          <span class="required">*</span>
-                          金额(不含税)
-                        </template>
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140"
+                        v-if="!outInboundWarehouse">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-
                             <div class="viewData">
                               <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                             </div>
@@ -396,7 +374,8 @@
                   <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                     <template slot="header">
                       <span class="required">*</span>
@@ -793,6 +772,7 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
+      outInboundWarehouse: '',  // 金额相关动态显示
       flowTaskOperatorRecordList: [],
       endTime: 0,
       tipsvisible: false,
@@ -961,7 +941,7 @@ export default {
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
           selectArr.push({
-            productCategoryName:item.productCategoryName,
+            productCategoryName: item.productCategoryName,
             projectName: item.projectName,
             productSource: item.productSource, // 产品来源 采购
             classAttribute: item.classAttribute,
@@ -1113,11 +1093,12 @@ export default {
       console.log('[]')
       this.$emit('close')
     },
-    init(id, type, approvalFlag) {
+    init(id, type, approvalFlag, outInboundWarehouse) {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.type = type
       this.approvalFlag = approvalFlag
+      this.outInboundWarehouse = outInboundWarehouse
       if (id) {
         if (this.type == 'edit') {
           this.title = '编辑外协订单'

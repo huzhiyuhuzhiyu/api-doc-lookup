@@ -536,7 +536,7 @@ export default {
       if (orderTypeFlag) return this.$message.error('只能选择相同外协订单类型的明细订单')
       this.addFormVisible = true
       this.$nextTick(() => {
-        this.$refs.addForm.init(id, btntype, false, this.list)
+        this.$refs.addForm.init(id, btntype, false, this.list, 'outInboundWarehouse')
       })
     },
     hasDifferentCooperativePartnerCode(arr) {

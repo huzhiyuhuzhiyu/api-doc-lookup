@@ -77,7 +77,8 @@
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="120" sortable="custom"></el-table-column>
-            <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>
@@ -649,7 +650,7 @@ export default {
       purPurchaseReceiptReturnGoodsDetailList(this.orderForm)
         .then((res) => {
           this.tableData = res.data.records
-         
+
 
           this.total = res.data.total
           this.listLoading = false
@@ -685,7 +686,7 @@ export default {
     },
     reset() {
       this.tableFlag = true
-      console.log(this.$refs,'ll')
+      console.log(this.$refs, 'll')
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.orderDateArr = []
@@ -729,7 +730,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, btnType, false, 'outInboundWarehouse')
       })
     },
     // 导出

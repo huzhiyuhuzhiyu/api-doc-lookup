@@ -786,7 +786,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, btnType,false,'outInboundWarehouse')
       })
     },
     // 导出

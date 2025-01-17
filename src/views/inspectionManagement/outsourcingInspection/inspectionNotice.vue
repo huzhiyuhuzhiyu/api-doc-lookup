@@ -436,7 +436,7 @@ export default {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look', false)
+          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look', false,[],'outInboundWarehouse')
         })
       } else {
         this.formVisible = true

@@ -124,7 +124,8 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -171,11 +172,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="含税单价" width="130">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        单价(含税)
-                      </template>
+                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
                           <div class="viewData">
@@ -184,11 +181,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(含税)
-                      </template>
+                    <el-table-column prop="totalAmount" label="金额(含税)" width="140" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
                           <div class="viewData">
@@ -197,11 +190,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        税率
-                      </template>
+                    <el-table-column prop="taxRate" label="税率" width="140" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -211,7 +200,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
                           <div class="viewData">
@@ -221,11 +210,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        税额
-                      </template>
+                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
                           <div class="viewData">
@@ -234,11 +219,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(不含税)
-                      </template>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
                           <div class="viewData">
@@ -390,7 +371,8 @@
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -580,17 +562,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="请输入客户编码" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.code" placeholder="请输入客户编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="请输入客户名称" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.name" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="请输入税号" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.taxId" placeholder="请输入税号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -631,12 +613,14 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
+                      placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productCode"
+                      placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -1003,6 +987,7 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
+      outInboundWarehouse: '',  // 金额相关动态显示
       flowTaskOperatorRecordList: [],
       endTime: 0,
       scanDialog: false,
@@ -1827,12 +1812,12 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data) {
+    init(id, btnType, approvalFlag, data, outInboundWarehouse) {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
-
-      if (data.length) {
+      this.outInboundWarehouse = outInboundWarehouse
+      if (data && data.length) {
         console.log(data)
         this.dataFormTwo.productData = data
         this.dataForm.partnerName = data[0].cooperativePartnerName

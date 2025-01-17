@@ -611,7 +611,7 @@ export default {
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list)
+        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse')
       })
     },
     hasDifferentCooperativePartnerCode(arr) {
@@ -651,7 +651,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.detailVisible = true
       this.$nextTick(() => {
-        this.$refs.Detail.init(id, btnType)
+        this.$refs.Detail.init(id, btnType, false, 'outInboundWarehouse')
       })
     },
     // 导出

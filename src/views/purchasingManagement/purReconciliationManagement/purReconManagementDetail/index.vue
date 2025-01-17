@@ -156,7 +156,7 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
-  name: 'purchaseInquirySheet',
+  name: 'purReconManagementDetail',
   components: { JNPFForm, withdrawnForm, SuperQuery, ExportForm },
   mixins: [getProjectList],
 

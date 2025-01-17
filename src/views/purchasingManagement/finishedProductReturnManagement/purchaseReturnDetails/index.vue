@@ -782,7 +782,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, btnType, false, 'outInboundWarehouse')
       })
     },
     // 导出
@@ -821,7 +821,7 @@ export default {
     getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
+        this.bimProductAttributesObj = res.data
       })
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {

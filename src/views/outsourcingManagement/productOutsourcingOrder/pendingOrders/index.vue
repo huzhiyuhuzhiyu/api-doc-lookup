@@ -506,16 +506,6 @@ export default {
         this.$refs.Form.init(id, btntype)
       })
     },
-    addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
-        })
-        // }, 600);
-      }
-    },
 
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -536,7 +526,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, btnType, false, 'outInboundWarehouse')
       })
     },
     // 导出

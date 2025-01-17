@@ -650,7 +650,7 @@ export default {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.returnDeliveryNoticeId, 'look')
+          this.$refs.DetailForm.init(row.returnDeliveryNoticeId, 'look',false,'outInboundWarehouse')
         })
       } else {
         this.formVisible = true

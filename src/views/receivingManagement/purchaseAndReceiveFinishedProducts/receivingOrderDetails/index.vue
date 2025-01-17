@@ -769,7 +769,7 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [])
+        this.$refs.Form.init(id, btntype, false, [],'outInboundWarehouse')
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -778,7 +778,7 @@ export default {
         console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype, false, [])
+          this.$refs.Form.init(id, btntype, false, [],'outInboundWarehouse')
         })
         // }, 600);
       }
@@ -802,7 +802,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false, [])
+        this.$refs.Form.init(id, btnType, false, [],'outInboundWarehouse')
       })
     },
     // 导出

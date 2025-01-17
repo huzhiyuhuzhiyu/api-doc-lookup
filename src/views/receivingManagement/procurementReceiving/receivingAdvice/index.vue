@@ -436,7 +436,7 @@ export default {
       console.log(id, btntype)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, [])
+        this.$refs.Form.init(id, btntype, false, [], 'outInboundWarehouse')
       })
     },
     addOrUpdateHandle(id, btntype) {
@@ -469,7 +469,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, false, [])
+        this.$refs.Form.init(id, btnType, false, [], 'outInboundWarehouse')
       })
     },
     //确认收货

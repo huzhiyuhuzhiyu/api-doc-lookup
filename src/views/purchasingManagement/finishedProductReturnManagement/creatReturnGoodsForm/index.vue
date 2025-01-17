@@ -40,39 +40,14 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="退货标识" prop="exchangeGoodsFlag">
-                        <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="仓库" prop="warehouseId">
-                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable>
-                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
+               
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                           :disabled="btnType == 'look'"></el-input>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="类别属性" prop="classAttribute">
-                        <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable
-                          style="width: 100%;">
-                          <el-option v-for="(item, index) in classAttributeList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
+             
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="操作人" prop="salesman">
                         <el-input v-model="dataForm.salesman" placeholder="请选择操作人"

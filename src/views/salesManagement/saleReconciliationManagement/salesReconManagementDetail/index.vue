@@ -155,7 +155,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  name: 'purchaseInquirySheet',
+  name: 'salesReconManagementDetail',
   components: { JNPFForm, withdrawnForm, SuperQuery, ExportForm },
   mixins: [getProjectList],
 

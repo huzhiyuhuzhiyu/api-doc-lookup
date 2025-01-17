@@ -47,24 +47,6 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="退货标识" prop="exchangeGoodsFlag">
-                        <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="仓库" prop="warehouseId">
-                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable>
-                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -128,11 +110,12 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
-                    <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
+                    <!-- <el-table-column prop="customerProductNo" label="供应商产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
                       show-overflow-tooltip />
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
@@ -161,7 +144,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="含税单价" width="130">
+                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="!outInboundWarehouse">
                       <template slot="header">
                         <span class="required">*</span>
                         单价(含税)
@@ -173,11 +156,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额" width="140">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(含税)
-                      </template>
+                    <el-table-column prop="totalAmount" label="金额" width="140" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
                           <div class="viewData">
@@ -186,7 +165,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140">
+                    <el-table-column prop="taxRate" label="税率" width="140" v-if="!outInboundWarehouse">
                       <template slot="header">
                         <span class="required">*</span>
                         税率
@@ -202,7 +181,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
                           <div class="viewData">
@@ -212,11 +191,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        税额
-                      </template>
+                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
                           <div class="viewData">
@@ -225,11 +200,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(不含税)
-                      </template>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="160" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
                           <div class="viewData">
@@ -387,13 +358,14 @@
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
+                <!-- <el-table-column prop="customerProductNo" label="供应商产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" show-overflow-tooltip />
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
@@ -432,11 +404,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="totalAmount" label="金额" width="140">
-                  <template slot="header">
-                    <span class="required">*</span>
-                    金额(含税)
-                  </template>
+                <el-table-column prop="totalAmount" label="金额(含税)" width="140">
                   <template slot-scope="scope">
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
                       <div class="viewData">
@@ -484,7 +452,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="150">
                   <template slot="header">
                     <span class="required">*</span>
                     金额(不含税)
@@ -571,17 +539,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="请输入供应商编码" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.code" placeholder="请输入供应商编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="请输入供应商名称" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.name" placeholder="请输入供应商名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="请输入税号" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.taxId" placeholder="请输入税号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -622,23 +590,27 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6" v-if="isReturnSwitch === '0'">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productCode" placeholder="产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="productForm.productCode"
+                      placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isProductNameSwitch === '1'">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productName" placeholder="产品名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="productForm.productName"
+                      placeholder="产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isReturnSwitch === '1'">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.drawingNo" placeholder="品名规格"
+                      clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6" v-if="isReturnSwitch === '0'">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="productForm.productDrawingNo"
+                      placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="isReturnSwitch === '1'">
@@ -871,7 +843,7 @@ export default {
       totalAmount: 0,
 
       productVisible: false,
-      cusPrototal: 0, //选择客户产品分页器的总条数
+      cusPrototal: 0, //选择供应商产品分页器的总条数
 
       // 选择全部产品参数
       allProVisible: false,
@@ -1010,7 +982,7 @@ export default {
         }
       },
       dataRule: {
-        partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
+        partnerName: [{ required: true, message: '供应商不能为空', trigger: 'change' }],
         salesman: [{ required: true, message: '操作员不能为空', trigger: 'input' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
@@ -1025,6 +997,7 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
+      outInboundWarehouse: '',  // 金额相关动态显示
       flowTaskOperatorRecordList: [],
       endTime: 0,
       bimProductAttributesObj: {},
@@ -1319,12 +1292,12 @@ export default {
         this.dataFormTwo.productData.splice(data.$index, 1)
       }
     },
-    // 选完客户产品数据后 渲染在列表上
+    // 选完供应商产品数据后 渲染在列表上
     submitCustomerProduct() {
       this.productVisible = false
     },
 
-    // 重置客户产品搜索条件
+    // 重置供应商产品搜索条件
     resetcusProduct() {
       this.productForm = {
         //   drawingNo: "",
@@ -1657,11 +1630,11 @@ export default {
       }
       this.initData()
     },
-    // 选择客户
+    // 选择供应商
     seleceCustomer(e) {
       getCooperativeInfo(e.id).then((res) => {
         if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
-          this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
+          this.$confirm('已选择过供应商，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -1801,7 +1774,7 @@ export default {
         })
       })
     },
-    // 获取客户数据
+    // 获取供应商数据
     getcategoryTree(isInit) {
       this.treeLoading = true
       let listQuery = {
@@ -1820,7 +1793,7 @@ export default {
           this.treeLoading = false
         })
     },
-    // 打开选择客户弹框
+    // 打开选择供应商弹框
     openDialog() {
       this.customerVisible = true
       this.getcategoryTree()
@@ -1836,13 +1809,14 @@ export default {
         console.log('dataForm', this.dataForm)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag) {
+    init(id, btnType, approvalFlag, outInboundWarehouse) {
       this.formLoading = true
       console.log('id', id, btnType)
       this.dataForm.id = id || ''
 
       this.btnType = btnType
       this.approvalFlag = approvalFlag
+      this.outInboundWarehouse = outInboundWarehouse
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice

@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-            ? '新建收货单'
-            : btnType == 'edit'
-              ? '编辑收货单'
-              : btnType == 'copy'
-                ? '新建收货单'
-                : '查看收货单'
+          ? '新建收货单'
+          : btnType == 'edit'
+            ? '编辑收货单'
+            : btnType == 'copy'
+              ? '新建收货单'
+              : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -34,10 +34,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                          ? true
+                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                            ? false
+                            : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -126,7 +126,8 @@
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                     <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -173,7 +174,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="含税单价" width="130">
+                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -182,7 +183,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额" width="140">
+                    <el-table-column prop="totalAmount" label="金额" width="140" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -191,7 +192,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140">
+                    <el-table-column prop="taxRate" label="税率" width="140" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -201,7 +202,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="!outInboundWarehouse">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -211,7 +212,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100">
+                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="!outInboundWarehouse">
                       <template slot="header">
                         <span class="required">*</span>
                         税额
@@ -224,7 +225,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="!outInboundWarehouse">
                       <template slot="header">
                         <span class="required">*</span>
                         金额(不含税)
@@ -280,10 +281,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                        ? true
-                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                          ? false
-                          : true
+                      ? true
+                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                        ? false
+                        : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -370,7 +371,8 @@
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
-                <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                   :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                 <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -414,7 +416,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="price" label="含税单价" width="130">
+                <el-table-column prop="price" label="单价(含税)" width="130">
                   <template slot="header">
                     <span class="required">*</span>
                     单价(含税)
@@ -552,17 +554,17 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="请输入客户编码" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.code" placeholder="请输入客户编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="请输入客户名称" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.name" placeholder="请输入客户名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="请输入税号" clearable />
+                    <el-input @keyup.native.enter="search()" v-model="form.taxId" placeholder="请输入税号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -603,12 +605,14 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
+                      placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productCode"
+                      placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -1012,6 +1016,7 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
+      outInboundWarehouse: '',  // 金额相关动态显示
       flowTaskOperatorRecordList: [],
       endTime: 0,
       selectArr: [],
@@ -1803,13 +1808,14 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data) {
+    init(id, btnType, approvalFlag, data, outInboundWarehouse) {
       console.log(id, '[]')
       this.dataForm.id = id || ''
 
       this.btnType = btnType
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
+      this.outInboundWarehouse = outInboundWarehouse
       console.log(data, 'ddd')
       if (data && data.length) {
         this.dataFormTwo.productData = data

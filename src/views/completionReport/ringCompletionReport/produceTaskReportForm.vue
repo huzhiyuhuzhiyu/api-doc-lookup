@@ -44,6 +44,8 @@
             style="width: 48%!important;position: relative;">
             <img src="@/assets/images/extend.png" alt="" v-if="currentProcess.processingType == 'external_production'"
               class="extend">
+            <img src="@/assets/images/noReport.png" alt=""
+              v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == false" class="extend">
             <el-row>
               <el-col :sm="24" :xs="24">
 
@@ -96,6 +98,7 @@
             v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true">
             <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="180px"
               label-position="left">
+      
               <el-row>
                 <div style="margin-bottom: 10px; background: #f2f2f2; padding: 20px 16px;">
                   <span style="font-size: 17px;font-weight: bold">加工数量：</span><span

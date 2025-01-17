@@ -200,10 +200,10 @@
 
 
 
-                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
+                        <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
                         <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
@@ -432,10 +432,10 @@
 
 
 
-                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
+                        <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
                         <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"

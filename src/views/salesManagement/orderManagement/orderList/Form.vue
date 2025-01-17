@@ -172,17 +172,17 @@
                       </el-table-column>
                       <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                       <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                      <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
+                      <el-table-column prop="price" label="单价(含税)" width="120" :key="11" v-if="!pageType">
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" width="120" :key="171">
+                      <el-table-column prop="taxRate" label="税率" width="120" :key="171"  v-if="!pageType">
                         <template slot-scope="scope">
                           <div>{{ scope.row.taxRate }}%</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                      <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
-                      <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"  v-if="!pageType"></el-table-column>
+                      <el-table-column prop="taxAmount" label="税额" width="140"  v-if="!pageType"></el-table-column>
+                      <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"  v-if="!pageType"></el-table-column>
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"  v-if="!pageType">
                         <template slot-scope="scope">
                           <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                         </template>
@@ -284,7 +284,7 @@
                     </el-table-column>
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-show="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-show="mainUnitFlag == 1" />
-                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110">
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110"  v-if="!pageType">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
                       </template>
@@ -296,7 +296,7 @@
                         </el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="120" :key="171">
+                    <el-table-column prop="taxRate" label="税率" width="120" :key="171"  v-if="!pageType">
                       <template slot="header">
                         <span class="required">*</span>税率
                       </template>
@@ -308,10 +308,10 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                    <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
-                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"  v-if="!pageType"></el-table-column>
+                    <el-table-column prop="taxAmount" label="税额" width="140"  v-if="!pageType"></el-table-column>
+                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"  v-if="!pageType"></el-table-column>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"  v-if="!pageType">
                       <template slot-scope="scope">
                         <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                       </template>
@@ -448,8 +448,8 @@
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                     <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
                     <!-- <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span> -->
-                    <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>
+                    <span style="font-weight:500;margin-right:10px" v-if="!pageType">总金额(含税)：{{ totalAmount }}</span>
+                    <span style="font-weight:500;margin-right:10px" v-if="!pageType">总金额(不含税)：{{ excludingTaxAmount }}</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -616,17 +616,17 @@
                   </el-table-column>
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                  <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
+                  <el-table-column prop="price" label="单价(含税)" width="120" :key="11"  v-if="!pageType">
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率" width="120" :key="171">
+                  <el-table-column prop="taxRate" label="税率" width="120" :key="171"  v-if="!pageType">
                     <template slot-scope="scope">
                       <div>{{ scope.row.taxRate }}%</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                  <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
-                  <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"  v-if="!pageType"></el-table-column>
+                  <el-table-column prop="taxAmount" label="税额" width="140"  v-if="!pageType"></el-table-column>
+                  <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"  v-if="!pageType"></el-table-column>
+                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"  v-if="!pageType">
                     <template slot-scope="scope">
                       <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                     </template>
@@ -722,7 +722,7 @@
                 </el-table-column>
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                <el-table-column prop="price" label="单价(含税)" width="120" :key="110">
+                <el-table-column prop="price" label="单价(含税)" width="120" :key="110"  v-if="!pageType">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
                   </template>
@@ -734,7 +734,7 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率" width="120" :key="171">
+                <el-table-column prop="taxRate" label="税率" width="120" :key="171"  v-if="!pageType">
                   <template slot="header">
                     <span class="required">*</span>税率
                   </template>
@@ -746,9 +746,9 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"  v-if="!pageType"></el-table-column>
+                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"  v-if="!pageType"></el-table-column>
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"  v-if="!pageType">
                   <template slot-scope="scope">
                     <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                   </template>
@@ -1428,6 +1428,7 @@ export default {
       isProjectSwitchFlag: null,
       taxRate: 13,
       pairingModeList: [],
+      pageType:""
     }
   },
   computed: {
@@ -2724,9 +2725,11 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
-    init(id, btnType, approvalFlag) {
+    init(id, btnType, approvalFlag,pageType) {
+      console.log("tytpe",pageType);
       this.dataForm.id = id || ''
       this.btnType = btnType
+      this.pageType=pageType||''
       this.approvalFlag = approvalFlag
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))

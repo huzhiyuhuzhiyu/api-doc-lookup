@@ -83,8 +83,8 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="price" label="单价" width="160" :key="181" />
-                        <el-table-column prop="totalAmount" label="总金额" width="160" :key="182" />
+                        <!-- <el-table-column prop="price" label="单价" width="160" :key="181" />
+                        <el-table-column prop="totalAmount" label="总金额" width="160" :key="182" /> -->
                         <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                           <template slot="header">
                             <span class="required">*</span>目标仓库
@@ -217,8 +217,8 @@
                         </el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="单价" width="160" :key="181" />
-                    <el-table-column prop="totalAmount" label="总金额" width="160" :key="182" />
+                    <!-- <el-table-column prop="price" label="单价" width="160" :key="181" />
+                    <el-table-column prop="totalAmount" label="总金额" width="160" :key="182" /> -->
                     <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                       <template slot="header">
                         <span class="required">*</span>目标仓库
@@ -335,7 +335,7 @@
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
-                <el-table-column prop="price" label="单价" min-width="80" />
+                <!-- <el-table-column prop="price" label="单价" min-width="80" /> -->
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
                 <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160"

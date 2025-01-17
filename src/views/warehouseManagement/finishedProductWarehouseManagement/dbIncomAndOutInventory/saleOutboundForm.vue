@@ -160,10 +160,10 @@
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
 
-                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
+                        <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="140" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
 
 
 
@@ -348,10 +348,10 @@
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
 
-                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
+                        <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="140" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
 
 
 

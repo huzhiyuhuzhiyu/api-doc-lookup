@@ -173,7 +173,7 @@
                       </el-table-column>
                       <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                       <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
-                      <el-table-column prop="price" label="单价(含税)" width="120" :key="110"> </el-table-column>
+                      <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"> </el-table-column>
                       <el-table-column prop="taxRate" label="税率" width="120" :key="171">
                         <template slot="header">
                           <span class="required">*</span>税率
@@ -186,7 +186,7 @@
                       <el-table-column prop="taxAmount" label="税额" width="140"></el-table-column>
                       <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="deliveryDate" label="交货日期" width="160" />
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"
                         v-if="accuracyLevelFlag == 1"></el-table-column>

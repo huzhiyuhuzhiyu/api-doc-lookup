@@ -145,10 +145,10 @@
                               v-model="scope.row.num" placeholder="数量"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
+                        <!-- <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRates" label="税率" width="120" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
                         <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255"
                           v-if="dataForm.businessType == 'inbound_sale_return'">
                           <template slot-scope="scope">
@@ -322,10 +322,10 @@
                               v-model="scope.row.num" placeholder="数量"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
+                        <!-- <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
                         <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
                         <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255"
                           v-if="dataForm.businessType == 'inbound_sale_return'">
                           <template slot-scope="scope">

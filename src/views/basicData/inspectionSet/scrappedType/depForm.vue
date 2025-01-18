@@ -45,15 +45,6 @@ import {
 import formValidate from '@/utils/formValidate'
 export default {
   data() {
-    var checkPrice = (rule, value, callback) => {
-      if (/^(?:[0-9]\d*)$/.test(value) == false) {
-        callback(new Error('请输入整数'))
-      } else if (Number(value) == 0) {
-        callback(new Error('单价不能为0'))
-      } else {
-        callback()
-      }
-    }
     return {
       visible: false,
       formLoading: false,
@@ -108,7 +99,7 @@ export default {
             message: '请输入单价',
             trigger: ['blur']
           },
-          { validator: checkPrice, trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber','', (errMsg) => {  }), trigger: 'blur' },
         ],
       }
     }
@@ -120,7 +111,7 @@ export default {
     init(row) {
 
       this.visible = true
-     
+
       this.title = !this.dataForm.id ? '新建报废类型' : '编辑报废类型'
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()

@@ -8,7 +8,7 @@
               <el-input @keyup.native.enter="search()" v-if="item.type === 'input'" v-model="listQuery[item.prop]"
                 :placeholder="'请输入' + item.label" clearable />
               <el-select v-else-if="item.type === 'select'" @change="selectChange" v-model="listQuery[item.prop]"
-                :placeholder="'请选择' + item.label" style="width: 100%;">
+                :placeholder="'请选择' + item.label" style="width: 100%;" clearable>
                 <el-option v-for="item2 in item.options" :key="item2.value" :label="item2.label"
                   :value="item2.value"></el-option>
               </el-select>
@@ -75,7 +75,7 @@
           </template>
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row, 'look')">查看价格</el-button>
+              <el-button size="mini" type="text" :disabled="!scope.row.effectiveDate" @click="addOrUpdateHandle(scope.row, 'look')">查看价格</el-button>
             </template>
           </el-table-column>
         </JNPF-table>

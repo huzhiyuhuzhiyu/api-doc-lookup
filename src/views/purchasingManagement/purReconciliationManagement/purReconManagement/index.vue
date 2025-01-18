@@ -105,7 +105,13 @@
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+          :limit.sync="listQuery.pageSize" @pagination="initData" >
+          <div class="text">
+            <span>合计：</span>
+            <span style="margin-left: 10px">出入库数量：{{ totalNum }}</span>
+            <span style="margin-left: 10px">金额：{{ totalTotalAmount }}</span>
+          </div>
+        </pagination>
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
@@ -189,6 +195,8 @@ export default {
       deliveryDate: [],
       selectData: [], // 选中的数据 带到form页
       total: 0,
+      totalNum: 0,
+      totalTotalAmount: 0,
       formVisible: false,
       superQueryJson: [
         {
@@ -373,6 +381,20 @@ export default {
     handeleProductInfoData(val) {
       console.log(val)
       this.selectData = val
+      function calculateTotalValue(arr) {
+        return arr.reduce((sum, item) => {
+          const value = Number(item.totalAmount); // 将 value 转换为数字  
+          if (item.businessType === 'inbound_purchase') {
+            return sum + value;  // 对于 '正', 加上 value  
+          } else if (item.businessType === 'outbound_purchase') {
+            return sum - value;   // 对于 '负', 减去 value  
+          }
+          return sum;  // 默认情况，无需改变 sum  
+        }, 0);
+      }
+      
+      this.totalNum = this.selectData.reduce((sum, e) => sum + Number(e.num || 0), 0)
+      this.totalTotalAmount = calculateTotalValue(this.selectData)
     },
     moreQueries() {
       this.visible = true

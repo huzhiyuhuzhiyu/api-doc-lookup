@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
           <template v-for="item in searchList">
@@ -44,7 +44,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main"  v-loading="listLoading">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
@@ -72,14 +72,15 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <el-table-column prop="orderNo" label="出入库单号" min-width="200" sortable="custom" />
+          <el-table-column prop="customerProductNo" label="客户料号" min-width="200" sortable="custom" />
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
-          show-overflow-tooltip></el-table-column>
+          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-          v-if="isProjectSwitch == 1" />
+            v-if="isProjectSwitch == 1" />
           <el-table-column prop="businessType" label="发/退货类型" min-width="150" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_sale_send'">发货</div>
@@ -89,7 +90,7 @@
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="num" label="出入库数量" min-width="120" />
           <el-table-column prop="costPrice" label="单价(含税)" min-width="120" />
-          <el-table-column prop="taxRate" label="税率" min-width="80" >
+          <el-table-column prop="taxRate" label="税率" min-width="80">
             <template slot-scope="scope">
               <div>{{ scope.row.taxRate }}%</div>
             </template>
@@ -100,7 +101,7 @@
                 scope.row.totalAmount }}</div>
               <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{
                 scope.row.totalAmount
-                }}</div>
+              }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
@@ -111,7 +112,13 @@
 
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+          :limit.sync="listQuery.pageSize" @pagination="initData">
+          <div class="text">
+            <span>合计：</span>
+            <span style="margin-left: 10px">出入库数量：{{ totalNum }}</span>
+            <span style="margin-left: 10px">金额：{{ totalTotalAmount }}</span>
+          </div>
+        </pagination>
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
@@ -188,6 +195,8 @@ export default {
       createRequirementDate: [],
       selectData: [],                    // 选中的数据 带到form页
       total: 0,
+      totalNum: 0,
+      totalTotalAmount: 0,
       formVisible: false,
       superQueryJson: [
         {
@@ -240,8 +249,8 @@ export default {
 
 
       ],
-      isProjectSwitch:"",
-      isProjectSwitchFlag:false,
+      isProjectSwitch: "",
+      isProjectSwitchFlag: false,
       isProductNameSwitch: '',
 
     }
@@ -251,14 +260,14 @@ export default {
     this.search('basic')
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch == 1) {
-          this.superQueryJson.splice(4, 0, {
-            prop: 'productName',
-            label: '产品名称',
-            type: 'input'
-          })
+      this.superQueryJson.splice(4, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
     }
     await this.getProjectSwitch('system', 'project')
-    this.isProjectSwitchFlag=true
+    this.isProjectSwitchFlag = true
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -267,7 +276,7 @@ export default {
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     superQuerySearch(query) {
@@ -327,8 +336,21 @@ export default {
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleProductInfoData(val) {
-      console.log(val);
       this.selectData = val
+      function calculateTotalValue(arr) {
+        return arr.reduce((sum, item) => {
+          const value = Number(item.totalAmount); // 将 value 转换为数字  
+          if (item.businessType === 'outbound_sale_send') {
+            return sum + value;  // 对于 '正', 加上 value  
+          } else if (item.businessType === 'inbound_sale_return') {
+            return sum - value;   // 对于 '负', 减去 value  
+          }
+          return sum;  // 默认情况，无需改变 sum  
+        }, 0);
+      }
+      
+      this.totalNum = this.selectData.reduce((sum, e) => sum + Number(e.num || 0), 0)
+      this.totalTotalAmount = calculateTotalValue(this.selectData)
     },
     moreQueries() {
       this.visible = true
@@ -347,8 +369,8 @@ export default {
       if (newProp === 'create_time') {
         newProp = 'createTime'
       }
-      
-      if(newProp=='project_name'){
+
+      if (newProp == 'project_name') {
         newProp = 'projectName'
 
       }
@@ -360,6 +382,8 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.totalNum = 0
+      this.totalTotalAmount = 0
       if (isRefresh) {
         this.initData()
       }
@@ -428,7 +452,7 @@ export default {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
 
-      this.superForm =this.listQuery = {
+      this.superForm = this.listQuery = {
         orderItems: [{
           asc: false,
           column: ""

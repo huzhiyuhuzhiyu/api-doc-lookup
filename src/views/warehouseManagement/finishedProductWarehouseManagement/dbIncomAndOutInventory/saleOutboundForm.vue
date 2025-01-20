@@ -184,6 +184,18 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="remark2" label="备注2" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="remark3" label="备注3" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
@@ -370,6 +382,18 @@
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="remark2" label="备注2" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="remark3" label="备注3" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>

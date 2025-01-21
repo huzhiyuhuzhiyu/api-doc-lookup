@@ -807,7 +807,7 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail } from '@/api/basicData/index'
+import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail,getBatchNumber } from '@/api/basicData/index'
 export default {
   // components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
   components: { Process, recordList, WareHouseForm, BatchNumberForm, Adjust },
@@ -1617,6 +1617,23 @@ export default {
           this.$set(item, 'allocationFlag', item.allocationFlag)
           this.$set(item, 'warehouseId', item.warehouseId)
           this.$set(item, 'warehouseCode', item.warehouseCode)
+        }
+        if(item.batchNumber){
+          let obj = {
+            productsId:item.productsId,
+            warehouseId:item.warehouseId
+          }
+          getBatchNumber(obj).then(res=>{
+              console.log(res,'re')
+              if (res.data.records && res.data.records.length !==0) {
+                let data = res.data.records[0]
+  
+                this.$set(item, 'cooperativePartnerName', data.partnerName)
+                this.$set(item, 'cooperativePartnerId', data.cooperativePartnerId)
+                this.$set(item, 'cooperativePartnerCode', data.partnerCode)
+              }
+              
+          })
         }
         // if (item.productCategoryName == '保持架') {
         //   let arr = ['pa017', 'pa021']

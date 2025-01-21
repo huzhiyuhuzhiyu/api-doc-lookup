@@ -61,6 +61,9 @@
                     <template v-else-if="row.pricingType == 'by_piece'">
                       计件
                     </template>
+                    <template v-else-if="row.pricingType == 'no_piece'">
+                      不计价
+                    </template>
                   </template>
                 </el-table-column>
                 <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label"
@@ -209,6 +212,8 @@ export default {
               item.price = item.timePrice
             } else if (item.pricingType === 'by_piece') {
               item.price = item.unitPrice
+            } else if (item.pricingType === 'no_piece') {
+                item.price = 0
             }
           })
         }

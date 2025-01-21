@@ -1346,7 +1346,7 @@ export default {
      
       this.productData[index].cooperativePartnerName = data.partnerName
       this.productData[index].cooperativePartnerId = data.cooperativePartnerId
-  
+      this.productData[index].cooperativePartnerCode = data.partnerCode
      
       if (this.productData[index].num) {
         this.productData[index].diffNum = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.productData[index].num, this.productData[index].stockNum]), 2)

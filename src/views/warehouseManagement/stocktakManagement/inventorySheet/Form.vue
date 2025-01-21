@@ -14,7 +14,7 @@
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="contain">
+      <div class="contain" ref="main">
         <div class="JNPF-common-layout">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
@@ -84,7 +84,7 @@
                       </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :height="customStyleData">
 
                         <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
@@ -384,7 +384,7 @@
                   </div>
 
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                    @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                    @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :height="customStyleData">
 
                     <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
@@ -814,7 +814,8 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
-
+      customStyleData: 0,
+      formLoading:true,
       partnerRequestObj: {
         code: "",
         name: "",
@@ -965,7 +966,7 @@ export default {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getpairingModeListFun()
-
+    await this.switchStyleheight()
   },
 
   computed: {
@@ -993,7 +994,28 @@ export default {
   },
 
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
 
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight = mainHeight1 - 280
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     
     // 获取配对方式
     async getpairingModeListFun() {

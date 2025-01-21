@@ -75,7 +75,8 @@
           </template>
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" :disabled="!scope.row.effectiveDate" @click="addOrUpdateHandle(scope.row, 'look')">查看价格</el-button>
+              <el-button size="mini" type="text" :disabled="!scope.row.effectiveDate"
+                @click="addOrUpdateHandle(scope.row, 'look')">查看价格</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -146,12 +147,12 @@
 
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
+      <!-- <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
         <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
           :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
           <el-option v-for="item in projectIdDataList" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
-      </div>
+      </div> -->
 
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
         :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
@@ -386,6 +387,10 @@ export default {
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })
+      if (this.processFlag) {
+        columnList = columnList.filter(item => item.prop !== "price")
+        columnList = [...columnList,{label:'正品单价',prop:'unitPrice'},{label:'计时单价',prop:'timePrice'}]
+        }
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
       })
@@ -399,7 +404,7 @@ export default {
         }
         let _data = {
           ...this.listQuery,
-          exportType: '1230',
+          exportType: this.processFlag ? '1231' : '1230',
           exportName: `产品${this.priceTypeName}价格信息`,
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
@@ -417,11 +422,11 @@ export default {
     // 导入
     importForm() {
       // this.$refs.UploadProduct.$el.querySelector('input').click()
-      if (this.userInfo.projectId !== '1') {
-        this.importProjectId = this.userInfo.projectId
-      } else {
-        this.importProjectId = ''
-      }
+      // if (this.userInfo.projectId !== '1') {
+      //   this.importProjectId = this.userInfo.projectId
+      // } else {
+      //   this.importProjectId = ''
+      // }
       this.uploadVisib = true
     },
     handleRemove(file, fileList) { },
@@ -444,9 +449,9 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append('file', data)
-      if (this.isProjectSwitch === '1') {
-        formData.append('projectId', this.importProjectId)
-      }
+      // if (this.isProjectSwitch === '1') {
+      //   formData.append('projectId', this.importProjectId)
+      // }
       if (this.processFlag) {
         formData.append('priceType', this.priceType)
       } else {
@@ -487,9 +492,9 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
-      if (this.isProjectSwitch === '1') {
-        if (!this.importProjectId) return this.$message.error('请选择所属项目')
-      }
+      // if (this.isProjectSwitch === '1') {
+      //   if (!this.importProjectId) return this.$message.error('请选择所属项目')
+      // }
       if (!this.file) return this.$message.error('请上传文件')
       this.UploadProduct(this.file)
     },
@@ -716,6 +721,7 @@ export default {
       delete listDetailQuery.effectFlag
       listDetailQuery.productsId = row.productsId
       listDetailQuery.processId = row.processId
+      listDetailQuery.pricingFlag = ''
       listDetailQuery.orderItems = [
         {
           asc: true,

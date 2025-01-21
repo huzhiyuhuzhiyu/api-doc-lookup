@@ -1343,6 +1343,11 @@ export default {
       console.log("批次号数据", data, index);
       this.productData[index].batchNumber = data.batchNumber
       this.productData[index].stockNum = data.inventoryQuantity
+     
+      this.productData[index].cooperativePartnerName = data.partnerName
+      this.productData[index].cooperativePartnerId = data.cooperativePartnerId
+  
+     
       if (this.productData[index].num) {
         this.productData[index].diffNum = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.productData[index].num, this.productData[index].stockNum]), 2)
       }

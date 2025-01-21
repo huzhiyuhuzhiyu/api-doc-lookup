@@ -47,6 +47,8 @@ export default {
     dataFormSubmit() {
       this.btnLoading = true
       const apiMethod = this.type === 'normal' ? stockBalance : stockBalanceNegate
+      console.log(this.dataForm,'this.dataForm')
+      return
       apiMethod(this.dataForm).then(res => {
         this.$message({
           message: (this.type === 'normal' ? '' : '反') + '结存成功',

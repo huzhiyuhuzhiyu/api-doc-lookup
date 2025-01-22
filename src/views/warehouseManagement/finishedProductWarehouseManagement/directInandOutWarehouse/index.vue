@@ -57,7 +57,7 @@
                           v-if="['inbound_sale_return', 'inbound_purchase', 'inbound_external', 'inbound_return_materials', 'inbound_order_production', 'inbound_production', 'inbound_flip', 'inbound_return'].includes(dataForm.businessType)">
                           <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
                             <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
-                              style="width: 100%;">
+                              style="width: 100%;" :disabled="btnType == 'look'">
                               <el-option v-for="(item, index) in diffBatchList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
                             </el-select>
@@ -755,7 +755,7 @@ export default {
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
-        diffBatchNumFlag: 1
+        diffBatchNumFlag: true
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -938,8 +938,8 @@ export default {
       processFlag: "",
       pairingModeList: [],
       diffBatchList: [
-        { label: '产品生成同批次号', value: 0 },
-        { label: '产品生成不同批次号', value: 1 },
+        { label: '产品生成同批次号', value: false },
+        { label: '产品生成不同批次号', value: true },
       ]
     }
   },

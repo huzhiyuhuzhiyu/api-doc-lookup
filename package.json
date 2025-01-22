@@ -67,6 +67,7 @@
     "dropzone": "5.5.1",
     "echarts": "^4.9.0",
     "echarts-stat": "^1.1.1",
+    "el-table-virtual-scroll": "^2.0.2",
     "element-resize-detector": "^1.2.1",
     "element-ui": "^2.15.5",
     "file-saver": "2.0.1",

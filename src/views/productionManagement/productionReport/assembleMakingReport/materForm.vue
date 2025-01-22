@@ -18,28 +18,46 @@
             </div>
             <JNPF-table v-loading="listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange" custom-column
               ref="dataTable">
-              <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="160"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
-              <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
-              <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
+              <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="100"
+                show-overflow-tooltip />
+              <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                show-overflow-tooltip></el-table-column>
+              <el-table-column prop="drawNo" label="品名规格" width="360" show-overflow-tooltip>
                 <template slot-scope="scope">
-                  <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
+                  <i :class="[
+                    scope.row.childrenList.length >= 1
+                      ? 'icon-ym icon-ym-tree-organization3'
+                      : 'icon-ym icon-ym-systemForm'
+                  ]"></i>
+                  {{ scope.row.drawNo }}
                 </template>
               </el-table-column>
-              <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
-              <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
-              <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
-              <el-table-column prop="mainUnit" label="单位" min-width="80" />
-              <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
-              <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
-              <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
-              <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
+              <!-- <el-table-column prop="productName" key="productName" label="产品名称" min-width="140" /> -->
+              <el-table-column prop="productSource" key="productSource" label="产品来源" min-width="100">
+                <template slot-scope="scope">
+                  <div>{{ scope.row.productSource == 'produce' ? "生产" : scope.row.productSource == 'out' ? "外协" : '采购'
+                    }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="mainUnit" key="mainUnit" label="单位" width="80" />
+              <el-table-column prop="kitQuantity" key="kitQuantity" label="齐套数量" min-width="100" />
+              <el-table-column prop="inventoryQuantity" key="inventoryQuantity" label="库存数量" min-width="100">
+                <template slot-scope="scope">
+                  <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : '0' }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="availableQuantity" key="availableQuantity" label="库存可用数量" min-width="140">
+                <template slot-scope="scope">
+                  <div>{{ scope.row.availableQuantity ? scope.row.availableQuantity : '0' }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="actualInTransitQuantity" key="actualInTransitQuantity" label="在途\在制数量"
+                min-width="140">
+                <template slot-scope="scope">
+                  <div>{{ scope.row.actualInTransitQuantity ? scope.row.actualInTransitQuantity : '0' }}</div>
+                </template>
+              </el-table-column>
             </JNPF-table>
-            <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-              @pagination="initData">
-
-            </pagination>
           </div>
         </div>
       </div>
@@ -51,7 +69,7 @@
 </template>
 
 <script>
-import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
+import { getTreeByDrawNo } from '@/api/plan/index.js'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index' // 仓库树
 import { getWorkList } from '@/api/productOrdes/index.js'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -76,7 +94,6 @@ export default {
       originalListQuery: {
 
       },
-      total: 0,
       listQuery: {
       },
       searchList: [
@@ -149,31 +166,13 @@ export default {
     },
 
     init(drawingNo, type, processName) {
-      if (type === 'inventoryFlag') { this.title = '可报工数明细' }
-      else if (type === 'occupancyFlag') { this.title = '占用数明细' }
-      else if (type === 'availableFlag') { this.title = '可用数明细' }
+      if (type === 'inventoryFlag') { this.title = '齐套查询' }
+      else if (type === 'occupancyFlag') { this.title = '齐套查询' }
+      else if (type === 'availableFlag') { this.title = '齐套查询' }
       this.visible = true
       let tempListQuery = {
-        productDrawingNo: drawingNo,
-        processName: processName,
-        productionPlanNo: "",
-        orderNo: "",
-        prodOrderStatus: "normal",
-        classAttribute: "semi_finished",
-        workReportFlag: true,
-        pageNum: 1,
-        pageSize: 20,
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        drawingNo: drawingNo,
+
         // superQuery: {
         //   matchLogic: 'AND',
         //   condition: [
@@ -212,11 +211,10 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getWorkList(this.listQuery).then(res => {
+      getTreeByDrawNo(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        this.tableData = res.data.records
-        this.total = res.data.total
+        this.tableData = res.data
 
 
       }).catch(err => {

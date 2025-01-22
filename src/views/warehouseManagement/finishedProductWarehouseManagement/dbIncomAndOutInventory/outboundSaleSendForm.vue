@@ -33,6 +33,11 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'" />
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="业务单号" prop="sourceNo">
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
@@ -200,6 +205,11 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'" />
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="业务单号" prop="sourceNo">
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
@@ -258,6 +268,12 @@
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
+                        <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                          v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'" placeholder="请输入客户合同号" />
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-toolti
                           v-if="isProjectSwitch == 1" />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
@@ -398,6 +414,12 @@
                 <el-table-column prop="deliverDate" label="发货日期" width="160" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
+                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                  v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'" placeholder="请输入客户合同号" />
+                  </template>
+                </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />

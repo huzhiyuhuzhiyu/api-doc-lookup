@@ -53,6 +53,11 @@
                               :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="dataForm.businessType === 'outbound_sale_send' && $store.getters.configGlobal.customerContractNo === '1'">
+                          <el-form-item label="客户合同号" prop="contractNo">
+                            <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'" />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24"
                           v-if="['inbound_sale_return', 'inbound_purchase', 'inbound_external', 'inbound_return_materials', 'inbound_order_production', 'inbound_production', 'inbound_flip', 'inbound_return'].includes(dataForm.businessType)">
                           <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
@@ -151,6 +156,12 @@
                         v-if="dataForm.documentType == 'outbound'" />
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
+                      <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                        v-if="dataForm.businessType === 'outbound_sale_send' && $store.getters.configGlobal.customerContractNo === '0'">
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'" placeholder="请输入客户合同号" />
+                        </template>
+                      </el-table-column>
                       <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"

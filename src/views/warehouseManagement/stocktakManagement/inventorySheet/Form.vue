@@ -390,7 +390,7 @@
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="processName" label="工序" width="120" :key="5" show-overflow-tooltip>
+                    <el-table-column prop="processName" label="工序" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
@@ -675,6 +675,7 @@
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip min-width="160"></el-table-column>
                 <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
+                <el-table-column prop="processName" label="工序名称" v-if="type == 'invent'" min-width="180"></el-table-column>
                 <el-table-column prop="productCategoryName" label="所属分类" v-if="type == 'all'" min-width="120" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -1877,7 +1878,9 @@ export default {
                   specialRequire: item.specialRequire,
                   cooperativePartnerName: item.cooperativePartnerName,
                   cooperativePartnerId: item.cooperativePartnerId,
-
+                  processName: item.processName,
+                  processCode: item.processCode,
+                  processId: item.processId,
 
                 }
                 arr.push(obj)

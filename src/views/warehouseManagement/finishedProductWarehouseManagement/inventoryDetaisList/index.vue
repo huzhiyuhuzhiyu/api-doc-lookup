@@ -118,6 +118,7 @@
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="warehouseName" label="仓库" width="160" sortable="custom" />
+          <el-table-column prop="batchNumber" label="批次号" width="170" sortable="custom" />
           <el-table-column prop="shelfSpaceName" label="库位" width="160" sortable="custom" />
           <!-- <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> -->

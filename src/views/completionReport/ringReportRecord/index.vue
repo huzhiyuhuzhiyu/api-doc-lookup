@@ -59,7 +59,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
+          <JNPF-table ref="dataTable" @selection-change="handeleProductInfoData" hasC  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="220" sortable="custom" />
@@ -101,7 +101,10 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" >
-            <span style="font-weight:500;margin-right:10px">报工数量总计：{{ totalData.reportingQuantity }}</span>
+            <div class="text">
+              <span style="margin-left: 10px">报工数量总计：{{ totalData.reportingQuantity }}</span>
+              <span style="margin-left: 10px">合格数量总计：{{ totalQualifiedQuantity }}</span>
+            </div>
           </pagination>
         </div>
       </div>
@@ -153,7 +156,8 @@ export default {
       visible: false,
       tableData: [],
       listLoading: false,
-
+      selectData: [], // 选中的数据 带到form页
+      totalQualifiedQuantity: 0,
       orderForm: {},
       orderFormlist: {
         orderNo: "",
@@ -449,7 +453,13 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')
     },
-
+     // 选中列表的数据 将其带到生成订单下面表单表格中
+     handeleProductInfoData(val) {
+      console.log(val)
+      this.selectData = val
+      
+      this.totalQualifiedQuantity = this.selectData.reduce((sum, e) => sum + Number(e.qualifiedQuantity || 0), 0)
+    },
 
 
 

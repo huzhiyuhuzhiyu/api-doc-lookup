@@ -390,6 +390,8 @@
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="processName" label="工序" width="120" :key="6" show-overflow-tooltip>
+                    </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
@@ -655,7 +657,7 @@
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun(type)">
                       {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun(type)">{{
                       $t('common.reset') }}
                     </el-button>
                   </el-form-item>
@@ -673,6 +675,7 @@
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip min-width="160"></el-table-column>
                 <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
+                <el-table-column prop="processName" label="工序名称" v-if="type == 'invent'" min-width="180"></el-table-column>
                 <el-table-column prop="productCategoryName" label="所属分类" v-if="type == 'all'" min-width="120" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -1515,7 +1518,7 @@ export default {
       console.log("11", this.selectSaleProductArr);
     },
     // 选择产品——重置
-    resetProductFun() {
+    resetProductFun(type) {
       this.productForm = {
         productCode: "",
         productDrawingNo: "",
@@ -1607,6 +1610,9 @@ export default {
         this.$set(item, 'packagingMethod', '')
         this.$set(item, 'specialRequire', '')
         this.$set(item, 'pairingModeId', '') 
+        this.$set(item, 'processName', item.processName)
+        this.$set(item, 'processCode', item.processCode)
+        this.$set(item, 'processId', item.processId) 
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
@@ -1618,6 +1624,7 @@ export default {
           this.$set(item, 'warehouseId', item.warehouseId)
           this.$set(item, 'warehouseCode', item.warehouseCode)
         }
+
         if(item.batchNumber){
           let obj = {
             productsId:item.productsId,
@@ -1871,7 +1878,9 @@ export default {
                   specialRequire: item.specialRequire,
                   cooperativePartnerName: item.cooperativePartnerName,
                   cooperativePartnerId: item.cooperativePartnerId,
-
+                  processName: item.processName,
+                  processCode: item.processCode,
+                  processId: item.processId,
 
                 }
                 arr.push(obj)

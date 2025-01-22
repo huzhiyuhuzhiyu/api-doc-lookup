@@ -56,7 +56,7 @@
                                                 @change="search('basic')"
                                 />
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
-                                           :placeholder="'请选择' + item.label"
+                                           :placeholder="'请选择' + item.label" :disabled="item.disabled"
                                            :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
                                 >
                                     <el-option v-for="(item2, index2) in item.options" :key="index2"

@@ -16,7 +16,7 @@
                                                 @change="search('basic')"
                                 />
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
-                                           :placeholder="'请选择' + item.label"
+                                           :placeholder="'请选择' + item.label" :disabled="item.disabled"
                                            :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
                                 >
                                     <el-option v-for="(item2, index2) in item.options" :key="index2"
@@ -459,6 +459,7 @@ export default {
                     field: 'projectId',
                     label: '所属项目',
                     prop: 'projectId',
+                    disabled:this.abProjectId === '1' ? false : true,
                     symbol: 'like',
                     searchType: 4,
                     options:this.abProjectNoCommonList,
@@ -663,7 +664,7 @@ export default {
         addOrUpdateHandle(accountPeriod, type = 'normal') {
             this.formVisible = true
             this.$nextTick(() => {
-                this.$refs.Form.init(accountPeriod, type,this.defaultProjectId)
+                this.$refs.Form.init(accountPeriod, type,this.listQuery.projectId)
             })
         },
 

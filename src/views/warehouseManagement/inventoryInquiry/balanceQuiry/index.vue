@@ -64,6 +64,7 @@ export default {
     async created() {
         await this.awaitAbProject()
         this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+        console.log(this.abProjectId,'this.defaultProjectId')
         this.listRequestObj.projectId = this.defaultProjectId
         await this.getProductNameSwitch('product', 'enable_productName')
         const res = await canStockBalance(this.defaultProjectId)
@@ -165,6 +166,7 @@ export default {
                 {
                     fieldValue: this.defaultProjectId,
                     field: 'projectId',
+                    disabled:this.abProjectId === '1' ? false : true,
                     label: '所属项目',
                     prop: 'projectId',
                     symbol: 'like',

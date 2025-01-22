@@ -1473,7 +1473,7 @@
     <WXSHREFForm v-if="wxshFormVisible" ref="WXSHREFForm" @close="closeForm" />
     <PickForm v-if="pickFormVisible" ref="PickREFForm" @close="closeForm" />
     <ReturnMaterREFForm v-if="returnMaterFormVisible" ref="ReturnMaterREFForm" @close="closeForm" />
-    <SaleForm v-if="saleFormVisible" ref="saleREFForm" @close="closeForm"></SaleForm>
+    <SaleForm v-if="saleFormVisible" ref="saleREFForm" @close="closeForm" :saleContractNoSwitch="$store.getters.configGlobal.customerContractNo || '6'"></SaleForm>
     <PurchaseForm v-if="purchaseFormVisible" ref="purchaseREFForm" @close="closeForm"></PurchaseForm>
     <ProductExternalForm v-if="productExternalVisible" ref="productExternalREFForm" @close="closeForm">
     </ProductExternalForm>
@@ -2286,6 +2286,7 @@ export default {
     await this.getWarehouseListFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.$store.dispatch('base/getBusinessConfig','gobal')
 
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },

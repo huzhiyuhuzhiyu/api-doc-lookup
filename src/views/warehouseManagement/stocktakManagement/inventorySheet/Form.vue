@@ -390,6 +390,8 @@
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                     </el-table-column>
+                    <el-table-column prop="processName" label="工序" width="120" :key="5" show-overflow-tooltip>
+                    </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
@@ -655,7 +657,7 @@
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun(type)">
                       {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun(type)">{{
                       $t('common.reset') }}
                     </el-button>
                   </el-form-item>
@@ -1515,7 +1517,7 @@ export default {
       console.log("11", this.selectSaleProductArr);
     },
     // 选择产品——重置
-    resetProductFun() {
+    resetProductFun(type) {
       this.productForm = {
         productCode: "",
         productDrawingNo: "",
@@ -1607,6 +1609,9 @@ export default {
         this.$set(item, 'packagingMethod', '')
         this.$set(item, 'specialRequire', '')
         this.$set(item, 'pairingModeId', '') 
+        this.$set(item, 'processName', item.processName)
+        this.$set(item, 'processCode', item.processCode)
+        this.$set(item, 'processId', item.processId) 
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
@@ -1618,6 +1623,7 @@ export default {
           this.$set(item, 'warehouseId', item.warehouseId)
           this.$set(item, 'warehouseCode', item.warehouseCode)
         }
+
         if(item.batchNumber){
           let obj = {
             productsId:item.productsId,

@@ -564,9 +564,9 @@ export default {
   async created() {
     // await this.$store.dispatch('base/getBusinessConfig','gobal')
     await Promise.all([
-      getOrderFiledMap('sale'),
+      getOrderFiledMap('gobal'),
     ]).then(([
-      saleRes,
+      gobalRes,
     ]) => {
       this.customerContractNoSwitch = saleRes.data.customerContractNo
     }).catch(error => {

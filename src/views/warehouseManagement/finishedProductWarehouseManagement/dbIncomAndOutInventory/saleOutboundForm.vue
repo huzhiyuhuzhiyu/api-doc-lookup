@@ -34,6 +34,11 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="" disabled />
+                            </el-form-item>
+                          </el-col>
                           <!-- <el-col :sm="6" :xs="24">
                             <el-form-item label="业务单号" prop="sourceNo">
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
@@ -107,6 +112,8 @@
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
 
+                        <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                          v-if="$store.getters.configGlobal.customerContractNo === '0'"></el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
@@ -223,6 +230,11 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="" disabled />
+                            </el-form-item>
+                          </el-col>
                           <!-- <el-col :sm="6" :xs="24">
                             <el-form-item label="业务单号" prop="sourceNo">
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
@@ -295,6 +307,8 @@
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
 
+                        <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                          v-if="$store.getters.configGlobal.customerContractNo === '0'"></el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
@@ -1140,6 +1154,7 @@ export default {
       } else {
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
         this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.contractNo = data[0].contractNo
         this.fetchData("CKDH", true)
         this.getBusInfo('b045')
         this.title = '新建出库单'

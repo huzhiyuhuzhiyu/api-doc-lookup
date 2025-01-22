@@ -563,6 +563,7 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.$store.dispatch('base/getBusinessConfig','gobal')
     await this.getWarehouseListFun()
     this.isProjectSwitchFlag = true
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))

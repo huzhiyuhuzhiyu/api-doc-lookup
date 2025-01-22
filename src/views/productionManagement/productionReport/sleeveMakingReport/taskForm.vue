@@ -22,6 +22,7 @@
                 sortable="custom"></el-table-column>
               <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
               <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
+              <el-table-column prop="productDrawingNo" label="成品规格" min-width="160" sortable="custom"></el-table-column>
               <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
                 <template slot-scope="scope">
                   <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
@@ -148,13 +149,13 @@ export default {
       })
     },
 
-    init(drawingNo, type, processName) {
+    init(mainProdId, type, processName) {
       if (type === 'inventoryFlag') { this.title = '可报工数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
       this.visible = true
       let tempListQuery = {
-        productDrawingNo: drawingNo,
+        productsId: mainProdId,
         processName: processName,
         productionPlanNo: "",
         orderNo: "",

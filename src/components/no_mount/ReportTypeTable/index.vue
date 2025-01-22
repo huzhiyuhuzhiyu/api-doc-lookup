@@ -106,7 +106,7 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table  v-if="tableItems.length" @sort-change="sortChange" show-summary :summary-method="getSummaries" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
+                <JNPF-table  v-if="tableItems.length" @sort-change="sortChange" :show-summary="renderSummary" :summary-method="getSummaries" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
                     <template v-for="item in tableItems">
                         <template v-if="['abrasive','oil','accessory','turnoverBox','total'].includes(item.prop)">
                             <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
@@ -260,7 +260,11 @@ export default {
         isProductNameSwitch:{
             type: String,
             default: ""
-        }
+        },
+        renderSummary:{
+            type:Boolean,
+            default:true
+        },
     },
     data() {
         return {

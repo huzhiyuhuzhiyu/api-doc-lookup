@@ -82,7 +82,10 @@
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-download"
                           @click="exportForm">导出</el-button>
                       </div>
-
+                         <!--若keyProp未设置或keyProp值不唯一，可能导致表格空数据或者滚动时渲染的数据断层、不连贯、滚动不了-->
+                      <virtual-scroll :data="virtualData" :item-size="15" key-prop="id"
+                         @change="(virtualList) => tableData = virtualList" :virtualized="true">
+  
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :height="customStyleData">
 
@@ -310,7 +313,7 @@
                           </template>
                         </el-table-column>
                       </JNPF-table>
-
+                    </virtual-scroll>
 
 
                     </el-collapse-item>
@@ -811,6 +814,7 @@ import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail,getBatchNumber } from '@/api/basicData/index'
+import VirtualScroll, { VirtualColumn } from 'el-table-virtual-scroll'
 export default {
   // components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
   components: { Process, recordList, WareHouseForm, BatchNumberForm, Adjust },
@@ -906,6 +910,7 @@ export default {
       productTotal: 0,
       deliveryDateArr: [],
       productVisible: false,
+      virtualData: [], // 实际数据
       productData: [],
       selectRows: [],
       listLoading: false,
@@ -963,13 +968,18 @@ export default {
       pairingModeList: [],
     }
   },
-
+  components: {
+    VirtualScroll: VirtualScroll,
+    VirtualColumn: VirtualColumn
+  },
   async created() {
+    this.formLoading = true
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getpairingModeListFun()
     await this.switchStyleheight()
+    this.formLoading = false
   },
 
   computed: {

@@ -95,7 +95,8 @@ export default {
       columnList: ['productsCode', 'processCode']
     }
   },
-  created() {
+  async created() {
+    await this.getProjectSwitch('system', 'project')
     let index = this.tableItems.findIndex((obj) => obj.prop === 'productsCode')
     this.tableItems.splice(index + 1, 0, {
       prop: 'productsName',

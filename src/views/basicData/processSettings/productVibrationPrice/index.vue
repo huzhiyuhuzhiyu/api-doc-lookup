@@ -100,6 +100,7 @@ export default {
     }
   },
   async created() {
+    await this.getProjectSwitch('system', 'project')
     await this.getProductClassFun()
     let index = this.tableItems.findIndex((obj) => obj.prop === 'code')
     this.tableItems.splice(index + 1, 0, {

@@ -18,15 +18,18 @@ import {
   getbimProductAttributesListMap
 } from '@/api/masterDataManagement/index'
 import Index from '../components/process/index.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'productPackagingPrice',
   components: { Index },
+  mixins: [getProjectList],
   data() {
     return {
       getBimProductAttributePrice,
       batchAddBimProductAttributePrice,
       uploadBimProductAttributePrice,
       deleteBimProductAttributePrice,
+      isProjectSwitch: '',
       listRequestObj: {
         pricingFlag: 1,
         drawingNo: '',
@@ -105,7 +108,9 @@ export default {
       minWidth: '180',
       sortable: 'custom'
     })
-    this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '120' })
+    if (this.isProjectSwitch === '1') {
+      this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '120' })
+    }
     this.searchList.forEach((item) => {
       if (item.prop === 'attributeMethod') {
         item.options = this.bimProductAttributesObj.pa015.map((it) => {

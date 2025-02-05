@@ -13,15 +13,18 @@ import {
   deleteBimProductProcessPrice
 } from '@/api/bimProcess/index'
 import Index from '../components/process/index.vue'
+import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'productProcessQualityPrice',
   components: { Index },
+  
   data() {
     return {
       getBimProductProcessPrice,
       batchAddBimProductProcessPrice,
       uploadBimProductProcessPrice,
       deleteBimProductProcessPrice,
+      isProjectSwitch: '',
       listRequestObj: {
         pricingFlag: 1,
         drawingNo: '',
@@ -100,7 +103,9 @@ export default {
       minWidth: '180',
       sortable: 'custom'
     })
-    this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '180' })
+    if (this.isProjectSwitch === '1') {
+      this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '120' })
+    }
   }
 }
 </script>

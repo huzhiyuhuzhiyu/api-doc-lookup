@@ -186,6 +186,7 @@ export default {
         processCode:"", 
         processName:"",
         reportWagesFlag:"",
+        reportingType:'normal',  // 报工类型 正常报工
         producerId:"",
         pageNum:1,
         pageSize:20,

@@ -499,6 +499,7 @@ export default {
         let obj = {
           productionOrderNo: id,
           classAttribute: "semi_finished",
+          reportingType:'normal',  // 报工类型 正常报工
           processId: "",
           "orderItems": [
             {

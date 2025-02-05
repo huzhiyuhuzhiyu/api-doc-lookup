@@ -14,7 +14,7 @@ import {
 } from '@/api/bimProcess/index'
 import Index from '../components/process/index.vue'
 export default {
-  name: 'productProcessPrice',
+  name: 'productProcessQualityPrice',
   components: { Index },
   data() {
     return {
@@ -26,7 +26,7 @@ export default {
         pricingFlag: 1,
         drawingNo: '',
         processName: '',
-        priceType: 'process',
+        priceType: 'inspection',
         effectFlag: 1,
         orderItems: [
           {
@@ -41,11 +41,11 @@ export default {
         { prop: 'productsCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
         { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
 
-        { prop: 'processName', label: '工序名称', minWidth: '140', sortable: 'custom' },
-        { prop: 'processCode', label: '工序编码', minWidth: '140', sortable: 'custom' },
-        { prop: 'effectiveDate', label: '生效日期', minWidth: '130' },
-        { prop: 'pricingType', label: '计价类型', minWidth: '120', sortable: 'custom' },
-        { prop: 'price', label: '单价(元)', minWidth: '100' }
+        { prop: 'processName', label: '工序名称', minWidth: '180', sortable: 'custom' },
+        { prop: 'processCode', label: '工序编码', minWidth: '160', sortable: 'custom' },
+        { prop: 'effectiveDate', label: '生效日期', minWidth: '160' },
+        { prop: 'pricingType', label: '计价类型', minWidth: '160', sortable: 'custom' },
+        { prop: 'price', label: '单价(元)', minWidth: '160' }
       ],
       searchList: [
         {
@@ -97,10 +97,10 @@ export default {
     this.tableItems.splice(index + 1, 0, {
       prop: 'productsName',
       label: '产品名称',
-      minWidth: '150',
+      minWidth: '180',
       sortable: 'custom'
     })
-    this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '120' })
+    this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '180' })
   }
 }
 </script>

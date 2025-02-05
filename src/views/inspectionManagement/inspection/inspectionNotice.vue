@@ -294,6 +294,7 @@ export default {
         productName: '',
         productDrawingNo: '',
         orderType: 'normal',
+        reportingType:'normal',  // 报工类型 正常报工
         planSsd: '',
         planSed: '',
         planEsd: '',

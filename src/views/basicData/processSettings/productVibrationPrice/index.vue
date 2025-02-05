@@ -1,37 +1,42 @@
 <template>
-  <Index :priceType="listRequestObj.priceType" :listRequestObj="listRequestObj" :listMethod="getBimProductProcessPrice"
-    :batchMethod="batchAddBimProductProcessPrice" :uploadMethod="uploadBimProductProcessPrice"
-    :delMethod="deleteBimProductProcessPrice" :tableItems="tableItems" :searchList="searchList"
-    :superQueryJson="superQueryJson" :columnList="columnList" />
+  <Index :priceType="listRequestObj.attributeType" :listRequestObj="listRequestObj"
+    :listMethod="getBimProductAttributePrice" :batchMethod="batchAddBimProductAttributePrice"
+    :uploadMethod="uploadBimProductAttributePrice" :delMethod="deleteBimProductAttributePrice" :tableItems="tableItems"
+    :searchList="searchList" :superQueryJson="superQueryJson" :columnList="columnList" />
 </template>
 
 <script>
 import {
-  getBimProductProcessPrice,
-  batchAddBimProductProcessPrice,
-  uploadBimProductProcessPrice,
-  deleteBimProductProcessPrice
+  getBimProductAttributePrice,
+  batchAddBimProductAttributePrice,
+  uploadBimProductAttributePrice,
+  deleteBimProductAttributePrice
 } from '@/api/bimProcess/index'
+import {
+  getbimProductAttributesList,
+  getbimProductAttributes,
+  getbimProductAttributesListMap
+} from '@/api/masterDataManagement/index'
 import Index from '../components/process/index.vue'
 export default {
-  name: 'productProcessPrice',
+  name: 'productVibrationPrice',
   components: { Index },
   data() {
     return {
-      getBimProductProcessPrice,
-      batchAddBimProductProcessPrice,
-      uploadBimProductProcessPrice,
-      deleteBimProductProcessPrice,
+      getBimProductAttributePrice,
+      batchAddBimProductAttributePrice,
+      uploadBimProductAttributePrice,
+      deleteBimProductAttributePrice,
       listRequestObj: {
         pricingFlag: 1,
         drawingNo: '',
         processName: '',
-        priceType: 'process',
+        attributeType: 'vibrate',
         effectFlag: 1,
         orderItems: [
           {
             asc: false,
-            column: 'processName'
+            column: 'attribute_method'
           }
         ],
         pageNum: 1,
@@ -41,11 +46,9 @@ export default {
         { prop: 'productsCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
         { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
 
-        { prop: 'processName', label: '工序名称', minWidth: '140', sortable: 'custom' },
-        { prop: 'processCode', label: '工序编码', minWidth: '140', sortable: 'custom' },
-        { prop: 'effectiveDate', label: '生效日期', minWidth: '130' },
-        { prop: 'pricingType', label: '计价类型', minWidth: '120', sortable: 'custom' },
-        { prop: 'price', label: '单价(元)', minWidth: '100' }
+        { prop: 'effectiveDate', label: '生效日期', minWidth: '140' },
+        { prop: 'attributeMethod', label: '属性名称', minWidth: '140', sortable: 'custom' },
+        { prop: 'unitPrice', label: '计价单价(元)', minWidth: '130' }
       ],
       searchList: [
         {
@@ -55,7 +58,7 @@ export default {
           options: [{ label: '无单价', value: 0 }, { label: '有单价', value: 1 }, { label: '所有', value: '' }]
         },
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'processName', label: '工序名称', type: 'input' }
+        { prop: 'attributeMethod', label: '振动等级', type: 'select', options: [] }
       ],
       superQueryJson: [
         {
@@ -89,18 +92,38 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['productsCode', 'processCode']
+      columnList: ['productsCode', 'processCode'],
+      bimProductAttributesObj: {}
     }
   },
-  created() {
-    let index = this.tableItems.findIndex((obj) => obj.prop === 'productsCode')
+  async created() {
+    await this.getProductClassFun()
+    let index = this.tableItems.findIndex((obj) => obj.prop === 'code')
     this.tableItems.splice(index + 1, 0, {
       prop: 'productsName',
       label: '产品名称',
-      minWidth: '150',
+      minWidth: '180',
       sortable: 'custom'
     })
     this.tableItems.unshift({ prop: 'projectName', label: '所属项目', minWidth: '120' })
+    this.searchList.forEach((item) => {
+      if (item.prop === 'attributeMethod') {
+        item.options = this.bimProductAttributesObj.pa005.map((it) => {
+          return {
+            label: it.name,
+            value: it.name
+          }
+        })
+      }
+    })
+  },
+  methods: {
+    // 获取产品属性
+    async getProductClassFun() {
+      // 产品属性
+      const res = await getbimProductAttributesListMap()
+      this.bimProductAttributesObj = res.data
+    }
   }
 }
 </script>

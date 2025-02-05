@@ -835,6 +835,7 @@ export default {
           productionOrderNo: id,
           classAttribute: "finish_product",
           processId: "",
+          reportingType:'normal',  // 报工类型 正常报工
           "orderItems": [
             {
               "asc": false,

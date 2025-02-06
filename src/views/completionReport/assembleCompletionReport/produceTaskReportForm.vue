@@ -24,6 +24,7 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
+                <el-descriptions-item label="领料方式">{{ dataForm.pickingWay=='production_order'?'生产订单领料':"工单领料" }}</el-descriptions-item>
                 <el-descriptions-item label="打字内容" v-if="sealingCoverTypingFlag === '1'">{{ dataForm.sealingCoverTyping
                   }}</el-descriptions-item>
                 <el-descriptions-item label="精度等级" v-if="accuracyLevelFlag === '1'">{{ dataForm.accuracyLevel
@@ -200,6 +201,10 @@
                   <span
                     style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
+                    }}]</span>
+                    <span  v-if="dataForm.pickingWay=='dispatch_list'" 
+                    style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">可领库存数：</span><span
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold"  v-if="dataForm.pickingWay=='dispatch_list'" >[{{ currentProcess.availableStockNum
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">

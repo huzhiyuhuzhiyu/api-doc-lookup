@@ -24,6 +24,7 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
+                <el-descriptions-item label="领料方式">{{ dataForm.pickingWay=='production_order'?'生产订单领料':"工单领料" }}</el-descriptions-item>
               </el-descriptions>
             </div>
 
@@ -115,7 +116,8 @@
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
                     }}]</span>
                     <span v-if="dataForm.pickingWay=='dispatch_list'"
-                    style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">可领库存数：</span><span
+                    style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">可领库存数：</span>
+                    <span  v-if="dataForm.pickingWay=='dispatch_list'"
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.availableStockNum
                     }}]</span>
                 </div>

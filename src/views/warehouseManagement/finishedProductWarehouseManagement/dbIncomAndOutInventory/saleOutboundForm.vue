@@ -36,7 +36,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
                             <el-form-item label="客户合同号" prop="contractNo">
-                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'" />
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
                             </el-form-item>
                           </el-col>
                           <!-- <el-col :sm="6" :xs="24">
@@ -115,7 +115,7 @@
                         <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
                           v-if="$store.getters.configGlobal.customerContractNo === '0'">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'" placeholder="请输入客户合同号" />
+                            <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
                           </template>
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -248,7 +248,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
                             <el-form-item label="客户合同号" prop="contractNo">
-                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'" />
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
                             </el-form-item>
                           </el-col>
                           <!-- <el-col :sm="6" :xs="24">
@@ -325,7 +325,7 @@
                         <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
                           v-if="$store.getters.configGlobal.customerContractNo === '0'">
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'" placeholder="请输入客户合同号" />
+                            <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
                           </template>
                         </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -566,6 +566,7 @@
 </template>
 
 <script>
+import { getOrderDetail, getsaleOrderList, } from '@/api/salesManagement/assemblyOrders'
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
@@ -1185,7 +1186,12 @@ export default {
       } else {
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
         this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.contractNo = data[0].contractNo
+        // 获取订单客户合同号
+        if (this.$store.getters.configGlobal.customerContractNo === '1') {
+          getOrderDetail(data[0].ordersId).then(res => {
+            this.dataForm.contractNo = res.data.order.contractNo || '123'
+          })
+        }
         this.fetchData("CKDH", true)
         this.getBusInfo('b045')
         this.title = '新建出库单'

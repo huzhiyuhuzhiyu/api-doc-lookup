@@ -190,7 +190,7 @@ export default {
         orderItems: [
           {
             asc: true,
-            column: 'name'
+            column: 'sort_code'
           }
         ]
       },
@@ -405,8 +405,8 @@ export default {
         pageSize: 20,
         orderItems: [
           {
-            asc: false,
-            column: 'name'
+            asc: true,
+            column: 'sort_code'
           }
         ]
       }

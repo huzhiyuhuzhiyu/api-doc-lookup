@@ -420,7 +420,7 @@ export default {
         appendQuantity: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["追加数量不能为空", (errMsg, index) => { this.$message.error(`追加数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '请输入正确的追加数量',), trigger: 'blur' }
         ],
       },
       workOrderData: [],

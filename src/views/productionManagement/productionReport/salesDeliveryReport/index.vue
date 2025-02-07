@@ -2,7 +2,7 @@
   <ReportTypeTable :need-super-query="false" :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag"
     :list-request-obj="listRequestObj" :list-method="getInventorySummaryData" :tableItems="tableItems"
     :searchList="searchList" :exportType="exportType" :export-name="exportName" :renderSummary="false"
-    :queryRequestMethon="getProducts" />
+    />
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       getInventorySummaryData,
-      // getProducts,
+      getProducts,
       listRequestObj: {
         businessType: 'outbound_sale_send', // 销售发货
         accountPeriod: '',
@@ -190,6 +190,7 @@ export default {
           searchType: 1,
         },
       ]
+      
     },
   }
 

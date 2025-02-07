@@ -318,10 +318,9 @@ export default {
     },
     methods: {
         querySearchAsync(queryString, cb, item) {
-            console.log(item,'item')
+            console.log(item.fn,'item')
             console.log(queryString,'q')
             console.log(cb,'cn')
-            console.log(this.queryRequestMethon)
       // if (!this.dataForm.cooperativePartnerId) {
       //   let air = []
       //   cb(air)
@@ -331,7 +330,7 @@ export default {
         item.queryRequestObj.productDrawingNo = queryString
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
-          this.queryRequestMethon(item.queryRequestObj).then(res => {
+            item.fn(item.queryRequestObj).then(res => {
             let datas = res.data.records
             if (datas !== []) {
               var restaurants = datas
@@ -433,8 +432,22 @@ export default {
                 this.treeLoading = false
             }
             this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
-            this.domSearchList = JSON.parse(JSON.stringify(this.searchList))
+            
+            this.domSearchList = this.deepCopy(this.searchList)
             this.initData()
+        },
+        deepCopy(source){
+            if (typeof source != "object") {
+            return source;
+            }
+            if (source == null) {
+                return source;
+            }
+            var newObj = source.constructor === Array ? [] : {};  //开辟一块新的内存空间
+            for (var i in source) {
+                newObj[i] = this.deepCopy(source[i]);
+            }
+            return newObj;
         },
         initData() {
             this.visible = false

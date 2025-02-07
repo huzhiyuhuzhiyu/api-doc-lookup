@@ -1,13 +1,14 @@
 <template>
   <ReportTypeTable :need-super-query="false" :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag"
     :list-request-obj="listRequestObj" :list-method="getInventorySummaryData" :tableItems="tableItems"
-    :searchList="searchList" :exportType="exportType" :export-name="exportName" :renderSummary="false" />
+    :searchList="searchList" :exportType="exportType" :export-name="exportName" :renderSummary="false"
+    :queryRequestMethon="getProducts" />
 </template>
 
 <script>
 import ReportTypeTable from '@/components/no_mount/ReportTypeTable/index.vue';
 import { getInventorySummaryData } from '@/api/warehouseManagement/inventory'
-
+import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 export default {
   name: 'salesDeliveryReport',
   components: { ReportTypeTable },
@@ -15,8 +16,9 @@ export default {
   data() {
     return {
       getInventorySummaryData,
+      // getProducts,
       listRequestObj: {
-        businessType:'outbound_sale_send', // 销售发货
+        businessType: 'outbound_sale_send', // 销售发货
         accountPeriod: '',
         classAttribute: "",
         createByName: "",
@@ -55,6 +57,7 @@ export default {
       isProductNameSwitch: '',
       accountPeriod: '',
       indexFlag: false,
+
     }
   },
   async created() {
@@ -75,18 +78,16 @@ export default {
     setTableItems() {
       this.tableItems = [
         { prop: "partnerName", label: "客户名称", minWidth: 160 },
-        { prop: "drawingNo", label: '销售订单', minWidth: 160, sortable: 'custom' },
-        { prop: "drawingNo", label: '品名规格', minWidth: 160, sortable: 'custom' },
-        { prop: "productsName", label: '产品名称', minWidth: 140, render: this.isProductNameSwitch === '1', sortable: 'custom' },
-        { prop: "productsCode", label: '产品编码', minWidth: 140, sortable: 'custom' },
-        { prop: "processName", label: '工序名称', minWidth: 140, sortable: 'custom' },
-        { prop: "warehouseName", label: '仓库名称', minWidth: 140, sortable: 'custom' },
-        { prop: "warehouseCode", label: '仓库编码', minWidth: 140, sortable: 'custom' },
-        { prop: "mainUnit", label: '单位', minWidth: 120 },
-        { prop: "orderNum", label: '订单数量', minWidth: 120, sortable: 'custom' },
-        { prop: "inboundQuantity", label: '入库数量', minWidth: 120, sortable: 'custom' },
-        { prop: "outboundQuantity", label: '出库数量', minWidth: 120, sortable: 'custom' },
-        { prop: "endInventoryQuantity", label: '期末数量', minWidth: 120, sortable: 'custom' },
+        { prop: "orderNo", label: '销售订单号', minWidth: 180, sortable: 'custom' },
+        { prop: "orderNo", label: '客户单号', minWidth: 180, sortable: 'custom' },
+        { prop: "drawingNo", label: '产品品名规格', minWidth: 160, sortable: 'custom' },
+        { prop: "productName", label: '客户料号', minWidth: 140, sortable: 'custom' },
+        { prop: "productCode", label: '订单数量', minWidth: 140, sortable: 'custom' },
+        { prop: "processName", label: '发货数量', minWidth: 140, sortable: 'custom' },
+        { prop: "warehouseName", label: '未发货数量', minWidth: 140, sortable: 'custom' },
+        { prop: "warehouseCode", label: '产品价格', minWidth: 140, sortable: 'custom' },
+        { prop: "mainUnit", label: '订单日期', minWidth: 120, sortable: 'custom' },
+        { prop: "orderNum", label: '发货日期', minWidth: 120, sortable: 'custom' },
       ]
     },
     setSuperQueryJson() {
@@ -159,7 +160,27 @@ export default {
           label: '品名规格',
           prop: 'drawingNo',
           symbol: 'like',
-          searchType: 1
+          searchType: 6,
+          queryRequestObj: {
+            classAttributeList: [],
+            classAttribute: "",
+            productDrawingNo: '',
+            productCategoryId: "",
+            queryType: 2,
+            productStatus: 'enable',
+            code: "",
+            name: "",
+            orderItems: [{
+              "asc": false,
+              "column": ""
+            }, {
+              "asc": false,
+              "column": "create_time"
+            }],
+            pageNum: 1,
+            pageSize: 20,
+          },
+          fn:this.getProducts,
         }, {
           fieldValue: '',
           field: 'productsName',

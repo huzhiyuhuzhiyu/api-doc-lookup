@@ -64,6 +64,9 @@
                                                :value="item2.value"
                                     ></el-option>
                                 </el-select>
+                                <el-autocomplete v-else-if="item.searchType === 6" v-model="item.fieldValue"
+                                :fetch-suggestions="((queryString,cb)=>{querySearchAsync(queryString,cb,item)})" :placeholder="'请选择' + item.label" 
+                                     prefix-icon="el-icon-search"></el-autocomplete>
                             </el-form-item>
                         </el-col>
                     </template>
@@ -265,6 +268,10 @@ export default {
             type:Boolean,
             default:true
         },
+         /* 列表数据请求方法 */
+         queryRequestMethon: {
+            required: true,
+        },
     },
     data() {
         return {
@@ -310,6 +317,52 @@ export default {
 
     },
     methods: {
+        querySearchAsync(queryString, cb, item) {
+            console.log(item,'item')
+            console.log(queryString,'q')
+            console.log(cb,'cn')
+            console.log(this.queryRequestMethon)
+      // if (!this.dataForm.cooperativePartnerId) {
+      //   let air = []
+      //   cb(air)
+      //   this.$message.error("请先选择客户!")
+      // } else {
+      if (queryString && queryString.length >= 3) {
+        item.queryRequestObj.productDrawingNo = queryString
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.queryRequestMethon(item.queryRequestObj).then(res => {
+            let datas = res.data.records
+            if (datas !== []) {
+              var restaurants = datas
+              var arr = []
+              restaurants.forEach((item, index) => {
+                arr.push({
+                  value: item.drawingNo,
+                  data: item,
+                })
+              })
+              cb(arr)
+            } else {
+              let air = []
+              this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
+              queryString = ""
+              cb(air)
+            }
+          })
+            .catch(res => {
+              this.$message({
+                type: 'error',
+                message: '获取数据失败'
+              })
+            })
+        }, 500)
+      } else {
+        let air = []
+        cb(air)
+      }
+      // }
+    },
         sortChange({ prop, order }) {
             let newProp = ''
             console.log(prop)

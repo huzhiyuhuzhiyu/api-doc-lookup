@@ -318,27 +318,24 @@ export default {
     },
     methods: {
         querySearchAsync(queryString, cb, item) {
+            console.log(item,'item')
             console.log(item.fn,'item')
             console.log(queryString,'q')
             console.log(cb,'cn')
-      // if (!this.dataForm.cooperativePartnerId) {
-      //   let air = []
-      //   cb(air)
-      //   this.$message.error("请先选择客户!")
-      // } else {
-      if (queryString && queryString.length >= 3) {
-        item.queryRequestObj.productDrawingNo = queryString
+      if (queryString && queryString.length >= 0) {
+        item.queryRequestObj[item.searchName] = queryString
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
             item.fn(item.queryRequestObj).then(res => {
+            console.log(res,'ddd')
             let datas = res.data.records
             if (datas !== []) {
               var restaurants = datas
               var arr = []
-              restaurants.forEach((item, index) => {
+              restaurants.forEach((ele, index) => {
                 arr.push({
-                  value: item.drawingNo,
-                  data: item,
+                  value: ele[item.searchName],
+                  data: ele,
                 })
               })
               cb(arr)
@@ -365,7 +362,7 @@ export default {
         sortChange({ prop, order }) {
             let newProp = ''
             console.log(prop)
-            if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode'].includes(prop)) {
+            if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode','customerProductNo','orderNum','remainingQuantity','costPrice','salePurchaseDate','orderDate'].includes(prop)) {
                 newProp = prop
             } else {
                 newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())

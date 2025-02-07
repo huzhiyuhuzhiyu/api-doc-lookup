@@ -132,7 +132,17 @@ export default {
         this.doLayout(false)
       },
       deep: true
-    }
+    },
+    hasMove: {
+      handler(val) {
+          if (val) {
+              this.rowDrop(); //声明表格拖动排序方法
+          } else {
+              this.sortable.destroy()
+          }
+      },
+      deep: true,
+    },
   },
   computed: {
     menuId() {

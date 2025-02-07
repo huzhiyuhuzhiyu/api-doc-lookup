@@ -5,9 +5,10 @@
 </template>
 
 <script>
-import ReportTypeTable from '@/components/no_mount/ReportTypeTable/index.vue';
+import ReportTypeTable from '@/components/no_mount/ReportTypeTable/index.vue'
 import { getInventorySummaryData } from '@/api/warehouseManagement/inventory'
-
+import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
+import { getCooperativeData } from '@/api/basicData/index'
 export default {
   name: 'salesDeliveryReport',
   components: { ReportTypeTable },
@@ -15,36 +16,40 @@ export default {
   data() {
     return {
       getInventorySummaryData,
+      getCooperativeData,
       listRequestObj: {
-        businessType:'outbound_sale_send', // 销售发货
+        businessType: 'outbound_sale_send', // 销售发货
         accountPeriod: '',
-        classAttribute: "",
-        createByName: "",
-        drawingNo: "",
-        endTime: "",
-        endUpdateTime: "",
-        keyword: "",
-        orderEndDate: "",
-        orderItems: [{
-          asc: false,
-          column: ''
-        }, {
-          asc: false,
-          column: 'drawingNo',
-        }],
-        orderStartDate: "",
+        classAttribute: '',
+        createByName: '',
+        drawingNo: '',
+        endTime: '',
+        endUpdateTime: '',
+        keyword: '',
+        orderEndDate: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'drawingNo'
+          }
+        ],
+        orderStartDate: '',
         pageNum: 1,
         pageSize: 20,
         productCategoryId: '',
-        productsCode: "",
-        productsName: "",
+        productsCode: '',
+        productsName: '',
         projectId: '',
-        startTime: "",
-        startUpdateTime: "",
+        startTime: '',
+        startUpdateTime: '',
         superQuery: {},
         totalRowFlag: false,
-        warehouseCode: "",
-        warehouseName: ""
+        warehouseCode: '',
+        warehouseName: ''
       },
       tableItems: [],
       columnList: ['productsCode', 'warehouseCode'],
@@ -54,11 +59,10 @@ export default {
       exportName: '销售发货报表',
       isProductNameSwitch: '',
       accountPeriod: '',
-      indexFlag: false,
+      indexFlag: false
     }
   },
   async created() {
-
     await this.getProductNameSwitch('product', 'enable_productName')
     this.setTableItems()
     this.setSuperQueryJson()
@@ -74,19 +78,17 @@ export default {
     },
     setTableItems() {
       this.tableItems = [
-        { prop: "partnerName", label: "客户名称", minWidth: 160 },
-        { prop: "drawingNo", label: '销售订单', minWidth: 160, sortable: 'custom' },
-        { prop: "drawingNo", label: '品名规格', minWidth: 160, sortable: 'custom' },
-        { prop: "productsName", label: '产品名称', minWidth: 140, render: this.isProductNameSwitch === '1', sortable: 'custom' },
-        { prop: "productsCode", label: '产品编码', minWidth: 140, sortable: 'custom' },
-        { prop: "processName", label: '工序名称', minWidth: 140, sortable: 'custom' },
-        { prop: "warehouseName", label: '仓库名称', minWidth: 140, sortable: 'custom' },
-        { prop: "warehouseCode", label: '仓库编码', minWidth: 140, sortable: 'custom' },
-        { prop: "mainUnit", label: '单位', minWidth: 120 },
-        { prop: "orderNum", label: '订单数量', minWidth: 120, sortable: 'custom' },
-        { prop: "inboundQuantity", label: '入库数量', minWidth: 120, sortable: 'custom' },
-        { prop: "outboundQuantity", label: '出库数量', minWidth: 120, sortable: 'custom' },
-        { prop: "endInventoryQuantity", label: '期末数量', minWidth: 120, sortable: 'custom' },
+        { prop: 'partnerName', label: '客户名称', minWidth: 160 },
+        { prop: 'salePurchaseOrderNo', label: '销售订单号', minWidth: 180, sortable: 'custom' },
+        { prop: 'contractNo', label: '客户单号', minWidth: 180, sortable: 'custom' },
+        { prop: 'drawingNo', label: '产品品名规格', minWidth: 160, sortable: 'custom' },
+        { prop: 'customerProductNo', label: '客户料号', minWidth: 140, sortable: 'custom' },
+        { prop: 'orderNum', label: '订单数量', minWidth: 140, sortable: 'custom' },
+        { prop: 'num', label: '发货数量', minWidth: 140, sortable: 'custom' },
+        { prop: 'remainingQuantity', label: '未发货数量', minWidth: 140, sortable: 'custom' },
+        { prop: 'costPrice', label: '产品价格', minWidth: 140, sortable: 'custom' },
+        { prop: 'salePurchaseDate', label: '订单日期', minWidth: 120, sortable: 'custom' },
+        { prop: 'orderDate', label: '发货日期', minWidth: 120, sortable: 'custom' }
       ]
     },
     setSuperQueryJson() {
@@ -95,21 +97,18 @@ export default {
           prop: 'accountPeriod',
           label: '账期',
           type: 'month',
-          valueFormat: 'yyyy-MM',
+          valueFormat: 'yyyy-MM'
         },
         {
           prop: 'balanceState',
           label: '结存状态',
           type: 'select',
-          options: [
-            { label: '未结存', value: 'not_finished' },
-            { label: '已结存', value: 'finished' }
-          ]
+          options: [{ label: '未结存', value: 'not_finished' }, { label: '已结存', value: 'finished' }]
         },
         {
           prop: 'drawingNo',
           label: '品名规格',
-          type: 'input',
+          type: 'input'
         },
         {
           prop: 'productsName',
@@ -148,31 +147,62 @@ export default {
       this.searchList = [
         {
           fieldValue: '',
-          field: 'accountPeriod',
-          label: '账期',
-          prop: 'accountPeriod',
+          field: 'orderDate',
+          label: '发货日期',
+          prop: 'orderDate',
           symbol: 'like',
-          searchType: 5
-        }, {
+          searchType: 5,
+          noNeedSuper: true,
+        },
+        {
+          fieldValue: '',
+          field: 'partnerName',
+          label: '客户',
+          prop: 'partnerName',
+          symbol: 'like',
+          searchType: 6,
+          searchName:'name',
+          queryRequestObj: {
+            partnerCategoryId: '',
+            code: "",
+            name: "",
+            taxId: "",
+            contacts: "",
+            phone: "",
+            mobilePhone: "",
+            departmentId: "",
+            salespersonIdText: "",
+            salespersonId: "",
+            internalStaffId: "",
+            startTime: "",
+            endTime: "",
+            type: "customer",
+            saleFlag: 1,
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [{
+              asc: false,
+              column: ""
+            }, {
+              asc: false,
+              column: "create_time"
+            }],
+            superQuery: {}
+          },
+          fn: this.getCooperativeData
+        },
+        {
           fieldValue: '',
           field: 'drawingNo',
-          label: '品名规格',
+          label: '产品品名规格',
           prop: 'drawingNo',
           symbol: 'like',
           searchType: 1
-        }, {
-          fieldValue: '',
-          field: 'productsName',
-          label: '产品名称',
-          prop: 'productsName',
-          symbol: 'like',
-          searchType: 1,
-        },
+        }
       ]
-    },
+    }
   }
-
-};
+}
 </script>
 
 <style scoped lang="scss"></style>

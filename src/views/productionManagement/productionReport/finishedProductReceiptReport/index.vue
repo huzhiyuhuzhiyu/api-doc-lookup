@@ -7,19 +7,20 @@
 <script>
 import ReportTypeTable from '@/components/no_mount/ReportTypeTable/index.vue'
 import { getInventorySummaryData } from '@/api/warehouseManagement/inventory'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getcategoryTree, getCooperativeData } from '@/api/basicData/index'
 export default {
-  name: 'salesDeliveryReport',
+  name: 'rawMaterialsReceivingReport',
   components: { ReportTypeTable },
   mixins: [],
   data() {
     return {
       getInventorySummaryData,
       getCooperativeData,
+      treeData: [],
       listRequestObj: {
-        businessType: 'outbound_sale_send', // 销售发货
+        businessType: 'inbound_purchase', // 采购收货
         accountPeriod: '',
-        classAttribute: '',
+        classAttribute: 'finish_product', // 成品
         createByName: '',
         drawingNo: '',
         endTime: '',
@@ -55,13 +56,14 @@ export default {
       searchList: [],
       superQueryJson: [],
       exportType: '1013',
-      exportName: '销售发货报表',
+      exportName: '成品收货报表',
       isProductNameSwitch: '',
       accountPeriod: '',
       indexFlag: false
     }
   },
   async created() {
+    await this.getcategoryTree()
     await this.getProductNameSwitch('product', 'enable_productName')
     this.setTableItems()
     this.setSuperQueryJson()
@@ -70,6 +72,15 @@ export default {
     this.indexFlag = true
   },
   methods: {
+    async getcategoryTree() {
+      let listQuery = {
+        keyword: '',
+        type: 'supplier'
+      }
+      const res = await getcategoryTree(listQuery)
+      this.treeData = res.data
+
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -77,11 +88,9 @@ export default {
     },
     setTableItems() {
       this.tableItems = [
-        { prop: 'partnerName', label: '客户名称', minWidth: 160 },
-        { prop: 'salePurchaseOrderNo', label: '销售订单号', minWidth: 180, sortable: 'custom' },
-        { prop: 'contractNo', label: '客户单号', minWidth: 180, sortable: 'custom' },
+        { prop: 'partnerName', label: '成品供应商名称', minWidth: 160 },
+        { prop: 'salePurchaseOrderNo', label: '采购订单号', minWidth: 180, sortable: 'custom' },
         { prop: 'drawingNo', label: '产品品名规格', minWidth: 160, sortable: 'custom' },
-        { prop: 'customerProductNo', label: '客户料号', minWidth: 140, sortable: 'custom' },
         { prop: 'orderNum', label: '订单数量', minWidth: 140, sortable: 'custom' },
         { prop: 'num', label: '发货数量', minWidth: 140, sortable: 'custom' },
         { prop: 'remainingQuantity', label: '未发货数量', minWidth: 140, sortable: 'custom' },
@@ -92,29 +101,19 @@ export default {
     },
     setSuperQueryJson() {
       this.superQueryJson = [
-      {
+        {
           prop: 'partnerName',
-          label: '客户名称',
+          label: '成品供应商名称',
           type: 'input'
         },
         {
           prop: 'salePurchaseOrderNo',
-          label: '销售订单号',
-          type: 'input'
-        },
-        {
-          prop: 'contractNo',
-          label: '客户单号',
+          label: '采购订单号',
           type: 'input'
         },
         {
           prop: 'drawingNo',
           label: '产品品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'customerProductNo',
-          label: '客户料号',
           type: 'input'
         },
         {
@@ -125,7 +124,7 @@ export default {
         {
           prop: 'num',
           label: '发货数量',
-          type: 'input',
+          type: 'input'
         },
         {
           prop: 'remainingQuantity',
@@ -158,6 +157,7 @@ export default {
       ]
     },
     setSearchList() {
+      console.log(this.treeData, 'treeData')
       this.searchList = [
         {
           fieldValue: '',
@@ -166,41 +166,44 @@ export default {
           prop: 'orderDate',
           symbol: 'like',
           searchType: 5,
-          noNeedSuper: true,
+          noNeedSuper: true
         },
         {
           fieldValue: '',
           field: 'partnerName',
-          label: '客户',
+          label: '成品供应商名称',
           prop: 'partnerName',
           symbol: 'like',
           searchType: 6,
-          searchName:'name',
+          searchName: 'name',
           queryRequestObj: {
-            partnerCategoryId: '',
-            code: "",
-            name: "",
-            taxId: "",
-            contacts: "",
-            phone: "",
-            mobilePhone: "",
-            departmentId: "",
-            salespersonIdText: "",
-            salespersonId: "",
-            internalStaffId: "",
-            startTime: "",
-            endTime: "",
-            type: "customer",
+            code: '',
+            taxId: '',
+            name: '',
+            customerRecognitionTime: [],
+            customerRecognitionStartTime: '',
+            customerRecognitionEndTime: '',
+            personResponsible: '',
+            contacts: '',
+            phone: '',
+            mobilePhone: '',
+            email: '',
+            grade: '',
+            type: 'supplier',
             saleFlag: 1,
+            partnerCategoryId: this.treeData[1].id,
             pageNum: 1,
             pageSize: 20,
-            orderItems: [{
-              asc: false,
-              column: ""
-            }, {
-              asc: false,
-              column: "create_time"
-            }],
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'createTime'
+              }
+            ],
             superQuery: {}
           },
           fn: this.getCooperativeData

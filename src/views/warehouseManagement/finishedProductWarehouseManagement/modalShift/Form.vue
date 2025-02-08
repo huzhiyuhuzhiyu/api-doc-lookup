@@ -49,22 +49,22 @@
                     <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
                     <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
                     <el-table-column prop="originSealingCoverTyping" label="原打字内容" width="230" show-overflow-tooltip key="originSealingCoverTyping" />
-                <el-table-column prop="originAccuracyLevel" label="原精度等级" width="140" show-overflow-tooltip key="originAccuracyLevel" />
-                <el-table-column prop="originVibrationLevel" label="原振动等级" width="140" show-overflow-tooltip key="originVibrationLevel" />
-                <el-table-column prop="originClearance" label="原游隙" width="160" show-overflow-tooltip key="originClearance" />
-                <el-table-column prop="originOil" label="原油脂" width="160" show-overflow-tooltip key="originOil" />
-                <el-table-column prop="originStandardValue" label="原规值(钢球属性)" width="160" show-overflow-tooltip key="originStandardValue" />
-                <el-table-column prop="originPackagingMethod" label="原包装方式" width="160" show-overflow-tooltip key="originPackagingMethod" />
-                <el-table-column prop="originColour" label="原颜色" width="140" show-overflow-tooltip key="originColour" />
-                <el-table-column prop="originPairingModeName" label="原配对方式" width="160" show-overflow-tooltip key="originPairingModeName" />
-                <el-table-column prop="originSpecialRequire" label="原特殊要求" width="200" show-overflow-tooltip key="originSpecialRequire" />
-                <el-table-column prop="originAperture" label="原孔径" width="140" show-overflow-tooltip key="originAperture" />
-                <el-table-column prop="originSpecSize" label="原规格/尺寸" width="140" show-overflow-tooltip key="originSpecSize" />
-                <el-table-column prop="originLogo" label="原logo" width="160" show-overflow-tooltip key="originLogo" />
-                <el-table-column prop="originDivideEqually" label="原开等分" width="160" show-overflow-tooltip key="originDivideEqually" />
-                <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip key="originMaterial" />
-                <el-table-column prop="originProtrusion" label="原凸出量" width="160" show-overflow-tooltip key="originProtrusion" />
-                <el-table-column prop="originPreload" label="原预负荷" width="160" show-overflow-tooltip key="originPreload" />
+                    <el-table-column prop="originAccuracyLevel" label="原精度等级" width="140" show-overflow-tooltip key="originAccuracyLevel" />
+                    <el-table-column prop="originVibrationLevel" label="原振动等级" width="140" show-overflow-tooltip key="originVibrationLevel" />
+                    <el-table-column prop="originClearance" label="原游隙" width="160" show-overflow-tooltip key="originClearance" />
+                    <el-table-column prop="originOil" label="原油脂" width="160" show-overflow-tooltip key="originOil" />
+                    <el-table-column prop="originStandardValue" label="原规值(钢球属性)" width="160" show-overflow-tooltip key="originStandardValue" />
+                    <el-table-column prop="originPackagingMethod" label="原包装方式" width="160" show-overflow-tooltip key="originPackagingMethod" />
+                    <el-table-column prop="originColour" label="原颜色" width="140" show-overflow-tooltip key="originColour" />
+                    <el-table-column prop="originPairingModeName" label="原配对方式" width="160" show-overflow-tooltip key="originPairingModeName" />
+                    <el-table-column prop="originSpecialRequire" label="原特殊要求" width="200" show-overflow-tooltip key="originSpecialRequire" />
+                    <el-table-column prop="originAperture" label="原孔径" width="140" show-overflow-tooltip key="originAperture" />
+                    <el-table-column prop="originSpecSize" label="原规格/尺寸" width="140" show-overflow-tooltip key="originSpecSize" />
+                    <el-table-column prop="originLogo" label="原logo" width="160" show-overflow-tooltip key="originLogo" />
+                    <el-table-column prop="originDivideEqually" label="原开等分" width="160" show-overflow-tooltip key="originDivideEqually" />
+                    <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip key="originMaterial" />
+                    <el-table-column prop="originProtrusion" label="原凸出量" width="160" show-overflow-tooltip key="originProtrusion" />
+                    <el-table-column prop="originPreload" label="原预负荷" width="160" show-overflow-tooltip key="originPreload" />
                     <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip v-if="btnType !== 'look'" key="availableQuantity" />
                     <!-- <el-table-column prop="availableQuantity" label="可用库存数量" width="170" show-overflow-tooltip
                   v-if="btnType != 'look'" key="3"></el-table-column> -->
@@ -105,144 +105,141 @@
                     </el-table-column>
                     <!-- <el-table-column prop="targetProcessName" label="目标工序名称" width="230" show-overflow-tooltip key="targetProcessName" /> -->
                     <el-table-column prop="targetSealingCoverTyping" label="目标打字内容" width="230" key="targetSealingCoverTyping">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetSealingCoverTyping" :disabled="btnType === 'look'" placeholder="请输入目标打字内容">{{ scope.row.targetSealingCoverTyping }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetAccuracyLevel" label="目标精度等级" width="140" key="targetAccuracyLevel">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetAccuracyLevel" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetAccuracyLevel }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetVibrationLevel" label="目标振动等级" width="140" key="targetVibrationLevel">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetVibrationLevel" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetVibrationLevel }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetClearance" label="目标游隙" width="160" key="targetClearance">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetClearance" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetClearance }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetOil" label="目标油脂" width="160" key="targetOil">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetOil" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetOil }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetStandardValue" label="目标规值(钢球属性)" width="200" key="targetStandardValue">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetStandardValue" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetStandardValue }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetPackagingMethod" label="目标包装方式" width="200" key="targetPackagingMethod">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetPackagingMethod" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetPackagingMethod }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetColour" label="目标颜色" width="140" key="targetColour">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetColour" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetColour }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetPairingModeId" label="目标配对方式" width="160">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false"
-                            @change="(value) => changePairingMode(value, scope)">
-                            <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                              :value="item.id">
-                            </el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                <el-table-column prop="targetSpecialRequire" label="目标特殊要求" width="200" key="targetSpecialRequire">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetSpecialRequire" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetSpecialRequire }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetAperture" label="目标孔径" width="140" key="targetAperture">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetAperture" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetAperture }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetSpecSize" label="目标规格/尺寸" width="160" key="targetSpecSize">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetSpecSize" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetSpecSize }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetLogo" label="目标logo" width="160" key="targetLogo">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetLogo" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetLogo }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetDivideEqually" label="目标开等分" width="160" key="targetDivideEqually">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetDivideEqually" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetDivideEqually }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetMaterial" label="目标材质" width="180" key="targetMaterial">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetMaterial" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetMaterial }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetProtrusion" label="目标凸出量" width="160" key="targetProtrusion">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetProtrusion" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetProtrusion }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="targetPreload" label="目标预负荷" width="160" key="targetPreload">
-                  <template slot-scope="scope">
-                    <el-form-item>
-                      <el-input v-model="scope.row.targetPreload" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetPreload }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetSealingCoverTyping" :disabled="btnType === 'look'" placeholder="请输入目标打字内容">{{ scope.row.targetSealingCoverTyping }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetAccuracyLevel" label="目标精度等级" width="140" key="targetAccuracyLevel">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetAccuracyLevel" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetAccuracyLevel }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetVibrationLevel" label="目标振动等级" width="140" key="targetVibrationLevel">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetVibrationLevel" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetVibrationLevel }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetClearance" label="目标游隙" width="160" key="targetClearance">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetClearance" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetClearance }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetOil" label="目标油脂" width="160" key="targetOil">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetOil" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetOil }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetStandardValue" label="目标规值(钢球属性)" width="200" key="targetStandardValue">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetStandardValue" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetStandardValue }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetPackagingMethod" label="目标包装方式" width="200" key="targetPackagingMethod">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetPackagingMethod" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetPackagingMethod }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetColour" label="目标颜色" width="140" key="targetColour">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetColour" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetColour }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetPairingModeId" label="目标配对方式" width="160">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetSpecialRequire" label="目标特殊要求" width="200" key="targetSpecialRequire">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetSpecialRequire" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetSpecialRequire }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetAperture" label="目标孔径" width="140" key="targetAperture">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetAperture" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetAperture }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetSpecSize" label="目标规格/尺寸" width="160" key="targetSpecSize">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetSpecSize" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetSpecSize }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetLogo" label="目标logo" width="160" key="targetLogo">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetLogo" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetLogo }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetDivideEqually" label="目标开等分" width="160" key="targetDivideEqually">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetDivideEqually" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetDivideEqually }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetMaterial" label="目标材质" width="180" key="targetMaterial">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetMaterial" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetMaterial }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetProtrusion" label="目标凸出量" width="160" key="targetProtrusion">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetProtrusion" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetProtrusion }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetPreload" label="目标预负荷" width="160" key="targetPreload">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.targetPreload" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetPreload }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="targetNum" label="转换目标数量" width="170" key="targetNum">
                       <template slot="header">
                         <span class="required">*</span>转换目标数量
@@ -532,7 +529,7 @@ export default {
       dataFormTwo: {
         data: []
       },
-      pairingModeList:[],
+      pairingModeList: [],
       options: [],      //批次号
       loading: false,
       btnType: undefined,
@@ -580,7 +577,7 @@ export default {
       productRequestObj: { // 明细
         accuracyLevel: "",
         availableStock: true,
-        excludeProcessFlag:1,
+        excludeProcessFlag: 1,
         availableBatch: 1,
         batchNumber: "",
         clearance: "",

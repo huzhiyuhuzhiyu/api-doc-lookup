@@ -159,12 +159,12 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="remark2" label="备注2" width="200" :key="128">
+                        <el-table-column prop="remark2" label="备注2（LOT NO）" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
                               placeholder="备注"></el-input>
                           </template>
-                        </el-table-column>  <el-table-column prop="remark3" label="备注3" width="200" :key="128">
+                        </el-table-column>  <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
                               placeholder="备注"></el-input>
@@ -338,13 +338,13 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="remark2" label="备注2" width="200" :key="128">
+                        <el-table-column prop="remark2" label="备注2（LOT NO）" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="remark3" label="备注3" width="200" :key="128">
+                        <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
                               placeholder="备注"></el-input>

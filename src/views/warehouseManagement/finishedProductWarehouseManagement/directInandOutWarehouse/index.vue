@@ -136,16 +136,16 @@
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
                       </div>
-                      <!-- <div class="JNPF-common-head-right">
+                      <div class="JNPF-common-head-right">
 
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun()" />
                         </el-tooltip>
-                      </div> -->
+                      </div>
                     </div>
 
-                    <JNPF-table ref="product"  :data="productData"   :fixedNO="true" :hasC="btnType != 'look'"
+                    <JNPF-table ref="product"  :data="productData" custom-column  :fixedNO="true" :hasC="btnType != 'look'"
                       @selection-change="handeleProductInfoData" border style="width: 100%;">
                       <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
@@ -997,6 +997,7 @@ export default {
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
     })
+    this.$nextTick(() => { this.$refs.product.doLayout() })
   },
   watch: {
     "dataForm.warehouseId": {

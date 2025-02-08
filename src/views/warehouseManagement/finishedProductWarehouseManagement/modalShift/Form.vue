@@ -48,6 +48,8 @@
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
                     <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
+                    <el-table-column prop="pairingModeName" label="原配对方式" width="180" show-overflow-tooltip key="pairingModeName" />
+                    <el-table-column prop="sealingCoverTyping" label="原打字内容" width="230" show-overflow-tooltip key="sealingCoverTyping" />
                     <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip v-if="btnType !== 'look'" key="availableQuantity" />
                     <!-- <el-table-column prop="availableQuantity" label="可用库存数量" width="170" show-overflow-tooltip
                   v-if="btnType != 'look'" key="3"></el-table-column> -->
@@ -189,6 +191,8 @@
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
                 <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
+                <el-table-column prop="pairingModeName" label="原配对方式" width="180" show-overflow-tooltip key="pairingModeName" />
+                <el-table-column prop="sealingCoverTyping" label="原打字内容" width="230" show-overflow-tooltip key="sealingCoverTyping" />
                 <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip v-if="btnType !== 'look'" key="availableQuantity" />
                 <!-- <el-table-column prop="availableQuantity" label="可用库存数量" width="170" show-overflow-tooltip
                   v-if="btnType != 'look'" key="3"></el-table-column> -->
@@ -711,6 +715,8 @@ export default {
           ratio: data[i].ratio,
           availableQuantity: data[i].availableQuantity,
           originBatchNumber: data[i].batchNumber,
+          pairingModeName: data[i].pairingModeName,
+          sealingCoverTyping: data[i].sealingCoverTyping,
           num: '',
           targetNum: '',
           shelfSpaceId: data[i].shelfSpaceId,

@@ -130,7 +130,7 @@
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'" :rules='productRules.targetBatchNumber'>
-                          <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择目标产品批次号" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
+                          <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择产品批次,只能输入" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
                             <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
                             </el-option>
                           </el-select>
@@ -437,7 +437,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'" :rules='productRules.targetBatchNumber'>
-                      <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择目标产品批次号" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
+                      <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择产品批次,只能输入" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
                         <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
                         </el-option>
                       </el-select>

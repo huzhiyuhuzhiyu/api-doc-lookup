@@ -629,7 +629,8 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.dataFormSubmit()
+      this.orderForm.extensionFlag=1
+      this.search('basic')
     },
     // 为近3天  
     btnsearch2() {
@@ -639,6 +640,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.extensionFlag=0
       this.search('basic')
     },
     // 为近7天  
@@ -649,6 +651,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.extensionFlag=0
       this.search('basic')
     },
     // 为近30天  
@@ -659,6 +662,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.deliveryDateArr[0] = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.extensionFlag=0
       this.search('basic')
     },
     superQuerySearch(query) {

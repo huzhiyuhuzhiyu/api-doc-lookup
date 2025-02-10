@@ -60,6 +60,15 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
+                            <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择"
+                                style="width: 100%;" :disabled="btnType == 'look'">
+                                <el-option v-for="(item, index) in totalStockOutboundList" :key="index"
+                                  :label="item.label" :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
                                 :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
@@ -100,12 +109,14 @@
                           v-if="isProjectSwitch == 1" />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
+                          v-if="!dataForm.totalStockOutboundFlag">
                           <template slot="header">
                             <span class="required">*</span>批次号
                           </template>
@@ -116,13 +127,19 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
+                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
+                          v-if="!dataForm.totalStockOutboundFlag">
                           <template slot-scope="scope">
                             <div>{{ scope.row.shelfSpaceName }}</div>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="140" v-if="btnType != 'look'"
-                          :key="7"></el-table-column>
+
+                        <el-table-column prop="inventoryQuantity" label="总库存数量" width="160"
+                          v-if="dataForm.totalStockOutboundFlag && btnType !== 'look'" :key="7"></el-table-column>
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"
+                          v-if="btnType != 'look' && !dataForm.totalStockOutboundFlag" :key="7"></el-table-column>
+                        <!-- <el-table-column prop="availableBatchNumber" label="批次库存数量" width="140" v-if="btnType != 'look'"
+                          :key="7"></el-table-column> -->
                         <el-table-column prop="undeliveredQuantity" label="待发货数量" width="140" :key="777"
                           v-if="btnType != 'look'">
                         </el-table-column>
@@ -152,8 +169,8 @@
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
                         <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
-                        <el-table-column prop="remark" label="备注1" width="200" :key="128">
+                        <el-table-column prop="colour" label="颜色" width="120"></el-table-column>
+                        <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
                               placeholder="备注"></el-input>
@@ -232,6 +249,15 @@
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
+                            <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择"
+                                style="width: 100%;" :disabled="btnType == 'look'">
+                                <el-option v-for="(item, index) in totalStockOutboundList" :key="index"
+                                  :label="item.label" :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="仓库" prop="warehouseName">
                               <ComSelect-list
                                 :requestObj="{ type: 'normal', state: 'enable', projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
@@ -278,14 +304,16 @@
                           v-if="isProjectSwitch == 1" />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
+                          v-if="!dataForm.totalStockOutboundFlag">
                           <template slot="header">
                             <span class="required">*</span>批次号
                           </template>
@@ -296,13 +324,18 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
+                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
+                          v-if="!dataForm.totalStockOutboundFlag">
                           <template slot-scope="scope">
                             <div>{{ scope.row.shelfSpaceName }}</div>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="140" v-if="btnType != 'look'"
-                          :key="7"></el-table-column>
+                        <!-- <el-table-column prop="availableBatchNumber" label="批次库存数量" width="140" v-if="btnType != 'look'"
+                          :key="7"></el-table-column> -->
+                        <el-table-column prop="inventoryQuantity" label="总库存数量" width="160"
+                          v-if="dataForm.totalStockOutboundFlag && btnType !== 'look'" :key="7"></el-table-column>
+                        <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160"
+                          v-if="btnType != 'look' && !dataForm.totalStockOutboundFlag" :key="17"></el-table-column>
                         <el-table-column prop="undeliveredQuantity" label="待发货数量" width="140" :key="777"
                           v-if="btnType != 'look'">
                         </el-table-column>
@@ -331,7 +364,7 @@
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
                         <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
+                        <el-table-column prop="colour" label="颜色" width="120"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -381,12 +414,14 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="客户料号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.customerProductDrawingNo"
+                      placeholder="客户料号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
+                      placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -441,7 +476,7 @@
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"></el-table-column>
                 <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom"></el-table-column>
                 <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'" />
@@ -544,6 +579,7 @@ export default {
         approvalFlag: false,
         orderDate: this.jnpf.getToday(),
         projectId: "",
+        totalStockOutboundFlag: false,
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -705,11 +741,34 @@ export default {
     // 选择批次
     selectBatchNumberFun(data, index) {
       console.log("批次号数据", data, index);
+      // this.$set(this.productData[index], 'warehouseId', data.warehouseId)
+      // this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
+      // this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
+      // this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
+      // this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
       this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+
+      this.$set(this.productData[index], 'sealingCoverTyping', data.sealingCoverTyping)
+      this.$set(this.productData[index], 'accuracyLevel', data.accuracyLevel)
+      this.$set(this.productData[index], 'vibrationLevel', data.vibrationLevel)
+      this.$set(this.productData[index], 'oil', data.oil)
+      this.$set(this.productData[index], 'clearance', data.clearance)
+      this.$set(this.productData[index], 'packagingMethod', data.packagingMethod)
+      this.$set(this.productData[index], 'specialRequire', data.specialRequire)
+      this.$set(this.productData[index], 'material', data.material)
+      this.$set(this.productData[index], 'colour', data.colour)
+      this.$set(this.productData[index], 'protrusion', data.protrusion)
+      this.$set(this.productData[index], 'preload', data.preload)
+      this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
+      this.$set(this.productData[index], 'angle', data.angle)
+
+
+
     },
     // 产品信息列表复制功能
     copyFun(row, index) {
@@ -1140,21 +1199,41 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
-              if(!item.batchNumber){
+              if (!item.batchNumber && !this.dataForm.totalStockOutboundFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
                 break
               }
+              if (this.dataForm.totalStockOutboundFlag) {
+                item.batchNumber = ""
+              }
+              if ((Number(item.num) > Number(item.availableBatchNumber)) && !this.dataForm.totalStockOutboundFlag) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
+                break
+              }
+              if (this.dataForm.totalStockOutboundFlag) {
+
+                this.productData.forEach(item => {
+                  this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+
+                })
+              }
+              // if(!item.batchNumber){
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
+              //   break
+              // }
               if (Number(item.num) > Number(item.undeliveredQuantity)) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发货数量")
                 break
               }
-              if (Number(item.num) > Number(item.availableBatchNumber)) {
-                submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
-                break
-              }
+              // if (Number(item.num) > Number(item.availableBatchNumber)) {
+              //   submitFlag = false
+              //   this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
+              //   break
+              // }
               if (!totals[item.ordersLineId]) {
                 totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
               }
@@ -1238,7 +1317,7 @@ export default {
                 this.$nextTick(() => {
                   this.$refs.printTemplate.init(this.enCode)
                 })
-              }else{
+              } else {
                 this.tipsvisible = true
               }
               this.btnLoading = false

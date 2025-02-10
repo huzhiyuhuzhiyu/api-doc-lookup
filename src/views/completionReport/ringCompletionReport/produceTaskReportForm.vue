@@ -24,7 +24,8 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
-                <el-descriptions-item label="领料方式">{{ dataForm.pickingWay=='production_order'?'生产订单领料':"工单领料" }}</el-descriptions-item>
+                <el-descriptions-item label="领料方式">{{ dataForm.pickingWay == 'production_order' ? '生产订单领料' : "工单领料"
+                  }}</el-descriptions-item>
               </el-descriptions>
             </div>
 
@@ -46,7 +47,8 @@
             <img src="@/assets/images/extend.png" alt="" v-if="currentProcess.processingType == 'external_production'"
               class="extend">
             <img src="@/assets/images/noReport.png" alt=""
-              v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == false" class="extend">
+              v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == false"
+              class="extend">
             <el-row>
               <el-col :sm="24" :xs="24">
 
@@ -86,7 +88,7 @@
                 </div>
 
               </el-col>
-              <el-col :sm="24" :xs="24" v-if="materialList.length&&materialList[0].reduceType=='picking'">
+              <el-col :sm="24" :xs="24" v-if="materialList.length && materialList[0].reduceType == 'picking'">
                 <div class="info">
                   <span class="left-title">已领料数量：</span>
                   <span class="left-title">{{ materialList[0].receivedQuantity }}</span>
@@ -95,11 +97,11 @@
               </el-col>
             </el-row>
           </el-col>
-          <el-col :span="12" class="rightInfo"  ref="mycol"
+          <el-col :span="12" class="rightInfo" ref="mycol"
             v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true">
             <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="180px"
               label-position="left">
-      
+
               <el-row>
                 <div style="margin-bottom: 10px; background: #f2f2f2; padding: 20px 16px;">
                   <span style="font-size: 17px;font-weight: bold">加工数量：</span><span
@@ -115,16 +117,17 @@
                     style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
                     }}]</span>
-                    <span v-if="dataForm.pickingWay=='dispatch_list'"
+                  <span v-if="dataForm.pickingWay == 'dispatch_list'"
                     style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">可领库存数：</span>
-                    <span  v-if="dataForm.pickingWay=='dispatch_list'"
+                  <span v-if="dataForm.pickingWay == 'dispatch_list'"
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.availableStockNum
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
 
                   <el-col :sm="24" :xs="24">
-                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"  :style="{ marginBottom: iptLabelMargin }">
+                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
                         @blur="handleBlur(item)" />
                     </el-form-item>
@@ -141,7 +144,8 @@
                     <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur2"
                         class="ipt materialWaste" />
-                        <el-button type="primary"  :disabled="!currentProcess.materialWasteQuantity" style="float: right;height: 50px"size="mini" @click='setMaterialWasteM()'>计算料废金额</el-button> 
+                      <el-button type="primary" :disabled="!currentProcess.materialWasteQuantity"
+                        style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>计算料废金额</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
@@ -150,7 +154,7 @@
                         class="ipt" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.processType=='grinding'">
+                  <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.processType == 'grinding'">
                     <el-form-item label="孔径" :prop="aperture">
                       <el-select v-model="currentProcess.aperture" placeholder="孔径" style="width: 100%;" class="ipt">
                         <el-option v-for="(item, index) in apertureList" :key="index" :label="item.label"
@@ -160,16 +164,20 @@
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="返工数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" @blur="handleBlur2"/>
+                      <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt"
+                        @blur="handleBlur2" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
-                  <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd" @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;"  placeholder="选择报工时间"> </el-date-picker>
-                </el-form-item>
+                      <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
+                        @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;" placeholder="选择报工时间">
+                      </el-date-picker>
+                    </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel">
-                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'"  :style="{ marginBottom: producerMargin }">
+                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'"
+                      :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.producerName" placeholder="生产人" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
@@ -178,8 +186,8 @@
 
                       <!-- producerId -->
                     </el-form-item>
-                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"  :style="{ marginBottom: producerMargin }"
-                      class="iptLabel">
+                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'"
+                      :style="{ marginBottom: producerMargin }" class="iptLabel">
                       <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable style="width: 100%;"
                         class="ipt" @change="hangleSelectSales">
                       </user-select>
@@ -242,11 +250,12 @@
           </el-col>
         </div>
       </div>
-    
+
     </div>
     <recordForm v-if="recordFormVisible" ref="recordForm"></recordForm>
     <OutForm v-if="processOutFormVisible" ref="outForm" @close="closeForm"></OutForm>
-    <MaterialWasteForm v-if="materialWasteFormVisible" ref="materialWasteFormRef" @change="materialWasteData"></MaterialWasteForm>
+    <MaterialWasteForm v-if="materialWasteFormVisible" ref="materialWasteFormRef" @change="materialWasteData">
+    </MaterialWasteForm>
 
 
   </div>
@@ -268,11 +277,11 @@ import MaterialWasteForm from './materialWasteForm.vue';
 export default {
 
   components: {
-    recordForm, OutForm,MaterialWasteForm
+    recordForm, OutForm, MaterialWasteForm
   },
   data() {
     return {
-      materialWasteFormVisible:false,
+      materialWasteFormVisible: false,
       apertureList: [],
       targetHeight: "",
       targetHeight2: "",
@@ -310,15 +319,15 @@ export default {
           { required: true, message: '生产人不能为空', trigger: 'change' }
         ],
         qualifiedQuantity: [
-          { required: true, message: '合格数量不能为空', trigger: 'blur' },
+          // { required: true, message: '合格数量不能为空', trigger: 'blur' },
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
           { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ]
       },
-      iptLabelMargin:'30px',
+      iptLabelMargin: '30px',
       producerMargin: '30px',
-      materialList:[],
-      materialWasteDataList:[],
+      materialList: [],
+      materialWasteDataList: [],
     }
   },
 
@@ -326,16 +335,16 @@ export default {
   },
 
   methods: {
-    setMaterialWasteM(){
-      console.log("this.materialWasteDataList",this.materialWasteDataList);
-      this.materialWasteFormVisible=true
-      this.$nextTick(()=>{
-        this.$refs.materialWasteFormRef.init(JSON.parse(JSON.stringify(this.materialWasteDataList)),this.currentProcess.materialWasteQuantity)
+    setMaterialWasteM() {
+      console.log("this.materialWasteDataList", this.materialWasteDataList);
+      this.materialWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.materialWasteFormRef.init(JSON.parse(JSON.stringify(this.materialWasteDataList)), this.currentProcess.materialWasteQuantity)
       })
     },
-    materialWasteData(data){
-      console.log("设置的料废金额",data);
-      this.materialWasteDataList=data
+    materialWasteData(data) {
+      console.log("设置的料废金额", data);
+      this.materialWasteDataList = data
     },
     // 转外协
     transferOutFun() {
@@ -354,7 +363,7 @@ export default {
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
         this.workList = res.data.workOrderList
-        this.materialList=res.data.materialList
+        this.materialList = res.data.materialList
         this.currentProcessId = res.data.workOrderList[0].processId
         this.currentProcess = res.data.workOrderList[0]
         this.$set(this.currentProcess, 'reportingQuantity', 0)
@@ -376,8 +385,8 @@ export default {
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
-        this.$set(this.currentProcess, 'availableStockNum', 0)
-        this.$set(this.currentProcess, 'materialWasteQuantity', 0)
+      this.$set(this.currentProcess, 'availableStockNum', 0)
+      this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
       this.$set(this.currentProcess, 'reworkQuantity', 0)
       this.$set(this.currentProcess, 'utilizeQuantity', 0)
@@ -390,22 +399,22 @@ export default {
     handleBlur(item, data) {
 
 
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,this.currentProcess.utilizeQuantity,this.currentProcess.reworkQuantity]), 6)
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.utilizeQuantity, this.currentProcess.reworkQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
-   
-        this.$nextTick(() => {
+
+      this.$nextTick(() => {
         const height = this.$refs.mycol.$el.clientHeight
         console.log('el-col的高度是1：', height);
         this.targetHeight = height;
-        })
-      },
+      })
+    },
     handleBlur2() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
 
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,this.currentProcess.utilizeQuantity,this.currentProcess.reworkQuantity]), 6)
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.utilizeQuantity, this.currentProcess.reworkQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
     },
-    reportingTimeChange(e){
+    reportingTimeChange(e) {
       this.currentProcess.reportingTime = e + ' 00:00:00'
     },
     commonFun() {
@@ -426,7 +435,7 @@ export default {
       }
       this.producePersonListFun(this.currentProcess.id)
       const end = new Date();//获取当前的日期
-      this.$set(this.currentProcess,'reportingTime',this.dateFormat(end))
+      this.$set(this.currentProcess, 'reportingTime', this.dateFormat(end))
     },
     // 获取生产人员数据
     producePersonListFun(id) {
@@ -508,14 +517,21 @@ export default {
             this.$message.error("合格数量+不合格数量+利用数量+返工数量不能超过可报工数量")
             return
           }
-          let total=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.qualifiedQuantity,this.currentProcess.reworkQuantity]), 6)
-            if(total<=0||!total){
-              submitFlag = false
+          let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+          if (total <= 0 || !total) {
+            submitFlag = false
             this.$message.error("请填写合格数量、料废数量、责废数量、返工数量")
             return
+          }
+          if (this.currentProcess.reportFlag && this.currentProcessType === 1) {
+            if (!this.totalReportNum) {
+              submitFlag = false
+              this.$message.error("合格数量加上不合格数量必须大于0")
+              return
             }
+          }
           if (submitFlag === false) return
-          if(this.currentProcess.materialWasteQuantity&&!this.materialWasteDataList.length) return this.$message.error("料废金额不能为空")
+          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length) return this.$message.error("料废金额不能为空")
           let obj = {}
           let arr = []
           obj.classAttribute = this.currentProcess.classAttribute
@@ -545,7 +561,7 @@ export default {
             this.$message.success("报工成功")
             this.init(this.id)
           })
-        }else {
+        } else {
           // if (!this.currentProcess.vibrateReportFlag) {
           //   if (!this.currentProcess.qualifiedQuantity || this.currentProcess.qualifiedQuantity == 0) {
           //     this.iptLabelMargin = '38px'
@@ -1022,12 +1038,14 @@ box-card:nth-child(n+3) {
   font-size: 18px;
   font-weight: bold;
 }
-::v-deep .el-form-item__error{
-  font-size: 16px!important;
+
+::v-deep .el-form-item__error {
+  font-size: 16px !important;
   margin: 8px 0;
-  padding-top:0px;
+  padding-top: 0px;
 }
-.materialWaste{
+
+.materialWaste {
   width: 70%;
 }
 </style>

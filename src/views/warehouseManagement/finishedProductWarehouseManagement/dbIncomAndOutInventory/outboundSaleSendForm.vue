@@ -535,6 +535,11 @@ export default {
         projectId: "",
         totalStockOutboundFlag: false,
       },
+      totalStockOutboundList:[
+        {label:"是",value:true,},
+        {label:"否",value:false,},
+
+      ],
       customerInfo: {},//所选客户信息
       getWarehouseList,
       sourceTypeList: [ //业务类型

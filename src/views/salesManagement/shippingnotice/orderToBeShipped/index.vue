@@ -214,7 +214,6 @@ export default {
         deliveryStartTime: "",
         extensionFlag: 1,
         deliverQueryFlag: 1,
-        orderState:"not_finish",
         shipmentStatus:"not_finish",
         pageNum: 1,
         pageSize: 20,
@@ -776,7 +775,6 @@ export default {
         deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
-        orderState:"not_finish",
         shipmentStatus:"not_finish",
         orderItems: [{
           asc: false,

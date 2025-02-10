@@ -115,9 +115,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="targetShelfSpaceId" label="目标库位" width="260" key="targetShelfSpaceId">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>目标库位
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'targetShelfSpaceName'" :rules='productRules.targetShelfSpaceName'>
                           <ComSelect-list :requestObj="shelfSpaceRequestObj" :dialogTitle="'选择目标库位'" placeholder="请选择目标库位" v-model="scope.row.targetShelfSpaceName" :beforeSubmit="beforeSubmitPartner" :isdisabled="btnType === 'look' || !dataForm.warehouseName" :method="stockDisassemblykw" :paramsObj="{ scope }" @change="changeWarehousekwmb"></ComSelect-list>
@@ -128,13 +128,16 @@
                       <!-- <template slot="header">
                         <span class="required">*</span>目标产品批次号
                       </template> -->
-                      <template slot-scope="scope">
+                      <!-- <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'" :rules='productRules.targetBatchNumber'>
                           <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择产品批次,只能输入" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
                             <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
                             </el-option>
                           </el-select>
                         </el-form-item>
+                      </template> -->
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.targetBatchNumber" placeholder="请输入产品批次号" :disabled="btnType == 'look' ? true : false" maxlength="20" />
                       </template>
                     </el-table-column>
                     <!-- <el-table-column prop="targetProcessName" label="目标工序名称" width="230" show-overflow-tooltip key="targetProcessName" /> -->
@@ -422,9 +425,9 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="targetShelfSpaceId" label="目标库位" width="260" key="targetShelfSpaceId">
-                  <template slot="header">
+                  <!-- <template slot="header">
                     <span class="required">*</span>目标库位
-                  </template>
+                  </template> -->
                   <template slot-scope="scope">
                     <el-form-item :prop="'data.' + scope.$index + '.' + 'targetShelfSpaceName'" :rules='productRules.targetShelfSpaceName'>
                       <ComSelect-list :requestObj="shelfSpaceRequestObj" :dialogTitle="'选择目标库位'" placeholder="请选择目标库位" v-model="scope.row.targetShelfSpaceName" :beforeSubmit="beforeSubmitPartner" :isdisabled="btnType === 'look' || !dataForm.warehouseName" :method="stockDisassemblykw" :paramsObj="{ scope }" @change="changeWarehousekwmb"></ComSelect-list>
@@ -435,13 +438,16 @@
                   <!-- <template slot="header">
                     <span class="required">*</span>目标产品批次号
                   </template> -->
-                  <template slot-scope="scope">
+                  <!-- <template slot-scope="scope">
                     <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'" :rules='productRules.targetBatchNumber'>
                       <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword placeholder="请选择产品批次,只能输入" style="width:100%" clearable :disabled="btnType == 'look'" :remote-method="remoteMethod" :loading="loading" @focus="action">
                         <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
                         </el-option>
                       </el-select>
                     </el-form-item>
+                  </template> -->
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.targetBatchNumber" placeholder="请输入产品批次号" :disabled="btnType == 'look' ? true : false" maxlength="20" />
                   </template>
                 </el-table-column>
                 <!-- <el-table-column prop="targetBoxBarcode" label="目标箱条码" width="220" key="targetBoxBarcode">
@@ -572,7 +578,7 @@ export default {
       },
       productRules: {
         // targetBatchNumber: [{ required: true, trigger: 'change' }],
-        targetShelfSpaceName: [{ required: true, trigger: 'change' }],
+        // targetShelfSpaceName: [{ required: true, trigger: 'change' }],
         targetProductDrawingNo: [{ required: true, trigger: 'change' }],
         originBoxBarcode: [{ required: true, trigger: 'change' }],
         targetBoxBarcode: [{ required: true, trigger: 'change' }],
@@ -1177,15 +1183,15 @@ export default {
       }
 
       // 目标产品不能与原产品相同
-      if (submitFlag) {
-        let flag = this.dataFormTwo.data.some((line, index) => {
-          if (line.originProductsId === line.targetProductsId) {
-            this.$message.error(`产品信息第${index + 1}行：未对产品进行转换，请选择不同的目标产品`)
-            submitFlag = false
-            return true
-          }
-        })
-      }
+      // if (submitFlag) {
+      //   let flag = this.dataFormTwo.data.some((line, index) => {
+      //     if (line.originProductsId === line.targetProductsId) {
+      //       this.$message.error(`产品信息第${index + 1}行：未对产品进行转换，请选择不同的目标产品`)
+      //       submitFlag = false
+      //       return true
+      //     }
+      //   })
+      // }
 
       // 库位相同，原箱条码不能与目标箱条码相同
       // if (submitFlag) {

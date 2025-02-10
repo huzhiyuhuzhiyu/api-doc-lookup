@@ -318,8 +318,9 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.superForm = this.orderForm
     this.search('basic')
-    this.advancedQueryFun()
+    
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.advancedQueryFun()
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(2, 0, {
         prop: 'productName',

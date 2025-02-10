@@ -587,7 +587,7 @@
           <div>
             <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
               v-show="categoryType == 'outbound_sale_send' && saleFlag" @click="batchOutbound">批量出库</el-button>
-            <el-button type="primary" size="mini" icon="el-icon-plus" style="margin-left: 8px;"
+            <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
               v-show="categoryType == 'outbound_sale_send' && saleFlag" @click="batchPrint">批量打印</el-button>
             <el-button type="primary" size="mini" icon="el-icon-plus"
               v-show="categoryType == 'inbound_external' && externalFlag" @click="externalBatchInbound">批量入库</el-button>
@@ -5580,5 +5580,9 @@ export default {
 
 ::v-deep.el-tabs__header {
   margin-bottom: 5px !important
+}
+::v-deep .icon-piliangdayin{
+  color: #fff;
+  margin-right:8px
 }
 </style>

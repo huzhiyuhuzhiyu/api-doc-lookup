@@ -188,8 +188,7 @@ import {batchRevokeOrder} from '@/api/purchasingAndOutsourcingOrders';
 import {ApprovalStatus, DocumentStatus} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
   name: 'orderList',
-  components: { Form, ExportForm, SuperQuery,      PrintBrowse,
-    PrintDialog, },
+  components: { Form, ExportForm, SuperQuery,PrintBrowse,PrintDialog, },
   data() {
     return {
       printVisible: false,

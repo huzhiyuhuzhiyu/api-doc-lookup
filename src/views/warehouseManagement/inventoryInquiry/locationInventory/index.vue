@@ -408,7 +408,7 @@ export default {
         this.treeData = res.data
         this.$nextTick(() => {
           this.treeLoading = false
-          if (isInit) this.initData()
+          if (isInit) this.search('basic')
         })
       }).catch(() => {
         this.treeLoading = false
@@ -457,7 +457,7 @@ export default {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.tableQuery = {
+      this.superForm  =this.tableQuery = {
         orderItems: [
           {
             asc: true,
@@ -467,6 +467,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         shelfSpaceQueryFlag: 1,
+        inventoryFlag:1,
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
@@ -475,7 +476,7 @@ export default {
         productCode: "",
         superQuery: {},
       }
-      this.superForm = this.form = JSON.parse(JSON.stringify(this.tableQuery))
+      
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },

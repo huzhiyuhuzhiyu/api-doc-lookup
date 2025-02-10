@@ -299,7 +299,11 @@ export default {
       },
       codeConfig: {},//单据规则配置
       workList: [],
+      totalStockOutboundList:[
+        {label:"是",value:true,},
+        {label:"否",value:false,},
 
+      ],
 
       currentProcess: {},
       listLoading: false,

@@ -743,6 +743,7 @@ export default {
         item.productName = item.name
         this.$set(item, 'pairingModeName', '')
         item.productsId = item.id
+        item.bomId = item.bomId
         item.planType = 'add_plan'
         if (this.planForm.planDate.length) {
           this.$set(item, 'planStartDate', this.planForm.planDate[0])
@@ -878,7 +879,15 @@ export default {
                 })
                 break
               }
-
+              if (!item.bomId) {
+                submitFlag = false
+                this.$message({
+                  message: "第" + (index + 1) + "行产品无BOM，请配置BOM信息",
+                  type: 'error',
+                  duration: 1500,
+                })
+                break
+              }
               // if (!item.planStartDate) {
               //   submitFlag = false
               //   this.$message({

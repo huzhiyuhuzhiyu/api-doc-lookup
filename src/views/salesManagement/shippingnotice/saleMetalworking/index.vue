@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
-
-    <div class="JNPF-common-layout-center JNPF-flex-main"  v-if="!formVisible">
+ 
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -22,7 +22,7 @@
                     :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                 </el-form-item>
               </el-col>
-            </template> 
+            </template>
 
 
             <el-col :span="6">
@@ -49,6 +49,8 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
+              <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
+                @click="batchPrint">批量打印</el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="mergeorderNo()"
                 :loading="hbbtnLoading">
                 合并订单
@@ -107,7 +109,8 @@
                 <div v-else-if="scope.row.delivery == 'collect_payment'">
                   <span>到付</span>
                 </div> -->
-                <div v-for="(item, index) in departMentList" :key="index">{{ scope.row.delivery == item.value ? item.label : ""
+                <div v-for="(item, index) in departMentList" :key="index">{{ scope.row.delivery == item.value ?
+                  item.label : ""
                   }}</div>
               </template>
             </el-table-column>
@@ -188,6 +191,9 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -199,11 +205,19 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   name: 'foreigntradenotice',
-  components: { Form, SuperQuery, ExportForm },
+  components: { Form, SuperQuery, ExportForm, PrintBrowse, PrintDialog, },
   data() {
     return {
+      printVisible: false,
+      printBrowseVisible: false,
+      prindId: '',
+      formId: '',
+      enCode: "",
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -306,7 +320,7 @@ export default {
       defaultProps: {
         children: 'childrenList',
         label: 'name'
-      },  
+      },
       total: 0,
       diagramVisible: false,
       formVisible: false,
@@ -383,14 +397,55 @@ export default {
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.superForm=this.orderForm
+    this.superForm = this.orderForm
     this.search('basic')
     this.getbimProductAttributesFun()
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
-  
+
   methods: {
+    hasDifferentCooperativePartnerCode(arr) {
+      const codes = new Set();
+
+      for (const item of arr) {
+        codes.add(item.cooperativePartnerId);
+      }
+
+      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
+    },
+    // 批量打印
+    batchPrint() {
+      if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
+      let flag = this.hasDifferentCooperativePartnerCode(this.selectArr)
+      if (flag) return this.$message.error("只能选择相同客户的数据")
+      this.enCode = 'p003' // 筛选出 businessType 等于 type 的项  
+
+      this.fullName = "发货通知单" // 筛选出 businessType 等于 type 的项  
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+          this.formId = this.selectArr.map(item => item.id).join(',')
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
     getbimProductAttributesFun() {
       getbimProductAttributes('595170644241464069').then(res => {
         res.data.list.forEach(item => {
@@ -500,7 +555,7 @@ export default {
         })
       }).catch(() => { })
     },
-    
+
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
@@ -528,7 +583,7 @@ export default {
     },
     initData() {
       this.listLoading = true
- 
+
 
 
 
@@ -577,9 +632,9 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.rdeDateArr=[]
+      this.rdeDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-      this.searchList=[
+      this.searchList = [
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
 
@@ -677,6 +732,11 @@ export default {
   margin-left: 0 !important;
 
   margin-bottom: 5px;
+}
+
+::v-deep .icon-piliangdayin {
+  color: #fff;
+  margin-right: 8px
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

@@ -542,7 +542,6 @@ export default {
           { required: true, message: '生产人不能为空', trigger: 'change' }
         ],
         qualifiedQuantity: [
-          { required: true, message: '合格数量不能为空', trigger: 'blur' },
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
           { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ],
@@ -1099,6 +1098,13 @@ export default {
             submitFlag = false
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
+          }
+          if(this.currentProcess.reportFlag&&this.currentProcessType===1){
+            if(!this.totalReportNum){
+              submitFlag = false
+              this.$message.error("合格数量加上不合格数量必须大于0")
+              return
+            }
           }
           if(this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag&&this.currentProcessType!==6){
             if(!this.currentProcess.qualifiedQuantity) return this.$message.error("合格数量不能为空")

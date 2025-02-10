@@ -370,7 +370,7 @@ export default {
         warehouseName: "",
         pageNum: 1,
         pageSize: 20,
-
+        inventoryFlag:1,
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
@@ -382,9 +382,9 @@ export default {
       this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
       ]
-    
+ 
       this.initData()
     },
 

@@ -140,27 +140,27 @@
               </p>
               <div v-if="totalData[item].length > 1">
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][0].planStartDate?totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}-
-                  {{ totalData[item][0].planEndDate?totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}
+                  {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
+                  {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                   {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
                 </p>
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][1].planStartDate? totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}-
-                  {{ totalData[item][1].planEndDate? totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):"" }}
+                  {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
+                  {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                   {{ totalData[item][1].completedQuantity }}/{{ totalData[item][1].dispatchQuantity }}个
                 </p>
               </div>
               <div v-else-if="totalData[item].length == 1">
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][0].planStartDate?totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                    "."):'' }}-{{ totalData[item][0].planEndDate?totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") :''}}
+                  {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                   {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
                 </p>
               </div>
 
               <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                派工截止：{{ totalData[item][totalData[item].length - 1].planEndDate?totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
-                  .replace("-", "."):'' }}
+                派工截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                  .replace("-", ".") }}
                 <el-button class="elbutton" type="text" size="mini"
                   @click.stop="getDetailFun(item, totalData[item], '人员')"
                   :style="item.split('_')[0] == currentPersonId ? 'border:1px solid #fff;color:#1890ff;background:#fff;    padding: 4px!important;' : ''">详细</el-button>
@@ -179,33 +179,33 @@
               </p>
               <div v-if="totalData[item].length > 1">
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][totalData[item].length - 2].planStartDate?totalData[item][totalData[item].length - 2].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                    "."):'' }}-
-                  {{ totalData[item][totalData[item].length - 2].planEndDate?totalData[item][totalData[item].length - 2].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                    ".") :''}}
+                  {{ totalData[item][totalData[item].length - 2].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    ".") }}-
+                  {{ totalData[item][totalData[item].length - 2].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    ".") }}
                   {{ totalData[item][totalData[item].length - 2].completedQuantity
                   }}/{{ totalData[item][totalData[item].length - 2].dispatchQuantity }}个
                 </p>
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][totalData[item].length - 1].planStartDate?totalData[item][totalData[item].length - 1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                    "."):'' }}-
-                  {{ totalData[item][totalData[item].length - 1].planEndDate?totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                    ".") :''}}
+                  {{ totalData[item][totalData[item].length - 1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    ".") }}-
+                  {{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    ".") }}
                   {{ totalData[item][totalData[item].length - 1].completedQuantity
                   }}/{{ totalData[item][totalData[item].length - 1].dispatchQuantity }}个
                 </p>
               </div>
               <div v-else-if="totalData[item].length == 1">
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][0].planStartDate?totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                    ".") :''}}-{{ totalData[item][0].planEndDate?totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}
+                  {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                    ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                   {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
                 </p>
               </div>
 
               <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                派工截止：{{ totalData[item][totalData[item].length - 1].planEndDate?totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
-                  "."):'' }}
+                派工截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
+                  ".") }}
                 <el-button class="elbutton" type="text" size="mini"
                   @click.stop="getDetailFun(item, totalData[item], '班组')"
                   :style="item.split('_')[0] == currentWorkgroupId ? 'border:1px solid #fff;color:#1890ff;background:#fff;    padding: 4px!important;' : ''">详细</el-button>
@@ -225,20 +225,20 @@
               </p>
               <div v-if="totalData[item].length > 1">
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][0].planStartDate?totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") :''}}-
-                  {{ totalData[item][0].planEndDate?totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") :''}}
+                  {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
+                  {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                   {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
                 </p>
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][1].planStartDate?totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}-
-                  {{ totalData[item][1].planEndDate?totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") :''}}
+                  {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
+                  {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
                   {{ totalData[item][1].completedQuantity }}/{{ totalData[item][1].dispatchQuantity }}个
                 </p>
               </div>
               <div v-else-if="totalData[item].length == 1">
                 <p style="margin-top: 4px; font-size: 12px">
-                  {{ totalData[item][0].planStartDate?totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):'' }}-
-                  {{ totalData[item][0].planEndDate?totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", "."):''
+                  {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
+                  {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".")
                   }}
                   {{ totalData[item][0].completedQuantity }}/{{
                     totalData[item][0].dispatchQuantity

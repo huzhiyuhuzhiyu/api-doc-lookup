@@ -81,6 +81,8 @@
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
                         </el-table-column>
+                        <el-table-column prop="processName" label="工序" width="120" :key="6" show-overflow-tooltip>
+                        </el-table-column>
                         <el-table-column prop="stockNum" label="调整前库存" width="150" :key="6" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="pairingModeName" label="配对方式" width="120" :key="6" show-overflow-tooltip>
@@ -344,6 +346,8 @@
                     <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="processName" label="工序" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
@@ -810,6 +814,7 @@ export default {
 
         });
         this.productData = data.stockTakingAdjustLineVOList
+        console.log(this.productData,'this.productData')
       } else {
         this.getDetailFun(data)
 
@@ -910,6 +915,9 @@ export default {
                 diffAmount: "",
                 takingLineId: item.takingLineId,
                 pairingModeId:item.pairingModeId,
+                processName: item.processName,
+                processCode: item.processCode,
+                processId: item.processId,
               }
               arr.push(obj)
             });

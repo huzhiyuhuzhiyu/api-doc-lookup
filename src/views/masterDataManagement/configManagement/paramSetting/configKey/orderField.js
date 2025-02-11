@@ -19,6 +19,11 @@ export default {
         description: '启用全局钢球/中心径/倒角后，将会显示钢球/中心径/倒角输入字段。',
         mainModule: '全局'
     },
+    gobal_customerContractNo: {
+        configKeyLabel: '启用客户合同号',
+        description: '启用后，在销售订单、订单进度、订单变更、仓库管理会显示客户合同号；关闭则在销售订单详情中明细列表展示客户合同号。',
+        mainModule: '全局'
+    },
     purchase_standardValue: {
         configKeyLabel: '启用规值',
         description: '启用采购订单规值后，新建采购订单时，将会显示规值输入字段，对应收货也将显示规值字段。',
@@ -127,11 +132,6 @@ export default {
     sale_colour: {
         configKeyLabel: '启用颜色',
         description: '启用销售管理颜色后，新建销售管理时，将会显示颜色输入字段，对应发货通知单、计划、需求、生产计划等也将显示颜色字段。',
-        mainModule: '销售管理'
-    },
-    sale_customerContractNo: {
-        configKeyLabel: '启用客户合同号',
-        description: '启用后，在销售订单、订单进度、订单变更会显示客户合同号；关闭则在销售订单详情中明细列表展示客户合同号。',
         mainModule: '销售管理'
     },
 

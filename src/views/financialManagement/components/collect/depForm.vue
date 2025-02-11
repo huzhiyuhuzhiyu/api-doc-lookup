@@ -152,6 +152,25 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
+                            <div class="viewData">
+                              <span>{{ scope.row.productCode ? scope.row.productCode : "调价" }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip
+                        v-if="isProductNameSwitch === '1'">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
+                            <div class="viewData">
+                              <span>{{ scope.row.productName ? scope.row.productName : "调价" }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
@@ -162,24 +181,6 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productCode ? scope.row.productCode : "调价" }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productName ? scope.row.productName : "调价" }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column> -->
                       <el-table-column prop="mainUnit" label="单位" min-width="100" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
@@ -373,6 +374,7 @@ export default {
   },
   data() {
     return {
+      isProductNameSwitch:'',
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
       dialogTitle: '',
@@ -488,6 +490,11 @@ export default {
     this.switchStyle()
   },
   methods: {
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     //自适应窗口
     async switchStyle() {
       await this.$nextTick();
@@ -546,11 +553,11 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type, cooperativePartnerId) {
+    async init(id, type, cooperativePartnerId) {
       console.log(id, type);
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
-
+      await this.getProductNameSwitch('product', 'enable_productName')
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {

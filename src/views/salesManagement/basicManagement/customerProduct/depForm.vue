@@ -1910,6 +1910,7 @@ export default {
           this.dataForm.dateOrderStart = this.dataForm.validDateArr[0]
           this.dataForm.dateOrderStop = this.dataForm.validDateArr[1]
         }
+        console.log(this.datafilelist,';this.datafilelist1')
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
@@ -1920,7 +1921,10 @@ export default {
             }
           })
         }
+        console.log(this.datafilelist,'this.datafilelist2')
+        
         let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
+        console.log(filteredArr,'filteredArr')
         let obj = {
           attachmentList: this.datafilelist,
           // sale: this.dataForm,
@@ -1931,8 +1935,20 @@ export default {
           // flowData: this.flowData
           partnerType: "customer",
         }
+        let editObj = {
+          ...filteredArr[0],
+          attachmentList: this.datafilelist,
+          // sale: this.dataForm,
+          id: this.dataForm.id,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          dateOrderStart: this.dataForm.dateOrderStart,
+          dateOrderStop: this.dataForm.dateOrderStop,
+          // list: filteredArr,
+          // flowData: this.flowData
+          partnerType: "customer",
+        }
         console.log(obj, '参数');
-        let queryBody = this.btnType === 'add' ? obj : filteredArr[0]
+        let queryBody = this.btnType === 'add' ? obj : editObj
         // return
         const formMethod = this.btnType === 'add' ? addPartnerOrProductData : updatePartnerOrProductData
         formMethod(queryBody).then(res => {

@@ -6,9 +6,15 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
 
-
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="reportDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                  :picker-options="pickerOptions" start-placeholder="报工开始日期" end-placeholder="报工结束日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
             <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-col :span="item.searchType === 3 ? 6 : 3">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />
@@ -36,7 +42,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
@@ -45,7 +51,7 @@
 
 
             </div>
-            <div class="JNPF-common-head-right" v-loading="listLoading">
+            <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
@@ -62,7 +68,7 @@
           <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
-            <el-table-column prop="productionOrderNo" label="任务单号" min-width="220" sortable="custom" />
+            <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="220" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="220" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -137,18 +143,18 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
       ], 
-      columnList: ["productionOrderNo", "productsCode",],
+      columnList: ["productsCode",],
 
       superQueryVisible: false,
       exportFormVisible: false,
 
       btnLoading: false,
-
+      reportDate: [],
       title: "更多查询",
       visible: false,
       tableData: [],
@@ -159,6 +165,7 @@ export default {
         orderNo: "",
         processName: "",
         productsDrawingNo: "",
+        reportingType:'normal',  // 报工类型 正常报工
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -184,7 +191,7 @@ export default {
       superQueryJson: [
         {
           prop: 'productionOrderNo',
-          label: "任务单号",
+          label: "生产任务单号",
           type: 'input'
         },
 
@@ -388,11 +395,13 @@ export default {
     initData() {
       this.listLoading = true
 
-
-
-
-      
- 
+      if (this.reportDate && this.reportDate.length) {
+        this.orderForm.reportStartDate = this.reportDate[0]
+        this.orderForm.reportEndDate = this.reportDate[1]
+      } else {
+        this.orderForm.reportStartDate = ""
+        this.orderForm.reportEndDate = ""
+      }
      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
      getSalaryDetailList(this.orderForm).then(res => {
         console.log("报工记录", res);
@@ -401,7 +410,7 @@ export default {
         // })
         this.tableData = res.data.page.records
         this.total = res.data.page.total
-        this.totalData = res.data.total
+        this.totalData = res.data.total ? res.data.total : {}
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -441,7 +450,7 @@ export default {
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
       this.searchList=[
-        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },

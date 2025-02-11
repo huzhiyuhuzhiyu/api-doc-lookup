@@ -1544,7 +1544,7 @@ export default {
     init(id, btnType, approvalFlag, data) {
       this.approvalFlag = approvalFlag
       console.log("传递数据", data);
-      if (data && data.length) {
+      if (data && data.length && Array.isArray(data)) {
         // this.seleceCustomer(data[0])
         data.forEach(item => {
           item.ordersNum = item.num

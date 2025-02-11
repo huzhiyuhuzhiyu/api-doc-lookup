@@ -422,7 +422,7 @@ export default {
       this.currentProcess.reportingTime = e + ' 00:00:00'
     },
     commonFun() {
-      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
+      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.utilizeQuantity]), 6)
 
       if (this.currentProcess.processingType == 'self_produced' && this.currentProcess.reportFlag == true) {
         this.getvibrationLevelFun()
@@ -521,7 +521,7 @@ export default {
             this.$message.error("合格数量+不合格数量+利用数量+返工数量不能超过可报工数量")
             return
           }
-          let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity,this.currentProcess.utilizeQuantity]), 6)
+          let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
           if (total <= 0 || !total) {
             submitFlag = false
             this.$message.error("请填写合格数量、料废数量、责废数量、返工数量")
@@ -555,7 +555,7 @@ export default {
           obj.producerId = this.currentProcess.producerId
           obj.productionOrderId = this.currentProcess.productionOrderId
           obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
-          obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity,this.currentProcess.utilizeQuantity]), 6)
+          obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
           obj.reportingType = "normal"
           obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
           obj.aperture = this.currentProcess.aperture

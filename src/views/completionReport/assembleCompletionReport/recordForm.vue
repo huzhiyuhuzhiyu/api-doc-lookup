@@ -91,6 +91,7 @@ export default {
         workNo: "",
         pageNum: 1,
         pageSize: 20,
+        reportingType:'normal',  // 报工类型 正常报工
         documentStatus: "submit",
         orderItems: [{
           asc: false,

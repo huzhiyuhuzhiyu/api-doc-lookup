@@ -53,11 +53,16 @@
                               :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="dataForm.businessType === 'outbound_sale_send' && $store.getters.configGlobal.customerContractNo === '1'">
+                          <el-form-item label="客户合同号" prop="contractNo">
+                            <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'" />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24"
                           v-if="['inbound_sale_return', 'inbound_purchase', 'inbound_external', 'inbound_return_materials', 'inbound_order_production', 'inbound_production', 'inbound_flip', 'inbound_return'].includes(dataForm.businessType)">
                           <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
                             <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
-                              style="width: 100%;">
+                              style="width: 100%;" :disabled="btnType == 'look'">
                               <el-option v-for="(item, index) in diffBatchList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
                             </el-select>
@@ -131,16 +136,16 @@
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
                       </div>
-                      <!-- <div class="JNPF-common-head-right">
+                      <div class="JNPF-common-head-right">
 
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun()" />
                         </el-tooltip>
-                      </div> -->
+                      </div>
                     </div>
 
-                    <JNPF-table ref="product"  :data="productData"   :fixedNO="true" :hasC="btnType != 'look'"
+                    <JNPF-table ref="product"  :data="productData" custom-column  :fixedNO="true" :hasC="btnType != 'look'"
                       @selection-change="handeleProductInfoData" border style="width: 100%;">
                       <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
@@ -151,6 +156,12 @@
                         v-if="dataForm.documentType == 'outbound'" />
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
+                      <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                        v-if="dataForm.businessType === 'outbound_sale_send' && $store.getters.configGlobal.customerContractNo === '0'">
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'" placeholder="请输入客户合同号" />
+                        </template>
+                      </el-table-column>
                       <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
@@ -450,6 +461,18 @@
                       <el-table-column prop="remark" label="备注" width="200" key="128">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.remark"
+                            placeholder="备注"></el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="remark2" label="备注2（LOT NO）" width="200" key="128">
+                        <template slot-scope="scope">
+                          <el-input :disabled="btnType == 'look'" v-model="scope.row.remark2"
+                            placeholder="备注"></el-input>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" key="128">
+                        <template slot-scope="scope">
+                          <el-input :disabled="btnType == 'look'" v-model="scope.row.remark3"
                             placeholder="备注"></el-input>
                         </template>
                       </el-table-column>
@@ -755,7 +778,7 @@ export default {
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
-        diffBatchNumFlag: 1
+        diffBatchNumFlag: true
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -938,8 +961,8 @@ export default {
       processFlag: "",
       pairingModeList: [],
       diffBatchList: [
-        { label: '产品生成同批次号', value: 0 },
-        { label: '产品生成不同批次号', value: 1 },
+        { label: '产品生成同批次号', value: false },
+        { label: '产品生成不同批次号', value: true },
       ]
     }
   },
@@ -974,6 +997,7 @@ export default {
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
     })
+    this.$nextTick(() => { this.$refs.product.doLayout() })
   },
   watch: {
     "dataForm.warehouseId": {

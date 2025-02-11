@@ -370,6 +370,7 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
+        inventoryFlag :1,
         classAttribute: "accessories",
       }
       this.$refs.SuperQuery.conditionList = []

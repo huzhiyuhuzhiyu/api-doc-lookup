@@ -370,6 +370,7 @@ export default {
         productCode: "",
         superQuery: {},
         classAttribute: "raw_material",
+        inventoryFlag :1,
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [

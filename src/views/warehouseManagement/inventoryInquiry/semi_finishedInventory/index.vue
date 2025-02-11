@@ -372,6 +372,7 @@ export default {
         productCode: "",
         superQuery:{},
         classAttribute:"semi_finished",
+        inventoryFlag :1,
       } 
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [

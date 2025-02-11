@@ -653,7 +653,7 @@ export default {
           this.formVisible = true
           this.$nextTick(() => {
             console.log(this.$refs, 'this.$refs')
-            this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch)
+            this.$refs.form.init(this.selectData, 'add','finish', this.isProjectSwitch)
           })
       }
     }

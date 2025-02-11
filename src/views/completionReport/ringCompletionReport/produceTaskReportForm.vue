@@ -413,7 +413,7 @@ export default {
       })
     },
     handleBlur2() {
-      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.utilizeQuantity]), 6)
+      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
 
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.utilizeQuantity, this.currentProcess.reworkQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)

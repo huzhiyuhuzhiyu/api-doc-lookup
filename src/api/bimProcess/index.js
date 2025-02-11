@@ -107,7 +107,15 @@ export function getBimProductProcessPrice (data) {
   })
 }
 
-// 产品工序价格API-列表
+// 产品工序价格API-删除
+export function deleteBimProductProcessPrice (id) {
+  return request({
+    url: `/api/zgt/bimProductProcessPrice/remove/${id}`,
+    method: 'delete',
+  })
+}
+
+// 产品工序价格API-批量设置
 export function batchAddBimProductProcessPrice (data) {
   return request({
     url: '/api/zgt/bimProductProcessPrice/batchAdd',
@@ -115,6 +123,8 @@ export function batchAddBimProductProcessPrice (data) {
     data
   })
 }
+
+// 产品包装价格
 
 // 产品包装价格-导入
 export function uploadBimProductProcessPrice (data) {
@@ -125,7 +135,7 @@ export function uploadBimProductProcessPrice (data) {
   })
 }
 
-// 产品工序价格API-列表
+// 产品包装价格-列表
 export function getBimProductPackagingPrice (data) {
   return request({
     url: '/api/zgt/bimProductPackagingPrice/page',
@@ -147,6 +157,43 @@ export function batchAddBimProductPackagingPrice (data) {
 export function uploadBimProductPackagingPrice (data) {
   return request({
     url: '/api/zgt/bimProductPackagingPrice/upload',
+    method: 'post',
+    data
+  })
+}
+
+// 产品属性价格
+
+// 产品属性价格-列表
+export function getBimProductAttributePrice (data) {
+  return request({
+    url: '/api/zgt/productAttributePrice/page',
+    method: 'post',
+    data
+  })
+}
+
+// 产品属性价格-删除
+export function deleteBimProductAttributePrice (id) {
+  return request({
+    url: `/api/zgt/productAttributePrice/remove/${id}`,
+    method: 'delete',
+  })
+}
+
+// 产品属性价格-批量设置
+export function batchAddBimProductAttributePrice (data) {
+  return request({
+    url: '/api/zgt/productAttributePrice/batchAdd',
+    method: 'post',
+    data
+  })
+}
+
+// 产品属性价格-导入
+export function uploadBimProductAttributePrice (data) {
+  return request({
+    url: '/api/zgt/productAttributePrice/upload',
     method: 'post',
     data
   })

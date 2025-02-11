@@ -21,7 +21,7 @@
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-              <el-col :span="4">
+              <!-- <el-col :span="4">
                 <el-form-item>
                   <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="请输入品名规格"
                     clearable />
@@ -40,7 +40,7 @@
                       :value="item.value"></el-option>
                   </el-select>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
 
               <el-col :span="4">
                 <el-form-item>
@@ -50,8 +50,8 @@
                   </el-button>
                 </el-form-item>
               </el-col>
-              <el-button style="float: right;margin-right: 10px;" size="mini" type="primary"
-                icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button>
+              <!-- <el-button style="float: right;margin-right: 10px;" size="mini" type="primary"
+                icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button> -->
             </el-form>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">

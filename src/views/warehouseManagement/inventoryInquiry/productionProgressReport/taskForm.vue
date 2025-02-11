@@ -158,7 +158,7 @@ export default {
         processName: processName,
         productionPlanNo: "",
         orderNo: "",
-        orderStatus: "normal",
+        prodOrderStatus: "normal",
         classAttribute: "semi_finished",
         workReportFlag: true,
         pageNum: 1,

@@ -100,6 +100,7 @@ export default {
                 pageSize: 20,
                 reportStartDate: '',
                 reportEndDate: '',
+                reportingType:'normal',  // 报工类型 正常报工
                 documentStatus: 'submit',
                 orderItems: [
                     {

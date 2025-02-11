@@ -626,6 +626,7 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.$store.dispatch('base/getBusinessConfig','gobal')
     this.getWarehouseListFun()
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
   },

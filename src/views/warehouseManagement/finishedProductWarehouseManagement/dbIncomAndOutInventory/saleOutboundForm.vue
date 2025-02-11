@@ -34,6 +34,11 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
+                            </el-form-item>
+                          </el-col>
                           <!-- <el-col :sm="6" :xs="24">
                             <el-form-item label="业务单号" prop="sourceNo">
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
@@ -107,6 +112,12 @@
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
 
+                        <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                          v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
@@ -184,6 +195,18 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="remark2" label="备注2（LOT NO）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
@@ -221,6 +244,11 @@
                               <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
                                 :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
                                 maxlength="300" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
                             </el-form-item>
                           </el-col>
                           <!-- <el-col :sm="6" :xs="24">
@@ -294,7 +322,12 @@
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
-
+                        <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                          v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
@@ -370,6 +403,18 @@
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="remark2" label="备注2（LOT NO）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
@@ -521,6 +566,7 @@
 </template>
 
 <script>
+import { getOrderDetail, getsaleOrderList, } from '@/api/salesManagement/assemblyOrders'
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
@@ -1140,6 +1186,12 @@ export default {
       } else {
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
         this.dataForm.partnerName = data[0].cooperativePartnerName
+        // 获取订单客户合同号
+        if (this.$store.getters.configGlobal.customerContractNo === '1') {
+          getOrderDetail(data[0].ordersId).then(res => {
+            this.dataForm.contractNo = res.data.order.contractNo || '123'
+          })
+        }
         this.fetchData("CKDH", true)
         this.getBusInfo('b045')
         this.title = '新建出库单'

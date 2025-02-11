@@ -56,7 +56,7 @@
                                                 @change="search('basic')"
                                 />
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
-                                           :placeholder="'请选择' + item.label"
+                                           :placeholder="'请选择' + item.label" :disabled="item.disabled"
                                            :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
                                 >
                                     <el-option v-for="(item2, index2) in item.options" :key="index2"
@@ -64,6 +64,9 @@
                                                :value="item2.value"
                                     ></el-option>
                                 </el-select>
+                                <el-autocomplete v-else-if="item.searchType === 6" v-model="item.fieldValue"
+                                :fetch-suggestions="((queryString,cb)=>{querySearchAsync(queryString,cb,item)})" :placeholder="'请选择' + item.label" 
+                                     prefix-icon="el-icon-search"></el-autocomplete>
                             </el-form-item>
                         </el-col>
                     </template>
@@ -106,7 +109,7 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table  v-if="tableItems.length" @sort-change="sortChange" show-summary :summary-method="getSummaries" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
+                <JNPF-table  v-if="tableItems.length" @sort-change="sortChange" :show-summary="renderSummary" :summary-method="getSummaries" ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
                     <template v-for="item in tableItems">
                         <template v-if="['abrasive','oil','accessory','turnoverBox','total'].includes(item.prop)">
                             <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
@@ -260,7 +263,15 @@ export default {
         isProductNameSwitch:{
             type: String,
             default: ""
-        }
+        },
+        renderSummary:{
+            type:Boolean,
+            default:true
+        },
+         /* 列表数据请求方法 */
+         queryRequestMethon: {
+            required: true,
+        },
     },
     data() {
         return {
@@ -306,10 +317,52 @@ export default {
 
     },
     methods: {
+        querySearchAsync(queryString, cb, item) {
+            console.log(item,'item')
+            console.log(item.fn,'item')
+            console.log(queryString,'q')
+            console.log(cb,'cn')
+      if (queryString && queryString.length >= 0) {
+        item.queryRequestObj[item.searchName] = queryString
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+            item.fn(item.queryRequestObj).then(res => {
+            console.log(res,'ddd')
+            let datas = res.data.records
+            if (datas !== []) {
+              var restaurants = datas
+              var arr = []
+              restaurants.forEach((ele, index) => {
+                arr.push({
+                  value: ele[item.searchName],
+                  data: ele,
+                })
+              })
+              cb(arr)
+            } else {
+              let air = []
+              this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
+              queryString = ""
+              cb(air)
+            }
+          })
+            .catch(res => {
+              this.$message({
+                type: 'error',
+                message: '获取数据失败'
+              })
+            })
+        }, 500)
+      } else {
+        let air = []
+        cb(air)
+      }
+      // }
+    },
         sortChange({ prop, order }) {
             let newProp = ''
             console.log(prop)
-            if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode'].includes(prop)) {
+            if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode','customerProductNo','orderNum','remainingQuantity','costPrice','salePurchaseDate','orderDate'].includes(prop)) {
                 newProp = prop
             } else {
                 newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -376,8 +429,22 @@ export default {
                 this.treeLoading = false
             }
             this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
-            this.domSearchList = JSON.parse(JSON.stringify(this.searchList))
+            
+            this.domSearchList = this.deepCopy(this.searchList)
             this.initData()
+        },
+        deepCopy(source){
+            if (typeof source != "object") {
+            return source;
+            }
+            if (source == null) {
+                return source;
+            }
+            var newObj = source.constructor === Array ? [] : {};  //开辟一块新的内存空间
+            for (var i in source) {
+                newObj[i] = this.deepCopy(source[i]);
+            }
+            return newObj;
         },
         initData() {
             this.visible = false

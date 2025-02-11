@@ -33,6 +33,11 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="业务单号" prop="sourceNo">
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
@@ -171,6 +176,17 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="remark2" label="备注2（LOT NO）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>  <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
@@ -204,6 +220,11 @@
                               <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
                                 :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
                                 maxlength="300" />
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                            <el-form-item label="客户合同号" prop="contractNo">
+                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
@@ -273,6 +294,12 @@
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
+                        <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                          v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
+                          </template>
+                        </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-toolti
                           v-if="isProjectSwitch == 1" />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
@@ -344,6 +371,18 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="remark2" label="备注2（LOT NO）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark2" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" :key="128">
+                          <template slot-scope="scope">
+                            <el-input v-model="scope.row.remark3" :disabled="btnType == 'look'"
+                              placeholder="备注"></el-input>
+                          </template>
+                        </el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
@@ -410,6 +449,12 @@
                 <el-table-column prop="deliverDate" label="发货日期" width="160" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
+                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                  v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
+                  </template>
+                </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
@@ -469,6 +514,7 @@
   </transition>
 </template>
 <script>
+import { getOrderDetail, getsaleOrderList, } from '@/api/salesManagement/assemblyOrders'
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves, getBimBusinessDetail } from '@/api/basicData/index'
@@ -1058,6 +1104,7 @@ export default {
         // this.refeshDataFormItems()
         getQuotationsendlist(data.id).then(res => {
           console.log("详情", res);
+          this.dataForm.contractNo = res.data.notice.contractNo
           // let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
           let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute));
           if (filteredArray.length) {

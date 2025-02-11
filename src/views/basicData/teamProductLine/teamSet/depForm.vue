@@ -68,13 +68,13 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="创建人" prop="createBy" v-if="btntype">
-            <el-input v-model="dataForm.createBy" maxlength="200" :disabled="btntype ? true : false" />
+          <el-form-item label="创建人" prop="createByName" v-if="btntype">
+            <el-input v-model="dataForm.createByName" maxlength="200" :disabled="btntype ? true : false" />
           </el-form-item>
         </el-col>
 
         <el-col :span="24">
-          <topOpts @add="addtable()" :addText="'添加'" style="margin-bottom: 10px;">
+          <topOpts v-if="!btntype" @add="addtable()" :addText="'添加'" style="margin-bottom: 10px;">
           </topOpts>
           <el-table :data="lines" height="300" highlight-current-row>
             <el-table-column prop="personnelIdText" label="人员名称" width="120">
@@ -209,7 +209,7 @@ export default {
         name: "",
         state: 'enable',
         createTime: "",
-        createBy: "",
+        createByName: "",
         id: "",
         workType: "",
         reportingType: "",

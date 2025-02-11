@@ -422,7 +422,7 @@ export default {
       this.currentProcess.reportingTime = e + ' 00:00:00'
     },
     commonFun() {
-      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
+      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.utilizeQuantity]), 6)
 
       if (this.currentProcess.processingType == 'self_produced' && this.currentProcess.reportFlag == true) {
         this.getvibrationLevelFun()

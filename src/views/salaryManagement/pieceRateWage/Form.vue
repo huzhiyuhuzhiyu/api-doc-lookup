@@ -176,6 +176,7 @@ export default {
         productName:"",
         productCode:"",
         productDrawingNo:"",
+        reportingType:'normal',  // 报工类型 正常报工
         reportStartDate:"",
         reportEndDate:"",
         processCode:"", 

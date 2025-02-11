@@ -536,6 +536,7 @@ export default {
         let obj = {
           productionOrderNo: this.dataForm.orderNo,
           classAttribute: "finish_product",
+          reportingType:'normal',  // 报工类型 正常报工
           processId: "",
           "orderItems": [
             {

@@ -175,7 +175,6 @@ export default {
   },
   methods: {
     columnSetFun() {
-      console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
     },
     sortChange({ prop, order }) {
@@ -207,7 +206,6 @@ export default {
       })
     },
     init(data, index, type, requestFlag) {
-      console.log(data, index);
       this.customerVisible = true
       this.type = type || ''
       this.requestFlag = requestFlag || ""
@@ -260,7 +258,6 @@ export default {
       this.listLoading = true
       // this.form.projectId=this.cpData.projectId
       getBatchNumber(this.form).then(res => {
-        console.log("批次号数据", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
         this.listLoading = false

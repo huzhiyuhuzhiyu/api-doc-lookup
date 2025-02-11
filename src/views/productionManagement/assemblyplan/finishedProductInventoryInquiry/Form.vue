@@ -1379,19 +1379,32 @@ export default {
       this.$set(this.dataForm, 'routingName', "")
       this.$refs.dataForm.clearValidate('planDate');
       this.$refs.dataForm.clearValidate('routingName');
-
-      if (this.dataForm.bomId) {
-        BOMLineList(this.dataForm.bomId).then(res => {
-          console.log("bom详情", res);
-          this.materialList = res.data
-          if (!this.materialList.length) return
-          this.materialList.forEach(item => {
-            let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
-            let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-            this.$set(item, 'materialsUsedQuantity', totalNum)
-          });
-        })
+      let obj={
+        materialsUsedQuantity:this.dataForm.productionQuantity,
+        qty:1,
+        reduceType:"picking",
+        calculationDirection:this.dataForm.calculationDirection,
+        ratio:this.dataForm.ratio,
+        productsId:this.dataForm.productsId,
+        mainUnit:this.dataForm.mainUnit,
+        productCode:this.dataForm.productCode,
+        productName:this.dataForm.productName,
+        productDrawingNo:this.dataForm.productDrawingNo,
+   
       }
+      this.materialList=[obj]
+      // if (this.dataForm.bomId) {
+      //   BOMLineList(this.dataForm.bomId).then(res => {
+      //     console.log("bom详情", res);
+      //     this.materialList = res.data
+      //     if (!this.materialList.length) return
+      //     this.materialList.forEach(item => {
+      //       let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
+      //       let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+      //       this.$set(item, 'materialsUsedQuantity', totalNum)
+      //     });
+      //   })
+      // }
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.dataForm.productsName = data[0].productName
       this.dataForm.productsDrawingNo = data[0].productDrawingNo

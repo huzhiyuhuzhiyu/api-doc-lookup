@@ -2299,7 +2299,6 @@ export default {
         if (valid) {
           this.btnLoading = true
           this.batchForm.bizIdList = this.selectPurchaseNoticeList.map(item => item.id); 
-          console.log(this.batchForm);
           
           batchInboundList(this.batchForm).then(res => {
             this.$message.success("批量入库成功")
@@ -2322,14 +2321,12 @@ export default {
     },
     // 所选的库位信息
     selectWareHouseFun(data, type) {
-      console.log("库位信息", data);
 
       this.batchForm.shelfSpaceId = data.id
       this.batchForm.shelfSpaceName = data.name
     },
     // 切换仓库
     changeWarehousex(val, data) {
-      console.log("data", data);
       if (!val && !data.length) {
         this.batchForm.warehouseId = ''
         this.batchForm.warehouseName = ''
@@ -2376,7 +2373,6 @@ export default {
       //     clearance //游隙
       //     packagingMethod //包装方式          
       //     specialRequire //特殊要求
-      console.log(this.categoryType);
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === prop)
 
       this.superQueryJson.splice(classIndex + 1, 0, {
@@ -2526,7 +2522,6 @@ export default {
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
-        console.log("仓库详情", res);
         this.projectId = this.isProjectSwitch === '1' ? res.data[0].projectId || '' : ''
         this.batchForm.warehouseName = res.data[0].name
         this.batchForm.warehouseId = res.data[0].id
@@ -2666,7 +2661,6 @@ export default {
         }
         this.externalList = res.data.records
         this.externalTotal = res.data.total
-        console.log("外协订单列表", res);
       })
     },
     // 外协收货  订单  多选
@@ -2764,7 +2758,6 @@ export default {
         this.saleFlag = res.data.warehouse[2].configValue1 == '1' ? true : false
         this.outboundExternalSendFlag = res.data.warehouse[3].configValue1 == '1' ? true : false
         if (this.saleFlag) {
-          console.log(555, this.$refs.salestabForm);
           this.salecolumnList = ["cooperativePartnerCode",]
         }
         this.getclassAttributeList()
@@ -2773,7 +2766,6 @@ export default {
     },
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
-        console.log("类别属性", res);
         this.classAttributeList = res.data
         this.getStockMovelistFun()
       })
@@ -2784,14 +2776,11 @@ export default {
         classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
-      console.log("obj",obj);
       getStockMovelist(obj.classAttributeList, obj.projectId, this.warehouseCode).then(res => {
-        console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {
             if (item.businessType == 'outbound_sale_send') {
               if (this.saleFlag) item.num = item.orderTodoNum
-              console.log("item====>", item);
               this.$set(item, 'fullName', '销售发货')
             }
             if (item.businessType == 'inbound_sale_return') {
@@ -2950,7 +2939,6 @@ export default {
             this.$refs.equipmentOutboundREFForm.init(data, btnType, this.categoryType, this.classAttributeList, this.warehouseCode)
           })
         } else if (this.categoryType == 'inbound_return') {
-          console.log(555);
           this.equipmentInboundVisible = true
           this.$nextTick(() => {
 
@@ -2971,13 +2959,11 @@ export default {
       if (this.categoryType == 'outbound_sale_send') {
         let newProp
         if (this.saleFlag) {
-          console.log("销售发货订单");
           if (prop == 'customerProductNo' || prop == 'deliveryDate' || prop == 'sealingCoverTyping' || prop == 'sealingCoverTyping' || prop == 'vibrationLevel' || prop == 'oilQuantity' || prop == 'packagingMethod' || prop == 'accuracyLevel' || prop == 'specialRequire') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
           else newProp = prop
           this.saleOrderForm.orderItems[0].asc = order === 'ascending'
           this.saleOrderForm.orderItems[0].column = newProp
         } else {
-          console.log("销售发货通知单");
           if (prop == 'orderNo' || prop == 'deliverDate' || prop == 'recipient' || prop == 'phone' || prop == 'exchangeGoodsFlag' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
           else newProp = prop
           this.fhForm.orderItems[0].asc = order === 'ascending'
@@ -2998,7 +2984,6 @@ export default {
       if (this.categoryType == 'inbound_purchase') {
         let newProp
         if (this.purchaseFlag) {
-          console.log("采购收货订单");
 
 
           if (prop == 'orderNo' || prop == 'cooperativePartnerName' || prop == 'cooperativePartnerCode' || prop == 'drawingNo' || prop == 'productCode' || prop == 'num' || prop == 'waitReceiptNum'
@@ -3009,7 +2994,6 @@ export default {
           this.purchaseForm.orderItems[0].column = newProp
         } else {
 
-          console.log("采购收货通知单");
           if (prop == 'orderNo' || prop == 'salesman' || prop == 'deliverDate' || prop == 'createTime') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
           else newProp = prop
           this.cgForm.orderItems[0].asc = order === 'ascending'
@@ -3031,7 +3015,6 @@ export default {
 
         let newProp
         if (!this.outboundExternalSendFlag) {
-          console.log("外协发料通知单");
           if (prop == 'orderNo' || prop == 'partnerName' || prop == 'partnerCode' || prop == 'deliverDate' || prop == 'recipient'
             || prop == 'phone' || prop == 'delivery' || prop == 'countryName' || prop == 'provinceName' || prop == 'cityName' || prop == 'areaName' || prop == 'address'
             || prop == 'createTime' || prop == 'createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -3039,7 +3022,6 @@ export default {
           this.wxflForm.orderItems[0].asc = order === 'ascending'
           this.wxflForm.orderItems[0].column = newProp
         } else {
-          console.log("外协发料订单");
           if (prop == 'orderNo' || prop == 'deliveryDate' || prop == 'mainUnit' || prop == 'purchaseQuantity') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
           else newProp = prop
           this.exterMaterForm.orderItems[0].asc = order === 'ascending'
@@ -3051,7 +3033,6 @@ export default {
 
         let newProp
         if (!this.externalFlag) {
-          console.log("外协收货通知单");
           if (prop == 'orderNo' || prop == 'partnerName' || prop == 'partnerCode' || prop == 'deliverDate' || prop == 'recipient'
             || prop == 'phone' || prop == 'delivery' || prop == 'countryName' || prop == 'provinceName' || prop == 'cityName' || prop == 'areaName' || prop == 'address'
             || prop == 'createTime' || prop == 'createByName') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -3060,7 +3041,6 @@ export default {
           this.wxflForm.orderItems[0].column = newProp
         } else {
 
-          console.log("外协收货订单");
           if (prop == 'orderNo' || prop == 'drawingNo' || prop == 'mainUnit' || prop == 'purchaseQuantity' || prop == 'deliveryDate') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
           else newProp = prop
           this.externalForm.orderItems[0].asc = order === 'ascending'
@@ -3106,7 +3086,6 @@ export default {
     // 根据左侧分类  点击不同的分类  请求不同的数据
     getTabdataList(type) {
       // 销售发货
-      console.log(this.categoryType);
       if (this.categoryType == 'outbound_sale_send') {
         if (this.saleFlag) {
           if (this.saleOrderDateArr.length) {
@@ -3140,7 +3119,6 @@ export default {
           this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
             this.listLoading = false
-            console.log("销售明细", res);
             if (this.mainUnitFlag == 1) {
               res.data.records.forEach(item => {
                 if (item.calculationDirection == 'multiplication') {
@@ -3273,7 +3251,6 @@ export default {
           }
           this.purchaseForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           detailpurchaseOrderList(this.purchaseForm).then(res => {
-            console.log("采购明细", res);
             if (this.mainUnitFlag == 1) {
               res.data.records.forEach(item => {
 
@@ -3477,7 +3454,6 @@ export default {
       // 生产领料
       if (this.categoryType == 'outbound_pick_out') {
         this.listLoading = true
-        console.log(555);
         this.pickForm.productClassAttributeList = this.classAttributeList
         this.pickForm.approvalStatus = 'ok'
 
@@ -3502,7 +3478,6 @@ export default {
         this.pickForm.warehouseId=this.warehouseInfo.warehouseId
         this.pickForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         WithdrawalList(this.pickForm).then(res => {
-          console.log("领料", res);
           this.pickingTableList = res.data.records
           this.pickTotal = res.data.total
           this.listLoading = false
@@ -3536,7 +3511,6 @@ export default {
         }
         this.returnMaterForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         WithdrawalList(this.returnMaterForm).then(res => {
-          console.log("退料", res);
           this.returnMaterTableList = res.data.records
           this.returnMaterTotal = res.data.total
           this.listLoading = false
@@ -3599,7 +3573,6 @@ export default {
         }
         this.outboundUseForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         CollectionandreturnList(this.outboundUseForm).then(res => {
-          console.log("退料", res);
           this.outboundUseTableList = res.data.records
           this.outboundUseTotal = res.data.total
           this.listLoading = false
@@ -3640,7 +3613,6 @@ export default {
         }
         this.inboundReturnForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
         CollectionandreturnList(this.inboundReturnForm).then(res => {
-          console.log("归还", res);
           this.inboundReturnData = res.data.records
           this.inboundReturnTotal = res.data.total
           this.listLoading = false
@@ -3674,7 +3646,6 @@ export default {
       }
       this.filpForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       ordershengchanList(this.filpForm).then(res => {
-        console.log("生产产品", res);
         this.filpData = res.data.records
         this.filpTotal = res.data.total
         this.listLoading = false
@@ -3707,7 +3678,6 @@ export default {
       }
       this.productForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       ordershengchanList(this.productForm).then(res => {
-        console.log("生产产品", res);
         this.productData = res.data.records
         this.productTotal = res.data.total
         this.listLoading = false
@@ -3740,7 +3710,6 @@ export default {
       }
       this.workForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
       getWorkPage(this.workForm).then(res => {
-        console.log("生产产品", res);
         this.workData = res.data.records
         this.workTotal = res.data.total
         this.listLoading = false
@@ -3758,7 +3727,6 @@ export default {
     },
     // 生产产品多选
     handleSelectionProduct(val) {
-      console.log(val);
       this.selectProductList = []
       this.selectProductList = val
     },
@@ -3773,7 +3741,6 @@ export default {
       arr.push(row)
       this.productInboundFormVisible = true
       this.$nextTick(() => {
-        console.log(555);
         this.$refs.productInboundREFForm.init(arr, 'add', this.classAttributeList, this.warehouseCode, type)
       })
     },
@@ -5323,10 +5290,8 @@ export default {
     },
     // 查看详情
     viewFun(id, btnType, ref, visible) {
-      console.log(id, btnType, ref, visible);
       this.$nextTick(() => {
         if (ref == 'PickREFForm') {
-          console.log(666);
           this.$refs[ref].init(id, btnType, false, 'pick')
         } else if (ref == 'OutbounduseREFForm') {
           // 设备领用查看详情
@@ -5385,7 +5350,6 @@ export default {
 
 
     filterNode(value, data) {
-      console.log(value, data);
       if (!value) return true;
       return data.fullName.indexOf(value) !== -1;
     },

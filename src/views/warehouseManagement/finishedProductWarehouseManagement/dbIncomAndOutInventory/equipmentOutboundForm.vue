@@ -696,12 +696,10 @@ export default {
     },
     // 设置编码
     setCodeFun(row, index) {
-      console.log(row);
       if (!row.num) return this.$message.error("请先输入领用数量")
       this.setcodeVisible = true
       this.currentUseIndex = index
       if (row.warehouseCodeLineList.length) {
-        console.log("有数据", row.warehouseCodeLineList);
 
         if (row.warehouseCodeLineList.length < row.num) {
           let list = JSON.parse(JSON.stringify(row.warehouseCodeLineList))
@@ -721,7 +719,6 @@ export default {
           this.arr = row.warehouseCodeLineList.splice(0, row.num)
         }
       } else {
-        console.log("没有数据");
         this.arr = Array.from({ length: row.num }, () => ({
           assetCode: "",
           moveId: "",
@@ -743,7 +740,6 @@ export default {
       this.$set(this.productData[this.currentUseIndex], 'warehouseCodeLineList', this.arr)
       // this.productData[this.currentUseIndex].warehouseCodeLineList = this.arr
       this.setcodeVisible = false
-      console.log(this.productData);
     },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
@@ -757,7 +753,6 @@ export default {
     },
     // 选择批次
     selectBatchNumberFun(data, index) {
-      console.log("批次号数据", data, index);
 
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
@@ -777,7 +772,6 @@ export default {
     },
     // 所选的库位信息
     selectWareHouseFun(data) {
-      console.log("库位信息", data);
       let index = this.currentProductIndex
       this.$set(this.productData[index], 'shelfSpaceName', data.name)
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
@@ -827,7 +821,6 @@ export default {
               }
             }
           });
-          console.log("res.data.records", res.data.records);
           this.productList = res.data.records
           this.productTotal = res.data.total
         }
@@ -875,7 +868,6 @@ export default {
         }
         this.productData.push(item)
       });
-      console.log("this.dataFormTwo", this.productData);
     },
     // 产品信息列表多选
     handeleProductInfoData(val) {
@@ -975,7 +967,6 @@ export default {
 
 
     changeWarehousex(val, data) {
-      console.log("data", data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
@@ -1018,7 +1009,6 @@ export default {
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
     init(data, btnType, businessType, classAttributeList, warehouseCode) {
-      console.log("112", data, btnType, classAttributeList, businessType);
 
       // this.visible = true
       this.oldData = data
@@ -1028,7 +1018,6 @@ export default {
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
       this.getWarehouseListFun()
-      console.log("btnty", btnType);
       // this.refeshDataFormItems()
 
 
@@ -1064,7 +1053,6 @@ export default {
         this.fetchData("CKDH", true)
         this.getBusInfo('b045')
         detailCollectionandreturn(data.id).then(res => {
-          console.log("详情", res);
           if (res.data.lines.length) {
             res.data.lines.forEach(item => {
               item.noticeId = ""
@@ -1083,7 +1071,6 @@ export default {
                 }
               }
             });
-            console.log("this.productData", this.productData);
             this.productData = res.data.lines
           }
           this.formLoading = false
@@ -1109,7 +1096,6 @@ export default {
       }
     },
     async handleConfirm(submitModel) {
-      console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1129,7 +1115,6 @@ export default {
           }
 
           if (this.productData.length) {
-            console.log(this.productData);
             let totals = {};
             let totalNum = {};
             for (let index = 0; index < this.productData.length; index++) {
@@ -1201,7 +1186,6 @@ export default {
               spaceLines: this.copyLinesData,
               flowData: this.flowData
             }
-            console.log("this.dataForm", this.dataForm);
             // // 提交确认
             // if (submitModel === 'submit') {
             //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
@@ -1210,7 +1194,6 @@ export default {
             //     return this.btnLoading = false
             //   }
             // }
-            console.log("this.productData", this.productData);
             this.btnLoading = true
             formMethod(dataObj).then(res => {
               let msg = res.msg

@@ -911,14 +911,12 @@ export default {
         }
       }
       this.productData = productArr
-      console.log(this.productData);
     },
 
 
 
     // 切换仓库
     changeWarehousex(val, data) {
-      console.log("data", data);
       if (!val && !data.length) {
         this.dataForm.warehouseId = ''
         this.dataForm.warehouseName = ''
@@ -989,7 +987,6 @@ export default {
     // { label: "外协退货", value: "outbound_external" },
     init(data, btnType, businessType, classAttributeList, warehouseCode) {
 
-      console.log("665", data, btnType, businessType);
       // this.visible = true
       this.warehouseCode = warehouseCode
       this.dataForm.businessType = businessType
@@ -1044,7 +1041,6 @@ export default {
         this.title = '新建入库单'
         this.datafilelist = []
         detailCollectionandreturn(data.id).then(res => {
-          console.log("详情", res);
           if (res.data.lines.length) {
             res.data.lines.forEach(item => {
               item.noticeId = ""
@@ -1081,7 +1077,6 @@ export default {
                 }
               });
             });
-            console.log("this.productData", this.productData);
             this.productData = res.data.lines
           }
           this.formLoading = false
@@ -1133,7 +1128,6 @@ export default {
       }
     },
     async handleConfirm(submitModel) {
-      console.log(this.productData);
       let submitFlag = true // 自动聚焦是否可用
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1153,7 +1147,6 @@ export default {
           }
 
           if (this.productData.length) {
-            console.log(this.productData);
             let totals = {};
             let totalNum = {};
             for (let index = 0; index < this.productData.length; index++) {
@@ -1167,8 +1160,6 @@ export default {
 
 
               if (Number(item.num) > Number(item.ordersNum)) {
-                console.log(item.num);
-                console.log(item.ordersNum);
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待退货数量")
                 break
@@ -1186,7 +1177,6 @@ export default {
             }
             for (let id in totals) {
               if (totals[id].totalNum > totals[id].ordersNum) {
-                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
                 submitFlag = false
                 this.$message.error("同产品的总数量不能超过订单数量")
                 break
@@ -1232,7 +1222,6 @@ export default {
               spaceLines: this.copyLinesData,
               flowData: this.flowData
             }
-            console.log("this.dataForm", this.dataForm);
             // // 提交确认
             // if (submitModel === 'submit') {
             //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
@@ -1241,7 +1230,6 @@ export default {
             //     return this.btnLoading = false
             //   }
             // }
-            console.log("this.productData", this.productData);
             this.btnLoading = true
             formMethod(dataObj).then(res => {
               let msg = res.msg

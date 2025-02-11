@@ -445,6 +445,7 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
+        inventoryFlag: 1,
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [

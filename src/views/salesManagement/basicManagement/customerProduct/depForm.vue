@@ -1935,11 +1935,23 @@ export default {
           // flowData: this.flowData
           partnerType: "customer",
         }
+        let editObj = {
+          ...filteredArr[0],
+          attachmentList: this.datafilelist,
+          // sale: this.dataForm,
+          id: this.dataForm.id,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          dateOrderStart: this.dataForm.dateOrderStart,
+          dateOrderStop: this.dataForm.dateOrderStop,
+          // list: filteredArr,
+          // flowData: this.flowData
+          partnerType: "customer",
+        }
         console.log(obj, '参数');
-        // let queryBody = this.btnType === 'add' ? obj : filteredArr[0]
+        let queryBody = this.btnType === 'add' ? obj : editObj
         // return
         const formMethod = this.btnType === 'add' ? addPartnerOrProductData : updatePartnerOrProductData
-        formMethod(obj).then(res => {
+        formMethod(queryBody).then(res => {
           let msg = "";
           if (value == "draft") {
             this.submitmethodsTitle = "保存成功"

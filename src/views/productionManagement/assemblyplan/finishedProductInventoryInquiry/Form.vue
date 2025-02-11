@@ -1368,7 +1368,7 @@ export default {
         this.processList = [...this.processList, ...arr]
       })
     },
-    init(data, btnType) {
+    init(data, btnType,pageType) {
       console.log(data);
       this.getProductionLineListFun()
       this.dataForm = data[0]
@@ -1411,7 +1411,9 @@ export default {
       this.dataForm.projectId = data[0].projectId
       this.dataForm.mainUnit = data[0].mainUnit
       // this.dataForm.productionQuantity=data[0].inventoryQuantity 
-      this.dataForm.stockInventoryLineId = data[0].id
+      if(pageType=='finish')this.dataForm.stockInventoryLineId = data[0].id
+      if(pageType=='sale')this.dataForm.stockInventoryLineId = data[0].stockInventoryLineId
+      
       this.dataForm.productsId = data[0].productsId
       this.$set(this.dataForm, 'orderType', 'flipping')
       this.fetchData("PROD")

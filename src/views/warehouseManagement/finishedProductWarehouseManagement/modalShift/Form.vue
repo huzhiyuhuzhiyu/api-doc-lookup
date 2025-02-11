@@ -626,6 +626,8 @@ export default {
         { prop: 'availableQuantity', label: '当前库存', minWidth: 120 },
         { prop: 'mainUnit', label: '单位', minWidth: 120 },
         { prop: 'batchNumber', label: '批次号', minWidth: 180 },
+        { prop: 'pairingModeName', label: '配对方式', minWidth: 140 },
+        { prop: 'sealingCoverTyping', label: '打字内容', minWidth: 160 }
       ],
       targetProductListQueryObj: { // 目标产品
         productDrawingNo: "",

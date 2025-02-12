@@ -16,6 +16,7 @@
           <el-radio-button label="deputyUnit">副单位设置</el-radio-button>
           <el-radio-button label="maintenance">维修设置</el-radio-button>
           <el-radio-button label="departmentalset">人力资源设置</el-radio-button>
+          <el-radio-button label="print">打印设置</el-radio-button>
         </el-radio-group>
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
@@ -291,6 +292,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'price'
         this.getData(11)
+      } else if (this.activeName === 'print') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'print'
+        this.getData(12)
       }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -336,6 +341,8 @@ export default {
             list = res.data.maintenance
           } else if (this.activeName === 'departmentalset') {
             list = res.data.departmentalset
+          }  else if (this.activeName === 'print') {
+            list = res.data.print
           } else if (this.activeName === 'orderField') {
             list = res.data.orderField
             list.forEach(item => {

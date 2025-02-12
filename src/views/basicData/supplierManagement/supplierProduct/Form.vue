@@ -42,7 +42,7 @@
                       <el-col :span="8">
                         <el-form-item label="有效结束时间" prop="dateOrderStop">
                           <el-date-picker v-model="dataForm.dateOrderStop" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择有效结束时间"
+                            style="width: 100%;" placeholder="请选择有效结束时间"  @change="handleEndDateChange"  
                             :disabled="type == 'look' ? true : false"></el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -588,6 +588,14 @@ export default {
     }
   },
   methods: {
+    handleEndDateChange(value) {  
+      const startDate = new Date(this.dataForm.dateOrderStart)  
+      const endDate = new Date(value)  
+      if (startDate && endDate < startDate) {  
+        this.$message.error('有效结束时间不能小于有效开始时间')  
+        this.dataForm.dateOrderStop = '' // 清空结束时间  
+      }  
+    },
     checkDate() {
       return (rule, value, callback) => {
         let index = rule.field.split('.')[1]

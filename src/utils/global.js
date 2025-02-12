@@ -72,30 +72,26 @@ const global = {
     shortcuts: [{ // 调用时使用 global.timePickerOptions.shortcuts 不设置日期/时间选择限制
       text: '最近一周',
       onClick(picker) {
-        const end = new Date()
-        const start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-        picker.$emit('pick', [start, end])
+        const start = moment().subtract(6, 'days').startOf('day');
+        const end = moment().endOf('day');
+        picker.$emit('pick', [start.toDate(), end.toDate()]);
       }
     }, {
       text: '最近一个月',
       onClick(picker) {
-        const end = new Date()
-        const start = new Date()
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-        picker.$emit('pick', [start, end])
+        const start = moment().subtract(30, 'days').startOf('day');
+        const end = moment().endOf('day');
+        picker.$emit('pick', [start.toDate(), end.toDate()]);
       }
     }, {
       text: '上个月',
       onClick(picker) {
-        const end = new Date(moment((new Date().getTime())).format('YYYY-MM-01 00:00:00'))
-        const start = new Date()
-        end.setTime(end.getTime() - 3600 * 1000 * 24)
-        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30)
-        picker.$emit('pick', [start, end])
+        const start = moment().subtract(1, 'months').startOf('month');
+        const end = moment().subtract(1, 'months').endOf('month');
+        picker.$emit('pick', [start.toDate(), end.toDate()]);
       }
     }]
-  }
+  },
 }
 
 export default global

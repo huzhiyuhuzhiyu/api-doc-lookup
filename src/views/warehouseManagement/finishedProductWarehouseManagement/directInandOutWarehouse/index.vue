@@ -994,7 +994,7 @@ export default {
     this.getclassAttributeList()
     this.getBusInfo('b046')
     let objs = { "pageSize": -1, "businessCode": "product" }
-    getBimBusinessSwitchConfigList(objs).then(res => {
+    await getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
     })
     this.$nextTick(() => { this.$refs.product.doLayout() })

@@ -323,6 +323,21 @@ export default {
               endPlaceholder: '结束时间',
               pickerOptions: this.global.timePickerOptions
             }
+          } else if (column.label === '单据状态') {
+            props = {
+              type: 'select',
+              options: this.global.documentStatusList
+            }
+          } else if (column.label === '审批状态') {
+            props = {
+              type: 'select',
+              options: this.global.approvalStateList
+            }
+          } else if (column.label.includes('是否')) {
+            props = {
+              type: 'select',
+              options: this.global.booleanOptions
+            }
           }
           return {
             ...column,

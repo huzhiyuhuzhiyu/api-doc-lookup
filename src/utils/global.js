@@ -10,6 +10,11 @@ const global = {
     { label: "审批通过", value: "ok" },
     { label: "审批拒绝", value: "rebut" },
   ],
+  // 布尔值选项
+  booleanOptions: [
+    { label: "是", value: true },
+    { label: "否", value: false },
+  ],
   timePicker: { // 日期/时间选择器通用选项（禁用未发生的时间）
     disabledDate(time) {
       return time.getTime() > Date.now();

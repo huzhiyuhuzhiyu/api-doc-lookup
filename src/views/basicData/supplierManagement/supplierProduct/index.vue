@@ -244,7 +244,7 @@ import { buyFixedPointPricingDetailList } from '@/api/purchasingManagement/purch
 import JNPFForm from './Form'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  name: 'PartnerProduct',
+  name: 'supplierProduct',
   components: { JNPFForm, ExportForm, SuperQuery },
   mixins: [getProjectList],
   data() {

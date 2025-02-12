@@ -136,16 +136,16 @@
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
                       </div>
-                      <div class="JNPF-common-head-right">
+                      <!-- <div class="JNPF-common-head-right">
 
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun()" />
                         </el-tooltip>
-                      </div>
+                      </div> -->
                     </div>
-
-                    <JNPF-table ref="product"  :data="productData" custom-column  :fixedNO="true" :hasC="btnType != 'look'"
+                    <!-- custom-column -->
+                    <JNPF-table ref="product"  :data="productData"   :fixedNO="true" :hasC="btnType != 'look'"
                       @selection-change="handeleProductInfoData" border style="width: 100%;">
                       <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
@@ -989,15 +989,15 @@ export default {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getpairingModeListFun()
+    await this.getWarehouseListFun()
     this.getprocessList()
-    this.getWarehouseListFun()
     this.getclassAttributeList()
     this.getBusInfo('b046')
     let objs = { "pageSize": -1, "businessCode": "product" }
     await getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
     })
-    this.$nextTick(() => { this.$refs.product.doLayout() })
+    // this.$nextTick(() => { this.$refs.product.doLayout() })
   },
   watch: {
     "dataForm.warehouseId": {
@@ -1877,12 +1877,12 @@ export default {
       this.$emit('close')
     },
     // 获取仓库id
-    getWarehouseListFun() {
-      getWarehouseList({ code: this.warehouseCode }).then(res => {
+    async getWarehouseListFun() {
+      await getWarehouseList({ code: this.warehouseCode }).then(res => {
         this.dataForm.warehouseName = res.data[0].name
         this.dataForm.warehouseId = res.data[0].id
         // 获取仓库详情信息
-        getWarehouseInfo(res.data[0].id).then(response => {
+         getWarehouseInfo(res.data[0].id).then(response => {
           this.dataForm.warehouseType = response.data.type
           this.dataForm.projectId = res.data[0].projectId
           this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true

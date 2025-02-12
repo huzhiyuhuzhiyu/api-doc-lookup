@@ -343,7 +343,7 @@ export default {
             ...column,
             ...props,
           }
-        })
+        }).filter(column => column.columnVisible)
       }
 
       if (!this.conditionList.length) {

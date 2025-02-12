@@ -6,6 +6,7 @@
   - show 是否显示
   - columnOptions 查询条件列表
   - partentOrChild 副表需要传字符串child
+  - tableRef 指定表格ref，自动生成高级查询条件（如果columnOptions中某项prop与表格列prop相同，则使用此项作为列查询条件）
   * 方法
   - superQuery 提交时触发
   - close 关闭时触发
@@ -219,7 +220,10 @@ export default {
     show: {
       type: Boolean,
       default: false
-    }
+    },
+    tableRef: {
+      type: String
+    },
   },
   data() {
     return {
@@ -296,6 +300,37 @@ export default {
   methods: {
     async init() {
       this.loading = true
+      let columnOptions = this.columnOptions
+
+      if (this.tableRef) { // 读取表格ref列，自动生成高级查询条件
+        columnOptions = this.$parent.$refs[this.tableRef].columnList.map(column => {
+          let props = { type: 'input' }
+          if (this.columnOptions.some(item => item.prop === column.prop)) {
+            props = this.columnOptions.find(item => item.prop === column.prop)
+          } else if (column.label.endsWith('日期')) {
+            props = {
+              type: 'daterange',
+              valueFormat: "yyyy-MM-dd",
+              startPlaceholder: '开始日期',
+              endPlaceholder: '结束日期',
+              pickerOptions: this.global.timePickerOptions
+            }
+          } else if (column.label.endsWith('时间')) {
+            props = {
+              type: 'datetimerange',
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              startPlaceholder: '开始时间',
+              endPlaceholder: '结束时间',
+              pickerOptions: this.global.timePickerOptions
+            }
+          }
+          return {
+            ...column,
+            ...props,
+          }
+        })
+      }
+
       if (!this.conditionList.length) {
         this.conditionList = [{
           prop: '',
@@ -305,7 +340,7 @@ export default {
           symbolOptions: this.symbolOptions.filter(symbolOption => symbolOption.effectType.includes('input'))
         }]
       }
-      let componentList = deepClone(this.columnOptions)
+      let componentList = deepClone(columnOptions)
       let demoFieldOptions = [
         // { // 下拉选
         //   prop: 'type',

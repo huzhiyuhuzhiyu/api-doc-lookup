@@ -98,3 +98,11 @@ export function getData(data) {
     data
   })
 }
+
+// 获取打印模版(能博旺)
+export function getPrintDeliveryNote(id) {
+  return request({
+    url: `/api/wms/stock/move/print/deliveryNote/${id}`,
+    method: 'get'
+  })
+}

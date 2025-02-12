@@ -260,7 +260,9 @@
                     <el-dropdown-item type="text"
                       :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
-
+                      <el-dropdown-item type="text" v-if="isPrintNBWSwitch === '1'"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
+                      @click.native="nbwPrintFun(scope.row)">能博旺打印</el-dropdown-item>
                   </el-dropdown-menu>
 
                 </el-dropdown>
@@ -349,7 +351,7 @@ import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue
 import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
-import { getPrintBusInfo } from '@/api/system/printDev'
+import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -389,6 +391,7 @@ export default {
     return {
       takingAdjustVisible: false,
       printVisible: false,
+      isPrintNBWSwitch:'',
       printBrowseVisible: false,
       inboundReturnVisible: false,
       outboundUseVisible: false,
@@ -627,10 +630,16 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.$store.dispatch('base/getBusinessConfig','gobal')
+    await this.getPrintNBWSwitch('print', 'print_zy_nbw')
     this.getWarehouseListFun()
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
   },
   methods: {
+    async getPrintNBWSwitch(code, type) {
+      try {
+        this.isPrintNBWSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     handleSelectionChange(val) {
       this.selectArr = val
 
@@ -697,7 +706,12 @@ export default {
         this.$refs.printTemplate.init(this.enCode)
       })
     },
-
+    nbwPrintFun(row){
+      getPrintDeliveryNote(row.id).then(res=>{
+        console.log(res,'res')
+        this.jnpf.downloadFile(res.data.url)
+      })
+    },
     closePrint() {
       this.printVisible = false
     },

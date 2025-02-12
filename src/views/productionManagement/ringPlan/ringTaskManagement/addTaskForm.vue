@@ -1277,6 +1277,7 @@ export default {
                         materialsUsedQuantity:totalNum,
                         processName:'',
                         processId:item.processId || '',
+                        productsId:item.productId
                     }
                 }) : []
               })
@@ -1492,10 +1493,11 @@ export default {
                   calculationDirection: item.calculationDirection,
                   mainUnit: item.mainUnit,
                   ratio: item.ratio,
-                  materialsUsedQuantity:item.materialsUsedQuantity || '',
+                  materialsUsedQuantity:item.materialsUsedQuantity || this.dataForm.productionQuantity,
                   processName:'',
                   processId:'',
-                  selectProduct:true
+                  selectProduct:true,
+                  reduceType:item.reduceType ? item.reduceType : 'picking',
               }
           })
           console.log(this.materialList,'this.materialList')

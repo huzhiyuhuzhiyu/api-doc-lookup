@@ -145,7 +145,7 @@
                       </div>
                     </div>
 
-                    <JNPF-table ref="product"  :data="productData" custom-column  :fixedNO="true" :hasC="btnType != 'look'"
+                    <JNPF-table ref="product"  :data="productData" custom-column  :fixedNO="true" :hasC="btnType != 'look'" v-if="tableDataFlag"
                       @selection-change="handeleProductInfoData" border style="width: 100%;">
                       <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
@@ -201,21 +201,21 @@
                       </el-table-column>
 
                       <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
-                        v-if="dataForm.weightFlag == true">
+                        v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.weight" placeholder="重量"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="proportion" label="比重" width="140" :key="727"
-                        v-if="dataForm.weightFlag == true">
+                        v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.proportion" placeholder="比重"></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
-                        v-if="dataForm.weightFlag == true">
+                        v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
@@ -916,7 +916,7 @@ export default {
       productNameFlag: null,
       printBrowseVisible: false,
       mainUnitFlag: null,
-      tableDataFlag: false,
+      tableDataFlag: true,
       arr: [
         {
           businessType: 'inbound_purchase',
@@ -990,6 +990,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getpairingModeListFun()
     await this.getWarehouseListFun()
+
     this.getprocessList()
     this.getclassAttributeList()
     this.getBusInfo('b046')
@@ -1007,9 +1008,8 @@ export default {
       },
     }
   },
-  mounted() {
+ async mounted() {
     this.getBimBusinessDetail()
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit', 'unitFlag')
   },
   methods: {
     changePairingMode(value, scope) {
@@ -1199,11 +1199,12 @@ export default {
     },
     async getMainUnitFun(code, type, flag) {
       this.listLoading = true
+      this.tableDataFlag=false
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
         if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
-        console.log("this.calculateQuantityFlag", this.calculateQuantityFlag);
         this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
+        console.log("this.dataForm.weightFlag ", this.dataForm.weightFlag );
         this.tableDataFlag = true
         this.listLoading = false
       } catch (error) {
@@ -1739,6 +1740,9 @@ export default {
       // 如果选择的是外协收货 外协发料 采购收退货 需要调用后台参数配置 是否开启显示重量比重折扣显示
       if (val == 'inbound_purchase' || val == 'outbound_purchase' || val == 'outbound_external_send' || val == 'inbound_external') {
         this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
+    this.$nextTick(() => { this.$refs.product.doLayout() })
+  }else{
+        this.dataForm.weightFlag=false
       }
       if (val == 'outbound_sale_send' || val == 'outbound_purchase' || val == 'outbound_pick_out' || val == 'outbound_external_send' || val == 'outbound_other') {
         // if (  val == 'outbound_other') {

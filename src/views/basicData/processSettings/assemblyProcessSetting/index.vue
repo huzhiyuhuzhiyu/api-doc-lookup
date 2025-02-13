@@ -116,13 +116,17 @@
           <el-table-column prop="name" label="工艺路线名称" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-          <el-table-column label="操作" width="140" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="handleUserRelation(scope.row, 'edit')" :hasDel="false"
                 :editDisabled="!scope.row.routingFlag">
                 <el-button type="text" :disabled="!scope.row.routingFlag"
                   @click="handleUserRelation(scope.row, 'look')">
                   查看详情
+                </el-button>
+                <el-button type="text" :disabled="!scope.row.routingFlag"
+                  @click="PrintFun(scope.row, 'look')">
+                  打印
                 </el-button>
               </tableOpts>
             </template>
@@ -162,6 +166,9 @@
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
     <SetForm v-if="setFormVisible" ref="setForm" @refresh="refresh" @close="closeForm" />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -185,12 +192,17 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProcessList, detailProcess, delProcess } from '@/api/basicData/processSettingss'
 import getProjectList from '@/mixins/generator/getProjectList'
 import SetForm from './setForm.vue'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   name: 'ProductionResource',
-  components: { ExportForm, SuperQuery, JNPFForm, SetForm },
+  components: { ExportForm, SuperQuery, JNPFForm, SetForm, PrintBrowse, PrintDialog, },
   mixins: [getProjectList],
   data() {
     return {
+      printVisible: false,
+      printBrowseVisible:false,
       isProjectSwitch: '',
       isTechnicalSwitch: '',
       isCheckingSwitch: '',
@@ -330,6 +342,36 @@ export default {
     this.initData()
   },
   methods: {
+    
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    // 打印
+    PrintFun(row) {
+      console.log(this.arr, row);
+      this.enCode = 'p044' // 打印的编码 
+      this.formId = row.id
+      this.fullName = '工艺' // 打印的名称 
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    closePrint() {
+      this.printVisible = false
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)

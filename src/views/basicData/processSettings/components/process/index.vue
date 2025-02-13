@@ -93,7 +93,7 @@
       <el-row :gutter="15" style="margin-top: 0px;">
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
-            <template v-if="processFlag">
+            <template v-if="inspectionFlag">
               <el-col :sm="24">
                 <el-form-item prop="pricingType" label="计价类型">
                   <el-select v-model="dataForm.pricingType" @change="pricingTypeChange" placeholder="请选择计价类型" clearable
@@ -112,17 +112,47 @@
                 </el-form-item>
               </el-col>
               <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
-                <el-form-item prop="unitPrice" label="计件单价">
-                  <el-input v-model="dataForm.unitPrice" placeholder="请输入计件单价" />
+                <el-form-item prop="unitPrice" label="人工检验价格">
+                  <el-input v-model="dataForm.unitPrice" placeholder="请输入人工检验价格" />
+                </el-form-item>
+                <el-form-item prop="machinesPrice" label="机器检验价格">
+                  <el-input v-model="dataForm.machinesPrice" placeholder="请输入机器检验价格" />
+                </el-form-item>
+              </el-col>
+            </template>
+            <template v-else>
+              <template v-if="processFlag">
+                <el-col :sm="24">
+                  <el-form-item prop="pricingType" label="计价类型">
+                    <el-select v-model="dataForm.pricingType" @change="pricingTypeChange" placeholder="请选择计价类型"
+                      clearable style="width: 100%;">
+                      <el-option v-for="(item, index) in [
+                        { label: '计时', value: 'by_time' },
+                        { label: '计件', value: 'by_piece' },
+                        { label: '不计价', value: 'no_piece' }
+                      ]" :key="index" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="24" v-if="dataForm.pricingType == 'by_time'">
+                  <el-form-item prop="timePrice" label="计时单价">
+                    <el-input v-model="dataForm.timePrice" placeholder="请输入计时单价" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
+                  <el-form-item prop="unitPrice" label="计件单价">
+                    <el-input v-model="dataForm.unitPrice" placeholder="请输入计件单价" />
+                  </el-form-item>
+                </el-col>
+              </template>
+
+              <el-col :sm="24" v-else>
+                <el-form-item prop="unitPrice" label="单价">
+                  <el-input v-model="dataForm.unitPrice" placeholder="请输入单价" />
                 </el-form-item>
               </el-col>
             </template>
 
-            <el-col :sm="24" v-else>
-              <el-form-item prop="unitPrice" label="单价">
-                <el-input v-model="dataForm.unitPrice" placeholder="请输入单价" />
-              </el-form-item>
-            </el-col>
             <el-col :sm="24">
               <el-form-item label="生效日期" prop="effectiveDate">
                 <el-date-picker v-model="dataForm.effectiveDate" type="date" format="yyyy-MM-dd" style="width: 100%;"
@@ -295,6 +325,7 @@ export default {
       analyseDialog: false,
       btnLoading: false,
       processFlag: false,
+      inspectionFlag: false,
       dataForm: {
         pricingType: '',
         effectiveDate: '',
@@ -322,6 +353,16 @@ export default {
             trigger: 'blur'
           },
           { required: true, message: '正品单价不能为空', trigger: 'blur' }
+        ],
+        machinesPrice: [
+          { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
+          {
+            validator: this.formValidate('noZero', '', (errMsg) => {
+              this.$message.error('机器检验价格不能为0')
+            }),
+            trigger: 'blur'
+          },
+          { required: true, message: '机器检验价格不能为空', trigger: 'blur' }
         ],
         effectiveDate: [{ required: true, message: '生效日期不能为空', trigger: 'change' }]
       },
@@ -358,7 +399,18 @@ export default {
       this.processFlag = true
     } else if (this.priceType === 'inspection') {
       this.priceTypeName = '工序质量'
-      this.processFlag = true
+      this.inspectionFlag = true
+      this.dataForm.pricingType = 'by_piece'
+      this.dataFormRules.unitPrice = [
+        { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
+        {
+          validator: this.formValidate('noZero', '', (errMsg) => {
+            this.$message.error('人工检验价格不能为0')
+          }),
+          trigger: 'blur'
+        },
+        { required: true, message: '人工检验价格不能为空', trigger: 'blur' }
+      ]
     } else if (this.priceType === 'packaging') {
       this.priceTypeName = '包装'
       this.processFlag = false
@@ -392,8 +444,8 @@ export default {
       })
       if (this.processFlag) {
         columnList = columnList.filter(item => item.prop !== "price")
-        columnList = [...columnList,{label:'正品单价',prop:'unitPrice'},{label:'计时单价',prop:'timePrice'}]
-        }
+        columnList = [...columnList, { label: '正品单价', prop: 'unitPrice' }, { label: '计时单价', prop: 'timePrice' }]
+      }
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
       })
@@ -652,7 +704,13 @@ export default {
 
       let flag = this.hasDifferentPricingType(this.selectedData)
       if (flag) return this.$message.error('只能选择相同计价类型的工序数据')
-      this.dataForm.pricingType = this.selectedData[0].pricingType
+      if (this.listQuery.pricingFlag === 1) {
+        this.dataForm.pricingType = this.selectedData[0].pricingType
+      } else {
+        if (this.inspectionFlag) {
+          this.dataForm.pricingType = 'by_piece'
+        }
+      }
       this.btnLoading = false
       this.analyseDialog = true
     },
@@ -681,17 +739,28 @@ export default {
         arr.forEach((item) => {
           item.pricingType = this.dataForm.pricingType
           item.effectiveDate = this.dataForm.effectiveDate + ' 00:00:00'
-          if (this.processFlag) {
+          if (this.inspectionFlag) {
             item.priceType = this.priceType
             if (item.pricingType === 'by_time') {
               item.timePrice = this.dataForm.timePrice
             } else if (item.pricingType === 'by_piece') {
               item.unitPrice = this.dataForm.unitPrice
+              item.machinesPrice = this.dataForm.machinesPrice
             }
           } else {
-            item.attributeType = this.priceType
-            item.unitPrice = this.dataForm.unitPrice
+            if (this.processFlag) {
+              item.priceType = this.priceType
+              if (item.pricingType === 'by_time') {
+                item.timePrice = this.dataForm.timePrice
+              } else if (item.pricingType === 'by_piece') {
+                item.unitPrice = this.dataForm.unitPrice
+              }
+            } else {
+              item.attributeType = this.priceType
+              item.unitPrice = this.dataForm.unitPrice
+            }
           }
+
         })
 
         this.batchMethod(arr)

@@ -244,6 +244,12 @@
                           <div>{{ scope.row.workOrderFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
+                      <el-table-column label="操作" width="100" fixed="right">
+                        <template slot-scope="scope">
+                          <el-button type="text" @click="delethHandle(scope)" style=" color: #ff3a3a">删除</el-button>
+
+                        </template>
+                      </el-table-column>
                     </JNPF-table>
 
                   </el-form>
@@ -762,6 +768,14 @@ export default {
   },
 
   methods: {
+    delethHandle(scope){ 
+      this.$confirm(this.$t('此操作将删除当前数据，确认删除？'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => { 
+      this.dataFormTwo.data.splice(scope.$index, 1)
+    
+      }).catch(() => { })
+    },
       getProcessData(id,data,params,index){
           this.materialList[params.scope.$index].processId = data[0].id || ''
           this.materialList[params.scope.$index].processName = data[0].name || ''

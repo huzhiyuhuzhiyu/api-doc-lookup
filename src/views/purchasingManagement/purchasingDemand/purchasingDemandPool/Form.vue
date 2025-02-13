@@ -369,7 +369,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
+                        <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip key="1">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"

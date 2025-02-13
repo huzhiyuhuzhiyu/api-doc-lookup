@@ -1481,17 +1481,18 @@ export default {
             // routingId:
             processId: item.id,
             // bimRoutingProcessResourceDTOList: [],
-            reportFlag: 0, // 是否报工
-            checkFlag: 0, // 是否检验
+            pickingFlag: item.pickingFlag, // 是否领料
+            reportFlag: item.reportFlag, // 是否报工
+            checkFlag: item.checkFlag, // 是否检验
             processingType: item.processingType, // 加工类型
             cooperativePartnerId: null, // 合作伙伴id
             cooperativePartnerName: '',
             departmentId: null, // 部门id
-            stockFlag: 0, // 是否入库
+            stockFlag: item.stockFlag, // 是否入库
             firstInspection: 0, // 是否首检
             firstFlag: false, //是否首道工序
             lastFlag: false, // 是否末道工序
-            workOrderFlag: 1, // 是否生成工单
+            workOrderFlag: item.workOrderFlag, // 是否生成工单
             technicalRequirement: item.technicalRequirement,
             inspectionInformation: item.inspectionInformation
           }
@@ -1512,8 +1513,8 @@ export default {
                 }
               } else {
                 item.lastFlag = false
-                item.stockFlag = false
-                item.reportFlag = false
+                // item.stockFlag = false
+                // item.reportFlag = false
               }
               if (index === 0) {
                 item.firstFlag = true

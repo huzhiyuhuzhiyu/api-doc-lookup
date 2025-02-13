@@ -50,7 +50,7 @@
                     <el-col :span="12">
                       <el-form-item label="加工类型" prop="processingType">
                         <el-select v-model="dataForm.processingType" placeholder="请选择加工类型" :disabled="disabled"
-                          style="width:100%">
+                          style="width:100%" @change="processingTypeChange">
                           <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
                             :value="item.value"></el-option>
                         </el-select>
@@ -75,6 +75,54 @@
                       <el-form-item label="检验信息" v-if="isCheckingSwitch === '1'">
                         <el-input v-model="dataForm.inspectionInformation" placeholder="请输入检验信息"
                           :disabled="disabled"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="是否领料" prop="pickingFlag">
+                        <el-select v-model="dataForm.pickingFlag" placeholder="请选择是否领料" 
+                        :disabled="disabled ? true : dataForm.processingType === 'external_production'" style="width:100%">
+                          <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="是否检验" prop="checkFlag">
+                        <el-select v-model="dataForm.checkFlag" placeholder="请选择是否检验" 
+                        :disabled="disabled ? true : dataForm.processingType === 'external_production'"
+                          style="width:100%">
+                          <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="是否报工" prop="reportFlag">
+                        <el-select v-model="dataForm.reportFlag" placeholder="请选择是否报工" 
+                        :disabled="disabled ? true : dataForm.processingType === 'external_production'"
+                          style="width:100%">
+                          <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="是否入库" prop="stockFlag">
+                        <el-select v-model="dataForm.stockFlag" placeholder="请选择是否入库" :disabled="disabled"
+                          style="width:100%">
+                          <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="是否生成工单" prop="workOrderFlag">
+                        <el-select v-model="dataForm.workOrderFlag" placeholder="请选择是否生成工单" 
+                        :disabled="disabled ? true : dataForm.processingType === 'self_produced'"
+                          style="width:100%">
+                          <el-option v-for="item in trueFalseList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="12" :xs="24">
@@ -312,6 +360,10 @@ export default {
         { label: '磨孔工序', value: 'grinding' },
         { label: '精度工序', value: 'accuracy' },
       ],
+      trueFalseList: [
+        { label: '是', value: true },
+        { label: '否', value: false },
+      ],
       getcategoryTree,
       configurationName: '',
       dialogTitle: '',
@@ -401,6 +453,41 @@ export default {
             trigger: ['blur']
           },
           { validator: checkReportingSort, trigger: 'blur' }
+        ],
+        pickingFlag: [
+          {
+            required: true,
+            message: '请选择是否领料',
+            trigger: ['change']
+          }
+        ],
+        checkFlag: [
+          {
+            required: true,
+            message: '请选择是否检验',
+            trigger: ['change']
+          }
+        ],
+        reportFlag: [
+          {
+            required: true,
+            message: '请选择是否报工',
+            trigger: ['change']
+          }
+        ],
+        stockFlag: [
+          {
+            required: true,
+            message: '请选择是否入库',
+            trigger: ['change']
+          }
+        ],
+        workOrderFlag: [
+          {
+            required: true,
+            message: '请选择是否生成工单',
+            trigger: ['change']
+          }
         ],
       },
       processingTypeOptions: [
@@ -563,6 +650,18 @@ export default {
     // this.getBusinessType()
   },
   methods: {
+    processingTypeChange(val){
+      if (val === 'self_produced') {
+        // 类型为自制  是否生成工单默认为是，禁用
+        this.dataForm.workOrderFlag = true
+      } else {
+        // 类型为外协  是否领料默认为否，禁用；是否检验默认为否，禁用；是否报工默认为否，禁用
+        this.dataForm.pickingFlag = false
+        this.dataForm.checkFlag = false
+        this.dataForm.reportFlag = false
+      }
+      console.log(this.dataForm.processType,'p')
+    },
     async getTechnicalSwitch(code, type) {
       try {
         this.isTechnicalSwitch = await this.jnpf.getMainUnitFun(code, type)

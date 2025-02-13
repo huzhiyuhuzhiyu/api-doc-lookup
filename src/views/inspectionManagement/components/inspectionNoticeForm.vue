@@ -348,7 +348,19 @@ export default {
           // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
           options: generateInspectionMethodList(this.inspectionType)
         },
-
+        {
+          prop: 'inspectionObject',
+          label: '检验对象',
+          value: 'manual',
+          type: 'select',
+          sm: 6,
+          options: [
+            { label: '人工检验', value: 'manual' },
+            { label: '机器检验', value: 'machines' }
+          ],
+          render: this.inspectionType === 'process',
+          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
+        },
         {
           prop: 'samplingQuantity',
           label: '检验数量',

@@ -75,6 +75,20 @@
               <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
             <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom" />
+            <el-table-column prop="reportingType" label="报工类型" min-width="110" sortable="custom">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in reportingTypeList" :key="index">
+                  <span v-if="item.value == scope.row.reportingType">{{ item.label }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="inspectionObject" label="检验对象" min-width="110" sortable="custom">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in inspectionObjectList" :key="index">
+                  <span v-if="item.value == scope.row.inspectionObject">{{ item.label }}</span>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="pricingType" label="计价类型" min-width="110" sortable="custom">
               <template slot-scope="scope">
                 <div v-for="(item, index) in pricingTypeList" :key="index">
@@ -168,6 +182,14 @@ export default {
           column: "reporting_time"
         }],
       },
+      reportingTypeList: [
+        { value: "normal", label: "正常报工", },
+        { value: "inspection", label: "检验报工", }
+      ],
+      inspectionObjectList: [
+        { label: '人工检验', value: 'manual' },
+        { label: '机器检验', value: 'machines' }
+      ],
       pricingTypeList: [
         { value: "by_time", label: "计时", },
         { value: "by_piece", label: "计件", }

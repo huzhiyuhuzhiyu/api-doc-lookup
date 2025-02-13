@@ -48,7 +48,8 @@ export default {
         { prop: 'processCode', label: '工序编码', minWidth: '160', sortable: 'custom' },
         { prop: 'effectiveDate', label: '生效日期', minWidth: '160' },
         { prop: 'pricingType', label: '计价类型', minWidth: '160', sortable: 'custom' },
-        { prop: 'price', label: '单价(元)', minWidth: '160' }
+        { prop: 'unitPrice', label: '人工检验价格(元)', minWidth: '160' },
+        { prop: 'machinesPrice', label: '机器检验价格(元)', minWidth: '160' }
       ],
       searchList: [
         {
@@ -92,7 +93,7 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['productsCode', 'processCode']
+      columnList: ['productsCode', 'processCode','pricingType']
     }
   },
   async created() {

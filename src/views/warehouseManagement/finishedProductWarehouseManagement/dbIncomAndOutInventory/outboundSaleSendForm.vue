@@ -154,7 +154,7 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                        <el-table-column prop="pairingModeNames" label="配对方式" min-width="120"></el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
@@ -309,7 +309,7 @@
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                        <el-table-column prop="pairingModeNames" label="配对方式" min-width="120"></el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
@@ -771,6 +771,7 @@ export default {
       this.$set(this.productData[index], 'preload', data.preload)
       this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
       this.$set(this.productData[index], 'angle', data.angle)
+      this.$set(this.productData[index], 'pairingModeName', data.pairingModeName)
 
 
 
@@ -1072,6 +1073,7 @@ export default {
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
             this.$set(item, 'price', item.costPrice)
+            this.$set(item,'pairingModeNames',item.partnerName)
             item.taxRates = item.taxRate + "%"
           });
           if (res.data.attachmentList) {
@@ -1088,6 +1090,7 @@ export default {
             })
           }
           this.dataForm = res.data.stockMove
+          
           this.productData = res.data.spaceLines
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
@@ -1115,6 +1118,7 @@ export default {
               item.taxRates = item.taxRate + "%"
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
+              this.$set(item,'pairingModeNames',item.partnerName)
               item.num = item.undeliveredQuantity
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
               item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 2)

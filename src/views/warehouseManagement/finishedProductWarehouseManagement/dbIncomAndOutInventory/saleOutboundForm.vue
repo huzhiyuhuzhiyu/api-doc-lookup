@@ -789,6 +789,7 @@ export default {
       this.$set(this.productData[index], 'preload', data.preload)
       this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
       this.$set(this.productData[index], 'angle', data.angle)
+      this.$set(this.productData[index], 'pairingModeName', data.pairingModeName)
                          
     }, 
 

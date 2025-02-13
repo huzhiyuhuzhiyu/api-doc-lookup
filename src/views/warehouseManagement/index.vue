@@ -19,9 +19,8 @@ import awaitInspectionInventory from'@/views/warehouseManagement/finishedProduct
 import modalShift from'@/views/warehouseManagement/finishedProductWarehouseManagement/modalShift'
 import InventoryAssembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/InventoryAssembly'
 import lnventoryDisassembly from'@/views/warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly'
-import { getConfigData } from '@/api/onlineDev/visualDev'
 export default {
-  name: 'inventoryDetaisList',
+  name: 'dbIncomAndOutInventory',
   components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,productionWaitMaterial,directMaterialRequisition,awaitInspectionInventory,modalShift,InventoryAssembly,lnventoryDisassembly},
   data() {
     return {
@@ -55,8 +54,11 @@ export default {
     },
     created() {
     console.log("this",this.$route);
+    this.name = this.$route.meta.zhTitle
+    this.code = this.$route.meta.title
     let path=this.$route.path
     let pathInfo=this.$route
+
     this.warehouseCode=pathInfo.fullPath.split("?")[1]
     let arr=path.split('/')
     this.businessType=arr[arr.length-1]

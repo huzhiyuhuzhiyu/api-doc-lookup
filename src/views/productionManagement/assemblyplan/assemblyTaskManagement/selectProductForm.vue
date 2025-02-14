@@ -31,11 +31,11 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
-            <el-table-column prop="code" label="产品编码" sortable="custom" />
+          <JNPF-table v-loading="listLoading" :data="tableDataList"   >
+            <el-table-column prop="code" label="产品编码" sortable="custom" min-width="150"/>
             <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="drawingNo" label="品名规格" sortable="custom" ></el-table-column>
+            <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="150"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="150" sortable="custom" />
@@ -64,7 +64,6 @@ export default {
     return {
       
       customerVisible: false,
-     
       form: {
         classAttribute: "finish_product",
         productDrawingNo:"",
@@ -103,7 +102,6 @@ export default {
     },
     init(id) {
       console.log(777);
-      this.customerVisible = true
       this.id=id
       this.getbatchNumList(id)
     },
@@ -118,7 +116,8 @@ export default {
       this.form.projectId = id
       
       getProducts(this.form).then(res => {
-        console.log("工艺路线", res);
+      this.customerVisible = true
+      console.log("工艺路线", res);
         this.tableDataList=res.data.records
         this.total=res.data.total
         this.listLoading = false

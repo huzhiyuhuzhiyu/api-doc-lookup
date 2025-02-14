@@ -31,7 +31,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" >
             <el-table-column prop="code" label="产品编码" sortable="custom" />
             <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -103,7 +103,6 @@ export default {
     },
     init(id) {
       console.log(777);
-      this.customerVisible = true
       this.id=id
       this.getbatchNumList(id)
     },
@@ -117,7 +116,8 @@ export default {
       this.listLoading = true
       this.form.projectId = id
       getProducts(this.form).then(res => {
-        console.log("工艺路线", res);
+      this.customerVisible = true
+      console.log("工艺路线", res);
         this.tableDataList=res.data.records
         this.total=res.data.total
         this.listLoading = false

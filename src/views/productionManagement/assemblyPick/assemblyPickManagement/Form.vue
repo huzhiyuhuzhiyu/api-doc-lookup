@@ -393,8 +393,8 @@ export default {
       console.log(9999);
       if (!this.isSame && this.dataForm.productionOrderNo) {
         console.log(666);
-        this.dataForm.productionOrderId = ""
-        this.dataForm.productionOrderNo = ""
+        // this.dataForm.productionOrderId = ""
+        // this.dataForm.productionOrderNo = ""
         this.dataFormTwo.data = []
       }
     },
@@ -403,7 +403,7 @@ export default {
       if (!this.dataForm.receiveType) return this.$message.error("请先选择领料类型")
       this.productTaskVisible = true
       this.$nextTick(() => {
-        if (this.isProjectSwitch == 1) {
+      if (this.isProjectSwitch == 1) {
           this.$refs.ProductTaskForm.init(this.userInfo.projectId || '')
 
         } else {

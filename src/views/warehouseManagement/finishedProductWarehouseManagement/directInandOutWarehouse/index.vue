@@ -1375,6 +1375,7 @@ export default {
       this.listQuery.productName = ""
       this.advancedQueryFuns()
       this.searchProductFun()
+      this.$nextTick(() => { this.$refs.productVisible.doLayout() })
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {

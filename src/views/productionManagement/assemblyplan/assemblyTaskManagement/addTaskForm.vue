@@ -766,7 +766,7 @@ export default {
                 ]
             },
             { prop: "mainUnit", label: "单位", value: "", type: 'view', minWidth: 80 },
-            { prop: "materialsUsedQuantity", label: "投料数量", value: "", type: 'view', minWidth: 140},
+            { prop: "materialsUsedQuantity", label: "投料数量", value: "", type: 'input', minWidth: 140},
         ],
     }
   },

@@ -372,8 +372,8 @@ export default {
       console.log(9999);
       if (!this.isSame && this.dataForm.productionOrderNo) {
         console.log(666);
-        this.dataForm.productionOrderId = ""
-        this.dataForm.productionOrderNo = ""
+        // this.dataForm.productionOrderId = ""
+        // this.dataForm.productionOrderNo = ""
         this.dataFormTwo.data = []
       }
     },

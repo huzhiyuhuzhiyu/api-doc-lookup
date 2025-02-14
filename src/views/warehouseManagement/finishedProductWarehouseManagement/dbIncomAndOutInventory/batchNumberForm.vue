@@ -142,6 +142,7 @@ export default {
         inspectStockFlag: true,
         processId: "",
         pairingModeId:"",
+        excludeProcessFlag:true,
       },
       refreshTree: true,
       listLoading: false,
@@ -233,7 +234,7 @@ export default {
       this.form.pairingModeId = data.pairingModeId
       this.form.material = ""
       this.form.standardValue = ""
-
+      this.form.excludeProcessFlag=true
       this.dataForm = data
       if (!requestFlag) {
 
@@ -296,7 +297,8 @@ export default {
         availableBatch:true,
         partnerName:"",
         standardValue:this.dataForm.standardValue,
-        colour:this.dataForm.colour
+        colour:this.dataForm.colour,
+        excludeProcessFlag:true,
       }
       if (this.requestFlag) {
         this.getlistOutBatchStockFun()

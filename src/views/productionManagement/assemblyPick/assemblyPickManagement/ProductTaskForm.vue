@@ -135,7 +135,6 @@ export default {
       } catch (error) { }
     },
     init(id) {
-      this.customerVisible = true
       this.id = id
       this.getbatchNumList(id)
     },
@@ -148,7 +147,8 @@ export default {
       this.listLoading = true
       this.orderForm.projectId = id
       ordershengchanList(this.orderForm).then(res => {
-        console.log("工艺路线", res);
+      this.customerVisible = true
+      console.log("工艺路线", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
         this.listLoading = false

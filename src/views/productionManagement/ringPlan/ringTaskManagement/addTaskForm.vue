@@ -83,8 +83,7 @@
                       </el-col>
 
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate"
-                          >
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -97,8 +96,7 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"
-                        v-if="dataForm.pickingWay == 'production_order' && dataForm.autoMaterialFlag">
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'production_order'">
                         <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                           <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
@@ -288,28 +286,27 @@
                 </el-collapse-item>
                 <el-collapse-item title="领料清单" name="productInfos" class="productInfo"
                   :style="!allocationFlag ? 'margin-top:5px' : ''">
-                    <TableForm-product :value="materialList" :ref="`linesForm_right`"
-                                       :tableItems="linesFormItems_right" :btnType="'add'"
-                                       @addth="(data) => { addth(data, null, ) }"
-                                       @deleteth="(scope) => { deleteth(scope, null, ) }"
-                                       @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null, ) }" />
+                  <TableForm-product :value="materialList" :ref="`linesForm_right`" :tableItems="linesFormItems_right"
+                    :btnType="'add'" @addth="(data) => { addth(data, null,) }"
+                    @deleteth="(scope) => { deleteth(scope, null,) }"
+                    @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null,) }" />
 
-<!--                  <JNPF-table ref="product" :data="materialList" fixedNO v-loading="tableloading">-->
-<!--                    <el-table-column prop="productsCode" label="产品编码"></el-table-column>-->
-<!--                    <el-table-column prop="productsName" label="产品名称"  width="160"-->
-<!--                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>-->
-<!--                    <el-table-column prop="productsDrawingNo" label="品名规格" />-->
-<!--                    <el-table-column prop="qty" label="基本数量">-->
-<!--                        <template slot-scope="scope">-->
-<!--                            <el-input></el-input>-->
-<!--                        </template>-->
-<!--                    </el-table-column>-->
-<!--                    <el-table-column prop="processName" label="工序名称" />-->
-<!--                    <el-table-column prop="mainUnit" label="单位"></el-table-column>-->
-<!--                    <el-table-column prop="materialsUsedQuantity" label="投料数量">-->
+                  <!--                  <JNPF-table ref="product" :data="materialList" fixedNO v-loading="tableloading">-->
+                  <!--                    <el-table-column prop="productsCode" label="产品编码"></el-table-column>-->
+                  <!--                    <el-table-column prop="productsName" label="产品名称"  width="160"-->
+                  <!--                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>-->
+                  <!--                    <el-table-column prop="productsDrawingNo" label="品名规格" />-->
+                  <!--                    <el-table-column prop="qty" label="基本数量">-->
+                  <!--                        <template slot-scope="scope">-->
+                  <!--                            <el-input></el-input>-->
+                  <!--                        </template>-->
+                  <!--                    </el-table-column>-->
+                  <!--                    <el-table-column prop="processName" label="工序名称" />-->
+                  <!--                    <el-table-column prop="mainUnit" label="单位"></el-table-column>-->
+                  <!--                    <el-table-column prop="materialsUsedQuantity" label="投料数量">-->
 
-<!--                    </el-table-column>-->
-<!--                  </JNPF-table>-->
+                  <!--                    </el-table-column>-->
+                  <!--                  </JNPF-table>-->
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
@@ -470,7 +467,8 @@
 
               <el-col :span="4">
                 <el-form-item>
-                  <el-input @keyup.native.enter="dataFormSubmit()"  v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
+                  <el-input @keyup.native.enter="dataFormSubmit()" v-model="dispatchSearchForm.processName"
+                    placeholder="工序名称" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -557,7 +555,7 @@ import { getBimProcessList } from '@/api/bimProcess'
 export default {
   mixins: [getProjectList],
   components: {
-      TableFormProduct,
+    TableFormProduct,
     RoutingForm,
     SelectProductForm,
   },
@@ -590,7 +588,7 @@ export default {
       dataForm: {
         planDate: [],
         lineEdgeList: [],
-        lineEdgeId:"",
+        lineEdgeId: "",
         orderNo: "",
         productsDrawingNo: "",
         productsCode: "",
@@ -615,7 +613,7 @@ export default {
         bomId: "",
         projectId: "",
         orderType: "manually",
-        lineEdgeId:"",
+        lineEdgeId: "",
       },
       dataFormTwo: {
         data: [],
@@ -627,7 +625,6 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataRule: {
-        lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         lineEdgeId: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
@@ -682,53 +679,8 @@ export default {
       isTechnicalSwitch: "",
       isCheckingSwitch: "",
       materialList: [],
-        linesFormItems_right: [
-            { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
-            { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 120,render:this.isProductNameSwitch === '1' },
-            { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
-            {
-                prop: "qty", label: "数量", value: "", type: 'input', width: 180,
-                itemRules: [
-                    { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
-                    { required: true, message: '', trigger: 'blur' },
-                    { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
-                    { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }), trigger: 'blur' }
-                ]
-            },
-            { prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
-                customComponent:'ComSelect-page',renderTree:false,change:this.getProcessData,
-                tableItems:[
-                    { prop: 'name', label: '工序名称' },
-                    { prop: 'code', label: '工序编码' },
-                ] , placeholder:"请选择工序名称", title:"选择工序名称",
-                listMethod:getBimProcessList , listRequestObj:{
-                    "name": "",
-                    "code": "",
-                    "processingType": "",
-                    "orderItems": [
-                        {
-                            "asc": false,
-                            "column": ""
-                        },
-                        {
-                            "asc": false,
-                            "column": "create_time"
-                        }
-                    ],
-                    "pageNum": 1,
-                    "pageSize": 20,
-                    "productCategoryId": "",
-                    "projectId": ''
-                },
-                searchList:[
-                    { prop: "code", label: "工序编码", type: 'input' },
-                    { prop: "name", label: "工序名称", type: 'input' },
-                ]
-            },
-            { prop: "mainUnit", label: "单位", value: "", type: 'view', minWidth: 80 },
-            { prop: "materialsUsedQuantity", label: "投料数量", value: "", type: 'view', minWidth: 140},
-        ],
-        lineIndex:null
+      linesFormItems_right: [],
+      lineIndex: null
     }
   },
   computed: {
@@ -768,18 +720,18 @@ export default {
   },
 
   methods: {
-    delethHandle(scope){ 
+    delethHandle(scope) {
       this.$confirm(this.$t('此操作将删除当前数据，确认删除？'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => { 
-      this.dataFormTwo.data.splice(scope.$index, 1)
-    
+      }).then(() => {
+        this.dataFormTwo.data.splice(scope.$index, 1)
+
       }).catch(() => { })
     },
-      getProcessData(id,data,params,index){
-          this.materialList[params.scope.$index].processId = data[0].id || ''
-          this.materialList[params.scope.$index].processName = data[0].name || ''
-      },
+    getProcessData(id, data, params, index) {
+      this.materialList[params.scope.$index].processId = data[0].id || ''
+      this.materialList[params.scope.$index].processName = data[0].name || ''
+    },
     // 输入编排数量，重新计算投料数量
     compount() {
       if (this.dataForm.productionQuantity) {
@@ -790,12 +742,12 @@ export default {
         }
         else {
           this.materialList.forEach(item => {
-              if (item.hasOwnProperty('selectProduct')) {
-                  item.materialsUsedQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6)
-              }else{
-                  let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
-                  item.materialsUsedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-              }
+            if (item.hasOwnProperty('selectProduct')) {
+              item.materialsUsedQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6)
+            } else {
+              let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
+              item.materialsUsedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+            }
 
           });
         }
@@ -837,18 +789,22 @@ export default {
       // this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       // this.$set(this.dataForm, 'planDate', [])
       // this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
-        this.dataForm = {
-          ...data,
-          orderType:'manually',
-          taskMethod:'appoint',
-          planDate:[],
-          orderNo:this.codeConfig.number
-        }
-        this.dataForm.productsDrawingNo = data.drawingNo
-        this.getWarehouseListFun()
-        if (!this.dataForm.bomId) {
+      this.dataForm = {
+        ...data,
+        orderType: 'manually',
+        taskMethod: 'appoint',
+        planDate: [],
+        orderNo: this.codeConfig.number
+      }
+      this.dataForm.productsDrawingNo = data.drawingNo
+      this.dataForm.productsCode = data.code
+      this.dataForm.productsName = data.name
+      this.dataForm.productsId = data.id
+      this.getWarehouseListFun()
+      if (!this.dataForm.bomId) {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
       }
+      this.creaFun()
       if (!data.routingId) return
       this.getRoutingDetail(this.dataForm.routingId)
 
@@ -1268,7 +1224,7 @@ export default {
         });
         if (res.data.routingLineList.length) {
           let processList = res.data.routingLineList.sort((a, b) => a.sort - b.sort);
-            console.log(processList,'processList====')
+          console.log(processList, 'processList====')
 
           this.hasWorkOrderFlagFalse = processList.some(item => !item.workOrderFlag);
 
@@ -1280,29 +1236,29 @@ export default {
 
               BOMLineList(this.dataForm.bomId).then(res => {
                 console.log("产品BOM", res);
-                this.materialList = res.data.length ? res.data.map(item=>{
-                    let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
-                    let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-                    return {
-                        ...item,
-                        productsCode: item.productCode,
-                        productsName: item.productName,
-                        productsDrawingNo: item.productDrawingNo,
-                        materialsUsedQuantity:totalNum,
-                        processName:'',
-                        processId:item.processId || '',
-                    }
+                this.materialList = res.data.length ? res.data.map(item => {
+                  let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
+                  let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+                  return {
+                    ...item,
+                    productsCode: item.productCode,
+                    productsName: item.productName,
+                    productsDrawingNo: item.productDrawingNo,
+                    materialsUsedQuantity: totalNum,
+                    processName: '',
+                    processId: item.processId || '',
+                  }
                 }) : []
               })
-            }else {
-                this.$message.error("该产品没有BOM，请配置BOM后再试")
+            } else {
+              this.$message.error("该产品没有BOM，请配置BOM后再试")
             }
           } else {
             // 产品+该道工序作为料
             // 存在不生成工单的数据，并找出最后一道不生成工单的数据
             // 找到 sort 最大的对象
-              console.log(processList,'processList')
-            maxSortItem = processList.reduce((maxItem, item) => {
+            console.log(processList, 'processList')
+            let maxSortItem = processList.reduce((maxItem, item) => {
               return item.sort > maxItem.sort ? item : maxItem;
             });
 
@@ -1312,12 +1268,15 @@ export default {
             let obj = {
               processName: maxSortItem.processName,
               processId: maxSortItem.processId,
-              productsCode: this.dataForm.productsCode,
-              productsName: this.dataForm.productsName,
-              productsDrawingNo: this.dataForm.productsDrawingNo,
+              productCode: this.dataForm.productsCode,
+              productName: this.dataForm.productsName,
+              productDrawingNo: this.dataForm.productsDrawingNo,
+              productsId: this.dataForm.productsId,
               materialsUsedQuantity: this.dataForm.productionQuantity,
               mainUnit: this.dataForm.mainUnit,
-              qty:1,
+              qty: 1,
+              reduceType: "picking",
+
             }
             console.log("obj", obj);
             this.materialList = [...this.materialList, obj]
@@ -1331,6 +1290,71 @@ export default {
     init() {
       this.getProductionLineListFun()
       this.fetchData("PROD")
+      this.creaFun()
+    },
+    creaFun() {
+      this.linesFormItems_right = [
+        { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
+        { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
+        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        {
+          prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
+          customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,
+          tableItems: [
+            { prop: 'name', label: '工序名称' },
+            { prop: 'code', label: '工序编码' },
+          ], placeholder: "请选择工序名称", title: "选择工序名称",
+          listMethod: getBimProcessList, listRequestObj: {
+            "name": "",
+            "code": "",
+            "processingType": "",
+            "orderItems": [
+              {
+                "asc": false,
+                "column": ""
+              },
+              {
+                "asc": false,
+                "column": "create_time"
+              }
+            ],
+            "pageNum": 1,
+            "pageSize": 20,
+            "productCategoryId": "",
+            "projectId": ''
+          },
+          searchList: [
+            { prop: "code", label: "工序编码", type: 'input' },
+            { prop: "name", label: "工序名称", type: 'input' },
+          ]
+        },
+        {
+          prop: "qty", label: "数量", value: "", type: 'input', width: 180,
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, message: '', trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }), trigger: 'blur' }
+          ]
+        },
+        { prop: "mainUnit", label: "单位", value: "", type: 'view', minWidth: 80 },
+        {
+          prop: 'reduceType',
+          label: '扣减料方式',
+          value: 'picking',
+          type: 'select',
+          disabled: this.btnType === 'look',
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 160,
+          render: this.dataForm.pickingWay == 'production_order',
+        },
+        { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
+      ]
     },
     async fetchData(code) {
       try {
@@ -1356,7 +1380,7 @@ export default {
     checkFun() {
       let submitFlag = null;
       if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
-      this.dataForm.productsId = this.dataForm.id
+      
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
       if (this.naturalResourcesFlag) {
@@ -1403,7 +1427,7 @@ export default {
       }
       console.log("表单", this.dataForm);
       console.log("工序", this.dataFormTwo.data);
-      if (submitFlag === false) return
+     
       this.dataFormTwo.data.forEach(item => {
         item.routingProResList.forEach(items => {
           items.processId = item.processId
@@ -1414,29 +1438,32 @@ export default {
 
       if (this.dataForm.pickingWay == 'dispatch_list') {
         arr.push({
-            productionOrderId: "",
-            warehouseId: this.dataForm.lineEdgeId
-          })
-      } else if(this.dataForm.pickingWay === 'production_order' && this.dataForm.autoMaterialFlag) {
+          productionOrderId: "",
+          warehouseId: this.dataForm.lineEdgeId
+        })
+      } else if (this.dataForm.pickingWay === 'production_order'  && this.dataForm.lineEdgeList.length) {
 
-          this.dataForm.lineEdgeList.forEach(item => {
-              arr.push({
-                  productionOrderId: "",
-                  warehouseId: item
-              })
+        this.dataForm.lineEdgeList.forEach(item => {
+          arr.push({
+            productionOrderId: "",
+            warehouseId: item
           })
+        })
       }
+      if (this.materialList.length) {
+        let hasAutoReduceType = this.materialList.some(item => item.reduceType === "auto")
+        if (hasAutoReduceType && !arr.length) {
+          submitFlag = false
+          return this.$message.error("提交失败:请选择线边仓")
+        }
+      }
+      if (submitFlag === false) return
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
         lineEdgeList: arr,
-        materialList: this.materialList.map(item=>{
-              return {
-                  ...item,
-                  productsId:item.productId
-              }
-        }),
+        materialList: this.materialList
       }
       this.btnLoading = true
       addProdOrder(obj).then(res => {
@@ -1482,58 +1509,60 @@ export default {
       }
 
     },
-      addth(data, index, type) {
-          let tempList = JSON.parse(JSON.stringify(this.materialList))
-          let hasItemList = []
-          for (let i = 0; i < data.length; i++) {
-              let item = data[i];
-              item.productsId = item.productsId || item.id
-              item.productCode = item.productCode || item.code
-              item.productName = item.productName || item.name
-              item.productDrawingNo = item.productDrawingNo || item.drawingNo
-              item.qty = 1
-              const hasFlag = this.materialList.find(i => item.productsId === i.productsId)
-              if (hasFlag) { hasItemList.push(item.productDrawingNo) }
-              else { tempList.push(item) }
-              if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
-          }
-          this.materialList = tempList.map(item => {
-              return {
-                  productsId: item.productsId,
-                  productCode: item.productCode,
-                  productName: item.productName,
-                  productDrawingNo: item.productDrawingNo,
-                  qty: item.qty,
-                  calculationDirection: item.calculationDirection,
-                  mainUnit: item.mainUnit,
-                  ratio: item.ratio,
-                  materialsUsedQuantity:item.materialsUsedQuantity || '',
-                  processName:'',
-                  processId:'',
-                  selectProduct:true
-              }
-          })
-          console.log(this.materialList,'this.materialList')
-      },
-      deleteth(scope, index, type) {
-          this.materialList.splice(scope.$index, 1)
-      },
-      linesChange(dataOrIndex, prop, value, index, type) {
-          if (Array.isArray(dataOrIndex)) {
-              this.materialList = JSON.parse(JSON.stringify(dataOrIndex))
-              // this.$set(this.dataForm, type, JSON.parse(JSON.stringify(dataOrIndex)))
-          } else if (prop) {
-              console.log(111)
-              console.log(dataOrIndex)
-              console.log(value)
-              console.log(prop)
-              if (prop === 'processName') {
-                  this.lineIndex = dataOrIndex
-                  return
-              }
-              this.materialList[dataOrIndex][prop] = value
-          }
-      },
+    addth(data, index, type) {
+      let tempList = JSON.parse(JSON.stringify(this.materialList))
+      let hasItemList = []
+      for (let i = 0; i < data.length; i++) {
+        let item = data[i];
+        item.productsId = item.productsId || item.id
+        item.productCode = item.productCode || item.code
+        item.productName = item.productName || item.name
+        item.productDrawingNo = item.productDrawingNo || item.drawingNo
+        item.qty = 1
+        const hasFlag = this.materialList.find(i => item.productsId === i.productsId)
+        if (hasFlag) { hasItemList.push(item.productDrawingNo) }
+        else { tempList.push(item) }
+        if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
+      }
+      this.materialList = tempList.map(item => {
+        return {
+          productsId: item.productsId,
+          productCode: item.productCode,
+          productName: item.productName,
+          productDrawingNo: item.productDrawingNo,
+          qty: item.qty,
+          calculationDirection: item.calculationDirection,
+          mainUnit: item.mainUnit,
+          ratio: item.ratio,
+          // materialsUsedQuantity: item.materialsUsedQuantity || '',
+          materialsUsedQuantity: this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6) || '',
+          processName: item.processName,
+          processId: item.processId,
+          selectProduct: true,
+          reduceType: "picking",
+        }
+      })
+      console.log(this.materialList, 'this.materialList')
+    },
+    deleteth(scope, index, type) {
+      this.materialList.splice(scope.$index, 1)
+    },
+    linesChange(dataOrIndex, prop, value, index, type) {
+      if (Array.isArray(dataOrIndex)) {
+        this.materialList = JSON.parse(JSON.stringify(dataOrIndex))
+        // this.$set(this.dataForm, type, JSON.parse(JSON.stringify(dataOrIndex)))
+      } else if (prop) {
+        console.log(111)
+        console.log(dataOrIndex)
+        console.log(value)
+        console.log(prop)
+        if (prop === 'processName') {
+          this.lineIndex = dataOrIndex
+          return
+        }
+        this.materialList[dataOrIndex][prop] = value
+      }
+    },
   }
 }
 </script>

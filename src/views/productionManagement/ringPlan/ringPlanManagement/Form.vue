@@ -1237,7 +1237,7 @@ export default {
             // 产品+该道工序作为料
             // 存在不生成工单的数据，并找出最后一道不生成工单的数据
             // 找到 sort 最大的对象  
-            maxSortItem = processList.reduce((maxItem, item) => {
+            let maxSortItem = processList.reduce((maxItem, item) => {
               return item.sort > maxItem.sort ? item : maxItem;
             });
 

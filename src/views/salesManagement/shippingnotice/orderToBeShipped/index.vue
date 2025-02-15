@@ -212,8 +212,9 @@ export default {
         documentStatus: "submit",
         deliveryEndTime: "",
         deliveryStartTime: "",
-        extensionFlag: 1,
+        extensionFlag: 0,
         shipmentStatus:"not_finish",
+        deliverQueryFlag:1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -628,8 +629,7 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.orderForm.extensionFlag=1
-      this.orderForm.deliverQueryFlag=1
+      this.orderForm.extensionFlag=1 
         this.search('basic')
     },
     // 为近3天  
@@ -774,7 +774,8 @@ export default {
         documentStatus: "submit",
         deliveryEndTime:  this.dateFun(this.deliveryDateArr[1]),
         deliveryStartTime: "",
-        extensionFlag: 1,
+        extensionFlag: 0,
+        deliverQueryFlag:1,
         pageNum: 1,
         pageSize: 20,
         shipmentStatus:"not_finish",

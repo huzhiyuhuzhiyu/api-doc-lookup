@@ -74,7 +74,7 @@
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
@@ -368,6 +368,8 @@ export default {
       mainUnitFlag: null,
       tableDataFlag: false,
       isProductNameSwitch: '',
+      isPairingModeSwitch: '', // 配对方式显示隐藏
+      pairingModeList: [], // 配对方式数据来源
       // 属性字段  控制属性字段显示隐藏
       accuracyLevelFlag: "",
       clearanceFlag: "",
@@ -410,12 +412,25 @@ export default {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+    await this.getpairingModeListFun()
     this.advancedQueryFun()
+    this.tableDataFlag = true
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(7, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
+      })
+    }
+    if (this.isPairingModeSwitch == 1) {
+      this.superQueryJson.splice(7, 0, {
+        prop: 'pairingModeName',
+        label: '配对方式',
+        type: 'select',
+        options: this.pairingModeList.map(item=>{
+          return {label:item.name,value:item.name}
+        })
       })
     }
     this.superForm = this.orderForm
@@ -586,7 +601,20 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.tableDataFlag = true
+        // this.tableDataFlag = true
+      } catch (error) { }
+    },
+    // 配对方式显示隐藏
+    async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    // 获取配对方式数据来源
+    async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        console.log("this.par", this.pairingModeList);
       } catch (error) { }
     },
     async getMainUnitFun(code, type) {

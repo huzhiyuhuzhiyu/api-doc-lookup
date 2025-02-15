@@ -155,7 +155,7 @@
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       </el-table-column>
-                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false"
@@ -257,7 +257,7 @@
                         </el-input> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false"
@@ -599,7 +599,7 @@
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   </el-table-column>
-                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                         :disabled="btnType == 'look' ? true : false"
@@ -696,7 +696,7 @@
                       :disabled="status"></el-autocomplete>
                   </template>
                 </el-table-column>
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                       :disabled="btnType == 'look' ? true : false" @change="(value) => changePairingMode(value, scope)">
@@ -1427,6 +1427,7 @@ export default {
       selectProductClassFlag: false,
       isProjectSwitchFlag: null,
       taxRate: 13,
+      isPairingModeSwitch: '', // 配对方式显示隐藏
       pairingModeList: [],
       pageType:""
     }
@@ -1474,6 +1475,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getpairingModeListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     this.isProjectSwitchFlag = true
     if (this.isProjectSwitch === '1') this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
@@ -1505,6 +1507,13 @@ export default {
   },
 
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 选择配对方式 强行将单位改成对
     changePairingMode(value, scope) {
       if (value) {

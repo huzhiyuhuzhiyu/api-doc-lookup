@@ -101,7 +101,7 @@
                           v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'">
                           <el-form-item label="是否显示比重折扣" prop="weightFlag">
                             <el-select v-model="dataForm.weightFlag" placeholder="是否显示比重折扣" style="width: 100%;"
-                              :disabled="btnType == 'look' ? true : false">
+                              :disabled="btnType == 'look' ? true : false" @change="selectWeight">
                               <el-option v-for="(item, index) in weightFlagList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
                             </el-select>
@@ -1012,6 +1012,10 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+    selectWeight(){
+      this.$nextTick(() => { this.$refs.product.doLayout() })
+
+    },
     changePairingMode(value, scope) {
       if (value) {
         this.productData[scope.$index].deputyUnit = this.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;

@@ -1170,12 +1170,12 @@ export default {
     },
     init(data) {
       console.log("传递数据", data);
-      this.$set(data[0], 'productionQuantity', '')
-      this.dataForm = data[0]
+      this.$set(data, 'productionQuantity', '')
+      this.dataForm = data
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'orderNo', '')
-      this.$set(this.dataForm, 'pairingModeId', data[0].pairingModeId)
+      this.$set(this.dataForm, 'pairingModeId', data.pairingModeId)
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
       // if (this.dataForm.autoMaterialFlag) {
@@ -1201,7 +1201,7 @@ export default {
         this.dataForm.planDate[0] = this.dataForm.planStartDate
         this.dataForm.planDate[1] = this.dataForm.planEndDate
       }
-      this.$set(this.dataForm, 'productionPlanId', data[0].id)
+      this.$set(this.dataForm, 'productionPlanId', data.id)
       console.log(this.$refs.dataForm);
       this.$refs.dataForm.clearValidate('planDate');
       this.getProductionLineListFun()

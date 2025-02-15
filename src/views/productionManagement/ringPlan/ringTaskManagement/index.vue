@@ -44,8 +44,10 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
                 新建返工任务
               </el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
+              <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
+                @click="batchPrint">批量打印</el-button>
+              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
               <el-button size="mini" type="primary" icon="el-icon-printer"
                 @click="printFlowCard('p023')">打印流转卡</el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
@@ -243,6 +245,9 @@
     <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData"
       @close="closeForm">
     </AddTaskForm>
+    <PrintDialog2 :visible.sync="printVisible2" @closePrint="closePrint2" @printSubmit="printWarehouse2"
+      :printQuery="printQuery2" :enCode="enCode2" ref="printTemplate2" append-to-body />
+    <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
   </div>
 </template>
 
@@ -260,13 +265,15 @@ import {
 } from "@/api/masterDataManagement/index";
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import PrintBrowse2 from '@/components/PrintBrowse'
+import PrintDialog2 from '@/components/no_mount/printDialog'
 import { getPrintList } from '@/api/system/printDev'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import AddTaskForm from './addTaskForm.vue'
 export default {
   name: 'ringTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, TaskForm,AddTaskForm },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, TaskForm,AddTaskForm,PrintDialog2,PrintBrowse2  },
   mixins: [getProjectList],
   data() {
     return {
@@ -463,6 +470,11 @@ export default {
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
       isProductNameSwitch:"",
+      prindId2: '',
+      formId2: '',
+      enCode2: "",
+      printVisible2: false,
+      printBrowseVisible2: false,
     }
   },
  
@@ -486,6 +498,35 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    printWarehouse2(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId2 = res.data.id
+          this.formId2 = this.selectArr.map(item => item.id).join(',')
+          this.printBrowseVisible2 = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible2 = false
+      });
+    },
+    closePrint2() {
+      console.log(345345345);
+      this.printVisible2 = false
+    },
+    batchPrint() {
+      if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
+      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项  
+
+      this.fullName2 = "任务排产单" // 筛选出 businessType 等于 type 的项  
+      this.printVisible2 = true
+      this.$nextTick(() => {
+        console.log(345345);
+        this.$refs.printTemplate2.init(this.enCode2)
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

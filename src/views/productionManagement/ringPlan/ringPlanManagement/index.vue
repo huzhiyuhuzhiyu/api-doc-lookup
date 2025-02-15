@@ -48,9 +48,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
+              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
                 编排
-              </el-button>
+              </el-button> -->
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="importFun('dataTable')">
                 导入
               </el-button>
@@ -145,6 +145,9 @@
           提交</el-button>
       </span>
     </el-dialog>
+    <PrintDialog2 :visible.sync="printVisible2" @closePrint="closePrint2" @printSubmit="printWarehouse2"
+      :printQuery="printQuery2" :enCode="enCode2" ref="printTemplate2" append-to-body />
+    <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
   </div>
 </template>
 
@@ -158,16 +161,25 @@ import { excelExport } from '@/api/basicData/index'
 import PlanSchedule from './planSchedule.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse2 from '@/components/PrintBrowse'
+import PrintDialog2 from '@/components/no_mount/printDialog'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import TaskForm from '../../assemblyplan/assemblyplanManagement/taskFormCopy.vue'
 export default {
   name: 'assemblyplanManagement',
-  components: { Form, SuperQuery, ExportForm,TaskForm, PlanSchedule },
+  components: { Form, SuperQuery, ExportForm,TaskForm, PlanSchedule,PrintDialog2,PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
+      selectArr: [],
+      prindId2: '',
+      formId2: '',
+      enCode2: "",
+      printVisible2: false,
+      printBrowseVisible2: false,
       planScheduleVisible: false,
       taskFormVisible:false,
       superQuery: {},
@@ -320,6 +332,35 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    printWarehouse2(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId2 = res.data.id
+          this.formId2 = this.selectArr.map(item => item.id).join(',')
+          this.printBrowseVisible2 = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible2 = false
+      });
+    },
+    closePrint2() {
+      console.log(345345345);
+      this.printVisible2 = false
+    },
+    batchPrint() {
+      if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
+      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项  
+
+      this.fullName2 = "未排产单" // 筛选出 businessType 等于 type 的项  
+      this.printVisible2 = true
+      this.$nextTick(() => {
+        console.log(345345);
+        this.$refs.printTemplate2.init(this.enCode2)
+      })
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
@@ -394,14 +435,18 @@ export default {
     },
 
     addition(data) {
-      if (this.selectArr) {
-        this.selectArr = []
-        this.selectArr.push(data)
-        this.translateFun()
-      } else {
-        this.selectArr.push(data)
-        this.translateFun()
-      }
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(data)
+      })
+      // if (this.selectArr) {
+      //   this.selectArr = []
+      //   this.selectArr.push(data)
+      //   this.translateFun()
+      // } else {
+      //   this.selectArr.push(data)
+      //   this.translateFun()
+      // }
     },
     // 编排
     translateFun() {

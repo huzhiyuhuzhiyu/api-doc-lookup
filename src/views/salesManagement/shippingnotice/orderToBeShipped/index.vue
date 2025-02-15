@@ -213,7 +213,6 @@ export default {
         deliveryEndTime: "",
         deliveryStartTime: "",
         extensionFlag: 1,
-        deliverQueryFlag: 1,
         shipmentStatus:"not_finish",
         pageNum: 1,
         pageSize: 20,
@@ -630,7 +629,8 @@ export default {
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.orderForm.extensionFlag=1
-      this.search('basic')
+      this.orderForm.deliverQueryFlag=1
+        this.search('basic')
     },
     // 为近3天  
     btnsearch2() {
@@ -769,14 +769,12 @@ export default {
       end.setDate(end.getDate() + 3);
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
-      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.superForm = this.orderForm = {
         approvalStatus: "ok",
         documentStatus: "submit",
-        deliveryEndTime: this.deliveryDateArr[1],
+        deliveryEndTime:  this.dateFun(this.deliveryDateArr[1]),
         deliveryStartTime: "",
         extensionFlag: 1,
-        deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         shipmentStatus:"not_finish",

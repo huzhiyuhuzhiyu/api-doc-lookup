@@ -290,6 +290,30 @@
 
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcess.processType === 'fatInjection' && currentProcess.reportFlag">
+                    <el-form-item label="注脂方式:" prop="oil">
+                      <el-select v-model="currentProcess.oil" placeholder="请选择注脂方式" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in oilList" :key="item.id" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+
+                      
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcess.processType === 'typing' && currentProcess.reportFlag">
+                    <el-form-item label="打字内容:" prop="sealingcoverTyping">
+                      <el-select v-model="currentProcess.sealingcoverTyping" placeholder="请选择打字内容" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in sealingcoverTypingList" :key="item.id" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+
+                    </el-form-item>
+                  </el-col>
+                    
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -522,7 +546,8 @@ export default {
       },
       codeConfig: {},//单据规则配置
       workList: [],
-
+      sealingcoverTypingList:[],
+      oilList:[],
       processInfo: {},
       currentProcess: {},
       listLoading: false,
@@ -559,7 +584,7 @@ export default {
 
       ],
       vibrationLevelList: [],
-      packagingMethodList: [],
+      packagingMethodLiqqqqqqst: [],
       pairingModeList: [],
       pairingModeListCopy: [],
       pairingModeNum: 0,
@@ -587,6 +612,8 @@ export default {
     this.getInboundVal()
     this.getOrderFiledMap()
     this.getPackmethods()
+    this.getOilList()
+    this.getsealingcoverTypingList()
   },
   methods: {
     // 选择02精度  再将选中的值赋值给到01精度可选项
@@ -1075,6 +1102,56 @@ export default {
         });
       })
     },
+     // 获取注脂方式
+     getOilList() {
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj4).then(res => {
+        this.oilList = res.data.records
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
+      })
+    },
+     // 获取打字内容
+     getsealingcoverTypingList() {
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj4).then(res => {
+        this.sealingcoverTypingList = res.data.records
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
+      })
+    },
     goBack() {
       this.$emit("close", false)
     },
@@ -1185,7 +1262,7 @@ export default {
           if (submitFlag === false) return
           console.log(12345);
           let arr = []
-          if (this.currentProcess.vibrateReportFlag) {
+          if (this.currentProcess.vibrateReportFlag||this.currentProcess.pairsReportFlag) {
             let obj = {}
             if (this.currentProcessType === 2) {//1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
               // 测震工序
@@ -1286,6 +1363,8 @@ export default {
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
+              obj.oil=this.currentProcess.oil
+              obj.sealingcoverTyping=this.currentProcess.sealingcoverTyping
             }
             arr.push(obj)
           } else if (this.currentProcess.accuracyReportFlag) {
@@ -1350,6 +1429,8 @@ export default {
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
               obj.accuracyLevel = this.currentProcess.accuracyLevel
+              obj.oil=this.currentProcess.oil
+              obj.sealingcoverTyping=this.currentProcess.sealingcoverTyping
               arr.push(obj)
               console.log("测震到配对工序之间的工序");
             } else if (this.currentProcessType === 4) {
@@ -1407,6 +1488,8 @@ export default {
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.accuracyLevel = this.currentProcess.accuracyLevel
+              obj.oil=this.currentProcess.oil
+              obj.sealingcoverTyping=this.currentProcess.sealingcoverTyping
               arr.push(obj)
             }
           }
@@ -1433,7 +1516,10 @@ export default {
               "reportingType": "normal ",
               "unqualifiedQuantity": this.currentProcess.unqualifiedQuantity,
               "vibrationLevel": this.currentProcess.vibrationLevel,
+              "oil": this.currentProcess.oil,
+              "sealingcoverTyping": this.currentProcess.sealingcoverTyping,
               "workOrderId": this.currentProcess.id,
+             
             }
             arr.push(obj)
           }

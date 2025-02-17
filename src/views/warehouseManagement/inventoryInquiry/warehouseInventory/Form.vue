@@ -51,6 +51,8 @@
               <el-table-column prop="productCode" label="产品编码" width="160" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
+              <el-table-column prop="processName" label="工序名称" min-width="120" />
+              <el-table-column prop="processCode" label="工序编码" min-width="120" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />

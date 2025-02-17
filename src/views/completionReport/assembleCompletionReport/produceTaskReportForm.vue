@@ -24,7 +24,8 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
-                <el-descriptions-item label="领料方式">{{ dataForm.pickingWay=='production_order'?'生产订单领料':"工单领料" }}</el-descriptions-item>
+                <el-descriptions-item label="领料方式">{{ dataForm.pickingWay == 'production_order' ? '生产订单领料' : "工单领料"
+                  }}</el-descriptions-item>
                 <el-descriptions-item label="打字内容" v-if="sealingCoverTypingFlag === '1'">{{ dataForm.sealingCoverTyping
                   }}</el-descriptions-item>
                 <el-descriptions-item label="精度等级" v-if="accuracyLevelFlag === '1'">{{ dataForm.accuracyLevel
@@ -202,9 +203,10 @@
                     style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span
                     style="color: #3fb9f8;font-size: 17px;font-weight: bold">[{{ currentProcess.unqualifiedQuantity
                     }}]</span>
-                    <span  v-if="dataForm.pickingWay=='dispatch_list'" 
+                  <span v-if="dataForm.pickingWay == 'dispatch_list'"
                     style="font-size: 17px;font-weight: bold;margin-left: 10px;display: inline-block;">可领库存数：</span><span
-                    style="color: #3fb9f8;font-size: 17px;font-weight: bold"  v-if="dataForm.pickingWay=='dispatch_list'" >[{{ currentProcess.availableStockNum
+                    style="color: #3fb9f8;font-size: 17px;font-weight: bold"
+                    v-if="dataForm.pickingWay == 'dispatch_list'">[{{ currentProcess.availableStockNum
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
@@ -220,9 +222,9 @@
                       <span class="pairNum" v-if="currentProcess.pairingModeId">配对基本数量：{{ pairingModeNum }}</span>
                     </el-form-item>
                   </el-col>
-      <!-- //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序 -->
-      <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType !== 1&&currentProcessType !== 6 && currentProcess.accuracyReportFlag">
+                  <!-- //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序 -->
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcessType !== 1 && currentProcessType !== 6 && currentProcess.accuracyReportFlag">
                     <el-form-item label="精度等级:" prop="accuracyLevel" :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
                         @change="(value) => handleSelectionChangeJD(value)" class="ipt">
@@ -233,7 +235,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType !== 1 && currentProcess.vibrateReportFlag&&currentProcessType!==6">
+                    v-if="currentProcessType !== 1 && currentProcess.vibrateReportFlag && currentProcessType !== 6">
                     <el-form-item label="测振等级:" prop="vibrationLevel" :style="{ marginBottom: producerMargin }">
                       <el-select v-model="currentProcess.vibrationLevel" placeholder="请选择测振等级" style="width: 100%;"
                         @change="(value) => handleSelectionChangeZD(value)" class="ipt">
@@ -267,7 +269,7 @@
 
                   <!-- stockFlag 0否 继续生产 2包装入库 -->
                   <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType !== 1 && currentProcess.reportFlag&&currentProcessType!==6">
+                    v-if="currentProcessType !== 1 && currentProcess.reportFlag && currentProcessType !== 6">
                     <el-form-item label="是否入库:" prop="stockFlag">
                       <el-select v-model="stockFlag" placeholder="请选择是否入库" :disabled="currentProcess.lastFlag"
                         style="width: 100%;" class="ipt">
@@ -288,6 +290,30 @@
 
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcess.processType === 'fatInjection' && currentProcess.reportFlag">
+                    <el-form-item label="注脂方式:" prop="oil">
+                      <el-select v-model="currentProcess.oil" placeholder="请选择注脂方式" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in oilList" :key="item.id" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+
+                      
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcess.processType === 'typing' && currentProcess.reportFlag">
+                    <el-form-item label="打字内容:" prop="sealingcoverTyping">
+                      <el-select v-model="currentProcess.sealingcoverTyping" placeholder="请选择打字内容" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in sealingcoverTypingList" :key="item.id" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+
+                    </el-form-item>
+                  </el-col>
+                    
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -353,7 +379,7 @@
                           <el-table-column prop="accuracyLevel" label="精度等级">
                             <template slot-scope="scope">
                               <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
-                                @change="(value) => handleSelectionChangeaccOne(scope,value)">
+                                @change="(value) => handleSelectionChangeaccOne(scope, value)">
                                 <el-option v-for="(item, index) in getFilteredAccuracyLevelList(scope.row)" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
@@ -380,7 +406,8 @@
                           :fixedNO="true">
                           <el-table-column prop="accuracyLevel" label="精度等级">
                             <template slot-scope="scope">
-                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;" @change="selectAccuracyFun(scope)">
+                              <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
+                                @change="selectAccuracyFun(scope)">
                                 <el-option v-for="(item, index) in getFilteredAccuracyLevelList2(scope.row)"
                                   :key="index" :label="item.name" :value="item.name"></el-option>
                               </el-select>
@@ -481,7 +508,7 @@
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { detailProcess, getvibrationList, getPairingModelList,getaccuracyList} from '@/api/basicData/processSettingss.js'
+import { detailProcess, getvibrationList, getPairingModelList, getaccuracyList } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
 import { log } from 'mathjs'
@@ -519,7 +546,8 @@ export default {
       },
       codeConfig: {},//单据规则配置
       workList: [],
-
+      sealingcoverTypingList:[],
+      oilList:[],
       processInfo: {},
       currentProcess: {},
       listLoading: false,
@@ -556,7 +584,7 @@ export default {
 
       ],
       vibrationLevelList: [],
-      packagingMethodList: [],
+      packagingMethodLiqqqqqqst: [],
       pairingModeList: [],
       pairingModeListCopy: [],
       pairingModeNum: 0,
@@ -584,22 +612,24 @@ export default {
     this.getInboundVal()
     this.getOrderFiledMap()
     this.getPackmethods()
+    this.getOilList()
+    this.getsealingcoverTypingList()
   },
   methods: {
     // 选择02精度  再将选中的值赋值给到01精度可选项
-    handleSelectionChangeaccOne(scope,value) {
-      console.log("vaue",scope);
+    handleSelectionChangeaccOne(scope, value) {
+      console.log("vaue", scope);
       //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
       const selectedItem = this.accuracyLevelList.find(item => item.name === value);
       console.log("selectedItem", selectedItem);
-      this.$set(this.tableDataList[scope.$index],'sortCode',selectedItem.sortCode)
-      let arr=JSON.parse(JSON.stringify(this.tableDataList))
-      console.log("asrr",arr);
-      arr.sort((a, b) => a.sortCode-b.sortCode  );  
-      console.log("arr",arr);
-      let sort=arr[0].sortCode
-   console.log("sort",sort);
-      this.accuracyLevelList2=this.accuracyLevelList.filter(item => item.sortCode >= sort);  
+      this.$set(this.tableDataList[scope.$index], 'sortCode', selectedItem.sortCode)
+      let arr = JSON.parse(JSON.stringify(this.tableDataList))
+      console.log("asrr", arr);
+      arr.sort((a, b) => a.sortCode - b.sortCode);
+      console.log("arr", arr);
+      let sort = arr[0].sortCode
+      console.log("sort", sort);
+      this.accuracyLevelList2 = this.accuracyLevelList.filter(item => item.sortCode >= sort);
     },
     // 过滤已选择的数据
     getFilteredAccuracyLevelList(currentRow) {
@@ -638,12 +668,12 @@ export default {
       } else {
       }
     },
-    selectAccuracyFun(scope){
+    selectAccuracyFun(scope) {
       console.log(scope);
-      if(scope.row.accuracyLevel==='P0'){
-        this.tableDataList2[scope.$index].stockFlag=2
-      }else{
-        this.tableDataList2[scope.$index].stockFlag=0  
+      if (scope.row.accuracyLevel === 'P0') {
+        this.tableDataList2[scope.$index].stockFlag = 2
+      } else {
+        this.tableDataList2[scope.$index].stockFlag = 0
 
       }
     },
@@ -701,7 +731,7 @@ export default {
     // 定义当前工序的类型
     //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
     setProcessType() {
-      if (this.currentProcess.vibrateReportFlag || this.currentProcess.accuracyReportFlag) {
+      if (this.currentProcess.vibrateReportFlag || this.currentProcess.accuracyReportFlag || this.currentProcess.pairsReportFlag) {
         if (this.currentProcess.processType == 'vibrate') {
           this.currentProcessType = 2
         } else if (this.currentProcess.processType == 'pairs') {
@@ -764,6 +794,7 @@ export default {
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
+        if (this.currentProcess.processType == 'pairs') this.$set(this.currentProcess, 'pairsReportFlag', true)
         this.setProcessType()
 
         this.commonFun()
@@ -781,8 +812,8 @@ export default {
         this.vibrationLevelList = res.data
       })
     },
-     // 获取 可选的精度等级
-     getReprotNumJD(id) {
+    // 获取 可选的精度等级
+    getReprotNumJD(id) {
       let obj = {
         workOrderId: this.currentProcess.id,
         pairingModeId: id,
@@ -792,7 +823,7 @@ export default {
         this.accuracyLevelList = res.data
       })
     },
-    
+
     handleSelectionChangeZD(value) {
       console.log("value", value);
       if (this.currentProcessType !== 2) {
@@ -856,11 +887,12 @@ export default {
     },
     async getProcessFun(item) {
       this.currentProcess = item
+      if (this.currentProcess.processType == 'pairs') this.$set(this.currentProcess, 'pairsReportFlag', true)
       console.log("当前点击的工序", item);
-      this.$nextTick(()=>{
-        if(item.reportFlag) this.$refs['reportRef'].clearValidate()
+      this.$nextTick(() => {
+        if (item.reportFlag) this.$refs['reportRef'].clearValidate()
       })
-      
+
       this.setProcessType()
       this.stockFlag = 0
       //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
@@ -1070,6 +1102,56 @@ export default {
         });
       })
     },
+     // 获取注脂方式
+     getOilList() {
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj4).then(res => {
+        this.oilList = res.data.records
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
+      })
+    },
+     // 获取打字内容
+     getsealingcoverTypingList() {
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj4).then(res => {
+        this.sealingcoverTypingList = res.data.records
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
+      })
+    },
     goBack() {
       this.$emit("close", false)
     },
@@ -1099,15 +1181,15 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
-          if(this.currentProcess.reportFlag&&this.currentProcessType===1){
-            if(!this.totalReportNum){
+          if (this.currentProcess.reportFlag && this.currentProcessType === 1) {
+            if (!this.totalReportNum) {
               submitFlag = false
               this.$message.error("合格数量加上不合格数量必须大于0")
               return
             }
           }
-          if(this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag&&this.currentProcessType!==6){
-            if(!this.currentProcess.qualifiedQuantity) return this.$message.error("合格数量不能为空")
+          if (this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag && this.currentProcessType !== 6) {
+            if (!this.currentProcess.qualifiedQuantity) return this.$message.error("合格数量不能为空")
           }
           // 精度工序相关判断
           if (this.currentProcessType === 6 && this.currentProcess.reportFlag && this.currentProcess.accuracyReportFlag) {
@@ -1180,7 +1262,7 @@ export default {
           if (submitFlag === false) return
           console.log(12345);
           let arr = []
-          if (this.currentProcess.vibrateReportFlag) {
+          if (this.currentProcess.vibrateReportFlag||this.currentProcess.pairsReportFlag) {
             let obj = {}
             if (this.currentProcessType === 2) {//1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
               // 测震工序
@@ -1281,6 +1363,8 @@ export default {
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
+              obj.oil=this.currentProcess.oil
+              obj.sealingcoverTyping=this.currentProcess.sealingcoverTyping
             }
             arr.push(obj)
           } else if (this.currentProcess.accuracyReportFlag) {
@@ -1320,8 +1404,8 @@ export default {
                 arr.push(obj)
                 console.log("精度报工", arr);
               })
-            }else if (this.currentProcessType === 3) {
-              let obj={}
+            } else if (this.currentProcessType === 3) {
+              let obj = {}
               obj.classAttribute = this.currentProcess.classAttribute
               obj.orderType = this.currentProcess.orderType
               obj.productDrawingNo = this.currentProcess.productDrawingNo
@@ -1344,11 +1428,13 @@ export default {
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
-              obj.accuracyLevel=this.currentProcess.accuracyLevel
+              obj.accuracyLevel = this.currentProcess.accuracyLevel
+              obj.oil=this.currentProcess.oil
+              obj.sealingcoverTyping=this.currentProcess.sealingcoverTyping
               arr.push(obj)
               console.log("测震到配对工序之间的工序");
             } else if (this.currentProcessType === 4) {
-              let obj={}
+              let obj = {}
               obj.classAttribute = this.currentProcess.classAttribute
               obj.orderType = this.currentProcess.orderType
               obj.productDrawingNo = this.currentProcess.productDrawingNo
@@ -1372,11 +1458,11 @@ export default {
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
-              obj.accuracyLevel=this.currentProcess.accuracyLevel
+              obj.accuracyLevel = this.currentProcess.accuracyLevel
               arr.push(obj)
               console.log("配对工序");
-            }else {
-              let obj={}
+            } else {
+              let obj = {}
               console.log("配对后工序");
               obj.classAttribute = this.currentProcess.classAttribute
               obj.orderType = this.currentProcess.orderType
@@ -1401,7 +1487,9 @@ export default {
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
-              obj.accuracyLevel=this.currentProcess.accuracyLevel
+              obj.accuracyLevel = this.currentProcess.accuracyLevel
+              obj.oil=this.currentProcess.oil
+              obj.sealingcoverTyping=this.currentProcess.sealingcoverTyping
               arr.push(obj)
             }
           }
@@ -1428,7 +1516,10 @@ export default {
               "reportingType": "normal ",
               "unqualifiedQuantity": this.currentProcess.unqualifiedQuantity,
               "vibrationLevel": this.currentProcess.vibrationLevel,
+              "oil": this.currentProcess.oil,
+              "sealingcoverTyping": this.currentProcess.sealingcoverTyping,
               "workOrderId": this.currentProcess.id,
+             
             }
             arr.push(obj)
           }

@@ -90,6 +90,12 @@
                           <template v-if="scope.row.processType == 'accuracy'">
                             精度工序
                           </template>
+                          <template v-if="scope.row.processType == 'typing  '">
+                            打字工序
+                          </template>
+                          <template v-if="scope.row.processType == 'fatInjection'">
+                            注脂工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">

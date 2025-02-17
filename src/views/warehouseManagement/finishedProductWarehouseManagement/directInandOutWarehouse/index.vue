@@ -600,6 +600,10 @@
                 v-if="dataForm.documentType == 'outbound'" key="occupancyQuantity" />
               <el-table-column prop="batchNumber" label="批次号" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="batchNumber" />
+                <el-table-column prop="warehouseName" label="仓库名称" width="180" sortable="custom"
+                v-if="dataForm.documentType == 'outbound'" key="warehouseName" />
+                <el-table-column prop="shelfSpaceName" label="库位名称" width="180" sortable="custom"
+                v-if="dataForm.documentType == 'outbound'" key="shelfSpaceName" />
               <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && standardValueFlag == 1" key="standardValue" />
               <el-table-column prop="colour" label="颜色" width="80" sortable="custom"

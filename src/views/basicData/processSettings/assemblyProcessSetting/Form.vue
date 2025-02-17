@@ -119,6 +119,12 @@
                           <template v-if="scope.row.processType == 'accuracy'">
                             精度工序
                           </template>
+                          <template v-if="scope.row.processType == 'typing  '">
+                            打字工序
+                          </template>
+                          <template v-if="scope.row.processType == 'fatInjection'">
+                            注脂工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -397,6 +403,12 @@
                       <template v-if="scope.row.processType == 'accuracy'">
                         精度工序
                       </template>
+                      <template v-if="scope.row.processType == 'typing  '">
+                        打字工序
+                      </template>
+                      <template v-if="scope.row.processType == 'fatInjection'">
+                        注脂工序
+                      </template>
                     </template>
                   </el-table-column>
                   <el-table-column prop="processingType" label="加工类型" width="100">
@@ -557,7 +569,7 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
-  name:'assemblyProcessSetting',
+  name: 'assemblyProcessSetting',
   components: {
     ProcessDialog,
     SourceArea,

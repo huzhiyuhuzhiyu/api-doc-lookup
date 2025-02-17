@@ -43,6 +43,9 @@
                 <div v-if="scope.row.processType == 'heat_treatment'">热工工序</div>
                 <div v-if="scope.row.processType == 'packing'">包装工序</div>
                 <div v-if="scope.row.processType == 'pairs'">配对工序</div>
+                <div v-if="scope.row.processType == 'typing'">打字工序</div>
+                <div v-if="scope.row.processType == 'fatInjection'">注脂工序</div>
+                <div v-if="scope.row.processType == 'grinding'">磨孔工序</div>
                 <div v-if="scope.row.processType == 'accuracy'">精度工序</div>
               </template>
             </el-table-column>

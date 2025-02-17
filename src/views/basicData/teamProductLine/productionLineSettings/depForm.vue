@@ -156,11 +156,15 @@
                   <el-table-column prop="processType" label="工序类型" width="180">
                     <template slot-scope="scope">
 
-                      <template v-if="scope.row.processType == 'normal'">正常工序</template>
-                      <template v-if="scope.row.processType == 'vibrate'">测振工序</template>
-                      <template v-if="scope.row.processType == 'heat_treatment'">热工工序</template>
-                      <template v-if="scope.row.processType == 'packing'">包装工序</template>
-                      <template v-if="scope.row.processType == 'pairs'">配对工序</template>
+                      <div v-if="scope.row.processType == 'normal'">正常工序</div>
+                <div v-if="scope.row.processType == 'vibrate'">测振工序</div>
+                <div v-if="scope.row.processType == 'heat_treatment'">热工工序</div>
+                <div v-if="scope.row.processType == 'packing'">包装工序</div>
+                <div v-if="scope.row.processType == 'pairs'">配对工序</div>
+                <div v-if="scope.row.processType == 'typing'">打字工序</div>
+                <div v-if="scope.row.processType == 'fatInjection'">注脂工序</div>
+                <div v-if="scope.row.processType == 'grinding'">磨孔工序</div>
+                <div v-if="scope.row.processType == 'accuracy'">精度工序</div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="processingType" label="加工类型" width="180">

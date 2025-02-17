@@ -133,6 +133,12 @@
                           <template v-if="scope.row.processType == 'accuracy'">
                             精度工序
                           </template>
+                          <template v-if="scope.row.processType == 'typing  '">
+                            打字工序
+                          </template>
+                          <template v-if="scope.row.processType == 'fatInjection'">
+                            注脂工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -433,6 +439,12 @@
                       <template v-if="scope.row.processType == 'accuracy'">
                         精度工序
                       </template>
+                      <template v-if="scope.row.processType == 'typing  '">
+                        打字工序
+                      </template>
+                      <template v-if="scope.row.processType == 'fatInjection'">
+                        注脂工序
+                      </template>
                     </template>
                   </el-table-column>
                   <el-table-column prop="processingType" label="加工类型" width="100">
@@ -573,9 +585,10 @@
     <process-dialog v-if="processVisibled" ref="processRef" @dataFormSubmit="submit"></process-dialog>
     <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
 
-    <ComSelect-page ref="ComSelect-page" :beforeSubmit="beforeSubmit" @change="submit" :tableItems="ProductTableItems" title="选择工序" treeTitle="工序分类"
-      :methodArr="ProductMethodArr" :listMethod="getBimProcessList" :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList" :elementShow="false" multiple :listDataFormatting="listDataFormatting" />
+    <ComSelect-page ref="ComSelect-page" :beforeSubmit="beforeSubmit" @change="submit" :tableItems="ProductTableItems"
+      title="选择工序" treeTitle="工序分类" :methodArr="ProductMethodArr" :listMethod="getBimProcessList"
+      :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple
+      :listDataFormatting="listDataFormatting" />
   </div>
 </template>
 <script>

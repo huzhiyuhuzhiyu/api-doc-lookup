@@ -771,7 +771,7 @@ export default {
       this.$set(this.productData[index], 'preload', data.preload)
       this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
       this.$set(this.productData[index], 'angle', data.angle)
-      this.$set(this.productData[index], 'pairingModeName', data.pairingModeName)
+      this.$set(this.productData[index], 'pairingModeNames', data.pairingModeName)
       this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
       
 
@@ -1074,7 +1074,7 @@ export default {
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
             this.$set(item, 'price', item.costPrice)
-            this.$set(item,'pairingModeNames',item.partnerName)
+            this.$set(item,'pairingModeNames',item.pairingModeName)
             item.taxRates = item.taxRate + "%"
           });
           if (res.data.attachmentList) {
@@ -1119,7 +1119,7 @@ export default {
               item.taxRates = item.taxRate + "%"
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
-              this.$set(item,'pairingModeNames',item.partnerName)
+              this.$set(item,'pairingModeNames',item.pairingModeName)
               item.num = item.undeliveredQuantity
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
               item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 2)

@@ -51,12 +51,13 @@
               <el-table-column prop="productCode" label="产品编码" width="160" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
+              <el-table-column prop="processName" label="工序名称" min-width="120" />
+              <el-table-column prop="processCode" label="工序编码" min-width="120" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-              <el-table-column prop="pairingModeName" label="配对方式" min-width="160" />
               <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
                 v-if="standardValueFlag == 1" />
               <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" v-if="colourFlag == 1" />
@@ -76,15 +77,15 @@
                 sortable="custom"></el-table-column>
               <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag == 1"
                 sortable="custom"></el-table-column>
-              <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
-                <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
+              <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
+                <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
                   </template>
+</el-table-column>
 </el-table-column> -->
-              </el-table-column>
-              <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" /> -->
-              <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
+              <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom" />
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>
@@ -109,7 +110,7 @@
 
 <script>
 import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
-import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index' // 仓库树
+import { getWarehouseList,getOrderFiledMap } from '@/api/basicData/index' // 仓库树
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -155,10 +156,9 @@ export default {
         batchNumber: "",
         vibrationLevel: '',
         standardValue: '',
-      },
-      isProjectSwitch: "",
-      // 属性字段  控制属性字段显示隐藏
-      accuracyLevelFlag: "",
+      isProjectSwitch:"",
+         // 属性字段  控制属性字段显示隐藏
+         accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -169,14 +169,16 @@ export default {
       bimProductAttributesList: [],
       standardValueFlag: "",
       colourFlag: "",
-      processFlag: "",
+      processFlag: "",  
+      }
     }
   },
   async created() {
     await this.getOrderFiledMap()
+
     await this.getProjectSwitch('system', 'project')
-
-
+    
+    
   },
   methods: {
     getOrderFiledMap() {
@@ -286,15 +288,15 @@ export default {
         this.vibrationLevelList = arr
       })
     },
-    init(row, type) {
+    init(id, type, warehouseId) {
       this.getProductClassFun()
       if (type === 'inventoryFlag') { this.title = '库存数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
       this.visible = true
       let tempListQuery = {
-
-        productsId: row.productsId,
+        warehouseId: warehouseId,
+        productsId: id,
         batchNumber: "",
         availableFlag: 0, // 可用数标识（0 否 1是）默认否
         inventoryFlag: 0, // 库存数标识（0 否 1是）默认否
@@ -310,8 +312,6 @@ export default {
         pageSize: 20,
         vibrationLevel: '',
         standardValue: '',
-        warehouseId: row.warehouseId,
-        shelfSpaceId: row.shelfSpaceId
       }
       tempListQuery[type] = 1
       this.originalListQuery = tempListQuery
@@ -338,7 +338,11 @@ export default {
         if (!res.data.whPage.records.length) return
         this.tableData = res.data.whPage.records
         this.total = res.data.whPage.total
-        this.totalData = res.data.stockSts || {}
+        this.totalData = res.data.stockSts||{
+        totalInventory:0,
+        totalAvailable:0,
+        totalOccupancy:0,
+      }
 
       }).catch(err => {
         this.treeLoading = false

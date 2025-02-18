@@ -9,10 +9,6 @@
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getWarehouseTree(true)">刷新数据</el-dropdown-item>
-                <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </span>
@@ -42,11 +38,20 @@
         <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
     </div>
-    <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="listLoading">
+    <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
-
-
+          <!-- <el-col :span="6">
+            <el-form-item>
+              <el-input v-model="tableQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item>
+              <el-input v-model="tableQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col> -->
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
@@ -65,6 +70,7 @@
               </el-form-item>
             </el-col>
           </template>
+
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search('basic')" class="commonBox">
@@ -75,7 +81,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -90,56 +96,55 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="search('basic')" />
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
-          v-if="isProjectSwitchFlag" @sort-change="sortChange">
-
-          <el-table-column prop="productDrawingNo" label="品名规格" width="330" sortable="custom" />
-          <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-            v-if="isProjectSwitch == 1" />
-
-          <el-table-column prop="mainUnit" label="单位" min-width="80" />
-          <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewFun(scope.row, 'inventoryFlag')">
-                {{ scope.row.inventoryQuantity }}
-              </el-link>
-            </template>
-
-          </el-table-column>
-          <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewFun(scope.row, 'availableFlag')">
-                {{ scope.row.availableQuantity }}
-              </el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewFun(scope.row, 'occupancyFlag')">
-                {{ scope.row.occupancyQuantity }}
-              </el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
-          <el-table-column prop="warehouseName" label="仓库名称/库位名称" min-width="200" sortable="custom">
-            <template slot-scope="scope">
-              <div>{{ scope.row.shelfSpaceName ? scope.row.warehouseName + '/' +
-                scope.row.shelfSpaceName : scope.row.warehouseName }}</div>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom"/> -->
-          <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
-
-        </JNPF-table>
+    
+        <JNPF-table   v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO @sort-change="sortChange"
+              ref="tabForm">
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
+              <el-table-column prop="productCode" label="产品编码" width="160" />
+              <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
+              <el-table-column prop="mainUnit" label="单位" width="80" />
+              <el-table-column prop="processName" label="工序名称" min-width="120" />
+              <el-table-column prop="processCode" label="工序编码" min-width="120" />
+              <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
+              <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
+              <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
+              <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
+              <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+              <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
+                v-if="standardValueFlag == 1" />
+              <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" v-if="colourFlag == 1" />
+              <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag == 1"
+                sortable="custom"></el-table-column>
+              <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
+                <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
+                  </template>
+</el-table-column>
+</el-table-column> -->
+              <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
+              <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
+                sortable="custom" />
+            </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="search('basic')">
           <div class="text">
@@ -168,19 +173,33 @@ import { excelExport } from '@/api/basicData/index'
 import Form from './Form'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
-  name: 'locationInventory',
+  name: 'warehouseInventoryDetail',
   components: { Form, SuperQuery, ExportForm },
   mixins: [getProjectList],
   data() {
     return {
+       // 属性字段  控制属性字段显示隐藏
+       accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      standardValueFlag: "",
+      colourFlag: "",
+      processFlag: "", 
+      isProjectSwitchFlag: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
       searchList: [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'shelfSpaceName', fieldValue: '', label: '库位名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
       superQueryVisible: false,
@@ -197,13 +216,18 @@ export default {
         label: 'name'
       },
       total: 0,
+      totalData: {
+        totalInventory: 0,
+        totalAvailable: 0,
+        totalOccupancy: 0,
+      },
       formVisible: false,
       expands: true,
       refreshTree: true,
       filterText: '',
       leftFlag: false,
       tableQuery: {
-
+        totalInventoryFlag :false,
         orderItems: [
           {
             asc: true,
@@ -212,22 +236,17 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        shelfSpaceQueryFlag: 1,
+
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
         productCode: "",
-        shelfSpaceName: "",
         superQuery: {},
         inventoryFlag: 1,
       },
       selectedNodeKey: "",
-      totalData: {
-        totalInventory: 0,
-        totalAvailable: 0,
-        totalOccupancy: 0,
-      },
+      totalData: {},
       superQueryJson: [
         {
           prop: 'productDrawingNo',
@@ -287,7 +306,6 @@ export default {
 
 
       ],
-      isProjectSwitchFlag: false,
       isProjectSwitch: "",
     }
   },
@@ -306,16 +324,26 @@ export default {
     this.isProjectSwitchFlag = true
     this.superForm = this.tableQuery
     this.getWarehouseTree(true)
-    if (localStorage.getItem("locationInventoryFlag")) {
-      let locationInventoryFlag = JSON.parse(localStorage.getItem('locationInventoryFlag'))
-      this.expands = locationInventoryFlag
-      console.log("locationInventoryFlag", locationInventoryFlag);
-      this.toggleExpand(locationInventoryFlag)
-
-    }
 
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     // 导出
     exportForm(exportTableRef) {
       console.log("object,", exportTableRef);
@@ -336,8 +364,8 @@ export default {
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1007',
-        exportName: "货位库存",
+        exportType: '1008',
+        exportName: "仓库库存明细",
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -350,27 +378,17 @@ export default {
     superQuerySearch(query) {
       this.tableQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     // 查看产品明细
-    viewFun(row, type) {
+    viewFun(id, type, warehouseId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(row, type)
+        this.$refs.Form.init(id, type, warehouseId)
       })
     },
 
-    // // 设置默认展开
-    setexpand(expands) {
-      console.log("expands", expands);
-      this.refreshTree = false
-      this.expands = expands
-      this.$nextTick(() => {
-        this.refreshTree = true
-        localStorage.setItem("locationInventoryFlag", expands)
 
-      })
-    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
 
@@ -379,16 +397,7 @@ export default {
       this.$refs.tabForm.showDrawer()
     },
 
-    toggleExpand(expands) {
-      this.refreshTree = false
-      this.expands = expands
-      this.$nextTick(() => {
-        this.refreshTree = true
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.companyId)
-        })
-      })
-    },
+
     filterNode(value, data) {
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
@@ -404,6 +413,8 @@ export default {
         virtuallyFlag: false,
       }
       obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+
+
       getWarehouseList(obj).then(res => {
         this.treeData = res.data
         this.$nextTick(() => {
@@ -421,11 +432,12 @@ export default {
         console.log(res);
         this.tableData = res.data.whPage.records
 
-        this.totalData = res.data.stockSts || {
-          totalInventory: 0,
-          totalAvailable: 0,
-          totalOccupancy: 0,
-        }
+          this.totalData = res.data.stockSts || {
+            totalInventory: 0,
+            totalAvailable: 0,
+            totalOccupancy: 0,
+          }
+        
         this.total = res.data.whPage.total
         this.listLoading = false
       }).catch(() => {
@@ -457,7 +469,7 @@ export default {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.superForm  =this.tableQuery = {
+      this.superForm = this.tableQuery = {
         orderItems: [
           {
             asc: true,
@@ -466,24 +478,21 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        shelfSpaceQueryFlag: 1,
-        inventoryFlag:1,
+        totalInventoryFlag:false,
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
-        shelfSpaceName: "",
         productCode: "",
         superQuery: {},
+        inventoryFlag: 1,
       }
-      
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'shelfSpaceName', fieldValue: '', label: '库位名称', symbol: 'like', searchType: 1, width: 120 },
-      ],
-        this.getWarehouseTree(true)
+      ]
+      this.getWarehouseTree(true)
     },
     handleNodeClick(data, node) {
       if (this.tableQuery.warehouseId === data.id) return
@@ -515,7 +524,7 @@ export default {
       }
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
-      this.search('basic')
+      this.initData()
     },
 
 

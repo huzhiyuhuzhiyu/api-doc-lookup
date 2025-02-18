@@ -1,6 +1,6 @@
 import router from './router'
 import store from './store'
-import { Message } from 'element-ui'
+import { message as $message } from '@/utils/message'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken, removeToken } from '@/utils/auth'
@@ -66,7 +66,7 @@ router.beforeEach(async (to, from, next) => {
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
-          if (error && typeof (error) == 'string') Message.error(error || 'Has Error')
+          if (error && typeof (error) == 'string') $message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
@@ -88,4 +88,5 @@ router.beforeEach(async (to, from, next) => {
 router.afterEach(() => {
   // finish progress bar
   NProgress.done()
+  $message.close()
 })

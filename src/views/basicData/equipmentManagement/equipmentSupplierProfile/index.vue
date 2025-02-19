@@ -423,8 +423,8 @@ export default {
     getProductClassFun() {
 
       let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa007",
         orderItems: [
           {
@@ -456,8 +456,8 @@ export default {
         }
       })
       let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa006",
         orderItems: [
           {
@@ -489,8 +489,8 @@ export default {
         }
       })
       let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa005",
         orderItems: [
           {
@@ -521,8 +521,8 @@ export default {
         }
       })
       let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa002",
         orderItems: [
           {
@@ -555,8 +555,8 @@ export default {
         }
       })
       let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa003",
         orderItems: [
           {
@@ -586,8 +586,8 @@ export default {
         }
       })
       let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa001",
         orderItems: [
           {
@@ -618,8 +618,8 @@ export default {
         }
       })
       let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa015",
         orderItems: [
           {

@@ -1284,6 +1284,9 @@ export default {
       this.fetchData("PROD")
 
       if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
+      if(this.dataForm.productionLineId){
+        this.selectLine(this.dataForm.productionLineId)
+      }
     },
     async fetchData(code) {
       try {

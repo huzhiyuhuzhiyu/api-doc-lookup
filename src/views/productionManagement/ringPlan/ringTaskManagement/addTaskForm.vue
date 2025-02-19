@@ -1294,9 +1294,9 @@ export default {
     },
     creaFun() {
       this.linesFormItems_right = [
-        { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
-        { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
-        { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
+        { prop: "productSName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
+        { prop: "productSDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
         {
           prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
           customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,
@@ -1514,10 +1514,10 @@ export default {
       let hasItemList = []
       for (let i = 0; i < data.length; i++) {
         let item = data[i];
-        item.productsId = item.productsId || item.id
-        item.productCode = item.productCode || item.code
-        item.productName = item.productName || item.name
-        item.productDrawingNo = item.productDrawingNo || item.drawingNo
+        item.productsId =  item.id
+        item.productsCode =   item.code
+        item.productsName =   item.name
+        item.productsDrawingNo =   item.drawingNo
         item.qty = 1
         const hasFlag = this.materialList.find(i => item.productsId === i.productsId)
         if (hasFlag) { hasItemList.push(item.productDrawingNo) }
@@ -1527,9 +1527,9 @@ export default {
       this.materialList = tempList.map(item => {
         return {
           productsId: item.productsId,
-          productCode: item.productCode,
-          productName: item.productName,
-          productDrawingNo: item.productDrawingNo,
+          productCode: item.productsCode,
+          productName: item.productsName,
+          productDrawingNo: item.productsDrawingNo,
           qty: item.qty,
           calculationDirection: item.calculationDirection,
           mainUnit: item.mainUnit,

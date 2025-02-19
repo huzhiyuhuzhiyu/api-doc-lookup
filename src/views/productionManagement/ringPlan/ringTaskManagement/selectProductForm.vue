@@ -40,7 +40,7 @@
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="150" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="150" sortable="custom" />
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="100" >
               <template slot-scope="scope" >
                 <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
               </template>

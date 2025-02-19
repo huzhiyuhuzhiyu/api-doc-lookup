@@ -478,8 +478,8 @@ export default {
               "column": "create_time"
             }
           ],
-          pageNum: -1,
-          pageSize: 20,
+          pageNum: 1,
+          pageSize: -1,
         }
         getWorkReportList(obj).then(res => {
           this.recoredsData = res.data.records

@@ -332,6 +332,7 @@ export default {
       producerMargin: '30px',
       materialList: [],
       materialWasteDataList: [],
+      copyCurrentProcess: {}
     }
   },
 
@@ -368,8 +369,21 @@ export default {
         this.dataForm = res.data.prodOrder
         this.workList = res.data.workOrderList
         this.materialList = res.data.materialList
-        this.currentProcessId = res.data.workOrderList[0].processId
-        this.currentProcess = res.data.workOrderList[0]
+  
+        
+        if (Object.keys(this.copyCurrentProcess).length !== 0) {
+          const matchingItem = res.data.workOrderList.find(item => item.processId === this.copyCurrentProcess.processId);
+          if (matchingItem) {
+            this.currentProcessId = matchingItem.processId
+            this.currentProcess = matchingItem
+            this.processInfo = JSON.parse(JSON.stringify(matchingItem))
+          } else {
+          }
+        } else {
+          this.currentProcessId = res.data.workOrderList[0].processId
+          this.currentProcess = res.data.workOrderList[0]
+          this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
+        }
         this.$set(this.currentProcess, 'reportingQuantity', 0)
         this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
@@ -385,6 +399,7 @@ export default {
     },
     getProcessFun(item) {
       this.currentProcess = item
+      this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")

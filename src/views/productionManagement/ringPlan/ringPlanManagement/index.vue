@@ -51,6 +51,8 @@
               <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
                 编排
               </el-button> -->
+              <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
+              @click="batchPrint">批量打印</el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="importFun('dataTable')">
                 导入
               </el-button>
@@ -75,8 +77,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
-            header-cell-class-name="all-select" @sort-change="sortChange" custom-column
-            :setColumnDisplayList="columnList" hasC @selection-change="selectFun" :checkSelectable="dispurchaseData">
+            @sort-change="sortChange" custom-column
+            :setColumnDisplayList="columnList" hasC @selection-change="selectFun" >
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
@@ -465,19 +467,8 @@ export default {
     },
     selectFun(val) {
       console.log(val);
-      if (val.length) {
-        this.tableData.forEach(item => {
-          if (item.id != val[0].id) {
-            item.selectFlag = true
-          }
-        });
-        this.selectArr = val
-      } else {
-        this.tableData.forEach(item => {
-          item.selectFlag = false
-        });
+      this.selectArr = val
 
-      }
 
     },
 

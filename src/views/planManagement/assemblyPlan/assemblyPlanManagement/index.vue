@@ -3,7 +3,7 @@
 
   <div class="JNPF-common-layout">
 
-    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!orderFormVisible">
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!FormVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
@@ -65,6 +65,14 @@
                 }}</el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="planType" label="计划来源" width="180">
+              <template slot-scope="scope">
+                <div v-if="scope.row.planType == 'order_plan'">订单生成计划</div>
+                <div v-else-if="scope.row.planType == 'add_plan'">直接创建计划</div>
+                <div v-else-if="scope.row.planType == 'safety_stock_plan'">安全库存创建计划</div>
+              </template>
+            </el-table-column>
+     
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -142,6 +150,7 @@
     <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" /> -->
 
     <OrderForm v-if="orderFormVisible" ref="orderForm" @refreshDataList="initData" @close="closeForm" />
+    <CreateDirectly v-if="createDirectlyVisible" ref="createDirectly" @refreshDataList="initData" @close="closeForm" />
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
@@ -156,6 +165,7 @@ import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributelin
 import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanList } from '@/api/calculationList/calculationList.js'
 import Form from './Form'
 import OrderForm from '../salesOrderCreation/Form.vue'
+import CreateDirectly from '../createDirectly/index.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -167,10 +177,11 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyPlanManagement',
-  components: { Form, ExportForm, SuperQuery, OrderForm },
+  components: { Form, ExportForm, SuperQuery, OrderForm ,CreateDirectly},
   mixins: [getProjectList],
   data() {
     return {
+      createDirectlyVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -178,10 +189,10 @@ export default {
         { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
-
-      CreateFormVisible: false,
+ 
       columnList: ["productCode", 'planState'],
-      orderFormVisible: false,
+      FormVisible: false,
+      orderFormVisible:false,
       superQueryVisible: false,
       exportFormVisible: false,
       tableData: [],
@@ -311,14 +322,17 @@ export default {
     ...mapGetters(['userInfo'])
   },
 
-
+  mounted () {
+    this.search('basic')
+    
+  },
   async created() {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     this.superForm = this.orderForm
     this.search('basic')
-    
+
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.advancedQueryFun()
     if (this.isProductNameSwitch == 1) {
@@ -553,7 +567,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName'||prop=='pairingModeName'  || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
+      if (prop === 'productName' || prop == 'pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus' || prop == 'productDrawingNo') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -579,13 +593,16 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.orderFormVisible = false
-      this.CreateFormVisible = false
+      this.FormVisible = false
+      this.createDirectlyVisible = false
+      this.orderFormVisible=false
+      console.log("1");
       this.search('basic')
     },
     initData() {
       this.listLoading = true
       this.superForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      console.log("3");
       getPlanList(this.superForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -598,6 +615,7 @@ export default {
 
 
     search(type) {
+      console.log("2");
       this.orderForm.pageNum = 1
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
@@ -664,13 +682,26 @@ export default {
 
 
     addOrUpdateHandle(data, btnType) {
-      // 订单创建计划
       detailPlanList(data.id).then(res => {
         console.log("订单计划详情", res);
-        this.orderFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
-        })
+        if (data.planType == 'add_plan') {
+          // 直接创建计划
+          this.createDirectlyVisible=true
+          this.FormVisible = true
+          this.$nextTick(() => {
+            this.$refs.createDirectly.init(data.id, btnType, res.data, data.planType)
+          })
+        } else if (data.planType == 'order_plan') {
+      // 订单创建计划
+          this.orderFormVisible = true
+          this.FormVisible = true
+          this.$nextTick(() => {
+            this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
+          })
+        }else{
+
+        }
+
       })
     },
 
@@ -693,10 +724,29 @@ export default {
       // 订单创建计划
       detailPlanList(data.id).then(res => {
         console.log("订单计划详情", res);
-        this.orderFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
-        })
+        // this.orderFormVisible = true
+        // this.$nextTick(() => {
+        //   this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
+        // })
+
+        if (data.planType == 'add_plan') {
+          // 直接创建计划
+          this.createDirectlyVisible=true
+          this.FormVisible = true
+          this.$nextTick(() => {
+            this.$refs.createDirectly.init(data.id, btnType, res.data, data.planType)
+          })
+        } else if (data.planType == 'order_plan') {
+      // 订单创建计划
+          this.orderFormVisible = true
+          this.FormVisible = true
+          this.$nextTick(() => {
+            this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
+          })
+        }else{
+
+        }
+
       })
 
     },

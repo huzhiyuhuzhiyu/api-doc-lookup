@@ -1941,6 +1941,7 @@ export default {
     },
     // 下一步
     next() {
+      if(!this.dataForm.projectId) return this.$message.error("请选择所属项目")
       if (!this.dataForm.arithmeticNo) return this.$message.error("运算单号不能为空")
       if (!this.tableData.length) return this.$message.error("已选择的计划数据不能为空")
       let hasFalseBomFlag = this.tableData.some(item => !item.bomFlag )

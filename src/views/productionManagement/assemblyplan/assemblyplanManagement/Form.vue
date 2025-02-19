@@ -1196,6 +1196,7 @@ export default {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
 
       }
+     
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       if (this.dataForm.planStartDate && this.dataForm.planEndDate) {
         this.dataForm.planDate[0] = this.dataForm.planStartDate
@@ -1208,6 +1209,9 @@ export default {
       this.fetchData("PROD")
 
       if (this.dataForm.routingId) this.getRoutingDetail(this.dataForm.routingId)
+      if(this.dataForm.productionLineId){
+        this.selectLine(this.dataForm.productionLineId)
+      }
     },
     async fetchData(code) {
       try {

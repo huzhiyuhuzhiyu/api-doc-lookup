@@ -485,8 +485,8 @@ export default {
     getProductClassFun() {
 
       let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
+        pageNum: 1,
+        pageSize: -1,
         typeCode: "pa007",
         orderItems: [
           {

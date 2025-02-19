@@ -73,7 +73,7 @@
 
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search('basic')" class="commonBox">
+              <el-button type="primary" icon="el-icon-search" @click="search('basic','search')" class="commonBox">
                 {{ $t('common.search') }}</el-button>
               <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{ $t('common.reset') }}
               </el-button>
@@ -149,11 +149,11 @@
           @pagination="search('basic')">
           <div class="text">
             <span>合计：</span>
-            <span style="margin-left: 10px">库存数量：{{ totalData.totalInventory }}</span>
-            <span style="margin-left: 10px">可用数量：{{ totalData.totalAvailable }}</span>
-            <span style="margin-left: 10px">占用数量：{{ totalData.totalOccupancy }}</span>
+            <span style="margin-left: 10px">库存数量：{{ totalData.inventoryQuantity }}</span>
+            <span style="margin-left: 10px">可用数量：{{ totalData.availableQuantity }}</span>
+            <span style="margin-left: 10px">占用数量：{{ totalData.occupancyQuantity }}</span>
           </div>
-        </pagination>
+        </pagination>  
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
@@ -165,7 +165,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList,getInventoryLineReport } from '@/api/basicData/index' // 仓库 
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -217,9 +217,9 @@ export default {
       },
       total: 0,
       totalData: {
-        totalInventory: 0,
-        totalAvailable: 0,
-        totalOccupancy: 0,
+        inventoryQuantity: 0,
+            availableQuantity: 0,
+            occupancyQuantity: 0,
       },
       formVisible: false,
       expands: true,
@@ -243,10 +243,9 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
-        inventoryFlag: 1,
+        lineFlag: 1,
       },
-      selectedNodeKey: "",
-      totalData: {},
+      selectedNodeKey: "", 
       superQueryJson: [
         {
           prop: 'productDrawingNo',
@@ -428,23 +427,23 @@ export default {
     initData() {
 
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      inventoryWarehouseList(this.tableQuery).then((res) => {
+      getInventoryLineReport(this.tableQuery).then((res) => {
         console.log(res);
-        this.tableData = res.data.whPage.records
+        this.tableData = res.data.page.records
 
-          this.totalData = res.data.stockSts || {
-            totalInventory: 0,
-            totalAvailable: 0,
-            totalOccupancy: 0,
+          this.totalData = res.data.total || {
+            inventoryQuantity: 0,
+            availableQuantity: 0,
+            occupancyQuantity: 0,
           }
         
-        this.total = res.data.whPage.total
+        this.total = res.data.page.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
     },
-    search(type) {
+    search(type,flag) {
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
@@ -462,6 +461,7 @@ export default {
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery
       }
+      if(flag) this.tableQuery.pageNum=1
       this.initData()
     },
     reset() {
@@ -477,15 +477,14 @@ export default {
           }
         ],
         pageNum: 1,
-        pageSize: 20,
-        totalInventoryFlag:false,
+        pageSize: 20, 
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
-        inventoryFlag: 1,
+        lineFlag: 1, 
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [

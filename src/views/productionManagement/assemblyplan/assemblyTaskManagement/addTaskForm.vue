@@ -956,6 +956,7 @@ export default {
       this.$set(this.dataForm, 'pairingModeId', pairingModeId)
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
+      this.$set(this.dataForm, 'productsName', data.name)
       this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
       this.creaFun()

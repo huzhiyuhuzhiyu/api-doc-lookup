@@ -109,7 +109,7 @@
 
                       </div> -->
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165" class="inboundProduct"
                         style="width: 100%;height: auto">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
@@ -376,7 +376,7 @@
 
                       </div> -->
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165" class="inboundProduct"
                         style="width: 100%;">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
@@ -1695,7 +1695,7 @@ export default {
   padding: 0;
 }
 
-::v-deep .el-table__body-wrapper {
+ .inboundProduct ::v-deep .el-table__body-wrapper { 
   height: auto !important;
 }
 </style>

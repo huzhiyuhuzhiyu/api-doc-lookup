@@ -142,7 +142,7 @@ export default {
         inspectStockFlag: true,
         processId: "",
         pairingModeId:"",
-        excludeProcessFlag:true,
+        excludeProcessFlag:false,
       },
       refreshTree: true,
       listLoading: false,
@@ -166,6 +166,7 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",
+      excludeProcessFlag:false,
 
     }
   },
@@ -215,6 +216,7 @@ export default {
       this.form.productsId = data.productsId
       this.form.vibrationLevel = ""
       this.form.sealingCoverTyping = ""
+      if(type=='sale') this.excludeProcessFlag=true
       // this.form.vibrationLevel = data.vibrationLevel
       // this.form.sealingCoverTyping = data.sealingCoverTyping
       // this.form.clearance = data.clearance
@@ -234,7 +236,7 @@ export default {
       this.form.pairingModeId = data.pairingModeId
       this.form.material = ""
       this.form.standardValue = ""
-      this.form.excludeProcessFlag=true
+      this.form.excludeProcessFlag=this.excludeProcessFlag
       this.dataForm = data
       if (!requestFlag) {
 
@@ -298,7 +300,7 @@ export default {
         partnerName:"",
         standardValue:this.dataForm.standardValue,
         colour:this.dataForm.colour,
-        excludeProcessFlag:true,
+        excludeProcessFlag:this.excludeProcessFlag,
       }
       if (this.requestFlag) {
         this.getlistOutBatchStockFun()

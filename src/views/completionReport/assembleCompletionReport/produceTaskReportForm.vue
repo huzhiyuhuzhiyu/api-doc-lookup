@@ -605,9 +605,10 @@ export default {
   },
 
   async mounted() {
-    await this.getpairingModeListFun()
+     
   },
-  mounted() {
+  async mounted() {
+    await this.getpairingModeListFun()
     this.getInboundVal()
     this.getOrderFiledMap()
     this.getPackmethods()
@@ -870,7 +871,7 @@ export default {
     changePairingMode(value) {
       console.log("bbb", value);
       if (value) {
-
+        console.log(this.pairingModeListCopy);
         this.pairingModeNum = this.pairingModeListCopy.filter(items => items.id === value)[0].quantity;
         this.currentProcess.qualifiedQuantity = ''
         this.currentProcess.reportingQuantity = 0

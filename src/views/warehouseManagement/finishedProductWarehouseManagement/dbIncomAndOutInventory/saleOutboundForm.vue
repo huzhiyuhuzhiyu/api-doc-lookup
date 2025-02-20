@@ -809,7 +809,7 @@ export default {
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
       this.$nextTick(() => {
-        this.$refs.BatchNumberForms.init(data, index)
+        this.$refs.BatchNumberForms.init(data, index,'sale')
       })
     },
     // 选择批次

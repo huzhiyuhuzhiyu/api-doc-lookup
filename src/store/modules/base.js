@@ -4,7 +4,7 @@ import { getPositionListAll, getPositionSelector } from '@/api/permission/positi
 import { getRoleSelector } from '@/api/permission/role'
 import { getPrintDevSelector } from '@/api/system/printDev'
 import jnpf from '@/utils/jnpf';
-import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData'
+import { getBimBusinessDetail, getOrderFiledMap, getBimBusinessSwitchConfigList } from '@/api/basicData'
 
 const state = {
   dictionaryList: [],
@@ -16,6 +16,7 @@ const state = {
   roleTree: [],
   printFlowTree: [],
   printFormTree: [],
+  configData: {},
   configGlobal:{}
 }
 
@@ -49,7 +50,22 @@ const mutations = {
   },
   SET_CONFIG_GLOBAL: (state, configGlobal) => {
     state.configGlobal = configGlobal
-  }
+  },
+  SET_CONFIG_DATA(state, configData) {
+    const createProxy = (target) => {
+      return new Proxy(target, {
+        get(target, prop) {
+          if (!(prop in target)) {
+            console.error(`$store.configData属性访问错误 "${prop}"\n`, state.configData);
+            return {};
+          }
+          if (typeof target[prop] === 'object' && target[prop] !== null) return createProxy(target[prop]);
+          return target[prop];
+        }
+      });
+    };
+    state.configData = createProxy(configData);
+  },
 }
 
 const actions = {
@@ -246,6 +262,27 @@ const actions = {
                 reject(error)
             })
         })
+  },
+  // 获取全部业务参数配置
+  refreshConfigData({ commit }, type) {
+    return new Promise((resolve, reject) => {
+      getBimBusinessSwitchConfigList({ pageSize: -1 }).then(res => {
+        commit('SET_CONFIG_DATA', transformConfig(res.data))
+        function transformConfig(configObj) {
+          const result = {};
+          for (const [key, configList] of Object.entries(configObj)) {
+            result[key] = {};
+            configList.forEach((item) => {
+              result[key][item.configKey] = item.configValue1 === '1' ? true : false;
+            });
+          }
+          return result;
+        }
+        resolve()
+      }).catch(error => {
+        reject()
+      })
+    })
   },
   getParamSetConfig({ commit },params) {
         return new Promise((resolve, reject) => {

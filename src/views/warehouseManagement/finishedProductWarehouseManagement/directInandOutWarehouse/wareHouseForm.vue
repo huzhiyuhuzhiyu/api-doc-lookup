@@ -43,6 +43,8 @@
               </template>
             </el-table-column>
           </JNPF-table>
+          <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
+          @pagination="search" />
         </div>
       </div>
     </div>
@@ -60,6 +62,8 @@ export default {
       tableQuery: {
         category: 'location',
         code: '',
+        pageNum:1,
+        pageSize:20,
         orderItems: [
           {
             asc: true,
@@ -68,7 +72,7 @@ export default {
         ],
         warehouseId: ''
       },
-
+      total:"",
       expands: true,
       defaultProps: {
         children: 'childrenList',

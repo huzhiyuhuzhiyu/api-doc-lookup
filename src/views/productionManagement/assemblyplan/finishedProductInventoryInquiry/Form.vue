@@ -856,7 +856,7 @@ export default {
     compount() {
       if (this.dataForm.productionQuantity) {
         this.materialList.forEach(item => {
-          let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.ratio, item.qty]), 6)
+          let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6)
           let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
           this.$set(item, 'materialsUsedQuantity', totalNum)
         });

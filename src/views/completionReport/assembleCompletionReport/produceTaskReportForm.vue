@@ -570,7 +570,7 @@ export default {
         ],
         qualifiedQuantity: [
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
-          { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
+          // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ],
         vibrationLevel: [
           { required: true, message: '测振等级不能为空', trigger: 'change' }

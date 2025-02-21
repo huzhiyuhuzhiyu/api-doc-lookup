@@ -36,7 +36,7 @@
                         </el-col>
                         <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                           <el-form-item label="所属项目" prop="projectId">
-                            <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;" 
+                            <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;"
                               @change="changeProject" :disabled="btnType == 'look' ? true : false">
                               <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
@@ -45,8 +45,8 @@
                         </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="产线" prop="productionLineId">
-                            <el-select v-model="planForm.productionLineId" placeholder="产线" clearable :disabled="btnType == 'look' ? true : false"
-                              style="width: 100%;" @change="selectLine">
+                            <el-select v-model="planForm.productionLineId" placeholder="产线" clearable
+                              :disabled="btnType == 'look' ? true : false" style="width: 100%;" @change="selectLine">
                               <el-option v-for="(item, index) in productionLineList" :key="index" :label="item.name"
                                 :value="item.id"></el-option>
                             </el-select>
@@ -70,21 +70,21 @@
                     </el-form>
                   </el-collapse-item>
                   <el-collapse-item title="产品信息" name="productInfo">
-                    <div v-if="btnType!='look'">
+                    <div v-if="btnType != 'look'">
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                     </div>
 
-                    <JNPF-table ref="product" :data="productData" 
-                      @selection-change="handeleProductInfoData" border height="660"  style="width: 100%;"
-                      :hasC=" btnType == 'look' ? false : true">
+                    <JNPF-table ref="product" :data="productData" @selection-change="handeleProductInfoData" border
+                      height="660" style="width: 100%;" :hasC="btnType == 'look' ? false : true">
 
                       <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
                         v-if="codeConfig.codeWay != 'auto'">
                         <template slot-scope="scope">
-                          <el-input v-model="scope.row.planNo" placeholder="计划单号"  :disabled="btnType == 'look' ? true : false"/>
+                          <el-input v-model="scope.row.planNo" placeholder="计划单号"
+                            :disabled="btnType == 'look' ? true : false" />
                         </template>
                       </el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
@@ -101,6 +101,7 @@
 
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                       <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
+                      <!-- <el-table-column prop="maxInventory" label="最高库存数量" width="140" :key="88" /> -->
                       <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
@@ -117,7 +118,8 @@
                         </template>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.planQuantity" placeholder="计划数量"
-                            oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"  :disabled="btnType == 'look' ? true : false">
+                            oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                            :disabled="btnType == 'look' ? true : false">
                           </el-input>
                         </template>
                       </el-table-column>
@@ -146,8 +148,8 @@
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
                         v-if="sealingCoverTypingFlag == 1" :key="211">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable  :disabled="btnType == 'look' ? true : false"
-                            style="width: 100%;">
+                          <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                            :disabled="btnType == 'look' ? true : false" style="width: 100%;">
                             <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -156,7 +158,8 @@
                       <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
                         :key="123">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable  :disabled="btnType == 'look' ? true : false">
+                          <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
+                            :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -165,8 +168,8 @@
                       <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
                         :key="17">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable  :disabled="btnType == 'look' ? true : false"
-                            style="width: 100%;">
+                          <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
+                            :disabled="btnType == 'look' ? true : false" style="width: 100%;">
                             <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -174,7 +177,8 @@
                       </el-table-column>
                       <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"  :disabled="btnType == 'look' ? true : false">
+                          <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -182,7 +186,8 @@
                       </el-table-column>
                       <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"  :disabled="btnType == 'look' ? true : false">
+                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -190,7 +195,8 @@
                       </el-table-column>
                       <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"  :disabled="btnType == 'look' ? true : false">
+                          <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -199,8 +205,8 @@
                       <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
                         :key="101">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable  :disabled="btnType == 'look' ? true : false"
-                            style="width: 100%;">
+                          <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                            :disabled="btnType == 'look' ? true : false" style="width: 100%;">
                             <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -209,8 +215,8 @@
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
                         :key="101">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable  :disabled="btnType == 'look' ? true : false"
-                            style="width: 100%;">
+                          <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                            :disabled="btnType == 'look' ? true : false" style="width: 100%;">
                             <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -218,7 +224,8 @@
                       </el-table-column>
                       <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"  :disabled="btnType == 'look' ? true : false">
+                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -226,7 +233,8 @@
                       </el-table-column>
                       <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"  :disabled="btnType == 'look' ? true : false">
+                          <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -234,7 +242,8 @@
                       </el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128">
                         <template slot-scope="scope">
-                          <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200"  :disabled="btnType == 'look' ? true : false" />
+                          <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200"
+                            :disabled="btnType == 'look' ? true : false" />
                         </template>
                       </el-table-column>
 
@@ -343,7 +352,7 @@ import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList,
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
 import { updatePlanList } from '@/api/calculationList/calculationList'
-import  {
+import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -442,7 +451,23 @@ export default {
       projectIdDataList: [],
       isProductNameSwitch: "",
       pairingModeList: [],
-      tableflag:false,
+      tableflag: false,
+      bimProductAttributesList: {},
+       // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      materialFlag: '',
+      colourFlag: '',
+      bimProductAttributesList: {},
+      dataFalg: false,
+      pairingModeList: [],
+      pairingModeNum: 1,
     }
   },
   computed: {
@@ -453,16 +478,18 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProductClassFun()
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getpairingModeListFun()
 
     await this.getProjectList()
-    await this.getProductAttributeFun()
-   
+
   },
   mounted() {
-    this.getProductClassFun()
     // this.getBimBusinessDetail()
+    if (this.btnType == 'add') {
+      this.fetchData("JHDH")
+    }
 
 
   },
@@ -493,8 +520,8 @@ export default {
       });
     },
     // 获取业务参数中 属性字段动态显示
-    getProductAttributeFun() {
-      getOrderFiledMap('sale').then(res => {
+    async getProductAttributeFun() {
+      await  getOrderFiledMap('sale').then(res => {
         console.log("产品属性", res);
         // sealingCoverTypingFlag list1  pa007
         // accuracyLevelFlag list2  pa006
@@ -643,6 +670,7 @@ export default {
       // 产品属性
       const res = await getbimProductAttributesListMap()
       this.bimProductAttributesList = res.data
+      await this.getProductAttributeFun()
 
 
     },
@@ -841,6 +869,7 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
+        console.log("data", data);
         this.codeConfig = data
 
       } catch (error) {
@@ -874,44 +903,44 @@ export default {
       this.planForm.id = id || ''
       this.btnType = btnType || 'add'
       this.planForm.planType = planType
-      this.planForm=productData.plan
-      this.productData=productData.planLineList
-      if(this.productData.length){
+      this.planForm = productData.plan
+      this.productData = productData.planLineList
+      if (this.productData.length) {
         this.productData.forEach(item => {
-          this.$set(item,'planQuantity',this.planForm.planQuantity)
-          this.$set(item,'planStartDate',this.planForm.planStartDate)
-          this.$set(item,'planEndDate',this.planForm.planEndDate)
-          this.$set(item,'drawingNo',this.planForm.productDrawingNo)
-          this.$set(item,'bomId',this.planForm.bomId)
-          this.$set(item,'id',this.planForm.id)
-          this.$set(item,'classAttribute',this.planForm.classAttribute)
-          this.$set(item,'projectId',this.planForm.projectId)
-          this.$set(item,'planNo',this.planForm.planNo)
-          this.$set(item,'productSource',this.planForm.productSource)
-          this.$set(item,'planType',this.planForm.planType)
-          this.$set(item,'ratio',this.planForm.ratio)
-          this.$set(item,'calculationDirection',this.planForm.calculationDirection)
-          this.$set(item,'mainUnit',this.planForm.mainUnit)
-          this.$set(item,'deputyUnit',this.planForm.deputyUnit)
-          this.$set(item,'planState',this.planForm.planState)
+          this.$set(item, 'planQuantity', this.planForm.planQuantity)
+          this.$set(item, 'planStartDate', this.planForm.planStartDate)
+          this.$set(item, 'planEndDate', this.planForm.planEndDate)
+          this.$set(item, 'drawingNo', this.planForm.productDrawingNo)
+          this.$set(item, 'bomId', this.planForm.bomId)
+          this.$set(item, 'id', this.planForm.id)
+          this.$set(item, 'classAttribute', this.planForm.classAttribute)
+          this.$set(item, 'projectId', this.planForm.projectId)
+          this.$set(item, 'planNo', this.planForm.planNo)
+          this.$set(item, 'productSource', this.planForm.productSource)
+          this.$set(item, 'planType', this.planForm.planType)
+          this.$set(item, 'ratio', this.planForm.ratio)
+          this.$set(item, 'calculationDirection', this.planForm.calculationDirection)
+          this.$set(item, 'mainUnit', this.planForm.mainUnit)
+          this.$set(item, 'deputyUnit', this.planForm.deputyUnit)
+          this.$set(item, 'planState', this.planForm.planState)
         });
       }
+      this.fetchData("JHDH")
       this.getProductionLineListFun()
-        this.fetchData("JHDH")
       setTimeout(() => {
-        this.tableflag=true
+        this.tableflag = true
       }, 300);
-      
-      console.log("this.planForm",this.planForm);
+
+      console.log("this.planForm", this.planForm);
     },
 
     goBack() {
-      if(this.btnType=='add'){
-        this.$router.push({path: "/planManagement/assemblyPlan/assemblyPlanManagement"})
-      }else{
+      if (this.btnType == 'add') {
+        this.$router.push({ path: "/planManagement/assemblyPlan/assemblyPlanManagement" })
+      } else {
         this.$emit('close')
       }
-      
+
       this.tipsvisible = false
 
     },
@@ -948,92 +977,139 @@ export default {
             })
             return
           } else {
-            for (let index = 0; index < this.productData.length; index++) {
-              const item = this.productData[index];
-              if (!item.planQuantity) {
-                submitFlag = false
-                this.$message({
-                  message: "请输入第" + (index + 1) + "行产品的计划数量",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
+            if (this.productData.length == 1) {
+              let item = this.productData[0]
+              let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.inventoryQuantity, item.planQuantity]), 6)
+              let methods = ""
+              let data = null
+              if (this.btnType == 'add') {
+                methods = batchAddPlan
+                data = this.productData
               }
-              if (Number(item.num) == 0) {
-                submitFlag = false
-                this.$message({
-                  message: "第" + (index + 1) + "行产品的计划数量必须大于0",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
+              if (this.btnType == 'edit') {
+                methods = updatePlanList
+                data = {
+                  plan: this.productData[0]
+                }
               }
-              if (!item.bomId) {
-                submitFlag = false
-                this.$message({
-                  message: "第" + (index + 1) + "行产品无BOM，请配置BOM信息",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
+              if (num > item.maxInventory) {
+                this.$confirm(this.$t('产品信息可用库存加计划数量大于最高库存,确认提交吗?'), this.$t('提示'), {
+                  type: 'warning'
+                }).then(() => {
+              this.btnLoading = true
+              this.productData.forEach(item => {
+                    item.documentStatus = value
+                    item.finalPlanQuantity = item.planQuantity
+                    item.productionLineId = this.planForm.productionLineId
+                  });
+
+                  methods(data).then(res => {
+                    let msg = "";
+                    if (value == "draft") {
+                      this.submitmethodsTitle = "保存成功"
+                    } else {
+                      this.submitmethodsTitle = "提交成功"
+
+                    }
+                    this.tipsvisible = true
+                    this.btnLoading = false
+
+                  }).catch(() => {
+                    this.btnLoading = false
+                  })
+                }).catch(() => { })
+
               }
-              if (!item.planStartDate) {
-                submitFlag = false
-                this.$message({
-                  message: "请选择第" + (index + 1) + "行产品的计划开始日期",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
-              }
-              if (!item.planEndDate) {
-                submitFlag = false
-                this.$message({
-                  message: "请选择第" + (index + 1) + "行产品的计划结束日期",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
-              }
-
-
-
-            }
-
-          }
-          this.productData.forEach(item => {
-            item.documentStatus = value
-            item.finalPlanQuantity = item.planQuantity
-            item.productionLineId = this.planForm.productionLineId
-          });
-          if (submitFlag === false) return
-          this.btnLoading = true
-          let methods=""
-          let data=null
-          if(this.btnType=='add'){
-            methods=batchAddPlan
-            data=this.productData
-          } 
-          if(this.btnType=='edit') {
-            methods=updatePlanList
-            data={
-              plan:this.productData[0]
-            }
-          }
-
-          methods(data).then(res => {
-            let msg = "";
-            if (value == "draft") {
-              this.submitmethodsTitle = "保存成功"
             } else {
-              this.submitmethodsTitle = "提交成功"
 
+              for (let index = 0; index < this.productData.length; index++) {
+                const item = this.productData[index];
+                if (!item.planQuantity) {
+                  submitFlag = false
+                  this.$message({
+                    message: "请输入第" + (index + 1) + "行产品的计划数量",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  break
+                }
+                if (Number(item.num) == 0) {
+                  submitFlag = false
+                  this.$message({
+                    message: "第" + (index + 1) + "行产品的计划数量必须大于0",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  break
+                }
+                if (!item.bomId) {
+                  submitFlag = false
+                  this.$message({
+                    message: "第" + (index + 1) + "行产品无BOM，请配置BOM信息",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  break
+                }
+                if (!item.planStartDate) {
+                  submitFlag = false
+                  this.$message({
+                    message: "请选择第" + (index + 1) + "行产品的计划开始日期",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  break
+                }
+                if (!item.planEndDate) {
+                  submitFlag = false
+                  this.$message({
+                    message: "请选择第" + (index + 1) + "行产品的计划结束日期",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  break
+                }
+
+
+
+              }
+              this.productData.forEach(item => {
+                item.documentStatus = value
+                item.finalPlanQuantity = item.planQuantity
+                item.productionLineId = this.planForm.productionLineId
+              });
+              if (submitFlag === false) return
+              this.btnLoading = true
+              let methods = ""
+              let data = null
+              if (this.btnType == 'add') {
+                methods = batchAddPlan
+                data = this.productData
+              }
+              if (this.btnType == 'edit') {
+                methods = updatePlanList
+                data = {
+                  plan: this.productData[0]
+                }
+              }
+
+              methods(data).then(res => {
+                let msg = "";
+                if (value == "draft") {
+                  this.submitmethodsTitle = "保存成功"
+                } else {
+                  this.submitmethodsTitle = "提交成功"
+
+                }
+                this.tipsvisible = true
+
+              }).catch(() => {
+                this.btnLoading = false
+              })
             }
-            this.tipsvisible = true
 
-          }).catch(() => {
-            this.btnLoading = false
-          })
+          }
+
 
         }
       })

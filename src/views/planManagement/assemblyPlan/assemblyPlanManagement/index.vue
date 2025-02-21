@@ -332,7 +332,8 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.superForm = this.orderForm
     this.search('basic')
-
+      this.createDirectlyVisible=false
+      this.FormVisible = false
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.advancedQueryFun()
     if (this.isProductNameSwitch == 1) {

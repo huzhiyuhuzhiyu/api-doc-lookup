@@ -129,7 +129,7 @@
                           v-if="packagingMethodFlag == 1"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
                           v-if="specialRequireFlag == 1"></el-table-column>
-                        <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
+                        <!-- <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column> -->
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
@@ -451,13 +451,18 @@ import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
 import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表
 import WareHouseForm from './wareHouseForm.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
+import Process from '@/components/Process/Preview'
+import flowMixin from '@/mixins/generator/flowMixin'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { WareHouseForm },
-  mixins: [getProjectList],
+  components: { WareHouseForm,Process, recordList  },
+  mixins: [getProjectList,flowMixin,busFlow, ],
 
   data() {
     return {
+      activeName: "orderInfo",
       isProjectSwitch: '',
       scanDialog: false,
       getWarehouseList,
@@ -467,6 +472,8 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
+      flowTemplateJson: {},
+      flowData: {},
 
       dataForm: {
         orderNo: "",
@@ -1012,7 +1019,8 @@ export default {
 
             let obj = {
               picking: this.dataForm,
-              lines: []
+              lines: [],
+              flowData:this.flowData
             }
             let arr = this.productData.map(item => {
               return {

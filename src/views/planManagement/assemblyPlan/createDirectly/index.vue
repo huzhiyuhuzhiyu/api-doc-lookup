@@ -37,7 +37,7 @@
                         <el-col :sm="6" :xs="24" v-if="isProjectSwitch == 1">
                           <el-form-item label="所属项目" prop="projectId">
                             <el-select v-model="planForm.projectId" placeholder="请选择所属项目" clearable style="width: 100%;" 
-                              @change="changeProject" :disabled="userInfo.projectId != '1'||btnType == 'look' ? true : false">
+                              @change="changeProject" :disabled="btnType == 'look' ? true : false">
                               <el-option v-for="(item, index) in projectIdDataList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
                             </el-select>

@@ -1443,6 +1443,7 @@ export default {
       if (this.naturalResourcesFlag) {
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];
+          console.log("item",item);
           if (item.reportFlag) {
             if (
               !item.workGroupId &&

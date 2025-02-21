@@ -166,7 +166,6 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",
-      excludeProcessFlag:false,
 
     }
   },

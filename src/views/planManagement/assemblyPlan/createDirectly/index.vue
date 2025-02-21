@@ -100,8 +100,8 @@
                       </el-table-column>
 
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
-                      <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
-                      <!-- <el-table-column prop="maxInventory" label="最高库存数量" width="140" :key="88" /> -->
+                      <el-table-column prop="inventoryQuantity" label="库存数量" width="140" :key="8" />
+                      <el-table-column prop="maxInventory" label="最高库存数量" width="140" :key="88" />
                       <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"

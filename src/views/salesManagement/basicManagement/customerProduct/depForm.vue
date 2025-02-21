@@ -8,11 +8,13 @@
           <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
             提交</el-button>
           <el-button size="mini" @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
+          <el-button size="mini" type="primary" v-has="'btn_change'" :loading="btnLoading" @click="getSwitchList">
+            切换</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading" ref="main" :element-loading-text="loadingText">
         <el-tabs v-model="activeName" v-if="!approvalFlag" class="JNPF-el_tabs">
-          <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
+          <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo" v-if="switchlist">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
@@ -234,6 +236,50 @@
               </el-collapse-item>
 
             </el-collapse>
+
+          </el-tab-pane>
+          <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo" v-else>
+            <el-descriptions class="margin-top"  :size="size" border v-for="item in dataFormTwo.lines" :key="item.id">
+              <el-descriptions-item label="客户名称" :span="2">
+                {{ dataForm.cooperativePartnerIdText }}
+              </el-descriptions-item>
+              <el-descriptions-item label="客户型号" :span="2">
+                {{item.customerProductNo}}
+              </el-descriptions-item>
+              <el-descriptions-item label="角度/游隙" :span="2">
+                {{item.angle}}/{{item.clearance}}
+              </el-descriptions-item>
+              <el-descriptions-item label="系统选型" :span="2">
+                {{item.productDrawingNo}}
+              </el-descriptions-item>
+              <el-descriptions-item label="配对方式" :span="2">
+                {{item.pairingModeName}}
+              </el-descriptions-item>
+              <el-descriptions-item label="精度/振动" :span="2">
+                {{item.accuracyLevel}}/{{ item.vibrationLevel }}
+              </el-descriptions-item>
+              <el-descriptions-item label="预负荷/凸出量" :span="2">
+                {{item.preload}}/{{ item.protrusion }}
+              </el-descriptions-item>
+              <el-descriptions-item label="球中心/倒角" :span="2">
+                {{ item.centerDiameter }}
+              </el-descriptions-item>
+              <el-descriptions-item label="打字" :span="2">
+                {{item.sealingCoverTyping}}
+              </el-descriptions-item>
+              <el-descriptions-item label="保持架" :span="2">
+                {{item.material}}
+              </el-descriptions-item>
+              <el-descriptions-item label="包装" :span="2">
+                {{item.packagingMethod}}
+              </el-descriptions-item>
+              <el-descriptions-item label="油脂" :span="2">
+                {{item.oil}}
+              </el-descriptions-item>
+              <el-descriptions-item label="备货工艺备注" :span="4">
+                {{item.specialRequire}}
+              </el-descriptions-item>
+            </el-descriptions>
 
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
@@ -925,7 +971,8 @@ export default {
       angleFlag: '',
       centerDiameterFlag: '',
       bimProductAttributesList: [],
-      row: null
+      row: null,
+      switchlist: true
     }
   },
   computed: {
@@ -962,6 +1009,9 @@ export default {
     }
   },
   methods: {
+    getSwitchList() {
+      this.switchlist = !this.switchlist
+    },
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -1826,6 +1876,7 @@ export default {
         })
         this.dataForm.validDateArr = [row.dateOrderStart, row.dateOrderStop]
         this.dataFormTwo.lines.push(this.row)
+        console.log(this.dataFormTwo.lines,'this.dataFormTwo.lines12')
       }
 
 

@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.drawingNo" placeholder="型号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.drawingNo" placeholder="产品品名规格" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -30,82 +30,36 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
-          @sort-change="sortChange" show-summary :summary-method="getSummaries">
-          <el-table-column prop="drawingNo" label="型号" width="180" sortable="custom" fixed="left"></el-table-column>
-          <el-table-column prop="waitClean" label="待清洗" width="120" align="center">
-            <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewDetailFun(scope.row.drawingNo, 'availableFlag', scope.row.warehouseId, projectId)">
-                {{ scope.row.waitClean }}
-              </el-link>
-            </template>
+          @sort-change="sortChange">
+          <el-table-column prop="orderNo" label="生产任务单号" width="180" sortable="custom" fixed="left"></el-table-column>
+          <el-table-column prop="drawingNo" label="产品品名规格" min-width="160" align="center">
           </el-table-column>
-          <el-table-column prop="waitFitting" label="待合套" width="130" align="center">
-            <template slot-scope='scope'>
-              <el-link type="primary" @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '清洗')">
-                {{ scope.row.waitFitting }}
-              </el-link>
-            </template>
+          <el-table-column prop="productionQuantity" label="生产任务数量" width="130" align="center">
+          
           </el-table-column>
-          <el-table-column prop="waitGrease" label="待注脂压盖" width="120" align="center">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '合套')">
-                {{ scope.row.waitGrease }}
-              </el-link>
-            </template>
+          <el-table-column prop="htQuantity" label="合套压铆完工数量" width="160" align="center">
+            
           </el-table-column>
-          <el-table-column prop="waitVibrate" label="待测振" width="130" align="center">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '注脂压盖')">
-                {{ scope.row.waitVibrate }}
-              </el-link>
-            </template>
+          <el-table-column prop="zzQuantity" label="注脂压盖完工数量" width="150" align="center">
+           
           </el-table-column>
-          <el-table-column prop="waitVisualInspect" label="待外观检验" width="120" align="center">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '测振')">
-                {{ scope.row.waitVisualInspect }}
-              </el-link>
-            </template>
+          <el-table-column prop="czQuantity" label="测振完工数量" width="120" align="center">
           </el-table-column>
-          <el-table-column prop="waitPacking" label="待包装" width=" 120" align="center">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '外观检验')">
-                {{ scope.row.waitPacking }}
-              </el-link>
-            </template>
+          <el-table-column prop="bzQuantity" label="包装完工数量" width=" 120" align="center">
           </el-table-column>
-          <el-table-column prop="waitStock" label="待入库" width="120" align="center">
-          </el-table-column>
-          <el-table-column prop="stockNum" label="库存数量" width="120" align="center">
-            <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId, projectId)">
-                {{ scope.row.stockNum }}
-              </el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="total" label="合计" align="center"></el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" :pageSizes="[50, 100, 500, 1000]" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
-    <TaskForm v-if="taskFormVisible" ref="TaskForm" @refreshDataList="initData" />
-    <MaterForm v-if="materFormVisible" ref="materFormRef"></MaterForm>
-    <ProductForm v-if="productFormVisible" ref="productFormRef"></ProductForm>
   </div>
 </template>
 <script>
 import { getAssembleList, assembleReport } from '@/api/productionManagement/report'
-import Form from '../../../warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
-import TaskForm from '../sleeveMakingReport/taskForm.vue'
-import MaterForm from './materForm.vue'
-import ProductForm from "../../../warehouseManagement/inventoryInquiry/productionProgressReport/productForm.vue";
+
 export default {
   name: 'sleeveMakingReport',
-  components: { Form, TaskForm, MaterForm, ProductForm },
+  components: {  },
   data() {
     return {
       formVisible: false,
@@ -135,29 +89,6 @@ export default {
     this.initData()
   },
   methods: {
-    // 查看产品明细
-    viewFun(id, type, warehouseId, projectId) {
-      if (!id) id = 0
-      this.formVisible = true
-      this.$nextTick(() => {
-        console.log(this.$refs, 'ff')
-        this.$refs.Form.init(id, type, warehouseId, projectId)
-      })
-    },
-    // 
-    viewDetailFun(drawingNo) {
-      this.materFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.materFormRef.init(drawingNo,'inventoryFlag')
-      })
-    },
-    // 查看产品明细
-    viewTask(productsId, type, processName) {
-      this.taskFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.TaskForm.init(productsId, type, processName)
-      })
-    },
     initData() {
       this.listLoading = true
       Object.keys(this.listQuery).forEach((key) => {
@@ -194,21 +125,6 @@ export default {
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
-    },
-    getSummaries(param) {
-      const sums = []
-      sums[0] = ''
-      sums[1] = '合计'
-      sums[2] = this.allTotal.waitClean
-      sums[3] = this.allTotal.waitFitting
-      sums[4] = this.allTotal.waitGrease
-      sums[5] = this.allTotal.waitVibrate
-      sums[6] = this.allTotal.waitVisualInspect
-      sums[7] = this.allTotal.waitPacking
-      sums[8] = this.allTotal.waitStock
-      sums[9] = this.allTotal.stockNum
-
-      return sums
     },
     exportForm() {
       if (!this.tableData.length) return this.$message.error('没有可导出的数据')

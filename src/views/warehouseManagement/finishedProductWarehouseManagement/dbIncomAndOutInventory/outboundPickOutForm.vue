@@ -700,7 +700,8 @@ export default {
   },
   mounted() {
     this.getBimBusinessDetail()
-
+    console.log("this.userInfo.projectId",this.userInfo);
+    this.dataForm.recipientBy=this.userInfo.userId
 
   },
   methods: {
@@ -719,7 +720,7 @@ export default {
     },
     //领料人
     hangleSelectSales(e, r) {
-
+      console.log(e);
       this.dataForm.recipientBy = e
 
     },
@@ -761,6 +762,8 @@ export default {
 
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
+      this.$set(this.productData[index], 'processName', data.processName)
+      this.$set(this.productData[index], 'processId', data.processId)
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index) {

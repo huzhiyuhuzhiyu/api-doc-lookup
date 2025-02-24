@@ -105,6 +105,7 @@
                 <div>{{ scope.row.taskMethod == 'appoint' ? "指定加工对象" : '不指定加工对象' }}</div>
               </template>
             </el-table-column>
+            <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
@@ -272,7 +273,7 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import PrintDialog2 from '@/components/no_mount/printDialog'
 
 import { getPrintList } from '@/api/system/printDev'
-import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
+import { excelExport, getOrderFiledMap,getProductionLineList } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
@@ -280,7 +281,7 @@ import AddTaskForm from './addTaskForm.vue'
 // import TaskForm from './taskForm.vue'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm,PrintDialog2,PrintBrowse2 },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
@@ -292,6 +293,7 @@ export default {
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productionLineId', fieldValue: '', label: '产线', symbol: 'like', searchType: 4, width: 120, options: [] },
       ],
       taskFormVisible: false,
       fullName: '',
@@ -321,6 +323,7 @@ export default {
       orderFormlist: {
         productDrawingNo: "",
         productionPlanNo: "",
+        productionLineId: "",
         orderNo: "",
         orderStatus: "normal",
         classAttribute: "finish_product",
@@ -359,6 +362,7 @@ export default {
             { label: "在制任务", value: "transit" },
           ]
         },
+        
         {
           prop: 'productCode',
           label: "产品编码",
@@ -385,6 +389,14 @@ export default {
           type: 'input'
         },
         {
+          prop: 'productionLineId',
+          label: "产线",
+          type: 'select',
+          options: [
+           
+          ]
+        },
+        {
           prop: 'routingName',
           label: "工艺路线名称",
           type: 'input'
@@ -394,7 +406,7 @@ export default {
           label: "工艺路线编码",
           type: 'input'
         },
-
+        
         {
           prop: 'productionPlanNo',
           label: "生产计划单号",
@@ -463,12 +475,14 @@ export default {
       enCode2: "",
       printVisible2: false,
       printBrowseVisible2: false,
+      productionLineList:[]
     }
   },
   async created() {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductionLineListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
     this.advancedQueryFuns()
     if (this.isProductNameSwitch == 1) {
@@ -487,6 +501,36 @@ export default {
   mounted() {
   },
   methods: {
+    // 产线
+    getProductionLineListFun() {
+      let objs = {
+        code: "",
+        createByName: "",
+        endTime: "",
+        name: "",
+        orderItems: [
+          {
+            asc: true,
+            column: "",
+          },
+        ],
+        pageNum: 1,
+        pageSize: -1,
+      };
+      // 获取产线
+      objs.projectId =this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getProductionLineList(objs).then((res) => {
+        console.log("产线", res);
+        res.data.records.forEach(item => {
+          this.$set(item,'label',item.name)
+          this.$set(item,'value',item.id)
+        });
+        this.searchList[3].options=res.data.records;
+        this.productionLineList = res.data.records;
+      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productionLineId')
+      this.superQueryJson[classIndex].options=this.productionLineList
+      });
+    },
     printWarehouse2(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
@@ -794,7 +838,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop == 'pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'partnerCode' ||prop=='productionLineNmae'|| prop == 'pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -860,6 +904,7 @@ export default {
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productionLineId', fieldValue: '', label: '产线', symbol: 'like', searchType: 4, width: 120,options:this.productionLineList },
       ],
         this.search('basic')
     },

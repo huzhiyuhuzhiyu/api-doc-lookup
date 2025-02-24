@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
-      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']"  v-if="!approvalFlag">
         <el-page-header @back="goBack" :content="title" />
         <div class="options">
           <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
@@ -51,7 +51,7 @@
                       <div>
                         <el-button type="text" style="margin-right:8px;font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                            class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                            class="iconfont-menu    icon-saoma"></i>扫码录入</el-button>|
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                           @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -63,12 +63,13 @@
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                        <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                        <el-table-column prop="productName" label="产品名称"   width="160"
                           v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                         <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
                         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式"   min-width="120" />
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -92,7 +93,7 @@
                           </template>
                           <template slot-scope="scope">
                             <ComSelect-list
-                              :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '' }"
+                              :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '',classAttributeList:classAttributeList }"
                               :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                               @change="changeWarehousex"></ComSelect-list>
@@ -185,7 +186,7 @@
                   <div>
                     <el-button type="text" style="margin-right:8px;font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                        class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                        class="iconfont-menu icon-saoma"></i>扫码录入</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -197,7 +198,7 @@
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                    <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    <el-table-column prop="productName" label="产品名称"   width="160"
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
                       show-overflow-tooltip></el-table-column>
@@ -205,6 +206,7 @@
                     <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式"  min-width="120" />
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -228,7 +230,7 @@
                       </template>
                       <template slot-scope="scope">
                         <ComSelect-list
-                          :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '' }"
+                          :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '',classAttributeList:classAttributeList }"
                           :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                           :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                           @change="changeWarehousex"></ComSelect-list>
@@ -342,6 +344,7 @@
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
+                <el-table-column prop="pairingModeName" label="配对方式" sortable="custom" min-width="120" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <!-- <el-table-column prop="price" label="单价" min-width="80" /> -->
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -459,7 +462,9 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   components: { WareHouseForm,Process, recordList  },
   mixins: [getProjectList,flowMixin,busFlow, ],
-
+  props: {
+    approvalFlags:{type:Boolean,default:false}
+  },
   data() {
     return {
       activeName: "orderInfo",
@@ -491,7 +496,7 @@ export default {
       allproductData: [],
       allProductTotal: 0,
       wareHouseVisible: false,
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: this.approvalFlags,   // 待办事宜等页面 需要
       ProductListRequestObj: {
         classAttribute: "",
         productDrawingNo: "",
@@ -964,6 +969,7 @@ export default {
         orderNo: "",
         pickingDate: "",
         remark: "",
+        approvalFlag: this.approvalFlags,
       }
       this.fetchData("DBDH")
       this.productData = []

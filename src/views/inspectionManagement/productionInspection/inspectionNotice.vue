@@ -42,6 +42,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
+            <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
             <el-button size="mini" type="primary" @click="scanFun">
               <i class="iconfont icon-saoma"></i>
               扫码检验
@@ -64,7 +65,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+        <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
+         :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
             <!-- <template slot-scope="scope">
@@ -157,6 +159,32 @@
         </div>
       </div>
     </el-dialog>
+    <!-- 批量检验 -->
+    <el-dialog v-if="analyseDialog" title="批量检验" :close-on-click-modal="false" append-to-body
+      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+      <el-row :gutter="15" style="margin-top: 0px;">
+        <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
+          <el-row :gutter="30">
+            <el-col :sm="24">
+                <el-form-item prop="inspectionResults" label="检验结果">
+                  <el-select v-model="dataForm.inspectionResults"placeholder="请选择检验结果" clearable
+                    style="width: 100%;">
+                    <el-option v-for="(item, index) in [
+                      {value: 'qualified',label: '合格'},
+					            {value: 'unqualified',label: '不合格'}]" :key="index" :label="item.label" :value="item.value"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+          </el-row>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="analyseDialog = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+          {{ $t('common.submitButton') }}
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -167,6 +195,7 @@ import Form from '../components/inspectionNoticeForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import { batchInspectionData } from '@/api/inspectionManagement/index' // 检验单
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
@@ -187,6 +216,14 @@ export default {
         'packagingMethod',
         'createByName'
       ],
+      selectedData:[],
+      analyseDialog:false,
+      dataForm:{
+        inspectionResults:'',
+      },
+      dataFormRules: {
+        inspectionResults: [{ required: true, message: '检验结果不能为空', trigger: 'change' }],
+      },
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -383,6 +420,74 @@ export default {
       this.scanDialog = false
       this.scanResult = ''
       this.listQuery.orderNo = ''
+    },
+    handleSelectionChange(val) {
+      this.selectedData = val
+    },
+    handleBatch() {
+      if (!this.selectedData.length) return this.$message.error('请至少选择一条检验数据')
+
+    
+      this.btnLoading = false
+      this.analyseDialog = true
+    },
+    async dataFormSubmit() {
+      this.btnLoading = true
+      let submitFlag = true
+
+      const form_1 = this.$refs.elForm
+      const valid_1 = await form_1.validate().catch((err) => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        this.jnpf.focusErrValidItem(form_1.fields)
+      }
+      this.bathData = this.selectedData.map(item => {
+					return {
+            calculationDirection: item.calculationDirection,
+						deputyUnit: item.deputyUnit,
+						docId: item.purchaseReceiptReturnGoodsId,
+						docLineId: item.id,
+						docNo: item.orderNo,
+						documentStatus: 'submit',
+						inspectionDate: this.jnpf.dateFormat(new Date().getTime(),
+							'YYYY-MM-DD'),
+						inspectionMethod: 'all',
+						inspectionQuantity: item.productionQuantity,
+						inspectorId: this.userInfo.userId,
+						mainUnit: item.mainUnit,
+						notificationType: 'process',
+						processId: item.processId,
+						productsId: item.productsId,
+						ratio: item.ratio,
+						remark: item.remark,
+						unqualifiedQuantity: this.inspectionResults === 'qualified' ?
+							0 : item.productionQuantity
+					}
+		  })
+      if (submitFlag) {
+        let _data = {
+					inspectionCategory: 'procure',
+					inspectionList: this.bathData,
+					inspectionResults: this.dataForm.inspectionResults
+				}
+
+        batchInspectionData(_data)
+          .then((res) => {
+            this.$message.success('批量检验成功')
+            this.selectedData = []
+            this.$refs.dataTable.$refs.JNPFTable.clearSelection()
+            this.analyseDialog = false
+            this.dataForm = {
+              inspectionResults: '',
+            }
+            this.search()
+          })
+          .catch((err) => {
+            this.btnLoading = false
+          })
+      } else {
+        this.btnLoading = false
+      }
     },
     getProductFun() {
       console.log(21341234)

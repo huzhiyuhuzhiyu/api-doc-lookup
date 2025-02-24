@@ -611,9 +611,9 @@ export default {
     },
 
     addSupplier(id, type) {
-      this.$router.push({
-        path: '/outsourcingManagement/productOutsourcingOrder/orderCreation',
-        query: { alert: '新建' }
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.procureForm.init(id, type)
       })
     },
     // 生成采购订单 将选中的数据传递过去

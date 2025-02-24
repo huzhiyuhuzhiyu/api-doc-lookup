@@ -28,6 +28,9 @@
           </el-collapse>
           <!-- </el-tab-pane> -->
         </el-tabs>
+        <el-tab-pane label="附件" name="annex">
+              <UploadWj v-model="datafilelist" :disabled="btnType" :detailed="btnType"></UploadWj>
+        </el-tab-pane>
       </div>
     </div>
   </transition>
@@ -68,6 +71,7 @@ export default {
       autoDrawingNo: undefined,
       tempCodeRules: [],
       tempDrawingNoRules: [],
+      datafilelist: [],
       dataForm: {
         classAttribute: 'finish_product',
         sealingCoverStructure: ''
@@ -798,7 +802,17 @@ export default {
           // 记录编码和图号，用于校验唯一性
           this.autoCode = res.data.code
           this.autoDrawingNo = res.data.drawingNo
-
+          if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                })
+              })
+            }
           // 处理普通属性
           let detailObj = res.data
           for (const key in detailObj) {
@@ -950,6 +964,20 @@ export default {
               this.dataForm.holder
           }
         }
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              configKey: '',
+              categoryId: this.categoryId,
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
+        this.dataForm.attachmentList = this.datafilelist
+        
         const formMethod = this.dataForm.id ? updateProductData : cpAddProduct
         formMethod(this.dataForm)
           .then((res) => {

@@ -148,3 +148,12 @@ export function lossQcUnqualifiedData(data) {
     data
   })
 }
+
+// 检验单-批量检验
+export function batchInspectionData(data) {
+  return request({
+    url: `/api/wms/qc/inspection/batch/add`,
+    method: 'POST',
+    data
+  })
+}

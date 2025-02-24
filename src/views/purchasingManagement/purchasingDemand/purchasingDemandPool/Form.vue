@@ -24,7 +24,7 @@
                   <el-row :gutter="15" class="" style="margin: 0 5px;">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :span="12">
+                      <el-col :span="12" v-role="'show_procure_data'">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
@@ -169,7 +169,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="price" label="含税单价" width="140">
+                        <el-table-column prop="price" label="含税单价" width="140" v-if="userInfo.roleCode.split(',').includes('"show_procure_data"')">
                           <template slot="header">
                             <span class="required">*</span>
                             单价(含税)

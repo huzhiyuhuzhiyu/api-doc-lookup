@@ -1,7 +1,9 @@
 import permission from './permission'
+import roleDirective from './roleDirective';
 
 const install = function(Vue) {
   Vue.directive('has', permission)
+  Vue.directive('role', roleDirective)
 }
 
 if (window.Vue) {

@@ -1,18 +1,14 @@
 <template>
   <div class="JNPF-common-layout">
-
     <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-
-
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />
-
                   <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                     clearable>
                     <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -25,7 +21,6 @@
                 </el-form-item>
               </el-col>
             </template>
-
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -34,10 +29,9 @@
                 </el-button>
               </el-form-item>
             </el-col>
-
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading" >
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
@@ -46,19 +40,17 @@
               </el-button>
               <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
                 @click="batchPrint">批量打印</el-button>
-              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
+              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button> -->
+              <!-- <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p035')">打印装配单</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer"
-                @click="printFlowCard('p023')">打印流转卡</el-button>
+                @click="printFlowCard('p020')">打印流转卡</el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
               </el-button>
-
             </div>
-
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="advanceFun" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -69,9 +61,10 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"   v-if="isProjectSwitchFlag"
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag"
             :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
@@ -86,15 +79,16 @@
                 <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
                 <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
                 <div v-if="scope.row.orderType == 'transit'">在制任务</div>
-
               </template>
             </el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
-            v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+              v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
+
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-            v-if="isProjectSwitch == 1" />
+              v-if="isProjectSwitch == 1" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
@@ -111,23 +105,35 @@
                 <div>{{ scope.row.taskMethod == 'appoint' ? "指定加工对象" : '不指定加工对象' }}</div>
               </template>
             </el-table-column>
-           
-            <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
-
-
+            <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+              v-if="sealingCoverTypingFlag == 1" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+              v-if="accuracyLevelFlag == 1" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
+              v-if="vibrationLevelFlag == 1" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
+              v-if="packagingMethodFlag == 1" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+              v-if="specialRequireFlag == 1" />
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
               <template slot-scope="scope">
-                <div>{{ scope.row.urgentFlag ? '是' : '否' }}</div>
+                <div :style="scope.row.urgentFlag ? 'color:red' : ''">{{ scope.row.urgentFlag ? '是' : '否' }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
             <el-table-column label="操作" width="320" fixed="right">
-
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'feed')">投料信息</el-button>
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'work')">工单信息</el-button>
@@ -162,12 +168,10 @@
             @pagination="initData" />
         </div>
       </div>
-
     </div>
     <el-dialog title="追加生产数量" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
       <el-row :gutter="20">
-
         <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
           <el-col :span="24">
             <el-form-item label="生产任务单号" prop="orderNo">
@@ -186,7 +190,6 @@
           </el-col>
         </el-form>
       </el-row>
-
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
@@ -201,9 +204,9 @@
     <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData"
       @close="closeForm">
     </BatchDispatchForm>
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
-      ref="printForm" :fullName="fullName" />
     <TaskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="initData" @close="closeForm"></TaskForm>
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      :fullName="fullName" ref="printForm" />
     <!-- 打印流转卡弹窗选择工单数据 -->
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="workOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
@@ -242,43 +245,47 @@
           打 印</el-button>
       </span>
     </el-dialog>
-    <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData"
-      @close="closeForm">
-    </AddTaskForm>
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
     <PrintDialog2 :visible.sync="printVisible2" @closePrint="closePrint2" @printSubmit="printWarehouse2"
       :printQuery="printQuery2" :enCode="enCode2" ref="printTemplate2" append-to-body />
     <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
+    <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData" @close="closeForm">
+    </AddTaskForm>
   </div>
 </template>
-
 <script>
 import { ordershengchanList, addOrderNum, detailordershengchan } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
-import BatchDispatchForm from './batchDispatchForm.vue'
 import ReworkForm from './reworkForm.vue'
+import BatchDispatchForm from './batchDispatchForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import TaskForm from './taskFormCopy.vue'
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintBrowse2 from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 import PrintDialog2 from '@/components/no_mount/printDialog'
+
 import { getPrintList } from '@/api/system/printDev'
+import { excelExport, getOrderFiledMap,getProductionLineList } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
+// import TaskForm from './taskForm.vue'
 export default {
-  name: 'ringTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, TaskForm,AddTaskForm,PrintDialog2,PrintBrowse2  },
+  name: 'assemblyTaskManagement',
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
-      addTaskFormVisible:false,
-      taskFormVisible: false,
+      addTaskFormVisible: false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -286,24 +293,26 @@ export default {
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productionLineId', fieldValue: '', label: '产线', symbol: 'like', searchType: 4, width: 120, options: [] },
       ],
-      form: {
-        appendQuantity: "",
-        productionQuantity: "",
-        orderNo: ""
-      },
+      taskFormVisible: false,
       fullName: '',
+      printVisible: false,
+      BatchDispatchVisible: false,
       printBrowseVisible: false,
       workOrderVisible: false,
       workOrderForm: {
         productionQuantity: '',
         enCode: ''
       },
-      BatchDispatchVisible: false,
+      form: {
+        appendQuantity: "",
+        productionQuantity: "",
+        orderNo: ""
+      },
       reworkVisible: false,
       addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
-
       superQueryVisible: false,
       btnLoading: false,
       title: "更多查询",
@@ -314,6 +323,7 @@ export default {
       orderFormlist: {
         productDrawingNo: "",
         productionPlanNo: "",
+        productionLineId: "",
         orderNo: "",
         orderStatus: "normal",
         classAttribute: "semi_finished",
@@ -345,12 +355,11 @@ export default {
           label: "任务类型",
           type: 'select',
           options: [
-          { label: "正常任务", value: "normal" },
+            { label: "正常任务", value: "normal" },
             { label: "返工任务", value: "rework" },
             { label: "手动新建任务", value: "manually" },
             { label: "翻库任务", value: "flipping" },
             { label: "在制任务", value: "transit" },
-
           ]
         },
         {
@@ -379,6 +388,14 @@ export default {
           type: 'input'
         },
         {
+          prop: 'productionLineId',
+          label: "产线",
+          type: 'select',
+          options: [
+           
+          ]
+        },
+        {
           prop: 'routingName',
           label: "工艺路线名称",
           type: 'input'
@@ -389,13 +406,11 @@ export default {
           type: 'input'
         },
 
-        
         {
           prop: 'productionPlanNo',
           label: "生产计划单号",
           type: 'input'
         },
-
         {
           prop: 'urgentFlag',
           label: "是否紧急",
@@ -419,35 +434,7 @@ export default {
           type: 'input'
         },
       ],
-      requestArr: [
-        {
-          prop: "sealingCoverTyping",
-          typeCode: "pa007"
-        }, {
-          prop: "accuracyLevel",
-          typeCode: "pa006"
-        },
-        {
-          prop: "vibrationLevel",
-          typeCode: "pa005"
-        },
-        {
-          prop: "oil",
-          typeCode: "pa002"
-        }, {
-          prop: "oilQuantity",
-          typeCode: "pa003"
-        }, {
-          prop: "clearance",
-          typeCode: "pa001"
-        }, {
-          prop: "packagingMethod",
-          typeCode: "pa015"
-        }, {
-          prop: "specialRequire",
-          typeCode: "pa016"
-        }
-      ],
+
       dataRule: {
         appendQuantity: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["追加数量不能为空", (errMsg, index) => { this.$message.error(`追加数量：${errMsg}`) }] }), trigger: 'blur' },
@@ -469,35 +456,80 @@ export default {
       printList: [],
       isProjectSwitch: '',
       isProjectSwitchFlag: false,
-      isProductNameSwitch:"",
+      isProductNameSwitch: "",
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      materialFlag: '',
+      colourFlag: '',
+      bimProductAttributesList: [],
       prindId2: '',
       formId2: '',
       enCode2: "",
       printVisible2: false,
       printBrowseVisible2: false,
+      productionLineList:[]
     }
   },
- 
   async created() {
+    await this.getProductClassFun()
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductionLineListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.advancedQueryFuns()
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(3, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
       })
-    } 
+    }
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
   mounted() {
-    this.getProductClassFun()
   },
   methods: {
+    // 产线
+    getProductionLineListFun() {
+      let objs = {
+        code: "",
+        createByName: "",
+        endTime: "",
+        name: "",
+        orderItems: [
+          {
+            asc: true,
+            column: "",
+          },
+        ],
+        pageNum: 1,
+        pageSize: -1,
+      };
+      // 获取产线
+      objs.projectId =this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      getProductionLineList(objs).then((res) => {
+        console.log("产线", res);
+        res.data.records.forEach(item => {
+          this.$set(item,'label',item.name)
+          this.$set(item,'value',item.id)
+        });
+        this.searchList[3].options=res.data.records;
+        this.productionLineList = res.data.records;
+        let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productionLineId')
+        this.superQueryJson[classIndex].options=this.productionLineList
+      });
+    },
     printWarehouse2(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
@@ -527,16 +559,184 @@ export default {
         this.$refs.printTemplate2.init(this.enCode2)
       })
     },
+    async getOrderFiledMap() {
+      await getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+      })
+    },
+    async getProductClassFun() {
+      // 产品属性
+      await getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+
+    },
+    advancedQueryFuns() {
+      // sealingCoverTyping //打字内容
+      //     accuracyLevel //精度等级
+      //     vibrationLevel //振动等级
+      //     oil //油脂
+      //     oilQuantity //油脂量
+      //     clearance //游隙
+      //     packagingMethod //包装方式          
+      //     specialRequire //特殊要求
+      //     material // 保持架材质
+      //     colour  //  颜色
+      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'routingCode')
+      if (this.colourFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'colour',
+          label: '颜色',
+          type: 'select',
+          options: this.bimProductAttributesList.pa010.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.materialFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'material',
+          label: '保持架材质',
+          type: 'select',
+          options: this.bimProductAttributesList.pa021.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.specialRequireFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'specialRequire',
+          label: '特殊要求',
+          type: 'select',
+          options: this.bimProductAttributesList.pa016.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.packagingMethodFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: this.bimProductAttributesList.pa015.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.clearanceFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'clearance',
+          label: '游隙',
+          type: 'select',
+          options: this.bimProductAttributesList.pa001.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.oilQuantityFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'oilQuantity',
+          label: '油脂量',
+          type: 'select',
+          options: this.bimProductAttributesList.pa003.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.oilFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'oil',
+          label: '油脂',
+          type: 'select',
+          options: this.bimProductAttributesList.pa002.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.vibrationLevelFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'vibrationLevel',
+          label: '振动等级',
+          type: 'select',
+          options: this.bimProductAttributesList.pa005.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.accuracyLevelFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'accuracyLevel',
+          label: '精度等级',
+          type: 'select',
+          options: this.bimProductAttributesList.pa006.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+      if (this.sealingCoverTypingFlag === '1') {
+        this.superQueryJson.splice(classIndex + 1, 0, {
+          prop: 'sealingCoverTyping',
+          label: '打字内容',
+          type: 'select',
+          options: this.bimProductAttributesList.pa007.map((item) => {
+            return {
+              label: item.name,
+              value: item.name
+            }
+          })
+        })
+      }
+    },
+    advanceFun() {
+      this.superQueryVisible = true
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.isProjectSwitchFlag = true
       } catch (error) { }
     },
-    viewDetailFun(id) {
-      this.taskFormVisible = true
+    // 改派
+    updataDispatch(id) {
+      this.BatchDispatchVisible = true
       this.$nextTick(() => {
-        this.$refs.taskForm.init(id)
+        this.$refs.BatchDispatchForm.init(id, 'all')
       })
     },
     // 新建返工
@@ -544,13 +744,6 @@ export default {
       this.reworkVisible = true
       this.$nextTick(() => {
         this.$refs.reworkForm.init(id, type)
-      })
-    },
-      // 新建任务
-      addTaskFun() {
-      this.addTaskFormVisible=true
-      this.$nextTick(()=>{
-        this.$refs.addTaskForm.init('add')
       })
     },
     // 追加
@@ -564,15 +757,12 @@ export default {
     addition1(data) {
       this.form = data
       this.addOrderVisible = true
-
-
-
     },
-    // 改派
-    updataDispatch(id) {
-      this.BatchDispatchVisible = true
+    // 新建任务
+    addTaskFun() {
+      this.addTaskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.BatchDispatchForm.init(id, 'all')
+        this.$refs.addTaskForm.init('add')
       })
     },
     reassignmentFun2() {
@@ -585,7 +775,12 @@ export default {
         this.$refs.BatchDispatchForm.init(this.selectArr[0].id, 'all')
       })
     },
-
+    reassignmentFun1(data) {
+      this.BatchDispatchVisible = true
+      this.$nextTick(() => {
+        this.$refs.BatchDispatchForm.init(id, 'all')
+      })
+    },
     // 追加生产数量 提交
     submitFun() {
       this.$refs['diaForm'].validate((valid) => {
@@ -602,7 +797,6 @@ export default {
           })
         }
       })
-
     },
     // 多选
     handleSelectionChange(val) {
@@ -616,15 +810,13 @@ export default {
         return true
       }
     },
-
     // 关单
     Cancelshipment() {
       if (!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
-      this.$confirm('您确认关闭选中的任务吗？', this.$t('common.tipTitle'), {
+      this.$confirm('关闭任务将会把领料单一起关闭，您确认关闭吗？', this.$t('common.tipTitle'), {
         type: 'warning',
         customClass: 'custom-confirm',
       }).then(() => {
-
         let arr = this.selectArr.map(item => {
           return item.id
         })
@@ -637,46 +829,6 @@ export default {
         })
       }).catch(() => { })
     },
-    // 获取打字内容等
-    getProductClassFun() {
-      this.requestArr.forEach((item, index) => {
-        let obj1 = {
-          pageNum: -1,
-          pageSize: 20,
-          typeCode: item.typeCode,
-          orderItems: [
-            {
-              asc: false,
-              column: "",
-            },
-            {
-              asc: false,
-              column: "code",
-            },
-          ],
-        };
-        getbimProductAttributesList(obj1).then(res => {
-
-          let arr = []
-          res.data.records.forEach(items => {
-            let obj = {
-              label: items.name,
-              value: items.name,
-            }
-            arr.push(obj)
-          });
-          let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
-          if (oilObj) {
-            // 将options赋值为5  
-            oilObj.options = JSON.parse(JSON.stringify(arr));
-          }
-        })
-      })
-
-
-
-
-    },
 
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -685,7 +837,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+      if (prop === 'partnerCode' ||prop=='productionLineNmae'|| prop == 'pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -696,24 +848,20 @@ export default {
       }
       this.orderForm.orderItems[0].asc = order !== "descending"
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
-
       this.initData()
     },
-
     // 关闭新建编辑页面
     closeForm(isRefresh) {
+      this.addTaskFormVisible = false
       this.formVisible = false
       this.reworkVisible = false
       this.BatchDispatchVisible = false
-      this.addTaskFormVisible=false
       this.taskFormVisible = false
-      this.search('basic')
+      this.search()
     },
     initData() {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-
-
       ordershengchanList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -721,10 +869,8 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-
     },
     search(type) {
-
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
@@ -751,19 +897,16 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
       this.$refs.SuperQuery.conditionList = []
-
       this.searchList = [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-      ]
-      this.search('basic')
+        { field: 'productionLineId', fieldValue: '', label: '产线', symbol: 'like', searchType: 4, width: 120,options:this.productionLineList },
+      ],
+        this.search('basic')
     },
-
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -779,45 +922,76 @@ export default {
       }).catch(() => { })
     },
     handleUserRelation(id, btnType) {
-      console.log(id);
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)
       })
     },
-
+    viewDetailFun(id) {
+      this.taskFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.taskForm.init(id)
+      })
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      this.enCode = enCode
+      this.fullName = '装配单'
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+    // 打印 装配单
+    printOrder(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectArr[0].id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
     },
     // 打印 流转卡
     printFlowCard(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
-      this.fullName = '套圈流程卡'
       this.workOrderVisible = true
-      this.$nextTick(() => {
-        console.log(this.$refs.work.$refs.JNPFTable);
-
-        this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
-        detailordershengchan(this.selectArr[0].id).then(res => {
-          res.data.workOrderList.forEach(item => {
-            item.selectFlag = false
-          })
-          this.workOrderData = res.data.workOrderList
+      // this.workOrderForm.enCode = enCode
+      this.fullName = '装配流转卡'
+      this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
+      detailordershengchan(this.selectArr[0].id).then(res => {
+        res.data.workOrderList.forEach(item => {
+          item.selectFlag = false
         })
-        getPrintList(this.printQuery).then(res => {
-          if (res.data) {
-            if (res.data.hasOwnProperty(enCode)) {
-              this.printList = res.data[enCode]
-              this.printList && this.printList.forEach(item => {
-                if (item.enabledMark) {
-                  this.workOrderForm.enCode = item.id
-                }
-              })
-            }
-          }
-        }).catch(() => { })
+        this.workOrderData = res.data.workOrderList
       })
+      getPrintList(this.printQuery).then(res => {
+        if (res.data) {
+          if (res.data.hasOwnProperty(enCode)) {
+            this.printList = res.data[enCode]
+            this.printList && this.printList.forEach(item => {
+              if (item.enabledMark) {
+                this.workOrderForm.enCode = item.id
+              }
+            })
+          }
+        }
+      }).catch(() => { })
     },
     handleSelectWork(val) {
       if (val.length) {
@@ -855,8 +1029,12 @@ export default {
 .JNPF-common-search-box {
   padding: 8px 0 !important;
   margin-left: 0 !important;
-
   margin-bottom: 5px;
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style scoped>
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
+}
+</style>

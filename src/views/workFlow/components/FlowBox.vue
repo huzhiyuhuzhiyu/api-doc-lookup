@@ -79,7 +79,7 @@
       </div>
       <el-tabs class="JNPF-el_tabs" v-model="activeTab">
         <el-tab-pane label="表单信息" v-loading="loading">
-          <component :is="currentView" @close="goBack" ref="form" @eventReceiver="eventReceiver" @setLoad="setLoad"
+          <component :approvalFlags="true" :is="currentView" @close="goBack" ref="form" @eventReceiver="eventReceiver" @setLoad="setLoad"
             @setCandidateLoad="setCandidateLoad" @setPageLoad="setPageLoad" />
         </el-tab-pane>
         <el-tab-pane label="流程信息" v-loading="loading">

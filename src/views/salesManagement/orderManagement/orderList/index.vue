@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout">
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
+      <div class="JNPF-common-layout-center JNPF-flex-main" >
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <template v-for="item in searchList">
@@ -544,7 +544,9 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
+      
       this.formVisible = false
+      this.listLoading=true
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -563,7 +565,8 @@ export default {
       getsaleOrderList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
-        this.listLoading = false
+          this.listLoading = false
+         
       }).catch(() => {
         this.listLoading = false
       })

@@ -153,6 +153,9 @@
                       v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="generateQRcode(scope.row)" >
+                      生成二维码
+                    </el-dropdown-item>
                     <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
                       查看详情
                     </el-dropdown-item> -->
@@ -253,6 +256,10 @@
     <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
     <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData" @close="closeForm">
     </AddTaskForm>
+    <el-dialog title="生产任务码" :close-on-click-modal="false" :close-on-press-escape="false"
+    :visible.sync="dialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" style="text-align: center;">
+      <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -279,12 +286,15 @@ import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
 // import TaskForm from './taskForm.vue'
+import QRCode from 'qrcodejs2'
 export default {
   name: 'assemblyTaskManagement',
   components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
+      dialogVisible:false,
+      qrCode:"",
       addTaskFormVisible: false,
       superQuery: {},
       superForm: {},
@@ -362,6 +372,7 @@ export default {
             { label: "在制任务", value: "transit" },
           ]
         },
+        
         {
           prop: 'productCode',
           label: "产品编码",
@@ -405,7 +416,7 @@ export default {
           label: "工艺路线编码",
           type: 'input'
         },
-
+        
         {
           prop: 'productionPlanNo',
           label: "生产计划单号",
@@ -500,6 +511,27 @@ export default {
   mounted() {
   },
   methods: {
+    // 生成二维码
+    generateQRcode(row){
+      if (!row.orderNo) {
+        return
+      }
+      this.dialogVisible=true
+    this.$nextTick(()=>{
+      this.$refs.qrCode.innerHTML = "";
+      let qrcode = new QRCode(this.$refs.qrCode, {
+        width: 265,
+        height: 265, // 高度
+        text: row.orderNo, // 二维码内容
+        // render: 'canvas' // 设置渲染方式（有两种方式 table和canvas，默认是canvas）
+        // background: '#f0f'
+        // foreground: '#ff0'
+        correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
+      })
+    })
+      console.log(this.qrcode);
+    },
+     
     // 产线
     getProductionLineListFun() {
       let objs = {
@@ -526,8 +558,8 @@ export default {
         });
         this.searchList[3].options=res.data.records;
         this.productionLineList = res.data.records;
-        let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productionLineId')
-        this.superQueryJson[classIndex].options=this.productionLineList
+      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productionLineId')
+      this.superQueryJson[classIndex].options=this.productionLineList
       });
     },
     printWarehouse2(enCode) {
@@ -1036,5 +1068,8 @@ export default {
 <style scoped>
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
+}
+::v-deep #qrcode img{
+  margin: 0 auto;
 }
 </style>

@@ -2283,8 +2283,8 @@ export default {
   async created() {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
-    await this.getWarehouseListFun()
     await this.getProjectSwitch('system', 'project')
+    await this.getWarehouseListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.$store.dispatch('base/getBusinessConfig','gobal')
 

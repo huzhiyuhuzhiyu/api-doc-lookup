@@ -606,7 +606,6 @@ export default {
       productRequestObj: { // 明细
         accuracyLevel: "",
         availableStock: true,
-        excludeProcessFlag: 1,
         availableBatch: 1,
         batchNumber: "",
         clearance: "",

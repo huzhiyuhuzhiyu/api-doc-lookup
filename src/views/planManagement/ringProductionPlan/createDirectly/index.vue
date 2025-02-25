@@ -78,7 +78,7 @@
                     </div>
 
                     <JNPF-table ref="product" :data="productData" @selection-change="handeleProductInfoData" border
-                      height="660" style="width: 100%;" :hasC="btnType == 'look' ? false : true">
+                      height="660"  :showOverflowTooltip="false" style="width: 100%;" :hasC="btnType == 'look' ? false : true">
 
                       <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
                         v-if="codeConfig.codeWay != 'auto'">

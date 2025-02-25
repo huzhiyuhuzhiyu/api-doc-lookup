@@ -120,7 +120,7 @@
 <script>
 import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
 import moment from 'moment'
-import Form from '../finishedProductInventoryInquiry/Form.vue'
+import Form from './Form.vue'
 import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'

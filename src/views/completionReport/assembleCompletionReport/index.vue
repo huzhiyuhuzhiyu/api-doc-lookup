@@ -8,8 +8,8 @@
             <div class="scanCodeTent">
               <div class="searchregion">
                 <!-- <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工单码、工序码、产线码、班组码、员工码、设备码" @keyup.enter.native="searchResult()" -->
-                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工序码 " @keyup.enter.native="searchResult()"
-                  class="scanResultIpt"></el-input>
+                <el-input ref="scanInput" v-model="scanResult" placeholder="您可以扫描生产任务码、工序码 "
+                  @keyup.enter="searchResult()" class="scanResultIpt"></el-input>
                 <div style="background: #55d47e;margin-top: 10px">
                   <img src="../../../assets/images/erwmbai.gif" alt="" class="scanImg">
                 </div>
@@ -65,11 +65,11 @@
                     <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
                     <div class="label_title"> 品名规格:{{ item.productDrawingNo }}</div>
                     <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
-                        }}</span></div>
+                    }}</span></div>
                     <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
-                        }}</span></div>
+                    }}</span></div>
                     <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.uncompletedQuantity
-                        }}</span></div>
+                    }}</span></div>
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
                       <el-button style="color:red;" type="text" @click="closeTaskFun(item)">关单</el-button>
@@ -188,13 +188,13 @@
                       <div class="label_title"> 工序名称:{{ item.name }}</div>
                       <div class="label_title"> 工序编码:{{ item.code }}</div>
                       <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{
-                          item.productionQuantity}}</span></div>
+                        item.productionQuantity }}</span></div>
                       <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{
-                          item.qualifiedQuantity}}</span></div>
+                        item.qualifiedQuantity }}</span></div>
                       <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.unqualifiedQuantity
-                          }}</span></div>
+                      }}</span></div>
                       <div class="label_title bold" style="color: #993255;"> 可报工数量:<span>{{ item.waitReportNum
-                          }}</span></div>
+                      }}</span></div>
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="ProcessReportFun(item)">报 工</el-button>
                       </div>
@@ -672,10 +672,14 @@ export default {
 
     }
   },
-
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.scanInput.focus(); // 确保输入框需要 ref 的引用  
+    });
+  },
   async created() {
     await this.getProjectSwitch('system', 'project')
- 
+
   },
   methods: {
     closeTaskFun(row) {
@@ -726,29 +730,34 @@ export default {
     // 扫码报工页面  搜索
     searchResult() {
       if (this.scanResult) {
+        setTimeout(() => {
+          // this.processData(data); 
+          
+          const cleanedResult = this.scanResult.trim();
+          console.log(this.scanResult);
+          getscanResultData({ code: cleanedResult, classAttribute: "finish_product" }).then(res => {
+            console.log("扫码查找数据", res);
+            if (res.data) {
+              if (res.data.type == 'prod_order') {
+                this.produceTaskReportFun(res.data.docId)
+              } else if (res.data.type == 'process') {
+                this.ProcessReportFun(res.data.docId)
 
-        getscanResultData({ code: this.scanResult, classAttribute: "finish_product" }).then(res => {
-          console.log("扫码查找数据", res);
-          if (res.data) {
-            if (res.data.type == 'prod_order') {
-              this.produceTaskReportFun(res.data.docId)
-            } else if (res.data.type == 'process') {
-              this.ProcessReportFun(res.data.docId)
+              } else if (res.data.type == 'personnel') {
+                this.personReportFun(res.data.docId)
 
-            } else if (res.data.type == 'personnel') {
-              this.personReportFun(res.data.docId)
+              } else if (res.data.type == 'produceLine') {
+                this.produceLineReportFun(res.data.docId)
 
-            } else if (res.data.type == 'produceLine') {
-              this.produceLineReportFun(res.data.docId)
+              } else if (res.data.type == 'device') {
+                this.deviceReportFun(res.data.docId)
+              } else if (res.data.type == 'work_group') {
+                this.groupReportFun(res.data.docId)
 
-            } else if (res.data.type == 'device') {
-              this.deviceReportFun(res.data.docId)
-            } else if (res.data.type == 'work_group') {
-              this.groupReportFun(res.data.docId)
-
+              }
             }
-          }
-        })
+          })
+        }, 1000);
 
       }
     },
@@ -792,7 +801,7 @@ export default {
 
       }
     },
- 
+
     // 生产任务列表
     searchProductData() {
       if (this.planDate.length) {

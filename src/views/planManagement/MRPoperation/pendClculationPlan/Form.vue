@@ -1828,6 +1828,9 @@ export default {
             this.dataForm.type.push('考虑可用库存')
           }
           this.dataForm.schemeName = '上一次运算方案'
+        }else{
+          this.schemeList=[]
+          this.dataForm.schemeNames=''
         }
       })
     },

@@ -3,10 +3,13 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建形态转换' : btnType == 'edit' ? '编辑形态转换' : '查看形态转换'" />
+        <el-page-header @back="goBack"
+          :content="btnType == 'add' ? '新建形态转换' : btnType == 'edit' ? '编辑形态转换' : '查看形态转换'" />
         <div class="options">
-          <el-button v-if="btnType != 'look'" type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
-          <el-button v-if="btnType != 'look'" type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
+          <el-button v-if="btnType != 'look'" type="success" :loading="btnLoading"
+            @click="handleConfirm('draft')">保存草稿</el-button>
+          <el-button v-if="btnType != 'look'" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit')">保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -19,17 +22,22 @@
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="转换单号" prop="orderNo">
-                        <el-input v-model="dataForm.orderNo" placeholder="请输入转换单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                        <el-input v-model="dataForm.orderNo" placeholder="请输入转换单号"
+                          :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
-                        <ComSelect-list :requestObj="{ type: 'normal',projectId:warehouseInfo.projectId }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
+                        <ComSelect-list :requestObj="{ type: 'normal', projectId: warehouseInfo.projectId }"
+                          :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId"
+                          :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库"
+                          @change="changeWarehouse" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="24" :xs="24">
                       <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                          :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -37,35 +45,57 @@
               </el-collapse-item>
               <el-collapse-item title="产品信息" name="cpInfo">
                 <div v-if="btnType !== 'look'">
-                  <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialogtes()">选择产品</el-button>|
-                  <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                  <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;"
+                    icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                    @click="openSeleceProductDialogtes()">选择产品</el-button>|
+                  <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;"
+                    :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                    @click="batchDelete">批量删除</el-button>|
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table class="TableForm table" ref="product" :data="dataFormTwo.data" v-bind="dataFormTwo.data" hasC hasNO fixedNO @selection-change="handeleProductInfoData" border>
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
+                  <el-table class="TableForm table" ref="product" :data="dataFormTwo.data" v-bind="dataFormTwo.data"
+                    hasC hasNO fixedNO @selection-change="handeleProductInfoData" border>
+                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'"
+                      key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="index" />
-                    <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip key="productDrawingNo" />
+                    <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip
+                      key="productDrawingNo" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                    <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
-                    <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
-                    <el-table-column prop="originSealingCoverTyping" label="原打字内容" width="230" show-overflow-tooltip key="originSealingCoverTyping" />
-                    <el-table-column prop="originAccuracyLevel" label="原精度等级" width="140" show-overflow-tooltip key="originAccuracyLevel" />
-                    <el-table-column prop="originVibrationLevel" label="原振动等级" width="140" show-overflow-tooltip key="originVibrationLevel" />
-                    <el-table-column prop="originClearance" label="原游隙" width="160" show-overflow-tooltip key="originClearance" />
+                    <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip
+                      key="shelfSpaceName" />
+                    <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip
+                      key="originBatchNumber" />
+                    <el-table-column prop="originProcessName" label="原工序" width="130" show-overflow-tooltip
+                      key="originProcessName" />
+                    <el-table-column prop="originSealingCoverTyping" label="原打字内容" width="230" show-overflow-tooltip
+                      key="originSealingCoverTyping" />
+                    <el-table-column prop="originAccuracyLevel" label="原精度等级" width="140" show-overflow-tooltip
+                      key="originAccuracyLevel" />
+                    <el-table-column prop="originVibrationLevel" label="原振动等级" width="140" show-overflow-tooltip
+                      key="originVibrationLevel" />
+                    <el-table-column prop="originClearance" label="原游隙" width="160" show-overflow-tooltip
+                      key="originClearance" />
                     <el-table-column prop="originOil" label="原油脂" width="160" show-overflow-tooltip key="originOil" />
                     <!-- <el-table-column prop="originStandardValue" label="原规值(钢球属性)" width="160" show-overflow-tooltip key="originStandardValue" /> -->
-                    <el-table-column prop="originPackagingMethod" label="原包装方式" width="160" show-overflow-tooltip key="originPackagingMethod" />
-                    <el-table-column prop="originColour" label="原颜色" width="140" show-overflow-tooltip key="originColour" />
-                    <el-table-column prop="originPairingModeName" label="原配对方式" width="160" show-overflow-tooltip key="originPairingModeName" />
-                    <el-table-column prop="originSpecialRequire" label="原特殊要求" width="200" show-overflow-tooltip key="originSpecialRequire" />
-                    <el-table-column prop="originAperture" label="原孔径" width="140" show-overflow-tooltip key="originAperture" />
+                    <el-table-column prop="originPackagingMethod" label="原包装方式" width="160" show-overflow-tooltip
+                      key="originPackagingMethod" />
+                    <el-table-column prop="originColour" label="原颜色" width="140" show-overflow-tooltip
+                      key="originColour" />
+                    <el-table-column prop="originPairingModeName" label="原配对方式" width="160" show-overflow-tooltip
+                      key="originPairingModeName" />
+                    <el-table-column prop="originSpecialRequire" label="原特殊要求" width="200" show-overflow-tooltip
+                      key="originSpecialRequire" />
+                    <el-table-column prop="originAperture" label="原孔径" width="140" show-overflow-tooltip
+                      key="originAperture" />
                     <!-- <el-table-column prop="originSpecSize" label="原规格/尺寸" width="140" show-overflow-tooltip key="originSpecSize" /> -->
                     <!-- <el-table-column prop="originLogo" label="原logo" width="160" show-overflow-tooltip key="originLogo" /> -->
                     <!-- <el-table-column prop="originDivideEqually" label="原开等分" width="160" show-overflow-tooltip key="originDivideEqually" /> -->
-                    <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip key="originMaterial" />
+                    <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip
+                      key="originMaterial" />
                     <!-- <el-table-column prop="originProtrusion" label="原凸出量" width="160" show-overflow-tooltip key="originProtrusion" /> -->
                     <!-- <el-table-column prop="originPreload" label="原预负荷" width="160" show-overflow-tooltip key="originPreload" /> -->
-                    <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip v-if="btnType !== 'look'" key="availableQuantity" />
+                    <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip
+                      v-if="btnType !== 'look'" key="availableQuantity" />
                     <!-- <el-table-column prop="availableQuantity" label="可用库存数量" width="170" show-overflow-tooltip
                   v-if="btnType != 'look'" key="3"></el-table-column> -->
 
@@ -73,13 +103,14 @@
                       <template slot="header">
                         <span class="required">*</span>原箱条码
                       </template>
-                      <template slot-scope="scope">
+<template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'originBoxBarcode'" :rules='productRules.originBoxBarcode'>
                           <ComSelect-page :placeholder="'请选择原箱条码'" :value="scope.row.originBoxBarcode" :dialogTitle="'选择条码'" @change="addth" :tableItems="barCodeTableItems" :renderTree="false" :listMethod="TransferBarCode" :listRequestObj="dataRequestObj[scope.$index]" :isdisabled="btnType === 'look'" :paramsObj="{ scope }" :searchList="barCodeSearchList" :elementShow="true" />
                         </el-form-item>
                       </template>
-                    </el-table-column>
-                    <el-table-column prop="originRealityTotalNum" label="原箱数量" width="120" v-if="btnType !== 'look'" key="originRealityTotalNum" /> -->
+</el-table-column>
+<el-table-column prop="originRealityTotalNum" label="原箱数量" width="120" v-if="btnType !== 'look'"
+  key="originRealityTotalNum" /> -->
                     <el-table-column prop="mainUnit" label="单位" width="110" show-overflow-tooltip key="mainUnit" />
                     <el-table-column prop="num" label="转换数量" width="170" key="num">
                       <template slot="header">
@@ -87,19 +118,27 @@
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                          <el-input v-model="scope.row.num" :disabled="scope.row.targetBoxBarcode === '整箱转换' || btnType === 'look'" maxlength="11" placeholder="请输入转换数量" style="width: 145px;">{{
-                          scope.row.num }}
+                          <el-input v-model="scope.row.num"
+                            :disabled="scope.row.targetBoxBarcode === '整箱转换' || btnType === 'look'" maxlength="11"
+                            placeholder="请输入转换数量" style="width: 145px;">{{
+                              scope.row.num }}
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="targetProductDrawingNo" label="目标品名规格" width="260" key="targetProductDrawingNo">
+                    <el-table-column prop="targetProductDrawingNo" label="目标品名规格" width="260"
+                      key="targetProductDrawingNo">
                       <template slot="header">
                         <span class="required">*</span>目标品名规格
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProductDrawingNo'" :rules='productRules.targetProductDrawingNo'>
-                          <ComSelect-page v-model="scope.row.targetProductDrawingNo" @change="submitCustomerProduct1" :tableItems="targetProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList" :listRequestObj="targetProductListQueryObj" :searchList="productTableSearchList" placeholder="请选择目标产品" :paramsObj="{ scope }" :isdisabled="btnType === 'look'" />
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProductDrawingNo'"
+                          :rules='productRules.targetProductDrawingNo'>
+                          <ComSelect-page v-model="scope.row.targetProductDrawingNo" @change="submitCustomerProduct1"
+                            :tableItems="targetProductTableItems" dialogTitle="选择产品" treeTitle="产品分类"
+                            :methodArr="productMethodArr" :listMethod="getProductList"
+                            :listRequestObj="targetProductListQueryObj" :searchList="productTableSearchList"
+                            placeholder="请选择目标产品" :paramsObj="{ scope }" :isdisabled="btnType === 'look'" />
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -108,19 +147,39 @@
                         <span class="required">*</span>转换目标数量
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetNum'" :rules='productRules.targetNum'>
-                          <el-input v-model="scope.row.targetNum" :disabled="btnType === 'look'" maxlength="11" placeholder="请输入转换目标数量">{{ scope.row.targetNum }}
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetNum'"
+                          :rules='productRules.targetNum'>
+                          <el-input v-model="scope.row.targetNum" :disabled="btnType === 'look'" maxlength="11"
+                            placeholder="请输入转换目标数量">{{ scope.row.targetNum }}
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="targetProcessName" label="转换目标工序" width="170" key="targetProcessName">
+
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProcessName'">
+                          <ComSelect-page v-model="scope.row.targetProcessName" @change="submitProcess"
+                            :tableItems="tableItems" dialogTitle="选择工序" :listMethod="getBimProcessList"
+                            :listRequestObj="listRequestObj" :renderTree="false" :searchList="searchList"
+                            placeholder="请选择目标工序" :paramsObj="{ scope }" :isdisabled="btnType === 'look'" />
+
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+
                     <el-table-column prop="targetShelfSpaceId" label="目标库位" width="260" key="targetShelfSpaceId">
                       <!-- <template slot="header">
                         <span class="required">*</span>目标库位
                       </template> -->
                       <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetShelfSpaceName'" :rules='productRules.targetShelfSpaceName'>
-                          <ComSelect-list :requestObj="shelfSpaceRequestObj" :dialogTitle="'选择目标库位'" placeholder="请选择目标库位" v-model="scope.row.targetShelfSpaceName" :beforeSubmit="beforeSubmitPartner" :isdisabled="btnType === 'look' || !dataForm.warehouseName" :method="stockDisassemblykw" :paramsObj="{ scope }" @change="changeWarehousekwmb"></ComSelect-list>
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetShelfSpaceName'"
+                          :rules='productRules.targetShelfSpaceName'>
+                          <ComSelect-list :requestObj="shelfSpaceRequestObj" :dialogTitle="'选择目标库位'"
+                            placeholder="请选择目标库位" v-model="scope.row.targetShelfSpaceName"
+                            :beforeSubmit="beforeSubmitPartner"
+                            :isdisabled="btnType === 'look' || !dataForm.warehouseName" :method="stockDisassemblykw"
+                            :paramsObj="{ scope }" @change="changeWarehousekwmb"></ComSelect-list>
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -137,42 +196,57 @@
                         </el-form-item>
                       </template> -->
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.targetBatchNumber" placeholder="请输入产品批次号" :disabled="btnType == 'look' ? true : false" maxlength="20" />
+                        <el-input v-model="scope.row.targetBatchNumber" placeholder="请输入产品批次号"
+                          :disabled="btnType == 'look' ? true : false" maxlength="20" />
                       </template>
                     </el-table-column>
                     <!-- <el-table-column prop="targetProcessName" label="目标工序名称" width="230" show-overflow-tooltip key="targetProcessName" /> -->
-                    <el-table-column v-if="sealingCoverTypingFlag == 1" prop="targetSealingCoverTyping" label="目标打字内容" width="230" key="targetSealingCoverTyping">
+                    <el-table-column v-if="sealingCoverTypingFlag == 1" prop="targetSealingCoverTyping" label="目标打字内容"
+                      width="230" key="targetSealingCoverTyping">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetSealingCoverTyping" placeholder="请选择" clearable :disabled="btnType == 'look'" style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetSealingCoverTyping" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column v-if="accuracyLevelFlag == 1" prop="targetAccuracyLevel" label="目标精度等级" width="140" key="targetAccuracyLevel">
+                    <el-table-column v-if="accuracyLevelFlag == 1" prop="targetAccuracyLevel" label="目标精度等级" width="140"
+                      key="targetAccuracyLevel">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetAccuracyLevel" placeholder="请选择" clearable :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetAccuracyLevel" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column v-if="vibrationLevelFlag == 1" prop="targetVibrationLevel" label="目标振动等级" width="140" key="targetVibrationLevel">
+                    <el-table-column v-if="vibrationLevelFlag == 1" prop="targetVibrationLevel" label="目标振动等级"
+                      width="140" key="targetVibrationLevel">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetVibrationLevel" placeholder="请选择" clearable :disabled="btnType == 'look'" style="width: 100%;">
-                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetVibrationLevel" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column v-if="clearanceFlag == 1" prop="targetClearance" label="目标游隙" width="160" key="targetClearance">
+                    <el-table-column v-if="clearanceFlag == 1" prop="targetClearance" label="目标游隙" width="160"
+                      key="targetClearance">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetClearance" placeholder="请选择" clearable style="width: 100%;" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetClearance" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column v-if="oilFlag == 1" prop="targetOil" label="目标油脂" width="160" key="targetOil">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetOil" placeholder="请选择" clearable style="width: 100%;" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetOil" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
@@ -184,39 +258,52 @@
                         </el-form-item>
                       </template>
                     </el-table-column> -->
-                    <el-table-column v-if="packagingMethodFlag == 1" prop="targetPackagingMethod" label="目标包装方式" width="200" key="targetPackagingMethod">
+                    <el-table-column v-if="packagingMethodFlag == 1" prop="targetPackagingMethod" label="目标包装方式"
+                      width="200" key="targetPackagingMethod">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetPackagingMethod" placeholder="请选择" clearable :disabled="btnType == 'look'" style="width: 100%;">
-                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetPackagingMethod" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="targetColour" label="目标颜色" width="140" key="targetColour">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in list11" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list11" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
                     <el-table-column prop="targetPairingModeId" label="目标配对方式" width="160">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" :value="item.id">
+                        <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
                           </el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column v-if="specialRequireFlag == 1" prop="targetSpecialRequire" label="目标特殊要求" width="200" key="targetSpecialRequire">
+                    <el-table-column v-if="specialRequireFlag == 1" prop="targetSpecialRequire" label="目标特殊要求"
+                      width="200" key="targetSpecialRequire">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetSpecialRequire" placeholder="请选择" clearable :disabled="btnType == 'look'" style="width: 100%;">
-                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetSpecialRequire" placeholder="请选择" clearable
+                          :disabled="btnType == 'look'" style="width: 100%;">
+                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column v-if="apertureFlag == 1" prop="targetAperture" label="目标孔径" width="140" key="targetAperture">
+                    <el-table-column v-if="apertureFlag == 1" prop="targetAperture" label="目标孔径" width="140"
+                      key="targetAperture">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetAperture" placeholder="请选择" clearable style="width: 100%;" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetAperture" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
@@ -246,8 +333,10 @@
                     </el-table-column> -->
                     <el-table-column prop="targetMaterial" label="目标材质" width="180" key="targetMaterial">
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetMaterial" placeholder="请选择" clearable style="width: 100%;" :disabled="btnType == 'look'">
-                          <el-option v-for="(item, index) in list12" :key="index" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model="scope.row.targetMaterial" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in list12" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
@@ -267,7 +356,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column> -->
-                    
+
                     <!-- <el-table-column prop="targetBoxBarcode" label="目标箱条码" width="220" key="targetBoxBarcode">
                       <template slot="header">
                         <span class="required">*</span>目标箱条码
@@ -279,10 +368,12 @@
                       </template>
                     </el-table-column> -->
                     <!-- <el-table-column prop="targetRealityTotalNum" label="目标箱数量" width="120" v-if="btnType !== 'look'" key="targetRealityTotalNum" /> -->
-                    <el-table-column prop="targetProductsMainUnit" label="单位" width="110" show-overflow-tooltip key="targetProductsMainUnit" />
+                    <el-table-column prop="targetProductsMainUnit" label="单位" width="110" show-overflow-tooltip
+                      key="targetProductsMainUnit" />
                     <el-table-column prop="remark" label="备注" min-width="230" key="remark">
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                        <el-input v-model="scope.row.remark" placeholder="请输入备注"
+                          :disabled="btnType == 'look' ? true : false" maxlength="200" />
                       </template>
                     </el-table-column>
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="66">
@@ -308,17 +399,22 @@
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="转换单号" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="请输入转换单号" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                    <el-input v-model="dataForm.orderNo" placeholder="请输入转换单号"
+                      :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="仓库" prop="warehouseName">
-                    <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId" :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehouse" />
+                    <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
+                      v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId"
+                      :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库"
+                      @change="changeWarehouse" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="24" :xs="24">
                   <el-form-item label="备注" prop="remark">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look' ? true : false"
+                      type="textarea" :rows="2" maxlength="200" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -326,36 +422,57 @@
           </el-collapse-item>
           <el-collapse-item title="产品信息" name="cpInfo">
             <div v-if="btnType !== 'look'">
-              <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialogtes()">选择产品</el-button>|
-              <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+              <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;"
+                icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                @click="openSeleceProductDialogtes()">选择产品</el-button>|
+              <el-button type="text" style="margin-right: 8px; margin-left: 8px; font-size: 14px !important;"
+                :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                @click="batchDelete">批量删除</el-button>|
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table class="TableForm table" ref="product" :data="dataFormTwo.data" v-bind="dataFormTwo.data" hasC hasNO fixedNO @selection-change="handeleProductInfoData" border>
-                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'" key="1" />
+              <el-table class="TableForm table" ref="product" :data="dataFormTwo.data" v-bind="dataFormTwo.data" hasC
+                hasNO fixedNO @selection-change="handeleProductInfoData" border>
+                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'"
+                  key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="index" />
-                <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip key="productDrawingNo" />
+                <el-table-column prop="productDrawingNo" label="原品名规格" width="200" show-overflow-tooltip
+                  key="productDrawingNo" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
-                <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
-                <el-table-column prop="originSealingCoverTyping" label="原打字内容" width="230" show-overflow-tooltip key="originSealingCoverTyping" />
-                <el-table-column prop="originAccuracyLevel" label="原精度等级" width="140" show-overflow-tooltip key="originAccuracyLevel" />
-                <el-table-column prop="originVibrationLevel" label="原振动等级" width="140" show-overflow-tooltip key="originVibrationLevel" />
-                <el-table-column prop="originClearance" label="原游隙" width="160" show-overflow-tooltip key="originClearance" />
+                <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip
+                  key="shelfSpaceName" />
+                <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip
+                  key="originBatchNumber" />
+                <el-table-column prop="originProcessName" label="原工序" width="130" show-overflow-tooltip
+                  key="originProcessName" />
+                <el-table-column prop="originSealingCoverTyping" label="原打字内容" width="230" show-overflow-tooltip
+                  key="originSealingCoverTyping" />
+                <el-table-column prop="originAccuracyLevel" label="原精度等级" width="140" show-overflow-tooltip
+                  key="originAccuracyLevel" />
+                <el-table-column prop="originVibrationLevel" label="原振动等级" width="140" show-overflow-tooltip
+                  key="originVibrationLevel" />
+                <el-table-column prop="originClearance" label="原游隙" width="160" show-overflow-tooltip
+                  key="originClearance" />
                 <el-table-column prop="originOil" label="原油脂" width="160" show-overflow-tooltip key="originOil" />
                 <!-- <el-table-column prop="originStandardValue" label="原规值(钢球属性)" width="160" show-overflow-tooltip key="originStandardValue" /> -->
-                <el-table-column prop="originPackagingMethod" label="原包装方式" width="160" show-overflow-tooltip key="originPackagingMethod" />
+                <el-table-column prop="originPackagingMethod" label="原包装方式" width="160" show-overflow-tooltip
+                  key="originPackagingMethod" />
                 <el-table-column prop="originColour" label="原颜色" width="140" show-overflow-tooltip key="originColour" />
-                <el-table-column prop="originPairingModeName" label="原配对方式" width="160" show-overflow-tooltip key="originPairingModeName" />
-                <el-table-column prop="originSpecialRequire" label="原特殊要求" width="200" show-overflow-tooltip key="originSpecialRequire" />
-                <el-table-column prop="originAperture" label="原孔径" width="140" show-overflow-tooltip key="originAperture" />
+                <el-table-column prop="originPairingModeName" label="原配对方式" width="160" show-overflow-tooltip
+                  key="originPairingModeName" />
+                <el-table-column prop="originSpecialRequire" label="原特殊要求" width="200" show-overflow-tooltip
+                  key="originSpecialRequire" />
+                <el-table-column prop="originAperture" label="原孔径" width="140" show-overflow-tooltip
+                  key="originAperture" />
                 <!-- <el-table-column prop="originSpecSize" label="原规格/尺寸" width="140" show-overflow-tooltip key="originSpecSize" /> -->
                 <!-- <el-table-column prop="originLogo" label="原logo" width="160" show-overflow-tooltip key="originLogo" /> -->
                 <!-- <el-table-column prop="originDivideEqually" label="原开等分" width="160" show-overflow-tooltip key="originDivideEqually" /> -->
-                <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip key="originMaterial" />
+                <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip
+                  key="originMaterial" />
                 <!-- <el-table-column prop="originProtrusion" label="原凸出量" width="160" show-overflow-tooltip key="originProtrusion" /> -->
                 <!-- <el-table-column prop="originPreload" label="原预负荷" width="160" show-overflow-tooltip key="originPreload" /> -->
 
-                <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip v-if="btnType !== 'look'" key="availableQuantity" />
+                <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip
+                  v-if="btnType !== 'look'" key="availableQuantity" />
                 <!-- <el-table-column prop="availableQuantity" label="可用库存数量" width="170" show-overflow-tooltip
                   v-if="btnType != 'look'" key="3"></el-table-column> -->
 
@@ -377,7 +494,9 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                      <el-input v-model="scope.row.num" :disabled="scope.row.targetBoxBarcode === '整箱转换' || btnType === 'look'" maxlength="11" placeholder="请输入转换数量" style="width: 145px;">{{
+                      <el-input v-model="scope.row.num"
+                        :disabled="scope.row.targetBoxBarcode === '整箱转换' || btnType === 'look'" maxlength="11"
+                        placeholder="请输入转换数量" style="width: 145px;">{{
                           scope.row.num }}
                       </el-input>
                     </el-form-item>
@@ -388,39 +507,68 @@
                     <span class="required">*</span>目标品名规格
                   </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProductDrawingNo'" :rules='productRules.targetProductDrawingNo'>
-                      <ComSelect-page v-model="scope.row.targetProductDrawingNo" @change="submitCustomerProduct1" :tableItems="targetProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList" :listRequestObj="targetProductListQueryObj" :searchList="productTableSearchList" placeholder="请选择目标产品" :paramsObj="{ scope }" :isdisabled="btnType === 'look'" />
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProductDrawingNo'"
+                      :rules='productRules.targetProductDrawingNo'>
+                      <ComSelect-page v-model="scope.row.targetProductDrawingNo" @change="submitCustomerProduct1"
+                        :tableItems="targetProductTableItems" dialogTitle="选择产品" treeTitle="产品分类"
+                        :methodArr="productMethodArr" :listMethod="getProductList"
+                        :listRequestObj="targetProductListQueryObj" :searchList="productTableSearchList"
+                        placeholder="请选择目标产品" :paramsObj="{ scope }" :isdisabled="btnType === 'look'" />
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="targetSealingCoverTyping" label="目标打字内容" width="230" show-overflow-tooltip key="targetSealingCoverTyping" />
-                <el-table-column prop="targetAccuracyLevel" label="目标精度等级" width="140" show-overflow-tooltip key="targetAccuracyLevel" />
-                <el-table-column prop="targetVibrationLevel" label="目标振动等级" width="140" show-overflow-tooltip key="targetVibrationLevel" />
-                <el-table-column prop="targetClearance" label="目标游隙" width="160" show-overflow-tooltip key="targetClearance" />
+                <el-table-column prop="targetSealingCoverTyping" label="目标打字内容" width="230" show-overflow-tooltip
+                  key="targetSealingCoverTyping" />
+                <el-table-column prop="targetAccuracyLevel" label="目标精度等级" width="140" show-overflow-tooltip
+                  key="targetAccuracyLevel" />
+                <el-table-column prop="targetVibrationLevel" label="目标振动等级" width="140" show-overflow-tooltip
+                  key="targetVibrationLevel" />
+                <el-table-column prop="targetClearance" label="目标游隙" width="160" show-overflow-tooltip
+                  key="targetClearance" />
                 <el-table-column prop="targetOil" label="目标油脂" width="160" show-overflow-tooltip key="targetOil" />
                 <!-- <el-table-column prop="targetStandardValue" label="目标规值(钢球属性)" width="160" show-overflow-tooltip key="targetStandardValue" /> -->
-                <el-table-column prop="targetPackagingMethod" label="目标包装方式" width="160" show-overflow-tooltip key="targetPackagingMethod" />
-                <el-table-column prop="targetColour" label="目标颜色" width="140" show-overflow-tooltip key="targetColour" />
+                <el-table-column prop="targetPackagingMethod" label="目标包装方式" width="160" show-overflow-tooltip
+                  key="targetPackagingMethod" />
+                <el-table-column prop="targetColour" label="目标颜色" width="140" show-overflow-tooltip
+                  key="targetColour" />
                 <el-table-column prop="targetPairingModeId" label="目标配对方式" width="160">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
-                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" :value="item.id">
+                    <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;"
+                      :disabled="btnType == 'look' ? true : false">
+                      <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                        :value="item.id">
                       </el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="targetSpecialRequire" label="目标特殊要求" width="200" show-overflow-tooltip key="targetSpecialRequire" />
-                <el-table-column prop="targetAperture" label="目标孔径" width="140" show-overflow-tooltip key="targetAperture" />
+                <el-table-column prop="targetSpecialRequire" label="目标特殊要求" width="200" show-overflow-tooltip
+                  key="targetSpecialRequire" />
+                <el-table-column prop="targetAperture" label="目标孔径" width="140" show-overflow-tooltip
+                  key="targetAperture" />
                 <!-- <el-table-column prop="targetSpecSize" label="目标规格/尺寸" width="140" show-overflow-tooltip key="targetSpecSize" /> -->
-                <el-table-column prop="targetMaterial" label="目标材质" width="180" show-overflow-tooltip key="targetMaterial" />
+                <el-table-column prop="targetMaterial" label="目标材质" width="180" show-overflow-tooltip
+                  key="targetMaterial" />
                 <el-table-column prop="targetNum" label="转换目标数量" width="170" key="targetNum">
                   <template slot="header">
                     <span class="required">*</span>转换目标数量
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'data.' + scope.$index + '.' + 'targetNum'" :rules='productRules.targetNum'>
-                      <el-input v-model="scope.row.targetNum" :disabled="btnType === 'look'" maxlength="11" placeholder="请输入转换目标数量">{{ scope.row.targetNum }}
+                      <el-input v-model="scope.row.targetNum" :disabled="btnType === 'look'" maxlength="11"
+                        placeholder="请输入转换目标数量">{{ scope.row.targetNum }}
                       </el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="targetProcessName" label="转换目标工序" width="170" key="targetProcessName">
+
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProcessName'">
+                      <ComSelect-page v-model="scope.row.targetProcessName" @change="submitProcess"
+                        :tableItems="tableItems" dialogTitle="选择工序" :listMethod="getBimProcessList"
+                        :listRequestObj="listRequestObj" :renderTree="false" :searchList="searchList"
+                        placeholder="请选择目标工序" :paramsObj="{ scope }" :isdisabled="btnType === 'look'" />
+
                     </el-form-item>
                   </template>
                 </el-table-column>
@@ -429,8 +577,12 @@
                     <span class="required">*</span>目标库位
                   </template> -->
                   <template slot-scope="scope">
-                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetShelfSpaceName'" :rules='productRules.targetShelfSpaceName'>
-                      <ComSelect-list :requestObj="shelfSpaceRequestObj" :dialogTitle="'选择目标库位'" placeholder="请选择目标库位" v-model="scope.row.targetShelfSpaceName" :beforeSubmit="beforeSubmitPartner" :isdisabled="btnType === 'look' || !dataForm.warehouseName" :method="stockDisassemblykw" :paramsObj="{ scope }" @change="changeWarehousekwmb"></ComSelect-list>
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetShelfSpaceName'"
+                      :rules='productRules.targetShelfSpaceName'>
+                      <ComSelect-list :requestObj="shelfSpaceRequestObj" :dialogTitle="'选择目标库位'" placeholder="请选择目标库位"
+                        v-model="scope.row.targetShelfSpaceName" :beforeSubmit="beforeSubmitPartner"
+                        :isdisabled="btnType === 'look' || !dataForm.warehouseName" :method="stockDisassemblykw"
+                        :paramsObj="{ scope }" @change="changeWarehousekwmb"></ComSelect-list>
                     </el-form-item>
                   </template>
                 </el-table-column>
@@ -447,7 +599,8 @@
                     </el-form-item>
                   </template> -->
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.targetBatchNumber" placeholder="请输入产品批次号" :disabled="btnType == 'look' ? true : false" maxlength="20" />
+                    <el-input v-model="scope.row.targetBatchNumber" placeholder="请输入产品批次号"
+                      :disabled="btnType == 'look' ? true : false" maxlength="20" />
                   </template>
                 </el-table-column>
                 <!-- <el-table-column prop="targetBoxBarcode" label="目标箱条码" width="220" key="targetBoxBarcode">
@@ -461,10 +614,12 @@
                       </template>
                     </el-table-column> -->
                 <!-- <el-table-column prop="targetRealityTotalNum" label="目标箱数量" width="120" v-if="btnType !== 'look'" key="targetRealityTotalNum" /> -->
-                <el-table-column prop="targetProductsMainUnit" label="单位" width="110" show-overflow-tooltip key="targetProductsMainUnit" />
+                <el-table-column prop="targetProductsMainUnit" label="单位" width="110" show-overflow-tooltip
+                  key="targetProductsMainUnit" />
                 <el-table-column prop="remark" label="备注" min-width="230" key="remark">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                    <el-input v-model="scope.row.remark" placeholder="请输入备注"
+                      :disabled="btnType == 'look' ? true : false" maxlength="200" />
                   </template>
                 </el-table-column>
                 <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="66">
@@ -478,7 +633,9 @@
         </el-collapse>
       </div>
       <!-- 选择产品 -->
-      <ComSelect-page ref="ComSelect-page" @change="submitAllProduct" :renderTree="false" :tableItems="productTableItems" dialogTitle="选择产品" :listMethod="getBatchNumber" :listRequestObj="productRequestObj" :searchList="productTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitAllProduct" :renderTree="false"
+        :tableItems="productTableItems" dialogTitle="选择产品" :listMethod="getBatchNumber"
+        :listRequestObj="productRequestObj" :searchList="productTableSearchList" :elementShow="false" multiple />
 
     </div>
   </transition>
@@ -501,11 +658,40 @@ import { stockDisassemblykw } from '@/api/warehouseManagement/productlistChange'
 import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList } from '@/api/basicData/index'// 仓库树
 import { getProductionLotList, getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
+import { getBimProcessList } from '@/api/bimProcess'
 export default {
   mixins: [busFlow, flowMixin, getProjectList],
   components: { Process, recordList },
   data() {
     return {
+      getBimProcessList,
+      searchList: [
+        { prop: "code", label: "工序编码", type: 'input' },
+        { prop: "name", label: "工序名称", type: 'input' },
+      ],
+      listRequestObj: {
+        "name": "",
+        "code": "",
+        "processingType": "",
+        "orderItems": [
+          {
+            "asc": false,
+            "column": ""
+          },
+          {
+            "asc": false,
+            "column": "create_time"
+          }
+        ],
+        "pageNum": 1,
+        "pageSize": 20,
+        "productCategoryId": "",
+        "projectId": ''
+      },
+      tableItems: [
+        { prop: 'name', label: '工序名称' },
+        { prop: 'code', label: '工序编码' },
+      ],
       accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
@@ -606,7 +792,6 @@ export default {
       productRequestObj: { // 明细
         accuracyLevel: "",
         availableStock: true,
-        excludeProcessFlag: 1,
         availableBatch: 1,
         batchNumber: "",
         clearance: "",
@@ -626,6 +811,7 @@ export default {
         { prop: 'availableQuantity', label: '当前库存', minWidth: 120 },
         { prop: 'mainUnit', label: '单位', minWidth: 120 },
         { prop: 'batchNumber', label: '批次号', minWidth: 180 },
+        { prop: 'processName', label: '工序', minWidth: 180 },
         { prop: 'pairingModeName', label: '配对方式', minWidth: 140 },
         { prop: 'sealingCoverTyping', label: '打字内容', minWidth: 160 }
       ],
@@ -699,6 +885,14 @@ export default {
     this.calcHeight()
   },
   methods: {
+    
+    submitProcess(id, data, params, index) {
+      console.log(123,id, data, params, index);
+      this.dataFormTwo.data[params.scope.$index].targetProcessId = data[0].id || ''
+      this.dataFormTwo.data[params.scope.$index].targetProcessName = data[0].name || ''
+      console.log("object",this.dataFormTwo.data);
+    },   
+    
     async getOrderFiledMap() {
       await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -1058,8 +1252,11 @@ export default {
           originProtrusion: data[i].protrusion,
           originPreload: data[i].preload,
 
+
           originProductsId: data[i].productsId,
           productCode: data[i].productCode,
+          originProcessName: data[i].processName,
+          originProcessId: data[i].processId,
           productName: data[i].name,
           productDrawingNo: data[i].productDrawingNo,
           mainUnit: data[i].mainUnit,
@@ -1077,6 +1274,8 @@ export default {
           originRealityTotalNum: '',
           targetBoxBarcode: '',
           targetRealityTotalNum: '',
+          targetProcessId: "",
+          targetProcessName: "",
         }
 
         // 找出this.linesList中与item 产品id、货位id、批次号 完全相同的项
@@ -1261,22 +1460,28 @@ export default {
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
+
 .required {
   color: red;
   margin-right: 4px;
 }
+
 ::v-deep .data-form {
   margin-bottom: 18px;
+
   .el-form-item--small.el-form-item {
     margin-bottom: 0 !important;
   }
 }
+
 .JNPF-preview-main .main {
   padding-top: 0;
 }
+
 ::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
   padding-right: 0 !important;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important;
 }
@@ -1284,6 +1489,7 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1306,6 +1512,7 @@ export default {
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px !important;
 }

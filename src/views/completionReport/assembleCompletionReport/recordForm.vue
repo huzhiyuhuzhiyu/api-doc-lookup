@@ -103,7 +103,7 @@ export default {
       total: 0,
       tableDataList: [],
       isProductNameSwitch: "",
-
+      workNo:"",
 
     }
   },
@@ -122,6 +122,7 @@ export default {
     },
     init(data) {
       this.form.workNo = data
+      this.workNo=data
       this.customerVisible = true
       this.getrecordsList()
     },
@@ -152,7 +153,7 @@ export default {
       this.form = {
         productDrawingNo: "",
         orderNo: "",
-        workNo: "",
+        workNo: this.workNo,
         pageNum: 1,
         pageSize: 20,
         documentStatus: "submit",

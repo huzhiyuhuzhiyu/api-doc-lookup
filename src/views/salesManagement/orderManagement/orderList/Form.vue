@@ -3014,6 +3014,11 @@ export default {
               // 删除空行
               this.productData.splice(index, 1);
             }
+            if(!this.productData.length){
+              submitFlag = false
+              this.$message.error("请选择产品信息")
+              return
+            }
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
               if (!item.productsId) {

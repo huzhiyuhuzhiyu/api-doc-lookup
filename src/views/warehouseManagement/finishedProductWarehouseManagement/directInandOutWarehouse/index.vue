@@ -341,7 +341,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
+                      <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping"
                         width="120" key="2111">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
@@ -418,7 +418,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                      <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" v-if="specialRequireFlag == 1" width="160"
                         key="202">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
@@ -437,7 +437,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" width="120" key="210">
+                      <el-table-column prop="colour" :label="$store.getters.colour" width="120" key="210">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -606,9 +606,9 @@
                 v-if="dataForm.documentType == 'outbound'" key="shelfSpaceName" />
               <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && standardValueFlag == 1" key="standardValue" />
-              <el-table-column prop="colour" label="颜色" width="80" sortable="custom"
+              <el-table-column prop="colour" :label="$store.getters.colour" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && colourFlag == 1" key="colour" />
-              <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom"
+              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && sealingCoverTypingFlag == 1" key="sealingCoverTyping" />
               <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && accuracyLevelFlag == 1" key="accuracyLevel" />
@@ -622,7 +622,7 @@
                 v-if="dataForm.documentType == 'outbound' && apertureFlag == 1" key="aperture"></el-table-column>
               <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && packagingMethodFlag == 1" key="packagingMethod" />
-              <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom"
+              <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && specialRequireFlag == 1" key="specialRequire" />
               <el-table-column prop="remark" label="备注" width="100" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="remark" />

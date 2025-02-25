@@ -55,6 +55,8 @@ router.beforeEach(async (to, from, next) => {
           // get user info
           let res = await store.dispatch('user/getInfo',type)
           const accessRoutes = await store.dispatch('permission/generateRoutes', res)
+          let resField = await store.dispatch('base/getDictionaryData',{sort: 'FieldNameSet'})  // 调用数据字典
+          store.commit('base/SET_FIELD_NAME', resField)
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
           // hack method to ensure that addRoutes is complete

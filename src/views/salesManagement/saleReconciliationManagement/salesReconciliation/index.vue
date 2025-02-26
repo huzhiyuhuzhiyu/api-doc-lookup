@@ -131,11 +131,7 @@
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData">
-          <div class="text">
-            <span>合计：</span>
-            <span style="margin-left: 10px">出入库数量：{{ totalNum }}</span>
-            <span style="margin-left: 10px">金额：{{ totalTotalAmount }}</span>
-          </div>
+      
         </pagination>
       </div>
     </div>
@@ -159,6 +155,9 @@ import moment from 'moment'
 import { excelExport, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
+import {
+   getbimProductAttributesListMap
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'salefinAccount',
   mixins: [getProjectList],
@@ -287,9 +286,10 @@ export default {
   async created() {
     this.superForm = this.listQuery
     this.search('basic')
+    await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProductNameSwitch('product', 'enable_productName')
-    this.advancedQueryFun()
+    await this.advancedQueryFun()
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(4, 0, {
         prop: 'productName',
@@ -305,6 +305,13 @@ export default {
   },
 
   methods: {
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+ 
+    },
     getOrderFiledMap() {
 
       getOrderFiledMap('sale').then((res) => {

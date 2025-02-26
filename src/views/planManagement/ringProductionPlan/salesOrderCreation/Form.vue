@@ -906,7 +906,7 @@ export default {
             let objs = {
               cooperativePartnerId: item.cooperativePartnerId,
               ordersId: item.ordersId,
-              ordersLineId: item.id,
+              ordersLineId: item.ordersLineId || item.id,
               productsId: item.productsId,
               planId: item.planId || null,
               pairingModeId: item.pairingModeId,

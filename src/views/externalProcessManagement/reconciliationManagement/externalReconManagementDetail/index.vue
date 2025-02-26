@@ -110,6 +110,8 @@
           <el-table-column prop="stockMoveOrderNo" label="出入库单号" width="180" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="180" sortable="custom" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+
           <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
           <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />

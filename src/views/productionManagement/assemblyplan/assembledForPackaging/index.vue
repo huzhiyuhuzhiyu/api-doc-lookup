@@ -86,6 +86,7 @@
                                      v-if="productNameFlag"/>
                     <el-table-column sortable="custom" prop="productCode" label="产品编码" v-if="isAssemble"
                                      width="120"/>
+              <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
                     <el-table-column sortable="custom" prop="createTime" label="创建时间" width="180"/>
                     <el-table-column sortable="custom" prop="createByName" label="创建人" width="100"/>
 

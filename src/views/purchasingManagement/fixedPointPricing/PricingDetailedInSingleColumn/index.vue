@@ -73,6 +73,7 @@
             <el-table-column prop="productsName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
             <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
             <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">

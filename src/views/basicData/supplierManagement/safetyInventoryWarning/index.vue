@@ -104,12 +104,12 @@
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
           <el-table-column prop="name" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
           <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
             <template slot-scope="scope">
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
           <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
@@ -181,7 +181,7 @@ export default {
       tableFlag: '',
       columnList: [
         // 'code',
-        'productCategoryName'
+        // 'productCategoryName'
         // 'deputyUnit',
         // 'deputyAvailableQuantity',
         // 'deputyInventoryQuantity',

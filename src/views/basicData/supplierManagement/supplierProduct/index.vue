@@ -71,6 +71,8 @@
                   v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
                 <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
@@ -168,6 +170,7 @@
                   v-if="isProductNameSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
                 <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
                 <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
                 <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
@@ -936,6 +939,9 @@ export default {
       }
       if (prop === 'customerProductDrawingNo') {
         prop = 'customer_Product_Drawing_No'
+      }
+      if (prop === 'productCategoryName') {
+        prop = 'product_category_name'
       }
       this.lastListQuery.orderItems[0].asc = order !== 'descending'
       this.lastListQuery.orderItems[0].column = order === null ? '' : prop

@@ -35,5 +35,8 @@ const getters = {
     loadingText: state => state.jx.loadingText,
     loadingBackground: state => state.jx.loadingText,
     loadingSpinner: state => state.jx.loadingSpinner,
+    sealingCoverTyping: state => state.base.sealingCoverTyping,  // 打字内容
+    specialRequire: state => state.base.specialRequire,  // 特殊要求
+    colour: state => state.base.colour,  // 颜色
 }
 export default getters

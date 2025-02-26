@@ -100,7 +100,7 @@
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
               v-if="accuracyLevelFlag == 1" />
@@ -111,10 +111,10 @@
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
               v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
             <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
+            <el-table-column prop="colour" :label="$store.getters.colour" width="120" v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -380,7 +380,7 @@ export default {
       if (this.colourFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
           prop: 'colour',
-          label: '颜色',
+          label: this.$store.getters.colour,
           type: 'select',
           options: this.bimProductAttributesList.pa010.map((item) => {
             return {
@@ -406,7 +406,7 @@ export default {
       if (this.specialRequireFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
           prop: 'specialRequire',
-          label: '特殊要求',
+          label: this.$store.getters.specialRequire,
           type: 'select',
           options: this.bimProductAttributesList.pa016.map((item) => {
             return {
@@ -498,7 +498,7 @@ export default {
       if (this.sealingCoverTypingFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
           prop: 'sealingCoverTyping',
-          label: '打字内容',
+          label: this.$store.getters.sealingCoverTyping,
           type: 'select',
           options: this.bimProductAttributesList.pa007.map((item) => {
             return {

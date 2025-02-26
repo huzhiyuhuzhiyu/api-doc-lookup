@@ -16,6 +16,9 @@ const state = {
   roleTree: [],
   printFlowTree: [],
   printFormTree: [],
+  sealingCoverTyping:'',
+  specialRequire:'',
+  colour:'',
   configData: {},
   configGlobal:{}
 }
@@ -47,6 +50,16 @@ const mutations = {
   },
   SET_PRINT_FORM_TREE: (state, printTree) => {
     state.printFormTree = printTree
+  },
+  SET_FIELD_NAME: (state, FieldNameJson) => { // 获取数据字典中字段名称配置
+    const sealingCoverTypingIndex = FieldNameJson.findIndex(obj => obj.enCode === 'sealingCoverTyping')
+    state.sealingCoverTyping = sealingCoverTypingIndex !== -1 ?  FieldNameJson[sealingCoverTypingIndex].fullName : ''
+
+    const specialRequireIndex = FieldNameJson.findIndex(obj => obj.enCode === 'specialRequire')
+    state.specialRequire = specialRequireIndex !== -1 ?  FieldNameJson[specialRequireIndex].fullName : ''
+
+    const colourIndex = FieldNameJson.findIndex(obj => obj.enCode === 'colour')
+    state.colour = colourIndex !== -1 ?  FieldNameJson[colourIndex].fullName : ''
   },
   SET_CONFIG_GLOBAL: (state, configGlobal) => {
     state.configGlobal = configGlobal

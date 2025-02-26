@@ -700,8 +700,6 @@ export default {
   },
   mounted() {
     this.getBimBusinessDetail()
-    console.log("this.userInfo.projectId",this.userInfo);
-    this.dataForm.recipientBy=this.userInfo.userId
 
   },
   methods: {
@@ -1131,6 +1129,8 @@ export default {
         this.getBusInfo('b045')
         detailWithdrawal(data.id).then(res => {
           console.log("详情", res);
+          
+    this.dataForm.recipientBy=res.data.collect.createBy
           let filteredArray = res.data.collectLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.unReceiveQuantity);
           if (filteredArray.length) {
             filteredArray.forEach(item => {

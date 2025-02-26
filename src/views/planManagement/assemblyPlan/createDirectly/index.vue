@@ -979,7 +979,7 @@ export default {
           } else {
             if (this.productData.length == 1) {
               let item = this.productData[0]
-              let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.inventoryQuantity, item.planQuantity]), 6)
+              let num = this.jnpf.numberFormat(this.jnpf.math('add', [item.inventoryQuantity, item.planQuantity]), 6)
               let methods = ""
               let data = null
               if (this.btnType == 'add') {

@@ -1254,16 +1254,17 @@ export default {
               });
               break;
             }
-          } else {
-            if (!item.personId && item.processingType == "self_produced") {
-              submitFlag = false;
-              this.$message({
-                message: "第" + (index + 1) + "行工序需配置人员信息",
-                type: "error",
-              });
-              break;
-            }
           }
+          //  else {
+          //   if (!item.personId && item.processingType == "self_produced") {
+          //     submitFlag = false;
+          //     this.$message({
+          //       message: "第" + (index + 1) + "行工序需配置人员信息",
+          //       type: "error",
+          //     });
+          //     break;
+          //   }
+          // }
         }
       } else {
         this.dataFormTwo.data.forEach(item => {

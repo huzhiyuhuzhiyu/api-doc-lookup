@@ -312,7 +312,14 @@
 
                     </el-form-item>
                   </el-col>
-
+                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcess.firstFlag !== true">
+                    <el-form-item label="不良数量:" class="iptLabel">
+                      <el-input v-model="currentProcess.materialWasteQuantity" placeholder="不良数量" @blur="handleBlur2"
+                        class="ipt materialWaste" />
+                      <el-button type="primary" :disabled="!currentProcess.materialWasteQuantity"
+                        style="float: right;height: 50px" size="mini" @click='setBadReasons()'>设置不良原因</el-button>
+                    </el-form-item>
+                  </el-col> -->
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -498,6 +505,7 @@
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
     <recordForm v-if="recordFormVisible" ref="recordForm"></recordForm>
+    <badReasonsForm v-if="badReasonsFormVisible" ref="badReasonsForm"></badReasonsForm>
 
   </div>
 </template>
@@ -515,13 +523,15 @@ import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
 import recordForm from './recordForm.vue'
 import { getOrderFiledMap } from '@/api/basicData/index'
+import badReasonsForm from './badReasonsForm.vue'
 export default {
 
   components: {
-    NormalForm, VibrateForm, recordForm,
+    NormalForm, VibrateForm, recordForm,badReasonsForm
   },
   data() {
     return {
+      badReasonsFormVisible:false,
       tableDataList: [
         { accuracyLevel: "", qualifiedQuantity: "" }
       ],
@@ -605,7 +615,7 @@ export default {
   },
 
   async mounted() {
-     
+
   },
   async mounted() {
     await this.getpairingModeListFun()
@@ -1598,9 +1608,7 @@ export default {
 
 
 
-//.el-button--small {
-// padding: 1;
-//}</style>
+ 
 ::v-deep .el-tabs__content {
 height: auto !important;
 padding: 0;
@@ -1609,440 +1617,439 @@ padding: 0;
 ::v-deep .JNPF-common-page-header.noButtons {
 padding: 9px 10px;
 }
-</style>
-<style scoped lang="scss">
+
 .required {
-  color: red;
-  margin-right: 4px;
+color: red;
+margin-right: 4px;
 }
 
 .el-dialog .el-dialog__body {
-  padding: 20px 0px 2px !important;
+padding: 20px 0px 2px !important;
 }
 
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 5px 0 10px !important;
+padding: 0 5px 0 10px !important;
 }
 
 .el-button span {
-  font-size: 14px !important;
+font-size: 14px !important;
 }
 
 .pagination-container {
-  background-color: #f5f7fa;
+background-color: #f5f7fa;
 }
 
 ::v-deep .el-input-group__append {
-  background-color: #48a2ff;
-  color: #fff;
+background-color: #48a2ff;
+color: #fff;
 }
 
 .el-table__footer {
-  display: none;
+display: none;
 }
 
 ::v-deep.has-gutter {
-  display: none;
+display: none;
 }
 
 .JNPF-preview-main .main {
-  padding-top: 0;
-  margin-bottom: 10px;
+padding-top: 0;
+margin-bottom: 10px;
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+padding: 0 10px !important
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+padding-left: 0px !important
 }
 
 
 
 ::v-deep .el-collapse-item__header {
-  line-height: 33px;
-  font-size: 18px;
-  border-top: 1px solid rgb(220, 223, 230);
-  // background: #dcdfe6;
-  background: rgb(250, 250, 250);
-  padding-left: 5px;
-  font-weight: 700;
-  // border-bottom:none;
-  border-right: 1px solid #dcdfe6;
-  border-left: 1px solid #dcdfe6;
+line-height: 33px;
+font-size: 18px;
+border-top: 1px solid rgb(220, 223, 230);
+// background: #dcdfe6;
+background: rgb(250, 250, 250);
+padding-left: 5px;
+font-weight: 700;
+// border-bottom:none;
+border-right: 1px solid #dcdfe6;
+border-left: 1px solid #dcdfe6;
 }
 
 ::v-deep .el-collapse-item__wrap {
-  border: 1px solid #dcdfe6 !important;
-  border-top: none;
-  margin-bottom: 0;
-  padding: 0px;
-  height: calc(100% - 48px);
+border: 1px solid #dcdfe6 !important;
+border-top: none;
+margin-bottom: 0;
+padding: 0px;
+height: calc(100% - 48px);
 
 }
 
 ::v-deep .el-collapse-item__content {
-  height: 100%;
+height: 100%;
 }
 
 .reportInfo ::v-deep .el-collapse-item__wrap {
-  padding: 0;
+padding: 0;
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+padding-bottom: 0px
 }
 
 
 .import_t {
-  font-size: 22px;
-  color: rgb(103, 194, 58);
-  vertical-align: top;
-  margin-top: 40px;
-  display: inline-block;
-  margin-left: 20px;
+font-size: 22px;
+color: rgb(103, 194, 58);
+vertical-align: top;
+margin-top: 40px;
+display: inline-block;
+margin-left: 20px;
 }
 
 .import_b {
-  font-size: 18px;
-  /* color: #67c23a; */
-  vertical-align: top;
-  margin-top: 43px;
-  display: inline-block;
+font-size: 18px;
+/* color: #67c23a; */
+vertical-align: top;
+margin-top: 43px;
+display: inline-block;
 }
 
 .orderInfo {
-  height: 100%;
+height: 100%;
 }
 
 .eol {
-  height: 100%;
-  border-right: 1px solid #dcdfe6;
-  background: #f5f7fa;
-  padding-left: 10px;
+height: 100%;
+border-right: 1px solid #dcdfe6;
+background: #f5f7fa;
+padding-left: 10px;
 }
 
 .options {
-  display: inline-block;
-  float: right;
+display: inline-block;
+float: right;
 }
 
 .pageTitle {
-  display: inline-block;
-  font-size: 18px;
-  color: #303133;
-  height: 100%;
-  line-height: 36px;
-  font-weight: 700;
+display: inline-block;
+font-size: 18px;
+color: #303133;
+height: 100%;
+line-height: 36px;
+font-weight: 700;
 }
 
 .setipImg {
-  width: 60px;
-  height: 60px;
+width: 60px;
+height: 60px;
 }
 
 .reportBox_left {
-  /* padding-right: 10px; */
-  /* margin-right: 15px; */
-  background: #fff;
-  /* margin-right: 5px; */
-  padding-right: 10px;
-  box-sizing: border-box;
-  border-right: 5px solid #ebeef5;
-  padding: 10px 0 0px 0;
-  width: 220px;
-  height: 640px;
-  display: inline-block;
-  overflow-y: auto;
+/* padding-right: 10px; */
+/* margin-right: 15px; */
+background: #fff;
+/* margin-right: 5px; */
+padding-right: 10px;
+box-sizing: border-box;
+border-right: 5px solid #ebeef5;
+padding: 10px 0 0px 0;
+width: 220px;
+height: 640px;
+display: inline-block;
+overflow-y: auto;
 }
 
 .reportBox_left::-webkit-scrollbar {
-  display: none;
-  /* 对于 Chrome, Safari 和 Opera 的写法 */
+display: none;
+/* 对于 Chrome, Safari 和 Opera 的写法 */
 }
 
 .processInfoBox {
-  background-image: url('../../../assets/images/success2.png');
-  /* width: 90%; */
-  /* height: 80px; */
-  width: 160px;
-  height: 50px;
-  background-size: 100% 100%;
-  margin: 0 auto;
-  /* line-height: 80px; */
-  /* border-radius: 2px; */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-left: 20px;
-  box-sizing: border-box;
-  font-size: 16px;
-  padding-right: 20px;
-  padding-top: 6px;
-  line-height: 19px;
+background-image: url('../../../assets/images/success2.png');
+/* width: 90%; */
+/* height: 80px; */
+width: 160px;
+height: 50px;
+background-size: 100% 100%;
+margin: 0 auto;
+/* line-height: 80px; */
+/* border-radius: 2px; */
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+padding-left: 20px;
+box-sizing: border-box;
+font-size: 16px;
+padding-right: 20px;
+padding-top: 6px;
+line-height: 19px;
 }
 
 .processInfo {
-  background-image: url('../../../assets/images/NotStarted3.png');
-  margin: 0 auto;
-  border-radius: 2px;
-  color: #fff;
-  white-space: nowrap;
-  /* 不换行 */
-  overflow: hidden;
-  /* 隐藏超出的内容 */
-  text-overflow: ellipsis;
+background-image: url('../../../assets/images/NotStarted3.png');
+margin: 0 auto;
+border-radius: 2px;
+color: #fff;
+white-space: nowrap;
+/* 不换行 */
+overflow: hidden;
+/* 隐藏超出的内容 */
+text-overflow: ellipsis;
 }
 
 .info {
-  display: inline-block;
-  vertical-align: top;
-  overflow-y: auto;
+display: inline-block;
+vertical-align: top;
+overflow-y: auto;
 
 }
 
 .info ::v-deep .el-form {
-  padding-left: 10px;
-  padding-right: 10px;
-  background: #ffa07a;
+padding-left: 10px;
+padding-right: 10px;
+background: #ffa07a;
 }
 
 .information ::v-deep.el-form {
-  padding-left: 10px;
-  padding-right: 10px;
-  background: #add8e6;
+padding-left: 10px;
+padding-right: 10px;
+background: #add8e6;
 }
 
 .reportBtn {
-  // text-align: center;
-  margin-top: 20px;
+// text-align: center;
+margin-top: 20px;
 }
 
 .tit {
-  background: #fafafa;
-  height: 48px;
-  line-height: 48px;
-  font-size: 18px;
-  font-weight: 600;
-  padding: 0 10px;
+background: #fafafa;
+height: 48px;
+line-height: 48px;
+font-size: 18px;
+font-weight: 600;
+padding: 0 10px;
 }
 
 .info::-webkit-scrollbar {
-  display: none;
-  /* 对于 Chrome, Safari 和 Opera 的写法 */
+display: none;
+/* 对于 Chrome, Safari 和 Opera 的写法 */
 }
 
 .el-card {
-  border: 0;
-  border-top: 1px solid #EBEEF5;
+border: 0;
+border-top: 1px solid #EBEEF5;
 }
 
 box-card:nth-child(n+3) {
-  margin-top: 10px
+margin-top: 10px
 }
 
 .workInfo:nth-child(n+2) {
-  margin-left: -8px;
+margin-left: -8px;
 }
 
 .taskInfo ::v-deep.el-form-item {
-  margin-bottom: 0;
+margin-bottom: 0;
 }
 
 .taskInfo::v-deep .el-form-item__content {
-  line-height: 40px !important;
+line-height: 40px !important;
 }
 
 .taskInfo::v-deep .el-form-item__label {
-  line-height: 40px !important;
+line-height: 40px !important;
 
 }
 
 .taskInfo ::v-deep.el-form-item__content div {
-  width: 170px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+width: 170px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 
 ::v-deep .el-col .el-form-item--small .el-form-item__content {
-  line-height: 32px;
+line-height: 32px;
 }
 
 .stoclInfo {
-  background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
-  padding: 5px;
+background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
+padding: 5px;
 }
 
 .stoclInfo .margin-top {
-  background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
+background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
 
 }
 
 .orderInfo::v-deep .el-descriptions-item__label {
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
+color: #fff;
+font-size: 18px;
+font-weight: bold;
 }
 
 .orderInfo::v-deep .el-descriptions-item__content {
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: inline-block !important;
+color: #fff;
+font-size: 18px;
+font-weight: bold;
+width: 200px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+display: inline-block !important;
 }
 
 .orderInfo ::v-deep .el-descriptions__table {
-  background: linear-gradient(0deg, #11B481 0%, #6ADE7D 100%);
+background: linear-gradient(0deg, #11B481 0%, #6ADE7D 100%);
 }
 
 .box ::v-deep .el-descriptions__table {
-  background: #6ADE7D;
+background: #6ADE7D;
 }
 
 .info {
-  margin-top: 18px;
+margin-top: 18px;
 }
 
 .fixedInfo {
-  background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
-  padding: 20px;
-  color: #fff;
-  padding: 20px;
-  color: #fff;
-  padding-top: 0;
-  border-bottom: 1px solid #ebeef5;
-  border-left: 1px solid #ebeef5;
+background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
+padding: 20px;
+color: #fff;
+padding: 20px;
+color: #fff;
+padding-top: 0;
+border-bottom: 1px solid #ebeef5;
+border-left: 1px solid #ebeef5;
 }
 
 .rightInfo {
-  width: 62%;
-  /* border: 1px solid; */
-  border-radius: 4px;
-  // margin-left: 20px;
-  float: right;
-  box-shadow: beige;
-  border-bottom: 1px solid #ebeef5;
-  border-right: 1px solid #ebeef5;
+width: 62%;
+/* border: 1px solid; */
+border-radius: 4px;
+// margin-left: 20px;
+float: right;
+box-shadow: beige;
+border-bottom: 1px solid #ebeef5;
+border-right: 1px solid #ebeef5;
 }
 
 .ipt ::v-deep.el-input__inner {
-  height: 50px;
-  line-height: 50px;
-  font-size: 20px !important;
-  font-weight: bold;
-  padding-right: 0;
-  border: 0;
+height: 50px;
+line-height: 50px;
+font-size: 20px !important;
+font-weight: bold;
+padding-right: 0;
+border: 0;
 }
 
 .iptLabel ::v-deep.el-form-item__label {
-  height: 50px;
-  line-height: 50px;
-  font-size: 20px !important;
-  font-weight: bold;
-  padding-left: 10px;
-  padding-right: 0;
+height: 50px;
+line-height: 50px;
+font-size: 20px !important;
+font-weight: bold;
+padding-left: 10px;
+padding-right: 0;
 }
 
 .rightInfo ::v-deep .el-form-item--small.el-form-item {
-  border: 1px solid #ebeef5;
+border: 1px solid #ebeef5;
 }
 
 .JNPF-common-drawer ::v-deep.el-drawer__body {
-  overflow-y: auto;
+overflow-y: auto;
 }
 
 .ts {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 
 .JNPF-dialog.JNPF-dialog_center ::v-deep.el-dialog .el-dialog__body {
-  padding: 10px !important;
+padding: 10px !important;
 }
 
 .left-title {
-  font-size: 18px;
-  font-weight: 600;
+font-size: 18px;
+font-weight: 600;
 }
 
 .reportBtn ::v-deep .el-button {
 
-  line-height: 40px;
-  background: #fff;
-  color: #3fb9f8;
+line-height: 40px;
+background: #fff;
+color: #3fb9f8;
 }
 
 .reportBtn ::v-deep .el-button span {
-  font-size: 18px !important;
-  font-weight: bold;
+font-size: 18px !important;
+font-weight: bold;
 }
 
 .reportBtn_right .el-button {
 
-  line-height: 40px;
+line-height: 40px;
 
 }
 
 .reportBtn_right ::v-deep .el-button span {
-  font-size: 18px !important;
-  font-weight: bold;
+font-size: 18px !important;
+font-weight: bold;
 }
 
 .process {
-  padding-top: 5px;
-  padding: 0px 10px;
-  border: 1px solid #dcdfe6;
-  padding-top: 5px;
-  background: #f2f2f2;
+padding-top: 5px;
+padding: 0px 10px;
+border: 1px solid #dcdfe6;
+padding-top: 5px;
+background: #f2f2f2;
 }
 
 .extend {
-  width: 150px;
-  position: absolute;
-  right: 10px;
-  top: 10px;
+width: 150px;
+position: absolute;
+right: 10px;
+top: 10px;
 }
 
 .external_text ::v-deep .el-descriptions-item__content,
 .external_text ::v-deep .el-descriptions-item__label {
-  font-size: 18px;
-  font-weight: bold;
+font-size: 18px;
+font-weight: bold;
 }
 
 ::v-deep .el-form-item__error {
-  font-size: 16px !important;
-  margin: 8px 0
+font-size: 16px !important;
+margin: 8px 0
 }
 
 .pairNum {
-  display: inline-block;
-  height: 50px;
-  float: right;
-  padding-right: 10px;
-  line-height: 50px;
-  background: #3fb9f8;
-  padding-left: 10px;
-  font-size: 18px;
-  color: #fff;
+display: inline-block;
+height: 50px;
+float: right;
+padding-right: 10px;
+line-height: 50px;
+background: #3fb9f8;
+padding-left: 10px;
+font-size: 18px;
+color: #fff;
 }
 
 ::v-deep .el-table--scrollable-y .el-table__body-wrapper {
-  height: auto !important;
+height: auto !important;
 }
 
 .accTitle {
-  height: 45px;
-  line-height: 45px;
-  background: rgb(242, 242, 242);
-  font-size: 18px;
-  font-weight: 600;
-  text-align: center;
+height: 45px;
+line-height: 45px;
+background: rgb(242, 242, 242);
+font-size: 18px;
+font-weight: 600;
+text-align: center;
 }
 </style>

@@ -641,9 +641,7 @@ export default {
 
 
 
-//.el-button--small {
-// padding: 1;
-//}</style>
+ 
 ::v-deep .el-tabs__content {
 height: auto !important;
 padding: 0;
@@ -658,7 +656,7 @@ padding: 9px 10px;
   color: red;
   margin-right: 4px;
 }
-
+ 
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;
 }

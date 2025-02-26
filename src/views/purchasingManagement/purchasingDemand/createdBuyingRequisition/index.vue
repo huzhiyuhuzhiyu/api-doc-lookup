@@ -503,6 +503,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'productCategoryName', label: '产品分类' },
         { prop: "mainUnit", label: "单位" }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [

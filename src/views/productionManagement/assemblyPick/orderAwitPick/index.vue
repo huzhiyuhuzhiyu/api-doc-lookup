@@ -97,7 +97,8 @@
                         <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                                          v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
-                        <el-table-column prop="processName" label="工序名称" min-width="300" sortable="custom"></el-table-column>
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+            <el-table-column prop="processName" label="工序名称" min-width="300" sortable="custom"></el-table-column>
                         <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
                             <template slot-scope="scope">
                                 <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>

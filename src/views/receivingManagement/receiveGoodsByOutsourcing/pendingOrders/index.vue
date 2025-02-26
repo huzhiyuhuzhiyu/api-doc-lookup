@@ -87,6 +87,7 @@
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
             <template v-if="isProportionSwitch === '1'">
               <el-table-column prop="weight" label="重量(kg)" width="90" />
@@ -502,7 +503,8 @@ export default {
         prop === 'cooperativePartnerName' ||
         prop === 'cooperativePartnerCode' ||
         prop === 'waitReceiptNum' ||
-        prop === 'createByName'
+        prop === 'createByName'||
+        prop=='productCategoryName'
       ) {
         newProp = prop
       } else if (prop === 'createTime') {

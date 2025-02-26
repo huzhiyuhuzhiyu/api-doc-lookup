@@ -73,6 +73,7 @@
           <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom"
             v-if="isProductNameSwitch === '1'" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="businessType" label="收/退货类型" width="140" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'outbound_external'">退货</div>

@@ -71,6 +71,7 @@
             v-if="isProductNameSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
+          <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
           <el-table-column prop="immediatelyBuyFlag" label="立即外协" min-width="120" sortable="custom">
             <template slot-scope="scope">

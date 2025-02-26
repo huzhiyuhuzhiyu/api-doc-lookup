@@ -80,6 +80,7 @@
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <template v-if="isProportionSwitch === '1'">
               <el-table-column prop="weight" label="重量(kg)" width="90" />
               <el-table-column prop="proportion" label="比重" width="80" />
@@ -470,7 +471,8 @@ export default {
         prop === 'productDrawingNo' ||
         prop === 'documentStatus' ||
         prop === 'createTime' ||
-        prop === 'createByName'
+        prop === 'createByName'||
+        prop=='productCategoryName'
       ) {
         newProp = prop
       } else {

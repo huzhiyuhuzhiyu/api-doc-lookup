@@ -86,6 +86,7 @@
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
             <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
             <template v-if="isProportionSwitch === '1'">

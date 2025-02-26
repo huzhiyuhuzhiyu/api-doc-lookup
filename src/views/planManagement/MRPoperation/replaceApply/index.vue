@@ -53,6 +53,8 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="140" />
                     <el-table-column prop="productName" label="产品名称" min-width="140" />
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+                    <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+
                     <el-table-column prop="productSource" label="产品来源" align="center" min-width="120">
                         <template slot-scope="scope">
                             <div v-if="scope.row.productSource === 'out'">外协</div>

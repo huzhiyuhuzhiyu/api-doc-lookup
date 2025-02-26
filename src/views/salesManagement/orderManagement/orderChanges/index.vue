@@ -204,6 +204,8 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="250" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+
                 <el-table-column prop="num" label="原数量(主)" min-width="120" />
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="140" />
                 <el-table-column prop="mainUnit" label="单位(主)" min-width="120" />

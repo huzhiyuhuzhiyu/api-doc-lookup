@@ -84,6 +84,8 @@
             <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+
             <el-table-column prop="mainUnit" label="单位" min-width="60" />
             <el-table-column prop="num" label="退料数量" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />

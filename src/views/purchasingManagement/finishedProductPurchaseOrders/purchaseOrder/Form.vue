@@ -20,7 +20,7 @@
                             placeholder="采购单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6">
+                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
                             @focus="openDialog"></el-input>
@@ -75,7 +75,7 @@
                       <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="单价(含税)" width="100" v-if="!outInboundWarehouse">
+                      <el-table-column prop="price" label="单价(含税)" width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                             <div class="viewData">
@@ -84,7 +84,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额(含税)" width="140" v-if="!outInboundWarehouse">
+                      <el-table-column prop="totalAmount" label="金额(含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                             <div class="viewData">
@@ -93,7 +93,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" width="60" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxRate" label="税率" width="60" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
                             <div class="viewData">
@@ -102,7 +102,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" v-if="!outInboundWarehouse">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -111,7 +111,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxAmount" label="税额" width="80" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxAmount" label="税额" width="80" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
                             <div class="viewData">
@@ -122,7 +122,7 @@
                       </el-table-column>
 
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140"
-                        v-if="!outInboundWarehouse">
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
                             <div class="viewData">
@@ -579,6 +579,7 @@ import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     workFlow,
@@ -591,7 +592,6 @@ export default {
     return {
       isDeputyUnitSwitch: '',
       isProductNameSwitch: '',
-      outInboundWarehouse: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
@@ -685,6 +685,7 @@ export default {
     this.formLoading = false
   },
   computed: {
+    ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0
@@ -889,7 +890,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type, approvalFlag, outInboundWarehouse) {
+    init(id, type, approvalFlag) {
       this.formLoading = true
       this.getProductClassFun()
       console.log(id, type)
@@ -897,7 +898,6 @@ export default {
       this.dataForm.id = id || ''
       this.type = type
       this.approvalFlag = approvalFlag
-      this.outInboundWarehouse = outInboundWarehouse
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {

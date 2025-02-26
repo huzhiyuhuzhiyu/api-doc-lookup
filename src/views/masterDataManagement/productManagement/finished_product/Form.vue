@@ -14,23 +14,24 @@
         <!-- 使用对象结合自定义组件渲染内容 -->
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
-          <!-- <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode"> -->
-          <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
-            <el-collapse-item v-if="flag" title="型号信息" name="modelInfo" class="orderInfo">
-              <JNPF-col v-model="modelForm" ref="modelForm" :tabContent="modelItems" :openMode="openMode" />
-            </el-collapse-item>
-            <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
-              <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
-            </el-collapse-item>
-            <el-collapse-item title="其他信息" name="otherInfo">
-              <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
-            </el-collapse-item>
-          </el-collapse>
-          <!-- </el-tab-pane> -->
-        </el-tabs>
-        <el-tab-pane label="附件" name="annex">
+          <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
+            <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
+              <el-collapse-item v-if="flag" title="型号信息" name="modelInfo" class="orderInfo">
+                <JNPF-col v-model="modelForm" ref="modelForm" :tabContent="modelItems" :openMode="openMode" />
+              </el-collapse-item>
+              <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+              </el-collapse-item>
+              <el-collapse-item title="其他信息" name="otherInfo">
+                <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
+              </el-collapse-item>
+            </el-collapse>
+          </el-tab-pane>
+          <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="btnType" :detailed="btnType"></UploadWj>
-        </el-tab-pane>
+          </el-tab-pane>
+        </el-tabs>
+        
       </div>
     </div>
   </transition>
@@ -71,7 +72,6 @@ export default {
       autoDrawingNo: undefined,
       tempCodeRules: [],
       tempDrawingNoRules: [],
-      datafilelist: [],
       dataForm: {
         classAttribute: 'finish_product',
         sealingCoverStructure: ''
@@ -678,6 +678,7 @@ export default {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
+      console.log(this.btnType,'看')
       this.flag = flag
       if (flag) {
         this.tabs[0].tabContent.forEach((ele) => {
@@ -1079,5 +1080,12 @@ export default {
 .orderInfo ::v-deep .el-collapse-item__wrap {
   // margin-bottom: 10px;
   border-bottom: none !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
 }
 </style>

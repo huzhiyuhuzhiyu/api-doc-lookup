@@ -276,7 +276,7 @@
 </template>
 <script>
 import SourceArea from '@/views/outsourcingManagement/productOutsourcingOrder/orderCreation/source.vue'
-import { insertOutOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder, partnerProductPrice, priceList,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
@@ -899,6 +899,18 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          console.log(item,'ll')
+            let priceObj = {
+              orderType:'external',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+          // 通过需求池id 获取明细的数据
+        
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            console.log(res,'ddd')
+            this.$set(item, 'outShipmentList', res.data)
+          })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,
@@ -928,6 +940,7 @@ export default {
             this.$refs.productForm.clearValidate()
           }
         })
+       
       }
     },
 

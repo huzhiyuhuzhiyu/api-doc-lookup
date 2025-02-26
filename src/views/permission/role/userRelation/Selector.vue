@@ -2,7 +2,7 @@
   <el-dialog :title="pageTitle" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="visible" lock-scroll append-to-body destroy-on-close
     class="JNPF-dialog JNPF-dialog_center transfer-dialog" width="800px">
-    <userTransfer v-model="dataForm.userIds" ref="userTransfer" :multiple="true" />
+    <userTransfer v-model="dataForm.userIds" ref="userTransfer" multiple />
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">{{$t('common.cancelButton')}}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">

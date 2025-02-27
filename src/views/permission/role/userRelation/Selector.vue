@@ -12,7 +12,7 @@
 </template>
 <script>
 import { getUserRelationList, createUserRelation } from '@/api/permission/userRelation'
-import userTransfer from '@/components/JNPF-userTransfer'
+import userTransfer from './userRelation.vue'
 
 export default {
   components: { userTransfer },

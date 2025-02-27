@@ -12,7 +12,8 @@
         </div>
         <div class="transfer-pane__body left-pane">
           <el-tree :data="treeData" :props="props" check-on-click-node @node-click="handleNodeClick"
-            class="JNPF-common-el-tree" node-key="id" v-loading="loading" lazy :load="loadNode" show-checkbox @check-change="handleCheckChange">
+            class="JNPF-common-el-tree" node-key="id" v-loading="loading" lazy :load="loadNode" 
+            :default-expand-all="true" show-checkbox @check-change="handleCheckChange">
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <i :class="data.icon"></i>
               <span class="text">{{node.label}}</span>
@@ -95,6 +96,15 @@ export default {
     },
     handleCheckChange(data, checked, indeterminate) {
         console.log(data, checked, indeterminate);
+        if (checked && data.type === 'user') {
+          const item = {
+            id: data.id,
+            fullName: data.fullName
+          }
+          this.selectedData.push(item)
+        } else {
+          this.selectedData = this.selectedData.filter(item => item.id !== data.id);
+        }
     },
     getSelectList() {
       if (!this.dataForm.userIds.length) return this.allLoading = false

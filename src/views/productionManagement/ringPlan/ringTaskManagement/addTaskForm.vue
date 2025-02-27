@@ -83,7 +83,7 @@
                       </el-col>
 
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" :style="dataForm.taskMethod!=='appoint'?'margin-bottom:19px':''">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -1296,8 +1296,8 @@ export default {
     creaFun() {
       this.linesFormItems_right = [
         { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
-        { prop: "productSName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
-        { prop: "productSDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "productsName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
+        { prop: "productsDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
         {
           prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
           customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,

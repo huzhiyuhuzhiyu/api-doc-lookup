@@ -1352,7 +1352,7 @@ export default {
               obj.producerId = this.currentProcess.producerId
               obj.productionOrderId = this.currentProcess.productionOrderId
               obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
-              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,  ]), 6)
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
@@ -1378,7 +1378,7 @@ export default {
               obj.producerId = this.currentProcess.producerId
               obj.productionOrderId = this.currentProcess.productionOrderId
               obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
-              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity ]), 6)
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
@@ -1473,7 +1473,7 @@ export default {
               obj.producerId = this.currentProcess.producerId
               obj.productionOrderId = this.currentProcess.productionOrderId
               obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
-              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
@@ -1502,7 +1502,7 @@ export default {
               obj.producerId = this.currentProcess.producerId
               obj.productionOrderId = this.currentProcess.productionOrderId
               obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
-              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+              obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
@@ -1526,15 +1526,14 @@ export default {
               remark: this.currentProcess.remark,
               reportingTime: this.currentProcess.reportingTime,
               reworkQuantity: this.currentProcess.reworkQuantity,
-              responsibilityWasteQuantity: this.currentProcess.responsibilityWasteQuantity,
-              reworkQuantity: this.currentProcess.reworkQuantity,
+              responsibilityWasteQuantity: this.currentProcess.responsibilityWasteQuantity, 
               "materialWasteQuantity": this.currentProcess.materialWasteQuantity,
               "pricingType": this.currentProcess.pricingType,
               "processId": this.currentProcess.processId,
               "producerId": this.currentProcess.producerId,
               "productionOrderId": this.currentProcess.productionOrderId,
               "qualifiedQuantity": this.currentProcess.qualifiedQuantity,
-              "reportingQuantity": this.currentProcess.qualifiedQuantity,
+              "reportingQuantity": this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,]), 6),
               "reportingType": "normal ",
               "unqualifiedQuantity": this.currentProcess.unqualifiedQuantity,
               "vibrationLevel": this.currentProcess.vibrationLevel,

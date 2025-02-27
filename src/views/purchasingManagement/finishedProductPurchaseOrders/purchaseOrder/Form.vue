@@ -293,7 +293,7 @@
                         placeholder="采购单号"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6">
+                  <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                       <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
                         @focus="openDialog"></el-input>
@@ -370,7 +370,7 @@
 
 
 
-                  <el-table-column prop="price" label="单价(含税)" width="120">
+                  <el-table-column prop="price" label="单价(含税)" width="120" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                         <div class="viewData">
@@ -379,7 +379,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="totalAmount" label="金额(含税)" width="120">
+                  <el-table-column prop="totalAmount" label="金额(含税)" width="120" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                         <div class="viewData">
@@ -388,7 +388,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率" width="80">
+                  <el-table-column prop="taxRate" label="税率" width="80" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
                         <div class="viewData">
@@ -397,7 +397,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120">
+                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                         <div class="viewData">
@@ -406,7 +406,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxAmount" label="税额" width="80">
+                  <el-table-column prop="taxAmount" label="税额" width="80" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
                         <div class="viewData">
@@ -416,7 +416,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
+                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       金额(不含税)

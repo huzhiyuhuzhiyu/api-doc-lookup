@@ -617,7 +617,7 @@
   </div>
 </template>
 <script>
-import {insertOutOrder, editOutOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
+import {insertOutOrder, editOutOrder, purPurchaseOrderdetail, orderSchedule ,purPurchaseOrderLineLast} from '@/api/purchasingAndOutsourcingOrders/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -981,6 +981,18 @@ export default {
           console.log(data, '删除后的数据')
           console.log(deletedArray, '被删掉的数据')
         }
+        selectArr.forEach((item, index) => {
+          let priceObj = {
+            orderType:'external_process',
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
+        })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
@@ -1042,6 +1054,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+              orderType:'external_process',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+        
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+            })
         })
       }
     },

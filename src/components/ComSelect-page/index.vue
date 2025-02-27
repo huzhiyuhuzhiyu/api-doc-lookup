@@ -174,9 +174,12 @@
 
               <!-- 普通结构 -->
               <template v-if="!listDataTreeFlag">
-                <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-                  :fixed="item.fixed || false" :sortable="item.sortable"
+                <template v-for="item in tableItems">
+                  <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
+                  :fixed="item.fixed || false" :sortable="item.sortable" 
                   v-bind="{ width: item.width ? item.width : 0, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }" />
+                </template>
+                
               </template>
 
               <!-- 双级树状结构 -->

@@ -310,7 +310,7 @@
 </template>
 <script>
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { inventoryList,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import SourceArea from './source.vue'
 import {
   getShipmentList,
@@ -507,6 +507,7 @@ export default {
         deliveryDate: '',
         endTime: '',
         orderNo: '', //订单号
+        availableBatch:true,
         // orderType: 'external', //	订单类型 采购 procure、外协 external
         ringBlankQueryFlag: 1,
         productSource: 'purchase', //产品来源
@@ -528,7 +529,9 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'productCode', label: '毛坯编码', sortable: 'custom' },
+        { prop: 'projectName', label: '所属项目',render:false },
+        { prop: 'productCode', label: '毛坯编码', sortable: 'custom',width: 180 },
+        { prop: 'productName', label: '毛坯名称',render:false },
         { prop: 'productDrawingNo', label: '毛坯规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
 
@@ -536,6 +539,8 @@ export default {
         { prop: 'batchNumber', label: '批次号', width: 180 },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'inventoryQuantity', label: '库存数量' },
+        { prop: 'weight', label: '重量(kg)',render:false  },
+        { prop: 'proportion', label: '比重',render:false  },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
@@ -924,6 +929,7 @@ export default {
             proportion: item.proportion,
             discount: item.discount,
             productDrawingNo: item.externalProductDrawingNo,
+            productCode: item.externalProductCode,
             productName: item.externalProductName,
             stockInventoryLineId: item.id,
             deliveryDate: item.deliveryDate,
@@ -982,6 +988,16 @@ export default {
             let data = res.data.records
             selectArr[index].processName = data[0].name
             selectArr[index].processId = data[0].id
+          })
+          let priceObj = {
+            orderType:this.orderType,
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
           })
           if (item.calculationDirection === 'multiplication') {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
@@ -1102,6 +1118,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+            orderType:this.orderType,
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+        
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,
@@ -1170,16 +1196,31 @@ export default {
     openSeleceProductDialog() {
 
       if (this.isProductNameSwitch === '1') {
-        this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '毛坯名称' })
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'productName') {
+            tc.render = true
+          }
+        })
       } else {
 
       }
       if (this.isProjectSwitch === '1') {
-        this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'projectName') {
+            tc.render = true
+          }
+        })
       } else {
+
       }
       if (this.isProportionSwitch === '1') {
-        this.ProductTableItems.push({ prop: 'weight', label: '重量(kg)' }, { prop: 'proportion', label: '比重' })
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'weight') {
+            tc.render = true
+          } else if (tc.prop === 'proportion') {
+            tc.render = true
+          }
+        })
       } else {
 
       }
@@ -1289,6 +1330,7 @@ export default {
           productName: item.productName,
           projectId: item.projectId,
           productDrawingNo: item.externalProductDrawingNo,
+          productCode: item.externalProductCode,
           productName: item.externalProductName,
           weight: item.weight,
           proportion: item.proportion,

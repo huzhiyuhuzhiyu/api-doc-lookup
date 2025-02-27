@@ -538,7 +538,7 @@
   </div>
 </template>
 <script>
-import {insertOutOrder, editOutOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
+import {insertOutOrder, editOutOrder, purPurchaseOrderdetail, orderSchedule,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -870,6 +870,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+              orderType:'external',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
         })
       }
     },
@@ -968,6 +978,23 @@ export default {
             return true
           })
         }
+        selectArr.forEach((item, index) => {
+          let priceObj = {
+            orderType:'external',
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
+        })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
         // this.$nextTick(() => { this.getApproverData() })

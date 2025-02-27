@@ -801,6 +801,16 @@ export default {
         if (this.btnType == 'edit') {
           item.id = ''
         }
+        let priceObj = {
+          orderType:'external',
+          productCode: item.productCode,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId
+        }
+        
+        purPurchaseOrderLineLast(priceObj).then((res) => {
+          this.$set(item, 'price',res.data ? res.data.price :'')
+          this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+        })
         this.dataFormTwo.data.push(item)
       })
     },
@@ -899,18 +909,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
-          console.log(item,'ll')
             let priceObj = {
               orderType:'external',
               productCode: item.productCode,
               cooperativePartnerId: this.dataForm.cooperativePartnerId
-          }
-          // 通过需求池id 获取明细的数据
+            }
         
-          purPurchaseOrderLineLast(priceObj).then((res) => {
-            console.log(res,'ddd')
-            this.$set(item, 'outShipmentList', res.data)
-          })
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+            })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,

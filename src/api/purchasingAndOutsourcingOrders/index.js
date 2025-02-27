@@ -200,7 +200,7 @@ export function insertOutOrder(data) {
   export const purPurchaseOrderLineLast = (data) => {
     return request({
       url: `/api/erp/purPurchaseOrderLine/last`,
-      method: 'get',
+      method: 'post',
       data
     })
   }

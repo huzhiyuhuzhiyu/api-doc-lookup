@@ -629,6 +629,7 @@ export default {
             planQuantity: '', //计划数量主
             planQuantity2: '', //计划数量副
             remark: item.remark,
+            productCategoryName:item.productCategoryName,
             deliveryDate: '' // 交期
           })
         })

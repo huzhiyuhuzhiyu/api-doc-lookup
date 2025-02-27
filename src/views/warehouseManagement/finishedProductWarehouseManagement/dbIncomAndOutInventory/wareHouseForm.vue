@@ -14,7 +14,11 @@
                 <el-input @keyup.native.enter="search()"  v-model="tableQuery.code" placeholder="请输入库位编码" clearable />
               </el-form-item>
             </el-col>
-
+            <el-col :span="6">
+              <el-form-item>
+                <el-input @keyup.native.enter="search()"  v-model="tableQuery.name" placeholder="请输入库位名称" clearable />
+              </el-form-item>
+            </el-col>
 
             <el-col :span="6">
               <el-form-item>
@@ -60,6 +64,7 @@ export default {
       listLoading: false,
       tableQuery: {
         code: '',
+        name:"",
         orderItems: [
           {
             asc: true,
@@ -121,8 +126,9 @@ export default {
       this.initData(this.cpId)
     },
     reset() {
-      this.form = {
+      this.tableQuery = {
         code: '',
+        name:"",
         orderItems: [
           {
             asc: true,

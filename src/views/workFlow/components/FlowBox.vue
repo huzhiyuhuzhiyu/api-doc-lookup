@@ -360,7 +360,9 @@ export default {
         'b063': 'warehouseManagement/finishedProductWarehouseManagement/lnventoryDisassembly/Form.vue',
         'b064': 'warehouseManagement/finishedProductWarehouseManagement/modalShift/Form.vue',
         'b066': 'warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition/Form.vue',
-        'b067': 'planManagement/MRPoperation/pendClculationPlan/ReplaceRulesForm.vue'
+        'b067': 'planManagement/MRPoperation/pendClculationPlan/ReplaceRulesForm.vue',
+        'b068': 'productionManagement/assemblyPick/orderAwitPick/Form/index.vue',
+        'b069': 'productionManagement/assemblyPick/orderAwitPick/Form/index.vue',
       },
       inspectionTypeList: [
         // 不良品

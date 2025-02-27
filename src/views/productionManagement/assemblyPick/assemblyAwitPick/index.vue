@@ -209,6 +209,7 @@ export default {
         pickingStatus: "not_finished",
         orderStatus: "normal",
         materialFlag: 1,
+        pickingWay:"production_order",
       },
       total: 0,
       formVisible: false,

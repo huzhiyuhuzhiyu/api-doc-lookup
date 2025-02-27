@@ -37,7 +37,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                       <el-form-item label="客户名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择客户" readonly @focus="openDialog"
                           :disabled="btnType == 'look'">
@@ -160,10 +160,10 @@
                       </template>
 
                     </el-table-column>
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" v-if="!pageType"></el-table-column>
-                    <el-table-column prop="taxAmount" label="税额" width="140" v-if="!pageType"></el-table-column>
-                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="!pageType"></el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="!pageType">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                    <el-table-column prop="taxAmount" label="税额" width="140" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                     </el-table-column>
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
                       v-if="sealingCoverTypingFlag == 1">

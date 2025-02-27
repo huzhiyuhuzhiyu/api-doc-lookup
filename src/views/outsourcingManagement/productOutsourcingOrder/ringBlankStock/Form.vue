@@ -531,7 +531,7 @@ export default {
       ProductTableItems: [
         { prop: 'projectName', label: '所属项目',render:false },
         { prop: 'productCode', label: '毛坯编码', sortable: 'custom',width: 180 },
-        { prop: 'productName', label: '毛坯名称',render:false },
+        { prop: 'productName', label: '毛坯名称',render:false , width: 180},
         { prop: 'productDrawingNo', label: '毛坯规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
 
@@ -1201,6 +1201,8 @@ export default {
             tc.render = true
           }
         })
+        let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+        this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '毛坯名称', type: 'input' })
       } else {
 
       }

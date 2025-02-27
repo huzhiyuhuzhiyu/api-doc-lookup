@@ -511,9 +511,10 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
+      { prop: 'projectName', label: '所属项目',render:false },
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+        { prop: 'productName', label: '产品名称',render:false },
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
-        // { prop: 'name', label: '产品名称', sortable: 'custom' },
 
         { prop: 'processName', label: '工序名称', sortable: 'custom' },
         // { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
@@ -1101,13 +1102,22 @@ export default {
     openSeleceProductDialog() {
 
       if (this.isProductNameSwitch === '1') {
-        this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
-        this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'productName') {
+            tc.render = true
+          }
+        })
+        let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+        this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
       } else {
 
       }
       if (this.isProjectSwitch === '1') {
-        this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'projectName') {
+            tc.render = true
+          }
+        })
       } else {
       }
       this.$refs['ComSelect-page'].openDialog()

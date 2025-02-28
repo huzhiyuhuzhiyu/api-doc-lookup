@@ -640,58 +640,7 @@ export default {
       this.drawer = true
 
       if (type == 'add') {
-        if (!this.requestFlag) {
-          getBimProcessDetail(data[0].processId).then(res => {
-            console.log("工序详情", res);
-            let resourceList = res.data.resourceList
-            this.loading = false
-            if (resourceList.length) {
-              const filteredData = resourceList.filter(item => item.resourceType === 'personnel')
-              this.personData = filteredData
-              console.log(filteredData, 'ren');
-              this.personData.forEach((item, index) => {
-                this.personData[index].resourceId = item.resourceId
-                this.personData[index].jobNumber = item.jobNumber
-                this.personData[index].processId = item.processId
-              })
-              const filteredData0 = resourceList.filter(item => item.resourceType === 'inspect_personnel')
-              this.inspectPersonnel = filteredData0
-              console.log(filteredData, 'ren');
-              this.inspectPersonnel.forEach((item, index) => {
-                this.inspectPersonnel[index].resourceId = item.resourceId
-                this.inspectPersonnel[index].jobNumber = item.jobNumber
-                this.inspectPersonnel[index].processId = item.processId
-              })
-
-              const filteredData2 = resourceList.filter(item => item.resourceType === 'work_group')
-              this.classData = filteredData2
-              this.classData.forEach((item, index) => {
-                this.classData[index].resourceId = item.resourceId
-                this.classData[index].resourceCode = item.resourceCode
-                this.classData[index].recourceName = item.recourceName
-                this.classData[index].processId = item.processId
-              })
-
-              const filteredData3 = resourceList.filter(item => item.resourceType === 'device')
-              this.equipData = filteredData3
-              this.equipData.forEach((item, index) => {
-                this.equipData[index].resourceId = item.resourceId
-                this.equipData[index].resourceCode = item.resourceCode
-                this.equipData[index].recourceName = item.recourceName
-                this.equipData[index].processId = item.processId
-              })
-
-              const filteredData4 = resourceList.filter(item => item.resourceType === 'tool')
-              this.toolData = filteredData4
-              this.toolData.forEach((item, index) => {
-                this.toolData[index].resourceId = item.resourceId
-                this.toolData[index].resourceCode = item.resourceCode
-                this.toolData[index].recourceName = item.recourceName
-                this.toolData[index].processId = item.processId
-              })
-
-            } else {
-              if (data[0].bimRoutingProcessResourceDTOList.length) {
+         if (data[0].bimRoutingProcessResourceDTOList.length) {
                 const filteredData = data[0].bimRoutingProcessResourceDTOList.filter(item => item.resourceType === 'personnel')
                 this.personData = filteredData
                 console.log(filteredData, 'ren');
@@ -738,11 +687,7 @@ export default {
                 this.equipData = []
                 this.toolData = []
               }
-            }
-
-          })
-
-        }
+        
 
       }
       if (type === 'edit' || type === 'look') {

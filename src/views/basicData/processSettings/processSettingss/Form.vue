@@ -1559,8 +1559,10 @@ export default {
         this.dataFormTwo.forEach((item) => {
           getBimProcessDetail(item.processId)
             .then((res) => {
-              if (res.data.resourceList.length) {
+              if (res.data.resourceList && res.data.resourceList.length) {
                 item.bimRoutingProcessResourceDTOList = res.data.resourceList
+              } else {
+                item.bimRoutingProcessResourceDTOList = []
               }
             })
             .catch((error) => {

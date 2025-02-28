@@ -94,6 +94,7 @@
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
+            <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>

@@ -269,3 +269,12 @@ export function getInboundWarehouseData(data) {
     data
   })
 }
+
+// 报工记录-修改
+export function updateReport(data) {
+  return request({
+    url: `/api/mrp/work/report/update`,
+    method: 'PUT',
+    data
+  })
+}

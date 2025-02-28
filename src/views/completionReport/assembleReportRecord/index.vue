@@ -100,7 +100,7 @@
 
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
-
+                <el-button size="mini" type="text" @click="editHandle(scope.row)" :disabled="scope.row.lastFlag">修改</el-button>
               </template>
             </el-table-column>
 
@@ -118,11 +118,56 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 报工记录修改 -->
+    <el-dialog v-if="analyseDialog" title="报工记录修改" :close-on-click-modal="false" append-to-body
+      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+      <el-row :gutter="15" style="margin-top: 0px;">
+        <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
+          <el-row :gutter="30">
+              <el-col :sm="12">
+                <el-form-item prop="producerId" label="生产人">
+                  <user-select v-model="dataForm.producerId" placeholder="生产人" clearable style="width: 100%;"
+                        class="ipt" @change="hangleSelectSales">
+                      </user-select>
+                </el-form-item>
+              </el-col>
+              <el-col :sm="12">
+                <el-form-item prop="qualifiedQuantity" label="合格数量">
+                  <el-input v-model="dataForm.qualifiedQuantity" placeholder="请输入合格数量" />
+                </el-form-item>
+              </el-col>
+              <el-col :sm="12">
+                <el-form-item prop="responsibilityWasteQuantity" label="责废数量">
+                  <el-input v-model="dataForm.responsibilityWasteQuantity" placeholder="请输入责废数量" />
+                </el-form-item>
+              </el-col>
+              <el-col :sm="12">
+                <el-form-item prop="materialWasteQuantity" label="料废数量">
+                  <el-input v-model="dataForm.materialWasteQuantity" placeholder="请输入料废数量" />
+                </el-form-item>
+              </el-col>
+              <el-col :sm="24">
+                <el-form-item label="报工时间" prop="reportingTime">
+                  <el-date-picker v-model="dataForm.reportingTime" value-format="yyyy-MM-dd"
+                        @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;" placeholder="选择报工时间">
+                      </el-date-picker>
+                </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="analyseDialog = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+          {{ $t('common.submitButton') }}
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getWorkReportList, revokeReport } from "@/api/productOrdes/index.js"
+import { getWorkReportList, revokeReport, updateReport } from "@/api/productOrdes/index.js"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -133,9 +178,10 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { getSalaryDetailList} from '@/api/salaryManagement'
+import userTransfer from '@/components/JNPF-userTransfer'
 export default {
   name: 'assemblyplanManagement',
-  components: { SuperQuery, ExportForm },
+  components: { SuperQuery, ExportForm,userTransfer },
   mixins: [getProjectList],
   data() {
     return {
@@ -152,7 +198,28 @@ export default {
 
       superQueryVisible: false,
       exportFormVisible: false,
-
+      analyseDialog: false,
+      dataForm:{
+        producerId:'',
+        qualifiedQuantity:null,
+        responsibilityWasteQuantity:null,
+        materialWasteQuantity:null,
+        unqualifiedQuantity:null,
+        reportingQuantity:null
+      },
+      dataFormRules: {
+        producerId: [{ required: true, message: '生产人不能为空', trigger: 'change' }],
+        qualifiedQuantity: [
+          { required: true, message: '合格数量不能为空', trigger: 'blur' }
+        ],
+        responsibilityWasteQuantity: [
+          { required: true, message: '责废数量不能为空', trigger: 'blur' }
+        ],
+        materialWasteQuantity: [
+          { required: true, message: '料废数量不能为空', trigger: 'blur' }
+        ],
+        reportingTime: [{ required: true, message: '报工时间不能为空', trigger: 'change' }]
+      },
       btnLoading: false,
       reportDate: [],
       title: "更多查询",
@@ -319,7 +386,45 @@ export default {
       })
 
     },
+    editHandle(row){
+      this.dataForm = {...row}
+      this.analyseDialog = true
+    },
+     // 选择生产人
+    hangleSelectSales(e, r) {
+      this.dataForm.producerId = e
+    },
+    reportingTimeChange(e) {
+      this.dataForm.reportingTime = e + ' 00:00:00'
+    },
+    async dataFormSubmit(){
+      this.btnLoading = true
+      let submitFlag = true
 
+      const form_1 = this.$refs.elForm
+      const valid_1 = await form_1.validate().catch((err) => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        this.btnLoading = false
+        this.jnpf.focusErrValidItem(form_1.fields)
+      }
+      if (submitFlag) {
+        console.log(this.dataForm.reportingTime,'是是是')
+        // 不合格数量 = 料废数量 + 责废数量
+        this.dataForm.unqualifiedQuantity = Number(this.dataForm.responsibilityWasteQuantity) + Number(this.dataForm.materialWasteQuantity)
+        // 报工数量 = 合格数量 + 不合格数量
+        this.dataForm.reportingQuantity = Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.unqualifiedQuantity)
+        updateReport(this.dataForm).then(res=>{
+          this.analyseDialog = false
+          this.btnLoading = false
+          this.$message.success("修改成功")
+          this.initData()
+        }).catch(e=>{
+          this.btnLoading = false
+        })
+      }
+      
+    },
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {

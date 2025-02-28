@@ -80,10 +80,18 @@ export const exportFinAccountsReceivableReconciliation = (id) => {
   })
 }
 
-// 应收付对账列表 分页 合计 
+// 应收付对账列表 分页 合计
 export function getfinAccountsReport(data) {
   return request({
     url: `/api/erp/finAccountsReceivableReconciliation/report`,
+    method: 'post',
+    data
+  })
+}
+// 应收付对账列表 分页 合计
+export function updateTaxFlag(data) {
+  return request({
+    url: `/api/wms/stock/move/tax/batch`,
     method: 'post',
     data
   })

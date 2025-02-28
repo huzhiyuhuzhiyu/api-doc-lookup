@@ -289,7 +289,7 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProductNameSwitch('product', 'enable_productName')
-    await this.advancedQueryFun()
+     this.advancedQueryFun()
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(4, 0, {
         prop: 'productName',

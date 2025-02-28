@@ -276,7 +276,7 @@
 </template>
 <script>
 import SourceArea from '@/views/outsourcingManagement/productOutsourcingOrder/orderCreation/source.vue'
-import { insertOutOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder, partnerProductPrice, priceList,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
@@ -801,6 +801,16 @@ export default {
         if (this.btnType == 'edit') {
           item.id = ''
         }
+        let priceObj = {
+          orderType:'external',
+          productCode: item.productCode,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId
+        }
+        
+        purPurchaseOrderLineLast(priceObj).then((res) => {
+          this.$set(item, 'price',res.data ? res.data.price :'')
+          this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+        })
         this.dataFormTwo.data.push(item)
       })
     },
@@ -899,6 +909,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+            let priceObj = {
+              orderType:'external',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+        
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+            })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,
@@ -928,6 +948,7 @@ export default {
             this.$refs.productForm.clearValidate()
           }
         })
+       
       }
     },
 

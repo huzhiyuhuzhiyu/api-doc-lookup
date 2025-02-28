@@ -310,7 +310,7 @@ import {
   editpurProcurementRequire,
   purProcurementRequirementsList
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import {
@@ -511,9 +511,10 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
+      { prop: 'projectName', label: '所属项目',render:false },
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+        { prop: 'productName', label: '产品名称',render:false },
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
-        // { prop: 'name', label: '产品名称', sortable: 'custom' },
 
         { prop: 'processName', label: '工序名称', sortable: 'custom' },
         // { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
@@ -895,6 +896,16 @@ export default {
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         this.dataFormTwo.data.forEach((item, index) => {
           console.log(item, 'pppp')
+          let priceObj = {
+              orderType:'external_process',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
           if (item.calculationDirection === 'multiplication') {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           } else {
@@ -1013,6 +1024,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+              orderType:'external_process',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,
@@ -1081,13 +1102,22 @@ export default {
     openSeleceProductDialog() {
 
       if (this.isProductNameSwitch === '1') {
-        this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
-        this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'productName') {
+            tc.render = true
+          }
+        })
+        let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+        this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
       } else {
 
       }
       if (this.isProjectSwitch === '1') {
-        this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'projectName') {
+            tc.render = true
+          }
+        })
       } else {
       }
       this.$refs['ComSelect-page'].openDialog()

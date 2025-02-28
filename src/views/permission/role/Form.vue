@@ -8,7 +8,7 @@
         <el-input v-model="dataForm.fullName" placeholder="输入角色名称" maxlength="50" />
       </el-form-item>
       <el-form-item label="角色编码" prop="enCode">
-        <el-input v-model="dataForm.enCode" placeholder="输入角色编码" />
+        <el-input v-model="dataForm.enCode" placeholder="输入角色编码" :disabled="!!dataForm.id" />
       </el-form-item>
       <el-form-item label="角色类型" prop="globalMark">
         <el-select v-model="dataForm.globalMark" placeholder="请选择角色类型"
@@ -82,6 +82,7 @@ export default {
   methods: {
     init(id) {
       this.dataForm.id = id || ''
+      console.log(this.dataForm,'---')
       this.visible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
@@ -89,6 +90,7 @@ export default {
           this.formLoading = true
           getRoleInfo(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            console.log(this.dataForm,'pp')
             this.formLoading = false
           })
         }

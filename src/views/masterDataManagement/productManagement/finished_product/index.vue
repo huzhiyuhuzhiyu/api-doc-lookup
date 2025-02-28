@@ -87,7 +87,7 @@
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle('', '', configFlag)">普通新建</el-dropdown-item>
+                <el-dropdown-item @click.native="addOrUpdateHandle('',false, configFlag)">普通新建</el-dropdown-item>
                 <el-dropdown-item @click.native="aiAdd()">智能新建</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -98,7 +98,7 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="quickAdd()">快速新建</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle('', '', configFlag)">普通新建</el-dropdown-item>
+                <el-dropdown-item @click.native="addOrUpdateHandle('', false, configFlag)">普通新建</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->

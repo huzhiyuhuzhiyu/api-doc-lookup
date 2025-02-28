@@ -306,7 +306,7 @@ import {
   editpurProcurementRequire,
   purProcurementRequirementsList
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import {
@@ -846,6 +846,18 @@ export default {
           console.log(data, '删除后的数据')
           console.log(deletedArray, '被删掉的数据')
         }
+        selectArr.forEach((item, index) => {
+          let priceObj = {
+            orderType:'external_process',
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
+        })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
         // 审批
@@ -952,6 +964,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+              orderType:'external_process',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,

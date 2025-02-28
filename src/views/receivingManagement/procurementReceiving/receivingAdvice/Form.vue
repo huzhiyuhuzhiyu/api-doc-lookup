@@ -51,7 +51,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                           :disabled="btnType == 'look'"></el-input>
@@ -174,7 +174,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="!outInboundWarehouse">
+                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -183,7 +183,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额" width="140" v-if="!outInboundWarehouse">
+                    <el-table-column prop="totalAmount" label="金额" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -192,7 +192,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140" v-if="!outInboundWarehouse">
+                    <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -202,7 +202,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="!outInboundWarehouse">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -212,7 +212,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="!outInboundWarehouse">
+                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot="header">
                         <span class="required">*</span>
                         税额
@@ -225,7 +225,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="!outInboundWarehouse">
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot="header">
                         <span class="required">*</span>
                         金额(不含税)
@@ -298,7 +298,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :sm="6" :xs="24">
+                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <el-form-item label="供应商名称" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                       :disabled="btnType == 'look'"></el-input>
@@ -416,7 +416,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="price" label="单价(含税)" width="130">
+                <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     单价(含税)
@@ -429,7 +429,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="totalAmount" label="金额" width="140">
+                <el-table-column prop="totalAmount" label="金额" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     金额(含税)
@@ -442,7 +442,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率" width="140">
+                <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     税率
@@ -456,7 +456,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150">
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot-scope="scope">
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
                       <div class="viewData">
@@ -466,7 +466,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="taxAmount" label="税额" min-width="100">
+                <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     税额
@@ -479,7 +479,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180">
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     金额(不含税)
@@ -1016,7 +1016,6 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
-      outInboundWarehouse: '',  // 金额相关动态显示
       flowTaskOperatorRecordList: [],
       endTime: 0,
       selectArr: [],
@@ -1808,14 +1807,13 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data, outInboundWarehouse) {
+    init(id, btnType, approvalFlag, data) {
       console.log(id, '[]')
       this.dataForm.id = id || ''
 
       this.btnType = btnType
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
-      this.outInboundWarehouse = outInboundWarehouse
       console.log(data, 'ddd')
       if (data && data.length) {
         this.dataFormTwo.productData = data

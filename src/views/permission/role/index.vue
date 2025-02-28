@@ -124,7 +124,7 @@ import { getRoleList, delRole, updateRoleState } from '@/api/permission/role'
 import Form from './Form'
 import AuthorizeForm from '@/views/permission/authorize/AuthorizeForm'
 import UserRelationList from './userRelation'
-import GlobalUserRelationList from '@/views/permission/userRelation/Selector'
+import GlobalUserRelationList from './userRelation/Selector.vue'
 import Diagram from '@/views/permission/user/Diagram'
 import { mapGetters } from "vuex";
 export default {

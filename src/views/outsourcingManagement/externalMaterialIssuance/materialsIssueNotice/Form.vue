@@ -44,7 +44,7 @@
                           </el-form-item>
                         </el-col>
 
-                        <el-col :sm="6" :xs="24">
+                        <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                           <el-form-item label="供应商名称" prop="partnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
@@ -167,7 +167,7 @@
                       <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="单价(含税)" width="130" v-if="!outInboundWarehouse">
+                      <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -181,7 +181,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额(含税)" width="140" v-if="!outInboundWarehouse">
+                      <el-table-column prop="totalAmount" label="金额(含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
                             <div class="viewData">
@@ -190,7 +190,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" width="140" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item>
                             <div class="viewData">
@@ -200,7 +200,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="!outInboundWarehouse">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -210,7 +210,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
                             <div class="viewData">
@@ -220,7 +220,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180"
-                        v-if="!outInboundWarehouse">
+                      v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
                             <div class="viewData">
@@ -887,7 +887,6 @@ export default {
         approvalFlag: false
       },
       approvalFlag: false,
-      outInboundWarehouse: '',  // 金额相关动态显示
       defaultAddress: '',
       parentId: '',
       pickerOptions: {
@@ -1603,7 +1602,7 @@ export default {
 
     // 切换table
     handleClick(tab, event) { },
-    init(id, btnType, approvalFlag, data, outInboundWarehouse) {
+    init(id, btnType, approvalFlag, data) {
       console.log(data, 'klkk')
       this.formLoading = true
       // this.getProvinceList()
@@ -1611,7 +1610,6 @@ export default {
       this.btnType = btnType
       console.log(this.btnType, '[[[[]]]]')
       this.approvalFlag = approvalFlag
-      this.outInboundWarehouse = outInboundWarehouse
       this.oldId = JSON.parse(JSON.stringify(id)) || ''
       this.oldType = JSON.parse(JSON.stringify(btnType))
 

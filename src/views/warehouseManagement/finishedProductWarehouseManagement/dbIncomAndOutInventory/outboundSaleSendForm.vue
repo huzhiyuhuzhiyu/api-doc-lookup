@@ -1,5 +1,5 @@
 <template>
-  <!-- 销售发货outbound_sale_send -->
+  <!-- 销售发货-通知单出库 outbound_sale_send -->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
@@ -52,7 +52,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24">
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled
                                 @focus="openDialog">
@@ -157,10 +157,10 @@
                         <el-table-column prop="pairingModeNames" label="配对方式" min-width="120"></el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                        <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
-                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
-                        <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
+                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxAmount" label="税额" width="120" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
@@ -241,7 +241,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24">
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled
                                 @focus="openDialog">
@@ -352,10 +352,10 @@
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="发货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                        <!-- <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
-                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"></el-table-column>
-                        <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column> -->
+                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxAmount" label="税额" width="120" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />

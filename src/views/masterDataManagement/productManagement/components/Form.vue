@@ -15,20 +15,23 @@
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
           <template v-for="item in tabs">
-            <!-- <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"> -->
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo" :class="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute)
-                ? orderInfo
-                : ''
-                ">
-                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
-              </el-collapse-item>
-              <el-collapse-item title="其他信息" name="otherInfo"
-                v-if="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute)">
-                <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
-              </el-collapse-item>
-            </el-collapse>
-            <!-- </el-tab-pane> -->
+            <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode">
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo" :class="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute)
+                  ? orderInfo
+                  : ''
+                  ">
+                  <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+                </el-collapse-item>
+                <el-collapse-item title="其他信息" name="otherInfo"
+                  v-if="['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(classAttribute)">
+                  <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
+                </el-collapse-item>
+              </el-collapse>
+            </el-tab-pane>
+            <el-tab-pane label="附件" name="annex">
+              <UploadWj v-model="datafilelist" :disabled="btnType" :detailed="btnType"></UploadWj>
+            </el-tab-pane>
           </template>
         </el-tabs>
       </div>
@@ -388,11 +391,12 @@ export default {
         }
       } catch (error) { }
     },
-    init(id, btnType = false, isProjectSwitch) {
+   async init(id, btnType = false, isProjectSwitch) {
       this.isProjectSwitch = isProjectSwitch
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
+      console.log(this.btnType,'看')
       this.dataForm.id = id || ''
       if (this.isProjectSwitch === '1') {
         this.tabs[0].tabContent.forEach((ele) => {
@@ -441,7 +445,17 @@ export default {
           // 记录编码和图号，用于校验唯一性
           this.autoCode = res.data.code
           this.autoDrawingNo = res.data.drawingNo
-
+          if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                })
+              })
+            }
           // 处理普通属性
           let detailObj = res.data
           for (const key in detailObj) {
@@ -534,6 +548,20 @@ export default {
       // 判断条件后发送请求
       if (submitFlag) {
         this.dataForm.documentStatus = 'submit'
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              configKey: '',
+              categoryId: this.categoryId,
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
+        this.dataForm.attachmentList = this.datafilelist
+
         const formMethod = this.dataForm.id ? updateProductData : addProduct
         formMethod(this.dataForm)
           .then((res) => {
@@ -635,5 +663,12 @@ export default {
 .orderInfo ::v-deep .el-collapse-item__wrap {
   // margin-bottom: 10px;
   border-bottom: none !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
 }
 </style>

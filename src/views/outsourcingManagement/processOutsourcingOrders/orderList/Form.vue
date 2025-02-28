@@ -30,7 +30,7 @@
                             placeholder="外协单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6">
+                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
                             :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"
@@ -164,7 +164,7 @@
                       </el-table-column>
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="含税单价" min-width="120" v-if="!outInboundWarehouse">
+                      <el-table-column prop="price" label="含税单价" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -176,7 +176,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额" min-width="120" v-if="!outInboundWarehouse">
+                      <el-table-column prop="totalAmount" label="金额" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
 
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
@@ -186,7 +186,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="140" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxRate" label="税率" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -204,7 +204,7 @@
                       </el-table-column>
 
                       <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150"
-                        v-if="!outInboundWarehouse">
+                      v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -214,7 +214,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
 
@@ -225,7 +225,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140"
-                        v-if="!outInboundWarehouse">
+                      v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
                             <div class="viewData">
@@ -617,7 +617,7 @@
   </div>
 </template>
 <script>
-import { editOutOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
+import {insertOutOrder, editOutOrder, purPurchaseOrderdetail, orderSchedule ,purPurchaseOrderLineLast} from '@/api/purchasingAndOutsourcingOrders/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -772,7 +772,6 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
-      outInboundWarehouse: '',  // 金额相关动态显示
       flowTaskOperatorRecordList: [],
       endTime: 0,
       tipsvisible: false,
@@ -982,6 +981,18 @@ export default {
           console.log(data, '删除后的数据')
           console.log(deletedArray, '被删掉的数据')
         }
+        selectArr.forEach((item, index) => {
+          let priceObj = {
+            orderType:'external_process',
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
+        })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
@@ -1043,6 +1054,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+              orderType:'external_process',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+        
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+            })
         })
       }
     },
@@ -1093,12 +1114,12 @@ export default {
       console.log('[]')
       this.$emit('close')
     },
-    init(id, type, approvalFlag, outInboundWarehouse) {
+    init(id, type, approvalFlag) {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.type = type
       this.approvalFlag = approvalFlag
-      this.outInboundWarehouse = outInboundWarehouse
+      
       if (id) {
         if (this.type == 'edit') {
           this.title = '编辑外协订单'

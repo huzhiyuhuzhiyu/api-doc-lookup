@@ -294,7 +294,7 @@ import {
   getBusDetail,
   approvalTransferList
 } from '@/api/basicData/approvalAdministrator'
-import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
@@ -804,6 +804,18 @@ export default {
             return true
           })
         }
+        selectArr.forEach((item, index) => {
+          let priceObj = {
+            orderType:'external',
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
+        })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
 
         // 审批
@@ -907,6 +919,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+              orderType:'external',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,

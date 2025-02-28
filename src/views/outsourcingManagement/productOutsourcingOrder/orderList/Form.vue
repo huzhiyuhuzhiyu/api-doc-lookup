@@ -30,7 +30,7 @@
                             placeholder="外协单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6">
+                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
@@ -140,7 +140,7 @@
                       <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="含税单价" width="120" v-if="!outInboundWarehouse">
+                      <el-table-column prop="price" label="含税单价" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -151,7 +151,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额" width="120" v-if="!outInboundWarehouse">
+                      <el-table-column prop="totalAmount" label="金额" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                             <div class="viewData">
@@ -160,7 +160,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="100" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxRate" label="税率" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -177,7 +177,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120" v-if="!outInboundWarehouse">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -186,7 +186,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxAmount" label="税额" width="100" v-if="!outInboundWarehouse">
+                      <el-table-column prop="taxAmount" label="税额" width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
                             <div class="viewData">
@@ -195,7 +195,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" v-if="!outInboundWarehouse">
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
                             <div class="viewData">
@@ -538,7 +538,7 @@
   </div>
 </template>
 <script>
-import { editOutOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
+import {insertOutOrder, editOutOrder, purPurchaseOrderdetail, orderSchedule,purPurchaseOrderLineLast } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -557,6 +557,7 @@ import {
 import SourceArea from '../orderCreation/source.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: { Process, recordList, SourceArea },
   mixins: [busFlow, getProjectList],
@@ -702,7 +703,6 @@ export default {
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
-      outInboundWarehouse: '',  // 金额相关动态显示
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
@@ -710,6 +710,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0
@@ -869,6 +870,16 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          let priceObj = {
+              orderType:'external',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
         })
       }
     },
@@ -967,6 +978,23 @@ export default {
             return true
           })
         }
+        selectArr.forEach((item, index) => {
+          let priceObj = {
+            orderType:'external',
+            productCode: item.productCode,
+            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          }
+      
+          purPurchaseOrderLineLast(priceObj).then((res) => {
+            this.$set(item, 'price',res.data ? res.data.price :'')
+            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+          })
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
+        })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
@@ -1118,14 +1146,13 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type, approvalFlag, outInboundWarehouse) {
+    init(id, type, approvalFlag) {
       console.log(id, 'idwww99999')
       this.getProductClassFun()
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.type = type
       this.approvalFlag = approvalFlag
-      this.outInboundWarehouse = outInboundWarehouse
       if (id) {
         if (this.type == 'edit') {
           this.title = '编辑外协订单'

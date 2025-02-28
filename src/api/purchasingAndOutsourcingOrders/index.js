@@ -194,3 +194,13 @@ export function insertOutOrder(data) {
       data
     })
   }
+
+  // 采购和外协订单明细-获取最后一次记录
+
+  export const purPurchaseOrderLineLast = (data) => {
+    return request({
+      url: `/api/erp/purPurchaseOrderLine/last`,
+      method: 'post',
+      data
+    })
+  }

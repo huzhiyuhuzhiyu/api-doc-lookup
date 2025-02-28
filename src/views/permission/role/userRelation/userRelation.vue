@@ -144,6 +144,10 @@ export default {
         } else {
           this.selectedData = this.selectedData.filter(item => item.id !== data.id);
         }
+        this.ids = this.selectedData.map(item=>{
+          return item.id
+        })
+        this.$emit('input', this.ids)
     },
     getData() {
       if (this.activeName === 'all') {

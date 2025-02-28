@@ -140,11 +140,11 @@
 
 
 
-                      <!-- 
+                      <!--
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-              
+
                         <div class="viewData">
                           <span>{{ scope.row.deputyUnit }}</span>
                         </div>
@@ -392,7 +392,7 @@ export default {
   async created() {
     this.fetchData('DZDH')
     await this.getProductNameSwitch('product', 'enable_productName')
-     
+
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -496,7 +496,7 @@ export default {
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     addAdjustmentBtn() {
@@ -542,9 +542,13 @@ export default {
       // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
       console.log(77777, data);
       let _data = JSON.parse(JSON.stringify(data))
+      let taxRateReal = 0
       _data.forEach(item => {
-        let excludingTaxAmount = item.businessType === 'outbound_sale_send' ? (this.jnpf.numberFormat(item.num * (this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1 / 100)), 2)), 2)) : -this.jnpf.numberFormat(item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1 / 100))))
-        let includingTaxAmount = item.businessType === 'inbound_sale_return' ? (this.jnpf.numberFormat(Math.abs(excludingTaxAmount) * (1 + ((item.taxRate * 1) / 100)))) : this.jnpf.numberFormat(excludingTaxAmount * (1 + ((item.taxRate * 1) / 100)))
+        if (item.taxFlag){
+            taxRateReal = item.taxFlag ? 0 : item.taxRate
+        }
+        let excludingTaxAmount = item.businessType === 'outbound_sale_send' ? (this.jnpf.numberFormat(item.num * (this.jnpf.numberFormat(item.costPrice / (1 + (taxRateReal * 1 / 100)), 2)), 2)) : -this.jnpf.numberFormat(item.num * this.jnpf.numberFormat(item.costPrice / (1 + (taxRateReal * 1 / 100))))
+        let includingTaxAmount = item.businessType === 'inbound_sale_return' ? (this.jnpf.numberFormat(Math.abs(excludingTaxAmount) * (1 + ((taxRateReal * 1) / 100)))) : this.jnpf.numberFormat(excludingTaxAmount * (1 + ((taxRateReal * 1) / 100)))
         this.dataFormTwo.data.push({
           accountsReceivableId: '',
           calculationDirection: item.calculationDirection,
@@ -567,7 +571,7 @@ export default {
           ratio: item.ratio,
           reconciliationUnitPrice: item.num,
           remark: item.remark,
-          excludingTaxPrice: this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1 / 100)), 2),
+          excludingTaxPrice: this.jnpf.numberFormat(item.costPrice / (1 + (taxRateReal * 1 / 100)), 2),
           excludingTaxAmount: excludingTaxAmount,
           taxAmount: item.businessType === 'outbound_sale_send' ? this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount) : this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
           taxRate: item.taxRate,

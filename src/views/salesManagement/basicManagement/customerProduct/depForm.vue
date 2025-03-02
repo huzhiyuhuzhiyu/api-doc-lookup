@@ -655,7 +655,15 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+               >
+                <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
+                  :value="item.id"></el-option>
+              </el-select>
+                  </el-form-item>
+                </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
@@ -666,11 +674,11 @@
                     <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <!-- <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
-                </el-col>
+                </el-col> -->
 
                 <el-col :span="6">
                   <el-form-item>
@@ -751,7 +759,8 @@ export default {
   mixins: [busFlow, flowMixin, getProjectList],
   data() {
     return {
-
+      isProjectSwitch:'',
+      projectIdData:[],
       list1: [],
       list2: [],
       list3: [],
@@ -1035,7 +1044,7 @@ export default {
         queryType: 2,
         productStatus: 'enable',
         saleFlag: true,
-
+        projectId:'',
         productCategoryId: "",
         code: "",
         name: "",
@@ -1048,6 +1057,10 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
+      }
+      if (this.isProjectSwitch === '1') {
+        console.log(this.userInfo,'ss')
+        this.ProductListRequestObj.projectId = this.userInfo.userProjectId
       }
       this.allproductData = []
       let successTotal = 0;
@@ -1107,7 +1120,7 @@ export default {
         productCategoryId: "",
         queryType: 2,
         saleFlag: true,
-
+        projectId:"",
         productCode: "",
         productName: "",
         orderItems: [{
@@ -1119,7 +1132,11 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
-      },
+      }
+      if (this.isProjectSwitch === '1') {
+        console.log(this.userInfo,'ss')
+        this.ProductListRequestObj.projectId = this.userInfo.userProjectId
+      }
         this.searchAllProduct()
     },
     // 所有产品列表 多选
@@ -1833,6 +1850,12 @@ export default {
     handeleProductInfoData(val) {
       this.selectRows = val
     },
+    async getProject(){
+      await this.getProjectSwitch('system', 'project')
+      if (this.isProjectSwitch === '1') {
+        await this.getProjectList()
+      }
+    },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -1849,6 +1872,7 @@ export default {
       this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName } || '' : ''
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
+      this.getProject()
       this.row && (this.dataForm = this.row)
       this.approvalFlag = approvalFlag
       this.btnType = btnType

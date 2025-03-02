@@ -193,7 +193,7 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       addFormVisible: false,
       btnsearchFlag: true,
@@ -794,7 +794,7 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.search('basic')
     },

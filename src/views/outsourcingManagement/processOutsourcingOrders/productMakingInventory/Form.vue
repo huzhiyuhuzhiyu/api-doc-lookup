@@ -896,16 +896,17 @@ export default {
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         this.dataFormTwo.data.forEach((item, index) => {
           console.log(item, 'pppp')
-          let priceObj = {
+          if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
               orderType:'external_process',
               productCode: item.productCode,
               cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
           }
-      
-          purPurchaseOrderLineLast(priceObj).then((res) => {
-            this.$set(item, 'price',res.data ? res.data.price :'')
-            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
-          })
           if (item.calculationDirection === 'multiplication') {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           } else {
@@ -1024,16 +1025,17 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
-          let priceObj = {
+          if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
               orderType:'external_process',
               productCode: item.productCode,
               cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
           }
-      
-          purPurchaseOrderLineLast(priceObj).then((res) => {
-            this.$set(item, 'price',res.data ? res.data.price :'')
-            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
-          })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,

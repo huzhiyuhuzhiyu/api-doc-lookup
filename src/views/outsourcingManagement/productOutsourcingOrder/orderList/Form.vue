@@ -870,16 +870,17 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
-          let priceObj = {
+          if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
               orderType:'external',
               productCode: item.productCode,
               cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
           }
-      
-          purPurchaseOrderLineLast(priceObj).then((res) => {
-            this.$set(item, 'price',res.data ? res.data.price :'')
-            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
-          })
         })
       }
     },
@@ -979,16 +980,17 @@ export default {
           })
         }
         selectArr.forEach((item, index) => {
-          let priceObj = {
-            orderType:'external',
-            productCode: item.productCode,
-            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
+              orderType:'external',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
           }
-      
-          purPurchaseOrderLineLast(priceObj).then((res) => {
-            this.$set(item, 'price',res.data ? res.data.price :'')
-            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
-          })
           if (item.calculationDirection === 'multiplication') {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           } else {

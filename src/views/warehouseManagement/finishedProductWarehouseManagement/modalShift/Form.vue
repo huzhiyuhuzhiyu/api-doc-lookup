@@ -633,7 +633,7 @@
         </el-collapse>
       </div>
       <!-- 选择产品 -->
-      <TempComSelectpage ref="ComSelect-page" @change="submitAllProduct" :renderTree="false"
+      <ComSelect-page ref="ComSelect-page" @change="submitAllProduct" :renderTree="false"
         :tableItems="productTableItems" dialogTitle="选择产品" :listMethod="getBatchNumber"
         :listRequestObj="productRequestObj" :searchList="productTableSearchList" :elementShow="false" multiple />
 
@@ -659,10 +659,9 @@ import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList } from '@/api/basicData/index'// 仓库树
 import { getProductionLotList, getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList } from '@/api/bimProcess'
-import TempComSelectpage from "./ComSelect-page/index.vue";
 export default {
   mixins: [busFlow, flowMixin, getProjectList],
-  components: { Process, recordList,TempComSelectpage },
+  components: { Process, recordList },
   data() {
     return {
       getBimProcessList,

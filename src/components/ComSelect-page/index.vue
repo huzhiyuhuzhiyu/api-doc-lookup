@@ -688,7 +688,8 @@ export default {
         else if (Array.isArray(listRes.data)) { this.tableData = listRes.data||listRes.data.whPage.records }
         else { this.tableData = listRes.data.records||listRes.data.whPage.records  }
         this.tableData.forEach((row, index) => { row._index = index });
-        this.total = listRes.data.total||listRes.data.whPage.total 
+
+        this.total = listRes.data ? listRes.data.total : 0 || listRes.data.whPage ? listRes.data.whPage.total : 0
         await this.$nextTick()
         if (!this.multiple && !this.$refs.defaultTableActionRef && !this.rowDblclick) { // 使用了自定义插槽且没有设置行双击事件的
           const allLines = [...document.querySelectorAll('.even-row'), ...document.querySelectorAll('.odd-row')]

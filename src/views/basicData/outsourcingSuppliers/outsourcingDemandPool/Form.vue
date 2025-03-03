@@ -801,16 +801,17 @@ export default {
         if (this.btnType == 'edit') {
           item.id = ''
         }
-        let priceObj = {
-          orderType:'external',
-          productCode: item.productCode,
-          cooperativePartnerId: this.dataForm.cooperativePartnerId
+        if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
+              orderType:'external',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
         }
-        
-        purPurchaseOrderLineLast(priceObj).then((res) => {
-          this.$set(item, 'price',res.data ? res.data.price :'')
-          this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
-        })
         this.dataFormTwo.data.push(item)
       })
     },
@@ -909,16 +910,17 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
+          if (this.dataForm.cooperativePartnerId) {
             let priceObj = {
               orderType:'external',
               productCode: item.productCode,
               cooperativePartnerId: this.dataForm.cooperativePartnerId
             }
-        
             purPurchaseOrderLineLast(priceObj).then((res) => {
               this.$set(item, 'price',res.data ? res.data.price :'')
-              this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
             })
+          }
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,

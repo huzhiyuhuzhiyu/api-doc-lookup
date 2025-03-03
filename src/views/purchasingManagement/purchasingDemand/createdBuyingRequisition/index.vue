@@ -337,7 +337,7 @@
           </div>
         </div>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
+      <TempComSelectpage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
         :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
         :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
@@ -360,9 +360,9 @@ import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import TempComSelectpage from "../../../warehouseManagement/finishedProductWarehouseManagement/modalShift/ComSelect-page/index.vue";
 export default {
-  components: { Process, recordList },
+  components: { Process, recordList,TempComSelectpage },
   mixins: [busFlow, getProjectList],
   data() {
     return {

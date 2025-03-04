@@ -1468,15 +1468,18 @@ export default {
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
       console.log(data, 'kk')
-      if (data && data.length !== 0) {
-        data.forEach((item) => {
-          item.ordersNo = item.orderNo
-          this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-        })
-        this.oldData = data
-        this.dataFormTwo.productData = data
-        this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+      if(data!='outInboundWarehouse'){
+
+        if (data && data.length !== 0) {
+          data.forEach((item) => {
+            item.ordersNo = item.orderNo
+            this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+          })
+          this.oldData = data
+          this.dataFormTwo.productData = data
+          this.dataForm.partnerName = data[0].cooperativePartnerName
+          this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+        }
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {

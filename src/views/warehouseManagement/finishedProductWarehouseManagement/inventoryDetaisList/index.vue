@@ -105,9 +105,9 @@
               <div v-if="scope.row.businessType == 'outbound_shift'">形态转换出库</div>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
+          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
           </el-table-column>
-          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180">
+          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
           </el-table-column>
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"
@@ -131,16 +131,16 @@
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-          <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" />
-          <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" />
+          <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" v-if="userInfo.roleCode.split(',').includes('show_procure_data')" />
+          <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')" />
           <el-table-column prop="taxRate" label="税率" sortable="custom" min-width="140">
             <template slot-scope="scope">
               <div>{{ scope.row.taxRate + '%' }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
-          <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
-          <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
+          <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')" />
+          <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_procure_data')" />
+          <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')" />
           <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="logo" label="logo" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"></el-table-column>

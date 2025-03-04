@@ -428,6 +428,7 @@ export default {
             duration: 1500,
           })
         }
+        this.lines = this.lines.filter(item=> item.personnelId)
         console.log("this.lines", this.lines);
         if (flag === false) return
         formMethod(obj).then(res => {
@@ -560,7 +561,7 @@ export default {
     },
     userRelationChange(data){
       console.log(data,'lll')
-  
+      this.lines = this.lines.filter(item=> item.personnelId)
       data = data.filter((item1) => {
             const index = this.lines.findIndex((item2) => item2.personnelId === item1)
             if (index !== -1) {

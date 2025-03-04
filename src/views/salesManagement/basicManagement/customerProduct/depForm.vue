@@ -1867,6 +1867,17 @@ export default {
       } catch (error) {
       }
     },
+    calculateExpiryDate() {  
+      const today = new Date();  
+      const expiryDate = new Date(today.setFullYear(today.getFullYear() + 30));  
+      return this.formatDate(expiryDate);  
+    },  
+    formatDate(date) {  
+      const year = date.getFullYear();  
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始  
+      const day = String(date.getDate()).padStart(2, '0');  
+      return `${year}-${month}-${day}`;  
+    },
     init(row, btnType, approvalFlag) {
       this.formLoading = true
       this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName } || '' : ''
@@ -1882,6 +1893,8 @@ export default {
       if (this.btnType == 'add') {
         let obj = JSON.parse(JSON.stringify(this.createdData))
         this.dataFormTwo.lines.push(obj)
+        this.dataForm.validDateArr = [this.formatDate(new Date()),this.calculateExpiryDate()]
+
       } else {
         getcooperativeproductInfo(row.id).then(res => {
           if (res.data.attachmentList) {

@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
-      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']"  v-if="!approvalFlag">
+      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="goBack" :content="title" />
         <div class="options">
           <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
@@ -63,13 +63,13 @@
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                        <el-table-column prop="productName" label="产品名称"   width="160"
-                          v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                         <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
                         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
-                <el-table-column prop="pairingModeName" label="配对方式"   min-width="120" />
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120" />
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -92,8 +92,7 @@
                             <span class="required">*</span>目标仓库
                           </template>
                           <template slot-scope="scope">
-                            <ComSelect-list
-                              :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '',classAttributeList:classAttributeList }"
+                            <ComSelect-list :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList }"
                               :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                               @change="changeWarehousex"></ComSelect-list>
@@ -198,15 +197,15 @@
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                    <el-table-column prop="productName" label="产品名称"   width="160"
-                      v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
                     <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
-                <el-table-column prop="pairingModeName" label="配对方式"  min-width="120" />
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="120" />
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -229,8 +228,7 @@
                         <span class="required">*</span>目标仓库
                       </template>
                       <template slot-scope="scope">
-                        <ComSelect-list
-                          :requestObj="{ type: 'line_edge', projectId: isProjectSwitch === '1' ? projectId || '' : '',classAttributeList:classAttributeList }"
+                        <ComSelect-list :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList }"
                           :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                           :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                           @change="changeWarehousex"></ComSelect-list>
@@ -460,10 +458,10 @@ import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { WareHouseForm,Process, recordList  },
-  mixins: [getProjectList,flowMixin,busFlow, ],
+  components: { WareHouseForm, Process, recordList },
+  mixins: [getProjectList, flowMixin, busFlow,],
   props: {
-    approvalFlags:{type:Boolean,default:false}
+    approvalFlags: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -1026,7 +1024,7 @@ export default {
             let obj = {
               picking: this.dataForm,
               lines: [],
-              flowData:this.flowData
+              flowData: this.flowData
             }
             let arr = this.productData.map(item => {
               return {

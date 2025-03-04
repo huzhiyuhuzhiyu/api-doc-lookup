@@ -3302,6 +3302,7 @@ export default {
           this.listLoading = true
 
           this.cgForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
+          this.cgForm.inspectionStatus="inspected"
           purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
             this.cgTableList = res.data.records
             this.cgTotal = res.data.total
@@ -3346,6 +3347,7 @@ export default {
         }
 
         this.cgForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
+          this.cgForm.inspectionStatus="inspected"
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
@@ -3442,6 +3444,7 @@ export default {
           }
           this.wxshForm.classAttributeList = this.classAttributeList
           this.wxshForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
+          this.wxshForm.inspectionStatus="inspected"
           purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
             this.wxshTableList = res.data.records
             this.wxshTotal = res.data.total

@@ -796,6 +796,7 @@ export default {
         planDate: [],
         orderNo: this.codeConfig.number
       }
+      
       this.dataForm.productsDrawingNo = data.drawingNo
       this.dataForm.productsCode = data.code
       this.dataForm.productsName = data.name
@@ -1269,9 +1270,9 @@ export default {
             let obj = {
               processName: maxSortItem.processName,
               processId: maxSortItem.processId,
-              productCode: this.dataForm.productsCode,
-              productName: this.dataForm.productsName,
-              productDrawingNo: this.dataForm.productsDrawingNo,
+              productsCode: this.dataForm.productsCode,
+              productsName: this.dataForm.productsName,
+              productsDrawingNo: this.dataForm.productsDrawingNo,
               productsId: this.dataForm.productsId,
               materialsUsedQuantity: this.dataForm.productionQuantity,
               mainUnit: this.dataForm.mainUnit,
@@ -1354,7 +1355,14 @@ export default {
           minWidth: 160,
           render: this.dataForm.pickingWay == 'production_order',
         },
-        { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
+        { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140,
+        itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：领料数量${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, message: '', trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：领料数量${errMsg}`) }] }), trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：领料数量${errMsg}`) }), trigger: 'blur' }
+          ]
+        },
       ]
     },
     async fetchData(code) {
@@ -1511,6 +1519,7 @@ export default {
 
     },
     addth(data, index, type) {
+      console.log("dtata",data);
       let tempList = JSON.parse(JSON.stringify(this.materialList))
       let hasItemList = []
       for (let i = 0; i < data.length; i++) {
@@ -1528,9 +1537,9 @@ export default {
       this.materialList = tempList.map(item => {
         return {
           productsId: item.productsId,
-          productCode: item.productsCode,
-          productName: item.productsName,
-          productDrawingNo: item.productsDrawingNo,
+          productsCode: item.productsCode,
+          productsName: item.productsName,
+          productsDrawingNo: item.productsDrawingNo,
           qty: item.qty,
           calculationDirection: item.calculationDirection,
           mainUnit: item.mainUnit,

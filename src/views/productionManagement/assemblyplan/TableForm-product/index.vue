@@ -122,9 +122,9 @@ export default {
       tableVisible: true,
       customStyleData: {},
       getProductList, // 产品选择弹出框树状列表请求api
-      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: this.classAttribute, } }, // 产品选择弹出框树状列表
+      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "finish_product" } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
+        classAttributeList: ["finish_product"],
         productCategoryId: "",
         code: "",
         name: "",

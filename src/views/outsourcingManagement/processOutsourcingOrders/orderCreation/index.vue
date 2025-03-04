@@ -847,16 +847,17 @@ export default {
           console.log(deletedArray, '被删掉的数据')
         }
         selectArr.forEach((item, index) => {
-          let priceObj = {
-            orderType:'external_process',
-            productCode: item.productCode,
-            cooperativePartnerId: this.dataForm.cooperativePartnerId
+          if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
+              orderType:'external_process',
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
           }
-      
-          purPurchaseOrderLineLast(priceObj).then((res) => {
-            this.$set(item, 'price',res.data ? res.data.price :'')
-            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
-          })
         })
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
@@ -964,16 +965,17 @@ export default {
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
-          let priceObj = {
+          if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
               orderType:'external_process',
               productCode: item.productCode,
               cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
           }
-      
-          purPurchaseOrderLineLast(priceObj).then((res) => {
-            this.$set(item, 'price',res.data ? res.data.price :'')
-            this.$set(item, 'taxRate',res.data? res.data.taxRate :'')
-          })
         })
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,

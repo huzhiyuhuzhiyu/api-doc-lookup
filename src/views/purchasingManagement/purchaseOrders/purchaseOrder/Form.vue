@@ -273,8 +273,8 @@
                     <!-- <span style="font-weight:500;margin-right:10px">
                       总金额：{{ dataForm.excludingTaxTotalAmount }}
                     </span> -->
-                    <span style="font-weight:500;margin-right:10px">总税额：{{ computedValue2 }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额：{{ computedValue }}</span>
+                    <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总税额：{{ computedValue2 }}</span>
+                    <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总金额：{{ computedValue }}</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -570,8 +570,8 @@
 
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                 <!-- <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.excludingTaxTotalAmount }}</span> -->
-                <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
-                <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.totalAmount }}</span>
+                <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总税额：{{ dataForm.taxAmount }}</span>
+                <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总金额：{{ dataForm.totalAmount }}</span>
               </div>
             </el-collapse-item>
           </el-collapse>

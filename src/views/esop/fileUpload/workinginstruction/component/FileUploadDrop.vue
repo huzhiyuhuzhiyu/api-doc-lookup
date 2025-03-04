@@ -368,8 +368,8 @@ export default {
         },
         handleClick(file) {
             // 点击下载文件
-            if (!file.filename) return
-            getDownloadUrl(this.type, file.filename).then(res => {
+            if (!file.filePath) return
+            getDownloadUrl(this.type, file.filePath).then(res => {
                 this.jnpf.downloadFile(res.data.url, file.name)
             })
         },

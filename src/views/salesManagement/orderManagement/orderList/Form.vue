@@ -996,6 +996,15 @@
               <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
                   <el-col :span="6">
+                  <el-form-item>
+                    <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+               >
+                <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
+                  :value="item.id"></el-option>
+              </el-select>
+                  </el-form-item>
+                </el-col>
+                  <el-col :span="6">
                     <el-form-item>
                       <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                     </el-form-item>
@@ -1005,11 +1014,11 @@
                       <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6">
+                  <!-- <el-col :span="6">
                     <el-form-item>
                       <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :span="6">
                     <el-form-item>
                       <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
@@ -1130,6 +1139,8 @@ export default {
   },
   data() {
     return {
+      isProjectSwitch:'',
+      projectIdData:[],
       attributesListVisible: false,
       formVisible: false,
       isattachmentswitch: '',
@@ -1678,6 +1689,12 @@ export default {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
+    },
+    async getProject(){
+      await this.getProjectSwitch('system', 'project')
+      if (this.isProjectSwitch === '1') {
+        await this.getProjectList()
+      }
     },
     async getMainUnitFun(code, type) {
       this.listLoading = true
@@ -2357,6 +2374,7 @@ export default {
         productStatus: 'enable',
         saleFlag: true,
         productCategoryId: "",
+        projectId:"",
         code: "",
         name: "",
         orderItems: [{
@@ -2368,6 +2386,10 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
+      }
+      if (this.isProjectSwitch === '1') {
+        console.log(this.userInfo,'ss')
+        this.ProductListRequestObj.projectId = this.userInfo.userProjectId
       }
       this.allproductData = []
       let successTotal = 0;
@@ -2424,6 +2446,7 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
+        projectId:"",
         saleFlag: true,
         productCode: "",
         productName: "",
@@ -2436,7 +2459,11 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
-      },
+      }
+      if (this.isProjectSwitch === '1') {
+        console.log(this.userInfo,'ss')
+        this.ProductListRequestObj.projectId = this.userInfo.userProjectId
+      }
         this.searchAllProduct()
     },
     // 所有产品列表 多选
@@ -2742,6 +2769,7 @@ export default {
       this.approvalFlag = approvalFlag
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
+      this.getProject()
       if (this.dataForm.id) {
         if (btnType == "edit" || btnType == "look") {
           getOrderDetail(this.dataForm.id).then(res => {

@@ -605,7 +605,7 @@ import {
   BOMLineList
 } from "@/api/calculationList/MRPOperation"
 import getProjectList from '@/mixins/generator/getProjectList'
-import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
+import TableFormProduct from '../TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
 export default {
   mixins: [getProjectList],
@@ -1356,10 +1356,10 @@ export default {
             }
           } else {
           }
+          res.data.routingLineList.sort((a, b) => a.sort - b.sort);
+          this.dataFormTwo.data = res.data.routingLineList
+          this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
         });
-        res.data.routingLineList.sort((a, b) => a.sort - b.sort);
-        this.dataFormTwo.data = res.data.routingLineList
-        this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
       })
     },
     init() {
@@ -1470,16 +1470,17 @@ export default {
               });
               break;
             }
-          } else {
-            if (!item.personId && item.processingType == "self_produced") {
-              submitFlag = false;
-              this.$message({
-                message: "第" + (index + 1) + "行工序需配置人员信息",
-                type: "error",
-              });
-              break;
-            }
-          }
+          } 
+          // else {
+          //   if (!item.personId && item.processingType == "self_produced") {
+          //     submitFlag = false;
+          //     this.$message({
+          //       message: "第" + (index + 1) + "行工序需配置人员信息",
+          //       type: "error",
+          //     });
+          //     break;
+          //   }
+          // }
         }
       } else {
         this.dataFormTwo.data.forEach(item => {

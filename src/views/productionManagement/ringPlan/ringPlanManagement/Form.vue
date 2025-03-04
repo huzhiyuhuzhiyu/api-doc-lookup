@@ -116,8 +116,16 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"
+                      <!-- <el-col :sm="6" :xs="24"
                         v-if="dataForm.pickingWay == 'production_order' && dataForm.autoMaterialFlag">
+                        <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
+                          <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
+                            <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col> -->
+                      <el-col :sm="6" :xs="24" v-if="dataForm.pickingWay == 'production_order'">
                         <el-form-item label="线边仓库" prop="lineEdgeList" ref="organizeIdTree">
                           <el-select v-model="dataForm.lineEdgeList" multiple placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
@@ -145,7 +153,9 @@
 
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
+                    <el-button type="text"   icon="el-icon-delete" style="margin-left: 8px;"
+                      @click="batchDelete">批量删除</el-button>
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading" @selection-change="handeleProductInfoData" hasC>
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -306,10 +316,10 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="领料清单" name="productInfo" class="productInfo"
+                <el-collapse-item title="领料清单" name="productInfos" class="productInfo"
                   :style="!allocationFlag ? 'margin-top:5px' : ''">
 
-                  <JNPF-table ref="product" :data="materialList" fixedNO v-loading="tableloading">
+                  <!-- <JNPF-table ref="product" :data="materialList" fixedNO v-loading="tableloading">
                     <el-table-column prop="productsCode" label="产品编码"></el-table-column>
                     <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -319,7 +329,11 @@
                     <el-table-column prop="materialsUsedQuantity" label="投料数量">
 
                     </el-table-column>
-                  </JNPF-table>
+                  </JNPF-table> -->
+                  <TableForm-product :value="materialList" :ref="`linesForm_right`" :tableItems="linesFormItems_right" :classAttribute="'semi_finished'"
+                    :btnType="'add'" @addth="(data) => { addth(data, null,) }"
+                    @deleteth="(scope) => { deleteth(scope, null,) }"
+                    @input="(dataOrIndex, prop, value) => { linesChange(dataOrIndex, prop, value, null,) }" />
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
@@ -574,20 +588,24 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
+import { getBimProcessList } from '@/api/bimProcess'
+import TableFormProduct from '../TableForm-product/index.vue'
 import {
   BOMLineList
 } from "@/api/calculationList/MRPOperation"
 export default {
   mixins: [getProjectList],
   components: {
-    RoutingForm
+    RoutingForm,TableFormProduct
   },
   data() {
     return {
+      getBimProcessList,
+      selectRows:[],
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       activeNames: ["productInfo", "basicInfo"],
-      activeNamess: ['pickInfo', 'productInfo'],
+      activeNamess: ['pickInfo', 'productInfos'],
       allocationFlag: false,
       routingVisible: false,
       collectForm: {
@@ -648,7 +666,6 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataRule: {
-        lineEdgeList: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         lineEdgeId:[{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
@@ -701,6 +718,8 @@ export default {
       materialList: [],
       hasWorkOrderFlagFalse: null,
       workFlagFalseInfo: {},
+      linesFormItems_right: [],
+      btnType:'add',
     }
 
   },
@@ -744,6 +763,138 @@ export default {
 
   },
   methods: {
+    addth(data, index, type) {
+      console.log("data",data);
+      let tempList = JSON.parse(JSON.stringify(this.materialList))
+      let hasItemList = []
+      for (let i = 0; i < data.length; i++) {
+        let item = data[i];
+        
+        item.productsId =  item.id
+        item.productsCode =  item.code
+        item.productsName =  item.name
+        item.productsDrawingNo = item.productDrawingNo || item.drawingNo
+        item.qty = 1
+        const hasFlag = this.materialList.find(i => item.productsId === i.productsId)
+        if (hasFlag) { hasItemList.push(item.productDrawingNo) }
+        else { tempList.push(item) }
+        if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
+      }
+      this.materialList = tempList.map(item => {
+        return {
+          productsId: item.productsId,
+          productsCode: item.productsCode,
+          productsName: item.productsName,
+          productsDrawingNo: item.productsDrawingNo,
+          qty: item.qty,
+          calculationDirection: item.calculationDirection,
+          mainUnit: item.mainUnit,
+          ratio: item.ratio,
+          materialsUsedQuantity: this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6) || '',
+          reduceType: "picking",
+          processName: '',
+          processId: '',
+          selectProduct: true
+        }
+      })
+      console.log(this.materialList, 'this.materialList')
+    },
+    deleteth(scope, index, type) {
+      this.materialList.splice(scope.$index, 1)
+    },
+    linesChange(dataOrIndex, prop, value, index, type) {
+      if (Array.isArray(dataOrIndex)) {
+        this.materialList = JSON.parse(JSON.stringify(dataOrIndex))
+      } else if (prop) {
+        this.materialList[dataOrIndex][prop] = value
+      }
+    },
+    getProcessData(id, data, params, index) {
+      this.materialList[params.scope.$index].processId = data[0].id || ''
+      this.materialList[params.scope.$index].processName = data[0].name || ''
+    },
+    creaFun() {
+      this.linesFormItems_right = [
+        { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
+        { prop: "productsName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
+        { prop: "productsDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        {
+          prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
+          customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,
+          tableItems: [
+            { prop: 'name', label: '工序名称' },
+            { prop: 'code', label: '工序编码' },
+          ], placeholder: "请选择工序名称", title: "选择工序名称",
+          listMethod: getBimProcessList, listRequestObj: {
+            "name": "",
+            "code": "",
+            "processingType": "",
+            "orderItems": [
+              {
+                "asc": false,
+                "column": ""
+              },
+              {
+                "asc": false,
+                "column": "create_time"
+              }
+            ],
+            "pageNum": 1,
+            "pageSize": 20,
+            "productCategoryId": "",
+            "projectId": ''
+          },
+          searchList: [
+            { prop: "code", label: "工序编码", type: 'input' },
+            { prop: "name", label: "工序名称", type: 'input' },
+          ]
+        },
+        {
+          prop: "qty", label: "数量", value: "", type: 'input', width: 180,
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, message: '', trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }), trigger: 'blur' }
+          ]
+        },
+        { prop: "mainUnit", label: "单位", value: "", type: 'view', minWidth: 80 },
+        {
+          prop: 'reduceType',
+          label: '扣减料方式',
+          value: 'picking',
+          type: 'select',
+          disabled: this.btnType === 'look',
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 160,
+          render: this.dataForm.pickingWay == 'production_order',
+        },
+        { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
+      ]
+      console.log(555);
+    },
+     // 产品列表选中
+     handeleProductInfoData(val) {
+      this.selectRows = val
+    },
+     // 批量删除
+     batchDelete() {
+      // 遍历选中的行的数据
+      if (this.selectRows.length < 1) return this.$message.error('请选择你要删除的数据')
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i];
+        const index = this.dataFormTwo.data.indexOf(row);
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRows = []; // 清空选中的行的数据
+    },
     delethHandle(scope){ 
       this.$confirm(this.$t('此操作将删除当前数据，确认删除？'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -1106,9 +1257,7 @@ export default {
       const time = y + '-' + m + '-' + d
       return time
     },
-    handeleProductInfoData(val) {
-      this.selectRows = val
-    },
+    
 
 
 
@@ -1204,7 +1353,7 @@ export default {
           let processList = res.data.routingLineList.sort((a, b) => a.sort - b.sort);
 
 
-          this.hasWorkOrderFlagFalse = processList.some(item => !item.workOrderFlag);
+          this.hasWorkOrderFlagFalse = processList.some(item => !item.workOrderFlag&&item.processingType !== "self_produced");
 
           if (!this.hasWorkOrderFlagFalse) {
             // 都生成工单 产品的bom作为料
@@ -1235,7 +1384,7 @@ export default {
             //               console.log(false);
           } else {
             // 产品+该道工序作为料
-            // 存在不生成工单的数据，并找出最后一道不生成工单的数据
+            // 存在不生成工单的数据并且是外协的，并找出最后一道不生成工单的数据
             // 找到 sort 最大的对象  
             let maxSortItem = processList.reduce((maxItem, item) => {
               return item.sort > maxItem.sort ? item : maxItem;
@@ -1265,11 +1414,13 @@ export default {
       console.log("传递数据", data);
       this.$set(data, 'productionQuantity', '')
       this.dataForm = data
+      this.creaFun()
       this.$set(this.dataForm, 'planDate', [])
 
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'pairingModeId', data.pairingModeId)
       this.$set(this.dataForm, 'orderNo', '')
+      console.log("dataf",this.dataForm,this.dataForm.pickingWay);
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity)) 
@@ -1278,7 +1429,7 @@ export default {
         this.dataForm.planDate[1]=this.dataForm.planEndDate
       }
       this.$set(this.dataForm, 'productionPlanId', data.id)
-      console.log(this.$refs.dataForm);
+      console.log(666,this.$refs.dataForm);
       this.$refs.dataForm.clearValidate('planDate');
       this.getProductionLineListFun()
       this.fetchData("PROD")
@@ -1310,6 +1461,7 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
+      if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
       let submitFlag = null;
       if (this.naturalResourcesFlag) {
@@ -1354,6 +1506,13 @@ export default {
         this.dataForm.materialFlag = false
 
       }
+      if (this.materialList.length) {
+        let hasAutoReduceType = this.materialList.some(item => item.reduceType === "auto")
+        if (hasAutoReduceType && !arr.length) {
+          submitFlag = false
+          return this.$message.error("提交失败:请选择线边仓")
+        }
+      }
       console.log("表单", this.dataForm);
       console.log("工序", this.dataFormTwo.data);
       if (submitFlag === false) return
@@ -1365,21 +1524,35 @@ export default {
       });
       let arr = []
 
+      // if (this.dataForm.pickingWay == 'dispatch_list') {
+      //   arr.push({
+      //       productionOrderId: "",
+      //       warehouseId: this.dataForm.lineEdgeId
+      //     })
+      // } else {
+      //   if(this.dataForm.autoMaterialFlag){
+
+      //     this.dataForm.lineEdgeList.forEach(item => {
+      //       arr.push({
+      //         productionOrderId: "",
+      //         warehouseId: item
+      //       })
+      //     })
+      //   }
+      // }
       if (this.dataForm.pickingWay == 'dispatch_list') {
         arr.push({
-            productionOrderId: "",
-            warehouseId: this.dataForm.lineEdgeId
-          })
-      } else {
-        if(this.dataForm.autoMaterialFlag){
+          productionOrderId: "",
+          warehouseId: this.dataForm.lineEdgeId
+        })
+      } else if (this.dataForm.pickingWay === 'production_order' && this.dataForm.lineEdgeList.length) {
 
-          this.dataForm.lineEdgeList.forEach(item => {
-            arr.push({
-              productionOrderId: "",
-              warehouseId: item
-            })
+        this.dataForm.lineEdgeList.forEach(item => {
+          arr.push({
+            productionOrderId: "",
+            warehouseId: item
           })
-        }
+        })
       }
       let obj = {
         prodOrder: this.dataForm,

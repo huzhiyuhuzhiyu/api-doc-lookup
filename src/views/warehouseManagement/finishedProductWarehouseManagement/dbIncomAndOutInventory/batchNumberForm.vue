@@ -48,7 +48,7 @@
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"   :setColumnDisplayList="columnList"  custom-column ref="dataTable">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"  key="batchNumber"></el-table-column>
-            <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180"></el-table-column>
+            <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')"></el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
@@ -108,6 +108,7 @@
 <script>
 import { getlistOutBatchStock } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
+import { mapGetters, mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -168,6 +169,9 @@ export default {
       processFlag: "",
 
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   async created() {
     await this.getOrderFiledMap()

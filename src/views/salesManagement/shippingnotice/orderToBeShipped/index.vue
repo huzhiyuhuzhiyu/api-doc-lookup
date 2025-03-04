@@ -125,7 +125,7 @@
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
             <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column label="操作" width="120" fixed="right">
+            <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>
@@ -560,11 +560,11 @@ export default {
         })
       }
     },
-    getProductClassFun() {
+   async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
+      const res = await getbimProductAttributesListMap()
+      this.bimProductAttributesList = res.data
+      
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
         let arr = []

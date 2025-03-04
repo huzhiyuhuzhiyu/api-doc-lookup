@@ -168,10 +168,10 @@
               <div v-if="scope.row.sourceType == 'io_other'">其他</div>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
+          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')">
 
           </el-table-column>
-          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180"></el-table-column>
+          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
           <el-table-column prop="inspectionResults" label="检验标志" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" v-if="scope.row.inspectionResults == 'qualified'">

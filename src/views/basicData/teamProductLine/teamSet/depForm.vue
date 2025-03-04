@@ -75,6 +75,7 @@
 
         <el-col :span="24">
           <topOpts v-if="!btntype" @add="addtable()" :addText="'添加'" style="margin-bottom: 10px;">
+             <el-button @click="addPerson()" type="primary">添加人员</el-button>
           </topOpts>
           <el-table :data="lines" height="300" highlight-current-row>
             <el-table-column prop="personnelIdText" label="人员名称" width="120">
@@ -152,6 +153,8 @@
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         提交</el-button>
     </span>
+    <userRelation v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="initData"
+        @closeDialog="userRelationListVisible = false" @change="userRelationChange"></userRelation>
   </el-dialog>
 </template>
 
@@ -159,9 +162,10 @@
 import { addGroupData, deleteGroupData, editGroupData, getGroupDataInfo, checkGroupCode } from "@/api/basicData/index";
 import getProjectList from '@/mixins/generator/getProjectList'
 import ProjectUserSelect from "./components/JNPF-userSelect";
+import userRelation from "./components/userRelation/Selector.vue";
 export default {
   components: {
-    ProjectUserSelect
+    ProjectUserSelect,userRelation
   },
   mixins: [getProjectList],
   data() {
@@ -255,6 +259,7 @@ export default {
 
       },
       codeConfig: {},
+      userRelationListVisible:false,
     }
   },
   async created() {
@@ -309,6 +314,12 @@ export default {
       }
 
 
+    },
+    addPerson(){
+      this.userRelationListVisible = true
+      this.$nextTick(() => {
+          this.$refs.UserRelationList.init(0, '班组人员', 'Role')
+        })
     },
     async init(id, type) {
       this.visible = true
@@ -546,7 +557,28 @@ export default {
       //   workType: "",
       //   reportingType: "",
 
-    }
+    },
+    userRelationChange(data){
+      console.log(data,'lll')
+  
+      data = data.filter((item1) => {
+            const index = this.lines.findIndex((item2) => item2.personnelId === item1)
+            if (index !== -1) {
+              return false
+            }
+            return true
+      })
+      data.forEach(item=>{
+        this.lines.push(
+          {
+            personnelId: item,
+            joinTime: "",
+            leaveTime: "",
+            state: "normal",
+            remark: ""
+          })
+      })
+    } 
   }
 }
 </script>

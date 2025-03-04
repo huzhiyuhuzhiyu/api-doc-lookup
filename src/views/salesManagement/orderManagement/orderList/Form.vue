@@ -995,15 +995,14 @@
             <div class="JNPF-common-layout-center JNPF-flex-main">
               <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-                  <el-col :span="6">
-                  <el-form-item>
-                    <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
-               >
-                <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
-                  :value="item.id"></el-option>
-              </el-select>
-                  </el-form-item>
-                </el-col>
+                  <el-col :span="6" v-if="isProjectSwitch === '1'" >
+                    <el-form-item>
+                      <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable>
+                        <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :span="6">
                     <el-form-item>
                       <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
@@ -1222,7 +1221,7 @@ export default {
       // 客户产品查询条件
       ProductTableSearchList: [
         { prop: "customerProductNo", label: "客户料号", type: 'input' },
-        { prop: "drawingNo", label: "品名规格", type: 'input' },
+        // { prop: "drawingNo", label: "品名规格", type: 'input' },
         { prop: "productCode", label: "产品编码", type: 'input' },
       ],
       datafilelist: [],
@@ -2353,6 +2352,10 @@ export default {
       if (this.dataForm.cooperativePartnerId) {
         // this.productVisible = true
         // this.getcooperativeProduct()
+        if (this.isProjectSwitch === '1'){
+          this.ProductTableSearchList.unshift({ prop: "projectId", label: "所属项目", type: 'select',options:this.projectIdData });
+          this.ProductListRequestObjs.projectId = this.userInfo.projectId
+        } 
         this.$refs["comSelect-page"].openDialog()
       } else {
         this.$message({

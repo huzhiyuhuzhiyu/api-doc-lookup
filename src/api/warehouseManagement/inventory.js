@@ -137,3 +137,12 @@ export function inventoryWarehouseExport(data) {
     data
   })
 }
+
+// 倍宁- 库存明细汇总报表
+export function inventoryWarehouseTotalReport(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/total/report`,
+    method: 'POST',
+    data
+  })
+}

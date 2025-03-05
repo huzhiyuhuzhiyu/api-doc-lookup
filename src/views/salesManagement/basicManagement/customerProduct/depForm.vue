@@ -95,9 +95,9 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="140">
+                    <el-table-column prop="taxRate" label="税率" width="140">
                       <template slot="header">
-                        <span class="required">*</span>税率(%)
+                        <span class="required">*</span>税率
                       </template>
                       <!-- <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'taxRate'" :rules='productRules.taxRate'>
@@ -384,9 +384,9 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率(%)" width="140">
+                <el-table-column prop="taxRate" label="税率" width="140">
                   <template slot="header">
-                    <span class="required">*</span>税率(%)
+                    <span class="required">*</span>税率
                   </template>
                   <!-- <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'taxRate'" :rules='productRules.taxRate'>
@@ -1880,7 +1880,7 @@ export default {
     },
     init(row, btnType, approvalFlag) {
       this.formLoading = true
-      this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName } || '' : ''
+      this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName,taxRate:row.taxRate*1 } || '' : ''
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
       this.getProject()

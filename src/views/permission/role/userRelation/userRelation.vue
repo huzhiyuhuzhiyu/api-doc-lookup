@@ -195,7 +195,7 @@ export default {
     },
     handleNodeClick(data) {
       if (data.type !== 'user') return
-      this.handleNodeClick2(data)
+      // this.handleNodeClick2(data)
     },
     handleNodeClick2(data) {
       const boo = this.selectedData.some(o => o.id === data.id)

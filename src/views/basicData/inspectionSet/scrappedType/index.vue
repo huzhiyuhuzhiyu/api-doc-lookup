@@ -64,6 +64,7 @@
                         <template slot-scope="scope">
                             <div v-if="scope.row.type == 'responsibility_fee'">责废</div>
                             <div v-if="scope.row.type == 'material_fee'">料废</div>
+                            <div v-if="scope.row.type == 'rework'">返工</div>
                         </template>
                     </el-table-column>
                     <el-table-column prop="remark" label="备注" sortable="custom"></el-table-column>
@@ -165,6 +166,10 @@ export default {
                 {
                     value: 'material_fee',
                     label: '料废'
+                },
+                {
+                    value: 'rework',
+                    label: '返工'
                 }
             ],
             formVisible: false,

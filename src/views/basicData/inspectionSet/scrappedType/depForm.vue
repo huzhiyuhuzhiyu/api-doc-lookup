@@ -72,6 +72,10 @@ export default {
         {
           value: 'material_fee',
           label: '料废'
+        },
+        {
+          value: 'rework',
+          label: '返工'
         }
       ],
       codeConfig: {},

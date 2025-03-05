@@ -2352,6 +2352,10 @@ export default {
       if (this.dataForm.cooperativePartnerId) {
         // this.productVisible = true
         // this.getcooperativeProduct()
+        this.ProductTableSearchList = [
+          { prop: "customerProductNo", label: "客户料号", type: 'input' },
+          { prop: "productCode", label: "产品编码", type: 'input' },
+        ]
         if (this.isProjectSwitch === '1'){
           this.ProductTableSearchList.unshift({ prop: "projectId", label: "所属项目", type: 'select',options:this.projectIdData });
           this.ProductListRequestObjs.projectId = this.userInfo.projectId

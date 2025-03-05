@@ -133,7 +133,7 @@
                           <template v-if="scope.row.processType == 'accuracy'">
                             精度工序
                           </template>
-                          <template v-if="scope.row.processType == 'typing  '">
+                          <template v-if="scope.row.processType == 'typing'">
                             打字工序
                           </template>
                           <template v-if="scope.row.processType == 'fatInjection'">

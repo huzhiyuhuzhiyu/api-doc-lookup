@@ -130,7 +130,7 @@
 <script>
 import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
+import { inventoryWarehouseTotalReport } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -360,10 +360,10 @@ export default {
     },
     initData() {
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      inventoryWarehouseList(this.tableQuery)
+      inventoryWarehouseTotalReport(this.tableQuery)
         .then((res) => {
           console.log(res)
-          this.tableData = res.data.whPage.records
+          this.tableData = res.data.page.records
 
           this.totalData = res.data.stockSts || {
             inventoryQuantity: 0,
@@ -371,7 +371,7 @@ export default {
             occupancyQuantity: 0
           }
 
-          this.total = res.data.whPage.total
+          this.total = res.data.page.total
           this.listLoading = false
         })
         .catch(() => {
@@ -450,6 +450,7 @@ export default {
         console.log(res, 'dd')
         this.shelvesData = res.data.records
       })
+      this.tableQuery.shelvesIds = []
       this.search('basic')
     },
     getNodePath(node) {

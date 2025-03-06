@@ -5,14 +5,23 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.name" placeholder="报废名称" clearable />
+                            <el-select v-model="tableQuery.type" placeholder="不良类型" clearable>
+                                <el-option v-for="item in typeData" :key="item.value" :label="item.label"
+                                    :value="item.value"></el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="4">
+                        <el-form-item>
+                            <el-input @keyup.native.enter="search()" v-model.trim="tableQuery.name" placeholder="不良名称"
+                                clearable />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
                         <el-form-item>
                             <el-date-picker v-model="timeArr" type="daterange" value-format="yyyy-MM-dd"
-                                style="width: 100%;" start-placeholder="请选择创建开始日期" end-placeholder="请选择创建结束日期">
-                            </el-date-picker>
+                                style="width: 100%;" start-placeholder="请选择创建开始日期"
+                                end-placeholder="请选择创建结束日期"></el-date-picker>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6">
@@ -49,8 +58,15 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
                     custom-column :setColumnDisplayList="columnList">
-                    <el-table-column prop="name" label="报废名称" sortable="custom" />
+                    <el-table-column prop="name" label="不良名称" sortable="custom" />
                     <el-table-column prop="price" label="单价" sortable="custom" width="120"></el-table-column>
+                    <el-table-column prop="type" label="不良类型" align="center" sortable="custom" width="160">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.type == 'responsibility_fee'">责废</div>
+                            <div v-if="scope.row.type == 'material_fee'">料废</div>
+                            <div v-if="scope.row.type == 'rework'">返工</div>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="remark" label="备注" sortable="custom"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                     <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
@@ -79,7 +95,7 @@ import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
-    name: 'quality',
+    name: 'scrappedType',
     components: { DepForm, SuperQuery },
     data() {
         return {
@@ -87,7 +103,7 @@ export default {
             superQueryJson: [
                 {
                     prop: 'name',
-                    label: '报废名称',
+                    label: '不良名称',
                     type: 'input'
                 },
                 {
@@ -95,7 +111,21 @@ export default {
                     label: '单价',
                     type: 'input'
                 },
-
+                {
+                    prop: 'type',
+                    label: '不良类型',
+                    type: 'select',
+                    options: [
+                        {
+                            value: 'responsibility_fee',
+                            label: '责废'
+                        },
+                        {
+                            value: 'material_fee',
+                            label: '料废'
+                        }
+                    ]
+                },
                 {
                     prop: 'createTime',
                     label: '创建时间',
@@ -104,7 +134,7 @@ export default {
                     startPlaceholder: '开始日期',
                     endPlaceholder: '结束日期',
                     pickerOptions: this.global.timePickerOptions
-                },
+                }
             ],
             columnList: [],
             depFormVisible: false,
@@ -114,6 +144,7 @@ export default {
             listLoading: false,
             timeArr: [],
             tableQuery: {
+                type: '',
                 pageNum: 1,
                 pageSize: 20,
                 orderItems: [
@@ -127,6 +158,20 @@ export default {
             },
 
             total: 0,
+            typeData: [
+                {
+                    value: 'responsibility_fee',
+                    label: '责废'
+                },
+                {
+                    value: 'material_fee',
+                    label: '料废'
+                },
+                {
+                    value: 'rework',
+                    label: '返工'
+                }
+            ],
             formVisible: false,
             filterText: ''
         }
@@ -168,8 +213,8 @@ export default {
         },
         initData() {
             if (this.timeArr.length) {
-                this.tableQuery.startTime = this.timeArr[0] + " 00:00:00"
-                this.tableQuery.endTime = this.timeArr[1] + " 23:59:59"
+                this.tableQuery.startTime = this.timeArr[0] + ' 00:00:00'
+                this.tableQuery.endTime = this.timeArr[1] + ' 23:59:59'
             } else {
                 this.tableQuery.startTime = ''
                 this.tableQuery.endTime = ''
@@ -193,6 +238,7 @@ export default {
         reset() {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort()
             this.tableQuery = {
+                type: '',
                 pageNum: 1,
                 pageSize: 20,
                 orderItems: [

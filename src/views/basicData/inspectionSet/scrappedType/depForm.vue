@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :title="!dataForm.id ? '新建报废类型' : '编辑报废类型'" :close-on-click-modal="false" :close-on-press-escape="false"
+  <el-drawer :title="!dataForm.id ? '新建不良原因' : '编辑不良原因'" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="visible" lock-scroll width="600px" @close="handleClose" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">
@@ -9,17 +9,25 @@
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="报废名称" prop="name">
+        <el-form-item label="不良名称" prop="name">
           <template slot="label">
-            报废名称<span class="required">*</span>
+            不良名称<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.name" placeholder="请输入报废名称" maxlength="20" :disabled="btntype ? true : false" />
+          <el-input v-model="dataForm.name" placeholder="请输入不良名称" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
         <el-form-item label="单价" prop="price">
           <template slot="label">
             单价<span class="required">*</span>
           </template>
           <el-input v-model="dataForm.price" placeholder="请输入单价" maxlength="20" />
+        </el-form-item>
+        <el-form-item label="不良类型" prop="type">
+          <template slot="label">
+            不良类型<span class="required">*</span>
+          </template>
+          <el-select v-model="dataForm.type" placeholder="不良类型" clearable style="width: 100%;">
+            <el-option v-for="item in typeData" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
@@ -56,11 +64,26 @@ export default {
         price: '',
         id: ''
       },
+      typeData: [
+        {
+          value: 'responsibility_fee',
+          label: '责废'
+        },
+        {
+          value: 'material_fee',
+          label: '料废'
+        },
+        {
+          value: 'rework',
+          label: '返工'
+        }
+      ],
       codeConfig: {},
       btntype: false,
+
       dataRule: {
         name: [
-          { required: true, message: '请输入报废名称', trigger: 'blur' },
+          { required: true, message: '请输入不良名称', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               console.log(value, this.dataForm.id)
@@ -70,7 +93,7 @@ export default {
                     if (!res.data) {
                       callback()
                     } else {
-                      callback(new Error('报废名称已存在'))
+                      callback(new Error('不良名称已存在'))
                     }
                   })
                   .catch((err) => {
@@ -82,7 +105,7 @@ export default {
                     if (!res.data) {
                       callback()
                     } else {
-                      callback(new Error('报废名称已存在'))
+                      callback(new Error('不良名称已存在'))
                     }
                   })
                   .catch((err) => {
@@ -99,7 +122,7 @@ export default {
             message: '请输入单价',
             trigger: ['blur']
           },
-          { validator: this.formValidate('positiveNumber','', (errMsg) => {  }), trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '', (errMsg) => { }), trigger: 'blur' },
         ],
       }
     }
@@ -112,7 +135,7 @@ export default {
 
       this.visible = true
 
-      this.title = !this.dataForm.id ? '新建报废类型' : '编辑报废类型'
+      this.title = !this.dataForm.id ? '新建不良原因' : '编辑不良原因'
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         this.dataForm = { ...row }

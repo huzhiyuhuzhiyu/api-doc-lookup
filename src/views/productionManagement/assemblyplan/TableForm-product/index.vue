@@ -144,7 +144,9 @@ export default {
         { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
         // { prop: 'spec', label: '规格型号' },
-        { prop: 'productCategoryName', label: '产品分类' }
+        { prop: 'productCategoryName', label: '产品分类' },
+        { prop: 'pairingModeName', label: '配对方式' },
+        { prop: 'mainUnit', label: '单位' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "productCode", label: "产品编码", type: 'input' },

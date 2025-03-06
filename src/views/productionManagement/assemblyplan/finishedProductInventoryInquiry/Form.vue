@@ -58,14 +58,15 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="生产数量" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="生产数量" @blur="compount">
+                          <el-input v-model="dataForm.productionQuantity" placeholder="生产数量">
+                            <!-- <el-input v-model="dataForm.productionQuantity" placeholder="生产数量" @blur="compount"> -->
                           </el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="配对方式" prop="pairingModeName">
                           <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
+                            :disabled="btnType == 'look' ? true : false" @change="selectPairingMode">
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                               :value="item.id">
                             </el-option>
@@ -91,8 +92,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate"
-                          >
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -593,7 +593,7 @@ import {
 export default {
   mixins: [getProjectList],
   components: {
-    RoutingForm, SelectProcrssForm,SelectProductForm,TableFormProduct
+    RoutingForm, SelectProcrssForm, SelectProductForm, TableFormProduct
   },
   data() {
     return {
@@ -779,6 +779,16 @@ export default {
     this.getPickingConfig()
   },
   methods: {
+    // 选择配对方式
+    selectPairingMode() {
+      let result = this.pairingModeList.find(item => item.id === this.dataForm.pairingModeId)
+      if (result) {
+        this.dataForm.mainUnit = result.unit
+      } else {
+        console.log("未找到匹配项");
+      }
+    },
+
     linesChange(dataOrIndex, prop, value, index, type) {
       if (Array.isArray(dataOrIndex)) {
         this.materialList = JSON.parse(JSON.stringify(dataOrIndex))
@@ -797,16 +807,18 @@ export default {
       })
     },
     addth(data, index, type) {
-      console.log("data",data);
+      console.log("data", data);
       let tempList = JSON.parse(JSON.stringify(this.materialList))
       let hasItemList = []
       for (let i = 0; i < data.length; i++) {
         let item = data[i];
-     
-        item.productsId =  item.productsId
-        item.productsCode =  item.productCode
-        item.productsName =  item.productName
-        item.productsDrawingNo = item.productDrawingNo 
+
+        item.productsId = item.productsId
+        item.productsCode = item.productCode
+        item.productsName = item.productName
+        item.productsDrawingNo = item.productDrawingNo
+        item.pairingModeId = item.pairingModeId
+        item.pairingModeName = item.pairingModeName
         item.qty = 1
         const hasFlag = this.materialList.find(i => item.productsId === i.productsId)
         if (hasFlag) { hasItemList.push(item.productDrawingNo) }
@@ -827,7 +839,9 @@ export default {
           reduceType: "picking",
           processName: '',
           processId: '',
-          selectProduct: true
+          selectProduct: true,
+          pairingModeId : item.pairingModeId,
+          pairingModeName : item.pairingModeName,
         }
       })
       console.log(this.materialList, 'this.materialList')
@@ -840,6 +854,7 @@ export default {
         { prop: "productsCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         { prop: "productsName", label: "产品名称", value: "", type: 'view', minWidth: 120, render: this.isProductNameSwitch === '1' },
         { prop: "productsDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+        { prop: "pairingModeName", label: "配对方式", value: "", type: 'view', minWidth: 120 },
         {
           prop: "processName", label: "工序名称", value: "", type: 'custom', minWidth: 140,
           customComponent: 'ComSelect-page', renderTree: false, change: this.getProcessData,
@@ -871,9 +886,9 @@ export default {
             { prop: "name", label: "工序名称", type: 'input' },
           ]
         },
-   
+
         { prop: "mainUnit", label: "单位", value: "", type: 'view', minWidth: 80 },
-        
+
         { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
       ]
     },
@@ -952,16 +967,16 @@ export default {
       }
       this.selectProcessArr = []; // 清空选中的行的数据
     },
-    // 输入编排数量，重新计算投料数量
-    compount() {
-      if (this.dataForm.productionQuantity) {
-        this.materialList.forEach(item => {
-          let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6)
-          let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-          this.$set(item, 'materialsUsedQuantity', totalNum)
-        });
-      }
-    },
+    // // 输入编排数量，重新计算投料数量
+    // compount() {
+    //   if (this.dataForm.productionQuantity) {
+    //     this.materialList.forEach(item => {
+    //       let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6)
+    //       let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+    //       this.$set(item, 'materialsUsedQuantity', totalNum)
+    //     });
+    //   }
+    // },
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -1092,7 +1107,7 @@ export default {
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'productsName', data.name)
       this.$set(this.dataForm, 'projectId', data.projectId)
-      this.$set(this.dataForm, 'mainUnit', data.mainUnit)
+      this.$set(this.dataForm, 'mainUnit', this.dataForm.mainUnit ? this.dataForm.mainUnit : data.mainUnit)
       // this.$set(this.dataForm, 'productionQuantity', data.inventoryQuantity)
       this.$set(this.dataForm, 'productsId', data.id)
       this.$refs.dataForm.clearValidate('productsDrawingNo');
@@ -1500,14 +1515,16 @@ export default {
           productsCode: item.productCode,
           productsName: item.productName,
           productsDrawingNo: item.productDrawingNo,
+          pairingModeId: item.pairingModeId,
+          pairingModeName: item.pairingModeName,
 
         }
         this.materialList.push(obj)
       });
 
- 
+
       this.$set(this.dataForm, 'taskMethod', 'appoint')
- 
+
       if (pageType == 'finish') this.dataForm.stockInventoryLineId = data[0].id
       // if (pageType == 'sale') this.dataForm.stockInventoryLineId = data[0].stockInventoryLineId
 

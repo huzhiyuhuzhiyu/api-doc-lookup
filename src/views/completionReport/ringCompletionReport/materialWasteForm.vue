@@ -1,7 +1,7 @@
 <template>
 
   <el-dialog title="设置料废金额" :close-on-click-modal="false" :close-on-press-escape="false" @close="customerVisible = false"
-    :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
+    :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="40%"
     append-to-body>
 
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -35,12 +35,12 @@
                 <el-input v-model="scope.row.num" placeholder="料废数量" @blur="countFun(scope)"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="price" label="单价" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="amount" label="金额" min-width="180" sortable="custom"></el-table-column>
+            <!-- <el-table-column prop="price" label="单价" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="amount" label="金额" min-width="180" sortable="custom"></el-table-column> -->
           </JNPF-table>
           <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
             <span style="font-weight:500;margin-right:10px">料废数量合计：{{ totalNum }}</span>
-            <span style="font-weight:500;margin-right:10px">料废金额合计：{{ totalAmount }}</span>
+            <!-- <span style="font-weight:500;margin-right:10px">料废金额合计：{{ totalAmount }}</span> -->
           </div>
         </div>
       </div>
@@ -159,7 +159,7 @@ export default {
       console.log(444444);
       console.log(this.tableDataList);
 
-      if(Number(this.totalNum)>Number(this.num)) return this.$message.error("料废数量之和不能超过料废总数量")
+      if(Number(this.totalNum)!=Number(this.num)) return this.$message.error("料废数量之和只能等于料废总数量")
       if(!this.tableDataList.length) return this.$message.error("料废金额数据不能为空")
       let flag=null;
       for (let index = 0; index < this.tableDataList.length; index++) {

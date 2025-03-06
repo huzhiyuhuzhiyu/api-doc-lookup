@@ -157,6 +157,8 @@ export default {
         { prop: 'productCode', label: '产品编码', fixed: 'left' },
         { prop: 'productName', label: '产品名称', fixed: 'left' },
         { prop: 'productDrawingNo', label: '品名规格' },
+        { prop: 'pairingModeName', label: '配对方式' },
+        { prop: 'mainUnit', label: '单位' },
         // { prop: 'spec', label: '规格型号' },
         { prop: 'inventoryQuantity', label: '可用客库存' }
       ], // 产品选择弹出框表单展示字段

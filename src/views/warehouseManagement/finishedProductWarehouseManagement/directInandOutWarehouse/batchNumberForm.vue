@@ -138,6 +138,7 @@ export default {
         clearance: "",
         accuracyLevel: "",
         productsId: "",
+        inspectStockFlag: true,
       },
       refreshTree: true,
       listLoading: false,
@@ -242,6 +243,7 @@ export default {
         oil: "",
         clearance: "",
         accuracyLevel: "",
+        inspectStockFlag: true,
       }
       this.init(this.cpData, this.cpIndex)
     },

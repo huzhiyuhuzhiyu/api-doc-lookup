@@ -864,7 +864,7 @@ export default {
           label: '扣减料方式',
           value: 'picking',
           type: 'select',
-          disabled: this.btnType === 'look',
+          disabled: this.btnType === 'look'||this.dataForm.pickingWay == 'production_order',
           options: [
             { label: '生成领料单', value: 'picking' },
             { label: '自动扣减料', value: 'auto' },
@@ -872,7 +872,6 @@ export default {
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160,
-          render: this.dataForm.pickingWay == 'production_order',
         },
         { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
       ]

@@ -79,7 +79,9 @@
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text" :disabled="!scope.row.effectiveDate"
-                @click="addOrUpdateHandle(scope.row, 'look')">查看价格</el-button>
+                @click="addOrUpdateHandle(scope.row, 'look')">
+                查看价格
+              </el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -88,76 +90,27 @@
       </div>
     </div>
     <!-- 批量设置价格 -->
-    <el-dialog v-if="analyseDialog" title="批量设置单价" :close-on-click-modal="false" append-to-body
+    <el-dialog v-if="analyseDialog" title="批量设置人员" :close-on-click-modal="false" append-to-body
       :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
       <el-row :gutter="15" style="margin-top: 0px;">
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
-            <template v-if="inspectionFlag">
-              <el-col :sm="24">
-                <el-form-item prop="pricingType" label="计价类型">
-                  <el-select v-model="dataForm.pricingType" @change="pricingTypeChange" placeholder="请选择计价类型" clearable
-                    style="width: 100%;">
-                    <el-option v-for="(item, index) in [
-                      { label: '计时', value: 'by_time' },
-                      { label: '计件', value: 'by_piece' },
-                      { label: '不计价', value: 'no_piece' }
-                    ]" :key="index" :label="item.label" :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" v-if="dataForm.pricingType == 'by_time'">
-                <el-form-item prop="timePrice" label="计时单价">
-                  <el-input v-model="dataForm.timePrice" placeholder="请输入计时单价" />
-                </el-form-item>
-              </el-col>
-              <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
-                <el-form-item prop="unitPrice" label="人工检验价格">
-                  <el-input v-model="dataForm.unitPrice" placeholder="请输入人工检验价格" />
-                </el-form-item>
-                <el-form-item prop="machinesPrice" label="机器检验价格">
-                  <el-input v-model="dataForm.machinesPrice" placeholder="请输入机器检验价格" />
-                </el-form-item>
-              </el-col>
-            </template>
-            <template v-else>
-              <template v-if="processFlag">
-                <el-col :sm="24">
-                  <el-form-item prop="pricingType" label="计价类型">
-                    <el-select v-model="dataForm.pricingType" @change="pricingTypeChange" placeholder="请选择计价类型"
-                      clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in [
-                        { label: '计时', value: 'by_time' },
-                        { label: '计件', value: 'by_piece' },
-                        { label: '不计价', value: 'no_piece' }
-                      ]" :key="index" :label="item.label" :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="24" v-if="dataForm.pricingType == 'by_time'">
-                  <el-form-item prop="timePrice" label="计时单价">
-                    <el-input v-model="dataForm.timePrice" placeholder="请输入计时单价" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
-                  <el-form-item prop="unitPrice" label="计件单价">
-                    <el-input v-model="dataForm.unitPrice" placeholder="请输入计件单价" />
-                  </el-form-item>
-                </el-col>
-              </template>
-
-              <el-col :sm="24" v-else>
-                <el-form-item prop="unitPrice" label="单价">
-                  <el-input v-model="dataForm.unitPrice" placeholder="请输入单价" />
-                </el-form-item>
-              </el-col>
-            </template>
-
             <el-col :sm="24">
-              <el-form-item label="生效日期" prop="effectiveDate">
-                <el-date-picker v-model="dataForm.effectiveDate" type="date" format="yyyy-MM-dd" style="width: 100%;"
-                  value-format="yyyy-MM-dd" placeholder="请选择生效日期" :disabled="btnType ? true : false"
-                  :picker-options="effectiveDatePickerOptions"></el-date-picker>
+              <el-form-item prop="roleIds" label="角色">
+                <el-select v-model="dataForm.roleIds" placeholder="请选择角色" clearable multiple collapse-tags
+                  style="width: 100%;">
+                  <el-option v-for="(item, index) in roleData" :key="index" :label="item.fullName"
+                    :value="item.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :sm="24">
+              <el-form-item prop="staffingId" label="人员">
+                <el-select v-model="dataForm.staffingId" @focus="roleChange" placeholder="请选择角色" clearable
+                  style="width: 100%;">
+                  <el-option v-for="(item, index) in personData" :key="index" :label="item.realName"
+                    :value="item.id"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -217,6 +170,8 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import getProjectList from '@/mixins/generator/getProjectList'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import { getRoleList } from '@/api/permission/role'
+import { getUsersByUserCondition } from '@/api/permission/user'
 export default {
   components: { SuperQuery, ExportForm },
   mixins: [getProjectList],
@@ -295,6 +250,9 @@ export default {
     return {
       priceTypeName: '',
       importProjectId: '',
+
+      roleData: [],
+      personData: [],
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -326,43 +284,15 @@ export default {
       processFlag: false,
       inspectionFlag: false,
       dataForm: {
-        pricingType: '',
+        roleIds: [],
+        staffingId: '',
         effectiveDate: '',
         timePrice: '',
         unitPrice: ''
       },
       dataFormRules: {
-        pricingType: [{ required: true, message: '计价类型不能为空', trigger: 'change' }],
-        timePrice: [
-          { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
-          {
-            validator: this.formValidate('noZero', '', (errMsg) => {
-              this.$message.error('计时单价不能为0')
-            }),
-            trigger: 'blur'
-          },
-          { required: true, message: '计时单价不能为空', trigger: 'blur' }
-        ],
-        unitPrice: [
-          { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
-          {
-            validator: this.formValidate('noZero', '', (errMsg) => {
-              this.$message.error('正品单价不能为0')
-            }),
-            trigger: 'blur'
-          },
-          { required: true, message: '正品单价不能为空', trigger: 'blur' }
-        ],
-        machinesPrice: [
-          { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
-          {
-            validator: this.formValidate('noZero', '', (errMsg) => {
-              this.$message.error('机器检验价格不能为0')
-            }),
-            trigger: 'blur'
-          },
-          { required: true, message: '机器检验价格不能为空', trigger: 'blur' }
-        ],
+        roleIds: [{ required: true, message: '角色不能为空', trigger: 'change' }],
+
         effectiveDate: [{ required: true, message: '生效日期不能为空', trigger: 'change' }]
       },
       selectedData: [],
@@ -389,6 +319,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getRoleList()
     await this.getProjectList()
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
@@ -420,6 +351,21 @@ export default {
     this.initData()
   },
   methods: {
+    getRoleList() {
+      let obj = {
+        organizeId: '',
+        keyword: '',
+        currentPage: 1,
+        pageSize: -1,
+        sort: 'desc',
+        sidx: ''
+      }
+      getRoleList(obj)
+        .then((res) => {
+          this.roleData = res.data.list
+        })
+        .catch(() => { })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -442,7 +388,7 @@ export default {
         return { label: item.label, prop: item.prop }
       })
       if (this.processFlag) {
-        columnList = columnList.filter(item => item.prop !== "price")
+        columnList = columnList.filter((item) => item.prop !== 'price')
         columnList = [...columnList, { label: '正品单价', prop: 'unitPrice' }, { label: '计时单价', prop: 'timePrice' }]
       }
       this.$nextTick(() => {
@@ -636,17 +582,7 @@ export default {
       this.listMethod(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
-          if (this.processFlag) {
-            this.tableData.forEach((item) => {
-              if (item.pricingType === 'by_time') {
-                item.price = item.timePrice
-              } else if (item.pricingType === 'by_piece') {
-                item.price = item.unitPrice
-              } else if (item.pricingType === 'no_piece') {
-                item.price = 0
-              }
-            })
-          }
+         
 
           this.total = res.data.total
           this.listLoading = false
@@ -703,13 +639,7 @@ export default {
 
       let flag = this.hasDifferentPricingType(this.selectedData)
       if (flag) return this.$message.error('只能选择相同计价类型的工序数据')
-      if (this.listQuery.pricingFlag === 1) {
-        this.dataForm.pricingType = this.selectedData[0].pricingType
-      } else {
-        if (this.inspectionFlag) {
-          this.dataForm.pricingType = 'by_piece'
-        }
-      }
+     
       this.btnLoading = false
       this.analyseDialog = true
     },
@@ -734,44 +664,22 @@ export default {
       }
 
       if (submitFlag) {
-        let arr = [...this.selectedData]
-        arr.forEach((item) => {
-          item.pricingType = this.dataForm.pricingType
-          item.effectiveDate = this.dataForm.effectiveDate + ' 00:00:00'
-          if (this.inspectionFlag) {
-            item.priceType = this.priceType
-            if (item.pricingType === 'by_time') {
-              item.timePrice = this.dataForm.timePrice
-            } else if (item.pricingType === 'by_piece') {
-              item.unitPrice = this.dataForm.unitPrice
-              item.machinesPrice = this.dataForm.machinesPrice
-            }
-          } else {
-            if (this.processFlag) {
-              item.priceType = this.priceType
-              if (item.pricingType === 'by_time') {
-                item.timePrice = this.dataForm.timePrice
-              } else if (item.pricingType === 'by_piece') {
-                item.unitPrice = this.dataForm.unitPrice
-              }
-            } else {
-              item.attributeType = this.priceType
-              item.unitPrice = this.dataForm.unitPrice
-            }
-          }
-
+        let arr = this.selectedData.map(item=>{
+          return item.id
         })
+        let obj = {
+          lineIdList: arr,
+          staffingId:this.dataForm.staffingId
+        }
 
-        this.batchMethod(arr)
+        this.batchMethod(obj)
           .then((res) => {
             this.$message.success('单价设置成功')
             this.selectedData = []
             this.$refs.dataTable.$refs.JNPFTable.clearSelection()
             this.analyseDialog = false
             this.dataForm = {
-              pricingType: '',
-              timePrice: '',
-              unitPrice: ''
+              staffingId: '',
             }
             this.search()
           })
@@ -782,11 +690,27 @@ export default {
         this.btnLoading = false
       }
     },
-    pricingTypeChange(val) {
-      this.dataForm.pricingType = val
-      this.$nextTick(() => {
-        this.$refs['elForm'].clearValidate()
-      })
+    roleChange(data) {
+      let query = {
+        pagination: {
+          currentPage: 1,
+          keyword: '',
+          pageSize: -1,
+          projectId: 0,
+          sidx: '',
+          sort: ''
+        },
+        roleIds: this.dataForm.roleIds
+      }
+      getUsersByUserCondition(query)
+        .then((res) => {
+          if (res.data.list.length) {
+            this.personData = res.data.list
+          } else {
+
+          }
+        })
+        .catch(() => { })
     },
     addOrUpdateHandle(row, type) {
       this.depVisibled = true

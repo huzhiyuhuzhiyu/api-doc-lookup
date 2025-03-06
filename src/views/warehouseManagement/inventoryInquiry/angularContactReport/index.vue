@@ -49,7 +49,26 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <template v-for="item in searchList">
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="tableQuery.productDrawingNo" placeholder="品名规格" clearable
+                @keyup.enter.native="search('basic')" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="tableQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search('basic')" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <el-select v-model="tableQuery.excludeProcessFlag" placeholder="工序">
+                <el-option v-for="item in excludeProcessFlagData" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
@@ -66,7 +85,7 @@
                   :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
               </el-form-item>
             </el-col>
-          </template>
+          </template> -->
 
           <el-col :span="6">
             <el-form-item>
@@ -104,9 +123,10 @@
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
           @sort-change="sortChange" ref="tabForm">
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
-          <el-table-column prop="inventoryQuantity" label="库存" width="160" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="130" />
+          <el-table-column prop="inventoryQuantity" label="库存" width="100" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
+          <el-table-column prop="processName" label="工序名称" width="180" />
           <el-table-column prop="remark" label="备注" width="160" />
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
@@ -147,11 +167,28 @@ export default {
       processFlag: '',
       isProjectSwitchFlag: false,
       superQuery: {},
-      superForm: {},
       basicQuery: {},
       searchList: [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'excludeProcessFlag',
+          fieldValue: '',
+          label: '工序',
+          symbol: 'like',
+          searchType: 4,
+          width: 120,
+          options: [
+            { label: '所有', value: '' },
+            { label: '有工序', value: 0 },
+            { label: '无工序', value: 1 }
+          ]
+        }
+      ],
+      excludeProcessFlagData: [
+        { label: '所有', value: '' },
+        { label: '有工序', value: 0 },
+        { label: '无工序', value: 1 }
       ],
       exportFormVisible: false,
       superQueryVisible: false,
@@ -179,8 +216,8 @@ export default {
       filterText: '',
       leftFlag: false,
       tableQuery: {
+        excludeProcessFlag:'',
         totalInventoryFlag: false,
-        // projectId: '1860848897609494530',
         orderItems: [
           {
             asc: true,
@@ -276,7 +313,6 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     this.isProjectSwitchFlag = true
-    this.superForm = this.tableQuery
     this.getWarehouseTree(true)
   },
   methods: {
@@ -346,14 +382,13 @@ export default {
         virtuallyFlag: false
       }
       console.log(this.projectIdData)
-      this.projectIdData.forEach(element => {
+      this.projectIdData.forEach((element) => {
         console.log(element)
-        if (element.code === "Bproject") {
+        if (element.code === 'Bproject') {
           obj.projectId = element.id
         }
-      });
-      
-
+      })
+      console.log(obj, 'lll')
       getWarehouseList(obj)
         .then((res) => {
           this.treeData = res.data
@@ -399,10 +434,10 @@ export default {
               }
             })
         }
-        this.superForm.superQuery = this.basicQuery
+        this.tableQuery.superQuery = this.basicQuery
       }
       if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
+        this.tableQuery.superQuery = this.superQuery
       }
       if (flag) this.tableQuery.pageNum = 1
       this.initData()
@@ -412,7 +447,7 @@ export default {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
-      this.superForm = this.tableQuery = {
+      this.tableQuery = {
         orderItems: [
           {
             asc: true,
@@ -432,7 +467,20 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'excludeProcessFlag',
+          fieldValue: '',
+          label: '工序',
+          symbol: 'like',
+          searchType: 4,
+          width: 120,
+          options: [
+            { label: '所有', value: '' },
+            { label: '有工序', value: 0 },
+            { label: '无工序', value: 1 }
+          ]
+        }
       ]
       this.getWarehouseTree(true)
     },

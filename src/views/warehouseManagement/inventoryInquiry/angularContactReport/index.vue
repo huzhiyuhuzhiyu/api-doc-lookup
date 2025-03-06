@@ -450,6 +450,7 @@ export default {
         console.log(res, 'dd')
         this.shelvesData = res.data.records
       })
+      this.tableQuery.shelvesIds = []
       this.search('basic')
     },
     getNodePath(node) {

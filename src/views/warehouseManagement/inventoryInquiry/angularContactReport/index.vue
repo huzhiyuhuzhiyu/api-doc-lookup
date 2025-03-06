@@ -274,6 +274,7 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getProjectList()
     this.isProjectSwitchFlag = true
     this.superForm = this.tableQuery
     this.getWarehouseTree(true)
@@ -344,7 +345,14 @@ export default {
         scrapFlag: false,
         virtuallyFlag: false
       }
-      obj.projectId = '1860848897609494530',
+      console.log(this.projectIdData)
+      this.projectIdData.forEach(element => {
+        console.log(element)
+        if (element.code === "Bproject") {
+          obj.projectId = element.id
+        }
+      });
+      
 
       getWarehouseList(obj)
         .then((res) => {

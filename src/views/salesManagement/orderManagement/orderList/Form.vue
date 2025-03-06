@@ -45,12 +45,12 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
-                    <el-form-item label="客户合同号" prop="contractNo">
-                      <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
-                        :disabled="btnType == 'look'" maxlength="300" clearable />
-                    </el-form-item>
-                  </el-col>
+                      <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                        <el-form-item label="客户合同号" prop="contractNo">
+                          <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
+                            maxlength="300" clearable />
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="所属部门" prop="departmentId">
                           <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
@@ -144,18 +144,24 @@
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       </el-table-column>
-                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
-                  </template>
-                </el-table-column>
+                      <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
+                      </el-table-column>
+                      <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                        v-if="saleContractNoSwitch === '0'">
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                            :disabled="btnType === 'look'"></el-input>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       </el-table-column>
-                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160"
+                        v-if="isPairingModeSwitch === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false"
@@ -172,25 +178,31 @@
                       </el-table-column>
                       <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                       <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                      <el-table-column prop="price" label="单价(含税)" width="120" :key="11" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                      <el-table-column prop="price" label="单价(含税)" width="120" :key="11"
+                        v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" width="120" :key="171"  v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                      <el-table-column prop="taxRate" label="税率" width="120" :key="171"
+                        v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                         <template slot-scope="scope">
                           <div>{{ scope.row.taxRate }}%</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"  v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                      <el-table-column prop="taxAmount" label="税额" width="140"  v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                      <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"
+                        v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                      <el-table-column prop="taxAmount" label="税额" width="140"
+                        v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                      <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"
+                        v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"
+                        v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                         <template slot-scope="scope">
                           <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                         </template>
                       </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                       <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
-                      <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120" :key="211"
-                        v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                      <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
+                        :key="211" v-if="sealingCoverTypingFlag == 1"></el-table-column>
                       <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
                         v-if="accuracyLevelFlag == 1">
                       </el-table-column>
@@ -205,8 +217,8 @@
                       <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
                         v-if="packagingMethodFlag == 1">
                       </el-table-column>
-                      <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120" :key="1012"
-                        v-if="vibrationLevelFlag == 1"></el-table-column>
+                      <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120"
+                        :key="1012" v-if="vibrationLevelFlag == 1"></el-table-column>
                       <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                         v-if="materialFlag == 1"></el-table-column>
                       <el-table-column prop="colour" :label="$store.getters.colour" width="120" :key="1020"
@@ -231,15 +243,20 @@
                         </el-input>
                       </template>
                     </el-table-column>
-                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
-                  </template>
-                </el-table-column>
+                    <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
+                    </el-table-column>
+                    <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                      v-if="saleContractNoSwitch === '0'">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                          :disabled="btnType === 'look'"></el-input>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       <template slot="header">
                         <span class="required">*</span>品名规格
@@ -257,7 +274,8 @@
                         </el-input> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160"
+                      v-if="isPairingModeSwitch === '1'">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false"
@@ -284,7 +302,8 @@
                     </el-table-column>
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-show="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-show="mainUnitFlag == 1" />
-                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110"  v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
                       </template>
@@ -296,7 +315,8 @@
                         </el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="120" :key="171"  v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                    <el-table-column prop="taxRate" label="税率" width="120" :key="171"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                       <template slot="header">
                         <span class="required">*</span>税率
                       </template>
@@ -308,10 +328,14 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                    <el-table-column prop="taxAmount" label="税额" width="140" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                    <el-table-column prop="taxAmount" label="税额" width="140"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                       <template slot-scope="scope">
                         <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                       </template>
@@ -398,8 +422,8 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" :label="$store.getters.sealingCoverTyping" width="120" v-if="specialRequireFlag == 1"
-                      :key="101">
+                    <el-table-column prop="specialRequire" :label="$store.getters.sealingCoverTyping" width="120"
+                      v-if="specialRequireFlag == 1" :key="101">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable
                           allow-create style="width: 100%;">
@@ -417,7 +441,8 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" :label="$store.getters.colour" width="120" v-if="colourFlag == 1" :key="110">
+                    <el-table-column prop="colour" :label="$store.getters.colour" width="120" v-if="colourFlag == 1"
+                      :key="110">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create
                           style="width: 100%;">
@@ -448,8 +473,11 @@
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                     <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
                     <!-- <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span> -->
-                    <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">总金额(含税)：{{ totalAmount }}</span>
-                    <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">总金额(不含税)：{{ excludingTaxAmount }}</span>
+                    <span style="font-weight:500;margin-right:10px"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')">总金额(含税)：{{ totalAmount }}</span>
+                    <span style="font-weight:500;margin-right:10px"
+                      v-if="userInfo.roleCode.split(',').includes('show_sale_data')">总金额(不含税)：{{ excludingTaxAmount
+                      }}</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -493,8 +521,8 @@
                   </el-col>
                   <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
                     <el-form-item label="客户合同号" prop="contractNo">
-                      <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
-                        :disabled="btnType == 'look'" maxlength="300" clearable />
+                      <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
+                        maxlength="300" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -588,18 +616,24 @@
                   <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   </el-table-column>
-                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
-                  </template>
-                </el-table-column>
+                  <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
+                  </el-table-column>
+                  <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                    v-if="saleContractNoSwitch === '0'">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                        :disabled="btnType === 'look'"></el-input>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                    show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   </el-table-column>
-                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160"
+                    v-if="isPairingModeSwitch === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                         :disabled="btnType == 'look' ? true : false"
@@ -616,25 +650,31 @@
                   </el-table-column>
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                  <el-table-column prop="price" label="单价(含税)" width="120" :key="11" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                  <el-table-column prop="price" label="单价(含税)" width="120" :key="11"
+                    v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                  <el-table-column prop="taxRate" label="税率" width="120" :key="171"
+                    v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                     <template slot-scope="scope">
                       <div>{{ scope.row.taxRate }}%</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                  <el-table-column prop="taxAmount" label="税额" width="140" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                  <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"
+                    v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                  <el-table-column prop="taxAmount" label="税额" width="140"
+                    v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                  <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"
+                    v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"
+                    v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                     <template slot-scope="scope">
                       <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                   <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
-                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120" :key="211"
-                    v-if="accuracyLevelFlag == 1"></el-table-column>
+                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
+                    :key="211" v-if="accuracyLevelFlag == 1"></el-table-column>
                   <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="clearanceFlag == 1">
                   </el-table-column>
                   <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
@@ -675,15 +715,18 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo" v-if="saleContractNoSwitch === '0'">
+                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                  v-if="saleContractNoSwitch === '0'">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" :disabled="btnType === 'look'"></el-input>
+                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                      :disabled="btnType === 'look'"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                  show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   <template slot="header">
                     <span class="required">*</span>品名规格
@@ -722,7 +765,8 @@
                 </el-table-column>
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                <el-table-column prop="price" label="单价(含税)" width="120" :key="110"  v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
+                  v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
                   </template>
@@ -734,7 +778,8 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率" width="120" :key="171" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                <el-table-column prop="taxRate" label="税率" width="120" :key="171"
+                  v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                   <template slot="header">
                     <span class="required">*</span>税率
                   </template>
@@ -746,9 +791,12 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"
+                  v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"
+                  v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126"
+                  v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                   <template slot-scope="scope">
                     <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
                   </template>
@@ -768,8 +816,8 @@
                     <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
                   </template>
                 </el-table-column> -->
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120" v-if="sealingCoverTypingFlag == 1"
-                  :key="211">
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
+                  v-if="sealingCoverTypingFlag == 1" :key="211">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable
                       allow-create style="width: 100%;">
@@ -833,8 +881,8 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120" v-if="specialRequireFlag == 1"
-                  :key="101">
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120"
+                  v-if="specialRequireFlag == 1" :key="101">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create
                       style="width: 100%;">
@@ -852,7 +900,8 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour" width="120" v-if="colourFlag == 1" :key="110">
+                <el-table-column prop="colour" :label="$store.getters.colour" width="120" v-if="colourFlag == 1"
+                  :key="110">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create
                       style="width: 100%;">
@@ -922,17 +971,17 @@
                 <el-form @submit.native.prevent>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input @keyup.native.enter="search()"  v-model="form.code" placeholder="客户编码" clearable />
+                      <el-input @keyup.native.enter="search()" v-model="form.code" placeholder="客户编码" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input @keyup.native.enter="search()"  v-model="form.name" placeholder="客户名称" clearable />
+                      <el-input @keyup.native.enter="search()" v-model="form.name" placeholder="客户名称" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input @keyup.native.enter="search()"  v-model="form.taxId" placeholder="税号" clearable />
+                      <el-input @keyup.native.enter="search()" v-model="form.taxId" placeholder="税号" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6">
@@ -1005,12 +1054,14 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                      <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productCode"
+                        placeholder="请输入产品编码" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="6" v-if="isProductNameSwitch == 1">
                     <el-form-item>
-                      <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                      <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productName"
+                        placeholder="请输入产品名称" clearable />
                     </el-form-item>
                   </el-col>
                   <!-- <el-col :span="6">
@@ -1138,8 +1189,8 @@ export default {
   },
   data() {
     return {
-      isProjectSwitch:'',
-      projectIdData:[],
+      isProjectSwitch: '',
+      projectIdData: [],
       attributesListVisible: false,
       formVisible: false,
       isattachmentswitch: '',
@@ -1147,6 +1198,7 @@ export default {
       oldType: "",
       createdData: {
         customerProductNo: "",
+        customerProductName:"",
         drawingNo: "",
         productCode: "",
         mainUnit: "",
@@ -1194,6 +1246,7 @@ export default {
       loadingText: '',
       ProductTableItems: [
         { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
+        { prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left' },
         { prop: 'productCode', label: '产品编码' },
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'mainUnit', label: '单位' },
@@ -1439,7 +1492,7 @@ export default {
       taxRate: 13,
       isPairingModeSwitch: '', // 配对方式显示隐藏
       pairingModeList: [],
-      pageType:""
+      pageType: ""
     }
   },
   computed: {
@@ -1517,8 +1570,8 @@ export default {
   },
 
   methods: {
-     // 配对方式显示隐藏
-     async getPairingModeSwitch(code, type) {
+    // 配对方式显示隐藏
+    async getPairingModeSwitch(code, type) {
       try {
         this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
@@ -1689,7 +1742,7 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    async getProject(){
+    async getProject() {
       await this.getProjectSwitch('system', 'project')
       if (this.isProjectSwitch === '1') {
         await this.getProjectList()
@@ -2381,7 +2434,7 @@ export default {
         productStatus: 'enable',
         saleFlag: true,
         productCategoryId: "",
-        projectId:"",
+        projectId: "",
         code: "",
         name: "",
         orderItems: [{
@@ -2395,7 +2448,7 @@ export default {
         pageSize: 20,
       }
       if (this.isProjectSwitch === '1') {
-        console.log(this.userInfo,'ss')
+        console.log(this.userInfo, 'ss')
         this.ProductListRequestObj.projectId = this.userInfo.userProjectId
       }
       this.allproductData = []
@@ -2453,7 +2506,7 @@ export default {
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
-        projectId:"",
+        projectId: "",
         saleFlag: true,
         productCode: "",
         productName: "",
@@ -2468,10 +2521,10 @@ export default {
         pageSize: 20,
       }
       if (this.isProjectSwitch === '1') {
-        console.log(this.userInfo,'ss')
+        console.log(this.userInfo, 'ss')
         this.ProductListRequestObj.projectId = this.userInfo.userProjectId
       }
-        this.searchAllProduct()
+      this.searchAllProduct()
     },
     // 所有产品列表 多选
     handleSelectionChangeAllPruduct(val) {
@@ -2768,11 +2821,11 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
-    init(id, btnType, approvalFlag,pageType) {
-      console.log("tytpe",pageType);
+    init(id, btnType, approvalFlag, pageType) {
+      console.log("tytpe", pageType);
       this.dataForm.id = id || ''
       this.btnType = btnType
-      this.pageType=pageType||''
+      this.pageType = pageType || ''
       this.approvalFlag = approvalFlag
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
@@ -3049,7 +3102,7 @@ export default {
               // 删除空行
               this.productData.splice(index, 1);
             }
-            if(!this.productData.length){
+            if (!this.productData.length) {
               submitFlag = false
               this.$message.error("请选择产品信息")
               return
@@ -3253,15 +3306,13 @@ export default {
   margin-bottom: 5px
 }
 
-//.el-button--small {
-// padding: 1;
-//}</style>
 ::v-deep .el-tabs__content {
-height: auto !important;
-padding: 0;
+  height: auto !important;
+  padding: 0;
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
-padding: 9px 10px;
+  padding: 9px 10px;
 }
 </style>
 <style scoped lang="scss">

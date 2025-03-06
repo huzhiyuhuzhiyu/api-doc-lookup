@@ -1146,7 +1146,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="160" sortable="custom" />
-          <el-table-column prop="personName" label="领料人" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="领料人" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">

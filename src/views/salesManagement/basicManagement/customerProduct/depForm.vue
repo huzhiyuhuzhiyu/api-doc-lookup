@@ -60,6 +60,15 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="customerProductName" label=" 客户产品名称" min-width="160">
+                  
+                      <template slot-scope="scope">
+                        <el-form-item  >
+                          <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType !== 'add'">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
@@ -95,9 +104,9 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="140">
+                    <el-table-column prop="taxRate" label="税率" width="140">
                       <template slot="header">
-                        <span class="required">*</span>税率(%)
+                        <span class="required">*</span>税率
                       </template>
                       <!-- <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'taxRate'" :rules='productRules.taxRate'>
@@ -334,6 +343,15 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
+                <el-table-column prop="customerProductName" label=" 客户产品名称" min-width="160">
+                  
+                  <template slot-scope="scope">
+                    <el-form-item  >
+                      <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType !== 'add'">
+                      </el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
@@ -384,9 +402,9 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率(%)" width="140">
+                <el-table-column prop="taxRate" label="税率" width="140">
                   <template slot="header">
-                    <span class="required">*</span>税率(%)
+                    <span class="required">*</span>税率
                   </template>
                   <!-- <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'taxRate'" :rules='productRules.taxRate'>
@@ -885,6 +903,7 @@ export default {
       oldType: "",
       tipsvisible: false,
       createdData: {
+        customerProductName:"",
         salesQuotationId: '',
         productsId: "",
         customerProductNo: "",
@@ -1880,7 +1899,7 @@ export default {
     },
     init(row, btnType, approvalFlag) {
       this.formLoading = true
-      this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName } || '' : ''
+      this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName,taxRate:row.taxRate*1 } || '' : ''
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
       this.getProject()
@@ -1911,6 +1930,7 @@ export default {
             })
           }
         })
+        this.row.taxRate=this.row.taxRate*1
         this.dataForm.validDateArr = [row.dateOrderStart, row.dateOrderStop]
         this.dataFormTwo.lines.push(this.row)
         console.log(this.dataFormTwo.lines,'this.dataFormTwo.lines12')

@@ -31,19 +31,13 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:10px">
           <div>
-            <el-button size="mini" type="primary" @click="handleBatch">批量设置价格</el-button>
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="el-icon-download" @click="exportForm">
-              导出
-            </el-button>
+            <el-button size="mini" type="primary" @click="handleBatch">批量设置检验人员</el-button>
           </div>
-
           <div class="JNPF-common-head-right">
-            <!-- <el-tooltip content="高级查询" placement="top" v-if="true">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
-            </el-tooltip> -->
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -58,38 +52,33 @@
             <el-table-column v-if="item.prop == 'effectiveDate'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center" :sortable="item.sortable"
               :formatter="jnpf.tableDateFormatStrDay"></el-table-column>
-            <el-table-column v-else-if="item.prop == 'pricingType'" :prop="item.prop" :key="item.prop"
+            <el-table-column v-else-if="item.prop == 'productSource'" :prop="item.prop" :key="item.prop"
               :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 130"
               :sortable="item.sortable">
               <template slot-scope="{ row }">
-                <template v-if="row.pricingType == 'by_time'">
-                  计时
+                <template v-if="row.productSource == 'produce'">
+                  生产
                 </template>
-                <template v-else-if="row.pricingType == 'by_piece'">
-                  计件
+                <template v-else-if="row.productSource == 'purchase'">
+                  采购
                 </template>
-                <template v-else-if="row.pricingType == 'no_piece'">
-                  不计价
+                <template v-else-if="row.productSource == 'out'">
+                  外协
+                </template>
+                <template v-else-if="row.productSource == 'assemble'">
+                  组装
                 </template>
               </template>
             </el-table-column>
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
               :min-width="item.minWidth || 130" :sortable="item.sortable" />
           </template>
-          <el-table-column label="操作" width="100" fixed="right">
-            <template slot-scope="scope">
-              <el-button size="mini" type="text" :disabled="!scope.row.effectiveDate"
-                @click="addOrUpdateHandle(scope.row, 'look')">
-                查看价格
-              </el-button>
-            </template>
-          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" />
       </div>
     </div>
-    <!-- 批量设置价格 -->
+    <!-- 批量设置检验人员 -->
     <el-dialog v-if="analyseDialog" title="批量设置人员" :close-on-click-modal="false" append-to-body
       :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
       <el-row :gutter="15" style="margin-top: 0px;">
@@ -106,11 +95,12 @@
             </el-col>
             <el-col :sm="24">
               <el-form-item prop="staffingId" label="人员">
-                <el-select v-model="dataForm.staffingId" @focus="roleChange" placeholder="请选择角色" clearable
-                  style="width: 100%;">
-                  <el-option v-for="(item, index) in personData" :key="index" :label="item.realName"
-                    :value="item.id"></el-option>
-                </el-select>
+                <InspectComSelectPpage clearable :isdisabled="type === 'look'" :renderTree="false"
+                  v-model="dataForm.staffingName" @change="supplierdata" :tableItems="staffingTableItems"
+                  :placeholder="'请选择人员'" title="选择人员" :listMethod="getUsersByUserCondition"
+                  :listRequestObj="staffingListRequestObj" :searchList="staffingTableSearchList"
+                  :listDataFormatting="listDataFormatting" :totalFormatting="totalFormatting"
+                  :beforeOpen="beforeOpen" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -126,41 +116,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- 导入产品 -->
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-      :http-request="UploadProduct" />
 
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <!-- <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
-        <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
-          :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
-          <el-option v-for="item in projectIdDataList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-        </el-select>
-      </div> -->
-
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">
-          只能上传.xls/.xlsx文件
-          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
-            下载模板
-          </el-button>
-        </div>
-      </el-upload>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="saveSubmit()">
-          提交
-        </el-button>
-      </span>
-    </el-dialog>
-    <depForm :priceType="priceType" :listMethod="listMethod" :delMethod="delMethod" :tableItems="detailTableItems"
-      :superQueryJson="superQueryJson" :columnList="columnList" v-if="depVisibled" ref="depForm" @close="closeForms" />
   </div>
 </template>
 
@@ -168,12 +124,11 @@
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport } from '@/api/basicData/index'
 import { getRoleList } from '@/api/permission/role'
 import { getUsersByUserCondition } from '@/api/permission/user'
+import InspectComSelectPpage from "./ComSelect-page/index.vue";
 export default {
-  components: { SuperQuery, ExportForm },
+  components: { SuperQuery, InspectComSelectPpage },
   mixins: [getProjectList],
   props: {
     priceType: {
@@ -186,14 +141,6 @@ export default {
     },
     /* 设置数据请求方法 */
     batchMethod: {
-      required: true
-    },
-    /* 上传数据请求方法 */
-    uploadMethod: {
-      required: true
-    },
-    /* 删除数据请求方法 */
-    delMethod: {
       required: true
     },
     /* 列表数据请求体 */
@@ -298,7 +245,26 @@ export default {
       selectedData: [],
       basicQuery: {},
       superQuery: {},
-      detailTableItems: []
+      detailTableItems: [],
+      getUsersByUserCondition,
+      staffingListRequestObj: {
+        pagination: {
+          currentPage: 1,
+          keyword: '',
+          pageSize: -1,
+          projectId: 0,
+          sidx: '',
+          sort: ''
+        },
+        roleIds: []
+      },
+      staffingTableSearchList: [
+        { prop: 'realName', label: '姓名', type: 'input' },
+      ],
+      staffingTableItems: [
+        { prop: 'realName', label: '姓名' },
+        { prop: 'organize', label: '组织' },
+      ]
     }
   },
   watch: {
@@ -323,31 +289,8 @@ export default {
     await this.getProjectList()
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
-    // 判断是产品类型
-    if (this.priceType === 'process') {
-      this.priceTypeName = '工序'
-      this.processFlag = true
-    } else if (this.priceType === 'inspection') {
-      this.priceTypeName = '工序质量'
-      this.inspectionFlag = true
-      this.dataForm.pricingType = 'by_piece'
-      this.dataFormRules.unitPrice = [
-        { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
-        {
-          validator: this.formValidate('noZero', '', (errMsg) => {
-            this.$message.error('人工检验价格不能为0')
-          }),
-          trigger: 'blur'
-        },
-        { required: true, message: '人工检验价格不能为空', trigger: 'blur' }
-      ]
-    } else if (this.priceType === 'packaging') {
-      this.priceTypeName = '包装'
-      this.processFlag = false
-    } else if (this.priceType === 'vibrate') {
-      this.priceTypeName = '振动'
-      this.processFlag = false
-    }
+
+
     this.initData()
   },
   methods: {
@@ -378,167 +321,6 @@ export default {
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
-    },
-
-    // 导出
-    exportForm() {
-      this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
-      columnList = columnList.map((item) => {
-        return { label: item.label, prop: item.prop }
-      })
-      if (this.processFlag) {
-        columnList = columnList.filter((item) => item.prop !== 'price')
-        columnList = [...columnList, { label: '正品单价', prop: 'unitPrice' }, { label: '计时单价', prop: 'timePrice' }]
-      }
-      this.$nextTick(() => {
-        this.$refs.exportForm.init(columnList)
-      })
-    },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
-        }
-        let _data = {
-          ...this.listQuery,
-          exportType: this.processFlag ? '1231' : '1230',
-          exportName: `产品${this.priceTypeName}价格信息`,
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
-        }
-        excelExport(_data)
-          .then((res) => {
-            this.exportFormVisible = false
-            if (!res.data.url) return
-            this.jnpf.downloadFile(res.data.url)
-          })
-          .catch(() => { })
-      }
-    },
-
-    // 导入
-    importForm() {
-      // this.$refs.UploadProduct.$el.querySelector('input').click()
-      // if (this.userInfo.projectId !== '1') {
-      //   this.importProjectId = this.userInfo.projectId
-      // } else {
-      //   this.importProjectId = ''
-      // }
-      this.uploadVisib = true
-    },
-    handleRemove(file, fileList) { },
-    handlePreview(file) { },
-    handleFileChange(file) {
-      this.file = file.raw
-    },
-    // 下载模板
-    downLoadTemplate() {
-      const a = document.createElement('a')
-      a.setAttribute('download', '')
-
-      a.setAttribute('href', location.origin + `/static/产品${this.priceTypeName}单价导入模板.xlsx`)
-
-      a.click()
-    },
-    // 上传产品
-    UploadProduct(data) {
-      this.loadingText = '正在导入数据'
-      this.formLoading = true
-      var formData = new FormData()
-      formData.append('file', data)
-      // if (this.isProjectSwitch === '1') {
-      //   formData.append('projectId', this.importProjectId)
-      // }
-      if (this.processFlag) {
-        formData.append('priceType', this.priceType)
-      } else {
-        formData.append('attributeType', this.priceType)
-      }
-      //调用上传文件接口
-      this.uploadMethod(formData)
-        .then((res) => {
-          if (!res.data) {
-            this.$message.success(`导入成功`)
-            this.uploadVisib = false
-            this.$refs['UploadProduct']
-            this.initData()
-          } else {
-            this.uploadVisib = false
-            this.handleMessage(res.data)
-          }
-
-          this.formLoading = false
-          this.loadingText = ''
-        })
-        .catch((err) => {
-          this.uploadVisib = false
-          // this.$message.error(`导入数据超过最大限制：500`)
-          this.$message.error(`导入失败`)
-          this.formLoading = false
-          this.loadingText = ''
-        })
-    },
-    // 导入产品  下载导入错误数据
-    downNoProduct(res) {
-      this.jnpf.downloadFile(res.url, res.name)
-      this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles()
-    },
-    cancelFun() {
-      this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles()
-    },
-    saveSubmit() {
-      // if (this.isProjectSwitch === '1') {
-      //   if (!this.importProjectId) return this.$message.error('请选择所属项目')
-      // }
-      if (!this.file) return this.$message.error('请上传文件')
-      this.UploadProduct(this.file)
-    },
-    // 提示
-    handleMessage(data) {
-      const h = this.$createElement
-      this.$message({
-        type: 'error',
-        duration: 0,
-        showClose: true,
-        customClass: 'my-message', // 自定义类名，用于设置样式
-        message: h(
-          'div',
-          {
-            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
-          },
-          [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在产品工序单价导入相关错误！'),
-            h(
-              'el-button',
-              {
-                props: {
-                  type: 'text',
-                  size: 'mini',
-                  icon: 'el-icon-download'
-                },
-                on: {
-                  click: () => {
-                    this.downNoProduct(data)
-                  }
-                },
-                style: {
-                  border: 'none',
-                  textAlign: 'center',
-                  // width:"20%",
-                  margin: '0 5px 0 5px '
-                }
-              },
-              '下载导入错误数据'
-            )
-          ]
-        )
-      })
-      return
     },
     sortChange({ prop, order }) {
       let newProp
@@ -582,8 +364,6 @@ export default {
       this.listMethod(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
-         
-
           this.total = res.data.total
           this.listLoading = false
         })
@@ -639,7 +419,7 @@ export default {
 
       let flag = this.hasDifferentPricingType(this.selectedData)
       if (flag) return this.$message.error('只能选择相同计价类型的工序数据')
-     
+
       this.btnLoading = false
       this.analyseDialog = true
     },
@@ -664,12 +444,12 @@ export default {
       }
 
       if (submitFlag) {
-        let arr = this.selectedData.map(item=>{
+        let arr = this.selectedData.map(item => {
           return item.id
         })
         let obj = {
           lineIdList: arr,
-          staffingId:this.dataForm.staffingId
+          staffingId: this.dataForm.staffingId
         }
 
         this.batchMethod(obj)
@@ -691,58 +471,48 @@ export default {
       }
     },
     roleChange(data) {
-      let query = {
-        pagination: {
-          currentPage: 1,
-          keyword: '',
-          pageSize: -1,
-          projectId: 0,
-          sidx: '',
-          sort: ''
-        },
-        roleIds: this.dataForm.roleIds
-      }
-      getUsersByUserCondition(query)
-        .then((res) => {
-          if (res.data.list.length) {
-            this.personData = res.data.list
-          } else {
-
-          }
-        })
-        .catch(() => { })
+      this.staffingListRequestObj.roleIds = this.dataForm.roleIds
     },
-    addOrUpdateHandle(row, type) {
-      this.depVisibled = true
-      let listDetailQuery = { ...this.listQuery }
-      delete listDetailQuery.effectFlag
-      listDetailQuery.productsId = row.productsId
-      listDetailQuery.processId = row.processId
-      listDetailQuery.pricingFlag = ''
-      listDetailQuery.orderItems = [
-        {
-          asc: true,
-          column: 'effective_date'
+    listDataFormatting(res) {
+      res.data.list.forEach((item, index) => {
+        if (item.classType === 'packaging') {
+          item.classTypeName = '包装物'
+        } else if (item.classType === 'inner_ring_blank') {
+          item.classTypeName = '内圈毛坯'
+        } else if (item.classType === 'outer_ring_blank') {
+          item.classTypeName = '外圈毛坯'
+        } else if (item.classType === 'inner_ring') {
+          item.classTypeName = '内圈'
+        } else if (item.classType === 'outer_ring') {
+          item.classTypeName = '外圈'
+        } else if (item.classType === 'abrasive') {
+          item.classTypeName = '磨料'
+        } else if (item.classType === 'oil') {
+          item.classTypeName = '油料'
+        } else if (item.classType === 'accessory') {
+          item.classTypeName = '配件'
+        } else if (item.classType === 'turnover_box') {
+          item.classTypeName = '周转箱'
+        } else if (item.classType === 'holder') {
+          item.classTypeName = '保持架'
+        } else if (item.classType === 'sealing_cap') {
+          item.classTypeName = '密封盖'
         }
-      ]
-      console.log(this.tableItems, 'this.tableItems')
-      this.detailTableItems = []
-      this.detailTableItems = [...this.tableItems]
-      console.log(this.detailTableItems, 'deee')
-      let index = this.detailTableItems.findIndex((obj) => obj.prop === 'effectiveDate')
-      this.detailTableItems.splice(index + 1, 0, { prop: 'expiringDate', label: '失效日期', minWidth: '160' })
-      this.$nextTick(() => {
-        this.$refs.depForm.init(JSON.stringify(listDetailQuery), type)
       })
+
+      return res.data.list
     },
-    // 关闭 收款新建、编辑页面
-    closeForms(isRefresh) {
-      this.collectionVisibled = false
-      this.makeVisibled = false
-      this.depVisibled = false
-      if (isRefresh) {
-        this.initData()
-      }
+    totalFormatting(res) {
+      return res.data.pagination.total
+    },
+    async beforeOpen(paramsObj) {
+      this.staffingListRequestObj.roleIds = this.dataForm.roleIds
+      return true
+    },
+    supplierdata(val,data){
+      console.log(data,';kkjj')
+      this.dataForm.staffingName = data[0].all.realName
+      this.dataForm.staffingId = data[0].all.id
     }
   }
 }

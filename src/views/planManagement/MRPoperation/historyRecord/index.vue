@@ -413,7 +413,7 @@
                 </el-table-column>
               </JNPF-table>
               <pagination :total="total3" :page.sync="purchaseForm.pageNum" :limit.sync="purchaseForm.pageSize"
-                @pagination="initData">
+                @pagination="getpurchaseData">
                 <div style="background: #f5f7fa;text-align:end" class="text">
                   <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
                   <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
@@ -556,7 +556,7 @@
                 </el-table-column>
               </JNPF-table>
               <pagination :total="total4" :page.sync="outForm.pageNum" :limit.sync="outForm.pageSize"
-                @pagination="initData">
+                @pagination="getouteData">
                 <div style="background: #f5f7fa;text-align:end" class="text">
                   <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
                   <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>

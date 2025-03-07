@@ -1873,6 +1873,7 @@ export default {
           }],
           pageNum: 1,
           pageSize: 20,
+          saleFlag:true,
         }
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {

@@ -175,7 +175,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column v-if="activeName == 'assemble'" @sort-change="sortChange"
+                <JNPF-table custom-column v-if="activeName == 'assemble'" @sort-change="sortChange1"
                   :partentOrChild="'assemble'" :data="assembleData" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
                   <el-table-column prop="planNo" label="计划单号" min-width="140" sortable="custom" />
@@ -251,7 +251,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
+                <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange2" :data="produceData"
                   v-if="activeName == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef">
                   <el-table-column prop="planNo" label="计划单号" min-width="140" sortable="custom" />
@@ -353,7 +353,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
+                <JNPF-table custom-column :partentOrChild="'purchase'" @sort-change="sortChange3" :data="purchaseData"
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
                   <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
@@ -442,7 +442,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column :partentOrChild="'out'" @sort-change="sortChange" :data="outData"
+                <JNPF-table custom-column :partentOrChild="'out'" @sort-change="sortChange4" :data="outData"
                   highlight-current-row :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border
                   ref="outRef">
 
@@ -547,7 +547,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column v-if="activeNameIss == 'assemble'" @sort-change="sortChange"
+                <JNPF-table custom-column v-if="activeNameIss == 'assemble'" @sort-change="sortChange5"
                   :partentOrChild="'assemble'" :data="assembleDataIss" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
                   <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
@@ -624,7 +624,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-                <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceDataIss"
+                <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange6" :data="produceDataIss"
                   v-if="activeNameIss == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef"> 
                   <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
@@ -727,7 +727,7 @@
                   </div>
                 </div>
                 <JNPF-table v-if="activeNameIss == 'purchase'" custom-column :partentOrChild="'purchase'"
-                  @sort-change="sortChange" :data="purchaseDataIss" :setColumnDisplayList="columnList3"
+                  @sort-change="sortChange7" :data="purchaseDataIss" :setColumnDisplayList="columnList3"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="purchaseRef">
                   <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -816,7 +816,7 @@
                   </div>
                 </div>
                 <JNPF-table v-if="activeNameIss == 'out'" custom-column :partentOrChild="'out'"
-                  @sort-change="sortChange" :data="outDataIss" highlight-current-row :setColumnDisplayList="columnList4"
+                  @sort-change="sortChange8" :data="outDataIss" highlight-current-row :setColumnDisplayList="columnList4"
                   :fixedNO="true" class="dataTable" border ref="outRef">
 
                   <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
@@ -1457,7 +1457,23 @@ export default {
         this.$refs.complateSetForm.init(id, type,flag);
       });
     },
+    sortChange1({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
 
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.assembleForm.orderItems[0].asc = order === "ascending"
+      this.assembleForm.orderItems[0].column = order === null ? "" : newProp
+      this.getassembleData()
+    },
     // 组装列表数据
     getassembleData() {
       this.assembleForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -1474,6 +1490,23 @@ export default {
 
       })
     },
+    sortChange5({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
+
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.assembleFormIss.orderItems[0].asc = order === "ascending"
+      this.assembleFormIss.orderItems[0].column = order === null ? "" : newProp
+      this.getassembleDataIss()
+    },
     // 组装数据  全部下达界面
     getassembleDataIss() {
       this.assembleFormIss.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -1489,7 +1522,23 @@ export default {
 
       })
     },
+    sortChange2({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
 
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.produceForm.orderItems[0].asc = order === "ascending"
+      this.produceForm.orderItems[0].column = order === null ? "" : newProp
+      this.getproduceData()
+    },
     // 生产列表数据
     getproduceData() {
       this.produceForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -1516,6 +1565,23 @@ export default {
 
       })
     },
+    sortChange6({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
+
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.produceFormIss.orderItems[0].asc = order === "ascending"
+      this.produceFormIss.orderItems[0].column = order === null ? "" : newProp
+      this.getproduceDataIss()
+    },
     // 生产数据  全部下达界面
     getproduceDataIss() {
       this.produceFormIss.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -1538,6 +1604,23 @@ export default {
         this.outputQuantityIss = totalData.outputQuantity || 0
 
       })
+    },
+    sortChange3({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
+
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.purchaseForm.orderItems[0].asc = order === "ascending"
+      this.purchaseForm.orderItems[0].column = order === null ? "" : newProp
+      this.getpurchaseData()
     },
     // 采购列表数据
     getpurchaseData() {
@@ -1565,6 +1648,23 @@ export default {
 
 
       })
+    },
+    sortChange7({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
+
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.purchaseFormIss.orderItems[0].asc = order === "ascending"
+      this.purchaseFormIss.orderItems[0].column = order === null ? "" : newProp
+      this.getpurchaseDataaIss()
     },
     // 采购 数据 全部下达界面
     getpurchaseDataaIss() {
@@ -1594,6 +1694,23 @@ export default {
 
       })
     },
+    sortChange3({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
+
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.outForm.orderItems[0].asc = order === "ascending"
+      this.outForm.orderItems[0].column = order === null ? "" : newProp
+      this.getouteData()
+    },
     // 外协列表数据
     getouteData() {
       this.outForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -1620,6 +1737,23 @@ export default {
 
 
       })
+    },
+    sortChange8({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
+
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.outFormIss.orderItems[0].asc = order === "ascending"
+      this.outFormIss.orderItems[0].column = order === null ? "" : newProp
+      this.getouteDataIss()
     },
     // 外协数据  全部下达界面
     getouteDataIss() {
@@ -1726,6 +1860,7 @@ export default {
       this.planVisible = true
       this.searchPlan()
     },
+  
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {

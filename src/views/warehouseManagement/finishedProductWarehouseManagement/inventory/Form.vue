@@ -4,7 +4,7 @@
       lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body @close="visible = false">
       <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
         <div class="JNPF-common-layout-center JNPF-flex-main">
-          <el-row class="JNPF-common-search-box" :gutter="16" v-if="inventorySearcheListFlag">
+          <el-row class="JNPF-common-search-box" :gutter="16" v-if="!$store.getters.configData.warehouse.inventorySearcheListFlag">
             <el-form @submit.native.prevent>
               <el-col :span="6">
                 <el-form-item>
@@ -38,7 +38,7 @@
               </el-col>
             </el-form>
           </el-row>
-          <el-row class="JNPF-common-search-box" :gutter="16" v-if="$store.getters.configData.product.enable_productName">
+          <el-row class="JNPF-common-search-box" :gutter="16" v-if="$store.getters.configData.warehouse.inventorySearcheListFlag">
             <el-form @submit.native.prevent>
               <el-col :span="4">
                 <el-form-item>

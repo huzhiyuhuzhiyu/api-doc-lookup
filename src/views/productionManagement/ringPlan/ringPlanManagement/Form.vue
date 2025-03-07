@@ -103,7 +103,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 19px;">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -810,8 +810,10 @@ export default {
       }
     },
     getProcessData(id, data, params, index) {
+      console.log(555,id, data, params, index);
       this.materialList[params.scope.$index].processId = data[0].id || ''
       this.materialList[params.scope.$index].processName = data[0].name || ''
+      console.log(this.materialList);
     },
     creaFun() {
       this.linesFormItems_right = [
@@ -864,7 +866,7 @@ export default {
           label: '扣减料方式',
           value: 'picking',
           type: 'select',
-          disabled: this.btnType === 'look'||this.dataForm.pickingWay == 'production_order',
+          disabled: this.btnType === 'look',
           options: [
             { label: '生成领料单', value: 'picking' },
             { label: '自动扣减料', value: 'auto' },
@@ -1557,7 +1559,8 @@ export default {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
-        lineEdgeList: arr
+        lineEdgeList: arr,
+        materialList:this.materialList
       }
       addProdPlanArrange(obj).then(res => {
         this.btnLoading = false

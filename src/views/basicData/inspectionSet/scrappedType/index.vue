@@ -30,7 +30,7 @@
                                 {{ $t('common.search') }}
                             </el-button>
                             <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset')
-                                }}</el-button>
+                            }}</el-button>
                         </el-form-item>
                     </el-col>
                 </el-form>
@@ -56,8 +56,10 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
-                    custom-column :setColumnDisplayList="columnList">
+                <JNPF-table v-if="tableDataFlag" v-loading="listLoading" :data="tableDataList" ref="dataTable"
+                    @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+                    <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="abProjectSwitchVisible"></el-table-column>
                     <el-table-column prop="name" label="不良名称" sortable="custom" />
                     <el-table-column prop="price" label="单价" sortable="custom" width="120"></el-table-column>
                     <el-table-column prop="type" label="不良类型" align="center" sortable="custom" width="160">
@@ -94,11 +96,15 @@ import DepForm from './depForm'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 export default {
     name: 'scrappedType',
     components: { DepForm, SuperQuery },
+    mixins: [AbProjectMixin],
     data() {
         return {
+            isProjectSwitch: '',
+            tableDataFlag: false,
             superQueryVisible: false,
             superQueryJson: [
                 {
@@ -181,8 +187,11 @@ export default {
             this.$refs.treeBox.filter(val)
         }
     },
-    created() {
+    async created() {
+        await this.awaitAbProject()
+        this.tableDataFlag = true
         this.initData()
+
     },
     methods: {
         superQuerySearch(query) {

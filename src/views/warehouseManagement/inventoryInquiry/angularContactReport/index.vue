@@ -384,7 +384,7 @@ export default {
       console.log(this.projectIdData)
       this.projectIdData.forEach((element) => {
         console.log(element)
-        if (element.code === 'Bproject') {
+        if (element.code === 'BP') {
           obj.projectId = element.id
         }
       })

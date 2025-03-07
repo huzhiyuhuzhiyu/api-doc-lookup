@@ -61,9 +61,9 @@
 
         <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList">
-          <el-table-column prop="name" label="产线名称" sortable="custom" />
           <el-table-column prop="code" label="产线编码" sortable="custom">
           </el-table-column>
+          <el-table-column prop="name" label="产线名称" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="workshopName" label="加工车间" sortable="custom"></el-table-column>
           <el-table-column prop="remark" label="备注"></el-table-column>

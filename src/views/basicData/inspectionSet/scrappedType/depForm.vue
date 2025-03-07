@@ -13,7 +13,7 @@
           <template slot="label">
             所属项目<span class="required">*</span>
           </template>
-          <el-select v-model="dataForm.projectId" placeholder="所属项目" style="width: 100%;" :disabled="dataForm.projectId !== '1'">
+          <el-select v-model="dataForm.projectId" placeholder="所属项目" style="width: 100%;" :disabled="abProjectId !== '1'">
             <el-option v-for="item in abProjectList" :key="item.id" :label="item.label" :value="item.id"></el-option>
           </el-select>
         </el-form-item>

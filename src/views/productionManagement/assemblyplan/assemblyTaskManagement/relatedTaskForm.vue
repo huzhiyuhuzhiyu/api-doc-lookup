@@ -97,6 +97,7 @@ export default {
       },
       cpId: "",
       type: "",
+      planNo:"",
     }
   },
   methods: {
@@ -110,6 +111,7 @@ export default {
       this.listLoading = true
       this.locationVisible = true
       this.tableQuery.productionPlanNo=data
+      this.planNo=data
       this.getOrderFun()
 
     },
@@ -141,7 +143,7 @@ export default {
       this.tableQuery = {
         productDrawingNo: "",
         orderNo: "",
-        productionPlanNo: "",
+        productionPlanNo: this.planNo,
         orderItems: [
           {
             asc: true,

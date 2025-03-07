@@ -138,7 +138,9 @@
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" placeholder="责废数量"
-                        @blur="handleBlur2" class="ipt" />
+                        @blur="handleBlur2" class="ipt materialWaste" />
+                        <el-button type="primary" :disabled="!currentProcess.responsibilityWasteQuantity"
+                        style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
@@ -257,7 +259,8 @@
     <OutForm v-if="processOutFormVisible" ref="outForm" @close="closeForm"></OutForm>
     <MaterialWasteForm v-if="materialWasteFormVisible" ref="materialWasteFormRef" @change="materialWasteData">
     </MaterialWasteForm>
-
+    <responsWaste v-if="responsWasteFormVisible" ref="responsWasteFormRef" @change="responsWasteData">
+    </responsWaste>
 
   </div>
 
@@ -275,13 +278,15 @@ import { log } from 'mathjs'
 import OutForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderCreation/processOut.vue'
 import recordForm from './recordForm.vue'
 import MaterialWasteForm from './materialWasteForm.vue';
+import responsWaste from './responsWaste.vue'
 export default {
 
   components: {
-    recordForm, OutForm, MaterialWasteForm
+    recordForm, OutForm, MaterialWasteForm,responsWaste
   },
   data() {
     return {
+      responsWasteFormVisible:false,
       materialWasteFormVisible: false,
       apertureList: [],
       targetHeight: "",
@@ -333,6 +338,7 @@ export default {
       producerMargin: '30px',
       materialList: [],
       materialWasteDataList: [],
+      responsWasteDataList:[],
       copyCurrentProcess: {}
     }
   },
@@ -345,12 +351,25 @@ export default {
       console.log("this.materialWasteDataList", this.materialWasteDataList);
       this.materialWasteFormVisible = true
       this.$nextTick(() => {
-        this.$refs.materialWasteFormRef.init(JSON.parse(JSON.stringify(this.materialWasteDataList)), this.currentProcess.materialWasteQuantity)
+        this.$refs.materialWasteFormRef.init(JSON.parse(JSON.stringify(this.materialWasteDataList)), this.currentProcess.materialWasteQuantity,this.dataForm.projectId)
+      })
+    },
+    // 设置责废原因
+    setResponsWasteM() {
+      console.log("this.responsWasteDataList", this.responsWasteDataList);
+      this.responsWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.responsWasteFormRef.init(JSON.parse(JSON.stringify(this.responsWasteDataList)), this.currentProcess.responsibilityWasteQuantity,this.dataForm.projectId)
       })
     },
     materialWasteData(data) {
       console.log("设置的料废金额", data);
       this.materialWasteDataList = data
+    },
+    responsWasteData(data){
+      console.log("责废数据",data);
+      this.responsWasteDataList = data
+
     },
     // 转外协
     transferOutFun() {

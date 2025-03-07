@@ -9,6 +9,14 @@
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
+        <el-form-item label="所属项目" prop="projectId" v-if="$store.getters.configData.system.project" >
+          <template slot="label">
+            所属项目<span class="required">*</span>
+          </template>
+          <el-select v-model="dataForm.projectId" placeholder="所属项目" style="width: 100%;" :disabled="abProjectId !== '1'">
+            <el-option v-for="item in abProjectList" :key="item.id" :label="item.label" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="不良名称" prop="name">
           <template slot="label">
             不良名称<span class="required">*</span>
@@ -25,7 +33,7 @@
           <template slot="label">
             不良类型<span class="required">*</span>
           </template>
-          <el-select v-model="dataForm.type" placeholder="不良类型" clearable style="width: 100%;">
+          <el-select v-model="dataForm.type" placeholder="不良类型" style="width: 100%;">
             <el-option v-for="item in typeData" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -51,17 +59,23 @@ import {
   checkScrapCategoryName
 } from '@/api/basicData/index'
 import formValidate from '@/utils/formValidate'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 export default {
+  mixins:[AbProjectMixin],
   data() {
     return {
+      isProjectSwitch: '',
+      
       visible: false,
       formLoading: false,
       btnLoading: false,
       isdisabled: false,
       title: '',
       dataForm: {
+        projectId:'',
         name: '',
         price: '',
+        type:'',
         id: ''
       },
       typeData: [
@@ -124,21 +138,43 @@ export default {
           },
           { validator: this.formValidate('positiveNumber', '', (errMsg) => { }), trigger: 'blur' },
         ],
+        type: [
+          {
+            required: true,
+            message: '请选择不良类型',
+            trigger: ['change']
+          },
+        ],
+        projectId: [
+          {
+            required: true,
+            message: '请选择所属项目',
+            trigger: ['change']
+          },
+        ],
       }
     }
   },
-  created() { },
+ async created() {
+    await this.awaitAbProject()
+    await this.getProjectList()
+  },
   methods: {
     handleClose() { },
 
     init(row) {
 
       this.visible = true
-
+      this.dataForm.id = row ? row.id :''
       this.title = !this.dataForm.id ? '新建不良原因' : '编辑不良原因'
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
-        this.dataForm = { ...row }
+        if (this.dataForm.id) {
+          this.dataForm = { ...row }
+        } else {
+          this.dataForm.projectId = this.abProjectId
+        }
+        
       })
 
     },

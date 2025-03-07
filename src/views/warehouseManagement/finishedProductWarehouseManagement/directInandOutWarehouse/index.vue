@@ -568,9 +568,9 @@
                 </el-tooltip>
               </div>
             </div>
-            <JNPF-table ref="productVisible" :partentOrChild="'child'" custom-column v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+            <JNPF-table ref="productVisibles" :partentOrChild="'child'" custom-column v-loading="listLoading" :data="productList" hasC :fixedNO="true"
               @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
-              <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" sortable="custom" />
+              <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" sortable="custom" v-if="dataForm.businessType!=='inbound_sale_return'"/>
               <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
@@ -1382,9 +1382,11 @@ export default {
       this.productVisible = true
       this.orderForm.productName = ""
       this.listQuery.productName = ""
+      this.listQuery.pageNum = 1
+      this.listQuery.pageNum = 1
       this.advancedQueryFuns()
-      this.searchProductFun()
-      this.$nextTick(() => { this.$refs.productVisible.doLayout() })
+      this.resetProductFun()
+      this.$nextTick(() => { this.$refs.productVisibles.doLayout() })
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
@@ -1465,13 +1467,16 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerName' || prop === 'productDrawingNo' || prop === 'productName' || prop === 'productCode') {
+      if ( prop === 'productDrawingNo' || prop === 'productName' || prop === 'productCode') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
+      if(prop=='partnerName'&&this.dataForm.businessType=='outbound') newProp =prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase())
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.listQuery.orderItems[0].asc = order === 'ascending'
+      this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.searchProductFun()
     },
     // 选完产品后  渲染在产品信息列表
@@ -1576,7 +1581,7 @@ export default {
     },
     productColumnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
-      this.$refs.productVisible.showDrawer()
+      this.$refs.productVisibles.showDrawer()
     },
     // 产品信息列表多选
     handeleProductInfoData(val) {

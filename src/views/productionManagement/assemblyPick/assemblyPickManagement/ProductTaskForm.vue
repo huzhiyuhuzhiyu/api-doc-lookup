@@ -39,8 +39,8 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
+          <JNPF-table  :data="tableDataList"  :fixedNO="true" style="height: 100%;" ref="product">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom"> </el-table-column>
             <el-table-column prop="orderType" label="生产任务类型" min-width="160" sortable="custom">
               <template slot-scope="scope">
@@ -127,6 +127,10 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
 
 
+    this.$nextTick(() => { this.$refs.product.doLayout() })
+  },
+  mounted () {
+    
   },
   methods: {
     async getProductNameSwitch(code, type) {
@@ -147,11 +151,13 @@ export default {
       this.listLoading = true
       this.orderForm.projectId = id
       ordershengchanList(this.orderForm).then(res => {
-      this.customerVisible = true
-      console.log("工艺路线", res);
+        this.customerVisible = true
+        console.log("工艺路线", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
-        this.listLoading = false
+        setTimeout(() => {
+          this.listLoading = false
+        }, 500);
       }).catch(() => {
         this.listLoading = false
       })
@@ -184,5 +190,9 @@ export default {
 
 .selectProcess.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body {
   padding: 0 !important;
+}
+
+::v-deep .el-table__body-wrapper {
+  height: calc(100% - 50px) !important;
 }
 </style>

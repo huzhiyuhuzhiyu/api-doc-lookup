@@ -27,12 +27,12 @@
 
                 <el-descriptions class="margin-top" :column="4">
                   <el-descriptions-item label="产品编码">{{ dataForm.productsCode }}</el-descriptions-item>
-                  <el-descriptions-item label="计划生产数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
+                  <!-- <el-descriptions-item label="计划生产数量">{{ dataForm.planProductionQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity ? dataForm.completedQuantity : '0'
                     }}{{
                       dataForm.mainUnit
-                    }}</el-descriptions-item>
+                    }}</el-descriptions-item> -->
                   <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
                   <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
                   <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>

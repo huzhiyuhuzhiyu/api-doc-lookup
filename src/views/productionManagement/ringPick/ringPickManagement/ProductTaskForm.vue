@@ -40,7 +40,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true"  ref="product">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom"> </el-table-column>
             <el-table-column prop="orderType" label="生产任务类型" min-width="160" sortable="custom">
               <template slot-scope="scope">
@@ -127,9 +127,11 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.$nextTick(() => { this.$refs.product.doLayout() })
 
 
   },
+
   methods: {
     async getProductNameSwitch(code, type) {
       try {
@@ -153,7 +155,10 @@ export default {
         console.log("工艺路线", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
-        this.listLoading = false
+        setTimeout(() => {
+          this.listLoading = false
+        }, 500);
+
       }).catch(() => {
         this.listLoading = false
       })
@@ -186,5 +191,8 @@ export default {
 
 .selectProcess.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body {
   padding: 0 !important;
+}
+::v-deep .el-table__body-wrapper{
+  height: calc(100% - 50px)!important;
 }
 </style>

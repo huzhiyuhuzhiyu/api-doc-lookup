@@ -97,6 +97,7 @@ export default {
       },
       cpId: "",
       type: "",
+      planNo:"",
     }
   },
   methods: {
@@ -109,8 +110,10 @@ export default {
     init(data) {
       this.listLoading = true
       this.locationVisible = true
+      this.planNo=data
       this.tableQuery.productionPlanNo=data
       this.getOrderFun()
+      this.$nextTick(() => { this.$refs.product.doLayout() })
 
     },
     getOrderFun(){
@@ -141,7 +144,7 @@ export default {
       this.tableQuery = {
         productDrawingNo: "",
         orderNo: "",
-        productionPlanNo: "",
+        productionPlanNo: this.planNo,
         orderItems: [
           {
             asc: true,

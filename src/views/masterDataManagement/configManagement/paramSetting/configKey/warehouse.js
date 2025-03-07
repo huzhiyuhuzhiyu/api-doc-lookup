@@ -25,6 +25,6 @@ export default {
     },
     inventorySearcheListFlag: {
         configKeyLabel: '启用库存明细查询条件',
-        description: '启用库存明细查询条件后,则库存明细查询条件按精度等级、配对方式、打字内容、库位名称查询'
+        description: '启用库存明细查询条件后,则库存明细查询条件按精度等级、配对方式、打字内容、库位名称查询。'
       }
 }

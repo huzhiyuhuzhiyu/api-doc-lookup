@@ -13,7 +13,7 @@
           <template slot="label">
             所属项目<span class="required">*</span>
           </template>
-          <el-select v-model="dataForm.projectId" placeholder="所属项目" clearable style="width: 100%;" :disabled="dataForm.projectId !== '1'">
+          <el-select v-model="dataForm.projectId" placeholder="所属项目" style="width: 100%;" :disabled="dataForm.projectId !== '1'">
             <el-option v-for="item in abProjectList" :key="item.id" :label="item.label" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -33,7 +33,7 @@
           <template slot="label">
             不良类型<span class="required">*</span>
           </template>
-          <el-select v-model="dataForm.type" placeholder="不良类型" clearable style="width: 100%;">
+          <el-select v-model="dataForm.type" placeholder="不良类型" style="width: 100%;">
             <el-option v-for="item in typeData" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -72,8 +72,10 @@ export default {
       isdisabled: false,
       title: '',
       dataForm: {
+        projectId:'',
         name: '',
         price: '',
+        type:'',
         id: ''
       },
       typeData: [

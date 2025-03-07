@@ -23,4 +23,8 @@ export default {
         configKeyLabel: '启用比重折扣',
         description: '启用比重折扣后，采购和外协收货入库、外协发料出库时，则必须填写重重和比重。'
     },
+    inventorySearcheListFlag: {
+        configKeyLabel: '启用库存明细查询条件',
+        description: '启用库存明细查询条件后,则库存明细查询条件按精度等级、配对方式、打字内容、库位名称查询'
+      }
 }

@@ -622,7 +622,7 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
+  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList,PrintDialog,PrintBrowse },
   mixins: [flowMixin, busFlow, getProjectList],
   data() {
     return {
@@ -1148,7 +1148,7 @@ export default {
       row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
       row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6)
       if (this.mainUnitFlag == 1) {
-        if (item.calculationDirection == 'multiplication') {
+        if (row.calculationDirection == 'multiplication') {
           this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
         } else {
           this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))

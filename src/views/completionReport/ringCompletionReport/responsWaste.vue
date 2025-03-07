@@ -1,8 +1,8 @@
 <template>
 
-  <el-dialog title="设置料废金额" :close-on-click-modal="false" :close-on-press-escape="false" @close="customerVisible = false"
-    :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="40%"
-    append-to-body>
+  <el-dialog title="设置责废原因" :close-on-click-modal="false" :close-on-press-escape="false"
+    @close="customerVisible = false" :visible.sync="customerVisible" lock-scroll
+    class="JNPF-dialog JNPF-dialog_center selectPro" width="40%" append-to-body>
 
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
 
@@ -12,34 +12,44 @@
           <div>
             <el-button type="text" icon="el-icon-plus" @click="addLinFun"
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
-            <span style="font-weight:500;margin-right:10px">料废总数量：{{ num }}</span>
+            <span style="font-weight:500;margin-right:10px">责废总数量：{{ num }}</span>
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
-            <el-table-column prop="name" label="料废类型" min-width="180" sortable="custom">
+            <el-table-column prop="name" label="责废原因" min-width="180" sortable="custom">
               <template slot="header">
-                <span class="required">*</span>料废类型
+                <span class="required">*</span>责废原因
               </template>
               <template slot-scope="scope">
-                <el-select v-model="scope.row.scrapId" placeholder="料废类型" style="width: 100%;" class="ipt"
+                <el-select v-model="scope.row.scrapId" placeholder="责废原因" style="width: 100%;" class="ipt"
                   @change="(value) => handleSelectionChange(value, scope)">
                   <el-option v-for="(item, index) in materialWasteList" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="num" label="料废数量" min-width="180" sortable="custom">
+            <el-table-column prop="num" label="责废数量" min-width="180" sortable="custom">
               <template slot="header">
-                <span class="required">*</span>料废数量
+                <span class="required">*</span>责废数量
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.num" placeholder="料废数量" @blur="countFun(scope)"></el-input>
+                <el-input v-model="scope.row.num" placeholder="责废数量" @blur="countFun(scope)"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="person" label="责废人" min-width="180" sortable="custom">
+              <template slot="header">
+                <span class="required">*</span>责废人
+              </template>
+              <template slot-scope="scope">
+                <user-select v-model="scope.row.person" placeholder="生产人" clearable style="width: 100%;"
+                  class="ipt" @change="hangleSelectSales(scope)"  @focus="handeleFocus(scope.$index)">
+                </user-select>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="price" label="单价" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="amount" label="金额" min-width="180" sortable="custom"></el-table-column> -->
           </JNPF-table>
           <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
-            <span style="font-weight:500;margin-right:10px">料废数量合计：{{ totalNum }}</span>
+            <span style="font-weight:500;margin-right:10px">责废数量合计：{{ totalNum }}</span>
             <!-- <span style="font-weight:500;margin-right:10px">料废金额合计：{{ totalAmount }}</span> -->
           </div>
         </div>
@@ -61,17 +71,16 @@ export default {
       customerVisible: false,
 
       form: {
-        projectId:"",
-        type:"material_fee",
         name: "",
         pageNum: -1,
         pageSize: -1,
         documentStatus: "submit",
+        type:"responsibility_fee",
         orderItems: [{
           asc: false,
           column: ""
         },],
-
+        projectId:"",
       },
       listLoading: false,
       total: 0,
@@ -107,6 +116,8 @@ export default {
 
   },
   methods: {
+   
+ 
     countFun(row) {
       let index = row.$index
       this.tableDataList[index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.num, row.row.price]), 6)
@@ -162,33 +173,33 @@ export default {
       console.log(444444);
       console.log(this.tableDataList);
 
-      if(Number(this.totalNum)!=Number(this.num)) return this.$message.error("料废数量之和只能等于料废总数量")
-      if(!this.tableDataList.length) return this.$message.error("料废金额数据不能为空")
-      let flag=null;
+      if (Number(this.totalNum) != Number(this.num)) return this.$message.error("责废数量之和只能等于责废总数量")
+      if (!this.tableDataList.length) return this.$message.error("责废数据不能为空")
+      let flag = null;
       for (let index = 0; index < this.tableDataList.length; index++) {
         const item = this.tableDataList[index];
-        if(!item.scrapId){
+        if (!item.scrapId) {
           this.$message({
-          message: "请选择第" + (index + 1) + "行的料废类型",
-          type: 'error',
-          duration: 1500,
-        })          
-        flag=false
-        break
+            message: "请选择第" + (index + 1) + "行的责废原因",
+            type: 'error',
+            duration: 1500,
+          })
+          flag = false
+          break
         }
-        if(!item.num){
+        if (!item.num) {
           this.$message({
-          message: "请输入第" + (index + 1) + "行数量",
-          type: 'error',
-          duration: 1500,
-        })          
-        flag=false
-        break
+            message: "请输入第" + (index + 1) + "行数量",
+            type: 'error',
+            duration: 1500,
+          })
+          flag = false
+          break
         }
       }
-       
-      if(flag===false)return
-      this.customerVisible=false
+
+      if (flag === false) return
+      this.customerVisible = false
       this.$emit('change', this.tableDataList)
     }
 

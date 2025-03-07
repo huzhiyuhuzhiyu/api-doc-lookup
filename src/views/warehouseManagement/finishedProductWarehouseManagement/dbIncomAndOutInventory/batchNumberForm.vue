@@ -166,7 +166,7 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",
-
+      excludeProcessFlag:"",
     }
   },
   async created() {

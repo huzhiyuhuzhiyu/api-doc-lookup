@@ -178,6 +178,7 @@
                 <JNPF-table custom-column v-if="activeName == 'assemble'" @sort-change="sortChange"
                   :partentOrChild="'assemble'" :data="assembleData" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
+                  <el-table-column prop="planNo" label="计划单号" min-width="140" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -199,7 +200,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
@@ -254,6 +254,7 @@
                 <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
                   v-if="activeName == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
                   :fixedNO="true" class="dataTable" border ref="produceRef">
+                  <el-table-column prop="planNo" label="计划单号" min-width="140" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -276,7 +277,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
                     <template slot-scope="scope">
@@ -356,6 +356,7 @@
                 <JNPF-table custom-column :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
                   :setColumnDisplayList="columnList3" highlight-current-row :fixedNO="true" class="dataTable" border
                   ref="purchaseRef">
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -367,7 +368,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
                     <template slot-scope="scope">
@@ -446,6 +446,7 @@
                   highlight-current-row :setColumnDisplayList="columnList4" :fixedNO="true" class="dataTable" border
                   ref="outRef">
 
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -466,7 +467,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
                     <template slot-scope="scope">
@@ -550,6 +550,7 @@
                 <JNPF-table custom-column v-if="activeNameIss == 'assemble'" @sort-change="sortChange"
                   :partentOrChild="'assemble'" :data="assembleDataIss" :setColumnDisplayList="columnList1"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef">
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -572,7 +573,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
@@ -626,7 +626,8 @@
                 </div>
                 <JNPF-table custom-column :partentOrChild="'produce'" @sort-change="sortChange" :data="produceDataIss"
                   v-if="activeNameIss == 'produce'" :setColumnDisplayList="columnList2" :key="2" highlight-current-row
-                  :fixedNO="true" class="dataTable" border ref="produceRef">
+                  :fixedNO="true" class="dataTable" border ref="produceRef"> 
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -649,7 +650,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
                     <template slot-scope="scope">
@@ -729,6 +729,7 @@
                 <JNPF-table v-if="activeNameIss == 'purchase'" custom-column :partentOrChild="'purchase'"
                   @sort-change="sortChange" :data="purchaseDataIss" :setColumnDisplayList="columnList3"
                   highlight-current-row :fixedNO="true" class="dataTable" border ref="purchaseRef">
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -740,7 +741,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
                     <template slot-scope="scope">
@@ -819,6 +819,7 @@
                   @sort-change="sortChange" :data="outDataIss" highlight-current-row :setColumnDisplayList="columnList4"
                   :fixedNO="true" class="dataTable" border ref="outRef">
 
+                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" /> 
                   <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -839,7 +840,6 @@
                       <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
                     <template slot-scope="scope">
@@ -1062,10 +1062,10 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
-      columnList1: ["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
-      columnList2: ["productCode", "planNo", "planEndDate"],
-      columnList3: ["productCode", "planNo", "planEndDate"],
-      columnList4: ["productCode", "planNo", "planEndDate"],
+      columnList1: ["productCode",  "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
+      columnList2: ["productCode",  "planEndDate"],
+      columnList3: ["productCode",  "planEndDate"],
+      columnList4: ["productCode",  "planEndDate"],
       // ---------运算结果相关字段
       complateSetFormVisible: false,
       dbformVisible: false,

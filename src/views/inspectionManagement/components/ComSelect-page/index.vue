@@ -48,6 +48,7 @@
   * 事件
   - checkSelectable 判断列表行是否可选的方法
   - listDataFormatting 列表数据格式化方法
+  - totalFormatting total数据格式化方法
   - rowDblclick 列表行双击事件
   * 插槽
   - table-action 自定义操作栏
@@ -359,11 +360,7 @@ export default {
     totalFormatting: {
       type: Function,
       /* (res) => {
-          let treeData = res.data.records.map(item => {
-            item.name = item.code;
-            return item;
-          });
-          return treeData
+          return res.data.total
         } */
     },
     placeholder: {
@@ -696,11 +693,11 @@ export default {
         console.log("listRes",listRes);
         if (this.listDataFormatting) { this.tableData = this.listDataFormatting({ ...listRes, listQuery: this.listQuery }) }
         
-        else if (Array.isArray(listRes.data)) { this.tableData = listRes.data||listRes.data.whPage.records }
-        else { this.tableData = listRes.data.records||listRes.data.whPage.records  }
+        else if (Array.isArray(listRes.data)) { this.tableData = listRes.data }
+        else { this.tableData = listRes.data.records  }
         this.tableData.forEach((row, index) => { row._index = index });
-        if (this.totalFormatting) { this.total = this.totalFormatting({ ...listRes, listQuery: this.listQuery }) } else{
-          this.total = listRes.data.total||listRes.data.whPage.total 
+        if (this.totalFormatting) { this.total = this.totalFormatting({ ...listRes, listQuery: this.listQuery }) } else {
+          this.total = listRes.data.total
         }
         
         await this.$nextTick()

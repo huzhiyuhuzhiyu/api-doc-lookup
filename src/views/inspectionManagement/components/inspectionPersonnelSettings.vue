@@ -94,7 +94,7 @@
               </el-form-item>
             </el-col>
             <el-col :sm="24">
-              <el-form-item prop="staffingId" label="人员">
+              <el-form-item prop="staffingName" label="人员">
                 <InspectComSelectPpage clearable :isdisabled="type === 'look'" :renderTree="false"
                   v-model="dataForm.staffingName" @change="supplierdata" :tableItems="staffingTableItems"
                   :placeholder="'请选择人员'" title="选择人员" :listMethod="getUsersByUserCondition"
@@ -232,6 +232,7 @@ export default {
       inspectionFlag: false,
       dataForm: {
         roleIds: [],
+        staffingName: '',
         staffingId: '',
         effectiveDate: '',
         timePrice: '',
@@ -240,7 +241,7 @@ export default {
       dataFormRules: {
         roleIds: [{ required: true, message: '角色不能为空', trigger: 'change' }],
 
-        effectiveDate: [{ required: true, message: '生效日期不能为空', trigger: 'change' }]
+        staffingName: [{ required: true, message: '检验人员不能为空', trigger: 'change' }]
       },
       selectedData: [],
       basicQuery: {},
@@ -509,10 +510,14 @@ export default {
       this.staffingListRequestObj.roleIds = this.dataForm.roleIds
       return true
     },
-    supplierdata(val,data){
-      console.log(data,';kkjj')
-      this.dataForm.staffingName = data[0].all.realName
-      this.dataForm.staffingId = data[0].all.id
+    supplierdata(val, data) {
+      if (data && data.length) { // 数据有效，进行更新
+        this.dataForm.staffingName = data[0].all.realName
+        this.dataForm.staffingId = data[0].all.id
+      } else { // 不选择任何内容，置空绑定的值
+        this.dataForm.staffingName = ''
+        this.dataForm.staffingId = ''
+      }
     }
   }
 }

@@ -37,7 +37,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         drawingNo: '', // 图号
-        productSource: 'purchase', // 产品来源
+        productSource: 'out', // 产品来源
         startAndEndTime: [], // 创建时间
         productCategoryId: '', // 类型id
         productStatus: '', // 产品状态
@@ -49,7 +49,7 @@ export default {
         { prop: 'productCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
         { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', minWidth: '140', sortable: 'custom' },
-        { prop: 'productSource', label: '产品来源', minWidth: '140' },
+        { prop: 'productSource', label: '产品来源', minWidth: '140',},
         { prop: 'processCode', label: '配置检验人员', minWidth: '140', sortable: 'custom' },
         { prop: 'processCode', label: '最近更新时间', minWidth: '140', sortable: 'custom' },
       ],

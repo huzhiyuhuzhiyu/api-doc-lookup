@@ -37,7 +37,6 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head">
-                    <!-- <el-dropdown> -->
                     <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('add')">
                         新建
                     </el-button>
@@ -228,10 +227,11 @@ export default {
                 this.tableQuery.startTime = ''
                 this.tableQuery.endTime = ''
             }
+            if (this.abProjectSwitchVisible) {
+                this.tableQuery.projectId = this.abProjectId
+            }
             getScrapCategoryList(this.tableQuery)
                 .then((res) => {
-                    //
-                    console.log('货位表格', res)
                     this.tableDataList = res.data.records
                     this.total = res.data.total
                     this.listLoading = false

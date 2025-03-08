@@ -970,12 +970,12 @@ export default {
             return {
               ...item,
               productsCode: item.productCode,
-              productsName: item.productName,
-              productsId: item.productId,
+              productsName: item.productName, 
               productsDrawingNo: item.productDrawingNo,
               materialsUsedQuantity: totalNum,
               processName: '',
               processId: item.processId || '',
+              productsId:item.productId,
             }
           }) : []
         })

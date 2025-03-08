@@ -83,7 +83,8 @@
                       </el-col>
 
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate" :style="dataForm.taskMethod!=='appoint'?'margin-bottom:19px':''">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate"
+                          :style="dataForm.taskMethod !== 'appoint' ? 'margin-bottom:19px' : ''">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -570,7 +571,7 @@ export default {
       routingVisible: false,
       collectForm: {
         orderNo: "",
-        operationDate: this.jnpf.getToday(), 
+        operationDate: this.jnpf.getToday(),
         personId: "",
       },
       collectConfig: {
@@ -1238,21 +1239,21 @@ export default {
 
               BOMLineList(this.dataForm.bomId).then(res => {
                 console.log("产品BOM", res);
-                this.materialList = res.data.length ? res.data.map(item=>{
-                    let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
-                    let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
-                    return {
-                        ...item,
-                        productsCode: item.productCode,
-                        productsName: item.productName,
-                        productsDrawingNo: item.productDrawingNo,
-                        materialsUsedQuantity:totalNum,
-                        processName:'',
-                        processId:item.processId || '',
-                        productsId:item.productId
-                    }
+                this.materialList = res.data.length ? res.data.map(item => {
+                  let num = this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, (1 + Number(item.lossRate)), item.qty]), 6)
+                  let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [num, item.fixedLoss]), 6)
+                  return {
+                    ...item,
+                    productsCode: item.productCode,
+                    productsName: item.productName,
+                    productsDrawingNo: item.productDrawingNo,
+                    materialsUsedQuantity: totalNum,
+                    processName: '',
+                    processId: item.processId || '', 
+                    productsId: item.productId,
+                  }
                 }) : []
-                console.log("materialList",this.materialList);
+                console.log("materialList", this.materialList);
               })
             } else {
               this.$message.error("该产品没有BOM，请配置BOM后再试")
@@ -1356,8 +1357,9 @@ export default {
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160,
         },
-        { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140,
-        itemRules: [
+        {
+          prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140,
+          itemRules: [
             { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：领料数量${errMsg}`) }] }), trigger: 'blur' },
             { required: true, message: '', trigger: 'blur' },
             { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：领料数量${errMsg}`) }] }), trigger: 'blur' },
@@ -1390,7 +1392,7 @@ export default {
     checkFun() {
       let submitFlag = null;
       if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
-      
+
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
       if (this.naturalResourcesFlag) {
@@ -1410,7 +1412,7 @@ export default {
               });
               break;
             }
-          } 
+          }
           // else {
           //   if (!item.personId && item.processingType == "self_produced") {
           //     submitFlag = false;
@@ -1438,7 +1440,7 @@ export default {
       }
       console.log("表单", this.dataForm);
       console.log("工序", this.dataFormTwo.data);
-     
+
       this.dataFormTwo.data.forEach(item => {
         item.routingProResList.forEach(items => {
           items.processId = item.processId
@@ -1446,13 +1448,13 @@ export default {
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
       let arr = []
-   
+
       if (this.dataForm.pickingWay == 'dispatch_list') {
         arr.push({
           productionOrderId: "",
           warehouseId: this.dataForm.lineEdgeId
         })
-      } else if (this.dataForm.pickingWay === 'production_order'  && this.dataForm.lineEdgeList.length) {
+      } else if (this.dataForm.pickingWay === 'production_order' && this.dataForm.lineEdgeList.length) {
 
         this.dataForm.lineEdgeList.forEach(item => {
           arr.push({
@@ -1521,15 +1523,15 @@ export default {
 
     },
     addth(data, index, type) {
-      console.log("dtata",data);
+      console.log("dtata", data);
       let tempList = JSON.parse(JSON.stringify(this.materialList))
       let hasItemList = []
       for (let i = 0; i < data.length; i++) {
         let item = data[i];
-        item.productsId =  item.id
-        item.productsCode =   item.code
-        item.productsName =   item.name
-        item.productsDrawingNo =   item.drawingNo
+        item.productsId = item.id
+        item.productsCode = item.code
+        item.productsName = item.name
+        item.productsDrawingNo = item.drawingNo
         item.qty = 1
         const hasFlag = this.materialList.find(i => item.productsId === i.productsId)
         if (hasFlag) { hasItemList.push(item.productDrawingNo) }

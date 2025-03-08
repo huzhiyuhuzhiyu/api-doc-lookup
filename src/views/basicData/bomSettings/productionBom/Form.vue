@@ -776,7 +776,7 @@ export default {
         // this.dataForm.version = this.dataForm.hasOwnProperty('version') ? (this.dataForm.version + 1) : 1
         // this.dataForm.approvalStatus = this.dataForm.documentStatus === "submit" ? this.dataForm.approvalStatus : ""
         this.dataForm.documentStatus = submitModel
-        this.dataForm.pickingWay = 'production_order'
+        // this.dataForm.pickingWay = 'production_order'
         const formMethod = this.dataForm.id ? updateBomData : addBomData
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {

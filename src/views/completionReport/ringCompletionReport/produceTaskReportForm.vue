@@ -65,8 +65,13 @@
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">工单类型：</span>
-                  <span class="left-title" v-if="currentProcess.orderType == 'normal'">正常工单</span>
-                  <span class="left-title" v-if="currentProcess.orderType == 'rework'">返工工单</span>
+                  <span class="left-title" v-if="processInfo.processType == 'normal'">正常工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'vibrate'">测振工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'heat_treatment'">热工工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'packing'">包装工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'pairs'">配对工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'grinding'">磨孔工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'accuracy'">精度工序</span>
                 </div>
               </el-col>
 
@@ -137,21 +142,21 @@
 
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="责废数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.responsibilityWasteQuantity" placeholder="责废数量"
+                      <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
                         @blur="handleBlur2" class="ipt materialWaste" />
-                        <el-button type="primary" :disabled="!currentProcess.responsibilityWasteQuantity"
+                        <el-button type="primary" 
                         style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="料废数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur2"
+                      <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"  
                         class="ipt materialWaste" />
-                      <el-button type="primary" :disabled="!currentProcess.materialWasteQuantity"
-                        style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>计算料废金额</el-button>
+                      <el-button type="primary"  
+                        style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24">
+                  <!-- <el-col :sm="24" :xs="24">
                     <el-form-item label="利用数量:" class="iptLabel">
                       <el-input v-model="currentProcess.utilizeQuantity" placeholder="料废数量" @blur="handleBlur2"
                         class="ipt" />
@@ -170,7 +175,7 @@
                       <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt"
                         @blur="handleBlur2" />
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
                       <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
@@ -199,7 +204,7 @@
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="设备:" class="iptLabel">
-                      <el-select v-model="currentProcess.equipmentName" placeholder="设备" style="width: 100%;"
+                      <el-select v-model="currentProcess.equipmentId" placeholder="设备" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in equipmentList" :key="index" :label="item.name"
                           :value="item.value"></el-option>
@@ -286,6 +291,7 @@ export default {
   },
   data() {
     return {
+      processInfo:{},
       responsWasteFormVisible:false,
       materialWasteFormVisible: false,
       apertureList: [],
@@ -310,7 +316,7 @@ export default {
         {label:"否",value:false,},
 
       ],
-
+      equipmentList:"", 
       currentProcess: {},
       listLoading: false,
       currentProcessId: "",
@@ -362,14 +368,21 @@ export default {
         this.$refs.responsWasteFormRef.init(JSON.parse(JSON.stringify(this.responsWasteDataList)), this.currentProcess.responsibilityWasteQuantity,this.dataForm.projectId)
       })
     },
-    materialWasteData(data) {
-      console.log("设置的料废金额", data);
+    materialWasteData(data,totalNums) {
+      console.log("设置的料废金额", data,totalNums);
       this.materialWasteDataList = data
+      if(totalNums){
+        this.currentProcess.materialWasteQuantity=totalNums
+        this.handleBlur2()
+      }
     },
-    responsWasteData(data){
-      console.log("责废数据",data);
+    responsWasteData(data,totalNums){
+      console.log("责废数据",data,totalNums);
       this.responsWasteDataList = data
-
+      if(totalNums){
+        this.currentProcess.responsibilityWasteQuantity=totalNums
+        this.handleBlur2()
+      }
     },
     // 转外协
     transferOutFun() {
@@ -404,6 +417,10 @@ export default {
           this.currentProcess = res.data.workOrderList[0]
           this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
         }
+        if(this.currentProcess.workOrderResMap && this.currentProcess.workOrderResMap.device){
+          
+          this.equipmentList=this.currentProcess.workOrderResMap.device
+        }
         this.$set(this.currentProcess, 'reportingQuantity', 0)
         this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
@@ -434,11 +451,12 @@ export default {
       this.targetHeight2 = ""
       this.commonFun()
 
+      this.processInfo = JSON.parse(JSON.stringify(item))
     },
     handleBlur(item, data) {
 
 
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.utilizeQuantity, this.currentProcess.reworkQuantity]), 6)
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
 
       this.$nextTick(() => {
@@ -448,16 +466,19 @@ export default {
       })
     },
     handleBlur2() {
+      console.log(555);
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
-
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.utilizeQuantity, this.currentProcess.reworkQuantity]), 6)
+      console.log(666);
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
+      console.log(777,this.currentProcess.reportingQuantity);
+      console.log(777,this.currentProcess.unqualifiedQuantity);
     },
     reportingTimeChange(e) {
       this.currentProcess.reportingTime = e + ' 00:00:00'
     },
     commonFun() {
-      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity,this.currentProcess.utilizeQuantity]), 6)
+      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
 
       if (this.currentProcess.processingType == 'self_produced' && this.currentProcess.reportFlag == true) {
         this.getvibrationLevelFun()
@@ -553,13 +574,13 @@ export default {
           let submitFlag = null
           if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
             this.submitFlag = false
-            this.$message.error("合格数量+不合格数量+利用数量+返工数量不能超过可报工数量")
+            this.$message.error("合格数量+不合格数量不能超过可报工数量")
             return
           }
           let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
           if (total <= 0 || !total) {
             submitFlag = false
-            this.$message.error("请填写合格数量、料废数量、责废数量、返工数量")
+            this.$message.error("请填写合格数量、料废数量、责废数量")
             return
           }
           if (this.currentProcess.reportFlag && this.currentProcessType === 1) {

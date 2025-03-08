@@ -570,7 +570,7 @@ export default {
       routingVisible: false,
       collectForm: {
         orderNo: "",
-        operationDate: "",
+        operationDate: this.jnpf.getToday(), 
         personId: "",
       },
       collectConfig: {
@@ -1354,7 +1354,6 @@ export default {
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160,
-          render: this.dataForm.pickingWay == 'production_order',
         },
         { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140,
         itemRules: [
@@ -1410,16 +1409,17 @@ export default {
               });
               break;
             }
-          } else {
-            if (!item.personId && item.processingType == "self_produced") {
-              submitFlag = false;
-              this.$message({
-                message: "第" + (index + 1) + "行工序需配置人员信息",
-                type: "error",
-              });
-              break;
-            }
-          }
+          } 
+          // else {
+          //   if (!item.personId && item.processingType == "self_produced") {
+          //     submitFlag = false;
+          //     this.$message({
+          //       message: "第" + (index + 1) + "行工序需配置人员信息",
+          //       type: "error",
+          //     });
+          //     break;
+          //   }
+          // }
         }
       } else {
         this.dataFormTwo.data.forEach(item => {

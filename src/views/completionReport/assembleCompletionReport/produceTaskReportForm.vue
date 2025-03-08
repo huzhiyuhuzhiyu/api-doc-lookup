@@ -324,21 +324,25 @@
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.responsibilityWasteQuantity" placeholder="责废数量"
-                        @blur="handleBlur2" class="ipt" />
+                      <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
+                        @blur="handleBlur2" class="ipt materialWaste" />
+                        <el-button type="primary" 
+                        style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1">
                     <el-form-item label="料废数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur3"
-                        class="ipt" />
+                      <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量" @blur="handleBlur3"
+                        class="ipt materialWaste" />
+                        <el-button type="primary"  
+                        style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="currentProcessType == 1">
+                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcessType == 1">
                     <el-form-item label="返工数量:" class="iptLabel">
                       <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" />
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
                       <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
@@ -368,10 +372,10 @@
                   </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="设备:" class="iptLabel">
-                      <el-select v-model="currentProcess.equipmentName" placeholder="设备" style="width: 100%;"
+                      <el-select v-model="currentProcess.equipmentId" placeholder="设备" style="width: 100%;"
                         class="ipt">
-                        <el-option v-for="(item, index) in equipmentList" :key="index" :label="item.name"
-                          :value="item.value"></el-option>
+                        <el-option v-for="(item, index) in equipmentList" :key="index" :label="item.resourceName"
+                          :value="item.resourceId"></el-option>
                       </el-select>
                       <!-- equipmentId -->
                     </el-form-item>
@@ -507,7 +511,10 @@
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
     <recordForm v-if="recordFormVisible" ref="recordForm"></recordForm>
     <badReasonsForm v-if="badReasonsFormVisible" ref="badReasonsForm"></badReasonsForm>
-
+    <MaterialWasteForm v-if="materialWasteFormVisible" ref="materialWasteFormRef" @change="materialWasteData">
+    </MaterialWasteForm>
+    <responsWaste v-if="responsWasteFormVisible" ref="responsWasteFormRef" @change="responsWasteData">
+    </responsWaste>
   </div>
 </template>
 
@@ -525,13 +532,17 @@ import VibrateForm from './VibrateForm.vue'
 import recordForm from './recordForm.vue'
 import { getOrderFiledMap } from '@/api/basicData/index'
 import badReasonsForm from './badReasonsForm.vue'
+import MaterialWasteForm from '../ringCompletionReport/materialWasteForm.vue';
+import responsWaste from '../ringCompletionReport/responsWaste.vue'
 export default {
 
   components: {
-    NormalForm, VibrateForm, recordForm,badReasonsForm
+    NormalForm, VibrateForm, recordForm,badReasonsForm,MaterialWasteForm,responsWaste
   },
   data() {
     return {
+      responsWasteFormVisible:false,
+      materialWasteFormVisible: false,
       badReasonsFormVisible:false,
       tableDataList: [
         { accuracyLevel: "", qualifiedQuantity: "" }
@@ -611,7 +622,10 @@ export default {
       materialFlag: '',
       colourFlag: '',
       accuracyLevelList: [],
-      copyCurrentProcess: {}
+      copyCurrentProcess: {},
+      materialWasteDataList: [],
+      responsWasteDataList:[],
+      equipmentList:[],
     }
   },
 
@@ -627,6 +641,37 @@ export default {
     this.getsealingcoverTypingList()
   },
   methods: {
+    setMaterialWasteM() {
+      console.log("this.materialWasteDataList", this.materialWasteDataList);
+      this.materialWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.materialWasteFormRef.init(JSON.parse(JSON.stringify(this.materialWasteDataList)), this.currentProcess.materialWasteQuantity,this.dataForm.projectId)
+      })
+    },
+    // 设置责废原因
+    setResponsWasteM() {
+      console.log("this.responsWasteDataList", this.responsWasteDataList);
+      this.responsWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.responsWasteFormRef.init(JSON.parse(JSON.stringify(this.responsWasteDataList)), this.currentProcess.responsibilityWasteQuantity,this.dataForm.projectId)
+      })
+    },
+    materialWasteData(data,totalNums) {
+      console.log("设置的料废金额", data,totalNums);
+      this.materialWasteDataList = data
+      if(totalNums){
+        this.currentProcess.materialWasteQuantity=totalNums
+        this.handleBlur2()
+      }
+    },
+    responsWasteData(data,totalNums){
+      console.log("责废数据",data,totalNums);
+      this.responsWasteDataList = data
+      if(totalNums){
+        this.currentProcess.responsibilityWasteQuantity=totalNums
+        this.handleBlur2()
+      }
+    },
     // 选择02精度  再将选中的值赋值给到01精度可选项
     handleSelectionChangeaccOne(scope, value) {
       console.log("vaue", scope);
@@ -808,13 +853,17 @@ export default {
           this.currentProcess = res.data.workOrderList[0]
           this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
         }
-
+        
         this.$set(this.currentProcess, 'reportingQuantity', 0)
         this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
+        if(this.currentProcess.workOrderResMap && this.currentProcess.workOrderResMap.device){
+          
+          this.equipmentList=this.currentProcess.workOrderResMap.device
+        }
         if (this.currentProcess.processType == 'pairs') this.$set(this.currentProcess, 'pairsReportFlag', true)
         this.setProcessType()
 
@@ -2051,5 +2100,8 @@ background: rgb(242, 242, 242);
 font-size: 18px;
 font-weight: 600;
 text-align: center;
+}
+.materialWaste {
+  width: 70%;
 }
 </style>

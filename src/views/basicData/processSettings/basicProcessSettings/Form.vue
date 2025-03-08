@@ -392,7 +392,12 @@ export default {
         pricingType: 'by_time',
         productCategoryIdText: '',
         productCategoryId: '',
-        processType: 'normal'
+        processType: 'normal',
+        pickingFlag:false,
+        checkFlag:false,
+        reportFlag:false,
+        stockFlag:false,
+        workOrderFlag:false,
       },
       placeholder: '请选择工序分类',
       pricingTypeList: [
@@ -656,13 +661,15 @@ export default {
   methods: {
     processingTypeChange(val){
       if (val === 'self_produced') {
-        // 类型为自制  是否生成工单默认为是，禁用
+        // 类型为自制  是否生成工单默认为是，禁用;
+        this.dataForm.stockFlag = true
         this.dataForm.workOrderFlag = true
       } else {
         // 类型为外协  是否领料默认为否，禁用；是否检验默认为否，禁用；是否报工默认为是，禁用
         this.dataForm.pickingFlag = false
+        this.dataForm.workOrderFlag = false
         this.dataForm.checkFlag = false
-        this.dataForm.reportFlag = true
+        this.dataForm.reportFlag = false
       }
       console.log(this.dataForm.processType,'p')
     },

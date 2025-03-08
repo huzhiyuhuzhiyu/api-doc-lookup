@@ -30,13 +30,13 @@ const plugins = [
 ]
 if (!isDev) {
   plugins.push(new TerserPlugin({
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: false,
-        pure_funcs: ['console.log'] // 移除console
-      }
-    },
+    // terserOptions: {
+    //   compress: {
+    //     drop_console: true,
+    //     drop_debugger: false,
+    //     pure_funcs: ['console.log'] // 移除console
+    //   }
+    // },
     sourceMap: false
   }), new CompressionPlugin({
     algorithm: 'gzip',

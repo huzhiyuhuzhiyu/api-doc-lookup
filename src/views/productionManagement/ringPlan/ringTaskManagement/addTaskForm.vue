@@ -1252,6 +1252,7 @@ export default {
                         productsId:item.productId
                     }
                 }) : []
+                console.log("materialList",this.materialList);
               })
             } else {
               this.$message.error("该产品没有BOM，请配置BOM后再试")

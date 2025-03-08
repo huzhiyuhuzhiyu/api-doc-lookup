@@ -158,7 +158,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="saveSubmit()">
+        <el-button type="primary" :loading="btnLoading" @click="saveSubmit()">
           提交
         </el-button>
       </span>
@@ -526,10 +526,12 @@ export default {
           if (!res.data) {
             this.$message.success(`导入成功`)
             this.uploadVisib = false
+            this.btnLoading = false
             this.$refs['UploadProduct']
             this.initData()
           } else {
             this.uploadVisib = false
+            this.btnLoading = false
             this.handleMessage(res.data)
           }
 
@@ -542,6 +544,7 @@ export default {
           this.uploadVisib = false
           console.log(err, 'err')
           this.formLoading = false
+          this.btnLoading = false
           this.loadingText = ''
           this.$refs['uploadRef'].clearFiles()
         })
@@ -558,6 +561,7 @@ export default {
     },
     saveSubmit() {
       if (!this.file) return this.$message.error('请上传文件')
+      this.btnLoading = true
       this.UploadProduct(this.file)
     },
     // 提示

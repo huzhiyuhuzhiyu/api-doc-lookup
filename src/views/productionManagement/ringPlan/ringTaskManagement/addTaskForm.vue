@@ -796,7 +796,8 @@ export default {
         planDate: [],
         orderNo: this.codeConfig.number
       }
-      
+      this.$refs.dataForm.clearValidate('productsDrawingNo');
+
       this.dataForm.productsDrawingNo = data.drawingNo
       this.dataForm.productsCode = data.code
       this.dataForm.productsName = data.name

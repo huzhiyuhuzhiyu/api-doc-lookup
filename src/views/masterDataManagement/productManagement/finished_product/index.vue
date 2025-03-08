@@ -1291,6 +1291,7 @@ export default {
 
             this.formLoading = false
             this.loadingText = ''
+            this.$refs['uploadRef'].clearFiles()
           })
           .catch((err) => {
             this.uploadVisib = false
@@ -1298,6 +1299,7 @@ export default {
             this.$message.error(`导入失败`)
             this.formLoading = false
             this.loadingText = ''
+            this.$refs['uploadRef'].clearFiles()
           })
       } else {
         uploadUnCpProductData(formData)

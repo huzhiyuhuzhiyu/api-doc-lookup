@@ -558,6 +558,7 @@ export default {
 
           this.formLoading = false
           this.loadingText = ''
+          this.$refs['uploadRef'].clearFiles()
         })
         .catch((err) => {
           console.log(err, 'err')
@@ -565,6 +566,7 @@ export default {
           console.log(err, 'err')
           this.formLoading = false
           this.loadingText = ''
+          this.$refs['uploadRef'].clearFiles()
         })
     },
     // 导入产品  下载导入错误数据

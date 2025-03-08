@@ -659,10 +659,10 @@ export default {
         // 类型为自制  是否生成工单默认为是，禁用
         this.dataForm.workOrderFlag = true
       } else {
-        // 类型为外协  是否领料默认为否，禁用；是否检验默认为否，禁用；是否报工默认为否，禁用
+        // 类型为外协  是否领料默认为否，禁用；是否检验默认为否，禁用；是否报工默认为是，禁用
         this.dataForm.pickingFlag = false
         this.dataForm.checkFlag = false
-        this.dataForm.reportFlag = false
+        this.dataForm.reportFlag = true
       }
       console.log(this.dataForm.processType,'p')
     },

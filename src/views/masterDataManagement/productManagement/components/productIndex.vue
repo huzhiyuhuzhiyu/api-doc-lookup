@@ -1532,12 +1532,14 @@ export default {
 
           this.formLoading = false
           this.loadingText = ''
+          this.$refs['uploadRef'].clearFiles()
         })
         .catch((err) => {
           // this.$message.error(`导入数据超过最大限制：500`)
           this.$message.error(`导入失败`)
           this.formLoading = false
           this.loadingText = ''
+          this.$refs['uploadRef'].clearFiles()
         })
     },
     // 导入产品  下载导入错误数据

@@ -119,12 +119,7 @@
               <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
               <el-table-column prop="occupancyQuantity" v-if="fieldFlag" label="占用数量" width="120" sortable="custom" />
-              <el-table-column prop="safeInventory" label="安全库存" min-width="100">
-                <template slot-scope="scope">
-                  <div>{{ scope.row.safeInventory ? scope.row.safeInventory : 0 }}</div>
-
-                </template>
-              </el-table-column>
+     
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
 
               <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">

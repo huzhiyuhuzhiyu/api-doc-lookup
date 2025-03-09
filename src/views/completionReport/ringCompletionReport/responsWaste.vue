@@ -12,7 +12,6 @@
           <div>
             <el-button type="text" icon="el-icon-plus" @click="addLinFun"
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
-            <span style="font-weight:500;margin-right:10px">责废总数量：{{ num }}</span>
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="name" label="责废原因" min-width="180" sortable="custom">
@@ -92,6 +91,7 @@ export default {
         price: "",
         num: "",
         amount: "",
+        person:"",
         scrapId: "",
       },
       num: "",
@@ -173,8 +173,6 @@ export default {
       console.log(444444);
       console.log(this.tableDataList);
 
-      if (Number(this.totalNum) != Number(this.num)) return this.$message.error("责废数量之和只能等于责废总数量")
-      if (!this.tableDataList.length) return this.$message.error("责废数据不能为空")
       let flag = null;
       for (let index = 0; index < this.tableDataList.length; index++) {
         const item = this.tableDataList[index];
@@ -196,11 +194,20 @@ export default {
           flag = false
           break
         }
+        if (!item.person) {
+          this.$message({
+            message: "请选择第" + (index + 1) + "行的责任人",
+            type: 'error',
+            duration: 1500,
+          })
+          flag = false
+          break
+        }
       }
 
       if (flag === false) return
       this.customerVisible = false
-      this.$emit('change', this.tableDataList)
+      this.$emit('change', this.tableDataList,this.totalNum)
     }
 
 

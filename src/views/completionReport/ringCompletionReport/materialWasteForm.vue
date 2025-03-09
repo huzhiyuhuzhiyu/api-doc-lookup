@@ -12,7 +12,6 @@
           <div>
             <el-button type="text" icon="el-icon-plus" @click="addLinFun"
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
-            <span style="font-weight:500;margin-right:10px">料废总数量：{{ num }}</span>
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="name" label="料废类型" min-width="180" sortable="custom">
@@ -162,8 +161,6 @@ export default {
       console.log(444444);
       console.log(this.tableDataList);
 
-      if(Number(this.totalNum)!=Number(this.num)) return this.$message.error("料废数量之和只能等于料废总数量")
-      if(!this.tableDataList.length) return this.$message.error("料废金额数据不能为空")
       let flag=null;
       for (let index = 0; index < this.tableDataList.length; index++) {
         const item = this.tableDataList[index];
@@ -189,7 +186,7 @@ export default {
        
       if(flag===false)return
       this.customerVisible=false
-      this.$emit('change', this.tableDataList)
+      this.$emit('change', this.tableDataList,this.totalNum)
     }
 
 

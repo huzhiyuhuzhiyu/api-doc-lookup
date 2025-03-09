@@ -515,7 +515,7 @@ export default {
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1008',
+        exportType: '1211',
         exportName: "仓库库存明细",
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1

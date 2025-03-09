@@ -305,9 +305,9 @@ export default {
   },
 
   methods: {
-    getProductClassFun() {
+    async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
+     await getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
  

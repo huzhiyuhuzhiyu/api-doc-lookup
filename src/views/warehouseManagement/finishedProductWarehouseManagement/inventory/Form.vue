@@ -350,7 +350,7 @@ export default {
       const targetListQuery = this.listQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1008',
+        exportType: '1211',
         exportName: this.title,
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
@@ -389,8 +389,8 @@ export default {
           }
           arr.push(obj)
         });
-        this.sealingCoverTypingList = arr
-        console.log('sealingCoverTypingList', this.sealingCoverTypingList);
+        this.accuracyLevelList = arr
+        console.log('accuracyLevelList', this.accuracyLevelList);
       })
 
       let obj3 = {
@@ -418,8 +418,8 @@ export default {
           }
           arr.push(obj)
         });
-        this.accuracyLevelList = arr
-        console.log('accuracyLevelList', this.accuracyLevelList);
+        this.sealingCoverTypingList = arr
+        console.log('sealingCoverTypingList', this.sealingCoverTypingList);
       })
 
 

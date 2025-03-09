@@ -3,8 +3,12 @@ export default {
         configKeyLabel: '自动评审',
         description: '自动评审'
     },
-    packaging: {
-        configKeyLabel: '包装方式加工单价',
-        description: '按加工工序计价时，则报工的工序单价从产品工序中获取单价;按工序属性计价时，则报工的工序单价从产品包装价格中获取单价。'
+    procure_inspection: {
+        configKeyLabel: '启用采购检验人员设置',
+        description: '启用后，在质量管理的采购检验待检收货单菜单列表只能显示单前检验人员的采购收货单。',
+    },
+    external_inspection: {
+        configKeyLabel: '启用外协检验人员设置',
+        description: '启用后，在质量管理的外协检验待检收货单菜单列表只能显示单前检验人员的采购收货单。',
     },
 }

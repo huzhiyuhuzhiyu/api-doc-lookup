@@ -349,3 +349,11 @@ export const delUserFavorites = (id) => {
     method: 'DELETE'
   })
 }
+
+// 获取用户下拉框列表
+export const getListBySys = () => {
+  return request({
+    url: `/api/permission/Users/getListBySys`,
+    method: 'GET'
+  })
+}

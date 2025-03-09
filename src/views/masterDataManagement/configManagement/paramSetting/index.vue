@@ -346,8 +346,10 @@ export default {
             list = res.data.maintenance
           } else if (this.activeName === 'departmentalset') {
             list = res.data.departmentalset
-          }  else if (this.activeName === 'print') {
+          } else if (this.activeName === 'print') {
             list = res.data.print
+          } else if (this.activeName === 'inspect') {
+            list = res.data.inspect
           } else if (this.activeName === 'orderField') {
             list = res.data.orderField
             list.forEach(item => {

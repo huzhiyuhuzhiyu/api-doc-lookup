@@ -511,6 +511,10 @@ export default {
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
       }
+      // 过滤检验人员
+      if (this.$store.getters.configData.inspect.external_inspection) {
+        this.listQuery.settingPersonFlag = 1
+      }
       purPurchaseReceiptReturnGoodsDetailList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

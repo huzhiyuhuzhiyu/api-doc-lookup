@@ -112,7 +112,6 @@
           <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
           <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
-          <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
           <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
             v-if="standardValueFlag == 1" />

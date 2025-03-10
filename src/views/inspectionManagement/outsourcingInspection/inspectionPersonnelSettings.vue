@@ -1,5 +1,5 @@
 <template>
-  <Index :listRequestObj="listRequestObj" :listMethod="getProductList" :batchMethod="batchProductPerson"
+  <Index :inspectType="listRequestObj.productSource" :listRequestObj="listRequestObj" :listMethod="getProductList" :batchMethod="batchProductPerson"
     :tableItems="tableItems" :searchList="searchList" :superQueryJson="superQueryJson" :columnList="columnList" />
 </template>
 

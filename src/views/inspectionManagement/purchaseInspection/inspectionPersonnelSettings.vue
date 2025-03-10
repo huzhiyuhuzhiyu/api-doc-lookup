@@ -1,5 +1,5 @@
 <template>
-  <Index :listRequestObj="listRequestObj" :listMethod="getProductList"
+  <Index :inspectType="listRequestObj.productSource" :listRequestObj="listRequestObj" :listMethod="getProductList"
     :batchMethod="batchProductPerson" :tableItems="tableItems" :searchList="searchList"
     :superQueryJson="superQueryJson" :columnList="columnList" />
 </template>
@@ -55,7 +55,7 @@ export default {
       searchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        // { prop: 'staffingName', label: '配置人员', type: 'input' }
+        { prop: 'staffingName', label: '配置人员', type: 'input' }
       ],
       superQueryJson: [
         {

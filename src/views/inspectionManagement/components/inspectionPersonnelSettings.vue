@@ -127,7 +127,7 @@ export default {
   components: { SuperQuery },
   mixins: [getProjectList],
   props: {
-    priceType: {
+    inspectType: {
       type: String,
       required: true
     },
@@ -396,7 +396,8 @@ export default {
         })
         let obj = {
           idList: arr,
-          staffingId: this.dataForm.staffingId
+          staffingId: this.dataForm.staffingId,
+          type: this.inspectType
         }
 
         this.batchMethod(obj)

@@ -11,7 +11,7 @@
           <el-tab-pane label="全部数据" name="all">
             <el-tree :data="treeData" :props="props" check-on-click-node
               @node-click="handleNodeClick" class="JNPF-common-el-tree" node-key="id"
-              v-loading="loading" lazy :load="loadNode" 
+              v-loading="loading" lazy :load="loadNode" ref="tree"
               :default-expand-all="true" show-checkbox @check-change="handleCheckChange">
               <span class="custom-tree-node" slot-scope="{ node, data }">
                 <i :class="data.icon"></i>
@@ -172,6 +172,7 @@ export default {
       getUserInfoList(this.value).then(res => {
         this.selectedData = res.data.list
         this.ids = this.selectedData.map(o => o.id)
+        this.$refs.tree.setCheckedKeys(this.ids);
         this.allLoading = false
       })
     },
@@ -209,11 +210,13 @@ export default {
       this.selectedData = []
       this.ids = []
       this.$emit('input', this.ids)
+      this.$refs.tree.setCheckedKeys(this.ids);
       this.$emit('getValue', this.ids, this.selectedData)
     },
     removeData(index) {
       this.selectedData.splice(index, 1)
       this.ids.splice(index, 1)
+      this.$refs.tree.setCheckedKeys(this.ids);
       this.$emit('input', this.ids)
       this.$emit('getValue', this.ids, this.selectedData)
     },

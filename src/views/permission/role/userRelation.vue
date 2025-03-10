@@ -11,7 +11,7 @@
           </el-input>
         </div>
         <div class="transfer-pane__body left-pane">
-          <el-tree :data="treeData" :props="props" check-on-click-node @node-click="handleNodeClick"
+          <el-tree ref="tree" :data="treeData" :props="props" check-on-click-node @node-click="handleNodeClick"
             class="JNPF-common-el-tree" node-key="id" v-loading="loading" lazy :load="loadNode" 
             :default-expand-all="true" show-checkbox @check-change="handleCheckChange">
             <span class="custom-tree-node" slot-scope="{ node, data }">
@@ -110,6 +110,10 @@ export default {
       if (!this.dataForm.userIds.length) return this.allLoading = false
       getUserInfoList(this.dataForm.userIds).then(res => {
         this.selectedData = res.data.list
+        let data = this.selectedData.map(item=>{
+          return item.id
+        })
+        this.$refs.tree.setCheckedKeys(data);
         this.allLoading = false
       })
     },
@@ -146,19 +150,25 @@ export default {
     },
     handleNodeClick(data) {
       if (data.type !== 'user') return
-      const boo = this.selectedData.some(o => o.id === data.id)
-      if (boo) return
-      const item = {
-        id: data.id,
-        fullName: data.fullName
-      }
-      this.selectedData.push(item)
+      // const boo = this.selectedData.some(o => o.id === data.id)
+      // if (boo) return
+      // const item = {
+      //   id: data.id,
+      //   fullName: data.fullName
+      // }
+      // this.selectedData.push(item)
     },
     removeAll() {
       this.selectedData = []
+  
+      this.$refs.tree.setCheckedKeys([]);
     },
     removeData(index) {
       this.selectedData.splice(index, 1)
+      let data = this.selectedData.map(item=>{
+          return item.id
+      })
+      this.$refs.tree.setCheckedKeys(data);
     },
     dataFormSubmit() {
       this.btnLoading = true

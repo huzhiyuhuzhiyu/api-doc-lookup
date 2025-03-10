@@ -8,7 +8,7 @@
               <el-input @keyup.native.enter="search()" v-if="item.type === 'input'" v-model="listQuery[item.prop]"
                 :placeholder="'请输入' + item.label" clearable />
               <el-select v-else-if="item.type === 'select'" @change="selectChange" v-model="listQuery[item.prop]"
-                :placeholder="'请选择' + item.label" style="width: 100%;" clearable>
+                :placeholder="'请选择' + item.label" style="width: 100%;" filterable clearable>
                 <el-option v-for="item2 in item.options" :key="item2.value" :label="item2.label"
                   :value="item2.value"></el-option>
               </el-select>
@@ -419,12 +419,21 @@ export default {
       }
     },
     // 获取质量管理菜单用户人员
-    getListBySys() {
-      getListBySys()
-        .then((res) => {
-          this.staffingData = res.data
-        })
-        .catch(() => { })
+    async getListBySys() {
+      const res = await getListBySys()
+
+      this.staffingData = res.data
+      this.searchList.forEach(tc=>{
+        if (tc.prop === 'productSettingName') {
+          tc.options = this.staffingData.map(item=>{
+            return {
+              label:item.realName,
+              value:item.realName
+            }
+          })
+        }
+      })
+
     }
   }
 }

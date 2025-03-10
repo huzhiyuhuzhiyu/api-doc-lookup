@@ -45,12 +45,12 @@ export default {
         { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', minWidth: '120', sortable: 'custom' },
         { prop: 'productSource', label: '产品来源', },
-        { prop: 'staffingName', label: '检验人员', minWidth: '140', sortable: 'custom' }
+        { prop: 'productSettingNames', label: '检验人员', minWidth: '140', sortable: 'custom' }
       ],
       searchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        // { prop: 'staffingName', label: '配置人员', type: 'input' }
+        { prop: 'productSettingName', label: '配置人员', type: 'select',options:[] }
       ],
       superQueryJson: [
         {
@@ -69,7 +69,7 @@ export default {
           type: 'input'
         },
         {
-          prop: 'staffingName',
+          prop: 'productSettingNames',
           label: '配置检验人员',
           type: 'input'
         }

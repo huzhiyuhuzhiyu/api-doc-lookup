@@ -1815,16 +1815,19 @@ export default {
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data && data.length) {
-        this.dataFormTwo.productData = data
-        this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-        data.forEach((item) => {
-          console.log('ooooooo', item)
-          item.ordersNo = item.orderNo
-          this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-          this.$set(item, 'discount', 1)
-        })
+      if(data!='outInboundWarehouse'){
+
+        if (data && data.length) {
+          this.dataFormTwo.productData = data
+          this.dataForm.partnerName = data[0].cooperativePartnerName
+          this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+          data.forEach((item) => {
+            console.log('ooooooo', item)
+            item.ordersNo = item.orderNo
+            this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+            this.$set(item, 'discount', 1)
+          })
+        }
       }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {

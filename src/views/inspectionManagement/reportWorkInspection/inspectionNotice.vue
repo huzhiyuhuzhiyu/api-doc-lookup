@@ -26,7 +26,6 @@
                   clearable />
               </el-form-item>
             </el-col>
-
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -67,7 +66,7 @@
             </div>
           </div>
           <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
-           :data="tableData" :fixedNO="true" @sort-change="sortChange"
+          :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
@@ -77,27 +76,57 @@
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
-            <el-table-column prop="partnerCode" label="供应商编码" min-width="150" sortable="custom" />
-            <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
+            <el-table-column prop="deliverDate" label="收货日期" min-width="120" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="120"
-              v-if="isProductNameSwitch === '1'"></el-table-column>
+            <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+              show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
-            <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom" />
             <el-table-column prop="warehouseName" label="仓库" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="60" />
             <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" min-width="200" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
+            <el-table-column prop="material" label="材质" width="130" sortable="custom"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"></el-table-column>
+            <el-table-column prop="processName" label="工序" width="100" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
-
+            <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag disable-transitions
+                  v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
+                  审批中
+                </el-tag>
+                <el-tag type="success" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
+                  审批通过
+                </el-tag>
+                <el-tag type="danger" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
+                  审批拒绝
+                </el-tag>
+                <el-tag type="warning" disable-transitions
+                  v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus !== 'draft'">
+                  审批撤回
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="remark" min-width="200" label="备注" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row, false)" editText="检验" :hasDel="false">
+                <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -120,7 +149,6 @@
         </div>
       </div>
     </div>
-
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm" />
     <!-- 高级查询 -->
@@ -172,19 +200,25 @@ import {
   purPurchaseReceiptReturnGoodsDetailList,
   linesReceiptReturn
 } from '@/api/purchasingManagement/purchaseInquirySheet'
-import Form from '../components/inspectionNoticeForm.vue'
-// import DetailForm from '@/views/externalProcessManagement/productAcceptReturnGoods/outsourcingReceiptNote/Form.vue'
-import DetailForm from '../../../views/receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
+import Form from './inspectionNoticeForm.vue'
+// import DetailForm from '@/views/purchasingManagement/purchaseAndReceive/purchaseReceiptNote/Form.vue'
+import DetailForm from '../../../views/receivingManagement/procurementReceiving/receivingAdvice/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import ExportForm from '@/components/no_mount/ExportBox/index'
+import {
+  getbimProductAttributesList,
+  getbimProductAttributes,
+  getbimProductsModelList,
+  getbimProductAttributesListMap
+} from '@/api/masterDataManagement/index'
+import { getCooperativeData } from '@/api/basicData/index'
 import { batchInspectionData } from '@/api/inspectionManagement/index' // 检验单
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getUnitData } from '@/api/basicData/materialSettings'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
-  components: { Form, DetailForm, ExportForm, SuperQuery, ExportForm },
+  components: { Form, DetailForm, SuperQuery, ExportForm },
   mixins: [getProjectList],
 
   data() {
@@ -242,7 +276,82 @@ export default {
           label: '单位',
           type: 'select'
         },
-
+        {
+          prop: 'receivedQuantity',
+          label: '收货数量',
+          type: 'input'
+        },
+        {
+          prop: 'standardValue',
+          label: '规值',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'sealingCoverTyping',
+          label: '打字内容',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'accuracyLevel',
+          label: '精度等级',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'vibrationLevel',
+          label: '振动等级',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oil',
+          label: '油脂',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oilQuantity',
+          label: '油脂量',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'clearance',
+          label: '游隙',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: '特殊要求',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'material',
+          label: '材质',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'colour',
+          label: '颜色',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'processName',
+          label: '工序',
+          type: 'input'
+        },
         {
           prop: 'ordersNo',
           label: '订单号',
@@ -268,10 +377,9 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['partnerCode', 'createByName'],
+      columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
       visible: false,
       detailFormVisible: false,
-      exportFormVisible: false,
       activeName: 'dataTable',
       listLoading: false,
       formVisible: false,
@@ -284,12 +392,11 @@ export default {
         inspectionStatus: 'unInspect', // 检验状态
         orderNo: '', // 收货单号
         purchaseOrderNo: '', // 业务单号
-        notificationType: 'external', // 通知单类型(采购 procure、外协 external、生产检验（入库检验） produce、退货检验 back、退料检验 back_material、在库检验 library、换料检验 refuelling、工序检验process)
-        // notificationTypeList: ["external", "external_process"],
+        notificationType: 'procure', // 通知单类型(采购 procure、外协 external、生产检验（入库检验） produce、退货检验 back、退料检验 back_material、在库检验 library、换料检验 refuelling、工序检验process)
         pageNum: 1,
         pageSize: 20,
         receiptReturnType: 'receipt',
-        // receivingStatus: "receiving",      //收货状态
+        // receivingStatus: 'finished', //收货状态
         salesman: '', // 业务员
         orderItems: [
           {
@@ -306,39 +413,192 @@ export default {
       total: 0,
 
       linesTableData: [],
-      linesQuery: {},
-
       linesTotal: 0,
+      linesQuery: {},
       scanDialog: false,
-      scanResult: ''
+      scanResult: '',
+      // 属性字段  控制属性字段显示隐藏
+      accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      materialFlag: '',
+      colourFlag: '',
+      bimProductAttributesObj: {}
     }
   },
   async created() {
+    await this.getProductClassFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.superQueryJson.forEach(tc => {
+      if (tc.prop === 'standardValue') {
+        let arr = []
+        this.bimProductAttributesObj.pa008.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'sealingCoverTyping') {
+        let arr = []
+        this.bimProductAttributesObj.pa007.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'accuracyLevel') {
+        let arr = []
+        this.bimProductAttributesObj.pa006.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'vibrationLevel') {
+        let arr = []
+        this.bimProductAttributesObj.pa005.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'oil') {
+        let arr = []
+        this.bimProductAttributesObj.pa002.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'oilQuantity') {
+        let arr = []
+        this.bimProductAttributesObj.pa003.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'clearance') {
+        let arr = []
+        this.bimProductAttributesObj.pa001.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'packagingMethod') {
+        let arr = []
+        this.bimProductAttributesObj.pa015.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'specialRequire') {
+        let arr = []
+        this.bimProductAttributesObj.pa016.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'material') {
+        let arr = []
+        this.bimProductAttributesObj.pa021.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+        console.log(tc, 'kk')
+      } else if (tc.prop === 'colour') {
+        let arr = []
+        this.bimProductAttributesObj.pa010.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'processName') {
+        let arr = []
+        this.bimProductAttributesObj.pa006.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.name
+          }
+          arr.push(obj)
+        })
+        tc.options = arr
+      } else if (tc.prop === 'mainUnit') {
+        let obj8 = {
+          pageNum: 1,
+          pageSize: 100
+        }
+        getUnitData(obj8).then((res) => {
+          let arr = []
+          res.data.records.forEach((item) => {
+            let obj = {
+              label: item.name,
+              value: item.name
+            }
+            arr.push(obj)
+          })
+          tc.options = arr
+        })
+      }
+    })
     if (this.isDeputyUnitSwitch === '1') {
-      this.superQueryJson.forEach(item => {
+      let mainUnitIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
+      this.superQueryJson.forEach((item) => {
         if (item.prop === 'mainUnit') {
           item.label = '单位(主)'
         }
       })
-      this.superQueryJson.splice(7, 0, {
+      this.superQueryJson.splice(mainUnitIndex + 1, 0, {
         prop: 'deputyUnit',
         label: '单位(副)',
         type: 'input'
       })
-
     }
     if (this.isProductNameSwitch === '1') {
-      this.superQueryJson.splice(5, 0, {
+      let productCodeIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'productCode')
+      this.superQueryJson.splice(productCodeIndex + 1, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
       })
     }
     this.tableDataFlag = true
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
   watch: {
@@ -397,7 +657,7 @@ export default {
 						inspectionQuantity: item.receivedQuantity,
 						inspectorId: this.userInfo.userId,
 						mainUnit: item.mainUnit,
-						notificationType: 'external',
+						notificationType: 'procure',
 						processId: item.processId,
 						productsId: item.productsId,
 						ratio: item.ratio,
@@ -448,9 +708,8 @@ export default {
           this.scanDialog = false
           if (this.tableData.length == 1) {
             this.formVisible = true
-            this.formVisible = true
             this.$nextTick(() => {
-              this.$refs.Form.init(this.tableData[0], false, 'external', 'notice', 'QCDH')
+              this.$refs.Form.init(this.tableData[0], false, 'procure', 'notice', 'QCDH')
             })
           }
         })
@@ -483,7 +742,7 @@ export default {
         let _data = {
           ...this.listQuery,
           exportType: '1073',
-          exportName: '外协待检收货单',
+          exportName: '采购待检收货单',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
           totalRowFlag: true
@@ -506,13 +765,29 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
 
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesObj = res.data
+      })
+
+
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+      })
+    },
     initData() {
       this.listLoading = true
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
       }
       // 过滤检验人员
-      if (this.$store.getters.configData.inspect.external_inspection) {
+      if (this.$store.getters.configData.inspect.procure_inspection) {
         this.listQuery.settingPersonFlag = 1
       }
       purPurchaseReceiptReturnGoodsDetailList(this.listQuery)
@@ -524,10 +799,11 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
+
+      this.listLoading = true
     },
     search() {
       this.visible = false
-
       this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
       Object.keys(this.listQuery).forEach((key) => {
         this.listQuery[key] = typeof this.listQuery[key] === 'string' ? this.listQuery[key].trim() : this.listQuery[key]
@@ -537,38 +813,41 @@ export default {
       this.initData()
     },
     reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort()
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
       this.initData()
     },
     addOrUpdateHandle(row, readOnly) {
-      console.log(readOnly, 'onlu')
+      console.log(readOnly, 're')
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look', false,[],'outInboundWarehouse')
+          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look', false, [], 'outInboundWarehouse')
         })
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(row, readOnly, 'external', 'notice', 'QCDH')
+          this.$refs.Form.init(row, readOnly, 'procure', 'notice', 'QCDH')
         })
       }
     },
     sortChange({ prop, order }) {
       let newProp
 
-      if (prop === 'inspectorName') {
-        newProp = 'inspector_id'
-      } else if (['orderNo', 'partnerName', 'partnerCode', 'purchaseOrderNo', 'productDrawingNo', 'processName', 'warehouseName', 'ordersNo', 'createTime', 'createByName'].includes(prop)) {
+      if (prop === 'orderNo' || prop === 'partnerName' ||
+        prop === 'partnerCode' || prop === 'productDrawingNo' ||
+        prop === 'warehouseName' || prop === 'sealingCoverTyping' ||
+        prop === 'accuracyLevel' || prop === 'vibrationLevel' ||
+        prop === 'oilQuantity' || prop === 'processName' ||
+        prop === 'ordersNo' || prop === 'createTime' ||
+        prop === 'createByName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
 
       this.search()
     },
@@ -576,7 +855,9 @@ export default {
       this.formVisible = false
       this.detailFormVisible = false
       this.initData()
-      // if (isRefresh) { this.initData() }
+      // if (isRefresh) {
+      //   this.initData()
+      // }
     }
   }
 }

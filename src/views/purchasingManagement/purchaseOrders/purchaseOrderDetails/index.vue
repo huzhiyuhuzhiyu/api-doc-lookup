@@ -93,11 +93,6 @@
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom">
-              <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look', scope.row)">
-                  {{ scope.row.receiptQuantity }}
-                </el-link>
-              </template>
             </el-table-column>
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom" />
             <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">

@@ -121,3 +121,12 @@ export function uploadProductData(data) {
     data
   })
 }
+
+// 产品管理-批量设置配置人员
+export function batchProductPerson(data) {
+  return request({
+    url: `/api/zgt/product/batch/setting`,
+    method: 'PUT',
+    data
+  })
+}

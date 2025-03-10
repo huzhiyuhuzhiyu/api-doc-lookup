@@ -70,6 +70,15 @@
                 </template>
               </template>
             </el-table-column>
+            <el-table-column v-else-if="item.prop == 'staffingName'" :prop="item.prop" :key="item.prop"
+              :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 130"
+              :sortable="item.sortable">
+              <!-- <template slot-scope="scope">
+                <div v-for="（item，index）in scope.row.staffingName" :key="index">
+                  {{ item }}
+                </div>
+              </template> -->
+            </el-table-column>
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
               :min-width="item.minWidth || 130" :sortable="item.sortable" />
           </template>
@@ -85,22 +94,11 @@
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
             <el-col :sm="24">
-              <el-form-item prop="roleIds" label="角色">
-                <el-select v-model="dataForm.roleIds" placeholder="请选择角色" clearable multiple collapse-tags
-                  style="width: 100%;">
-                  <el-option v-for="(item, index) in roleData" :key="index" :label="item.fullName"
+              <el-form-item prop="staffingId" label="人员">
+                <el-select v-model="dataForm.staffingId" filterable placeholder="请选择角色" style="width: 100%;">
+                  <el-option v-for="(item, index) in staffingData" :key="index" :label="item.realName"
                     :value="item.id"></el-option>
                 </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="24">
-              <el-form-item prop="staffingName" label="人员">
-                <InspectComSelectPpage clearable :isdisabled="type === 'look'" :renderTree="false"
-                  v-model="dataForm.staffingName" @change="supplierdata" :tableItems="staffingTableItems"
-                  :placeholder="'请选择人员'" title="选择人员" :listMethod="getUsersByUserCondition"
-                  :listRequestObj="staffingListRequestObj" :searchList="staffingTableSearchList"
-                  :listDataFormatting="listDataFormatting" :totalFormatting="totalFormatting"
-                  :beforeOpen="beforeOpen" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -116,7 +114,6 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-
   </div>
 </template>
 
@@ -125,13 +122,12 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getRoleList } from '@/api/permission/role'
-import { getUsersByUserCondition } from '@/api/permission/user'
-import InspectComSelectPpage from "./ComSelect-page/index.vue";
+import { getListBySys } from '@/api/permission/user'
 export default {
-  components: { SuperQuery, InspectComSelectPpage },
+  components: { SuperQuery },
   mixins: [getProjectList],
   props: {
-    priceType: {
+    inspectType: {
       type: String,
       required: true
     },
@@ -231,41 +227,18 @@ export default {
       processFlag: false,
       inspectionFlag: false,
       dataForm: {
-        roleIds: [],
-        staffingName: '',
         staffingId: '',
-        effectiveDate: '',
-        timePrice: '',
-        unitPrice: ''
       },
       dataFormRules: {
-        roleIds: [{ required: true, message: '角色不能为空', trigger: 'change' }],
-
-        staffingName: [{ required: true, message: '检验人员不能为空', trigger: 'change' }]
+        staffingId: [{ required: true, message: '检验人员不能为空', trigger: 'change' }]
       },
       selectedData: [],
       basicQuery: {},
       superQuery: {},
       detailTableItems: [],
-      getUsersByUserCondition,
-      staffingListRequestObj: {
-        pagination: {
-          currentPage: 1,
-          keyword: '',
-          pageSize: -1,
-          projectId: 0,
-          sidx: '',
-          sort: ''
-        },
-        roleIds: []
-      },
-      staffingTableSearchList: [
-        { prop: 'realName', label: '姓名', type: 'input' },
-      ],
-      staffingTableItems: [
-        { prop: 'realName', label: '姓名' },
-        { prop: 'organize', label: '组织' },
-      ]
+      staffingListRequestObj: {},
+      staffingTableSearchList: [{ prop: 'realName', label: '姓名', type: 'input' }],
+      staffingTableItems: [{ prop: 'realName', label: '姓名' }, { prop: 'organize', label: '组织' }]
     }
   },
   watch: {
@@ -286,30 +259,14 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    await this.getRoleList()
     await this.getProjectList()
+    await this.getListBySys()
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
-
 
     this.initData()
   },
   methods: {
-    getRoleList() {
-      let obj = {
-        organizeId: '',
-        keyword: '',
-        currentPage: 1,
-        pageSize: -1,
-        sort: 'desc',
-        sidx: ''
-      }
-      getRoleList(obj)
-        .then((res) => {
-          this.roleData = res.data.list
-        })
-        .catch(() => { })
-    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -416,22 +373,11 @@ export default {
       this.selectedData = data
     },
     async handleBatch() {
-      if (!this.selectedData.length) return this.$message.error('请至少选择一条工序数据')
-
-      let flag = this.hasDifferentPricingType(this.selectedData)
-      if (flag) return this.$message.error('只能选择相同计价类型的工序数据')
+      if (!this.selectedData.length) return this.$message.error('请至少选择一条检验数据')
 
       this.btnLoading = false
+      this.dataForm = {}
       this.analyseDialog = true
-    },
-    hasDifferentPricingType(arr) {
-      const codes = new Set()
-
-      for (const item of arr) {
-        codes.add(item.pricingType)
-      }
-
-      return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
     async dataFormSubmit() {
       this.btnLoading = true
@@ -445,22 +391,23 @@ export default {
       }
 
       if (submitFlag) {
-        let arr = this.selectedData.map(item => {
+        let arr = this.selectedData.map((item) => {
           return item.id
         })
         let obj = {
-          lineIdList: arr,
-          staffingId: this.dataForm.staffingId
+          idList: arr,
+          staffingId: this.dataForm.staffingId,
+          type: this.inspectType
         }
 
         this.batchMethod(obj)
           .then((res) => {
-            this.$message.success('单价设置成功')
+            this.$message.success('人员设置成功')
             this.selectedData = []
             this.$refs.dataTable.$refs.JNPFTable.clearSelection()
             this.analyseDialog = false
             this.dataForm = {
-              staffingId: '',
+              staffingId: ''
             }
             this.search()
           })
@@ -471,53 +418,13 @@ export default {
         this.btnLoading = false
       }
     },
-    roleChange(data) {
-      this.staffingListRequestObj.roleIds = this.dataForm.roleIds
-    },
-    listDataFormatting(res) {
-      res.data.list.forEach((item, index) => {
-        if (item.classType === 'packaging') {
-          item.classTypeName = '包装物'
-        } else if (item.classType === 'inner_ring_blank') {
-          item.classTypeName = '内圈毛坯'
-        } else if (item.classType === 'outer_ring_blank') {
-          item.classTypeName = '外圈毛坯'
-        } else if (item.classType === 'inner_ring') {
-          item.classTypeName = '内圈'
-        } else if (item.classType === 'outer_ring') {
-          item.classTypeName = '外圈'
-        } else if (item.classType === 'abrasive') {
-          item.classTypeName = '磨料'
-        } else if (item.classType === 'oil') {
-          item.classTypeName = '油料'
-        } else if (item.classType === 'accessory') {
-          item.classTypeName = '配件'
-        } else if (item.classType === 'turnover_box') {
-          item.classTypeName = '周转箱'
-        } else if (item.classType === 'holder') {
-          item.classTypeName = '保持架'
-        } else if (item.classType === 'sealing_cap') {
-          item.classTypeName = '密封盖'
-        }
-      })
-
-      return res.data.list
-    },
-    totalFormatting(res) {
-      return res.data.pagination.total
-    },
-    async beforeOpen(paramsObj) {
-      this.staffingListRequestObj.roleIds = this.dataForm.roleIds
-      return true
-    },
-    supplierdata(val, data) {
-      if (data && data.length) { // 数据有效，进行更新
-        this.dataForm.staffingName = data[0].all.realName
-        this.dataForm.staffingId = data[0].all.id
-      } else { // 不选择任何内容，置空绑定的值
-        this.dataForm.staffingName = ''
-        this.dataForm.staffingId = ''
-      }
+    // 获取质量管理菜单用户人员
+    getListBySys() {
+      getListBySys()
+        .then((res) => {
+          this.staffingData = res.data
+        })
+        .catch(() => { })
     }
   }
 }

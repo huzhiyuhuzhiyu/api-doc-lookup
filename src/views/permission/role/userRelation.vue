@@ -13,7 +13,7 @@
         <div class="transfer-pane__body left-pane">
           <el-tree ref="tree" :data="treeData" :props="props" check-on-click-node @node-click="handleNodeClick"
             class="JNPF-common-el-tree" node-key="id" v-loading="loading" lazy :load="loadNode" 
-            :default-expand-all="true" show-checkbox @check-change="handleCheckChange">
+             show-checkbox @check-change="handleCheckChange">
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <i :class="data.icon"></i>
               <span class="text">{{node.label}}</span>
@@ -118,6 +118,7 @@ export default {
       })
     },
     search() {
+      console.log(123)
       this.initData()
     },
     initData() {
@@ -128,6 +129,8 @@ export default {
         organizeId: this.nodeId,
         roleId: this.dataForm.objectId
       }
+      console.log(query,'pp')
+      
       getUsersByRoleOrgId(query).then(res => {
         this.treeData = res.data
         this.loading = false

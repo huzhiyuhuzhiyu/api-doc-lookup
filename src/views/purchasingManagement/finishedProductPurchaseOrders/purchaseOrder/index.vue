@@ -106,7 +106,7 @@
               <template slot-scope="scope">
                 <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>
                 <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.SUBMIT">提交</el-tag>
-                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
+                <el-tag type="danger" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />

@@ -1,5 +1,44 @@
 <template>
   <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title">
+        <h2 v-if="!leftFlag">产品分类</h2>
+        <span class="options" v-if="!leftFlag">
+          <el-dropdown>
+            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </span>
+      </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
+      </div>
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
+            <span class="text" :title="data.name">{{ data.name }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+    </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
@@ -120,6 +159,7 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getcategoryTree } from '@/api/basicData/materialSettings'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getRoleList } from '@/api/permission/role'
 import { getListBySys } from '@/api/permission/user'
@@ -227,7 +267,7 @@ export default {
       processFlag: false,
       inspectionFlag: false,
       dataForm: {
-        staffingId: '',
+        staffingId: ''
       },
       dataFormRules: {
         staffingId: [{ required: true, message: '检验人员不能为空', trigger: 'change' }]
@@ -261,12 +301,34 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
     await this.getListBySys()
+    this.getcategoryTree()
     this.tableDataFlag = true
     this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
 
     this.initData()
   },
   methods: {
+    // 获取指定树状列表
+    getcategoryTree() {
+      this.listLoading = true
+      this.treeLoading = true
+      this.listQuery.productCategoryId = '' // 重置数据类型id筛选
+      getcategoryTree({
+        classAttribute: '',
+        type: 'material'
+      })
+        .then((res) => {
+          this.treeData = res.data.length ? res.data : []
+          this.$nextTick(() => {
+            this.treeLoading = false
+            this.initData()
+          })
+        })
+        .catch(() => {
+          this.treeLoading = false
+          this.listLoading = false
+        })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -362,6 +424,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
+      this.filterText = ''
       this.initData()
     },
     handleNodeClick(data, node) {
@@ -423,17 +486,16 @@ export default {
       const res = await getListBySys()
 
       this.staffingData = res.data
-      this.searchList.forEach(tc=>{
+      this.searchList.forEach((tc) => {
         if (tc.prop === 'productSettingName') {
-          tc.options = this.staffingData.map(item=>{
+          tc.options = this.staffingData.map((item) => {
             return {
-              label:item.realName,
-              value:item.realName
+              label: item.realName,
+              value: item.realName
             }
           })
         }
       })
-
     }
   }
 }

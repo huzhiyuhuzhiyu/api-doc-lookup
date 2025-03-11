@@ -308,7 +308,7 @@ export default {
       clearanceFlag: '',
       packagingMethodFlag: '',
       specialRequireFlag: '',
-      bimProductAttributesList: [],
+      bimProductAttributesList: {},
       processList: []
     }
   },
@@ -593,11 +593,10 @@ export default {
       this.search()
     },
     // 获取产品属性
-    getProductClassFun() {
+   async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
+      const res = await getbimProductAttributesListMap()
+      this.bimProductAttributesList = res.data
 
       // 工序
       let obj8 = {

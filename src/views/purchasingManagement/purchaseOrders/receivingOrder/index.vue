@@ -674,11 +674,11 @@ export default {
       })
     },
     // 获取
-    getProductClassFun() {
+    async getProductClassFun() {
       // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
+      const res = await getbimProductAttributesListMap()
+      this.bimProductAttributesList = res.data
+      
       // 工序
       let obj1 = {
         pageNum: 1,

@@ -376,11 +376,11 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 export default {
   components: { Process, recordList },
-  mixins: [busFlow, getProjectList],
+  mixins: [busFlow, AbProjectMixin],
   data() {
     return {
       isProjectSwitch: '',
@@ -494,7 +494,7 @@ export default {
       },
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '',type: 'material' } }
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
@@ -516,9 +516,11 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
+        { prop: 'projectName', label: '所属项目',render:false},
+        { prop: 'code', label: '产品编码'},
+        { prop: 'name', label: '产品名称',render:false},
+        
         { prop: 'drawingNo', label: '品名规格' },
-        // { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'code', label: '产品编码', fixed: 'left' },
         // { prop: 'spec', label: '规格型号' }
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
         // { prop: 'processName', label: '工序名称' },
@@ -542,9 +544,7 @@ export default {
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
-
- 
+    this.tableDataFlag = true
     this.getBimBusinessDetail()
     if (this.type === 'add') this.getBusInfo()
   },
@@ -675,6 +675,27 @@ export default {
     },
     // 产品弹窗
     openSeleceProductDialog() {
+      this.ProductTableSearchList = [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+      ]
+      if (this.$store.getters.configData.product.enable_productName) {
+      this.ProductTableItems.forEach(tc=>{
+        if (tc.prop === 'name') {
+          tc.render = true
+        }
+      })
+      let index = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+      this.ProductTableSearchList.splice(index+1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      }
+      if (this.abProjectSwitchVisible) {
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'projectName') {
+            tc.render = true
+          }
+        })
+        this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+      }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true
       // this.$nextTick(() => {

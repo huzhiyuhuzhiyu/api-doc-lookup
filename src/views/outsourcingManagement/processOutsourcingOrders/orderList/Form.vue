@@ -88,7 +88,7 @@
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
-                        v-if="isProjectSwitch === '1'"></el-table-column>
+                        v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="160"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
@@ -270,7 +270,7 @@
                     id="table">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="projectName" label="所属项目" width="120"
-                      v-if="isProjectSwitch === '1'"></el-table-column>
+                      v-if="abProjectSwitchVisible"></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="160"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
@@ -370,7 +370,7 @@
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                   <el-table-column prop="projectName" label="所属项目" width="120"
-                    v-if="isProjectSwitch === '1'"></el-table-column>
+                    v-if="abProjectSwitchVisible"></el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
@@ -574,7 +574,7 @@
                 id="table">
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="projectName" label="所属项目" width="120"
-                  v-if="isProjectSwitch === '1'"></el-table-column>
+                  v-if="abProjectSwitchVisible"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
@@ -627,16 +627,15 @@ import SourceArea from '../orderCreation/source.vue'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 export default {
   components: { Process, recordList, SourceArea },
-  mixins: [busFlow, getProjectList],
+  mixins: [busFlow, AbProjectMixin],
   data() {
     return {
-      isProjectSwitch: '',
       isProductNameSwitch: '',
       isProportionSwitch: '',
       tableDataFlag: false,
@@ -697,9 +696,10 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        // { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
@@ -781,17 +781,9 @@ export default {
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
-    console.log(this.isProjectSwitch)
-    if (this.isProductNameSwitch === '1') {
-      this.ProductTableItems.splice(1, 0, { prop: 'name', label: '产品名称' })
-      this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
-    }
-    if (this.isProjectSwitch === '1') {
-      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
-    }
+  
     this.getDeputyUnit()
     this.getBimBusinessDetail()
   },
@@ -889,6 +881,27 @@ export default {
     },
     // 产品弹窗
     openSeleceProductDialog() {
+      this.ProductTableSearchList = [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+      ]
+      if (this.isProductNameSwitch === '1') {
+      this.ProductTableItems.forEach(tc=>{
+        if (tc.prop === 'name') {
+          tc.render = true
+        }
+      })
+      let index = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+      this.ProductTableSearchList.splice(index+1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      }
+      if (this.abProjectSwitchVisible) {
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'projectName') {
+            tc.render = true
+          }
+        })
+        this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+      }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true
       // this.$nextTick(() => {

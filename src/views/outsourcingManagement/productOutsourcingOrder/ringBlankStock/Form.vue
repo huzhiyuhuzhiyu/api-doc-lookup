@@ -89,9 +89,9 @@
                     <JNPF-table style="border: 1px solid #e3e7ee;" custom-column :fixedNO="true" ref="multipleTable" :setColumnDisplayList="columnList"
                       @selection-change="handeleProductInfoData" :partentOrChild="'child'" :hasC="type != 'look'" hasNO fixedNO
                       v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" border :height="customStyleData">
-                      <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                      <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                         :key="2"></el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"
+                      <el-table-column prop="productName" label="产品名称" width="120" v-if="$store.getters.configData.product.enable_productName"
                         :key="3"></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
@@ -332,19 +332,18 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getBimProcessList } from '@/api/bimProcess/index'
-
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 export default {
   components: {
     SourceArea,
     Process
   },
-
+  mixins: [AbProjectMixin],
   data() {
     return {
       columnList:[],
       orderType: '',
       isProjectSwitch: '',
-      isProductNameSwitch: '',
       isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
@@ -781,8 +780,6 @@ export default {
     this.getProductClassFun()
   },
   async created() {
-
-    await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
     await this.getDeputyUnit()
     await this.switchStyleheight()
@@ -814,11 +811,6 @@ export default {
           this.switchStyleheight()
         }, 100)
       }
-    },
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
     },
     async getProportionSwitch(code, type) {
       try {
@@ -1197,7 +1189,7 @@ export default {
     // 产品弹窗
     openSeleceProductDialog() {
 
-      if (this.isProductNameSwitch === '1') {
+      if (this.$store.getters.configData.product.enable_productName) {
         this.ProductTableItems.forEach(tc=>{
           if (tc.prop === 'productName') {
             tc.render = true
@@ -1208,12 +1200,13 @@ export default {
       } else {
 
       }
-      if (this.isProjectSwitch === '1') {
+      if (this.abProjectSwitchVisible) {
         this.ProductTableItems.forEach(tc=>{
           if (tc.prop === 'projectName') {
             tc.render = true
           }
         })
+        this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
       } else {
 
       }

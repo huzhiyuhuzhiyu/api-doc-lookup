@@ -19,7 +19,7 @@
             <el-col :span="4" v-if="isProductNameSwitch === '1'">
               <el-form-item>
                 <el-input v-model.trim="listsQuery.productName" placeholder="产品名称" clearable
-                  @keyup.enter.native="search()" />
+                  @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -92,7 +92,14 @@
               :width="isDeputyUnitSwitch === '1' ? 100 : 80" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
-            <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom" />
+            <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom" >
+              <template slot-scope="scope">
+                <el-link type="primary"
+                  @click.native="viewReceiptFun(scope.row, 'inventoryFlag', scope.row.warehouseId, projectId)">
+                  {{ scope.row.receiptQuantity }}
+                </el-link>
+              </template>
+            </el-table-column>
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom" />
             <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
               <template slot-scope="scope">
@@ -166,72 +173,6 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="采购单号">
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="供应商名称">
-              <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="供应商编码">
-              <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="审批状态">
-              <el-select v-model="listQuery.approvalStatus" placeholder="审批状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="订单状态">
-              <el-select v-model="listQuery.receivingStatus" placeholder="订单状态" style="width: 100%;" clearable>
-                <el-option v-for="(item, index) in receiptReturnType" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                clearable start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期"
-                :picker-options="pickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
-
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <!-- <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" /> -->
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -242,6 +183,7 @@
     <!-- 选择打印模版弹窗 -->
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+    <Form v-if="receiptFormVisible" ref="Form" @refreshDataList="initData" />
   </div>
 </template>
 
@@ -258,7 +200,7 @@ import {
 import JNPFForm from '../purchaseOrder/Form.vue'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
-// import withdrawnForm from './withranForm'
+import Form from '../../purchaseOrders/purchaseOrderDetails/Form.vue'
 import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/Form.vue'
 // import PrintForm from './printForm'
 import { excelExport } from '@/api/basicData/index'
@@ -277,7 +219,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { getBimProcessList } from '@/api/bimProcess/index'
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
+  components: { JNPFForm,Form, withdrawnForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
   mixins: [getProjectList],
 
   data() {
@@ -382,6 +324,7 @@ export default {
       flag: true,
       activeName: 'orderList',
       formVisible: false,
+      receiptFormVisible:false,
       listLoading: false,
       statusList: [
         {
@@ -706,6 +649,13 @@ export default {
     this.detailData()
   },
   methods: {
+    // 查看已入库数量
+    viewReceiptFun(row, type, warehouseId, projectId) {
+      this.receiptFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(row, type, warehouseId, projectId)
+      })
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.materialFlag = res.data.material

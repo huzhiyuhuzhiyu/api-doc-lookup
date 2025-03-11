@@ -68,7 +68,7 @@
                           ref="multipleTable" :height="customStyleData">
 
                           <el-table-column prop="projectName" label="所属项目" width="120"
-                            v-if="isProjectSwitch === '1'"></el-table-column>
+                            v-if="abProjectSwitchVisible"></el-table-column>
                           <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
                             key="productCode">
                             <template slot-scope="scope">
@@ -81,7 +81,7 @@
                             </template>
                           </el-table-column>
                           <el-table-column prop="productName" label="产品名称" width="120"
-                            v-if="isProductNameSwitch === '1'"></el-table-column>
+                            v-if="abProjectSwitchVisible"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                             key="productDrawingNo">
@@ -219,7 +219,7 @@
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type !== 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="projectName" label="所属项目" width="120"
-                        v-if="isProjectSwitch === '1'"></el-table-column>
+                        v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip
                         key="productCode">
                         <template slot-scope="scope">
@@ -232,7 +232,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120"
-                        v-if="isProductNameSwitch === '1'"></el-table-column>
+                        v-if="abProjectSwitchVisible"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                         key="productDrawingNo">
@@ -359,16 +359,14 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBimBusinessDetail } from '@/api/basicData/index'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 export default {
   components: { Process, recordList },
-  mixins: [busFlow, getProjectList],
+  mixins: [busFlow, AbProjectMixin],
   data() {
     return {
       customStyleData: 0,
-      isProjectSwitch: '',
-      isProductNameSwitch: '',
       tableDataFlag: false,
       isattachmentswitch: '',
       datafilelist: [],
@@ -479,7 +477,7 @@ export default {
       },
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '',type: 'material' } }
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
@@ -501,7 +499,9 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
+        { prop: 'projectName', label: '所属项目',render:false },
         { prop: 'code', label: '产品编码' },
+        { prop: 'name', label: '产品名称',render:false },
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'productCategoryName', label: '产品分类' },
         { prop: "mainUnit", label: "单位" }
@@ -521,28 +521,8 @@ export default {
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
-    await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
     await this.switchStyleheight()
-    this.tableDataFlag = true
-    console.log(this.isProjectSwitch)
-    if (this.isProductNameSwitch === '1') {
-      let codeIndex = this.ProductTableItems.findIndex(obj => obj.prop === 'code');
-      this.ProductTableItems.splice(codeIndex + 1, 0, {
-        prop: 'name',
-        label: '产品名称',
-      })
-      let productCodeIndex = this.ProductTableItems.findIndex(obj => obj.prop === 'productCode');
-      this.ProductTableSearchList.splice(productCodeIndex + 1, 0, {
-        prop: 'productName',
-        label: '产品名称',
-        type: 'input'
-      })
-    }
-    if (this.isProjectSwitch === '1') {
-      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
-    }
     this.tableDataFlag = true
 
     this.fetchData('QGD')
@@ -583,11 +563,6 @@ export default {
           this.switchStyleheight()
         }, 100)
       }
-    },
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
     },
     getBimBusinessDetail() {
       let obj = {
@@ -697,6 +672,27 @@ export default {
     },
     // 产品弹窗
     openSeleceProductDialog() {
+      this.ProductTableSearchList = [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+      ]
+      if (this.$store.getters.configData.product.enable_productName) {
+      this.ProductTableItems.forEach(tc=>{
+        if (tc.prop === 'name') {
+          tc.render = true
+        }
+      })
+      let index = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+      this.ProductTableSearchList.splice(index+1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      }
+      if (this.abProjectSwitchVisible) {
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'projectName') {
+            tc.render = true
+          }
+        })
+        this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+      }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true
       // this.$nextTick(() => {

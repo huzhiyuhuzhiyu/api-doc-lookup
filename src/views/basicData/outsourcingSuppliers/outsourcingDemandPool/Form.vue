@@ -63,7 +63,7 @@
                         <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="projectName" label="所属项目" width="120"
-                          v-if="isProjectSwitch === '1'"></el-table-column>
+                          v-if="abProjectSwitchVisible"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120"
                           v-if="isProductNameSwitch === '1'"></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
@@ -304,18 +304,17 @@ import { getbimProductAttributesList, getbimProductAttributes } from '@/api/mast
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 export default {
   components: {
     SourceArea,
     Process
   },
-  mixins: [getProjectList],
+  mixins: [AbProjectMixin],
 
   data() {
     return {
-      isProjectSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -343,10 +342,11 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
+        { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
         { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+        { prop: 'productName', label: '产品名称', sortable: 'custom',render:false },
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
-
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
         { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', minWidth: 130 },
@@ -599,16 +599,7 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProjectList()
 
-    if (this.isProductNameSwitch === '1') {
-      this.ProductTableItems.splice(1, 0, { prop: 'productName', label: '产品名称' })
-      this.ProductTableSearchList.splice(1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
-    }
-    if (this.isProjectSwitch === '1') {
-      this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
-
-    }
     this.tableDataFlag = true
-    console.log(this.isProjectSwitch)
 
 
   },
@@ -784,6 +775,27 @@ export default {
     },
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
+      this.ProductTableSearchList = [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+      ]
+      if (this.isProductNameSwitch === '1') {
+      this.ProductTableItems.forEach(tc=>{
+        if (tc.prop === 'name') {
+          tc.render = true
+        }
+      })
+      let index = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+      this.ProductTableSearchList.splice(index+1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      }
+      if (this.abProjectSwitchVisible) {
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'projectName') {
+            tc.render = true
+          }
+        })
+        this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+      }
       this.$refs['comSelect-page'].openDialog()
     },
     // 选完客户产品数据后 渲染在列表上

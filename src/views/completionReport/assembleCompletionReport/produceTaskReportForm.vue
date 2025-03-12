@@ -672,7 +672,6 @@ export default {
           this.printBrowseVisible = true
           this.printVisible = false
 
-          this.printVisible = false
         } else {
           this.$message.warning('未找到相应打印模版')
         }

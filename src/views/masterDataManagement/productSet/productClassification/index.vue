@@ -16,7 +16,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" clearable style="width: 100%;">
+              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" clearable style="width: 100%;" @change="classAttributeChange">
                 <el-option v-for="(item, index) in categoryPropertList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -237,6 +237,9 @@ export default {
     this.initData()
   },
   methods: {
+    classAttributeChange(val){
+      this.initData()
+    },
     getclassAttributeList() {
       let obj = {
         pageNum: 1,

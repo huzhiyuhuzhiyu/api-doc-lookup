@@ -402,8 +402,8 @@ export default {
 						productsId: item.productsId,
 						ratio: item.ratio,
 						remark: item.remark,
-						unqualifiedQuantity: this.inspectionResults === 'qualified' ?
-							0 : item.receivedQuantity
+						// unqualifiedQuantity: this.inspectionResults === 'qualified' ?
+						// 	0 : item.receivedQuantity
 					}
 		  })
       if (submitFlag) {

@@ -4,91 +4,11 @@
       lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body @close="visible = false">
       <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
         <div class="JNPF-common-layout-center JNPF-flex-main">
-          <el-row class="JNPF-common-search-box" :gutter="16" v-if="!$store.getters.configData.warehouse.inventorySearcheListFlag">
-            <el-form @submit.native.prevent>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-input v-model="listQuery.batchNumber" placeholder="批次号" clearable
-                    @keyup.enter.native="search()" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-input @keyup.native.enter="search()" v-model="listQuery.partnerName" placeholder="请输入供应商名称"
-                    clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6" v-if="productNameFlag == 1">
-                <el-form-item>
-                  <el-input v-model="listQuery.productName" placeholder="产品名称" clearable
-                    @keyup.enter.native="search()" />
-                </el-form-item>
-              </el-col>
-
-
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}
-                  </el-button>
-                  <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                    {{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </el-row>
-          <el-row class="JNPF-common-search-box" :gutter="16" v-if="$store.getters.configData.warehouse.inventorySearcheListFlag">
-            <el-form @submit.native.prevent>
-              <el-col :span="4">
-                <el-form-item>
-                  <el-select v-model="listQuery.accuracyLevel" placeholder="精度等级" clearable filterable allow-create>
-                    <el-option v-for="(item, index) in accuracyLevelList" :key="index" :label="item.label"
-                      :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <el-form-item>
-                  <el-select v-model="listQuery.pairingModeId" placeholder="配对方式" clearable filterable allow-create>
-                    <el-option v-for="(item, index) in pairingModeList" :key="index" :label="item.name"
-                      :value="item.id"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="4" v-if="productNameFlag == 1">
-                <el-form-item>
-                  <el-select v-model="listQuery.sealingCoverTyping" placeholder="打字内容" clearable filterable
-                    allow-create>
-                    <el-option v-for="(item, index) in sealingCoverTypingList" :key="index" :label="item.label"
-                      :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <el-form-item>
-                  <el-input v-model="listQuery.shelfSpaceName" placeholder="库位名称" clearable
-                    @keyup.enter.native="search()" />
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="6">
-                <el-form-item>
-                  <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                    {{ $t('common.search') }}
-                  </el-button>
-                  <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                    {{ $t('common.reset') }}
-                  </el-button>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
             <div class="JNPF-common-head">
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+              <!-- <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('dataTable')">导出</el-button> -->
+                <div></div>
               <div class="JNPF-common-head-right">
 
                 <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -116,9 +36,9 @@
               <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
               <el-table-column prop="pairingModeName" label="配对方式" width="160" />
 
-              <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
-              <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
-              <el-table-column prop="occupancyQuantity" v-if="fieldFlag" label="占用数量" width="120" sortable="custom" />
+              <el-table-column prop="num" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
+              <!-- <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
+              <el-table-column prop="occupancyQuantity" v-if="fieldFlag" label="占用数量" width="120" sortable="custom" /> -->
      
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
 
@@ -162,12 +82,6 @@
             </JNPF-table>
             <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
               @pagination="initData">
-              <div class="text">
-                <span>合计：</span>
-                <span style="margin-left: 10px">库存数量：{{ totalData.totalInventory }}</span>
-                <span style="margin-left: 10px">可用数量：{{ totalData.totalAvailable }}</span>
-                <span style="margin-left: 10px">占用数量：{{ totalData.totalOccupancy }}</span>
-              </div>
             </pagination>
           </div>
         </div>
@@ -180,7 +94,7 @@
 </template>
 
 <script>
-import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
+import { getWarehouseLinesList } from '@/api/warehouseManagement/inboundAndOutbound'
 import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index' // 仓库树
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import {
@@ -433,7 +347,8 @@ export default {
       let tempListQuery = {
 
         productsId: row.productsId,
-        sourceNo:row.orderNo,
+        ordersLineId:row.id, // 订单明细id
+        businessType:'inbound_purchase', // 出入库类型
         batchNumber: "",
         availableFlag: 0, // 可用数标识（0 否 1是）默认否
         inventoryFlag: 0, // 库存数标识（0 否 1是）默认否
@@ -445,7 +360,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "latest_storage_time"
+          column: ""
         }],
         pageNum: 1,
         pageSize: 20,
@@ -487,18 +402,14 @@ export default {
       console.log("this.fileFlag", this.fieldFlag);
       // this.listQuery.excludeProcessFlag=!this.fieldFlag
       this.listQuery.warehouseId = this.warehouseId
-      inventorySpaceList(this.listQuery).then(res => {
+      getWarehouseLinesList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
 
 
-        this.tableData = res.data.whPage.records
-        this.total = res.data.whPage.total
-        this.totalData = res.data.stockSts || {
-          totalInventory: 0,
-          totalAvailable: 0,
-          totalOccupancy: 0,
-        }
+        this.tableData = res.data.records
+        this.total = res.data.total
+       
 
 
       }).catch(err => {

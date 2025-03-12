@@ -133,7 +133,7 @@
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
             <el-col :sm="24">
-              <el-form-item prop="staffingId" label="人员">
+              <el-form-item  label="人员">
                 <el-select v-model="dataForm.staffingId" filterable multiple collapse-tags placeholder="请选择角色"
                   style="width: 100%;">
                   <el-option v-for="(item, index) in staffingData" :key="index" :label="item.realName"

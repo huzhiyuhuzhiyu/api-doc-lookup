@@ -161,7 +161,7 @@
                       <el-input v-model="currentProcess.utilizeQuantity" placeholder="料废数量" @blur="handleBlur2"
                         class="ipt" />
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.processType == 'grinding'">
                     <el-form-item label="孔径" :prop="aperture">
                       <el-select v-model="currentProcess.aperture" placeholder="孔径" style="width: 100%;" class="ipt">
@@ -170,7 +170,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24">
+                  <!-- <el-col :sm="24" :xs="24">
                     <el-form-item label="返工数量:" class="iptLabel">
                       <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt"
                         @blur="handleBlur2" />

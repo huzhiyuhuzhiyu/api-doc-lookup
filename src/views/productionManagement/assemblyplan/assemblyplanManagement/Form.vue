@@ -576,7 +576,7 @@ export default {
       routingVisible: false,
       collectForm: {
         orderNo: "",
-        operationDate: "",
+        operationDate: this.jnpf.getToday(),
         personId: "",
       },
       collectConfig: {

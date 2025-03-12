@@ -610,7 +610,7 @@ export default {
       routingVisible: false,
       collectForm: {
         orderNo: "",
-        operationDate: "",
+        operationDate:this.jnpf.getToday(),
         personId: "",
       },
       collectConfig: {
@@ -1507,11 +1507,22 @@ export default {
         this.dataForm.materialFlag = false
 
       }
+      
       if (this.materialList.length) {
         let hasAutoReduceType = this.materialList.some(item => item.reduceType === "auto")
-        if (hasAutoReduceType && !arr.length) {
-          submitFlag = false
-          return this.$message.error("提交失败:请选择线边仓")
+        if (this.dataForm.pickingWay == 'production_order') {
+
+          if (hasAutoReduceType && !this.dataForm.lineEdgeList.length) {
+            submitFlag = false
+            return this.$message.error("提交失败:请选择线边仓")
+          }
+        }
+        if (this.dataForm.pickingWay == 'dispatch_list') {
+
+          if (hasAutoReduceType && !this.dataForm.lineEdgeId) {
+            submitFlag = false
+            return this.$message.error("提交失败:请选择线边仓")
+          }
         }
       }
       console.log("表单", this.dataForm);

@@ -1,5 +1,15 @@
 <template>
   <div class="JNPF-common-layout">
+
+
+
+
+
+
+
+
+
+
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
@@ -19,12 +29,15 @@
           </span>
         </div>
         <div>
-          <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable style="width:200px;margin:10px auto;display:block" />
+          <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable
+            style="width:200px;margin:10px auto;display:block" />
         </div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree">
+        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands"
+          highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
+          class="JNPF-common-el-tree" v-if="refreshTree">
           <span class="custom-tree-node" slot-scope="{ data, node }" :title="data.fullName">
             <i :class="data.icon" />
             <span class="text" :title="data.fullName">{{ node.label }}</span>
@@ -54,14 +67,16 @@
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.enabledMark" placeholder="请选择状态" clearable>
-                <el-option v-for="item in [{label:'禁用',value:0},{label:'启用',value:1},{label:'锁定',value:2}]" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option
+                  v-for="item in [{ label: '禁用', value: 0 }, { label: '启用', value: 1 }, { label: '锁定', value: 2 }]"
+                  :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')
-                }}</el-button>
+              }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
@@ -76,16 +91,18 @@
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle('',false,true)">从员工新建</el-dropdown-item>
-                <el-dropdown-item @click.native="addOrUpdateHandle('',false,false)">直接新建</el-dropdown-item>
+                <el-dropdown-item @click.native="addOrUpdateHandle('', false, true)">从员工新建</el-dropdown-item>
+                <el-dropdown-item @click.native="addOrUpdateHandle('', false, false)">直接新建</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
             <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
-            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" :disabled="!tableData.length" @click="exportForm">导出</el-button>
-            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download"
+              :disabled="!tableData.length" @click="exportForm">导出</el-button>
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
+              @click="uploadForm">导入</el-button>
             <el-button style="margin-left:10px" type="primary" icon="el-icon-plus" @click.native="toDingHandle('')">
               阿里钉钉同步到系统
-              </el-button>
+            </el-button>
             <!-- <el-dropdown style="margin:0 10px;">
                 <el-button  type="primary" icon="el-icon-plus">
                   同步到系统
@@ -96,19 +113,20 @@
                 </el-dropdown-menu>
               </el-dropdown> -->
             <el-dropdown style="margin:0 10px;">
-                <el-button  type="primary" icon="el-icon-plus">
-                  同步到第三方
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="toWxHandle('sync')">同步到企业微信</el-dropdown-item>
-                  <el-dropdown-item @click.native="toDingHandle('sync')">同步到阿里钉钉</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <el-button type="primary" icon="el-icon-plus">
+                同步到第三方
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="toWxHandle('sync')">同步到企业微信</el-dropdown-item>
+                <el-dropdown-item @click.native="toDingHandle('sync')">同步到阿里钉钉</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -118,7 +136,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableFlag"  :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
+        <JNPF-table v-if="tableFlag" :data="tableData" custom-column fixedNO @sort-change="sortChange"
+          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom">
             <template slot-scope="scope">
@@ -152,7 +171,8 @@
               <el-tag type="danger" disable-transitions v-else>禁用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180" sortable="custom" />
+          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180"
+            sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope" v-if="!scope.row.isAdministrator">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
@@ -172,27 +192,32 @@
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">查看详情</el-dropdown-item>
                     <el-dropdown-item @click.native="handleResetPwd(scope.row.id)"> {{ $t('user.resetPassword') }}
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="unlockUser(scope.row.id)" v-if="scope.row.enabledMark == 2">解除锁定</el-dropdown-item>
+                    <el-dropdown-item @click.native="unlockUser(scope.row.id)"
+                      v-if="scope.row.enabledMark == 2">解除锁定</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData" />
       </div>
     </div>
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
       <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
         <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
           :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
           <el-option v-for="item in projectIdData" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </div>
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
+        :limit="1" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
+            icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
 
       </el-upload>
 
@@ -211,7 +236,8 @@
     <JobQuit v-if="jobQuitFormVisible" ref="JobQuit" @close="removeForm" />
     <JobEntry v-if="jobEntryFormVisible" ref="JobEntry" @close="removeForm" />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> -->
     <el-dialog title="数据同步" :visible.sync="dataVisible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll
       width="450px">
@@ -230,7 +256,7 @@
           </div>
         </div>
       </div>
-      <div class="add-main"  v-if="synchronization !== '把企业微信数据同步到系统' && !syncType">
+      <div class="add-main" v-if="synchronization !== '把企业微信数据同步到系统' && !syncType">
         <div class="add-item add-item-sys">
           <i class="add-icons icon-ym icon-ym-download"></i>
           <div class="add-txt">
@@ -249,7 +275,7 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getBimBusinessDetail,excelExport, salecooperativeUsers,getBimBusinessSwitchConfigList  } from '@/api/basicData/index'
+import { getBimBusinessDetail, excelExport, salecooperativeUsers, getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import {
   updateUserState,
@@ -295,10 +321,10 @@ export default {
   data() {
     return {
       isApprovalwitch: '',
-      isProjectSwitch:'',
-      importProjectId:'',
-      tableFlag:false,
-      syncType:'',
+      isProjectSwitch: '',
+      importProjectId: '',
+      tableFlag: false,
+      syncType: '',
       superQueryJson: [
         {
           prop: 'account',
@@ -340,9 +366,9 @@ export default {
         }
       ],
       superQueryVisible: false,
-      dataVisible:false,
-      wechatLoading:false,
-      dingLoading:false,
+      dataVisible: false,
+      wechatLoading: false,
+      dingLoading: false,
       uploadVisib: false,
       columnList: [],
       filterText: "",
@@ -395,7 +421,7 @@ export default {
       leftFlag: false,
       name: '',
       names: '',
-      synchronization:''
+      synchronization: ''
     }
   },
   watch: {
@@ -413,7 +439,7 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
- async created() {
+  async created() {
     await this.getProjectSwitch()
     this.getSwitch()
     await this.getProjectList()
@@ -816,7 +842,7 @@ export default {
       this.initData()
     },
     // 同步到钉钉
-    toDingHandle(syncType){
+    toDingHandle(syncType) {
       this.syncType = syncType
       if (!this.selectArr.length && this.syncType) return this.$message.warning('请选择您要同步的用户数据')
       this.name = '同步到阿里钉钉'
@@ -824,8 +850,8 @@ export default {
       this.synchronization = '把阿里钉钉数据同步到系统'
       this.dataVisible = true
     },
-     // 同步到企微
-     toWxHandle(syncType){
+    // 同步到企微
+    toWxHandle(syncType) {
       this.syncType = syncType
       if (!this.selectArr.length && this.syncType) return this.$message.warning('请选择您要同步的用户数据')
       this.name = '同步到企业微信'
@@ -834,12 +860,12 @@ export default {
       this.dataVisible = true
     },
     syncQy(type) {
-      let ids = this.selectArr.map(item=>item.id)
+      let ids = this.selectArr.map(item => item.id)
       this.$confirm('同步以后会丢失现有数据，是否继续？', '提示', {
         type: 'warning'
       }).then(() => {
         type == 0 ? this.wechatLoading = true : this.dingLoading = true
-        const method = type === 0  ? getUserToWx : synAllUserQyToSys
+        const method = type === 0 ? getUserToWx : synAllUserQyToSys
         let obj = type == 0 ? ids : type
         method(obj).then(res => {
           type == 0 ? this.wechatLoading = false : this.dingLoading = false
@@ -861,7 +887,7 @@ export default {
       })
     },
     syncDing(type) {
-      let ids = this.selectArr.map(item=>item.id)
+      let ids = this.selectArr.map(item => item.id)
       this.$confirm('同步以后会丢失现有数据，是否继续？', '提示', {
         type: 'warning'
       }).then(() => {
@@ -960,6 +986,7 @@ export default {
   -ms-flex-align: center;
   align-items: center;
 }
+
 .add-main {
   display: flex;
   align-items: center;

@@ -6,7 +6,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="通知单单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -64,7 +64,7 @@
           <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="false" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList"
             @selection-change="handleSelectionChange">
-            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+            <el-table-column prop="orderNo" label="通知单单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="handleUserRelation(scope.row.purchaseReceiptReturnGoodsId, 'look')">
@@ -295,7 +295,7 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '单号',
+          label: '通知单单号',
           type: 'input'
         },
         {

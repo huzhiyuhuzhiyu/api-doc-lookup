@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="类别属性">
+              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" @change="classAttributeChange">
                 <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -455,6 +455,9 @@ export default {
     this.initData()
   },
   methods: {
+    classAttributeChange(){
+      this.initData()
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
 

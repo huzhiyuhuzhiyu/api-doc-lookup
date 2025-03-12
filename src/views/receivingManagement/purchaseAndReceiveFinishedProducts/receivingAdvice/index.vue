@@ -67,15 +67,15 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             :checkSelectable="checkSelectable" @selection-change="handleSelectionChange">
-            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+            <el-table-column prop="orderNo" label="通知单单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
-            <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" min-width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商名称" min-width="200" sortable="custom" />
             <el-table-column prop="salesman" label="操作员" width="100" sortable="custom" />
             <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom"></el-table-column>
 
@@ -166,12 +166,12 @@ export default {
       basicQuery: {},
       superQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '通知单单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       superForm: {},
       superQueryVisible: false,
-      columnList: ['partnerCode', 'createByName'],
+      columnList: [],
       deliverDateArr: [],
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -287,7 +287,7 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '单号',
+          label: '通知单单号',
           type: 'input'
         },
         {
@@ -494,7 +494,7 @@ export default {
       this.deliverDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '通知单单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
       ]
       this.superForm = JSON.parse(JSON.stringify(this.orderForm))

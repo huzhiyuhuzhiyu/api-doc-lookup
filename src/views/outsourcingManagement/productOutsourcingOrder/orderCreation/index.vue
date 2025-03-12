@@ -118,7 +118,7 @@
 
                           <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                          <el-table-column prop="purchaseQuantity" label="数量" width="100">
+                          <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch === '1' ? 110 : 100" >
                             <template slot="header">
                               <span class="required">*</span>
                               {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -737,7 +737,11 @@ export default {
       this.btnLoading = false
     },
     goBom() {
+      this.dataForm = {}
+      this.linesList = []
+      this.datafilelist = []
       this.tipsvisible = false
+      this.btnLoading = false
       this.$router.push({
         path: '/outsourcingManagement/productOutsourcingOrder/orderList'
       })

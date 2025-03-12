@@ -62,7 +62,7 @@
           <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="false" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList"
             @selection-change="handleSelectionChange">
-            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+            <el-table-column prop="orderNo" label="通知单单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="handleUserRelation(scope.row.purchaseReceiptReturnGoodsId, 'look')">
@@ -188,7 +188,7 @@ export default {
       basicQuery: {},
       superQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '通知单单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ],
@@ -284,7 +284,7 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '单号',
+          label: '通知单单号',
           type: 'input'
         },
         {

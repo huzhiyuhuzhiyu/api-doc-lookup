@@ -82,7 +82,7 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'"
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
                       ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
                       :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
                       :row-style="rowStyle">
@@ -122,7 +122,7 @@
                       </template>
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                      <el-table-column prop="purchaseQuantity" label="数量" width="100">
+                      <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch === '1' ? 110 : 100">
                         <template slot="header">
                           <span class="required">*</span>
                           {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -369,7 +369,7 @@
                   </template>
                   <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                     :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                  <el-table-column prop="purchaseQuantity" label="数量" width="100">
+                  <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch === '1' ? 110 : 100">
                     <template slot="header">
                       <span class="required">*</span>
                       {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -1084,7 +1084,7 @@ export default {
       console.log(this.autoId, 'this.autoId')
       if (this.autoId === row.id) {
         console.log('000')
-        return { 'background-color': '#F7EDED', cursor: 'pointer' }
+        return {  cursor: 'pointer' }
       }
       return { cursor: 'pointer' }
     },

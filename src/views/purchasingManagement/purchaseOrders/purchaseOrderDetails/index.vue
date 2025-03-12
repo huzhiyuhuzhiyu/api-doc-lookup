@@ -122,6 +122,13 @@
                 <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+              <template slot-scope="scope">
+                <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.SUBMIT">提交</el-tag>
+                <el-tag type="danger" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column prop="standardValue" label="规值" width="100" sortable="custom"
               v-if="standardValueFlag === '1'" />
             <el-table-column prop="material" label="材质" width="130" sortable="custom"
@@ -200,6 +207,7 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getBimProcessList } from '@/api/bimProcess/index'
+import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm,Form, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
@@ -328,33 +336,6 @@ export default {
         },
         { label: '审批撤回', value: 'withdrawn' }
       ],
-      listQuery: {
-        approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
-        cooperativePartnerCode: '', //供应商编码
-        cooperativePartnerName: '', // 	供应商名称
-        createByName: '',
-        delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
-        deliveryEndDate: '', //交货结束日期
-        deliveryStartDate: '',
-        deliveryDate: '',
-        endTime: '',
-        orderNo: '', //订单号
-        orderType: 'procure', //	订单类型 采购 procure、外协 external
-        pageNum: 1,
-        pageSize: 20,
-        startTime: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        receivingStatus: ''
-      },
       deliveryDateArr: [],
       // 明细参数
       listsQuery: {
@@ -367,6 +348,7 @@ export default {
         orderNo: '',
         classAttribute: 'other',
         orderType: 'procure',
+        documentStatus:'submit',
         orderItems: [
           {
             asc: false,
@@ -454,6 +436,11 @@ export default {
       specialRequireFlag: '',
       processList: [],
       bimProductAttributesList: {}
+    }
+  },
+  computed: {
+    DocumentStatus() {
+      return DocumentStatus
     }
   },
   mounted() {

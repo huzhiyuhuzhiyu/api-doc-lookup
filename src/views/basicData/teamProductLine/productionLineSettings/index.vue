@@ -23,9 +23,9 @@
           </template>
           <el-col :span="4">
             <el-form-item>
-              <el-select clearable v-model="tableQuery.workshopId" placeholder="加工车间" style="width: 100%;">
+              <el-select clearable v-model="tableQuery.workshopName" placeholder="加工车间" style="width: 100%;" @change="workshopIdChange">
                 <el-option v-for="(item, index) in workshopIdOptions" :key="index" :label="item.fullName"
-                  :value="item.id"></el-option>
+                  :value="item.fullName"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -128,7 +128,6 @@ export default {
         { field: 'name', fieldValue: '', label: '产线名称', symbol: 'like', searchType: 1, width: 120 },
 
       ],
-      superForm: {},
       basicQuery: {},
       superQuery: {},
       superQueryVisible: false,
@@ -224,12 +223,14 @@ export default {
     this.tableDataFlag = true
     await this.getProjectList()
 
-    this.superForm = this.tableQuery
     this.getDepartmentList()
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    workshopIdChange(){
+      this.initData()
+    },
     getDepartmentList() {
       getDepartmentList('CJ').then(res => {
         this.workshopIdOptions = res.data
@@ -300,9 +301,9 @@ export default {
     },
     initData() {
       if (this.isProjectSwitch === '1') {
-        this.superForm.projectId = this.userInfo.projectId
+        this.tableQuery.projectId = this.userInfo.projectId
       }
-      getProductionLineList(this.superForm)
+      getProductionLineList(this.tableQuery)
         .then((res) => {
           console.log(res, '产线')
           this.tableDataList = res.data.records
@@ -336,10 +337,10 @@ export default {
               }
             })
         }
-        this.superForm.superQuery = this.basicQuery
+        this.tableQuery.superQuery = this.basicQuery
       }
       if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
+        this.tableQuery.superQuery = this.superQuery
       }
       this.initData()
     },

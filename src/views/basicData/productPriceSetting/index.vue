@@ -75,7 +75,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">
+                <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;" @change="productSourceChange">
                   <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
@@ -671,6 +671,9 @@ export default {
     }
   },
   watch: {
+    productSourceChange(){
+      this.initData()
+    },
     filterText(val) {
       this.$refs.treeBox.filter(val)
     },

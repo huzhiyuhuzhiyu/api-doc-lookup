@@ -62,7 +62,7 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">
+              <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;" @change="productSourceChange">
                 <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -675,6 +675,9 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    productSourceChange(){
+      this.initData()
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

@@ -164,7 +164,7 @@
         </el-form>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="analyseDialog = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button @click="cancel">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
           {{ $t('common.submitButton') }}
         </el-button>
@@ -782,6 +782,10 @@ export default {
       } else {
         this.btnLoading = false
       }
+    },
+    cancel(){
+      this.analyseDialog = false
+      this.initData()
     },
     pricingTypeChange(val) {
       this.dataForm.pricingType = val

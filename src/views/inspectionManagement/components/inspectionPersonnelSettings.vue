@@ -134,7 +134,8 @@
           <el-row :gutter="30">
             <el-col :sm="24">
               <el-form-item prop="staffingId" label="人员">
-                <el-select v-model="dataForm.staffingId" filterable placeholder="请选择角色" style="width: 100%;">
+                <el-select v-model="dataForm.staffingId" filterable multiple collapse-tags placeholder="请选择角色"
+                  style="width: 100%;">
                   <el-option v-for="(item, index) in staffingData" :key="index" :label="item.realName"
                     :value="item.id"></el-option>
                 </el-select>
@@ -144,7 +145,7 @@
         </el-form>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="analyseDialog = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button @click="cancel">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
           {{ $t('common.submitButton') }}
         </el-button>
@@ -267,7 +268,7 @@ export default {
       processFlag: false,
       inspectionFlag: false,
       dataForm: {
-        staffingId: ''
+        staffingId: []
       },
       dataFormRules: {
         staffingId: [{ required: true, message: '检验人员不能为空', trigger: 'change' }]
@@ -439,7 +440,9 @@ export default {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条检验数据')
 
       this.btnLoading = false
-      this.dataForm = {}
+      this.dataForm = {
+        staffingId:[]
+      }
       this.analyseDialog = true
     },
     async dataFormSubmit() {
@@ -470,7 +473,7 @@ export default {
             this.$refs.dataTable.$refs.JNPFTable.clearSelection()
             this.analyseDialog = false
             this.dataForm = {
-              staffingId: ''
+              staffingId: []
             }
             this.search()
           })
@@ -480,6 +483,10 @@ export default {
       } else {
         this.btnLoading = false
       }
+    },
+    cancel(){
+      this.analyseDialog = false
+      this.initData()
     },
     // 获取质量管理菜单用户人员
     async getListBySys() {

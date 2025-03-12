@@ -269,7 +269,7 @@
       </span>
     </el-dialog>
     <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
-      dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList" :listRequestObj="ProductListRequestObjs"
+      dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList" :listRequestObj="ProductListRequestObj"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="true" :renderTree="false"  />
   </div>
@@ -325,7 +325,7 @@ export default {
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       // 选择客户产品参数
-      ProductListRequestObjs: {
+      ProductListRequestObj: {
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'external', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
@@ -795,6 +795,7 @@ export default {
           }
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+        this.ProductListRequestObj.projectId = this.abProjectId
       }
       this.$refs['comSelect-page'].openDialog()
     },

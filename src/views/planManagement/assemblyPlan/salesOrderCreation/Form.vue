@@ -733,7 +733,7 @@ export default {
 
         this.countFun1()
         // this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-      } else if (1 <= Number(val) <= 100) {
+      } else if (1 <= Number(val) && Number(val) <= 100) {
         this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
 
         this.countFun1()

@@ -28,4 +28,8 @@ export default {
         configKeyLabel: '启用工艺路线检验信息',
         description: '启用工艺路线检验信息后，新建、编辑工艺路线时，将会显示检验信息要求输入字段，对应工单也将显示检验信息字段。'
     },
+    purchase_to_production: {
+        configKeyLabel: '套圈毛坯采购生成任务',
+        description: '启用后，套圈毛坯采购入库自动生成套圈任务。'
+    },
 }

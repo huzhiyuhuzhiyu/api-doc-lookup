@@ -1058,6 +1058,7 @@ export default {
 
     // 打开选择库位弹框
     openSeleceWareDialog(row, index, type) {
+      console.log(row,index,type);
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
       this.wareHouseVisible = true
       this.$nextTick(() => {
@@ -1068,7 +1069,7 @@ export default {
 
     // 所选的库位信息
     selectWareHouseFun(data, type) {
-      console.log("库位信息", data);
+      console.log("库位信息", data,type,this.currentProductIndex);
       let index = this.currentProductIndex
       if (!type) {
         this.shelfSpaceId = data.id
@@ -1078,6 +1079,10 @@ export default {
       if (this.productData.length) {
         this.productData.forEach(item => {
           if (!item.shelfSpaceId) {
+            this.$set(item, 'shelfSpaceName', data.name)
+            this.$set(item, 'warehouseId', data.warehouseId)
+            this.$set(item, 'shelfSpaceId', data.id)
+          }else if(item.shelfSpaceId&&type){
             this.$set(item, 'shelfSpaceName', data.name)
             this.$set(item, 'warehouseId', data.warehouseId)
             this.$set(item, 'shelfSpaceId', data.id)

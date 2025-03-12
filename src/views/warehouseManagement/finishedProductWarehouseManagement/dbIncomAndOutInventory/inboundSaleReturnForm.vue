@@ -715,6 +715,10 @@ export default {
             this.$set(item, 'shelfSpaceName', data.name)
             this.$set(item, 'warehouseId', data.warehouseId)
             this.$set(item, 'shelfSpaceId', data.id)
+          }else if(item.shelfSpaceId&&type){
+            this.$set(item, 'shelfSpaceName', data.name)
+            this.$set(item, 'warehouseId', data.warehouseId)
+            this.$set(item, 'shelfSpaceId', data.id)
           }
         });
         if (index) {

@@ -407,9 +407,10 @@ export default {
     },
     materialWasteData(data,totalNums) {
       console.log("设置的料废金额", data,totalNums);
-      this.materialWasteDataList = data
       if(totalNums){
-        this.currentProcess.materialWasteQuantity=totalNums
+     
+      this.materialWasteDataList = data
+      this.currentProcess.materialWasteQuantity=totalNums
         this.handleBlur2()
       }
     },
@@ -640,7 +641,7 @@ export default {
           obj.reworkQuantity = this.currentProcess.reworkQuantity
           obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
           obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
-          obj.scrapList = this.materialWasteDataList
+          obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList] 
           obj.pricingType = this.currentProcess.pricingType
           obj.processId = this.currentProcess.processId
           obj.producerId = this.currentProcess.producerId
@@ -652,6 +653,7 @@ export default {
           obj.aperture = this.currentProcess.aperture
           obj.workOrderId = this.currentProcess.id
           arr.push(obj)
+      
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
             this.init(this.id)

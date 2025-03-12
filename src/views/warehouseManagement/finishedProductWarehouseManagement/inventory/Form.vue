@@ -422,6 +422,7 @@ export default {
     init(id, type, flag, projectId) {
       console.log(id, type, flag, projectId);
       this.getProductClassFun()
+      this.tableData=[]
       this.fieldFlag = flag || true
       this.warehouseId = flag
       this.projectId = projectId

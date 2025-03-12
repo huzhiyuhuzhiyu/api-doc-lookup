@@ -34,12 +34,12 @@
                 <el-input v-model="scope.row.scrapQuantity" placeholder="责废数量" @blur="countFun(scope)"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="scrapUserId" label="责废人" min-width="180" sortable="custom">
+            <el-table-column prop="scrapUserId" label="责任人" min-width="180" sortable="custom">
               <template slot="header">
-                <span class="required">*</span>责废人
+                <span class="required">*</span>责任人
               </template>
               <template slot-scope="scope">
-                <user-select v-model="scope.row.scrapUserId" placeholder="生产人" clearable style="width: 100%;"
+                <user-select v-model="scope.row.scrapUserId" placeholder="责任人" clearable style="width: 100%;"
                   class="ipt"   @focus="handeleFocus(scope.$index)">
                 </user-select>
               </template>

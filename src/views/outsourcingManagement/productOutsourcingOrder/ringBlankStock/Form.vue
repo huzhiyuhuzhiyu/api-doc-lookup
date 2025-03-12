@@ -1207,7 +1207,7 @@ export default {
           }
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
-        this.ProductListRequestObj.projectId = this.abProjectId
+        this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
       } else {
 
       }

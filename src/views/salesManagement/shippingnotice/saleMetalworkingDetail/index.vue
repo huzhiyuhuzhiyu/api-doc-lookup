@@ -108,7 +108,7 @@
             <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="materialFlag == 1"></el-table-column>
             <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
-            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
+            <!-- <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.exchangeGoodsFlag">
                   换货发货
@@ -117,7 +117,7 @@
                   正常发货
                 </div>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'not_finished'">
@@ -377,12 +377,13 @@ export default {
           prop: 'ordersNo',
           label: "订单号",
           type: 'input',
-        }, {
-          prop: 'exchangeGoodsFlag',
-          label: "发货标识",
-          type: 'select',
-          options: [{ label: "换货发货", value: true }, { label: "正常发货", value: false },]
-        },
+        }, 
+        // {
+        //   prop: 'exchangeGoodsFlag',
+        //   label: "发货标识",
+        //   type: 'select',
+        //   options: [{ label: "换货发货", value: true }, { label: "正常发货", value: false },]
+        // },
         {
           prop: 'deliveryStatus',
           label: "发货状态",
@@ -875,7 +876,10 @@ export default {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.filter(item => item.prop !== "deputyNum"); 
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      delete columnList.deputyNum
+      console.log("columnList1",columnList);
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
     download(data) {

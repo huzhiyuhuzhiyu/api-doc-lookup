@@ -74,7 +74,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
-            <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="通知单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                   scope.row.orderNo
@@ -172,7 +172,7 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '通知单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
 
       ],
@@ -227,7 +227,7 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: "单号",
+          label: "通知单号",
           type: 'input'
         },
         {

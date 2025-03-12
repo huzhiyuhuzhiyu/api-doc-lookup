@@ -591,7 +591,7 @@
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="inventoryQuantity" label="库存数量">
                       <template slot-scope="scope">
-                        <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                        <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
                           {{ scope.row.inventoryQuantity }}
                         </el-link>
                       </template>
@@ -943,6 +943,7 @@ export default {
     }
   },
   async created() {
+    this.formLoading=true
     // this.handleChange()
     // this.getProvinceList()
     await this.getpairingModeListFun()
@@ -952,7 +953,10 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
-
+    setTimeout(() => {
+    this.formLoading=false
+      
+    }, 800);
   },
   mounted() {
     this.init()
@@ -1196,10 +1200,10 @@ export default {
       this.dataFormTwo.productData = productArr
     },
     // 查看库存明细
-    viewFun(id, type, warehouseId) {
+    viewFun(row, type, warehouseId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, "", 'product')
+        this.$refs.Form.init(row.id, type, "", row.projectId)
       })
     },
     getAttachmentswitch() {

@@ -19,7 +19,7 @@
                 <span class="required">*</span>料废类型
               </template>
               <template slot-scope="scope">
-                <el-select v-model="scope.row.scrapId" placeholder="料废类型" style="width: 100%;" class="ipt"
+                <el-select v-model="scope.row.scrapCategoryId" placeholder="料废类型" style="width: 100%;" class="ipt"
                   @change="(value) => handleSelectionChange(value, scope)">
                   <el-option v-for="(item, index) in materialWasteList" :key="index" :label="item.name"
                     :value="item.id"></el-option>
@@ -31,7 +31,7 @@
                 <span class="required">*</span>料废数量
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.num" placeholder="料废数量" @blur="countFun(scope)"></el-input>
+                <el-input v-model="scope.row.scrapQuantity" placeholder="料废数量" @blur="countFun(scope)"></el-input>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="price" label="单价" min-width="180" sortable="custom"></el-table-column>
@@ -79,10 +79,14 @@ export default {
       tableDataList: [],
       createdData: {
         name: "",
+        scrapUserId:"",
         price: "",
-        num: "",
+        scrapQuantity: "",
         amount: "",
-        scrapId: "",
+        scrapCategoryId: "",
+        workReportId:"",
+        type: "work",
+        scrapCategory:'material_fee',
       },
       num: "",
 
@@ -99,7 +103,7 @@ export default {
     totalNum: function () {
       var totalNums = 0;
       for (var i = 0; i < this.tableDataList.length; i++) {
-        totalNums = this.jnpf.math('add', [totalNums, this.tableDataList[i].num])
+        totalNums = this.jnpf.math('add', [totalNums, this.tableDataList[i].scrapQuantity])
       }
       return totalNums
     },
@@ -108,7 +112,7 @@ export default {
   methods: {
     countFun(row) {
       let index = row.$index
-      this.tableDataList[index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.num, row.row.price]), 6)
+      this.tableDataList[index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.scrapQuantity, row.row.price]), 6)
     },
     addLinFun() {
       this.tableDataList.push(JSON.parse(JSON.stringify(this.createdData)))
@@ -122,9 +126,9 @@ export default {
       // 通过 value (即选中的 item.id) 找出对应的 item  
       const selectedItem = this.materialWasteList.find(item => item.id === value);
       this.tableDataList[row.$index].price = selectedItem.price
-      this.tableDataList[row.$index].name = selectedItem.name
-      this.tableDataList[row.$index].scrapId = selectedItem.id
-      this.tableDataList[row.$index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.num, row.row.price]), 6)
+      this.tableDataList[row.$index].scrapCategoryName = selectedItem.name
+      this.tableDataList[row.$index].scrapCategoryId = selectedItem.id
+      this.tableDataList[row.$index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.scrapQuantity, row.row.price]), 6)
       console.log('选中的选项:', selectedItem); // 这里会打印出完整的 item 对象  
       // 你可以进一步处理 selectedItem，比如更新状态或发送请求  
     },
@@ -164,7 +168,7 @@ export default {
       let flag=null;
       for (let index = 0; index < this.tableDataList.length; index++) {
         const item = this.tableDataList[index];
-        if(!item.scrapId){
+        if(!item.scrapCategoryId){
           this.$message({
           message: "请选择第" + (index + 1) + "行的料废类型",
           type: 'error',
@@ -173,7 +177,7 @@ export default {
         flag=false
         break
         }
-        if(!item.num){
+        if(!item.scrapQuantity){
           this.$message({
           message: "请输入第" + (index + 1) + "行数量",
           type: 'error',

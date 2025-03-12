@@ -14,33 +14,33 @@
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
-            <el-table-column prop="name" label="责废原因" min-width="180" sortable="custom">
+            <el-table-column prop="scrapCategoryName" label="责废原因" min-width="180" sortable="custom">
               <template slot="header">
                 <span class="required">*</span>责废原因
               </template>
               <template slot-scope="scope">
-                <el-select v-model="scope.row.scrapId" placeholder="责废原因" style="width: 100%;" class="ipt"
+                <el-select v-model="scope.row.scrapCategoryId" placeholder="责废原因" style="width: 100%;" class="ipt"
                   @change="(value) => handleSelectionChange(value, scope)">
                   <el-option v-for="(item, index) in materialWasteList" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="num" label="责废数量" min-width="180" sortable="custom">
+            <el-table-column prop="scrapQuantity" label="责废数量" min-width="180" sortable="custom">
               <template slot="header">
                 <span class="required">*</span>责废数量
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.num" placeholder="责废数量" @blur="countFun(scope)"></el-input>
+                <el-input v-model="scope.row.scrapQuantity" placeholder="责废数量" @blur="countFun(scope)"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="person" label="责废人" min-width="180" sortable="custom">
+            <el-table-column prop="scrapUserId" label="责废人" min-width="180" sortable="custom">
               <template slot="header">
                 <span class="required">*</span>责废人
               </template>
               <template slot-scope="scope">
-                <user-select v-model="scope.row.person" placeholder="生产人" clearable style="width: 100%;"
-                  class="ipt" @change="hangleSelectSales(scope)"  @focus="handeleFocus(scope.$index)">
+                <user-select v-model="scope.row.scrapUserId" placeholder="生产人" clearable style="width: 100%;"
+                  class="ipt"   @focus="handeleFocus(scope.$index)">
                 </user-select>
               </template>
             </el-table-column>
@@ -87,12 +87,14 @@ export default {
       isProductNameSwitch: "",
       tableDataList: [],
       createdData: {
-        name: "",
+        scrapCategoryName: "",
         price: "",
-        num: "",
+        scrapQuantity: "",
         amount: "",
-        person:"",
-        scrapId: "",
+        scrapUserId:"",
+        scrapCategoryId: "",
+        type:'work',
+        scrapCategory:'responsibility_fee',
       },
       num: "",
 
@@ -109,7 +111,7 @@ export default {
     totalNum: function () {
       var totalNums = 0;
       for (var i = 0; i < this.tableDataList.length; i++) {
-        totalNums = this.jnpf.math('add', [totalNums, this.tableDataList[i].num])
+        totalNums = this.jnpf.math('add', [totalNums, this.tableDataList[i].scrapQuantity])
       }
       return totalNums
     },
@@ -120,7 +122,7 @@ export default {
  
     countFun(row) {
       let index = row.$index
-      this.tableDataList[index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.num, row.row.price]), 6)
+      this.tableDataList[index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.scrapQuantity, row.row.price]), 6)
     },
     addLinFun() {
       this.tableDataList.push(JSON.parse(JSON.stringify(this.createdData)))
@@ -134,9 +136,9 @@ export default {
       // 通过 value (即选中的 item.id) 找出对应的 item  
       const selectedItem = this.materialWasteList.find(item => item.id === value);
       this.tableDataList[row.$index].price = selectedItem.price
-      this.tableDataList[row.$index].name = selectedItem.name
-      this.tableDataList[row.$index].scrapId = selectedItem.id
-      this.tableDataList[row.$index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.num, row.row.price]), 6)
+      this.tableDataList[row.$index].scrapCategoryName = selectedItem.name
+      this.tableDataList[row.$index].scrapCategoryId = selectedItem.id
+      this.tableDataList[row.$index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.scrapQuantity, row.row.price]), 6)
       console.log('选中的选项:', selectedItem); // 这里会打印出完整的 item 对象  
       // 你可以进一步处理 selectedItem，比如更新状态或发送请求  
     },
@@ -151,18 +153,12 @@ export default {
       this.tableDataList = data
       this.getrecordsList()
     },
-    // 选择批次
-    selectFun(row) {
-      this.$emit("selectRouting", row,)
-      this.customerVisible = false
-    },
+ 
     getrecordsList() {
       this.listLoading = true
       getScrapCategoryList(this.form).then(res => {
         console.log("料废类型", res);
-        // res.data.records.forEach(item => {
-        //   item.selectFlag = false
-        // })
+       
         this.materialWasteList = res.data.records
         this.listLoading = false
       }).catch(() => {
@@ -176,7 +172,7 @@ export default {
       let flag = null;
       for (let index = 0; index < this.tableDataList.length; index++) {
         const item = this.tableDataList[index];
-        if (!item.scrapId) {
+        if (!item.scrapCategoryId) {
           this.$message({
             message: "请选择第" + (index + 1) + "行的责废原因",
             type: 'error',
@@ -185,7 +181,7 @@ export default {
           flag = false
           break
         }
-        if (!item.num) {
+        if (!item.scrapQuantity) {
           this.$message({
             message: "请输入第" + (index + 1) + "行数量",
             type: 'error',
@@ -194,7 +190,7 @@ export default {
           flag = false
           break
         }
-        if (!item.person) {
+        if (!item.scrapUserId) {
           this.$message({
             message: "请选择第" + (index + 1) + "行的责任人",
             type: 'error',

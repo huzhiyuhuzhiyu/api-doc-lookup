@@ -539,7 +539,7 @@ import MaterialWasteForm from '../ringCompletionReport/materialWasteForm.vue';
 import responsWaste from '../ringCompletionReport/responsWaste.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
-import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
+import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 
 export default {
 
@@ -1399,6 +1399,7 @@ export default {
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
+              obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
             } else if (this.currentProcessType === 3) {
               obj.classAttribute = this.currentProcess.classAttribute
               obj.orderType = this.currentProcess.orderType
@@ -1422,6 +1423,7 @@ export default {
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
+              obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               console.log("测震到配对工序之间的工序");
             } else if (this.currentProcessType === 4) {
               obj.classAttribute = this.currentProcess.classAttribute
@@ -1447,6 +1449,7 @@ export default {
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
+              obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               console.log("配对工序");
             } else {
               console.log("配对后工序");
@@ -1475,6 +1478,7 @@ export default {
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.oil = this.currentProcess.oil
               obj.sealingcoverTyping = this.currentProcess.sealingcoverTyping
+              obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
             }
             arr.push(obj)
           } else if (this.currentProcess.accuracyReportFlag) {
@@ -1507,6 +1511,7 @@ export default {
                 this.$set(obj, 'matchedQuantity', this.currentProcess.matchedQuantity)
                 this.$set(obj, 'pairingModeId', this.currentProcess.pairingModeId)
                 this.$set(obj, 'accuracyLevel', item.accuracyLevel)
+                this.$set(obj, 'causesList', [...this.materialWasteDataList, ...this.responsWasteDataList])
 
 
 
@@ -1541,6 +1546,7 @@ export default {
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.oil = this.currentProcess.oil
               obj.sealingcoverTyping = this.currentProcess.sealingcoverTyping
+              obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               arr.push(obj)
               console.log("测震到配对工序之间的工序");
             } else if (this.currentProcessType === 4) {
@@ -1569,6 +1575,7 @@ export default {
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.accuracyLevel = this.currentProcess.accuracyLevel
+              obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               arr.push(obj)
               console.log("配对工序");
             } else {
@@ -1600,10 +1607,10 @@ export default {
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.oil = this.currentProcess.oil
               obj.sealingcoverTyping = this.currentProcess.sealingcoverTyping
+              obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               arr.push(obj)
             }
-          }
-          else {
+          } else {
             let obj = {
               "classAttribute": this.currentProcess.classAttribute,
               orderType: this.currentProcess.orderType,
@@ -1628,12 +1635,16 @@ export default {
               "oil": this.currentProcess.oil,
               "sealingcoverTyping": this.currentProcess.sealingcoverTyping,
               "workOrderId": this.currentProcess.id,
+              causesList: [...this.materialWasteDataList, ...this.responsWasteDataList],
 
             }
             arr.push(obj)
           }
+
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
+            this.materialWasteDataList=[]
+            this.responsWasteDataList=[]
             this.init(this.id)
           })
         } else {

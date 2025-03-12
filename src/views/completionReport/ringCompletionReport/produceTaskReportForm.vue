@@ -5,6 +5,7 @@
         <el-page-header @back="goBack" :content="'生产任务报工'" />
         <div class="options">
 
+          <el-button @click="printBarCode">打印二维码</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -266,7 +267,9 @@
     </MaterialWasteForm>
     <responsWaste v-if="responsWasteFormVisible" ref="responsWasteFormRef" @change="responsWasteData">
     </responsWaste>
-
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 
 </template>
@@ -284,13 +287,22 @@ import OutForm from '@/views/outsourcingManagement/processOutsourcingOrders/orde
 import recordForm from './recordForm.vue'
 import MaterialWasteForm from './materialWasteForm.vue';
 import responsWaste from './responsWaste.vue'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
 export default {
 
   components: {
-    recordForm, OutForm, MaterialWasteForm,responsWaste
+    recordForm, OutForm, MaterialWasteForm,responsWaste,PrintBrowse,
+    PrintDialog,
   },
   data() {
     return {
+      printVisible: false,
+      printBrowseVisible: false,
+      enCode: "p035",
+      fullName: "打印工单码",
+      formId: "",
       processInfo:{},
       responsWasteFormVisible:false,
       materialWasteFormVisible: false,
@@ -353,6 +365,31 @@ export default {
   },
 
   methods: {
+    closePrint() {
+      this.printVisible = false
+    },
+    // 打印
+    printBarCode() {
+      this.formId = this.dataForm.id
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
     setMaterialWasteM() {
       console.log("this.materialWasteDataList", this.materialWasteDataList);
       this.materialWasteFormVisible = true

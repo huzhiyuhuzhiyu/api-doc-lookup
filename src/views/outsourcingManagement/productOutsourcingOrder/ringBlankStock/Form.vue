@@ -155,7 +155,7 @@
                       </el-table-column>
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" :key="8" />
-                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100" :key="9">
+                      <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch === '1' ? 110 : 100" :key="9">
                         <template slot="header">
                           <span class="required">*</span>
                           {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -1207,6 +1207,7 @@ export default {
           }
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+        this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
       } else {
 
       }

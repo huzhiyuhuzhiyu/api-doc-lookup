@@ -19,29 +19,25 @@
             </div>
             <JNPF-table v-if="tableDataFlag" :partentOrChild="'child'" :data="tableData" hasNO fixedNO
               @sort-change="sortChange" :setColumnDisplayList="columnList" custom-column ref="dataTable">
-
+              <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                v-if="isProjectSwitch == 1" />
               <el-table-column prop="partnerName" label="供应商名称" min-width="200" sortable="custom" />
               <el-table-column prop="partnerCode" label="供应商编码" min-width="200" sortable="custom" />
               <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
               <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                 sortable="custom" />
-              <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
+              <el-table-column prop="drawingNo" label="品名规格" min-width="330" sortable="custom" />
+              <el-table-column prop="num" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
+              <el-table-column prop="createTime" label="入库时间" min-width="180" fixed="right"
+                sortable="custom" />
               <el-table-column prop="weight" label="重量(KG)" min-width="120" sortable="custom" />
               <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
               <el-table-column prop="processName" label="工序名称" min-width="120" />
               <el-table-column prop="processCode" label="工序编码" min-width="120" />
-              <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-                v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
               <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
               <el-table-column prop="pairingModeName" label="配对方式" width="160" />
-
-              <el-table-column prop="num" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
-              <!-- <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
-              <el-table-column prop="occupancyQuantity" v-if="fieldFlag" label="占用数量" width="120" sortable="custom" /> -->
-     
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-
               <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
                 <template slot-scope="scope">
                   <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
@@ -77,8 +73,6 @@
                 sortable="custom"></el-table-column>
               <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag == 1"
                 sortable="custom"></el-table-column>
-              <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
-                sortable="custom" />
             </JNPF-table>
             <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
               @pagination="initData">

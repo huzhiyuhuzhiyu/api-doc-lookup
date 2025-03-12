@@ -41,7 +41,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="类别属性">
+              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" @change="classAttributeChange">
                 <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -110,9 +110,9 @@
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-            :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-          <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+          <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.procureDeputyUnit ? '单位(主)' : '单位'"
+            :width="$store.getters.configData.deputyUnit.procureDeputyUnit ? 85 : 60" />
+          <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="$store.getters.configData.deputyUnit.procureDeputyUnit" />
           <el-table-column prop="availableQuantity" label="可用库存" min-width="130" sortable="custom" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="130" sortable="custom" />
           <el-table-column prop="maxInventory" label="最高库存" min-width="130" sortable="custom" />
@@ -177,7 +177,6 @@ export default {
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
-      isDeputyUnitSwitch: '',
       tableFlag: '',
       columnList: [
         // 'code',
@@ -297,11 +296,9 @@ export default {
     this.getProductClassFun()
   },
   async created() {
-    await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
-    await this.getProductNameSwitch('product', 'enable_productName')
-    if (this.isDeputyUnitSwitch === '1') {
+    if (this.$store.getters.configData.deputyUnit.procureDeputyUnit) {
       this.superQueryJson.forEach(item => {
         if (item.prop === 'mainUnit') {
           item.label = '单位(主)'
@@ -314,7 +311,7 @@ export default {
       })
 
     }
-    if (this.isProductNameSwitch === '1') {
+    if (this.$store.getters.configData.product.enable_productName) {
       this.superQueryJson.splice(2, 0, {
         prop: 'name',
         label: '产品名称',
@@ -336,19 +333,8 @@ export default {
     ...mapState('user', ['token'])
   },
   methods: {
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
-    },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `procureDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-      })
+    classAttributeChange(){
+      this.initData()
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleProductInfoData(val) {

@@ -160,7 +160,7 @@ export default {
         { prop: 'pairingModeName', label: '配对方式' },
         { prop: 'mainUnit', label: '单位' },
         // { prop: 'spec', label: '规格型号' },
-        { prop: 'inventoryQuantity', label: '可用客库存' }
+        { prop: 'inventoryQuantity', label: '可用库存' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "productCode", label: "产品编码", type: 'input' },

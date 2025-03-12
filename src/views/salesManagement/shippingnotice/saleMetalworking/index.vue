@@ -397,7 +397,7 @@ export default {
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.superForm = this.orderForm
+    // this.superForm = this.orderForm
     this.search('basic')
     this.getbimProductAttributesFun()
     // this.getAttributeline()
@@ -623,10 +623,10 @@ export default {
               }
             })
         }
-        this.superForm.superQuery = this.basicQuery
+        this.orderForm.superQuery = this.basicQuery
       }
       if (type === 'super') {
-        this.superForm.superQuery = this.superQuery
+        this.orderForm.superQuery = this.superQuery
       }
       this.initData()
     },
@@ -635,8 +635,9 @@ export default {
       this.rdeDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.searchList = [
-        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        
 
       ]
       this.$refs.SuperQuery.conditionList = []

@@ -411,10 +411,10 @@
     <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
     <ComSelect-page v-if="purchasingType == 'pool'" ref="comSelect-page" @change="submitCustomerProduct"
       :tableItems="ProductPoolTableItems" dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList"
-      :listRequestObj="ProductPoolListRequestObjs" :listDataFormatting="listDataFormatting"
+      :listRequestObj="ProductPoolListRequestObj" :listDataFormatting="listDataFormatting"
       :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
     <ComSelect-page v-else ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
-      dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObjs"
+      dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="true" :renderTree="false" />
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
@@ -470,7 +470,7 @@ export default {
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       // 选择客户产品参数
-      ProductListRequestObjs: {
+      ProductListRequestObj: {
         productSource: 'purchase', // 产品来源
         safeInventoryWarnFlag: 1,
         orderItems: [
@@ -486,7 +486,7 @@ export default {
         pageNum: 1,
         pageSize: 20
       },
-      ProductPoolListRequestObjs: {
+      ProductPoolListRequestObj: {
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
@@ -988,6 +988,8 @@ export default {
           }
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+        this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
+        this.ProductPoolListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
       }
       this.$refs['comSelect-page'].openDialog()
     },
@@ -1259,7 +1261,7 @@ export default {
       })
 
       this.dataForm.classAttribute = classAttributeFlag
-      this.ProductListRequestObjs = {
+      this.ProductListRequestObj = {
         classAttribute: this.dataForm.classAttribute,
         productSource: 'purchase', // 产品来源
         safeInventoryWarnFlag: 1,
@@ -1276,7 +1278,7 @@ export default {
         pageNum: 1,
         pageSize: 20
       }
-      this.ProductPoolListRequestObjs = {
+      this.ProductPoolListRequestObj = {
         classAttribute: this.dataForm.classAttribute,
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure

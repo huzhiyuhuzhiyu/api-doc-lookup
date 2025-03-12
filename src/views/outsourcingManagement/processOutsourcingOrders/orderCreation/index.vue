@@ -780,7 +780,11 @@ export default {
       this.btnLoading = false
     },
     goBom() {
+      this.dataForm = {}
+      this.linesList = []
+      this.datafilelist = []
       this.tipsvisible = false
+      this.btnLoading = false
       this.$router.push({
         path: '/outsourcingManagement/processOutsourcingOrders/orderList'
       })
@@ -1042,6 +1046,7 @@ export default {
           }
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
+        this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
       }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true

@@ -1197,6 +1197,9 @@ export default {
       // unqualifiedQuantityDisabled 不合格数量是否禁用
       // scrapQuantityDisabled       报废数量是否禁用
       // repairQuantityDisabled      返工返修数量是否禁用
+      this.$nextTick(() => {
+        this.$refs.dataForm.$refs.main.clearValidate()
+      })
       if (val === 'qualified' || val === 'concessive_acceptance') {
         // 合格、让步接收
         this.dataForm.qualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
@@ -1277,17 +1280,20 @@ export default {
 
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
-
+      console.log(this.$refs['dataForm'].$children[0],'事事顺心')
       // 校验主表
       let form_1 = this.$refs['dataForm'].$children[0]
       let valid_1 = await form_1.validate().catch(() => false)
+      console.log(valid_1,'ll')
       if (!valid_1 && submitFlag) {
         // 校验失败，聚焦第一失败项，继续校验后续项
         if (submitFlag) {
           // 聚焦第一个失败的表单元素
           let formItems = form_1.$children[0].$children
+          console.log(formItems,'cccc')
           for (let j = 0; j < formItems.length; j++) {
-            let formItem = formItems[j].$children[0].$children[0]
+            let formItem = formItems[j].$children.length ? formItems[j].$children[0].$children[0] :''
+            console.log(formItem,'kkk')
             if (formItem.validateState === 'error') {
               this.activeName = 'jcInfo'
               submitFlag = false

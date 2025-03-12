@@ -70,7 +70,7 @@
           </template>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.pricingType" placeholder="计价类型" clearable style="width: 100%;">
+              <el-select v-model="listQuery.pricingType" placeholder="计价类型" clearable style="width: 100%;" @change="pricingTypeChange">
                 <el-option
                   v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
                   :key="index" :label="item.label" :value="item.value"></el-option>
@@ -292,6 +292,9 @@ export default {
     this.getcategoryTree()
   },
   methods: {
+    pricingTypeChange(){
+      this.initData()
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false

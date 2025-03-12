@@ -70,7 +70,7 @@
           </template>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.processingType" placeholder="加工类别" clearable>
+              <el-select v-model="listQuery.processingType" placeholder="加工类别" clearable @change="processingTypeChange">
                 <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -352,6 +352,9 @@ export default {
     this.getBusinessOptions()
   },
   methods: {
+    processingTypeChange(){
+      this.initData()
+    },
     // 导入
     importForm() {
       if (this.userInfo.projectId !== '1') {

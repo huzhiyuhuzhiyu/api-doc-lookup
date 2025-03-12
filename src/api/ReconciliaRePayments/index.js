@@ -89,9 +89,9 @@ export function getfinAccountsReport(data) {
   })
 }
 // 应收付对账列表 分页 合计
-export function updateTaxFlag(data) {
+export function updateTaxFlag(data,taxFlag) {
   return request({
-    url: `/api/wms/stock/move/tax/batch`,
+    url: `/api/wms/stock/move/tax/batch?taxFlag=${taxFlag}`,
     method: 'post',
     data
   })

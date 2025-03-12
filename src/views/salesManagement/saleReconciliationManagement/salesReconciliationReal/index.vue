@@ -49,7 +49,8 @@
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成销售对账</el-button>
-            <el-button size="mini" type="primary" v-loading="taxLoading" @click="changeTaxFlag()">税率置0</el-button>
+            <el-button size="mini" type="primary" v-loading="taxLoading" @click="changeTaxFlag(true)">税率置0</el-button>
+            <el-button size="mini" type="primary" v-loading="taxLoading" @click="changeTaxFlag(false)">税率复原</el-button>
             <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
               type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
           </div>
@@ -710,11 +711,11 @@ export default {
       }
 
     },
-    changeTaxFlag(){
+    changeTaxFlag(type){
       this.taxLoading = true
       if (!this.selectData.length) return this.$message.error('请至少选择一条数据')
       let idList = this.selectData.map(item=>item.id)
-      updateTaxFlag(idList).then(res=>{
+      updateTaxFlag(idList,type).then(res=>{
         this.$message.success('修改成功')
         this.taxLoading = false
         this.initData()

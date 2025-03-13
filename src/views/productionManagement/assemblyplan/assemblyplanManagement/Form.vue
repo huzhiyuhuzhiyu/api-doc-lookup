@@ -1235,7 +1235,7 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
-      if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
+      // if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
       let submitFlag = null;
       if (this.naturalResourcesFlag) {
 

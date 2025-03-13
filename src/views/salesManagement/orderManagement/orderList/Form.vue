@@ -15,7 +15,7 @@
             <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
-        <div class="main" v-loading="formLoading" :element-loading-text="loadingText">
+        <div class="main" ref="main" v-loading="formLoading" :element-loading-text="loadingText">
           <el-tabs v-model="activeName" @tab-click="handleClick" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
@@ -138,9 +138,9 @@
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDelete">批量删除</el-button>
                   </div>
-                  <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
+                  <div ref="boxresiz" v-if="btnType == 'look'">
                     <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" key="191"
-                      style="width: 100%;height:100%">
+                      style="width: 100%;height:100%" :height="customStyleData">
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       </el-table-column>
@@ -230,8 +230,8 @@
                   </div>
                   <el-table ref="product"
                     v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
-                    :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
-                    @row-click="rowclick" key="165" style="width: 100%;">
+                    :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border
+                    @row-click="rowclick" key="165" style="width: 100%;" :height="customStyleData">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -610,9 +610,9 @@
                   :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                   @click="batchDelete">批量删除</el-button>
               </div>
-              <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
-                <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" :key="191"
-                  style="width: 100%;height:100%">
+              <div ref="boxresiz" v-if="btnType == 'look'">
+                <el-table ref="product" :data="productData" :fixedNO="false" border :key="191"
+                  :height="customStyleData">
                   <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   </el-table-column>
@@ -702,8 +702,8 @@
               </div>
               <el-table ref="product"
                 v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
-                :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border height="460"
-                @row-click="rowclick" :key="165" style="width: 100%;">
+                :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border
+                :height="customStyleData" @row-click="rowclick" :key="165" style="width: 100%;">
                 <el-table-column type="selection" width="55" fixed="left" :key="2">
                 </el-table-column>
                 <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -1198,7 +1198,7 @@ export default {
       oldType: "",
       createdData: {
         customerProductNo: "",
-        customerProductName:"",
+        customerProductName: "",
         drawingNo: "",
         productCode: "",
         mainUnit: "",
@@ -1542,6 +1542,7 @@ export default {
     this.isProjectSwitchFlag = true
     if (this.isProjectSwitch === '1') this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
+    await this.switchStyleheight()
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
@@ -1872,7 +1873,7 @@ export default {
           }],
           pageNum: 1,
           pageSize: 20,
-          saleFlag:true,
+          saleFlag: true,
         }
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
@@ -1968,22 +1969,22 @@ export default {
     handleRowClick(row) {
       this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
     },
-    switchStyleheight() {
-      const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
-      const mainHeight = mainRegion.clientHeight;
-      const TableFormTitle = mainRegion.querySelector('.TableForm_title') // 获取TableForm头部操作栏
-      const TableFormTitleHeight = TableFormTitle ? TableFormTitle.clientHeight : 0
-      let maxHeight = mainHeight - TableFormTitleHeight - 65 - 154
-      maxHeight = maxHeight > 500 ? maxHeight : 500
-      this.customStyleData = maxHeight
-      // 附带防抖的监听适配模式屏幕缩放
-      window.onresize = () => {
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          this.switchStyleheight()
-        }, 100);
-      };
-    },
+    // switchStyleheight() {
+    //   const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
+    //   const mainHeight = mainRegion.clientHeight;
+    //   const TableFormTitle = mainRegion.querySelector('.TableForm_title') // 获取TableForm头部操作栏
+    //   const TableFormTitleHeight = TableFormTitle ? TableFormTitle.clientHeight : 0
+    //   let maxHeight = mainHeight - TableFormTitleHeight - 65 - 154
+    //   maxHeight = maxHeight > 500 ? maxHeight : 500
+    //   this.customStyleData = maxHeight
+    //   // 附带防抖的监听适配模式屏幕缩放
+    //   window.onresize = () => {
+    //     clearTimeout(this.timeout)
+    //     this.timeout = setTimeout(() => {
+    //       this.switchStyleheight()
+    //     }, 100);
+    //   };
+    // },
     // 表格选择交货日期
     selectDeliveryDate(row, index) {
       console.log(row);
@@ -3290,6 +3291,37 @@ export default {
           }
         }
       }).catch(() => { })
+    },
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      console.log("this.$refs.main", this.$refs.main);
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight;
+      if (this.btnType == 'look') {
+         maxHeight = mainHeight1 - 580
+
+      } else {
+         maxHeight = mainHeight1 - 500
+      }
+
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
     },
   }
 }

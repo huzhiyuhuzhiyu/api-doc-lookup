@@ -160,7 +160,7 @@
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.personId" placeholder="" clearable
-                            style="width: 60%; display: none" class="applySelect" disabled>
+                            style="width: 60%; display: none" class="applySelect" :disabled="scope.row.processingType != 'self_produced'">
                             <el-option
                               v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
                               :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
@@ -174,14 +174,14 @@
                       <el-table-column prop="workGroupId" label="班组" min-width="150"
                         v-if="naturalResourcesFlag == true">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
+                          <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" :disabled="scope.row.processingType != 'self_produced'"
                             style="width: 70%; display: none">
                             <el-option
                               v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.work_group : []"
                               :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
                           </el-select>
                           <el-button @click="selectWorkgroupFun(scope)" type="text" class="underline-button"
-                            :disabled="scope.row.processingType != 'self_produced'">
+                            :disabled="scope.row.processingType != 'self_produced'" >
                             {{ scope.row.workGroupId ? scope.row.workGroupName : "请选择班组" }}
                           </el-button>
                         </template>
@@ -191,7 +191,7 @@
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
-                            style="width:70%;display:none" class="applySelect" disabled>
+                            style="width:70%;display:none" class="applySelect" :disabled="scope.row.processingType != 'self_produced'">
                             <el-option
                               v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.device : []"
                               :key="index" :label="item.resourceName + '(' + item.resourceCode + ')'"

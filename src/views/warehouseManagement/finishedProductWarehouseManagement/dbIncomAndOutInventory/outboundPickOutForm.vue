@@ -754,7 +754,6 @@ export default {
       this.$set(this.productData[index], 'specSize', data.specSize)
       this.$set(this.productData[index], 'logo', data.logo)
       this.$set(this.productData[index], 'divideEqually', data.divideEqually)
-      this.$set(this.productData[index], 'material', data.material)
       this.$set(this.productData[index], 'partnerName', data.partnerName)
       this.$set(this.productData[index], 'cooperativePartnerId', data.cooperativePartnerId)
 
@@ -762,6 +761,26 @@ export default {
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'processName', data.processName)
       this.$set(this.productData[index], 'processId', data.processId)
+
+      this.$set(this.productData[index], 'sealingCoverTyping', data.sealingCoverTyping)
+      this.$set(this.productData[index], 'accuracyLevel', data.accuracyLevel)
+      this.$set(this.productData[index], 'vibrationLevel', data.vibrationLevel)
+      this.$set(this.productData[index], 'oil', data.oil)
+      this.$set(this.productData[index], 'clearance', data.clearance)
+      this.$set(this.productData[index], 'packagingMethod', data.packagingMethod)
+      this.$set(this.productData[index], 'specialRequire', data.specialRequire)
+      this.$set(this.productData[index], 'material', data.material)
+      this.$set(this.productData[index], 'colour', data.colour)
+      this.$set(this.productData[index], 'protrusion', data.protrusion)
+      this.$set(this.productData[index], 'preload', data.preload)
+      this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
+      this.$set(this.productData[index], 'angle', data.angle)
+      this.$set(this.productData[index], 'pairingModeNames', data.pairingModeName)
+      this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
+      
+
+
+
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index) {

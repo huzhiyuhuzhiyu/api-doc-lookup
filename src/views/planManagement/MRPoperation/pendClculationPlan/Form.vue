@@ -1694,7 +1694,7 @@ export default {
 
       })
     },
-    sortChange3({ prop, order }) {
+    sortChange4({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop

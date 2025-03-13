@@ -83,10 +83,16 @@
             <el-table-column prop="producerName" label="生产人" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" sortable="custom" />
-            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
+            <!-- <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" /> -->
+            <!-- <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" /> -->
+            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="120" sortable="custom" />
+            <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="120" sortable="custom" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="oil" label="注脂方式" min-width="120" sortable="custom" />

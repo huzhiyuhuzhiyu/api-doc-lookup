@@ -84,10 +84,18 @@
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" sortable="custom" />
             <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="120" sortable="custom" />
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="120" sortable="custom" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="120" sortable="custom" />
+
+
+
+
+ 
+            <el-table-column prop="aperture" label="孔径" min-width="120" sortable="custom" />
             <el-table-column prop="orderStatus" label="任务状态" min-width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderStatus == 'finish'"><el-tag type="success">已完成</el-tag></div>
@@ -100,6 +108,7 @@
 
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
+                <el-button size="mini" type="text" @click="viewFun(scope.row)"  :disabled="scope.row.inspectionStatus!='inspected'">查看详情</el-button>
 
               </template>
             </el-table-column>
@@ -303,6 +312,9 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    viewFun(row){
+      console.log("当前数据",row);
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

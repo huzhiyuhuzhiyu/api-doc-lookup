@@ -15,7 +15,7 @@
         </el-steps>
         <div class="options">
           <el-button type="primary" size="mini" @click="next" :disabled="activeStep == 1 || loading"
-            v-if="activeStep == 0">执行计算 </el-button>
+            v-if="activeStep == 0" :loading="btnLoading">执行计算 </el-button>
           <el-button size="mini" @click="prev" :disabled="activeStep <= 0" v-if="activeStep > 0 && activeStep != 2">{{
             $t('common.prev')
           }}</el-button>
@@ -2079,11 +2079,24 @@ export default {
     },
     // 下一步
     next() {
-      if(!this.dataForm.projectId) return this.$message.error("请选择所属项目")
-      if (!this.dataForm.arithmeticNo) return this.$message.error("运算单号不能为空")
-      if (!this.tableData.length) return this.$message.error("已选择的计划数据不能为空")
+      this.btnLoading = true
+      if(!this.dataForm.projectId){
+        this.btnLoading = false
+        return this.$message.error("请选择所属项目")
+      } 
+      if (!this.dataForm.arithmeticNo){
+        this.btnLoading = false
+        return this.$message.error("运算单号不能为空")
+      } 
+      if (!this.tableData.length){
+        this.btnLoading = false
+        return this.$message.error("已选择的计划数据不能为空")
+      } 
       let hasFalseBomFlag = this.tableData.some(item => !item.bomFlag )
-      if(hasFalseBomFlag&&this.dataForm.calcBomLevel!=='not_calc_bom') return this.$message.error("存在无BOM的数据，BOM计算级别错误，请检查后重试")
+      if(hasFalseBomFlag&&this.dataForm.calcBomLevel!=='not_calc_bom'){
+        this.btnLoading = false
+        return this.$message.error("存在无BOM的数据，BOM计算级别错误，请检查后重试")
+      } 
    
      
       let obj = {
@@ -2121,6 +2134,7 @@ export default {
       analyseMRP(obj).then(res => {
         console.log("res", res);
         this.$message.success("分析成功")
+        this.btnLoading = false
         this.activeStep = 1
         this.activeName = 'assemble'
         this.getassembleData()

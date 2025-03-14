@@ -900,8 +900,8 @@ export default {
 
           newItem.firstFlag = false
           newItem.lastFlag = false
-          newItem.reportFlag = false
-          newItem.stockFlag = false
+          // newItem.reportFlag = false
+          // newItem.stockFlag = false
         }
 
         // 如果存在上一个元素，则添加 previousId
@@ -909,8 +909,8 @@ export default {
 
           newItem.firstFlag = false
           newItem.lastFlag = false
-          newItem.reportFlag = false
-          newItem.stockFlag = false
+          // newItem.reportFlag = false
+          // newItem.stockFlag = false
         }
 
         return newItem // 返回修改后的对象
@@ -1029,8 +1029,8 @@ export default {
         }
         if (item.processingType === 'external_production') {
           if (index != 0 && this.dataFormTwo[index - 1].processingType != 'external_production') {
-            this.dataFormTwo[index - 1].reportFlag = 1
-            this.dataFormTwo[index - 1].stockFlag = 1
+            this.dataFormTwo[index - 1].reportFlag = true
+            this.dataFormTwo[index - 1].stockFlag = true
             // this.$set()
             this.dataFormTwo[index - 1].defaultFlag = true
           }

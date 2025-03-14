@@ -760,7 +760,10 @@ export default {
       },
       type: '',
       dataFormArr: [],
-      rules: {},
+      rules: {
+        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+      },
       productRules: {},
       productArr: [],
       defaultProps: {

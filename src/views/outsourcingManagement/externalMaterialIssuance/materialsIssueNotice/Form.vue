@@ -234,7 +234,7 @@
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                            disabled maxlength="200" />
                         </template>
                       </el-table-column>
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
@@ -516,7 +516,7 @@
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" placeholder="请输入备注"
-                        :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                        disabled maxlength="200" />
                     </template>
                   </el-table-column>
                   <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
@@ -1821,7 +1821,7 @@ export default {
     // 更改选中行背景色
     rowStyle({ row }) {
       if (this.autoId === row.id) {
-        return { 'background-color': '#F7EDED', cursor: 'pointer' }
+        return { cursor: 'pointer' }
       }
       return { cursor: 'pointer' }
     },
@@ -1922,7 +1922,7 @@ export default {
                   pickingQuantity: it.pickingQuantity ? it.pickingQuantity : '',
                   ratio: it.ratio ? it.ratio : '',
                   // demandQuantity: it.demandQuantity ? it.demandQuantity : '',
-                  remark: it.remark ? it.remark : '',
+                  remark: item.remark ? item.remark : '',
                   returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
                   price: item.price ? item.price : '',
                   totalAmount: item.totalAmount ? item.totalAmount : '',

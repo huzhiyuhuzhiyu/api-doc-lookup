@@ -380,8 +380,6 @@ export default {
                   callback(new Error('检验数量不能大于报检数量'))
                 } else if (value < Number(this.autosamplingQuantity)) {
                   callback(new Error('检验数量不能小于规定的抽检数量'))
-                } else if (/^(?:[0-9]\d*)$/.test(value) == false) {
-                  callback(new Error('请输入整数'))
                 } else if (Number(value) == 0) {
                   callback(new Error('检验数量不能为0'))
                 } else {
@@ -420,9 +418,7 @@ export default {
                   callback(new Error('不合格数量不能大于检验数量'))
                 } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
                   callback(new Error('不合格数量不能为0'))
-                } else if (/^(?:[0-9]\d*)$/.test(value) == false) {
-                  callback(new Error('请输入整数'))
-                } else {
+                }  else {
                   callback()
                 }
               },
@@ -885,7 +881,7 @@ export default {
       this.$message.success('配置成功')
     },
     // 检验结果更改
-    inspectionResultsChange(val, scope) {
+   async inspectionResultsChange(val, scope) {
       this.$refs['dataForm'].$refs['main'].clearValidate('unqualifiedQuantity')
       if (val === 'qualified') {
         this.dataForm.unqualifiedQuantity = '0'
@@ -932,7 +928,54 @@ export default {
           { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
         ]
       }
+      
       this.setDataFormItems()
+      if (this.dataForm.processId) {
+        this.dataForm.inspectionMethod = this.scope.processInspectionMethod
+      } else {
+        this.dataForm.inspectionMethod = this.scope.productInspectionMethod
+      }
+
+      if (this.dataForm.inspectionMethod) {
+        if (this.dataForm.inspectionMethod === 'all') {
+          this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
+          this.inspectionInfo.forEach(tc => {
+            if (tc.prop === 'inspectionMethod') {
+              tc.itemDisabled = true
+            } else if (tc.prop === 'samplingQuantity') {
+              tc.itemDisabled = true
+            }
+          })
+        } else if (this.dataForm.inspectionMethod === 'exempt') {
+          this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
+          this.dataForm.inspectionResults = 'qualified'
+          this.inspectionInfo.forEach(tc => {
+            if (tc.prop === 'inspectionMethod') {
+              tc.itemDisabled = true
+            } else if (tc.prop === 'samplingQuantity') {
+              tc.itemDisabled = true
+            } else if (tc.prop === 'inspectionResults') {
+
+              tc.itemDisabled = true
+            }
+
+          })
+        } else if (this.dataForm.inspectionMethod === 'spot_check') {
+          console.log(this.dataForm.processId, 'id')
+          if (this.dataForm.processId) {
+            const _data = { processId: this.dataForm.processId, num: this.dataForm.inspectionQuantity }
+            let res = await getSamplingQuantityByProcessId(_data).catch(() => false)
+            this.$set(this.dataForm, 'samplingQuantity', res.data)
+          } else {
+            const _data = [{ productsId: this.dataForm.productsId, num: this.dataForm.inspectionQuantity }]
+            let res = await getSamplingQuantityByProductId(_data).catch(() => false)
+            this.$set(this.dataForm, 'samplingQuantity', res.data[0].spotCheckNum)
+          }
+
+        } else {
+
+        }
+      }
     },
     // 检验方式更改
     async inspectionMethodChange(val, scope) {

@@ -127,6 +127,8 @@
     <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm"
       :inspectionMethodList="inspectionMethodList" />
+    <DetailReportWorkForm v-if="detailReportWorkFormVisible" ref="DetailReportWorkForm" @close="closeForm"
+      :inspectionMethodList="inspectionMethodList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -139,6 +141,7 @@ import { getInspectionList, deleteInspectionData, getInspectionLinesList } from 
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import Form from './defectiveProductHandlingForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
+import DetailReportWorkForm from '../reportWorkInspection/inspectionFormManagementDetail.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -148,7 +151,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
-  components: { Form, ExportForm, DetailForm, SuperQuery },
+  components: { Form, ExportForm, DetailForm,DetailReportWorkForm, SuperQuery },
   mixins: [getProjectList],
 
   props: {
@@ -261,6 +264,7 @@ export default {
       activeName: 'dataTable',
       formVisible: false,
       detailFormVisible: false,
+      detailReportWorkFormVisible:false,
       listLoading: false,
       documentStatusList, // 单据状态
       approvalStatusList, // 审批状态
@@ -424,11 +428,19 @@ export default {
     },
     addOrUpdateHandle(row, btnType) {
       if (btnType == 'look') {
-        this.detailFormVisible = true
-
-        this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
-        })
+        console.log(row,'对对对')
+        if (row.notificationType === 'work_report') {
+          this.detailReportWorkFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.DetailReportWorkForm.init(row.id, btnType, false, this.pageData.type)
+          })
+        } else {
+          this.detailFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
+          })
+        }
+        
       } else {
 
         this.formVisible = true
@@ -455,6 +467,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.detailFormVisible = false
+      this.detailReportWorkFormVisible = false
       this.initData()
     },
     handleDel(id) {

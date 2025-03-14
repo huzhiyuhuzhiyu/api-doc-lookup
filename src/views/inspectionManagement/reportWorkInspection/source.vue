@@ -5,8 +5,11 @@
       <div ref="main">
         <el-scrollbar style="height: 100%;">
           <div v-if="types !== 'look'">
-            <el-button type="text" class="topButton" icon="el-icon-plus" @click="openProductDialog('product')">
+            <!-- <el-button type="text" class="topButton" icon="el-icon-plus" @click="openProductDialog('product')">
               选择产品
+            </el-button> -->
+            <el-button type="text" class="topButton" icon="el-icon-plus" @click="add()">
+              添加
             </el-button>
             |
             <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
@@ -16,10 +19,7 @@
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
             <JNPF-table hasNO fixedNO hasC v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
               :style="{ height: height + 'px' }" ref="sourceTable" @selection-change="handeleProductInfoData">
-              <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
-              <el-table-column prop="projectName" label="所属项目" width="120"
-                v-if="isProjectSwitch === '1'"></el-table-column>
-              <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
+              <el-table-column prop="drawingNo" label="责废人" min-width="200" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
                     <div class="viewData">
@@ -28,7 +28,7 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip>
+              <el-table-column prop="productCode" label="责废原因" width="130" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">
@@ -38,10 +38,9 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="processName" label="工序名称" width="135" show-overflow-tooltip>
+              <!-- <el-table-column prop="processName" label="工序名称" width="135" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item>
-                    <!-- 工序选择弹窗  -->
                     <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeProcessClick"
                       v-model="scope.row.processName" @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems"
                       :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
@@ -49,22 +48,14 @@
                       :searchList="ProcessTableSearchList" />
                   </el-form-item>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
 
-              <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
-                <template slot-scope="scope">
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-                    <div class="viewData">
-                      <span>{{ scope.row.mainUnit }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
+             
 
               <el-table-column prop="qty" label="发料数量" width="120">
                 <template slot="header">
                   <span class="required">*</span>
-                  发料数量
+                  数量
                 </template>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
@@ -329,6 +320,13 @@ export default {
       this.ProductListRequestObj.routingId = ''
       this.ProductListRequestObj.queryType = ''
       this.$refs['ComSelect-page'].openDialog()
+    },
+    add(){
+      this.dataFormTwo.data.push({
+        drawingNo: '',
+        processName: '',
+        demandQuantity1: this.purchaseQuantity
+      })
     },
     // 批量删除
     batchDelete() {

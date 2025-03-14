@@ -2,15 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
-        <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建检验单'
-          : btnType == 'edit'
-            ? '编辑检验单'
-            : btnType == 'copy'
-              ? '新建检验单'
-              : '查看检验单'
-          " />
+        <el-page-header @back="goBack" content="检验" />
         <div class="options" v-if="btnType != 'look'">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿
@@ -30,47 +22,46 @@
             <el-form label-width="160px" label-position="top">
               <el-row :gutter="30" style="padding:0 10px">
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="生产任务单号" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="生产任务单号" disabled></el-input>
+                  <el-form-item label="生产任务单号">
+                    <el-input v-model="dataForm.productionOrderNo" placeholder="生产任务单号" disabled></el-input>
                   </el-form-item>
                 </el-col>
 
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="工单单号" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="工单单号" disabled></el-input>
+                  <el-form-item label="工单单号">
+                    <el-input v-model="dataForm.workNo" placeholder="工单单号" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="报工单号" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="报工单号" disabled></el-input>
+                  <el-form-item label="报工单号">
+                    <el-input v-model="dataForm.reportNo" placeholder="报工单号" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="报工人" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="报工人" disabled></el-input>
+                  <el-form-item label="报工人">
+                    <el-input v-model="dataForm.createByName" placeholder="报工人" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="报工时间" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="报工时间" disabled></el-input>
+                  <el-form-item label="报工时间">
+                    <el-input v-model="dataForm.reportingTime" placeholder="报工时间" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="工序名称" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="工序名称" disabled></el-input>
+                  <el-form-item label="工序名称">
+                    <el-input v-model="dataForm.processName" placeholder="工序名称" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="品名规格" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="品名规格" disabled></el-input>
+                  <el-form-item label="品名规格">
+                    <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="报工数量" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="报工数量" disabled></el-input>
+                  <el-form-item label="报工数量">
+                    <el-input v-model="dataForm.reportingQuantity" placeholder="报工数量" disabled></el-input>
                   </el-form-item>
                 </el-col>
-
               </el-row>
             </el-form>
           </el-collapse-item>
@@ -78,38 +69,38 @@
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" style="padding:0 10px">
                 <el-col :sm="12" :xs="24">
-                  <el-form-item label="合格数量" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="合格数量" disabled></el-input>
+                  <el-form-item label="合格数量">
+                    <el-input v-model="dataForm.qualifiedQuantity" placeholder="合格数量" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
-                  <el-form-item label="让步接收数量" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" placeholder="让步接收数量" disabled></el-input>
+                  <el-form-item label="让步接收数量" prop="actualConcessionQuantity">
+                    <el-input v-model="dataForm.actualConcessionQuantity" placeholder="让步接收数量"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="返工数量" prop="warehouseId">
-                    <el-input placeholder="返工数量" v-model="input2">
+                    <el-input placeholder="返工数量" v-model="dataForm.actualReworkQuantity">
                       <template slot="append">
-                        <el-button @click="handlerOpenSource(scope.$index, 'source')">修改</el-button>
+                        <el-button @click="setReworkWasteM">修改</el-button>
                       </template>
                     </el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="责废数量" prop="warehouseId">
-                    <el-input placeholder="责废数量" v-model="input2">
+                    <el-input placeholder="责废数量" v-model="dataForm.actualResponsibilityWasteQuantity">
                       <template slot="append">
-                        <el-button>修改</el-button>
+                        <el-button @click="setResponsWasteM">修改</el-button>
                       </template>
                     </el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="料废数量" prop="warehouseId">
-                    <el-input placeholder="料废数量" v-model="input2">
+                  <el-form-item label="料废数量" prop="actualMaterialQuantity">
+                    <el-input placeholder="料废数量" v-model="dataForm.actualMaterialQuantity">
                       <template slot="append">
-                        <el-button>修改</el-button>
+                        <el-button @click="setMaterialWasteM">修改</el-button>
                       </template>
                     </el-input>
                   </el-form-item>
@@ -119,19 +110,19 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-      <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
+      <ReworkWaste v-if="reworkWasteFormVisible" ref="reworkWasteFormRef" @change="reworkWasteData"></ReworkWaste>
+      <responsWaste v-if="responsWasteFormVisible" ref="responsWasteFormRef" @change="responsWasteData"></responsWaste>
+      <MaterialWasteForm v-if="materialWasteFormVisible" ref="materialWasteFormRef" @change="materialWasteData">
+      </MaterialWasteForm>
     </div>
   </transition>
 </template>
 
 <script>
-import SourceArea from './source.vue'
-import { getProvinceList } from '@/api/system/province'
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import {
   getcategoryTrees,
-  getAttributeline,
   getcooperativeProduct,
   getOrderDetail,
   getsaleOrderDetailList
@@ -143,17 +134,28 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { getWarehouseList, getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
+import { getOrderFiledMap } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 
 import { mapGetters } from 'vuex'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+import ReworkWaste from './reworkWaste.vue'
+import responsWaste from '../../completionReport/ringCompletionReport/responsWaste.vue'
+import MaterialWasteForm from '../../completionReport/ringCompletionReport/materialWasteForm.vue'
+import {
+  addReportWorkInspectionData,
+  updateInspectionData,
+  detailInspectionData,
+  detailInspectionDataByBizid
+} from '@/api/inspectionManagement/index' // 产品检验项目列表
 export default {
-  components: { SourceArea },
-  mixins: [getProjectList],
+  components: { ReworkWaste, MaterialWasteForm, responsWaste },
+  mixins: [AbProjectMixin],
   data() {
     return {
-      sourceVisibled: false,
+      reworkWasteFormVisible: false,
+      responsWasteFormVisible: false,
+      materialWasteFormVisible: false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       isProportionSwitch: '',
@@ -171,214 +173,13 @@ export default {
       productTotal: 0,
       codeConfig: {},
       datafilelist: [],
-      provinces: [],
-      orderForm: {
-        cooperativePartnerCode: '',
-        cooperativePartnerName: '',
-        createByName: '',
-        deliveryEndDate: '',
-        deliveryStartDate: '',
-        receiptQueryFlag: 1,
-        endTime: '',
-        orderNo: '',
-        orderType: 'procure',
-        orderItems: [
-          {
-            asc: false,
-            column: 'createTime'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: '',
-        productCode: '',
-        productName: '',
-        classAttribute: 'other',
-        receivingStatus: 'receiving'
-      },
-      scanResult: '',
-      // orderList: [
-      //   { label: "外协通知", value: "external" },
-      //   { label: "采购通知", value: "sale" },
-      // ],
-      inspectionStatusList: [
-        { label: '待检验', value: 'unInspect' },
-        { label: '已检验', value: 'inspected' },
-        { label: '检验中', value: 'inspecting' }
-      ],
-      deliveryStatusList: [
-        { label: '未完成', value: 'not_returned' },
-        { label: '已完成', value: 'returned' },
-        { label: '已取消', value: 'canceled' }
-      ],
-      documentStatusList: [{ label: '收货', value: false }, { label: '换货', value: true }],
-      approvalStatusList: [
-        { label: '审批中', value: 'ing' },
-        { label: '审批通过', value: 'ok' },
-        { label: '审批拒绝', value: 'rebut' }
-      ],
-      orderListtf: [{ label: '收货', value: 'back' }, { label: '发货', value: 'delivery' }],
-      orderListdd: [
-        { label: '外贸', value: 'foreign_trade' },
-        { label: '内销', value: 'domestic_market' },
-        { label: '总成', value: 'assembly' }
-      ],
-      orderListfhfs: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
-      ],
-      orderList: [
-        { label: '正常任务', value: 'normal' },
-        { label: '预测订单', value: 'prediction' },
-        { label: '样品订单', value: 'sample' },
-        { label: '备货订单', value: 'stock_up' },
-        { label: '急件订单', value: 'urgent' }
-      ],
-      productRules: {
-        receivedQuantity: [
-          {
-            validator: this.formValidate({
-              type: 'noEmtry',
-              params: [
-                '',
-                (errMsg, index) => {
-                  console.log(index)
-                  this.$message.error(`产品信息第${index + 1}行：收货数量${errMsg}`)
-                }
-              ]
-            }),
-            trigger: ['blur']
-          },
-          // { validator: this.calcValidate(), trigger: 'blur' },
-          { validator: this.calcValidatenum(), trigger: 'blur' }
-        ]
-      },
       ordersLineId: '',
       code: '',
       iszhi: false,
       totalNum: 0,
       totalAssistantNum: 0,
       totalAmount: 0,
-      // 选择客户产品参数
-      productForm: {
-        //   drawingNo: "",
-        productCode: '',
-        productName: '',
-        partnerId: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      },
-      productVisible: false,
-      cusPrototal: 0, //选择客户产品分页器的总条数
-      cusProductData: [],
-      // 选择全部产品参数
-      allProVisible: false,
-      ProductMethodArr: [
-        {
-          label: '产品分类',
-          classAttribute: '',
-          method: getcategoryTree,
-          requestObj: { classAttribute: '' }
-        }
-      ],
-      allproductData: [],
-      allProductTotal: 0,
-      orderDateArr: [],
-      ProductTreeData: [],
-      ProductListRequestObj: {
-        // neOrderState: 'finish',
-        orderNo: '',
-        cooperativePartnerCode: '',
-        cooperativePartnerName: '',
-        orderType: '',
-        salesName: '',
-        workOrderNo: '',
-        sourceOrderNo: '',
-        orderStartDate: '',
-        orderEndDate: '',
-        contractNo: '',
-        deliveryStartDate: '',
-        deliveryEndDate: '',
-        distributeStatus: 'distributed',
-        // orderCategory: "assembly",
-        shipmentStatus: '',
-        orderState: '',
-        productionStatus: '',
-        documentStatus: '',
-        approvalStatus: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      },
-      attributeLines: [],
-      dataFormTwo: {
-        productData: []
-      },
-      listLoading: false,
-      total: 0,
-      tableDataCustomer: [],
-      treeData: [],
-      form: {
-        code: '',
-        name: '',
-        taxId: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerCategoryId: '',
-        type: 'supplier'
-      },
-      defaultProps: {
-        children: 'childrenList',
-        label: 'name'
-      },
-      index: null,
-      expands: true,
-      refreshTree: true,
-      customerVisible: false,
-      paymentMethodList: [],
-      paymentCycleList: [],
-      activeNameDetail: 'productInfo',
-      coverNum: '', //用于计算
-      invoicingStatusList: [
-        { label: '未开票', value: 'not_invoiced' },
-        { label: '部分开票', value: 'partial_invoicing' },
-        { label: '已开票', value: 'invoiced' }
-      ],
-      btnType: undefined,
-      areaList: [],
-      provinces: [],
-      cities: [],
-      areas: [],
-      contactsList: [],
-      deliveryAddressList: [],
-      countryList: [],
-      listQuery: {
-        keyword: ''
-      },
+
       activeName: 'orderInfo',
       nodeId: -1,
       isdisabled: false,
@@ -401,15 +202,6 @@ export default {
         deliverDate: '',
         partnerName: '',
         orderNo: '',
-        logisticsNumber: '',
-        //   phone: '',
-        //   country: '',
-        //   province: '',
-        //   city: '',
-        //   area: '',
-        //   address: '',
-        //   delivery: '',
-        //   shipperId: '',
         cooperativePartnerId: '',
         remark: '',
         approvalFlag: false
@@ -428,7 +220,6 @@ export default {
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
       },
-      customerData: {},
       treeLoading: false,
       selectRows: [],
       warehouseIdList: [],
@@ -444,141 +235,88 @@ export default {
       formId: '',
       enCode: '',
       printBrowseVisible: false,
-      printVisible: false
+      printVisible: false,
+      reworkWasteDataList: [],
+      materialWasteDataList: [],
+      responsWasteDataList: []
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
-    // 总发货数量
-    totalDeliveryQuantity: function () {
-      var totalNum = 0
-      console.log(this.dataFormTwo.productData, 'oooo')
-      if (this.dataFormTwo.productData) {
-        for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
-          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
-        }
-      }
-
-      return totalNum
-    }
+    ...mapGetters(['userInfo'])
   },
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
-    },
-    'dataFormTwo.productData': {
-      // immediate:true,
-      handler: function (newVal, oldVal) {
-        newVal.forEach((item) => {
-          if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
-            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
-          } else {
-            item.excludingTaxPrice = ''
-          }
-          if (item.receivedQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice)
-          } else {
-            item.excludingTaxAmount = ''
-          }
-          if (item.price && item.receivedQuantity && item.excludingTaxAmount) {
-            item.taxAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount)
-          } else {
-            item.taxAmount = ''
-          }
-          if (item.excludingTaxAmount && item.taxAmount) {
-            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
-          } else {
-            item.totalAmount = ''
-          }
-          // if (!item.price) {
-          //   this.$message.error('未找到供应商单价')
-          // }
-        })
-      },
-      deep: true
     }
   },
   async created() {
     await this.getOrderFiledMap()
-    await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
-    this.getBimBusinessDetail()
-    await this.getDeputyUnit()
-    await this.switchStyleheight()
     this.formLoading = false
     // this.handleChange()
-    // this.getProvinceList()
-    this.getAttributeline()
-    this.getWarehouseList()
   },
-  mounted() {
-    let tBody = document.querySelectorAll('.el-table')[1]
-    tBody.style.height = 'auto'
-    tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
-  },
+  mounted() { },
   methods: {
-    // 配置资源
-    handlerOpenSource(index, type) {
-      console.log(this.dataFormTwo.data[index].purchaseQuantity, 'this.dataFormTwo.data[index].id')
-      if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
-      console.log(index, 'index')
-      this.sourceVisibled = true
-      this.index = index
-      console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
-      if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
-        this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
-
-        // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-        //   console.log(item, 'p{{}}')
-        //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
-        //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
-        //   this.sourceData[ind].processId = item.processId
-        //   this.sourceData[ind].processName = item.processName
-        // })
-      } else {
-        this.sourceData = []
-      }
-      console.log(this.sourceData, '1111')
-
-      if (this.sourceData.length === 0) {
-        this.sourceDisabled = true
-      } else {
-        this.sourceDisabled = false
-      }
-      console.log(this.dataFormTwo.data, 'daaaa')
+    // 设置返工原因
+    setReworkWasteM() {
+      console.log('this.reworkWasteDataList', this.reworkWasteDataList)
+      this.reworkWasteFormVisible = true
       this.$nextTick(() => {
-        this.$refs['sourceRef'].init(
-          this.sourceData,
-          '',
-          this.dataFormTwo.data[this.index].productsId,
-          this.dataFormTwo.data[this.index].purchaseQuantity
+        this.$refs.reworkWasteFormRef.init(
+          JSON.parse(JSON.stringify(this.reworkWasteDataList)),
+          this.dataForm.actualReworkQuantity,
+          this.dataForm.projectId
         )
       })
     },
-    switchStyleheight() {
-      const mainRegion1 = this.$refs.main // 表单页面区域
-      const mainHeight1 = mainRegion1.clientHeight
-      // 其他同级组件占用高度
-      let bortherHeight = 0
-      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
-      bortherItems.forEach((item) => {
-        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
-      })
-
-      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
-      let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 450
-      console.log(maxHeight, 'maxHeight')
-      this.customStyleData = maxHeight
-      // 附带防抖的监听适配模式屏幕缩放
-      window.onresize = () => {
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          this.switchStyleheight()
-        }, 100)
+    reworkWasteData(data, totalNums) {
+      console.log('返工数据', data, totalNums)
+      this.reworkWasteDataList = data
+      if (totalNums) {
+        this.dataForm.actualReworkQuantity = totalNums
       }
     },
+    // 设置责废原因
+    setResponsWasteM() {
+      console.log('this.responsWasteDataList', this.responsWasteDataList)
+
+      this.responsWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.responsWasteFormRef.init(
+          JSON.parse(JSON.stringify(this.responsWasteDataList)),
+          this.dataForm.actualResponsibilityWasteQuantity,
+          this.dataForm.projectId
+        )
+      })
+    },
+    responsWasteData(data, totalNums) {
+      console.log('责废数据', data, totalNums)
+      this.responsWasteDataList = data
+      if (totalNums) {
+        this.dataForm.actualResponsibilityWasteQuantity = totalNums
+      }
+    },
+    // 设置料废原因
+    setMaterialWasteM() {
+      console.log('this.materialWasteDataList', this.materialWasteDataList)
+      this.materialWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.materialWasteFormRef.init(
+          JSON.parse(JSON.stringify(this.materialWasteDataList)),
+          this.dataForm.actualMaterialQuantity,
+          this.dataForm.projectId
+        )
+      })
+    },
+    materialWasteData(data, totalNums) {
+      console.log('设置的料废金额', data, totalNums)
+      this.materialWasteDataList = data
+      if (totalNums) {
+        this.dataForm.actualMaterialQuantity = totalNums
+      }
+    },
+
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.materialFlag = res.data.material
@@ -604,38 +342,7 @@ export default {
         this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    warehouseIdChange(e) {
-      this.dataForm.warehouseId = e
-      if (this.isProjectSwitch === '1') {
-        this.warehouseIdList.forEach((item) => {
-          if (e === item.id) {
-            this.orderForm.projectId = item.projectId
-          }
-        })
-        this.dataFormTwo.productData = this.dataFormTwo.productData.filter(
-          (item) => item.projectId === this.orderForm.projectId
-        )
-      }
-    },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `procureDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-      })
-    },
-    getBimBusinessDetail() {
-      let obj = {
-        businessCode: 'attachment',
-        configKey: 'fj_cgshd'
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isattachmentswitch = res.data.configValue1
-        this.categoryId = res.data.configValue2
-      })
-    },
+
     scanFun() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
       this.scanDialog = true
@@ -648,614 +355,7 @@ export default {
       this.scanResult = ''
       this.orderForm.productCode = ''
     },
-    getProductFun() {
-      console.log(21341234)
-      console.log(this.scanResult)
-      if (this.deliveryDateArr.length) {
-        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartTime = ''
-        this.orderForm.deliveryEndTime = ''
-      }
-      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      this.orderForm.productCode = this.scanResult
-      detailpurchaseOrderList(this.orderForm).then((res) => {
-        console.log(res.data.records, 'p')
-        this.scanResult = ''
-        console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
-        const newRecord = res.data.records
 
-        if (newRecord.length !== 0) {
-          if (!this.dataFormTwo.productData || this.dataFormTwo.productData.length == 0) {
-            this.dataFormTwo.productData = newRecord
-          } else {
-            // 使用 Map 来确保唯一性并更新对象
-            const mergedMap = new Map()
-
-            this.dataFormTwo.productData.forEach((item) => mergedMap.set(item.id, item))
-
-            newRecord.forEach((item) => mergedMap.set(item.id, item))
-
-            this.dataFormTwo.productData = Array.from(mergedMap.values())
-          }
-        } else {
-          this.$message({
-            message: '未匹配到产品',
-            type: 'warning'
-          })
-          this.scanResult = ''
-        }
-      })
-    },
-    getWarehouseList() {
-      let obj = {
-        type: 'virtually',
-        category: 'warehouse'
-      }
-      if (this.isProjectSwitch === '1') {
-        obj.projectId = this.userInfo.projectId
-      }
-      getWarehouseList(obj).then((res) => {
-        this.warehouseIdList = res.data
-      })
-    },
-    //发货数量不能为0
-    calcValidatenum() {
-      return (rule, value, callback) => {
-        console.log(value, 'oo999')
-        let msg = `收货数量不能为'0'`
-        if (value == 0) {
-          callback(new Error(msg)), this.$message.error(msg)
-        }
-        if (!value) {
-          callback(new Error(msg)), this.$message.error(msg)
-        }
-      }
-    },
-    //数量验证
-    // list 中 a 不能 operator b 的校验规则
-    calcValidate() {
-      console.log(12332222)
-      return (rule, value, callback) => {
-        console.log(value, 'p')
-        let index = Number(rule.field.match(/\d+/)[0])
-        let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
-        if (!value || value == 0) {
-          callback()
-        } else {
-          let flag = false
-          let list = this.dataFormTwo.productData
-          let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].waitReceiptNum)
-
-          if (!(num_1 <= num_2)) {
-            flag = true
-          }
-          if (flag) {
-            this.$message.error(`第${index + 1}行${msg}`)
-            callback(new Error(msg))
-          } else {
-            callback()
-          }
-        }
-      }
-    },
-
-    // 产品列表选中
-    handeleProductInfoData(val) {
-      this.selectRows = val
-    },
-    // 批量删除
-    batchDelete() {
-      // 遍历选中的行的数据
-      if (!this.selectRows.length) {
-        this.$message({
-          message: '请选择要删除的产品',
-          type: 'error',
-          duration: 1500
-        })
-      }
-      for (let i = 0; i < this.selectRows.length; i++) {
-        const row = this.selectRows[i]
-        const index = this.dataFormTwo.productData.indexOf(row)
-        if (index > -1) {
-          this.dataFormTwo.productData.splice(index, 1) // 从tableData中删除选中的行
-        }
-      }
-      this.selectRows = [] // 清空选中的行的数据
-    },
-    // 单个删除
-    handleDel(data) {
-      if (this.btnType == 'qrsh') {
-        if (this.dataFormTwo.productData.length > 1) {
-          this.dataFormTwo.productData.splice(data.$index, 1)
-        } else {
-          this.$message({
-            message: '已是最后一条数据',
-            type: 'error',
-            duration: 1500
-          })
-        }
-      } else {
-        this.dataFormTwo.productData.splice(data.$index, 1)
-      }
-    },
-    // 选完客户产品数据后 渲染在列表上
-    submitCustomerProduct() {
-      this.productVisible = false
-    },
-
-    // 重置客户产品搜索条件
-    resetcusProduct() {
-      this.productForm = {
-        //   drawingNo: "",
-        productCode: '',
-        productName: '',
-        partnerId: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-    },
-    // 搜索客户产品
-    searchcusProduct() {
-      this.productForm.pageNum = 1
-      this.getcooperativeProduct()
-    },
-    // 获取客户产品数据
-    getcooperativeProduct() {
-      this.productForm.partnerId = this.dataForm.cooperativePartnerId
-      getcooperativeProduct(this.productForm).then((res) => {
-        this.cusProductData = res.data.records
-      })
-    },
-
-    // 选择产品——搜索
-    searchProductFun() {
-      if (this.deliveryDateArr.length) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartDate = ''
-        this.orderForm.deliveryEndDate = ''
-      }
-      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      detailpurchaseOrderList(this.orderForm)
-        .then((res) => {
-          this.productList = res.data.records
-          this.productTotal = res.data.total
-          this.listLoading = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-    // 选择产品——重置
-    resetProductFun() {
-      this.deliveryDateArr = []
-      this.orderForm = {
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: '',
-        returnQueryFlag: 1,
-        drawingNo: '', // customerProductNo: "",
-        deliveryStartTime: '',
-        deliveryEndTime: '',
-
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
-          }
-        ]
-      }
-      this.searchProductFun()
-    },
-    // 点击选择产品
-    openSeleceProductDialog() {
-      if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
-      this.productVisible = true
-      this.searchProductFun()
-    },
-    submitAllProduct() {
-      if (this.selectArr.length == 0) return this.$message.error('请选择产品！')
-      this.productVisible = false
-      this.selectArr.forEach((item) => {
-        this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-        this.dataFormTwo.productData.push(item)
-      })
-      let uniqueArr = []
-      let idSet = new Set()
-
-      this.dataFormTwo.productData.forEach((item) => {
-        if (!idSet.has(item.id)) {
-          uniqueArr.push(item)
-          idSet.add(item.id)
-        }
-      })
-      this.dataFormTwo.productData = uniqueArr
-    },
-    // },
-    // 获取所有订单列表数据
-    initData2() {
-      this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode
-      this.listLoading = true
-      getsaleOrderList(this.ProductListRequestObj).then((listRes) => {
-        if (Array.isArray(listRes.data)) {
-          this.allproductData = listRes.data
-        } else {
-          this.allproductData = listRes.data.records
-        }
-        this.allProductTotal = listRes.data.total
-        this.$forceUpdate()
-        this.treeLoading = false
-        this.listLoading = false
-      })
-    },
-    // 搜索所有产品 列表
-    searchAllProduct() {
-      this.ProductListRequestObj.pageNum = 1
-      if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.ProductListRequestObj.orderStartDate = this.orderDateArr[0]
-        this.ProductListRequestObj.orderEndDate = this.orderDateArr[1]
-      } else {
-        this.ProductListRequestObj.orderStartDate = ''
-        this.ProductListRequestObj.orderEndDate = ''
-      }
-      this.initData2()
-    },
-    // 监听主数量输入
-    watchnums(row, index) {
-      if (!row.receivedQuantity) {
-        return
-      }
-      row.receivedQuantity = row.receivedQuantity.replace(/[^0-9.]/g, '')
-
-      if (row.receivedQuantity.length == 1 && row.receivedQuantity == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.receivedQuantity = ''
-      } else if (row.receivedQuantity.length == 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.receivedQuantity = row.receivedQuantity.slice(0, 1) + '.' + row.receivedQuantity.slice(1)
-      } else if (row.receivedQuantity.length > 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
-        row.receivedQuantity = row.receivedQuantity.substring(1, row.receivedQuantity.length)
-      }
-      if (row.receivedQuantity.includes('.')) {
-        let dotCount = 0 // 小数点的数量
-        let result = '' // 处理后的结果
-        for (let i = 0; i < row.receivedQuantity.length; i++) {
-          const char = row.receivedQuantity[i]
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char
-              dotCount++
-            }
-          } else {
-            result += char
-          }
-        }
-        row.receivedQuantity = result
-        let arr = row.receivedQuantity.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
-        }
-        row.receivedQuantity = arr[0] + '.' + arr[1]
-      } else {
-        if (row.receivedQuantity.length > 8) {
-          row.receivedQuantity = row.receivedQuantity.substring(0, 8)
-        }
-      }
-      if (!row.receivedQuantity) {
-        return
-      }
-      row.receivedQuantity = row.receivedQuantity.replace(/[^0-9.]/g, '')
-
-      if (row.receivedQuantity.length == 1 && row.receivedQuantity == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.receivedQuantity = ''
-      } else if (row.receivedQuantity.length == 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.receivedQuantity = row.receivedQuantity.slice(0, 1) + '.' + row.receivedQuantity.slice(1)
-      } else if (row.receivedQuantity.length > 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
-        row.receivedQuantity = row.receivedQuantity.substring(1, row.receivedQuantity.length)
-      }
-      if (row.receivedQuantity.includes('.')) {
-        let dotCount = 0 // 小数点的数量
-        let result = '' // 处理后的结果
-        for (let i = 0; i < row.receivedQuantity.length; i++) {
-          const char = row.receivedQuantity[i]
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char
-              dotCount++
-            }
-          } else {
-            result += char
-          }
-        }
-        row.receivedQuantity = result
-        let arr = row.receivedQuantity.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
-        }
-        row.receivedQuantity = arr[0] + '.' + arr[1]
-      } else {
-        if (row.receivedQuantity.length > 8) {
-          row.receivedQuantity = row.receivedQuantity.substring(0, 8)
-        }
-      }
-    },
-    // 所有产品弹框 重置搜索条件
-    resetAllProduct() {
-      this.orderDateArr = []
-      this.ProductListRequestObj = {
-        // neOrderState: 'finish',
-        orderNo: '',
-        cooperativePartnerName: '',
-        orderType: '',
-        salesName: '',
-        workOrderNo: '',
-        sourceOrderNo: '',
-        orderStartDate: '',
-        orderEndDate: '',
-        contractNo: '',
-        deliveryStartDate: '',
-        deliveryEndDate: '',
-        distributeStatus: 'distributed',
-        // orderCategory: "assembly",
-        shipmentStatus: '',
-        orderState: '',
-        productionStatus: '',
-        documentStatus: '',
-        approvalStatus: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      }
-      this.searchAllProduct()
-    },
-    handleSelectionChangeAllPruduct(val) {
-      this.selectArr = val
-    },
-    // 获取产品列表字段 编排属性
-    getAttributeline() {
-      getAttributeline('product').then((res) => {
-        this.attributeLines = res.data
-      })
-    },
-
-    // 选完所属采购，带出所属部门
-    hangleSelectSales(e, r) {
-      this.dataForm.departmentId = r.parentId
-      this.dataForm.departmentName = r.organize
-    },
-    handleClose() {
-      this.form = {
-        code: '',
-        name: '',
-        taxId: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerCategoryId: '',
-        type: 'supplier'
-      }
-      this.initData()
-    },
-    // 选择客户
-    seleceCustomer(e) {
-      getCooperativeInfo(e.id).then((res) => {
-        if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
-          this.$confirm('切换供应商后将清空订单和产品信息，是否继续！', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-            .then(() => {
-              this.$message({
-                type: 'success',
-                message: '切换成功'
-              })
-              // this.dataForm = {
-              //   exchangeGoodsFlag: false,
-              //   // orderCategory: "assembly",
-              //   returnDeliveryType: 'back',
-              //   notificationType: 'procure',
-              //   logisticsCompany: '',
-              //   ordersId: '',
-              //   deliverDate: '',
-              //   logisticsNumber: '',
-              //   cooperativePartnerId: '',
-              //   remark: '',
-              //   orderNo: this.codeConfig.number
-              // }
-              this.dataFormTwo.productData = []
-              this.customerData = e
-              this.dataForm.cooperativePartnerId = e.id
-              this.ProductListRequestObj.cooperativePartnerCode = e.code
-              this.code = e.code
-              this.dataForm.partnerName = e.name
-              this.dataForm.code = e.code
-              this.customerVisible = false
-            })
-            .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消'
-              })
-              this.customerVisible = true
-            })
-        } else {
-          // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          // this.dataForm = {
-          //   exchangeGoodsFlag: false,
-          //   // orderCategory: "assembly",
-          //   returnDeliveryType: 'back',
-          //   notificationType: 'procure',
-          //   logisticsCompany: '',
-          //   ordersId: '',
-          //   orderNo: this.codeConfig.number,
-          //   deliverDate: '',
-          //   logisticsNumber: '',
-          //   cooperativePartnerId: '',
-          //   remark: ''
-          // }
-          this.dataFormTwo.productData = []
-          this.customerData = e
-          this.dataForm.cooperativePartnerId = e.id
-          this.ProductListRequestObj.cooperativePartnerCode = e.code
-          this.code = e.code
-          this.dataForm.partnerName = e.name
-          this.dataForm.code = e.code
-          this.customerVisible = false
-        }
-      })
-    },
-    computedNumFun(data, index) {
-      if (data.proportion && data.weight) {
-        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight * data.discount)
-        this.watchNum(data, index)
-      }
-    },
-    search() {
-      this.form.pageNum = 1
-      this.initData()
-    },
-    reset() {
-      this.form = {
-        code: '',
-        taxId: '',
-        name: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerCategoryId: '',
-        type: 'supplier'
-      }
-      this.getcategoryTree()
-    },
-    initData() {
-      this.listLoading = true
-      getCooperativeData(this.form)
-        .then((res) => {
-          this.tableDataCustomer = res.data.records
-          this.total = res.data.total
-          this.listLoading = false
-          this.visible = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-    filterNode(value, data) {
-      if (!value) return true
-      return data.name.indexOf(value) !== -1
-    },
-    handleNodeClick(data, node) {
-      if (this.form.partnerCategoryId === data.id) return
-      this.form.partnerCategoryId = data.id
-      const nodePath = this.getNodePath(node)
-      this.organizeIdTree = nodePath.map((o) => o.id)
-      this.search()
-    },
-    getNodePath(node) {
-      let fullPath = []
-      const loop = (node) => {
-        if (node.level) fullPath.unshift(node.data)
-        if (node.parent) loop(node.parent)
-      }
-      loop(node)
-      return fullPath
-    },
-    filterNodeAllProduct(value, data) {
-      if (!value) return true
-      return data.name.indexOf(value) !== -1
-    },
-    handleNodeAllProduct(data, node) {
-      if (this.ProductListRequestObj.productCategoryId === data.id) return
-      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      const nodePath = this.getNodePathProduct(node)
-      this.organizeIdTree = nodePath.map((o) => o.id)
-      this.ProductListRequestObj.classAttribute = data.classAttribute
-      this.searchAllProduct()
-    },
-    getNodePathProduct(node) {
-      let fullPath = []
-      const loop = (node) => {
-        if (node.level) fullPath.unshift(node.data)
-        if (node.parent) loop(node.parent)
-      }
-      loop(node)
-      return fullPath
-    },
-    toggleExpand(expands) {
-      this.refreshTree = false
-      this.expands = expands
-      this.$nextTick(() => {
-        this.refreshTree = true
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.companyId)
-        })
-      })
-    },
-    // 获取客户数据
-    getcategoryTree(isInit) {
-      this.treeLoading = true
-      let listQuery = {
-        keyword: '',
-        type: 'supplier'
-      }
-      getcategoryTrees(listQuery)
-        .then((res) => {
-          this.treeData = res.data
-          this.$nextTick(() => {
-            this.initData()
-            this.treeLoading = false
-          })
-        })
-        .catch(() => {
-          this.treeLoading = false
-        })
-    },
-    // 打开选择客户弹框
-    openDialog() {
-      this.customerVisible = true
-      this.getcategoryTree()
-    },
-    // 切换table
-    handleClick(tab, event) { },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -1264,16 +364,48 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(data) {
-      console.log(id, '[]')
-      this.dataForm.id = id || ''
+    init(row, readOnly, inspectionType, type, businessCode) {
+      this.fetchData(businessCode, true)
 
-      this.btnType = btnType
-      console.log(btnType, 'iiiiii')
-      this.approvalFlag = approvalFlag
-      console.log(data, 'ddd')
+      this.btnType = type
+      this.approvalFlag = false
+      console.log(inspectionType, 'ddd')
 
-      this.dataForm = { ...data }
+      this.dataForm = { ...row }
+      this.dataForm.reportNo = this.dataForm.orderNo
+      this.dataForm.notificationType = 'work_report'
+      console.log(this.dataForm,'hhhh')
+      this.dataForm.docLineId = this.dataForm.id
+      this.dataForm.causesList.forEach((item) => {
+        if (item.scrapCategoryType === 'responsibility_fee') {
+          this.responsWasteDataList.push({
+            name: item.scrapCategoryName,
+            price: item.scrapCategoryPrice,
+            num: item.scrapQuantity,
+            amouny: this.jnpf.numberFormat(
+              this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
+              6
+            ),
+            person: item.scrapUserId,
+            scrapId: item.scrapUserId,
+            type:'inspect'
+          })
+        } else if (item.scrapCategoryType === 'material_fee') {
+          this.materialWasteDataList.push({
+            name: item.scrapCategoryName,
+            price: item.scrapCategoryPrice,
+            num: item.scrapQuantity,
+            amouny: this.jnpf.numberFormat(
+              this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
+              6
+            ),
+            person: item.scrapUserId,
+            scrapId: item.scrapUserId,
+            type:'inspect'
+          })
+        }
+      })
+
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
         this.getBusInfo()
@@ -1293,38 +425,6 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
-    // 继续新增
-    continueAdd() {
-      this.dataFormTwo.productData = []
-      this.dataForm = {
-        exchangeGoodsFlag: false,
-        inspectionStatus: '',
-        // orderCategory: "assembly",
-        // returnDeliveryType: 'back',
-        // notificationType: 'procure',
-        logisticsCompany: '',
-        ordersId: '',
-        deliverDate: '',
-        partnerName: '',
-        orderNo: '',
-        logisticsNumber: '',
-        //   phone: '',
-        //   country: '',
-        //   province: '',
-        //   city: '',
-        //   area: '',
-        //   address: '',
-        //   delivery: '',
-        //   shipperId: '',
-        cooperativePartnerId: '',
-        remark: '',
-        approvalFlag: false
-      }
-      this.$refs.dataForm.resetFields()
-      this.init('', 'add')
-      this.tipsvisible = false
-      this.btnLoading = false
-    },
     handleConfirm(value, type) {
       let submitFlag = true
       console.log(this.$refs['dataForm'])
@@ -1335,14 +435,7 @@ export default {
           this.btnLoading = false
         }
       })
-      console.log(this.$refs['productForm'], 'kkkk')
-      this.$refs['productForm'].validate((valid) => {
-        console.log(valid, 'p999')
-        if (!valid) {
-          submitFlag = false
-          this.btnLoading = false
-        }
-      })
+
       if (submitFlag) {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -1356,185 +449,49 @@ export default {
             }
           })
         }
-        // this.dataForm.classAttribute = 'finish_product'
-        this.dataForm.receiptReturnType = 'receipt'
+        this.dataForm.causesList = []
+        this.dataForm.causesList = [...this.responsWasteDataList,...this.materialWasteDataList]
+        // 实际合格数量 = 合格数量 + 让步接收数量
+        this.dataForm.actualQualifiedQuantity =
+          Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.actualConcessionQuantity)
+
+        // 实际不合格数量 = 实际责废数量 + 实际料废数量
+        this.dataForm.actualUnqualifiedQuantity =
+          Number(this.dataForm.actualResponsibilityWasteQuantity) + Number(this.dataForm.actualMaterialQuantity)
+        if (
+          Number(this.dataForm.actualQualifiedQuantity) +
+          Number(this.dataForm.actualUnqualifiedQuantity) +
+          Number(this.dataForm.actualReworkQuantity) >
+          Number(this.dataForm.reportingQuantity)
+        ) {
+          this.$message.error(`合格数量、让步接收数量、责废数量和料废数量的合计不能大于报工数量`)
+          return
+        }
         let obj = {
           attachmentList: this.datafilelist,
-          returnGoods: this.dataForm,
+          inspection: this.dataForm,
+          workReport: this.dataForm,
           lines: [],
           flowData: this.flowData
         }
-        if (!this.dataFormTwo.productData.length) {
-          this.$message({
-            message: '请选择产品',
-            type: 'error',
-            duration: 1500
-          })
-          return
-        }
-        for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
-          const item = this.dataFormTwo.productData[index]
-          console.log(item.purchaseQuantity, 'item')
-          console.log(item.productsId, 'item')
-          if (!item.receivedQuantity && item.productsId) {
-            submitFlag = false
-            this.btnLoading = false
-            this.$message({
-              message: '请输入第' + (index + 1) + '行产品的收货数量',
-              type: 'error',
-              duration: 1500
-            })
-            break
-          }
-          if (Number(item.receivedQuantity) == 0) {
-            submitFlag = false
-            this.btnLoading = false
-            this.$message({
-              message: '第' + (index + 1) + '行产品的收货数量必须大于0',
-              type: 'error',
-              duration: 1500
-            })
-            break
-          }
-        }
 
-        this.dataFormTwo.productData.forEach((item, index) => {
-          let dep = {
-            accuracyLevel: item.accuracyLevel,
-            billStatus: item.billStatus,
-            calculationDirection: item.calculationDirection,
-            clearance: item.clearance,
-            customColumn: item.customColumn,
-            deputyUnit: item.deputyUnit,
-            // id: 0,
-            notificationType: 'procure',
-            inspectionResults: item.inspectionResults,
-            mainUnit: item.mainUnit,
-            // notificationType: item.notificationType,
-            oil: item.oil,
-            oilQuantity: item.oilQuantity,
-            weight: item.weight,
-            proportion: item.proportion,
-            discount: item.discount,
-            packagingMethod: item.packagingMethod,
-            packingQuantity: item.packingQuantity,
-            processId: item.processId,
-            productsId: item.productsId ? item.productsId : '',
-            purchaseOrderId: item.purchaseOrderId,
-            purchaseQuantity: item.purchaseQuantity,
-            purchaseQuantity2: item.purchaseQuantity2,
-            purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
-            qualifiedQuantity: item.qualifiedQuantity,
-            ratio: item.ratio,
-            waitReceiptNum: item.waitReceiptNum,
-            receivedQuantity: item.receivedQuantity,
-            receivingStatus: item.receivingStatus,
-            remark: item.remark,
-            sealingCoverTyping: item.sealingCoverTyping,
-            standardValue: item.standardValue,
-            unqualifiedQuantity: item.unqualifiedQuantity,
-            vibrationLevel: item.vibrationLevel,
-            warehouseId: item.warehouseId,
-            ordersId: item.ordersId,
-            classAttribute: item.classAttribute,
-            id: item.id ? item.id : '',
-            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-            // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-            ratio: item.ratio ? item.ratio : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            remark: item.remark ? item.remark : '',
-            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
-            price: item.price ? item.price : '',
-            totalAmount: item.totalAmount ? item.totalAmount : '',
-            taxRate: item.taxRate ? item.taxRate : '',
-            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-            taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
-          }
-          let dep1 = {
-            billStatus: item.billStatus ? item.billStatus : '',
-            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-            mainUnit: item.mainUnit ? item.mainUnit : '',
-            ordersId: item.ordersId,
-            classAttribute: item.classAttribute,
-            id: item.id ? item.id : '',
-            purchaseQuantity: item.purchaseQuantity,
-            purchaseQuantity2: item.purchaseQuantity2,
-            productsId: item.productsId ? item.productsId : '',
-            waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
-            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-            ratio: item.ratio ? item.ratio : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            remark: item.remark ? item.remark : '',
-            purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
-            price: item.price ? item.price : '',
-            totalAmount: item.totalAmount ? item.totalAmount : '',
-            taxRate: item.taxRate ? item.taxRate : '',
-            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-            taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-            weight: item.weight,
-            proportion: item.proportion,
-            discount: item.discount
-          }
-          if (this.btnType == 'add' || this.btnType == 'copy') {
-            obj.lines.push(dep)
-          } else {
-            obj.lines.push(dep1)
-          }
-        })
         this.btnLoading = true
-        let formMethod = null
 
-        if (this.btnType == 'edit') {
-          formMethod = editpurPurchaseReceiptReturnGoods
-        } else if (this.btnType == 'add' || this.btnType == 'copy') {
-          // obj.notice.deliveryStatus = 'not_returned'
-          formMethod = addpurPurchaseReceiptReturnGoods
-        }
         console.log(obj, 'obj')
-        formMethod(obj)
+        addReportWorkInspectionData(obj)
           .then((res) => {
-            // let msg = "";
-            // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-            //   msg = "新建成功"
-            // } else if (value == 'draft') {
-            //   msg = "保存成功"
-            // } else if (value == 'submit') {
-            //   msg = '提交成功'
-            // }
-            if (value == 'draft') {
-              this.submitmethodsTitle = '保存成功'
-            } else if (value == 'submit') {
-              this.submitmethodsTitle = '提交成功'
+            let msg = res.msg
+            if (res.msg === 'Success') {
+              msg = this.dataForm.documentStatus == 'submit' ? '提交成功' : '保存成功'
             }
-            if (type) {
-              this.enCode = 'p018'
-              this.formId = res.data.id
-              this.fullName = '采购检验单'
-
-              this.printVisible = true
-              this.$nextTick(() => {
-                this.$refs.printTemplate.init(this.enCode)
-              })
-            } else {
-              this.tipsvisible = true
-            }
+            this.visible = false
+            this.$emit('close', true)
             this.$message({
               message: msg,
               type: 'success',
               duration: 1500,
               onClose: () => {
-                this.visible = false
                 this.btnLoading = false
-                this.$emit('close', true)
               }
             })
           })
@@ -1542,25 +499,6 @@ export default {
             this.btnLoading = false
           })
       }
-    },
-    printWarehouse(enCode) {
-      getPrintBusInfo(enCode)
-        .then((res) => {
-          if (res.data) {
-            this.printVisible = false
-            this.prindId = res.data.id
-            this.printBrowseVisible = true
-          } else {
-            this.$message.warning('未找到相应打印模版')
-          }
-        })
-        .catch(() => {
-          this.printBrowseVisible = false
-        })
-    },
-    closePrint() {
-      this.btnLoading = false
-      this.printVisible = false
     },
     // 测试审批流
     getBusInfo() {
@@ -1620,12 +558,6 @@ export default {
         })
         .catch(() => { })
     }
-  },
-  beforeUpdate() {
-    this.$nextTick(() => {
-      //在数据加载完，重新渲染表格
-      this.$refs['product'].doLayout()
-    })
   }
 }
 </script>

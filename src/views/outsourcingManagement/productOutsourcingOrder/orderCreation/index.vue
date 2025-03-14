@@ -1019,9 +1019,9 @@ export default {
         // 通过需求池id 获取明细的数据
         getShipmentList(obj).then((res) => {
           this.dataFormTwo.data[index].outShipmentList = res.data
-          this.dataFormTwo.data[index].outShipmentList.forEach((item) => {
-            item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
-          })
+          // this.dataFormTwo.data[index].outShipmentList.forEach((item) => {
+          //   item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity
+          // })
           console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
         })
       }

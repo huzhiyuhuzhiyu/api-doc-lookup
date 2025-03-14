@@ -215,7 +215,7 @@
                       </el-table-column>
 
 
-                      <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
+                      <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" :disabled="sourceDisabled"
                             @click="handlerOpenSource(scope.$index, 'source')">

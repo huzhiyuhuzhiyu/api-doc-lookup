@@ -440,7 +440,7 @@ export default {
               trigger: 'blur'
             }
           ],
-          itemDisabled: ['qualified', 'unqualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults) || this.dataForm.approvalStatus === 'ok' ? true : false
+          itemDisabled: this.qualifiedQuantityDisabled
         },
         {
           prop: 'unqualifiedQuantity',
@@ -479,7 +479,7 @@ export default {
               trigger: 'blur'
             }
           ],
-          itemDisabled: ['qualified', 'unqualified', 'concessive_acceptance'].includes(this.dataForm.treatmentResults) || this.dataForm.approvalStatus === 'ok' ? true : false
+          itemDisabled: this.unqualifiedQuantityDisabled
         },
         {
           prop: 'scrapQuantity',

@@ -599,7 +599,7 @@ export default {
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
       productRules: {
-        productDrawingNo: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
+        productDrawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
         productName: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
         purchaseQuantity: [
           // 主数量
@@ -635,7 +635,6 @@ export default {
             }),
             trigger: 'blur'
           },
-          { required: true, trigger: ['blur'] }
         ],
         purchaseQuantity2: [
           // 副数量
@@ -671,11 +670,9 @@ export default {
             }),
             trigger: 'blur'
           },
-          { required: true, trigger: ['blur'] }
         ],
         taxRate: [
           // 税率
-          { required: true, trigger: ['change'] },
           {
             validator: this.formValidate({
               type: 'noEmtry',
@@ -718,21 +715,6 @@ export default {
             }),
             trigger: 'blur'
           },
-          // {
-          //   validator: this.formValidate({
-          //     type: 'calc',
-          //     params: [
-          //       (rowIndex, value) =>
-          //         Number(this.dataFormTwo.data[rowIndex].price) <= Number(this.dataFormTwo.data[rowIndex].fixedPrice),
-          //       '不能超过对应定价',
-          //       (errMsg, index) => {
-          //         this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
-          //       }
-          //     ]
-          //   }),
-          //   trigger: 'blur'
-          // },
-          { required: true, trigger: ['blur'] }
         ],
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
@@ -849,29 +831,6 @@ export default {
     }
   },
   methods: {
-    switchStyleheight() {
-      const mainRegion1 = this.$refs.main // 表单页面区域
-      const mainHeight1 = mainRegion1.clientHeight
-      // 其他同级组件占用高度
-      let bortherHeight = 0
-      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
-      bortherItems.forEach((item) => {
-        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
-      })
-
-      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
-      let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 325
-      console.log(maxHeight, 'maxHeight')
-      this.customStyleData = maxHeight
-      // 附带防抖的监听适配模式屏幕缩放
-      window.onresize = () => {
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          this.switchStyleheight()
-        }, 100)
-      }
-    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.standardValueFlag = res.data.standardValue

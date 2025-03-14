@@ -420,7 +420,7 @@ export default {
           if (this.tableData.length == 1) {
             this.formVisible = true
             this.$nextTick(() => {
-              this.$refs.Form.init(this.tableData[0], false, 'finished', 'notice', 'QCDH', 'QCDH')
+              this.$refs.Form.init(this.tableData[0], false, 'work_report', 'add', 'QCDH', 'QCDH')
             })
           }
         })

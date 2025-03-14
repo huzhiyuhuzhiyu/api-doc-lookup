@@ -36,8 +36,7 @@
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="盘点日期" prop="orderDate">
                               <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                                style="width: 100%;"  placeholder="请选择盘点日期"
-                                :disabled="btnType == 'look'">
+                                style="width: 100%;" placeholder="请选择盘点日期" :disabled="btnType == 'look'">
                               </el-date-picker>
                             </el-form-item>
                           </el-col>
@@ -82,12 +81,13 @@
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-download"
                           @click="exportForm">导出</el-button>
                       </div>
-                         <!--若keyProp未设置或keyProp值不唯一，可能导致表格空数据或者滚动时渲染的数据断层、不连贯、滚动不了-->
-                      <virtual-scroll :data="virtualData" :item-size="15" key-prop="id"
-                         @change="(virtualList) => tableData = virtualList" :virtualized="true">
-  
+                      <!--若keyProp未设置或keyProp值不唯一，可能导致表格空数据或者滚动时渲染的数据断层、不连贯、滚动不了-->
+                      <!-- <virtual-scroll :data="virtualData" :item-size="15" key-prop="id"
+                         @change="(virtualList) => tableData = virtualList" :virtualized="true"> -->
+
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :height="customStyleData">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;"
+                        :height="customStyleData" :showOverflowTooltip="false">
 
                         <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
@@ -98,7 +98,7 @@
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
-                              :disabled="btnType == 'look' ? true : false" >
+                              :disabled="btnType == 'look' ? true : false">
                               <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                                 :value="item.id">
                               </el-option>
@@ -131,7 +131,9 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
-
+                          <template slot="header">
+                            <span class="required">*</span>库位
+                          </template>
                           <template slot-scope="scope" v-if="scope.row.allocationFlag">
                             <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
                               @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
@@ -140,7 +142,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                        <el-table-column prop="batchNumber" label="批次号" width="200"   >
 
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
@@ -313,7 +315,7 @@
                           </template>
                         </el-table-column>
                       </JNPF-table>
-                    </virtual-scroll>
+                      <!-- </virtual-scroll> -->
 
 
                     </el-collapse-item>
@@ -341,8 +343,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="盘点日期" prop="orderDate">
                           <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;"  placeholder="请选择盘点日期"
-                            :disabled="btnType == 'look'">
+                            style="width: 100%;" placeholder="请选择盘点日期" :disabled="btnType == 'look'">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -387,7 +388,8 @@
                   </div>
 
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                    @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :height="customStyleData">
+                    @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;"
+                    :height="customStyleData" :showOverflowTooltip="false">
 
                     <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
@@ -434,7 +436,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
-
+                      <template slot="header" >
+                        <span class="required">*</span>库位
+                      </template>
                       <template slot-scope="scope" v-if="scope.row.allocationFlag">
                         <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
                           @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
@@ -442,7 +446,7 @@
 
                       </template>
                     </el-table-column>
-                    <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111">
+                    <el-table-column prop="batchNumber" label="批次号" width="200"  >
 
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
@@ -643,17 +647,20 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun(type)"  v-model="productForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun(type)" v-model="productForm.productDrawingNo"
+                      placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun(type)"  v-model="productForm.productName" placeholder="产品名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun(type)" v-model="productForm.productName"
+                      placeholder="产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun(type)"  v-model="productForm.productCode" placeholder="产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun(type)" v-model="productForm.productCode"
+                      placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -678,7 +685,8 @@
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip min-width="160"></el-table-column>
                 <el-table-column prop="name" label="产品名称" v-show="productNameFlag" min-width="160" />
                 <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
-                <el-table-column prop="processName" label="工序名称" v-if="type == 'invent'" min-width="180"></el-table-column>
+                <el-table-column prop="processName" label="工序名称" v-if="type == 'invent'"
+                  min-width="180"></el-table-column>
                 <el-table-column prop="productCategoryName" label="所属分类" v-if="type == 'all'" min-width="120" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -801,7 +809,7 @@ import { getProducts, getDetailByDrawNo, getbimProductAttributesListMap, getbimP
 
 // import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
-import BatchNumberForm from './batchNumberForm.vue'
+import BatchNumberForm from './BatchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import { mapGetters, mapState } from 'vuex'
 import { excelExport } from '@/api/basicData/index'
@@ -813,8 +821,8 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import busFlow from '@/mixins/generator/busFlow';
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail,getBatchNumber } from '@/api/basicData/index'
-import VirtualScroll, { VirtualColumn } from 'el-table-virtual-scroll'
+import { getCooperativeData, getOrderFiledMap, getBimBusinessDetail, getBatchNumber } from '@/api/basicData/index'
+// import VirtualScroll, { VirtualColumn } from 'el-table-virtual-scroll'
 export default {
   // components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
   components: { Process, recordList, WareHouseForm, BatchNumberForm, Adjust },
@@ -822,7 +830,7 @@ export default {
   data() {
     return {
       customStyleData: 0,
-      formLoading:true,
+      formLoading: true,
       partnerRequestObj: {
         code: "",
         name: "",
@@ -968,10 +976,10 @@ export default {
       pairingModeList: [],
     }
   },
-  components: {
-    VirtualScroll: VirtualScroll,
-    VirtualColumn: VirtualColumn
-  },
+  // components: {
+  //   VirtualScroll: VirtualScroll,
+  //   VirtualColumn: VirtualColumn
+  // },
   async created() {
     this.formLoading = true
     await this.getProductClassFun()
@@ -1029,7 +1037,7 @@ export default {
         }, 100)
       }
     },
-    
+
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -1356,11 +1364,11 @@ export default {
       console.log("批次号数据", data, index);
       this.productData[index].batchNumber = data.batchNumber
       this.productData[index].stockNum = data.inventoryQuantity
-     
+
       this.productData[index].cooperativePartnerName = data.partnerName
       this.productData[index].cooperativePartnerId = data.cooperativePartnerId
       this.productData[index].cooperativePartnerCode = data.partnerCode
-     
+
       if (this.productData[index].num) {
         this.productData[index].diffNum = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.productData[index].num, this.productData[index].stockNum]), 2)
       }
@@ -1596,7 +1604,7 @@ export default {
         }
 
 
-1
+        1
         this.$set(item, 'num', '')
         this.$set(item, 'diffNum', '')
         this.$set(item, 'shelfSpaceId', item.shelfSpaceId)
@@ -1619,10 +1627,10 @@ export default {
         this.$set(item, 'aperture', '')
         this.$set(item, 'packagingMethod', '')
         this.$set(item, 'specialRequire', '')
-        this.$set(item, 'pairingModeId', '') 
+        this.$set(item, 'pairingModeId', '')
         this.$set(item, 'processName', item.processName)
         this.$set(item, 'processCode', item.processCode)
-        this.$set(item, 'processId', item.processId) 
+        this.$set(item, 'processId', item.processId)
         if (this.dataForm.warehouseId) {
           this.$set(item, 'warehouseName', this.dataForm.warehouseName)
           this.$set(item, 'allocationFlag', this.allocationFlag)
@@ -1635,21 +1643,21 @@ export default {
           this.$set(item, 'warehouseCode', item.warehouseCode)
         }
 
-        if(item.batchNumber){
+        if (item.batchNumber) {
           let obj = {
-            productsId:item.productsId,
-            warehouseId:item.warehouseId
+            productsId: item.productsId,
+            warehouseId: item.warehouseId
           }
-          getBatchNumber(obj).then(res=>{
-              console.log(res,'re')
-              if (res.data.records && res.data.records.length !==0) {
-                let data = res.data.records[0]
-  
-                this.$set(item, 'cooperativePartnerName', data.partnerName)
-                this.$set(item, 'cooperativePartnerId', data.cooperativePartnerId)
-                this.$set(item, 'cooperativePartnerCode', data.partnerCode)
-              }
-              
+          getBatchNumber(obj).then(res => {
+            console.log(res, 're')
+            if (res.data.records && res.data.records.length !== 0) {
+              let data = res.data.records[0]
+
+              this.$set(item, 'cooperativePartnerName', data.partnerName)
+              this.$set(item, 'cooperativePartnerId', data.cooperativePartnerId)
+              this.$set(item, 'cooperativePartnerCode', data.partnerCode)
+            }
+
           })
         }
         // if (item.productCategoryName == '保持架') {
@@ -1870,7 +1878,7 @@ export default {
                   shelfSpaceId: item.shelfSpaceId,
                   stockNum: item.stockNum,
                   warehouseId: item.warehouseId,
-                  pairingModeId:item.pairingModeId,
+                  pairingModeId: item.pairingModeId,
                   specSize: item.specSize,
                   logo: item.logo,
                   divideEqually: item.divideEqually,

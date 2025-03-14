@@ -179,12 +179,12 @@
         <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
           <el-col :span="24">
             <el-form-item label="生产任务单号" prop="orderNo">
-              <el-input v-model="form.orderNo" placeholder="生产任务单号" readonly />
+              <el-input v-model="form.orderNo" placeholder="生产任务单号" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="原生产数" prop="productionQuantity">
-              <el-input v-model="form.productionQuantity" placeholder="原生产数" readonly />
+              <el-input v-model="form.productionQuantity" placeholder="原生产数" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -451,7 +451,7 @@ export default {
         appendQuantity: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["追加数量不能为空", (errMsg, index) => { this.$message.error(`追加数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '请输入正确的追加数量',), trigger: 'blur' }
+          { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
         ],
       },
       workOrderData: [],

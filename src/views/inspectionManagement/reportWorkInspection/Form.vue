@@ -263,6 +263,7 @@ export default {
       console.log('this.reworkWasteDataList', this.reworkWasteDataList)
       this.reworkWasteFormVisible = true
       this.$nextTick(() => {
+        console.log(this.$refs.reworkWasteFormRef,'this.$refs.reworkWasteFormRef')
         this.$refs.reworkWasteFormRef.init(
           JSON.parse(JSON.stringify(this.reworkWasteDataList)),
           this.dataForm.actualReworkQuantity,

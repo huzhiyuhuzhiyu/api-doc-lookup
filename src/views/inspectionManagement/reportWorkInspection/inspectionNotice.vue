@@ -32,11 +32,11 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head">
           <div>
-            <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
+            <!-- <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
             <el-button size="mini" type="primary" @click="scanFun">
               <i class="iconfont icon-saoma"></i>
               扫码检验
-            </el-button>
+            </el-button> -->
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -59,11 +59,6 @@
          :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
-            <!-- <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                {{ scope.row.orderNo }}
-              </el-link>
-            </template> -->
           </el-table-column>
           <el-table-column prop="workNo" label="工单单号" width="200" sortable="custom" />
           <el-table-column prop="orderNo" label="报工单号" width="200" sortable="custom" />
@@ -92,19 +87,6 @@
           <el-table-column label="操作" width="60" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
-                <!-- <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown> -->
               </tableOpts>
             </template>
           </el-table-column>
@@ -164,7 +146,6 @@
 <script>
 import { getWorkReportList } from '@/api/productOrdes/index'
 import Form from './Form.vue'
-// import DetailForm from './DetailForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -518,6 +499,7 @@ export default {
     addOrUpdateHandle(row, readOnly) {
       this.formVisible = true
       this.$nextTick(() => {
+        console.log(this.$refs.Form,'this.$refs.Form')
         this.$refs.Form.init(row, readOnly, 'finished', 'notice', 'QCDH', 'QCDH')
       })
     },

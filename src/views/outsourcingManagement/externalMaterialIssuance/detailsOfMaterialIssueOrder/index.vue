@@ -75,7 +75,7 @@
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="projectName" label="所属项目" width="120"
+            <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"

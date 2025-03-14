@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-            <el-table-column prop="projectName" label="所属项目" width="120"
+            <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"
               v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="140" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"

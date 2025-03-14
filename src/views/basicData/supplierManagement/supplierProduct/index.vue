@@ -65,7 +65,7 @@
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
                 <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
                 <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
-                <el-table-column prop="projectName" label="所属项目" width="120"
+                <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"
                   v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="120"
                   v-if="isProductNameSwitch === '1'"></el-table-column>

@@ -411,18 +411,17 @@ export default {
           sm: 6,
           itemRules: [
             {
-              validator: this.formValidate({
-                type: 'noEmtry',
-                params: [
-                  '',
-                  (errMsg) => {
-                    this.$message.error(`合格数量${errMsg}`)
-                  }
-                ]
-              }),
+              validator: (rule, value, callback) => {
+                if (!value) {
+                  callback(new Error('合格数量不能为空'))
+                } else if (Number(value) <0) {
+                  callback(new Error('请填不小于0的数量'))
+                } else {
+                  callback()
+                }
+              },
               trigger: 'blur'
             },
-            { required: true, trigger: 'blur' },
             {
               validator: (rule, value, callback) => {
                 console.log(value, 'val')
@@ -450,18 +449,17 @@ export default {
           sm: 6,
           itemRules: [
             {
-              validator: this.formValidate({
-                type: 'noEmtry',
-                params: [
-                  '',
-                  (errMsg) => {
-                    this.$message.error(`不合格数量${errMsg}`)
-                  }
-                ]
-              }),
+              validator: (rule, value, callback) => {
+                if (!value) {
+                  callback(new Error('不合格数量不能为空'))
+                } else if (Number(value) <0) {
+                  callback(new Error('请填不小于0的数量'))
+                } else {
+                  callback()
+                }
+              },
               trigger: 'blur'
             },
-            { required: true, trigger: 'blur' },
             {
               validator: (rule, value, callback) => {
                 console.log(value, 'val')

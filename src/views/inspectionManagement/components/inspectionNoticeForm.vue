@@ -380,8 +380,6 @@ export default {
                   callback(new Error('检验数量不能大于报检数量'))
                 } else if (value < Number(this.autosamplingQuantity)) {
                   callback(new Error('检验数量不能小于规定的抽检数量'))
-                } else if (/^(?:[0-9]\d*)$/.test(value) == false) {
-                  callback(new Error('请输入整数'))
                 } else if (Number(value) == 0) {
                   callback(new Error('检验数量不能为0'))
                 } else {
@@ -420,9 +418,7 @@ export default {
                   callback(new Error('不合格数量不能大于检验数量'))
                 } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
                   callback(new Error('不合格数量不能为0'))
-                } else if (/^(?:[0-9]\d*)$/.test(value) == false) {
-                  callback(new Error('请输入整数'))
-                } else {
+                }  else {
                   callback()
                 }
               },

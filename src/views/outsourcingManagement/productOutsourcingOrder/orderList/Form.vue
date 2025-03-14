@@ -690,7 +690,10 @@ export default {
       },
       type: '',
       dataFormArr: [],
-      rules: {},
+      rules: {
+        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+      },
       productRules: {},
       productArr: [],
       defaultProps: {
@@ -977,7 +980,7 @@ export default {
             planQuantity: '', //计划数量主
             planQuantity2: '', //计划数量副
             remark: item.remark,
-            deliveryDate: '' // 交期
+            deliveryDate: this.dataForm.deliveryDate // 交期
           })
         })
         if (this.dataFormTwo.data.length) {

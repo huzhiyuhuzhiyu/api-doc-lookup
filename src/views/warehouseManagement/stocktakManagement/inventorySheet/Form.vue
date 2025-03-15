@@ -809,7 +809,7 @@ import { getProducts, getDetailByDrawNo, getbimProductAttributesListMap, getbimP
 
 // import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
-import BatchNumberForm from './BatchNumberForm.vue'
+import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import { mapGetters, mapState } from 'vuex'
 import { excelExport } from '@/api/basicData/index'

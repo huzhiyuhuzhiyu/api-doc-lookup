@@ -1367,6 +1367,7 @@ export default {
                 res.data.forEach(item => {
                   this.$set(item, 'productsCode', item.productCode)
                   this.$set(item, 'productsName', item.productName)
+                  this.$set(item, 'productsId', item.productId)
                   this.$set(item, 'productsDrawingNo', item.productDrawingNo)
 
                 });
@@ -1399,6 +1400,7 @@ export default {
               processId: maxSortItem.processId,
               productsCode: this.dataForm.productsCode,
               productsName: this.dataForm.productsName,
+              productsName: this.dataForm.productsId,
               productsDrawingNo: this.dataForm.productsDrawingNo,
               materialsUsedQuantity: this.dataForm.productionQuantity,
               mainUnit: this.dataForm.mainUnit,

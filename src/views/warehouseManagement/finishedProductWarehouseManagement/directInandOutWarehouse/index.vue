@@ -1256,6 +1256,7 @@ export default {
     },
     closePrint() {
       this.printVisible = false
+      this.$message.warning("取消打印")
     },
     computedNumFun(data, index) {
       if (data.discount && data.proportion && data.weight) {

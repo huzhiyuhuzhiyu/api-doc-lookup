@@ -9,14 +9,14 @@
                 <el-input v-model="listQuery.orderNo" placeholder="检验单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4" v-if="$store.getters.configData.product.enable_productName">
+            <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
+                <el-input v-model="listQuery.producerName" placeholder="生产人" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
+                <el-input v-model="listQuery.inspectorName" placeholder="检验人" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
@@ -69,27 +69,27 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="docNo" label="报工单号" min-width="200" sortable="custom" />
+            <el-table-column prop="workReport.orderNo" label="报工单号" min-width="200" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="200" sortable="custom" />
+            <el-table-column prop="projectName" label="所属项目" width="120"
+              v-if="isProjectSwitch === '1'"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" min-width="200" sortable="custom"
               v-if="$store.getters.configData.product.enable_productName" />
-            <el-table-column prop="docNo" label="生产任务单号" min-width="200" sortable="custom" />
-            <el-table-column prop="docNo" label="工单单号" min-width="200" sortable="custom" />
-            <el-table-column prop="docNo" label="报工数量" min-width="200" sortable="custom" />
-            <el-table-column prop="docNo" label="报工人" min-width="200" sortable="custom" />
-            <el-table-column prop="docNo" label="报工时间" min-width="200" sortable="custom" />
-            <el-table-column prop="inspectorName" label="合格数量" width="100" sortable="custom" />
-            <el-table-column prop="inspectionDate" label="让步接收数量" width="120" sortable="custom" />
-            <el-table-column prop="projectName" label="所属项目" width="120"
-              v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="productCode" label="返工数量" min-width="180" sortable="custom" />
-            <el-table-column prop="productName" label="责废数量" width="160" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" label="料废数量" min-width="180" sortable="custom" />
+            <el-table-column prop="workReport.productionOrderNo" label="生产任务单号" min-width="200" sortable="custom" />
+            <el-table-column prop="workReport.workNo" label="工单单号" min-width="200" sortable="custom" />
+            <el-table-column prop="workReport.reportingQuantity" label="报工数量" min-width="200" sortable="custom" />
+            <el-table-column prop="workReport.producerName" label="生产人" min-width="200" sortable="custom" />
+            <el-table-column prop="workReport.reportingTime" label="报工时间" min-width="200" sortable="custom" />
+            <el-table-column prop="workReport.actualQualifiedQuantity" label="合格数量" width="120" sortable="custom" />
+            <el-table-column prop="workReport.actualConcessionQuantity" label="让步接收数量" width="140" sortable="custom" />
+         
+            <el-table-column prop="workReport.actualReworkQuantity" label="返工数量" min-width="180" sortable="custom" />
+            <el-table-column prop="workReport.actualResponsibilityWasteQuantity" label="责废数量" width="160" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="workReport.actualMaterialQuantity" label="料废数量" min-width="180" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="检验时间" width="160" />
-
+            <el-table-column prop="createTime" label="检验时间" width="160" />
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">

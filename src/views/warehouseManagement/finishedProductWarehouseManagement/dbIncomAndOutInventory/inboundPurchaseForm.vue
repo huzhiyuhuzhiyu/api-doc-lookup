@@ -820,6 +820,7 @@ export default {
     },
     closePrint() {
       this.printVisible = false
+      this.$message.warning("取消打印")
     },
     closePrintPage() {
       this.$emit('close', true)
@@ -1515,6 +1516,7 @@ export default {
 
               }
 
+              this.$message.success(msg)
               if (type) {
 
                 this.enCode = 'p017'

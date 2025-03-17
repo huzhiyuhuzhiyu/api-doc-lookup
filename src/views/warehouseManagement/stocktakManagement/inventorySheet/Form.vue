@@ -676,7 +676,7 @@
               </el-form>
 
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main selectProduct">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
 
@@ -2093,8 +2093,12 @@ export default {
 
 .JNPF-common-search-box {
   margin-bottom: 5px;
+  margin-left: -18px!important;
+  padding-top: 0;
 }
-
+.selectProduct{
+  padding: 0px!important;
+}
 // .orderInfo ::v-deep .el-collapse-item__wrap {
 //   border-bottom: none !important
 // }

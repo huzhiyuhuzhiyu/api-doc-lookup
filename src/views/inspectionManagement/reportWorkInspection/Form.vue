@@ -4,15 +4,9 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="goBack" content="检验" />
         <div class="options" v-if="btnType != 'look'">
-          <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
-            保存草稿
-          </el-button> -->
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
           </el-button>
-          <!-- <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">
-            提交并打印
-          </el-button> -->
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -70,7 +64,7 @@
               <el-row :gutter="30" style="padding:0 10px">
                 <el-col :sm="12" :xs="24">
                   <el-form-item label="合格数量">
-                    <el-input v-model="dataForm.qualifiedQuantity" placeholder="合格数量" disabled></el-input>
+                    <el-input v-model="qualifiedQuantity" placeholder="合格数量" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
@@ -80,7 +74,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="返工数量" prop="warehouseId">
-                    <el-input placeholder="返工数量" v-model="dataForm.actualReworkQuantity">
+                    <el-input placeholder="返工数量" v-model="dataForm.actualReworkQuantity" disabled>
                       <template slot="append">
                         <el-button @click="setReworkWasteM">修改</el-button>
                       </template>
@@ -89,7 +83,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="责废数量" prop="warehouseId">
-                    <el-input placeholder="责废数量" v-model="dataForm.actualResponsibilityWasteQuantity">
+                    <el-input placeholder="责废数量" v-model="dataForm.actualResponsibilityWasteQuantity" disabled>
                       <template slot="append">
                         <el-button @click="setResponsWasteM">修改</el-button>
                       </template>
@@ -98,7 +92,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="料废数量" prop="actualMaterialQuantity">
-                    <el-input placeholder="料废数量" v-model="dataForm.actualMaterialQuantity">
+                    <el-input placeholder="料废数量" v-model="dataForm.actualMaterialQuantity" disabled>
                       <template slot="append">
                         <el-button @click="setMaterialWasteM">修改</el-button>
                       </template>
@@ -214,11 +208,22 @@ export default {
         }
       },
       dataRule: {
-        salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
-        partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
-        exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
-        orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
-        deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
+        actualConcessionQuantity: [
+          { required: true, message: '让步接收数量不能为空', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (isNaN(value)) {
+                callback(new Error('让步接收数量只允许输入数字'))
+                //如果某个字段要求整数+数字
+              } else if (Number(value) < 0) {
+                callback(new Error('让步接收数量不能小于0'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
       },
       treeLoading: false,
       selectRows: [],
@@ -242,8 +247,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    qualifiedQuantity() {
+      return (
+        Number(this.dataForm.reportingQuantity) -
+        Number(this.dataForm.actualResponsibilityWasteQuantity) -
+        Number(this.dataForm.actualMaterialQuantity) -
+        Number(this.dataForm.actualConcessionQuantity)
+      )
+    }
   },
+
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
@@ -263,7 +277,7 @@ export default {
       console.log('this.reworkWasteDataList', this.reworkWasteDataList)
       this.reworkWasteFormVisible = true
       this.$nextTick(() => {
-        console.log(this.$refs.reworkWasteFormRef,'this.$refs.reworkWasteFormRef')
+        console.log(this.$refs.reworkWasteFormRef, 'this.$refs.reworkWasteFormRef')
         this.$refs.reworkWasteFormRef.init(
           JSON.parse(JSON.stringify(this.reworkWasteDataList)),
           this.dataForm.actualReworkQuantity,
@@ -374,35 +388,46 @@ export default {
 
       this.dataForm = { ...row }
       this.dataForm.reportNo = this.dataForm.orderNo
+      this.dataForm.actualResponsibilityWasteQuantity = Number(this.dataForm.responsibilityWasteQuantity) 
+      this.dataForm.actualMaterialQuantity = Number(this.dataForm.materialWasteQuantity)
       this.dataForm.notificationType = 'work_report'
-      console.log(this.dataForm,'hhhh')
+      console.log(this.dataForm, 'hhhh')
       this.dataForm.docLineId = this.dataForm.id
       this.dataForm.causesList.forEach((item) => {
+        
         if (item.scrapCategoryType === 'responsibility_fee') {
+          // 责废
           this.responsWasteDataList.push({
             name: item.scrapCategoryName,
+            scrapCategoryName: item.scrapCategoryName,
+            scrapCategoryId: item.scrapCategoryId,
             price: item.scrapCategoryPrice,
             num: item.scrapQuantity,
-            amouny: this.jnpf.numberFormat(
+            scrapQuantity: item.scrapQuantity,
+            amount: this.jnpf.numberFormat(
               this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
               6
             ),
             person: item.scrapUserId,
-            scrapId: item.scrapUserId,
-            type:'inspect'
+            scrapUserId: item.scrapUserId,
+            type: 'inspect'
           })
         } else if (item.scrapCategoryType === 'material_fee') {
+          // 料废
           this.materialWasteDataList.push({
             name: item.scrapCategoryName,
+            scrapCategoryName: item.scrapCategoryName,
+            scrapCategoryId: item.scrapCategoryId,
             price: item.scrapCategoryPrice,
             num: item.scrapQuantity,
-            amouny: this.jnpf.numberFormat(
+            scrapQuantity: item.scrapQuantity,
+            amount: this.jnpf.numberFormat(
               this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
               6
             ),
             person: item.scrapUserId,
-            scrapId: item.scrapUserId,
-            type:'inspect'
+            scrapUserId: item.scrapUserId,
+            type: 'inspect'
           })
         }
       })
@@ -451,10 +476,10 @@ export default {
           })
         }
         this.dataForm.causesList = []
-        this.dataForm.causesList = [...this.responsWasteDataList,...this.materialWasteDataList]
+        this.dataForm.causesList = [...this.responsWasteDataList, ...this.materialWasteDataList]
         // 实际合格数量 = 合格数量 + 让步接收数量
         this.dataForm.actualQualifiedQuantity =
-          Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.actualConcessionQuantity)
+          Number(this.qualifiedQuantity) + Number(this.dataForm.actualConcessionQuantity)
 
         // 实际不合格数量 = 实际责废数量 + 实际料废数量
         this.dataForm.actualUnqualifiedQuantity =
@@ -465,9 +490,10 @@ export default {
           Number(this.dataForm.actualReworkQuantity) >
           Number(this.dataForm.reportingQuantity)
         ) {
-          this.$message.error(`合格数量、让步接收数量、责废数量和料废数量的合计不能大于报工数量`)
+          this.$message.error(`合格数量、让步接收数量、责废数量和料废数量、返工数量的合计不等于报工数量`)
           return
         }
+  
         let obj = {
           attachmentList: this.datafilelist,
           inspection: this.dataForm,
@@ -475,7 +501,8 @@ export default {
           lines: [],
           flowData: this.flowData
         }
-
+        console.log(obj,'lll')
+        
         this.btnLoading = true
 
         console.log(obj, 'obj')

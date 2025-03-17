@@ -262,7 +262,7 @@ export default {
           matchLogic: ''
         },
         totalRowFlag: false,
-        receiptInboundFlag: 1
+        // receiptInboundFlag: 1
       },
 
       detailTotal: 0,

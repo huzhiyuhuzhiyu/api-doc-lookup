@@ -664,7 +664,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
+              <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC  @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
@@ -724,7 +724,7 @@
         </span>
       </el-dialog>
       <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible"
-        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
+        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body >
 
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
           <div class="JNPF-common-layout-left">
@@ -788,19 +788,19 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC
-                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" @sort-change="sortChange">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" />
 
                 <el-table-column prop="productCategoryName" label="所属分类" />
-                <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                <el-table-column prop="projectName" label="所属项目" min-width="120"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="inventoryQuantity" label="库存数量">
                   <template slot-scope="scope">
-                    <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                    <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
                       {{ scope.row.inventoryQuantity }}
                     </el-link>
                   </template>
@@ -818,6 +818,8 @@
             确定</el-button>
         </span>
       </el-dialog>
+    <Form v-if="formVisible" ref="Form"></Form>
+
     </div>
   </transition>
 </template>
@@ -840,15 +842,17 @@ import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列�
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 
 import {
-  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
+  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap,
 } from "@/api/masterDataManagement/index"
 export default {
-  components: { Process, recordList },
+  components: { Process, recordList,Form },
   mixins: [busFlow, getProjectList],
   data() {
     return {
+      formVisible:false,
       isProjectSwitch: "",
       isattachmentswitch: '',
       noticeswitch: "",
@@ -1166,6 +1170,22 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+        if (prop === 'createByName') {
+          newProp = 'create_by'
+        } else {
+          newProp = prop
+        }
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.orderForm.orderItems[0].asc = order !== "descending"
+      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+
+      this.searchProductFun()
+    },
     async getMainUnitFun(code, type) {
       this.listLoading = true
       try {
@@ -1418,7 +1438,7 @@ export default {
     viewFun(id, type, warehouseId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, "", 'product')
+        this.$refs.Form.init(id, type, "",  row.projectId)
       })
     },
     getBimBusinessDetail() {
@@ -2604,4 +2624,5 @@ $footerPadding: '10px';
   padding: 0;
   border-top: 1px solid #dcdfe6 !important;
 }
+
 </style>

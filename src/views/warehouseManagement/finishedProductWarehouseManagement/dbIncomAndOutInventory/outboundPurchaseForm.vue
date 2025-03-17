@@ -743,6 +743,7 @@ export default {
     closePrint() {
       this.printVisible = false
       this.$emit('close',true)
+      this.$message.warning("取消打印")
     },
     closePrintPage(){
       this.$emit('close',true)
@@ -1274,6 +1275,7 @@ export default {
               } else {
                 this.submitmethodsTitle = "提交成功"
               }
+              this.$message.success(msg)
               if (type) {
                 this.enCode = 'p008'
                 this.formId = res.data.id

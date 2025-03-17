@@ -493,7 +493,7 @@ export default {
           this.$message.error(`合格数量、让步接收数量、责废数量和料废数量、返工数量的合计不等于报工数量`)
           return
         }
-  
+        this.dataForm.inspectionStatus = 'inspected'
         let obj = {
           attachmentList: this.datafilelist,
           inspection: this.dataForm,

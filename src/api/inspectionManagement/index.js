@@ -158,7 +158,7 @@ export function batchInspectionData(data) {
   })
 }
 
-// 检验单-批量检验
+// 检验单 新建
 export function addReportWorkInspectionData(data) {
   return request({
     url: `/api/wms/qc/inspection/workReport/add`,

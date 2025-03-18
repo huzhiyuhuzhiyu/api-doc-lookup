@@ -9,7 +9,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #fff;overflow-y:auto ;">
 
         <div class="JNPF-common-layout-main JNPF-flex-main" style="padding-top: 0;">
-          <div>
+          <div v-if="btnType !== 'look'">
             <el-button type="text" icon="el-icon-plus" @click="addLinFun"
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
           </div>
@@ -20,7 +20,7 @@
               </template>
               <template slot-scope="scope">
                 <el-select v-model="scope.row.scrapId" placeholder="返工原因" style="width: 100%;" class="ipt"
-                  @change="(value) => handleSelectionChange(value, scope)">
+                  @change="(value) => handleSelectionChange(value, scope)" :disabled="btnType==='look'">
                   <el-option v-for="(item, index) in materialWasteList" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>
@@ -31,7 +31,7 @@
                 <span class="required">*</span>返工数量
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.num" placeholder="返工数量" @blur="countFun(scope)"></el-input>
+                <el-input v-model="scope.row.num" placeholder="返工数量" @blur="countFun(scope)" :disabled="btnType==='look'"></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="person" label="返工人" min-width="180" sortable="custom">
@@ -39,7 +39,7 @@
                 <span class="required">*</span>返工人
               </template>
               <template slot-scope="scope">
-                <user-select v-model="scope.row.person" placeholder="生产人" clearable style="width: 100%;"
+                <user-select v-model="scope.row.person" placeholder="生产人" clearable style="width: 100%;" :disabled="btnType==='look'"
                   class="ipt" @change="hangleSelectSales(scope)"  @focus="handeleFocus(scope.$index)">
                 </user-select>
               </template>
@@ -95,7 +95,7 @@ export default {
         scrapId: "",
       },
       num: "",
-
+      btnType:''
     }
   },
   computed: {
@@ -141,10 +141,11 @@ export default {
       // 你可以进一步处理 selectedItem，比如更新状态或发送请求  
     },
 
-    init(data, num,projectId) {
+    init(data, num,projectId,btnType) {
       console.log(data, num);
       this.num = num
       this.form.projectId=projectId
+      this.btnType = btnType
       this.tableDataList = []
       this.customerVisible = true
       if (!data.length) this.tableDataList.push(JSON.parse(JSON.stringify(this.createdData)))

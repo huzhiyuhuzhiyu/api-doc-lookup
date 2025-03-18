@@ -407,7 +407,6 @@ export default {
             ),
             person: item.scrapUserId,
             scrapUserId: item.scrapUserId,
-            type: 'inspect'
           })
         } else if (item.scrapCategoryType === 'material_fee') {
           // 料废
@@ -424,7 +423,6 @@ export default {
             ),
             person: item.scrapUserId,
             scrapUserId: item.scrapUserId,
-            type: 'inspect'
           })
         }
       })
@@ -473,6 +471,9 @@ export default {
         }
         this.dataForm.causesList = []
         this.dataForm.causesList = [...this.responsWasteDataList, ...this.materialWasteDataList]
+        this.dataForm.causesList.map(item=>{
+          item.type = 'inspect'
+        })
         // 实际合格数量 = 合格数量 + 让步接收数量
         this.dataForm.actualQualifiedQuantity =
           Number(this.qualifiedQuantity) + Number(this.dataForm.actualConcessionQuantity)

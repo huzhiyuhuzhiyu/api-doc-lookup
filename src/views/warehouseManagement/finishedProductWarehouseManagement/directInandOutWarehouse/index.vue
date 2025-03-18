@@ -792,7 +792,8 @@ export default {
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
-        diffBatchNumFlag: true
+        diffBatchNumFlag: true,
+        cooperativePartnerIdText:"",
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -1791,6 +1792,7 @@ export default {
         this.dataForm.documentType = 'inbound'
         if (this.btnType == 'add') this.fetchData("RKDH")
       }
+
       // 如果选的是销售发退货、采购收退货、直接出入库、生产产品入库
       if (val == 'outbound_sale_send' || val == 'inbound_sale_return') {
         this.partnerFlag = true
@@ -1852,6 +1854,8 @@ export default {
       } else {
         this.partnerFlag = false
       }
+          this.dataForm.cooperativePartnerIdText=""
+    this.dataForm.cooperativePartnerId=""
       console.log(111,this.$refs.products);
       setTimeout(() => {
         this.$nextTick(() => { this.$refs.products.doLayout() })
@@ -2145,7 +2149,7 @@ export default {
     },
     // 客户选框传值
     partnerChange(val, data, paramsObj) {
-      this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerIdText') }) // 校验操作的元素(name是组件绑定的value)
+      console.log(val,data,);
       if (data && data.length) { // 数据有效，进行更新
         const partnerInfo = data[0].all
         this.partnerInfo = data[0].all
@@ -2155,6 +2159,9 @@ export default {
         this.dataForm.cooperativePartnerId = ""
         this.dataForm.cooperativePartnerIdText = ""
       }
+      console.log(this.dataForm);
+      this.$refs.dataForm.clearValidate('cooperativePartnerIdText');
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerIdText') }) // 校验操作的元素(name是组件绑定的value)
     },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域

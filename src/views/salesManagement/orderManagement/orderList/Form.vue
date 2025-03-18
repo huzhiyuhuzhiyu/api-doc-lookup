@@ -2402,6 +2402,9 @@ export default {
         } else {
           this.productData = [...allArray, ...this.productData];
         }
+      }else{
+        this.productData = [...allArray, ...this.productData];
+
       }
     },
     openSeleceCustomerProductDialog() {
@@ -2556,6 +2559,9 @@ export default {
         } else {
           this.productData = [...this.selectArr, ...this.productData,]
         }
+      }else{
+        this.productData = [...this.selectArr, ...this.productData,]
+
       }
       // this.productData=[...this.productData,...this.selectArr]
     },

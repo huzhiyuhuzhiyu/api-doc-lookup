@@ -14,7 +14,7 @@
           <el-step title="提交运算结果并下达" @click.native="stepChick(2)" />
         </el-steps>
         <div class="options">
-          <el-button type="primary" size="mini" @click="next" :disabled="activeStep == 1 || loading"
+          <el-button type="primary" size="mini" @click="next" :loading="btnLoading" :disabled="activeStep == 1 || loading"
             v-if="activeStep == 0">执行计算 </el-button>
           <el-button size="mini" @click="prev" :disabled="activeStep <= 0" v-if="activeStep > 0 && activeStep != 2">{{
             $t('common.prev')
@@ -2085,7 +2085,8 @@ export default {
       let hasFalseBomFlag = this.tableData.some(item => !item.bomFlag )
       if(hasFalseBomFlag&&this.dataForm.calcBomLevel!=='not_calc_bom') return this.$message.error("存在无BOM的数据，BOM计算级别错误，请检查后重试")
    
-     
+     this.loading=true
+     this.btnLoading=true
       let obj = {
         arithmetic: {
           arithmeticNo: this.dataForm.arithmeticNo,
@@ -2123,7 +2124,12 @@ export default {
         this.$message.success("分析成功")
         this.activeStep = 1
         this.activeName = 'assemble'
+        this.loading=false
+        this.btnLoading=false
         this.getassembleData()
+      }).catch(error=>{
+        this.btnLoading=false
+        this.loading=false
       })
     },
     prev() {

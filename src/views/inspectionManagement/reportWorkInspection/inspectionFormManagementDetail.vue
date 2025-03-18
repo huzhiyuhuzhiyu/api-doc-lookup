@@ -66,7 +66,7 @@
               <el-row :gutter="30" style="padding:0 10px">
                 <el-col :sm="12" :xs="24">
                   <el-form-item label="合格数量">
-                    <el-input v-model="dataForm.qualifiedQuantity" placeholder="合格数量" disabled></el-input>
+                    <el-input v-model="dataForm.actualQualifiedQuantity" placeholder="合格数量" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
@@ -94,7 +94,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="料废数量">
-                    <el-input placeholder="料废数量" v-model="dataForm.actualMaterialQuantity">
+                    <el-input placeholder="料废数量" v-model="dataForm.actualMaterialQuantity" disabled>
                       <template slot="append">
                         <el-button @click="setMaterialWasteM">查看</el-button>
                       </template>
@@ -183,7 +183,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-      
+
       },
       defaultAddress: '',
       parentId: '',
@@ -235,11 +235,12 @@ export default {
       console.log('this.reworkWasteDataList', this.reworkWasteDataList)
       this.reworkWasteFormVisible = true
       this.$nextTick(() => {
-        console.log(this.$refs.reworkWasteFormRef,'this.$refs.reworkWasteFormRef')
+        console.log(this.$refs.reworkWasteFormRef, 'this.$refs.reworkWasteFormRef')
         this.$refs.reworkWasteFormRef.init(
           JSON.parse(JSON.stringify(this.reworkWasteDataList)),
           this.dataForm.actualReworkQuantity,
-          this.dataForm.projectId
+          this.dataForm.projectId,
+          'look'
         )
       })
     },
@@ -259,7 +260,8 @@ export default {
         this.$refs.responsWasteFormRef.init(
           JSON.parse(JSON.stringify(this.responsWasteDataList)),
           this.dataForm.actualResponsibilityWasteQuantity,
-          this.dataForm.projectId
+          this.dataForm.projectId,
+          'look'
         )
       })
     },
@@ -278,7 +280,8 @@ export default {
         this.$refs.materialWasteFormRef.init(
           JSON.parse(JSON.stringify(this.materialWasteDataList)),
           this.dataForm.actualMaterialQuantity,
-          this.dataForm.projectId
+          this.dataForm.projectId,
+          'look'
         )
       })
     },
@@ -329,45 +332,17 @@ export default {
       this.orderForm.productCode = ''
     },
     init(id, readOnly, inspectionType, type) {
-   
+
 
       this.btnType = type
       this.approvalFlag = false
       console.log(inspectionType, 'ddd')
       this.inspectionOrderNoChange(id)
-  
+
       this.dataForm.notificationType = 'work_report'
-      console.log(this.dataForm,'hhhh')
+      console.log(this.dataForm, 'hhhh')
       this.dataForm.docLineId = this.dataForm.id
-      this.dataForm.causesList.forEach((item) => {
-        if (item.scrapCategoryType === 'responsibility_fee') {
-          this.responsWasteDataList.push({
-            name: item.scrapCategoryName,
-            price: item.scrapCategoryPrice,
-            num: item.scrapQuantity,
-            amouny: this.jnpf.numberFormat(
-              this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
-              6
-            ),
-            person: item.scrapUserId,
-            scrapId: item.scrapUserId,
-            type:'inspect'
-          })
-        } else if (item.scrapCategoryType === 'material_fee') {
-          this.materialWasteDataList.push({
-            name: item.scrapCategoryName,
-            price: item.scrapCategoryPrice,
-            num: item.scrapQuantity,
-            amouny: this.jnpf.numberFormat(
-              this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
-              6
-            ),
-            person: item.scrapUserId,
-            scrapId: item.scrapUserId,
-            type:'inspect'
-          })
-        }
-      })
+
 
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
@@ -378,8 +353,8 @@ export default {
         this.getBusInfo()
       }
     },
-     // 检验单更改
-     inspectionOrderNoChange(id) {
+    // 检验单更改
+    inspectionOrderNoChange(id) {
       this.formLoading = true
       detailInspectionData(id)
         .then((res) => {
@@ -399,6 +374,43 @@ export default {
           console.log(this.dataForm, 'oooooo')
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
           this.dataForm.reportNo = this.dataForm.orderNo
+          this.dataForm.causesList.forEach((item) => {
+            if (item.scrapCategoryType === 'responsibility_fee') {
+              // 责废
+              this.responsWasteDataList.push({
+                name: item.scrapCategoryName,
+                scrapCategoryName: item.scrapCategoryName,
+                scrapCategoryId: item.scrapCategoryId,
+                price: item.scrapCategoryPrice,
+                num: item.scrapQuantity,
+                scrapQuantity: item.scrapQuantity,
+                amount: this.jnpf.numberFormat(
+                  this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
+                  6
+                ),
+                person: item.scrapUserId,
+                scrapUserId: item.scrapUserId,
+                type: 'inspect'
+              })
+            } else if (item.scrapCategoryType === 'material_fee') {
+              // 料废
+              this.materialWasteDataList.push({
+                name: item.scrapCategoryName,
+                scrapCategoryName: item.scrapCategoryName,
+                scrapCategoryId: item.scrapCategoryId,
+                price: item.scrapCategoryPrice,
+                num: item.scrapQuantity,
+                scrapQuantity: item.scrapQuantity,
+                amount: this.jnpf.numberFormat(
+                  this.jnpf.math('multiply', [item.scrapQuantity, item.scrapCategoryPrice]),
+                  6
+                ),
+                person: item.scrapUserId,
+                scrapUserId: item.scrapUserId,
+                type: 'inspect'
+              })
+            }
+          })
           this.refeshDataFormItems()
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)

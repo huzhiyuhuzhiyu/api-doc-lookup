@@ -44,6 +44,11 @@
                 </user-select>
               </template>
             </el-table-column>
+            <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
+              <template slot-scope="scope">
+                <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+              </template>
+            </el-table-column>
             <!-- <el-table-column prop="price" label="单价" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="amount" label="金额" min-width="180" sortable="custom"></el-table-column> -->
           </JNPF-table>
@@ -118,7 +123,10 @@ export default {
 
   },
   methods: {
-   
+       // 单个删除
+       handleDel(data) {
+      this.tableDataList.splice(data.$index, 1)
+    },
  
     countFun(row) {
       let index = row.$index
@@ -182,7 +190,7 @@ export default {
           flag = false
           break
         }
-        if (!item.scrapQuantity) {
+        if (!item.scrapQuantity||item.scrapQuantity=='0') {
           this.$message({
             message: "请输入第" + (index + 1) + "行数量",
             type: 'error',

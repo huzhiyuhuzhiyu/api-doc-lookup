@@ -45,24 +45,6 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="退货标识" prop="exchangeGoodsFlag">
-                        <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
-                            <!-- <el-col :sm="6" :xs="24">
-                              <el-form-item label="仓库" prop="warehouseId">
-                                <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                                  :disabled="btnType == 'look' ? true : false" clearable>
-                                  <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
-                                    :value="item.id"></el-option>
-                                </el-select>
-                              </el-form-item>
-                            </el-col> -->
                             <el-col :sm="6" :xs="24">
                               <el-form-item label="供应商名称" prop="partnerName">
                                 <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
@@ -73,15 +55,6 @@
                          :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" :rowDblclick="false" />
                               </el-form-item>
                             </el-col>
-                            <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="类别属性" prop="classAttribute">
-                        <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable
-                          style="width: 100%;">
-                          <el-option v-for="(item, index) in classAttributeList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
                             <el-col :sm="6" :xs="24">
                               <el-form-item label="操作人" prop="salesman">
                                 <el-input v-model="dataForm.salesman" placeholder="请选择操作人"
@@ -164,8 +137,6 @@
                             <el-table-column type="selection" width="60" fixed="left" align="center"
                               v-if="btnType !== 'look'" key="1" />
                             <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                            <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                            <!-- </el-table-column> -->
                             <el-table-column prop="projectName" label="所属项目" width="120"
                               v-if="isProjectSwitch === '1'"></el-table-column>
                             <el-table-column prop="productName" label="产品名称" width="160"
@@ -173,14 +144,14 @@
                             <el-table-column prop="drawingNo" label="品名规格" width="160"
                               sortable="custom" />
 
-                            <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                              :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                            <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.procureDeputyUnit ? '单位(主)' : '单位'"
+                              :width="$store.getters.configData.deputyUnit.procureDeputyUnit ? 85 : 60" />
                             <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
-                              v-if="isReturnSwitch === '1'" />
+                              v-if="$store.getters.configData.return.purchase_order" />
                             <el-table-column prop="deputyUnit" label="单位(副)" width="85"
-                              v-if="isDeputyUnitSwitch === '1'" />
+                              v-if="$store.getters.configData.deputyUnit.procureDeputyUnit" />
                             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
-                              v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
+                              v-if="$store.getters.configData.deputyUnit.procureDeputyUnit && $store.getters.configData.return.purchase_order" />
                             <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                             <el-table-column prop="receivedQuantity" label="退货数量" width="170"
                               v-if="!dataForm.exchangeGoodsFlag" key="789">
@@ -208,7 +179,7 @@
                                 <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'"
                                   :rules="productRules.price">
                                   <el-input v-model="scope.row.price" placeholder="单价(含税)"
-                                    :disabled="isReturnSwitch === '1' || btnType == 'look'" />
+                                    :disabled="$store.getters.configData.return.purchase_order || btnType == 'look'" />
                                 </el-form-item>
                               </template>
                             </el-table-column>
@@ -233,7 +204,7 @@
                               <template slot-scope="scope">
                                 <el-form-item :rules="productRules.taxRate">
                                   <el-select v-model="scope.row.taxRate"
-                                    :disabled="isReturnSwitch === '1' || btnType == 'look'" placeholder="请选择"
+                                    :disabled="$store.getters.configData.return.purchase_order || btnType == 'look'" placeholder="请选择"
                                     style="width: 100%;">
                                     <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                       :value="item.enCode"></el-option>
@@ -370,7 +341,6 @@ export default {
       isProductNameSwitch: '',
       tableDataFlag: false,
       // tipsvisible: false,
-      isDeputyUnitSwitch: '',
       submitmethodsTitle: '',
       btnText: '继续新增',
       productList: [],
@@ -616,7 +586,6 @@ export default {
       flowData: {},
       isattachmentswitch: '',
       categoryId: '',
-      isReturnSwitch: '',
       oldData: [],
       getCooperativeData,
       getcategoryTree,
@@ -750,8 +719,6 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     // this.handleChange()
     // this.getProvinceList()
-    this.getDeputyUnit()
-    this.getReturnswitch()
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
@@ -832,7 +799,7 @@ export default {
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
-        if (this.isReturnSwitch === '1') {
+        if (this.$store.getters.configData.return.purchase_order) {
           list.forEach((item, index) => {
             item.ordersNum = item.num
             item.receiptQuantity = item.purchaseQuantity
@@ -875,29 +842,6 @@ export default {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
-    },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `procureDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then(res => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-      })
-    },
-    getReturnswitch() {
-      let obj = {
-        businessCode: 'return',
-        pageSize: -1
-      }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        console.log(res, 's')
-        res.data.return.forEach((item) => {
-          if (item.configKey == 'purchase_order') {
-            this.isReturnSwitch = item.configValue1
-          }
-        })
-      })
     },
     getProductClassFun() {
       // 获取税率(数据字典)
@@ -1022,8 +966,8 @@ export default {
     },
     // 点击选择产品
     openSeleceProductDialog() {
-      console.log(this.isReturnSwitch, ';')
-      if (this.isReturnSwitch === '1') {
+      console.log(this.$store.getters.configData.deputyUnit.procureDeputyUnit,'this.$store.getters.configData.deputyUnit.procureDeputyUnit')
+      if (this.$store.getters.configData.return.purchase_order) {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
         this.listMethod = detailpurchaseOrderList
         this.ProductListRequestObj = {
@@ -1044,6 +988,10 @@ export default {
           { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
           // { prop: 'deliveryDate', label: '交货日期', type: 'date' },
         ]
+        if (this.$store.getters.configData.product.enable_productName) {
+          let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+          this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        }
         this.ProductTableItems = [
           { prop: 'orderNo', label: '订单号', sortable: 'custom',minWidth:180 },
           { prop: 'productCode', label: '产品编码', sortable: 'custom' },
@@ -1051,7 +999,7 @@ export default {
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
           { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? false : true },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
           { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
           { prop: 'processName', label: '工序', sortable: 'custom' },
           { prop: 'remark', label: '备注', sortable: 'custom' },
@@ -1082,14 +1030,18 @@ export default {
           { prop: 'productCode', label: '产品编码', type: 'input' },
           { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
         ]
+        if (this.$store.getters.configData.product.enable_productName) {
+          let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+          this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        }
         this.ProductTableItems = [
           { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
           { prop: 'code', label: '产品编码', sortable: 'custom' },
           { prop: 'name', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: '主单位', sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom' },
+          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
         
         ]// 产品选择弹出框表单展示字段

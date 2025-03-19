@@ -127,8 +127,7 @@
                       v-if="isReturnSwitch === '1'" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
                       v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
-                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
-                      v-if="isReturnSwitch === '1'" />
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -405,7 +404,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :rules="productRules.taxRate">
-                      <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch === '1' || btnType == 'look'"
+                      <el-select v-model="scope.row.taxRate" :disabled="$store.getters.configData.return.purchase_order || btnType == 'look'"
                         placeholder="请选择" style="width: 100%;">
                         <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                           :value="item.enCode"></el-option>
@@ -982,7 +981,7 @@ export default {
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
-        if (this.isReturnSwitch === '1') {
+        if (this.$store.getters.configData.return.purchase_order) {
           list.forEach((item, index) => {
             item.ordersNum = item.num
             item.receiptQuantity = item.purchaseQuantity
@@ -1208,7 +1207,7 @@ export default {
     // 点击选择产品
     openSeleceProductDialog() {
       console.log(this.isReturnSwitch, ';')
-      if (this.isReturnSwitch === '1') {
+      if (this.$store.getters.configData.return.purchase_order) {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
         this.listMethod = detailpurchaseOrderList
         this.ProductListRequestObj = {
@@ -1229,19 +1228,22 @@ export default {
           { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
           // { prop: 'deliveryDate', label: '交货日期', type: 'date' },
         ]
+        if (this.$store.getters.configData.product.enable_productName) {
+          let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+          this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        }
         this.ProductTableItems = [
           { prop: 'orderNo', label: '订单号', sortable: 'custom' },
           { prop: 'productCode', label: '产品编码', sortable: 'custom' },
           { prop: 'productName', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: '主单位', sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom' },
+          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
           { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
           { prop: 'processName', label: '工序', sortable: 'custom' },
           { prop: 'remark', label: '备注', sortable: 'custom' },
           { prop: 'createTime', label: '创建时间', sortable: 'custom' },
-         
         ]// 产品选择弹出框表单展示字段
         
       } else {
@@ -1268,14 +1270,18 @@ export default {
           { prop: 'productCode', label: '产品编码', type: 'input' },
           { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
         ]
+        if (this.$store.getters.configData.product.enable_productName) {
+          let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+          this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        }
         this.ProductTableItems = [
           { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
           { prop: 'code', label: '产品编码', sortable: 'custom' },
           { prop: 'name', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: '主单位', sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom' },
+          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
         
         ]// 产品选择弹出框表单展示字段

@@ -167,9 +167,8 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="splitorderNo(scope.row)">
-                      拆分
-                    </el-dropdown-item>
+                    <!-- <el-dropdown-item @click.native="splitorderNo(scope.row)"> 拆分 </el-dropdown-item> -->
+                    <el-dropdown-item @click.native="withdrawFun(scope.row.id)" :disabled="scope.row.deliveryStatus !== 'not_finished'"> 撤回 </el-dropdown-item>
 
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
@@ -198,7 +197,7 @@
 </template>
 
 <script>
-import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
+import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist,withdrawApi } from '@/api/salesManagement'
 import { UserListAll, } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
@@ -405,6 +404,17 @@ export default {
   },
 
   methods: {
+    withdrawFun(id){
+      
+      this.$confirm('您确认撤回该发货通知单吗？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        withdrawApi(id).then(res => {
+          this.$message.success('撤回成功')
+          this.initData()
+        })
+      }).catch(() => { })
+    },
     hasDifferentCooperativePartnerCode(arr) {
       const codes = new Set();
 

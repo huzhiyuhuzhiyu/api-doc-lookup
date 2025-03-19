@@ -363,3 +363,11 @@ export function CancelshipmentlineOutlist (data) {
     data
   })
 }
+// 销售待发货撤回
+export function withdrawApi (id) {
+  return request({
+    url: `/api/erp/sale/orders/notice/revoke/${id}`,
+    method: 'post',
+    
+  })
+}

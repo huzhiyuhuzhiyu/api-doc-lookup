@@ -46,7 +46,7 @@
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
                             value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
-                            placeholder="请选择交货日期"></el-date-picker>
+                            placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :span="6" v-if="type === 'look'">
@@ -293,7 +293,7 @@
                     <el-form-item label="交货日期" prop="deliveryDate">
                       <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
                         value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
-                        placeholder="请选择交货日期"></el-date-picker>
+                        placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                     </el-form-item>
                   </el-col>
                   <el-col :span="6" v-if="type === 'look'">
@@ -1019,6 +1019,14 @@ export default {
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
+    },
+    deliveryDateChange(val) {
+      console.log(val,'领料')
+      this.dataFormTwo.data.forEach((item) => {
+        if (!item.deliveryDate) {
+          this.$set(item, 'deliveryDate', val) // 总金额(不含税)
+        }
+      })
     },
     // 配置资源
     handlerOpenSource(index, type) {

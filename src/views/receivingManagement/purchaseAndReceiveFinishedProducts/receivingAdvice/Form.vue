@@ -1333,45 +1333,6 @@ export default {
         this.dataFormTwo.productData.splice(data.$index, 1)
       }
     },
-    // 选完客户产品数据后 渲染在列表上
-    submitCustomerProduct() {
-      this.productVisible = false
-    },
-
-    // 重置客户产品搜索条件
-    resetcusProduct() {
-      this.productForm = {
-        //   drawingNo: "",
-        productCode: '',
-        productName: '',
-        partnerId: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-    },
-    // 搜索客户产品
-    searchcusProduct() {
-      this.productForm.pageNum = 1
-      this.getcooperativeProduct()
-    },
-    // 获取客户产品数据
-    getcooperativeProduct() {
-      this.productForm.partnerId = this.dataForm.cooperativePartnerId
-      getcooperativeProduct(this.productForm).then((res) => {
-        this.cusProductData = res.data.records
-      })
-    },
-
     // 选择产品——搜索
     searchProductFun() {
       if (this.deliveryDateArr.length) {
@@ -1396,25 +1357,28 @@ export default {
     resetProductFun() {
       this.deliveryDateArr = []
       this.orderForm = {
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: '',
-        returnQueryFlag: 1,
-        drawingNo: '', // customerProductNo: "",
-        deliveryStartTime: '',
-        deliveryEndTime: '',
-
-        pageNum: 1,
-        pageSize: 20,
+        cooperativePartnerCode: '',
+        cooperativePartnerName: '',
+        createByName: '',
+        deliveryEndDate: '',
+        deliveryStartDate: '',
+        receiptQueryFlag: 1,
+        endTime: '',
+        orderNo: '',
+        orderType: 'procure',
         orderItems: [
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
+            column: 'createTime'
           }
-        ]
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        startTime: '',
+        productCode: '',
+        productName: '',
+        classAttribute: 'finish_product',
+        receivingStatus: 'receiving'
       }
       this.searchProductFun()
     },

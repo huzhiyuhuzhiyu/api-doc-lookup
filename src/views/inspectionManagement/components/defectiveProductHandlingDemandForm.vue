@@ -410,11 +410,10 @@ export default {
           type: 'input',
           sm: 6,
           itemRules: [
+          { required: true, message: '合格数量不能为空', trigger: ['blur'] },
             {
               validator: (rule, value, callback) => {
-                if (!value) {
-                  callback(new Error('合格数量不能为空'))
-                } else if (Number(value) <0) {
+                if (Number(value) <0) {
                   callback(new Error('请填不小于0的数量'))
                 } else {
                   callback()
@@ -448,11 +447,10 @@ export default {
           type: 'input',
           sm: 6,
           itemRules: [
+            { required: true, message: '不合格数量不能为空', trigger: ['blur'] },
             {
               validator: (rule, value, callback) => {
-                if (!value) {
-                  callback(new Error('不合格数量不能为空'))
-                } else if (Number(value) <0) {
+                if (Number(value) <0) {
                   callback(new Error('请填不小于0的数量'))
                 } else {
                   callback()

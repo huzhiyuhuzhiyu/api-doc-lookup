@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="contain">
-        <div class="JNPF-common-layout">
+        <div class="JNPF-common-layout" v-loading="formLoading">
           <div class="JNPF-common-layout-left treeBox" v-if="title !== '新建BOM' && !statusFlag">
             <div class="JNPF-common-title">
               <h2>BOM树</h2>
@@ -45,7 +45,7 @@
               </el-tree>
             </el-scrollbar>
           </div>
-          <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <el-tabs v-model="activeName" v-if="!approvalFlag">
                 <el-tab-pane label="基础信息" name="jcInfo" class="jcInfo">
@@ -134,7 +134,7 @@ export default {
       btnLoading: false,
       treeLoading: true,
       formLoading: true,
-      title: '',
+      title: '新建BOM',
       autoCode: undefined,
       refreshTree: true,
       treeData: [],
@@ -473,6 +473,15 @@ export default {
       })
     },
     async init(id, btnType, approvalFlag, approvalStatus) {
+      this.formLoading = true
+      this.btnType = btnType
+      this.approvalFlag = approvalFlag
+      this.approvalStatus = approvalStatus ? approvalStatus.approvalStatus : ''
+      this.getBimBusinessDetail()
+      this.statusFlag =
+        this.approvalStatus == 'rebut' || this.approvalStatus == 'withdrawn' || this.approvalStatus == 'ing'
+          ? true
+          : false
       await this.getProjectSwitch('system', 'project')
       await this.getProjectList()
       await this.getProductNameSwitch('product', 'enable_productName')
@@ -525,15 +534,7 @@ export default {
       })
 
       this.visible = true
-      this.formLoading = true
-      this.btnType = btnType
-      this.approvalFlag = approvalFlag
-      this.approvalStatus = approvalStatus ? approvalStatus.approvalStatus : ''
-      this.getBimBusinessDetail()
-      this.statusFlag =
-        this.approvalStatus == 'rebut' || this.approvalStatus == 'withdrawn' || this.approvalStatus == 'ing'
-          ? true
-          : false
+    
       let loadTotal = 0
       if (id && this.btnType != 'add' && this.btnType != 'waitAdd' && !this.statusFlag) {
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'

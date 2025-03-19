@@ -333,7 +333,7 @@ export default {
     },
     init(id, readOnly, inspectionType, type) {
 
-
+      console.log(555,id, readOnly, inspectionType, type);
       this.btnType = type
       this.approvalFlag = false
       console.log(inspectionType, 'ddd')

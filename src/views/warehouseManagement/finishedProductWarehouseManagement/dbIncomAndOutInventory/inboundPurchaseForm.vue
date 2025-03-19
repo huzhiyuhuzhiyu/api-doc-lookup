@@ -126,7 +126,8 @@
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
@@ -195,15 +196,20 @@
                             </el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="receiptQuantity" label="已入库数量" min-width="140" />
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="收货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
 
 
-                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        <el-table-column prop="taxAmount" label="税额" width="100" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
@@ -357,7 +363,8 @@
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip>
                         </el-table-column>
@@ -427,15 +434,20 @@
                             </el-input>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="receiptQuantity" label="已入库数量" min-width="140" />
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="收货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
 
 
-                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        <el-table-column prop="taxAmount" label="税额" width="100" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxRates" label="税率" width="100" :key="171"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="taxAmount" label="税额" width="100" :key="1721"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"
+                          v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="originalBatchNumber" label="原批次号" width="170" :key="1255">
                           <template slot-scope="scope">
                             <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
@@ -495,7 +507,8 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
+                      placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -534,6 +547,7 @@
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="130" sortable="custom" />
+                <el-table-column prop="receiptQuantity" label="已入库数量" min-width="140" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
                 <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
@@ -871,7 +885,7 @@ export default {
             this.$set(item, 'shelfSpaceName', data.name)
             this.$set(item, 'warehouseId', data.warehouseId)
             this.$set(item, 'shelfSpaceId', data.id)
-          }else if(item.shelfSpaceId&&type){
+          } else if (item.shelfSpaceId && type) {
             this.$set(item, 'shelfSpaceName', data.name)
             this.$set(item, 'warehouseId', data.warehouseId)
             this.$set(item, 'shelfSpaceId', data.id)
@@ -1318,7 +1332,7 @@ export default {
         this.title = '新建入库单'
         this.datafilelist = []
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
-          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.qualifiedQuantity > item.receiptQuantity);
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && Number(item.qualifiedQuantity) > Number(item.receiptQuantity));
 
           console.log("filteredArray", filteredArray);
 

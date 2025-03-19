@@ -110,6 +110,9 @@
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="printView(scope.row)">
+                      打印
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -127,10 +130,15 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
 <script>
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 import {
   purPurchaseReceiptReturnGoodsList,
   deleteQuotationsendlist,
@@ -151,15 +159,22 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
+import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 export default {
   name: 'foreigntradenotice',
-  components: { Form, SuperQuery, ExportForm },
+  components: { Form, SuperQuery, ExportForm,    PrintBrowse,
+    PrintDialog, },
   mixins: [getProjectList],
 
   data() {
     return {
+      formId:"",
+      enCode:"",
+      fullName:"",
+      printVisible:false,
       isProjectSwitch: '',
       tableDataFlag: false,
+      printBrowseVisible: false,
       basicQuery: {},
       superQuery: {},
       searchList: [
@@ -328,6 +343,32 @@ export default {
   },
 
   methods: {
+     
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id 
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(row) {
+      this.enCode = 'p006'
+      this.fullName = '采购收货单'
+      this.printVisible = true
+      this.formId = row.id
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
     //禁用复选框
     checkSelectable(row) {
       if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false

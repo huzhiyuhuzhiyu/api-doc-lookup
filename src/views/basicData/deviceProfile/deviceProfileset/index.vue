@@ -19,9 +19,12 @@
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <i
+              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -50,7 +53,8 @@
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="form.state" placeholder="请选择设备状态" clearable>
-                <el-option v-for="(item, index) in equipmentStateList" :key="index" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="(item, index) in equipmentStateList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -68,15 +72,19 @@
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
-              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printDevice('p038')">打印设备二维码</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer"
+                @click="printView('p038')">打印设备二维码</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button>
-              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
-              <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableData.length">导出</el-button>
+              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
+                @click="importProductFun">导入</el-button>
+              <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm"
+                :disabled="!tableData.length">导出</el-button>
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -86,10 +94,12 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="istable" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
+        <JNPF-table v-if="istable" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC
+          @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'"
+            key="projectName" />
           <el-table-column prop="deviceType" label="设备类型" width="140" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常设备</el-tag>
@@ -148,7 +158,8 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData" />
       </div>
     </div>
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
@@ -169,15 +180,20 @@
       </span>
     </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <share v-if="shareVisible" ref="share" @close="closeForm"></share>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      :fullName="fullName" ref="printForm" />
   </div>
 </template>
 
 <script>
-import { excelExport,equEquipmentupload } from '@/api/basicData/index'
+import { excelExport, equEquipmentupload } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
@@ -189,12 +205,15 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
+import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   mixins: [getProjectList],
   name: 'deviceProfileSet',
-  components: { Form, PrintBrowse, share, SuperQuery, ExportForm },
+  components: { Form, PrintBrowse, share, SuperQuery, ExportForm,PrintDialog },
   data() {
     return {
+      formId:"",
+      printVisible:false,
       fileList: [],
       loadingText: '',
       file: {},
@@ -814,7 +833,8 @@ export default {
         this.$refs.share.init(idList)
       })
     },
-    printDevice(enCode) {
+ 
+    printWarehouse(enCode) {
       if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -827,6 +847,19 @@ export default {
       }).catch(() => {
         this.printBrowseVisible = false
       });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
+      this.enCode = enCode
+      this.fullName = '库位二维码'
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
     },
     handleSelectionChange(val) {
       this.selectList = val

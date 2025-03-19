@@ -758,6 +758,7 @@ export default {
       this.printVisible = false
       this.$emit('close', true)
       this.$message.warning("取消打印")
+      this.$emit('close', true)
     },
     closePrintPage() {
       this.$emit('close', true)

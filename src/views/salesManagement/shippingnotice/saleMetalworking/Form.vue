@@ -1877,50 +1877,7 @@ export default {
               obj.noticeLineList.push(dep2)
             }
           })
-          let isQuantity = this.dataFormTwo.data.some((item, index) => {
-            return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
-          })
-          if (!this.dataForm.exchangeGoodsFlag && isQuantity) {
-            this.$confirm(`总发货数量大于订单数量,是否继续？`, '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(() => {
-              this.btnLoading = true
-              let formMethod = null;
-              if (this.btnType == 'edit') {
-                formMethod = editQuotationMsendlist
-              } else if (this.btnType == 'add' || this.btnType == 'copy') {
-                obj.notice.deliveryStatus = 'undelivered'
-                formMethod = addQuotationsendlist
-              }
-              formMethod(obj).then(res => {
-                let msg = "";
-                if (value == 'draft') {
-                  this.submitmethodsTitle = "保存成功"
-                } else if (value == 'submit') {
-                  this.submitmethodsTitle = "提交成功"
-                }
-                this.tipsvisible = true
-                // this.$message({
-                //   message: msg,
-                //   type: 'success',
-                //   duration: 1500,
-                // })
-                // this.visible = false
-                // this.btnLoading = false
-                // this.$emit('close', true)
-              }).catch(() => {
-                this.btnLoading = false
-              })
-            }).catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消'
-              })
-            })
-          } else {
-            this.btnLoading = true
+          this.btnLoading = true
             let formMethod = null;
             if (this.btnType == 'edit') {
               formMethod = editQuotationMsendlist
@@ -1939,7 +1896,51 @@ export default {
             }).catch(() => {
               this.btnLoading = false
             })
-          }
+          // let isQuantity = this.dataFormTwo.data.some((item, index) => {
+          //   return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
+          // })
+          // if (!this.dataForm.exchangeGoodsFlag && isQuantity) {
+          //   this.$confirm(`总发货数量大于订单数量,是否继续？`, '提示', {
+          //     confirmButtonText: '确定',
+          //     cancelButtonText: '取消',
+          //     type: 'warning'
+          //   }).then(() => {
+          //     this.btnLoading = true
+          //     let formMethod = null;
+          //     if (this.btnType == 'edit') {
+          //       formMethod = editQuotationMsendlist
+          //     } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          //       obj.notice.deliveryStatus = 'undelivered'
+          //       formMethod = addQuotationsendlist
+          //     }
+          //     formMethod(obj).then(res => {
+          //       let msg = "";
+          //       if (value == 'draft') {
+          //         this.submitmethodsTitle = "保存成功"
+          //       } else if (value == 'submit') {
+          //         this.submitmethodsTitle = "提交成功"
+          //       }
+          //       this.tipsvisible = true
+          //       // this.$message({
+          //       //   message: msg,
+          //       //   type: 'success',
+          //       //   duration: 1500,
+          //       // })
+          //       // this.visible = false
+          //       // this.btnLoading = false
+          //       // this.$emit('close', true)
+          //     }).catch(() => {
+          //       this.btnLoading = false
+          //     })
+          //   }).catch(() => {
+          //     this.$message({
+          //       type: 'info',
+          //       message: '已取消'
+          //     })
+          //   })
+          // } else {
+         
+          // }
         }
       })
     },

@@ -722,6 +722,7 @@ export default {
     closePrint() {
       this.printVisible = false
       this.$message.warning("取消打印")
+      this.$emit('close', true)
     },
     closePrintPage() {
       this.$emit('close', true)
@@ -1193,7 +1194,7 @@ export default {
           }
           if (this.allocationFlag) {
             this.productData.forEach((item, index) => {
-              if (!item.shelfSpaceId) {
+              if (!item.shelfSpaceId && !this.dataForm.totalStockOutboundFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
               }

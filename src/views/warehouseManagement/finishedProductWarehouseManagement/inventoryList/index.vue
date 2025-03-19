@@ -260,7 +260,7 @@
                     <el-dropdown-item type="text"
                       :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
-                      <el-dropdown-item type="text" v-if="isPrintNBWSwitch === '1'"
+                    <el-dropdown-item type="text" v-if="isPrintNBWSwitch === '1'"
                       :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
                       @click.native="nbwPrintFun(scope.row)">能博旺打印</el-dropdown-item>
                   </el-dropdown-menu>
@@ -326,7 +326,7 @@
 
 <script>
 import { getInventoryDetailList, getInventorySummaryData, withdrawApi } from '@/api/warehouseManagement/inventory'
-import { getWarehouseList, deleteWarehouseData, getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
+import { getWarehouseList, deleteWarehouseData, getWarehouseTree, detailWarehouseData } from '@/api/warehouseManagement/inboundAndOutbound'
 import { excelExport, getWarehouseInfo } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -351,7 +351,7 @@ import outboundUseForm from '../dbIncomAndOutInventory/equipmentOutboundForm.vue
 import InboundReturnForm from '../dbIncomAndOutInventory/equipmentInboundForm.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
-import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
+import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -391,7 +391,7 @@ export default {
     return {
       takingAdjustVisible: false,
       printVisible: false,
-      isPrintNBWSwitch:'',
+      isPrintNBWSwitch: '',
       printBrowseVisible: false,
       inboundReturnVisible: false,
       outboundUseVisible: false,
@@ -611,7 +611,7 @@ export default {
       {
         businessType: 'outbound_sale_send',
         code: "p031",
-        fullName: "销售出库单"
+        fullName: "销售发货单"
       },
       {
         businessType: 'inbound_sale_return',
@@ -629,7 +629,7 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    await this.$store.dispatch('base/getBusinessConfig','gobal')
+    await this.$store.dispatch('base/getBusinessConfig', 'gobal')
     await this.getPrintNBWSwitch('print', 'print_zy_nbw')
     this.getWarehouseListFun()
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -701,14 +701,22 @@ export default {
       this.enCode = this.arr.find(item => item.businessType === row.businessType).code // 筛选出 businessType 等于 type 的项  
       this.formId = row.id
       this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
+      if (row.businessType == 'outbound_sale_send' && row.sourceType == 'notice') {
+        this.enCode = 'p003'
+        detailWarehouseData(row.id).then(res => {
+          console.log("详情", res);
+          this.formId = res.data.spaceLines[0].noticeId
+
+        })
+      }
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
       })
     },
-    nbwPrintFun(row){
-      getPrintDeliveryNote(row.id).then(res=>{
-        console.log(res,'res')
+    nbwPrintFun(row) {
+      getPrintDeliveryNote(row.id).then(res => {
+        console.log(res, 'res')
         this.jnpf.downloadFile(res.data.url)
       })
     },

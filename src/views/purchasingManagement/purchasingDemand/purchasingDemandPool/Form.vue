@@ -114,7 +114,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="orderQuantity" label="可下单数量" width="120" show-overflow-tooltip
+                        <el-table-column prop="orderQuantity" label="可下单数量" min-width="120" show-overflow-tooltip
                           v-if="this.purchasingType === 'pool'" :key="13">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'orderQuantity'">

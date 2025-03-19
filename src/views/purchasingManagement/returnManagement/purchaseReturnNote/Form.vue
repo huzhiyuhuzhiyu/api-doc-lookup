@@ -120,13 +120,13 @@
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" width="160"
                       sortable="custom" show-overflow-tooltip />
-                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                      :width="isDeputyUnitSwitch ? 85 : 60" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
-                      v-if="isReturnSwitch === '1'" />
+                      v-if="isReturnSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
-                      v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
+                      v-if="isDeputyUnitSwitch && isReturnSwitch" />
                     <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
@@ -153,7 +153,7 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
                           <el-input v-model="scope.row.price" placeholder="单价(含税)"
-                            :disabled="isReturnSwitch === '1' || btnType == 'look'" />
+                            :disabled="isReturnSwitch || btnType == 'look'" />
                         </el-form-item>
                       </template>
                     </el-table-column>
@@ -177,7 +177,7 @@
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :rules="productRules.taxRate">
-                          <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch === '1' || btnType == 'look'"
+                          <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch || btnType == 'look'"
                             placeholder="请选择" style="width: 100%;">
                             <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                               :value="item.enCode"></el-option>
@@ -348,13 +348,13 @@
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom"
                   show-overflow-tooltip />
-                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch ? 85 : 60" />
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
-                  v-if="isReturnSwitch === '1'" />
+                  v-if="isReturnSwitch" />
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
-                  v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
+                  v-if="isDeputyUnitSwitch && isReturnSwitch" />
                 <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
@@ -380,7 +380,7 @@
                   <template slot-scope="scope">
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
                       <el-input v-model="scope.row.price" placeholder="单价(含税)"
-                        :disabled="isReturnSwitch === '1' || btnType == 'look'" />
+                        :disabled="isReturnSwitch || btnType == 'look'" />
                     </el-form-item>
                   </template>
                 </el-table-column>
@@ -404,7 +404,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :rules="productRules.taxRate">
-                      <el-select v-model="scope.row.taxRate" :disabled="$store.getters.configData.return.purchase_order || btnType == 'look'"
+                      <el-select v-model="scope.row.taxRate" :disabled="isReturnSwitch || btnType == 'look'"
                         placeholder="请选择" style="width: 100%;">
                         <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                           :value="item.enCode"></el-option>
@@ -899,11 +899,11 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
+    this.isReturnSwitch = this.$store.getters.configData.return.purchase_order
     // this.handleChange()
     // this.getProvinceList()
     this.getProductClassFun()
-    this.getDeputyUnit()
-    this.getReturnswitch()
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
@@ -981,7 +981,7 @@ export default {
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
-        if (this.$store.getters.configData.return.purchase_order) {
+        if (this.isReturnSwitch) {
           list.forEach((item, index) => {
             item.ordersNum = item.num
             item.receiptQuantity = item.purchaseQuantity
@@ -1025,16 +1025,7 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `procureDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-        console.log(this.isDeputyUnitSwitch, 'this.isDeputyUnitSwitch')
-      })
-    },
+   
     getProductClassFun() {
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
@@ -1061,20 +1052,6 @@ export default {
       }
       getWarehouseList(obj).then(res => {
         this.warehouseIdList = res.data
-      })
-    },
-    getReturnswitch() {
-      let obj = {
-        businessCode: 'return',
-        pageSize: -1
-      }
-      getBimBusinessSwitchConfigList(obj).then((res) => {
-        console.log(res, 's')
-        res.data.return.forEach((item) => {
-          if (item.configKey == 'purchase_order') {
-            this.isReturnSwitch = item.configValue1
-          }
-        })
       })
     },
     //发货数量不能为0
@@ -1207,7 +1184,7 @@ export default {
     // 点击选择产品
     openSeleceProductDialog() {
       console.log(this.isReturnSwitch, ';')
-      if (this.$store.getters.configData.return.purchase_order) {
+      if (this.isReturnSwitch) {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
         this.listMethod = detailpurchaseOrderList
         this.ProductListRequestObj = {
@@ -1238,8 +1215,8 @@ export default {
           { prop: 'productName', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
+          { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
           { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
           { prop: 'processName', label: '工序', sortable: 'custom' },
           { prop: 'remark', label: '备注', sortable: 'custom' },
@@ -1280,8 +1257,8 @@ export default {
           { prop: 'name', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
+          { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
         
         ]// 产品选择弹出框表单展示字段

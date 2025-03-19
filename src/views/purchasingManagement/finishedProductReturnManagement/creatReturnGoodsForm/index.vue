@@ -170,8 +170,7 @@
                       v-if="isReturnSwitch === '1'" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
                       v-if="isDeputyUnitSwitch === '1' && isReturnSwitch === '1'" />
-                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom"
-                      v-if="isReturnSwitch === '1'" />
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">

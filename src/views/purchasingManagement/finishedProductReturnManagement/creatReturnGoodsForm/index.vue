@@ -1064,14 +1064,18 @@ export default {
           { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
           // { prop: 'deliveryDate', label: '交货日期', type: 'date' },
         ]
+        if (this.$store.getters.configData.product.enable_productName) {
+          let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+          this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        }
         this.ProductTableItems = [
           { prop: 'orderNo', label: '订单号', sortable: 'custom',minWidth:180 },
           { prop: 'productCode', label: '产品编码', sortable: 'custom' },
           { prop: 'productName', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: '主单位', sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom' },
+          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
           { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
           { prop: 'processName', label: '工序', sortable: 'custom' },
           { prop: 'remark', label: '备注', sortable: 'custom' },
@@ -1103,14 +1107,18 @@ export default {
           { prop: 'productCode', label: '产品编码', type: 'input' },
           { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
         ]
+        if (this.$store.getters.configData.product.enable_productName) {
+          let productCodeIndex = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+          this.ProductTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+        }
         this.ProductTableItems = [
           { prop: 'projectName', label: '所属项目', sortable: 'custom',render:false },
           { prop: 'code', label: '产品编码', sortable: 'custom' },
           { prop: 'name', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: '主单位', sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom' },
+          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
         
         ]// 产品选择弹出框表单展示字段

@@ -144,14 +144,14 @@
                             <el-table-column prop="drawingNo" label="品名规格" width="160"
                               sortable="custom" />
 
-                            <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.procureDeputyUnit ? '单位(主)' : '单位'"
-                              :width="$store.getters.configData.deputyUnit.procureDeputyUnit ? 85 : 60" />
+                            <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                              :width="isDeputyUnitSwitch ? 85 : 60" />
                             <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
-                              v-if="$store.getters.configData.return.purchase_order" />
+                              v-if="isReturnSwitch" />
                             <el-table-column prop="deputyUnit" label="单位(副)" width="85"
-                              v-if="$store.getters.configData.deputyUnit.procureDeputyUnit" />
+                              v-if="isDeputyUnitSwitch" />
                             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
-                              v-if="$store.getters.configData.deputyUnit.procureDeputyUnit && $store.getters.configData.return.purchase_order" />
+                              v-if="isDeputyUnitSwitch && isReturnSwitch" />
                             <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                             <el-table-column prop="receivedQuantity" label="退货数量" width="170"
                               v-if="!dataForm.exchangeGoodsFlag" key="789">
@@ -179,7 +179,7 @@
                                 <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'"
                                   :rules="productRules.price">
                                   <el-input v-model="scope.row.price" placeholder="单价(含税)"
-                                    :disabled="$store.getters.configData.return.purchase_order || btnType == 'look'" />
+                                    :disabled="isReturnSwitch || btnType == 'look'" />
                                 </el-form-item>
                               </template>
                             </el-table-column>
@@ -204,7 +204,7 @@
                               <template slot-scope="scope">
                                 <el-form-item :rules="productRules.taxRate">
                                   <el-select v-model="scope.row.taxRate"
-                                    :disabled="$store.getters.configData.return.purchase_order || btnType == 'look'" placeholder="请选择"
+                                    :disabled="isReturnSwitch || btnType == 'look'" placeholder="请选择"
                                     style="width: 100%;">
                                     <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                       :value="item.enCode"></el-option>
@@ -717,6 +717,8 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
+    this.isReturnSwitch = this.$store.getters.configData.return.purchase_order
     // this.handleChange()
     // this.getProvinceList()
     this.getBimBusinessDetail()
@@ -799,7 +801,7 @@ export default {
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
-        if (this.$store.getters.configData.return.purchase_order) {
+        if (this.isReturnSwitch) {
           list.forEach((item, index) => {
             item.ordersNum = item.num
             item.receiptQuantity = item.purchaseQuantity
@@ -966,8 +968,7 @@ export default {
     },
     // 点击选择产品
     openSeleceProductDialog() {
-      console.log(this.$store.getters.configData.deputyUnit.procureDeputyUnit,'this.$store.getters.configData.deputyUnit.procureDeputyUnit')
-      if (this.$store.getters.configData.return.purchase_order) {
+      if (this.isReturnSwitch) {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
         this.listMethod = detailpurchaseOrderList
         this.ProductListRequestObj = {
@@ -998,8 +999,8 @@ export default {
           { prop: 'productName', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
+          { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
           { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
           { prop: 'processName', label: '工序', sortable: 'custom' },
           { prop: 'remark', label: '备注', sortable: 'custom' },
@@ -1040,8 +1041,8 @@ export default {
           { prop: 'name', label: '产品名称', sortable: 'custom' },
           { prop: 'drawingNo', label: "品名规格", sortable: 'custom' },
           { prop: 'productCategoryName', label: '所属分类', sortable: 'custom' },
-          { prop: 'mainUnit', label: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? '主单位' :'单位' , sortable: 'custom' },
-          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.$store.getters.configData.deputyUnit.procureDeputyUnit ? true : false },
+          { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
+          { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
         
         ]// 产品选择弹出框表单展示字段

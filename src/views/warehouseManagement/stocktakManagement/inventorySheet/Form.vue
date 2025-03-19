@@ -130,10 +130,8 @@
 
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
-                          <template slot="header">
-                            <span class="required">*</span>库位
-                          </template>
+                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" >
+                      
                           <template slot-scope="scope" v-if="scope.row.allocationFlag">
                             <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
                               @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">

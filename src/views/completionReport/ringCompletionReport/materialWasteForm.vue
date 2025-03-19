@@ -1,15 +1,15 @@
 <template>
 
-  <el-dialog title="设置料废金额" :close-on-click-modal="false" :close-on-press-escape="false" @close="customerVisible = false"
-    :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="40%"
-    append-to-body>
+  <el-dialog title="设置料废金额" :close-on-click-modal="false" :close-on-press-escape="false"
+    @close="customerVisible = false" :visible.sync="customerVisible" lock-scroll
+    class="JNPF-dialog JNPF-dialog_center selectPro" width="40%" append-to-body>
 
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
 
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #fff;overflow-y:auto ;">
 
         <div class="JNPF-common-layout-main JNPF-flex-main" style="padding-top: 0;">
-          <div v-if="btnType !=='look'">
+          <div v-if="btnType !== 'look'">
             <el-button type="text" icon="el-icon-plus" @click="addLinFun"
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
           </div>
@@ -20,7 +20,7 @@
               </template>
               <template slot-scope="scope">
                 <el-select v-model="scope.row.scrapCategoryId" placeholder="料废类型" style="width: 100%;" class="ipt"
-                  @change="(value) => handleSelectionChange(value, scope)" :disabled="btnType==='look'">
+                  @change="(value) => handleSelectionChange(value, scope)" :disabled="btnType === 'look'">
                   <el-option v-for="(item, index) in materialWasteList" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>
@@ -31,7 +31,13 @@
                 <span class="required">*</span>料废数量
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.scrapQuantity" placeholder="料废数量" @blur="countFun(scope)" :disabled="btnType==='look'"></el-input>
+                <el-input v-model="scope.row.scrapQuantity" placeholder="料废数量" @blur="countFun(scope)"
+                  :disabled="btnType === 'look'"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
+              <template slot-scope="scope">
+                <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
               </template>
             </el-table-column>
             <!-- <el-table-column prop="price" label="单价" min-width="180" sortable="custom"></el-table-column>
@@ -60,8 +66,8 @@ export default {
       customerVisible: false,
 
       form: {
-        projectId:"",
-        type:"material_fee",
+        projectId: "",
+        type: "material_fee",
         name: "",
         pageNum: -1,
         pageSize: -1,
@@ -79,17 +85,17 @@ export default {
       tableDataList: [],
       createdData: {
         name: "",
-        scrapUserId:"",
+        scrapUserId: "",
         price: "",
         scrapQuantity: "",
         amount: "",
         scrapCategoryId: "",
-        workReportId:"",
+        workReportId: "",
         type: "work",
-        scrapCategory:'material_fee',
+        scrapCategory: 'material_fee',
       },
       num: "",
-      btnType:''
+      btnType: ''
     }
   },
   computed: {
@@ -110,6 +116,10 @@ export default {
 
   },
   methods: {
+    // 单个删除
+    handleDel(data) {
+      this.tableDataList.splice(data.$index, 1)
+    },
     countFun(row) {
       let index = row.$index
       this.tableDataList[index].amount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.row.scrapQuantity, row.row.price]), 6)
@@ -133,10 +143,10 @@ export default {
       // 你可以进一步处理 selectedItem，比如更新状态或发送请求  
     },
 
-    init(data, num,projectId,btnType) {
+    init(data, num, projectId, btnType) {
       console.log(data, num);
       this.num = num
-      this.form.projectId=projectId
+      this.form.projectId = projectId
       this.btnType = btnType
       this.tableDataList = []
       this.customerVisible = true
@@ -166,32 +176,32 @@ export default {
       console.log(444444);
       console.log(this.tableDataList);
 
-      let flag=null;
+      let flag = null;
       for (let index = 0; index < this.tableDataList.length; index++) {
         const item = this.tableDataList[index];
-        if(!item.scrapCategoryId){
+        if (!item.scrapCategoryId) {
           this.$message({
-          message: "请选择第" + (index + 1) + "行的料废类型",
-          type: 'error',
-          duration: 1500,
-        })          
-        flag=false
-        break
+            message: "请选择第" + (index + 1) + "行的料废类型",
+            type: 'error',
+            duration: 1500,
+          })
+          flag = false
+          break
         }
-        if(!item.scrapQuantity){
+        if (!item.scrapQuantity||item.scrapQuantity=='0') {
           this.$message({
-          message: "请输入第" + (index + 1) + "行数量",
-          type: 'error',
-          duration: 1500,
-        })          
-        flag=false
-        break
+            message: "请输入第" + (index + 1) + "行数量",
+            type: 'error',
+            duration: 1500,
+          })
+          flag = false
+          break
         }
       }
-       
-      if(flag===false)return
-      this.customerVisible=false
-      this.$emit('change', this.tableDataList,this.totalNum)
+
+      if (flag === false) return
+      this.customerVisible = false
+      this.$emit('change', this.tableDataList, this.totalNum)
     }
 
 

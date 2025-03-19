@@ -1094,7 +1094,7 @@
                   <el-table-column prop="mainUnit" label="单位" width="80" />
                   <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120">
                     <template slot-scope="scope">
-                      <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                      <el-link type="primary" @click.native="viewFun(scope.row)">
                         {{ scope.row.inventoryQuantity }}
                       </el-link>
                     </template>
@@ -1759,10 +1759,10 @@ export default {
       }
     },
     // 查看库存明细
-    viewFun(id, type, warehouseId) {
+    viewFun(row) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, "", 'product')
+        this.$refs.Form.init(row.id, '', "", row.projectId)
       })
     },
     addLinFun() {

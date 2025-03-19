@@ -252,7 +252,8 @@ export default {
         Number(this.dataForm.reportingQuantity) -
         Number(this.dataForm.actualResponsibilityWasteQuantity) -
         Number(this.dataForm.actualMaterialQuantity) -
-        Number(this.dataForm.actualConcessionQuantity)
+        Number(this.dataForm.actualConcessionQuantity) - 
+        Number(this.dataForm.actualReworkQuantity)
       )
     }
   },
@@ -290,6 +291,11 @@ export default {
       if (totalNums) {
         this.dataForm.actualReworkQuantity = totalNums
       }
+      if (Number(this.qualifiedQuantity) <0) {
+        this.$message.error('合格数量不能小于0')
+        return
+      }
+     
     },
     // 设置责废原因
     setResponsWasteM() {
@@ -310,6 +316,10 @@ export default {
       if (totalNums) {
         this.dataForm.actualResponsibilityWasteQuantity = totalNums
       }
+      if (Number(this.qualifiedQuantity) <0) {
+        this.$message.error('合格数量不能小于0')
+        return
+      }
     },
     // 设置料废原因
     setMaterialWasteM() {
@@ -328,6 +338,10 @@ export default {
       this.materialWasteDataList = data
       if (totalNums) {
         this.dataForm.actualMaterialQuantity = totalNums
+      }
+      if (Number(this.qualifiedQuantity) <0) {
+        this.$message.error('合格数量不能小于0')
+        return
       }
     },
 
@@ -447,6 +461,10 @@ export default {
       this.btnLoading = false
     },
     handleConfirm(value, type) {
+      if (Number(this.qualifiedQuantity) <0) {
+        this.$message.error('合格数量不能小于0')
+        return
+      }
       let submitFlag = true
       console.log(this.$refs['dataForm'])
       this.$refs['dataForm'].validate((valid) => {

@@ -3087,6 +3087,7 @@ export default {
     getTabdataList(type) {
       // 销售发货
       if (this.categoryType == 'outbound_sale_send') {
+        if(this.fhForm.inspectionStatus) delete this.fhForm.inspectionStatus
         if (this.saleFlag) {
           if (this.saleOrderDateArr.length) {
             this.saleOrderForm.deliveryStartTime = this.saleOrderDateArr[0]

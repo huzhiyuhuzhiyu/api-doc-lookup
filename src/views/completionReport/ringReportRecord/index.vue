@@ -84,12 +84,12 @@
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" sortable="custom" />
             <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="150" sortable="custom" />
+            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="170" sortable="custom" />
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="150" sortable="custom" />
+            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="170" sortable="custom" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="150" sortable="custom" />
-            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="150" sortable="custom" />
+            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="170" sortable="custom" />
+            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="170" sortable="custom" />
 
 
 
@@ -103,12 +103,19 @@
                 <div v-else-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">已关闭</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="inspectionStatus" label="检验状态" min-width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.inspectionStatus == 'inspected'"><el-tag type="success">已检验</el-tag></div>
+                <div v-else-if="scope.row.inspectionStatus == 'inspecting'"><el-tag>检验中</el-tag></div>
+                <div v-else-if="scope.row.inspectionStatus == 'unInspect'"><el-tag type="info">待检验 </el-tag></div>
+              </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="160" fixed="right">
 
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
-                <el-button size="mini" type="text" @click="viewFun(scope.row)"  :disabled="scope.row.inspectionStatus!='inspected'">查看详情</el-button>
+                <el-button size="mini" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'">查看检验记录</el-button>
 
               </template>
             </el-table-column>
@@ -130,13 +137,14 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <InspectionDetail v-if="inspectionDetailVisible" ref="inspectionDetailRef" @close="closeFun"></InspectionDetail>
   </div>
 </template>
 
 <script>
 import { getWorkReportList, revokeReport } from "@/api/productOrdes/index.js"
 import ExportForm from '@/components/no_mount/ExportBox/index'
-
+import  InspectionDetail from '@/views/inspectionManagement/reportWorkInspection/inspectionFormManagementDetail.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -147,10 +155,11 @@ import {
 import { getSalaryDetailList } from '@/api/salaryManagement'
 export default {
   name: 'assemblyplanManagement',
-  components: { SuperQuery, ExportForm },
+  components: { SuperQuery, ExportForm,InspectionDetail },
   mixins: [getProjectList],
   data() {
     return {
+      inspectionDetailVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -312,8 +321,15 @@ export default {
     this.getProductClassFun()
   },
   methods: {
-    viewFun(row){
-      console.log("当前数据",row);
+    closeFun(){
+      this.inspectionDetailVisible=false
+      this.initData()
+    },
+    viewFun(id){
+      this.inspectionDetailVisible=true
+      this.$nextTick(()=>{
+        this.$refs.inspectionDetailRef.init(id,'look')
+      })
     },
     async getProductNameSwitch(code, type) {
       try {

@@ -87,12 +87,12 @@
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" /> -->
             <!-- <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" /> -->
-            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" min-width="170" sortable="custom" />
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualResponsibilityWasteQuantity" label="实际责废数量" min-width="170" sortable="custom" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="120" sortable="custom" />
-            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="120" sortable="custom" />
+            <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="170" sortable="custom" />
+            <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="170" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="oil" label="注脂方式" min-width="120" sortable="custom" />
@@ -105,10 +105,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="160" fixed="right">
 
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
+                <el-button size="mini" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'">查看检验记录</el-button>
 
               </template>
             </el-table-column>
@@ -127,6 +128,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <InspectionDetail v-if="inspectionDetailVisible" ref="inspectionDetailRef" @close="closeFun"></InspectionDetail>
   </div>
 </template>
 
@@ -134,6 +136,7 @@
 import { getWorkReportList, revokeReport } from "@/api/productOrdes/index.js"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 
+import  InspectionDetail from '../../inspectionManagement/reportWorkInspection/inspectionFormManagementDetail.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -144,10 +147,11 @@ import {
 import { getSalaryDetailList} from '@/api/salaryManagement'
 export default {
   name: 'assemblyplanManagement',
-  components: { SuperQuery, ExportForm },
+  components: { SuperQuery, ExportForm,InspectionDetail },
   mixins: [getProjectList],
   data() {
     return {
+      inspectionDetailVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -320,6 +324,16 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    closeFun(){
+      this.inspectionDetailVisible=false
+      this.initData()
+    },
+    viewFun(id){
+      this.inspectionDetailVisible=true
+      this.$nextTick(()=>{
+        this.$refs.inspectionDetailRef.init(id,'','','look')
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

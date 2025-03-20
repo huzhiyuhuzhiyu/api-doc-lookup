@@ -71,14 +71,14 @@
 
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="60" />
-          <el-table-column prop="productionQuantity" label="生产数量" width="120" sortable="custom" />
+          <el-table-column prop="reportingQuantity" label="报工数量" width="120" sortable="custom" />
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" width="120" /> -->
           <el-table-column prop="qualifiedQuantity" label="合格数量" width="120" sortable="custom" />
           <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="140" sortable="custom" />
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" width="120" sortable="custom" />
           <el-table-column prop="materialWasteQuantity" label="料废数量" width="120" sortable="custom" />
-          <el-table-column prop="utilizeQuantity" label="利用数量" width="120" sortable="custom" />
-          <el-table-column prop="reworkQuantity" label="返工数量" width="120" sortable="custom" />
+          <!-- <el-table-column prop="utilizeQuantity" label="利用数量" width="120" sortable="custom" />
+          <el-table-column prop="reworkQuantity" label="返工数量" width="120" sortable="custom" /> -->
           <el-table-column prop="producerName" label="生产人" width="100" sortable="custom" />
           <el-table-column prop="reportingTime" label="报工时间" width="120" sortable="custom" />
           <el-table-column prop="createByName" label="报工人" width="100" sortable="custom" />

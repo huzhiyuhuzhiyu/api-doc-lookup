@@ -855,7 +855,7 @@ export default {
     printView(enCode) {
       if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
       this.enCode = enCode
-      this.fullName = '库位二维码'
+      this.fullName = '设备二维码'
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(enCode)

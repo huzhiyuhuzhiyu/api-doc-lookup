@@ -1217,7 +1217,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")
                 break
               }
-              if (item.num > item.availableBatchNumber) {
+              if (Number(item.num) > Number(item.availableBatchNumber)) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break

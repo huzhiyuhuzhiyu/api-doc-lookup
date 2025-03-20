@@ -18,14 +18,14 @@
                   <!-- <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
                 </div>
               </div>
-              <div class="main" v-loading="formLoading">
+              <div class="main" ref="main" v-loading="formLoading">
                 <el-tabs v-model="activeName" @tab-click="handleClick">
                   <el-tab-pane label="订单信息" name="orderInfo">
                     <el-collapse v-model="activeNames">
                       <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                         <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
                           label-position="top">
-                          <el-row :gutter="30" class="custom-row">
+                          <el-row :gutter="30" style="padding: 0 10px;">
                             <el-col :sm="6" :xs="24">
                               <el-form-item label="单号" prop="orderNo">
                                 <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
@@ -133,7 +133,7 @@
                         </div>
                         <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                           <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO
-                            fixedNO @selection-change="handeleProductInfoData">
+                            fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                             <el-table-column type="selection" width="60" fixed="left" align="center"
                               v-if="btnType !== 'look'" key="1" />
                             <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -316,7 +316,7 @@ import {
   getOrderDetail,
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData, getBimBusinessDetail, getWarehouseList, getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData, getBimBusinessDetail, getWarehouseList,getOrderFiledMap, getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 import {
   addpurPurchaseReceiptReturnGoods,
@@ -330,7 +330,6 @@ import Process from '@/components/Process/Preview'
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import getProjectList from '@/mixins/generator/getProjectList'
-
 export default {
   components: { Process },
   mixins: [getProjectList],
@@ -540,6 +539,7 @@ export default {
       visible: false,
       btnLoading: false,
       formLoading: false,
+      customStyleData: 0,
       dataForm: {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
@@ -719,8 +719,9 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
     this.isReturnSwitch = this.$store.getters.configData.return.purchase_order
-    // this.handleChange()
-    // this.getProvinceList()
+    await this.switchStyleheight()
+    this.formLoading = false
+
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
@@ -734,65 +735,27 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
-       // 弹窗节点的点击
-       treeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      listQuery.classAttribute = data.classAttribute
-      return listQuery
-    },
-    // 切换供应商后给的提示
-    async beforeSubmit(data, paramsObj) {
-      let flag = true
-      if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商将清空产品价格信息，是否继续？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$message({
-              type: 'success',
-              message: '更换成功!'
-            })
-            this.$refs['productForm'].resetFields()
-            return true
-          })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消'
-            })
-            return false
-          })
-      }
-      return flag
-    },
-    supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('partnerName')
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
       })
-      if (data.length === 0) {
-        this.dataForm.partnerName = ''
-        this.dataForm.cooperativePartnerCode = ''
-        this.dataForm.cooperativePartnerId = ''
-        this.oldData = []
-      } else {
-        if (this.oldData.length) {
-        } else {
-          this.oldData.push(data)
-        }
-        this.dataForm.partnerName = data[0].all.name
-        this.dataForm.cooperativePartnerCode = data[0].all.code
-        this.dataForm.cooperativePartnerId = data[0].all.id
-        let productIdList = []
-        this.dataFormTwo.productData.forEach((item) => {
-          productIdList.push(item.productsId)
-        })
-        let _data = {
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          productIdList
-        }
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 425
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
       }
     },
        // 产品组件回调
@@ -1382,6 +1345,12 @@ export default {
         })
         .catch(() => { })
     }
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>
@@ -1512,7 +1481,7 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  // padding: 10px;
   border-top: none !important;
 }
 

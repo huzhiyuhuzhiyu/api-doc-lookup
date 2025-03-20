@@ -66,8 +66,8 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
-            <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" min-width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商名称" min-width="200" sortable="custom" />
             <el-table-column prop="salesman" label="操作员" width="100" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="120" sortable="custom"></el-table-column>
 
@@ -148,7 +148,7 @@ export default {
   data() {
     return {
       superQueryVisible: false,
-      columnList: ['partnerCode', 'createByName'],
+      columnList: [],
       exportFormVisible: false,
       qxbtnLoading: false,
       hbbtnLoading: false,

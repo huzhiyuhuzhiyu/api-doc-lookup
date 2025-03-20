@@ -21,13 +21,13 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
+      <div class="main" ref="main" v-loading="formLoading">
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
           <el-tab-pane label="订单信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
+                  <el-row :gutter="30" style="padding: 0 10px;">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="通知单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择通知单号" :disabled="btnType == 'look'
@@ -107,8 +107,8 @@
                   </el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
+                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
+                    @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -512,7 +512,6 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { getWarehouseList } from '@/api/basicData/index'
 import { mapGetters } from "vuex"
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
@@ -521,7 +520,7 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import { getWarehouseList, getOrderFiledMap } from '@/api/basicData/index'
 export default {
   components: { Process, recordList },
   mixins: [busFlow, getProjectList],
@@ -897,13 +896,17 @@ export default {
     }
   },
   async created() {
+    await this.getOrderFiledMap()
+    await this.getProductClassFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
     this.isReturnSwitch = this.$store.getters.configData.return.purchase_order
+    await this.switchStyleheight()
+    this.formLoading = false
     // this.handleChange()
     // this.getProvinceList()
-    this.getProductClassFun()
+
     this.getBimBusinessDetail()
     this.getAttributeline()
     this.getWarehouseList()
@@ -914,112 +917,43 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
-      // 弹窗节点的点击
-      treeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      listQuery.classAttribute = data.classAttribute
-      return listQuery
-    },
-    // 切换供应商后给的提示
-    async beforeSubmit(data, paramsObj) {
-      let flag = true
-      if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商将清空产品价格信息，是否继续？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$message({
-              type: 'success',
-              message: '更换成功!'
-            })
-            this.$refs['productForm'].resetFields()
-            return true
-          })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消'
-            })
-            return false
-          })
-      }
-      return flag
-    },
-    supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('partnerName')
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
       })
-      if (data.length === 0) {
-        this.dataForm.partnerName = ''
-        this.dataForm.cooperativePartnerCode = ''
-        this.dataForm.cooperativePartnerId = ''
-        this.oldData = []
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = 0
+      if (this.btnType === 'look') {
+        maxHeight = mainHeight1 - 470
       } else {
-        if (this.oldData.length) {
-        } else {
-          this.oldData.push(data)
-        }
-        this.dataForm.partnerName = data[0].all.name
-        this.dataForm.cooperativePartnerCode = data[0].all.code
-        this.dataForm.cooperativePartnerId = data[0].all.id
-        let productIdList = []
-        this.dataFormTwo.productData.forEach((item) => {
-          productIdList.push(item.productsId)
-        })
-        let _data = {
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          productIdList
-        }
+        maxHeight = mainHeight1 - 450
+      }
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
       }
     },
-       // 产品组件回调
-    addth(id, data) {
-      this.getProductClassFun()
-      if (data.length) {
-        let selectArr = []
-        let list = data.map((item) => item.all)
-        if (this.isReturnSwitch) {
-          list.forEach((item, index) => {
-            item.ordersNum = item.num
-            item.receiptQuantity = item.purchaseQuantity
-            item.productName = item.productName
-            item.deliveryDate = this.dataForm.deliveryDate // 交期
-            selectArr.push(item)
-          })
-        } else {
-          list.forEach((item, index) => {
-            item.receiptQuantity = item.inventoryQuantity
-            item.productsId = item.id
-            item.productName = item.name
-            item.deliveryDate = this.dataForm.deliveryDate // 交期
-            selectArr.push(item)
-          })
-        }
-       
-        if (this.dataFormTwo.productData && this.dataFormTwo.productData.length) {
-          const deletedArray = []
-          selectArr = selectArr.filter((item1) => {
-            const index = this.dataFormTwo.productData.findIndex((item2) => item2.productsId === item1.productsId)
-            if (index !== -1) {
-              deletedArray.push(item1.productName)
-              if (deletedArray.length) {
-                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
-              }
-              return false
-            }
-            return true
-          })
-        }
-        console.log(selectArr,'kkk')
-        this.dataFormTwo.productData = [...this.dataFormTwo.productData, ...selectArr]
-        console.log(this.dataFormTwo.productData,'lll')
-        // 审批
-        // this.$nextTick(() => { this.getApproverData() })
-      }
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
     },
+
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1756,6 +1690,12 @@ export default {
         }
       }).catch(() => { })
     },
+  },
+  beforeUpdate() {
+    this.$nextTick(() => {
+      //在数据加载完，重新渲染表格
+      this.$refs['product'].doLayout();
+    });
   }
 }
 </script>
@@ -1886,7 +1826,7 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  // padding: 10px;
   border-top: none !important;
 }
 

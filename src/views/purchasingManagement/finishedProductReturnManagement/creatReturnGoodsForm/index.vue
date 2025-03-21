@@ -1606,4 +1606,8 @@ $footerPadding: '10px';
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }
+/* 使用 /deep/ 或者 ::v-deep 来穿透组件的 scoped CSS */
+::v-deep .el-select-dropdown__item {
+  width: 100%; /* 调整为你需要的宽度 */
+}
 </style>

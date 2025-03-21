@@ -35,9 +35,9 @@
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
+              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
                 新建返工任务
-              </el-button>
+              </el-button> -->
               <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
                 @click="batchPrint">批量打印</el-button>
               <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button> -->

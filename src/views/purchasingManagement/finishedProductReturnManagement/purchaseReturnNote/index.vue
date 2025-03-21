@@ -207,6 +207,7 @@ export default {
         keyword: '',
         classAttribute: 'finish_product',
         notificationType: 'procure',
+        stockFlag:1,
         notificationTypeList: [],
         orderItems: [
           {

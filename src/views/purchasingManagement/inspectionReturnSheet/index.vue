@@ -1,18 +1,11 @@
 <template>
   <Index :priceType="listRequestObj.priceType" :listRequestObj="listRequestObj" :listMethod="purPurchaseReceiptReturnGoodsDetailList"
-    :batchMethod="batchAddBimProductProcessPrice" :uploadMethod="uploadBimProductProcessPrice"
-    :delMethod="deleteBimProductProcessPrice" :tableItems="tableItems" :searchList="searchList"
+    :batchMethod="batchReturnLine" :tableItems="tableItems" :searchList="searchList"
     :superQueryJson="superQueryJson" :columnList="columnList" />
 </template>
 
 <script>
-import {
-  getBimProductProcessPrice,
-  batchAddBimProductProcessPrice,
-  uploadBimProductProcessPrice,
-  deleteBimProductProcessPrice
-} from '@/api/bimProcess/index'
-import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { purPurchaseReceiptReturnGoodsDetailList,batchReturnLine } from '@/api/purchasingManagement/purchaseInquirySheet'
 import Index from './components/inspectionReturn/index.vue'
 export default {
   name: 'inspectionReturnSheet',
@@ -20,9 +13,7 @@ export default {
   data() {
     return {
       purPurchaseReceiptReturnGoodsDetailList,
-      batchAddBimProductProcessPrice,
-      uploadBimProductProcessPrice,
-      deleteBimProductProcessPrice,
+      batchReturnLine,
       isProjectSwitch: '',
       listRequestObj: {
         approvalStatus: '',
@@ -73,27 +64,27 @@ export default {
       },
       tableItems: [
         // { prop: 'qcOrderNo', label: '检验单号', minWidth: '160', sortable: 'custom' },
-        { prop: 'orderNo', label: '收货单号', minWidth: '100' },
+        { prop: 'orderNo', label: '收货单号', minWidth: '160' },
         { prop: 'productCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
         { prop: 'productDrawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
 
         { prop: 'productCategoryName', label: '产品分类', minWidth: '140', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位', minWidth: '140', sortable: 'custom' },
-        { prop: 'effectiveDate', label: '不合格数量', minWidth: '130' },
+        { prop: 'receivedQuantity', label: '不合格数量', minWidth: '130' },
         { prop: 'price', label: '单价(含税)', minWidth: '100' },
         { prop: 'taxRate', label: '税率', minWidth: '100' },
-        { prop: 'price', label: '总金额', minWidth: '100' },
+        { prop: 'totalAmount', label: '总金额', minWidth: '100' },
         { prop: 'partnerName', label: '供应商名称', minWidth: '180', sortable: 'custom' },
         { prop: 'ordersNo', label: '采购单号', minWidth: '100' },
         { prop: 'receivingStatus', label: '是否处理', minWidth: '100' },
       ],
       searchList: [
         {
-          prop: 'pricingFlag',
-          label: '计价类型',
+          prop: 'receivingStatus',
+          label: '处理结果',
           type: 'select',
           clearable:false,
-          options: [{ label: '未处理', value: 0 }, { label: '已处理', value: 1 }]
+          options: [{ label: '未处理', value: 'not_finished' }, { label: '已处理', value: 'finished' }]
         },
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
         { prop: 'processName', label: '供应商名称', type: 'input' },
@@ -142,7 +133,7 @@ export default {
         minWidth: '150',
         sortable: 'custom'
       })
-      let flagIndex = this.searchList.findIndex((obj) => obj.prop === 'pricingFlag')
+      let flagIndex = this.searchList.findIndex((obj) => obj.prop === 'receivingStatus')
       this.searchList.splice(flagIndex + 1, 0,{
         prop: 'productName',
         label: '产品名称',

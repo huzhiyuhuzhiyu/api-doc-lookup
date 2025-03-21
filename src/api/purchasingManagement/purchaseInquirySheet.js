@@ -391,3 +391,12 @@ export function getProductWithOut(data) {
     data
   })
 }
+
+// 批量处理质检退货单
+export function batchReturnLine(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/batch/returnLine`,
+    method: 'post',
+    data
+  })
+}

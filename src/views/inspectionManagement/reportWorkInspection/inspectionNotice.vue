@@ -19,6 +19,18 @@
                 clearable />
             </el-form-item>
           </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.orderNo" @keyup.enter.native="search()" placeholder="报工单号"
+                clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.producerName" @keyup.enter.native="search()" placeholder="生产人"
+                clearable />
+            </el-form-item>
+          </el-col>
           <el-col :span="3">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">

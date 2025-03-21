@@ -363,11 +363,11 @@ export default {
             disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
           },
           { label: '报废', value: 'discard', disabled: !['sale_back', 'process', 'finished'].includes(inspectionType) },
-          {
-            label: '挑选',
-            value: 'select',
-            disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
-          },
+          // {
+          //   label: '挑选',
+          //   value: 'select',
+          //   disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
+          // },
           {
             label: '返工返修',
             value: 'repair',
@@ -428,9 +428,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.unqualifiedQuantity) !==
-                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                  Number(this.dataForm.inspectionQuantity)
                 ) {
-                  callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                  callback(new Error('合格数量+不合格数量要等于检验数量'))
                 } else {
                   callback()
                 }
@@ -465,9 +465,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.qualifiedQuantity) + Number(this.dataForm.unqualifiedQuantity) !==
-                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                  Number(this.dataForm.inspectionQuantity)
                 ) {
-                  callback(new Error('合格数量+不合格数量要等于检验不合格数量'))
+                  callback(new Error('合格数量+不合格数量要等于检验数量'))
                 } else {
                   callback()
                 }
@@ -506,9 +506,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                  Number(this.dataForm.inspectionQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                  callback(new Error('报废数量+返修数量要等于检验数量'))
                 } else {
                   callback()
                 }
@@ -547,9 +547,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionUnqualifiedQuantity)
+                  Number(this.dataForm.inspectionQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于检验不合格数量'))
+                  callback(new Error('报废数量+返修数量要等于检验数量'))
                 } else {
                   callback()
                 }
@@ -777,8 +777,8 @@ export default {
                     this.jnpf.math('add', [
                       this.linesList[rowIndex].qualifiedQuantity,
                       this.linesList[rowIndex].unqualifiedQuantity
-                    ]) === Number(this.linesList[rowIndex].inspectionUnqualifiedQuantity),
-                  '合格数量+不合格数量要等于对应检验不合格数量',
+                    ]) === Number(this.linesList[rowIndex].inspectionQuantity),
+                  '合格数量+不合格数量要等于对应检验数量',
                   (errMsg, index) => {
                     this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
                   }
@@ -792,7 +792,7 @@ export default {
                 params: [
                   (rowIndex) =>
                     !(
-                      this.linesList[rowIndex].treatmentResults === 'select' &&
+                      this.linesList[rowIndex].treatmentResults === 'concessive_acceptance' &&
                       this.linesList[rowIndex].qualifiedQuantity == 0
                     ),
                   '处理结果为挑选时合格数量不能等于0',
@@ -805,7 +805,7 @@ export default {
             }
           ],
           minWidth: 180,
-          itemDisabled: (rowIndex) => this.linesList[rowIndex].treatmentResults !== 'select' || this.btnType === 'look',
+          itemDisabled: (rowIndex) => this.linesList[rowIndex].treatmentResults !== 'concessive_acceptance' || this.btnType === 'look',
           render: this.dataForm.approvalStatus === 'ok'
         },
         {
@@ -850,8 +850,8 @@ export default {
                     this.jnpf.math('add', [
                       this.linesList[rowIndex].qualifiedQuantity,
                       this.linesList[rowIndex].unqualifiedQuantity
-                    ]) === Number(this.linesList[rowIndex].inspectionUnqualifiedQuantity),
-                  '合格数量+不合格数量要等于对应检验不合格数量',
+                    ]) === Number(this.linesList[rowIndex].inspectionQuantity),
+                  '合格数量+不合格数量要等于对应报检数量',
                   (errMsg, index) => {
                     this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
                   }
@@ -865,10 +865,10 @@ export default {
                 params: [
                   (rowIndex) =>
                     !(
-                      this.linesList[rowIndex].treatmentResults === 'select' &&
+                      this.linesList[rowIndex].treatmentResults === 'concessive_acceptance' &&
                       this.linesList[rowIndex].unqualifiedQuantity == 0
                     ),
-                  '处理结果为挑选时不合格数量不能等于0',
+                  '处理结果为让步接收时不合格数量不能等于0',
                   (errMsg, index) => {
                     this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
                   }
@@ -879,7 +879,7 @@ export default {
           ],
           minWidth: 180,
           input: this.calcLossPrice,
-          itemDisabled: (rowIndex) => this.linesList[rowIndex].treatmentResults !== 'select' || this.btnType === 'look',
+          itemDisabled: (rowIndex) => this.linesList[rowIndex].treatmentResults !== 'concessive_acceptance' || this.btnType === 'look',
           render: this.dataForm.approvalStatus === 'ok'
         },
         {
@@ -1196,9 +1196,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.dataForm.$refs.main.clearValidate()
       })
-      if (val === 'qualified' || val === 'concessive_acceptance') {
+      if (val === 'qualified') {
         // 合格、让步接收
-        this.dataForm.qualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.qualifiedQuantity = this.dataForm.inspectionQuantity
         this.dataForm.unqualifiedQuantity = 0
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
@@ -1209,14 +1209,14 @@ export default {
       } else if (val === 'unqualified') {
         // 不合格
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
         this.scrapQuantityDisabled = true
         this.repairQuantityDisabled = true
-      } else if (val === 'select') {
+      } else if (val === 'concessive_acceptance') {
         // 挑选
         this.dataForm.qualifiedQuantity = ''
         this.dataForm.unqualifiedQuantity = ''
@@ -1264,13 +1264,14 @@ export default {
     },
     // 提交
     async handleConfirm(submitModel) {
-      if (this.dataForm.treatmentResults == 'select') {
+      if (this.dataForm.treatmentResults == 'concessive_acceptance') {
+        console.log(this.dataForm.inspectionQuantity,'所属')
         console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionUnqualifiedQuantity)) return this.$message.error('合格数量+不合格数量不等于检验不合格数量。');
+        if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('合格数量+不合格数量不等于检验数量。');
       }
       if (this.dataForm.treatmentResults == 'discard_repair') {
         console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionUnqualifiedQuantity)) return this.$message.error('报废数量+返修数量不等于检验不合格数量。');
+        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('报废数量+返修数量不等于检验数量。');
       }
 
 

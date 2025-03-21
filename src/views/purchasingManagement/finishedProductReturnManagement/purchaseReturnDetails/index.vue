@@ -269,6 +269,7 @@ export default {
         productDrawingNo: '',
         productName: '',
         receiptReturnType: 'back',
+        stockFlag:1,
         receivingStatus: '',
         salesman: '',
         startTime: '',

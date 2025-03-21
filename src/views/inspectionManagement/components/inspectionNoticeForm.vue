@@ -245,11 +245,11 @@ export default {
             value: 'spot_check',
             disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(inspectionType)
           },
-          {
-            label: '免检',
-            value: 'exempt',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(inspectionType)
-          }
+          // {
+          //   label: '免检',
+          //   value: 'exempt',
+          //   disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(inspectionType)
+          // }
         ].filter((o) => !o.disabled)
       }
       this.dataFormItems = [

@@ -235,6 +235,7 @@ export default {
         keyword: '',
         classAttribute: 'other',
         notificationType: 'procure',
+        stockFlag:1,
         notificationTypeList: [],
         orderItems: [
           {

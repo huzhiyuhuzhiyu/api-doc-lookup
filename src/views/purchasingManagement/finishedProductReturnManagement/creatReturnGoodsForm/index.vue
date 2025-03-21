@@ -20,7 +20,7 @@
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
+                  <el-row :gutter="30" style="padding:0 10px;">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
@@ -150,27 +150,24 @@
                   </el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" :hasC="btnType !== 'look'" hasNO fixedNO
                     @selection-change="handeleProductInfoData" :height="customStyleData">
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
+                    <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                    <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                    <!-- </el-table-column> -->
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" width="160"
-                      sortable="custom" show-overflow-tooltip />
+                    <el-table-column prop="drawingNo" label="品名规格" width="160" show-overflow-tooltip />
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch ? 85 : 60" />
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom"
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" 
                       v-if="isReturnSwitch" />
-                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
+                    <el-table-column prop="purchaseQuantity2" label="订单数量(副)" width="160"
                       v-if="isDeputyUnitSwitch && isReturnSwitch" />
-                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -272,7 +269,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom"
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" 
                       v-if="sealingCoverTypingFlag == 1" />
                     <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom"
                       v-if="accuracyLevelFlag == 1" />
@@ -304,7 +301,7 @@
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                       </template>
                     </el-table-column>
-                  </el-table>
+                  </JNPF-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin:0 10px">总退货数量：{{ totalDeliveryQuantity }}</span>
                   </div>
@@ -1634,7 +1631,7 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  // padding: 0 10px 0px;
   border-top: none !important;
 }
 

@@ -692,7 +692,7 @@ export default {
         partnerCategoryIdText: [{ required: true, message: '所属分类不能为空', trigger: 'change' }],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
-          { validator: this.formValidate('enCode'), trigger: 'blur' },
+          // { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               checkCode(value, this.dataForm.id, this.dataForm.type)

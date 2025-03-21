@@ -121,6 +121,7 @@
                   </el-form>
                 </el-collapse-item>
                 <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
+                  <div class="JNPF-common-head">
                   <div v-if="btnType !== 'look'">
                     <el-button type="text" style="margin-right:8px;margin-left:5px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
@@ -138,10 +139,18 @@
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDelete">批量删除</el-button>
                   </div>
+                  <div v-else></div>
+                  <div class="JNPF-common-head-right fixedRight">
+                    <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                      <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                        @click="columnSetFun()" />
+                    </el-tooltip>
+                  </div>
+                  </div>
                   <div ref="boxresiz" v-if="btnType == 'look'">
-                    <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" key="191"
+                    <JNPF-table ref="product" :data="productData" custom-column :fixedNO="false" border height="100%" key="191"
                       style="width: 100%;height:100%" :height="customStyleData">
-                      <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                      <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       </el-table-column>
                       <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
@@ -226,15 +235,15 @@
                       <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
 
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                   </div>
-                  <el-table ref="product"
+                  <JNPF-table ref="product"
                     v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
-                    :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border
-                    @row-click="rowclick" key="165" style="width: 100%;" :height="customStyleData">
-                    <el-table-column type="selection" width="55" fixed="left" :key="2">
+                    :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border custom-column
+                    @row-click="rowclick" key="165" style="width: 100%;" hasC :height="customStyleData">
+                    <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
-                    <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                    <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.customerProductNo" placeholder="请输入"
@@ -469,7 +478,7 @@
                         <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
                       </template>
                     </el-table-column>
-                  </el-table>
+                  </JNPF-table>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                     <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
                     <!-- <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span> -->
@@ -610,10 +619,16 @@
                   :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                   @click="batchDelete">批量删除</el-button>
               </div>
+              <div class="JNPF-common-head-right fixedRight">
+                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                  <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                    @click="columnSetFun()" />
+                </el-tooltip>
+              </div>
               <div ref="boxresiz" v-if="btnType == 'look'">
-                <el-table ref="product" :data="productData" :fixedNO="false" border :key="191"
+                <JNPF-table ref="product" :data="productData" :fixedNO="false" border :key="191" custom-column
                   :height="customStyleData">
-                  <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                  <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   </el-table-column>
                   <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
@@ -698,15 +713,15 @@
 
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                   </el-table-column>
-                </el-table>
+                </JNPF-table>
               </div>
-              <el-table ref="product"
+              <JNPF-table ref="product"
                 v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
-                :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border
-                :height="customStyleData" @row-click="rowclick" :key="165" style="width: 100%;">
-                <el-table-column type="selection" width="55" fixed="left" :key="2">
+                :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border custom-column
+                :height="customStyleData" @row-click="rowclick" :key="165" style="width: 100%;" hasC>
+                <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                 </el-table-column>
-                <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.customerProductNo" placeholder="请输入"
@@ -927,7 +942,7 @@
                     <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
                   </template>
                 </el-table-column>
-              </el-table>
+              </JNPF-table>
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                 <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
                 <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
@@ -1543,6 +1558,7 @@ export default {
     if (this.isProjectSwitch === '1') this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
     await this.switchStyleheight()
+    this.$nextTick(() => { this.$refs.product.doLayout() })
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
@@ -1571,6 +1587,9 @@ export default {
   },
 
   methods: {
+    columnSetFun() {
+      this.$refs.product.showDrawer()
+    },
     // 配对方式显示隐藏
     async getPairingModeSwitch(code, type) {
       try {

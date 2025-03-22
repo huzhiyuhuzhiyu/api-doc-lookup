@@ -101,6 +101,13 @@
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column label="操作" min-width="120" fixed="right">
+              <template slot-scope="scope">
+
+                <el-button size="mini" type="text" @click.native="printFun(scope.row.id)">打印</el-button>
+
+              </template>
+            </el-table-column>
           </JNPF-table>
 
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -120,6 +127,9 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -135,9 +145,14 @@ import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
+
 export default {
   name: 'salesOrderCreation',
-  components: { Form, ExportForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery, PrintBrowse,
+    PrintDialog,},
   mixins: [getProjectList],
   data() {
     return {
@@ -287,6 +302,11 @@ export default {
       materialFlag: '',
       colourFlag: '',
       bimProductAttributesList: [],
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printVisible: false,
+      printBrowseVisible: false,
     }
   },
   watch: {
@@ -316,6 +336,34 @@ export default {
     this.search('basic')
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 打印
+    printFun(id) {
+      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
+      this.formId = id
+      this.fullName = "备货工艺" // 筛选出 businessType 等于 type 的项  
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -517,7 +565,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' ||prop=='pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' || prop == 'pairingModeName' || prop == 'projectName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'

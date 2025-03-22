@@ -15,7 +15,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
+                <el-input @keyup.native.enter="search()" v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -64,6 +64,9 @@
             </el-table-column>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120" />
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
+            <el-table-column prop="weight" label="重量" min-width="120" />
+            <el-table-column prop="proportion" label="比重" min-width="120" />
+            <el-table-column prop="discount" label="折扣" min-width="120" />
             <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
 
@@ -72,10 +75,8 @@
             <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"
               :key="603"></el-table-column>
             <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="603"></el-table-column>
-            <el-table-column prop="standardValue" label="规值" min-width="120"  
-              sortable="custom"></el-table-column>
-              <el-table-column prop="colour" label="颜色" min-width="120"  
-              sortable="custom"></el-table-column>
+            <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom"></el-table-column>
+            <el-table-column prop="colour" label="颜色" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
               sortable="custom"></el-table-column>
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"

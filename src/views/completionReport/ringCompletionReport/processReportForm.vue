@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="JNPF-preview-main org-form">
+    <div class="JNPF-preview-main org-form" >
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="'工序报工'" />
         <div class="options">
@@ -8,42 +8,42 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading" ref="main">
+      <div ref="pageForm">
+        <div class="main" v-loading="formLoading">
 
-        <el-collapse v-model="activeNames" style="margin-top: 5px;">
+          <el-collapse v-model="activeNames" style="margin-top: 5px;">
 
-          <el-collapse-item title="工单信息" name="productInfo">
+            <el-collapse-item title="工单信息" name="productInfo">
 
 
-            <div  >
               <div class="JNPF-common-head">
                 <div>
                   <el-row class="JNPF-common-search-box orderNosearch" :gutter="16">
-                        <el-form @submit.native.prevent>
-                          <el-col :span="6">
-                            <el-form-item>
-                              <el-input v-model="form.productionOrderNo" @keyup.enter.native="search()"
-                                placeholder="生产任务单号" clearable />
-                            </el-form-item>
-                          </el-col>
-                          <el-col :span="6">
-                            <el-form-item>
-                              <el-input v-model="form.productDrawingNo" @keyup.enter.native="search()"
-                                placeholder="品名规格" clearable />
-                            </el-form-item>
-                          </el-col>
-                          <el-col :span="8">
-                            <el-form-item>
-                              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                                {{ $t('common.search') }}</el-button>
-                              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                                $t('common.reset') }}
-                              </el-button>
-                            </el-form-item>
-                          </el-col>
+                    <el-form @submit.native.prevent>
+                      <el-col :span="6">
+                        <el-form-item>
+                          <el-input v-model="form.productionOrderNo" @keyup.enter.native="search()" placeholder="生产任务单号"
+                            clearable />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="6">
+                        <el-form-item>
+                          <el-input v-model="form.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
+                            clearable />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item>
+                          <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                            {{ $t('common.search') }}</el-button>
+                          <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
+                            $t('common.reset') }}
+                          </el-button>
+                        </el-form-item>
+                      </el-col>
 
-                        </el-form>
-                      </el-row>
+                    </el-form>
+                  </el-row>
                 </div>
                 <div class="JNPF-common-head-right">
 
@@ -55,7 +55,7 @@
                 </div>
               </div>
               <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
-                :setColumnDisplayList="columnList" custom-column :height="customStyleData2">
+                :setColumnDisplayList="columnList" custom-column :height="customStyleData2" @sort-change="sortChange">
                 <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
                 <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
                 <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="160"
@@ -67,6 +67,21 @@
                     <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
                   </template>
                 </el-table-column>
+                <el-table-column prop="processType" label="工单类型" min-width="120" sortable="custom">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.processType == 'normal'"> 正常工序</div>
+                    <div v-if="scope.row.processType == 'vibrate'">测振工序</div>
+                    <div v-if="scope.row.processType == 'heat_treatment'">热工工序</div>
+                    <div v-if="scope.row.processType == 'packing'">包装工序</div>
+                    <div v-if="scope.row.processType == 'pairs'">配对工序</div>
+                    <div v-if="scope.row.processType == 'grinding'">磨孔工序</div>
+                    <div v-if="scope.row.processType == 'accuracy'">精度工序</div>
+                    <div v-if="scope.row.processType == 'fatInjection'">注脂工序</div>
+                    <div v-if="scope.row.processType == 'typing'">打字工序</div>
+
+                  </template>
+                </el-table-column>
+
                 <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
@@ -81,21 +96,11 @@
                     <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">查看报工记录</el-button>
                   </template>
                 </el-table-column>
-              </JNPF-table>
+              </JNPF-table> 
+            </el-collapse-item>
+          </el-collapse>
 
-              <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-                        @pagination="initData"> -->
-
-              <!-- </pagination> -->
-
-            </div>
-
-
-
-
-          </el-collapse-item>
-        </el-collapse>
-
+        </div>
       </div>
 
 
@@ -103,7 +108,7 @@
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <!-- <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm> -->
     <recordForm v-if="recordFormVisible" ref="recordForm"></recordForm>
-    <Drawer v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></Drawer>
+    <Drawer v-if="vibrateFormVisible" ref="drawerForm" @close="closeForm"></Drawer>
   </div>
 </template>
 
@@ -140,8 +145,8 @@ export default {
       codeConfig: {},//单据规则配置
       workList: [],
       form: {
-        productionOrderNo:"",
-        productDrawingNo:"",
+        productionOrderNo: "",
+        productDrawingNo: "",
         processId: "",
         prodOrderStatus: 'normal',
         workReportFlag: true,
@@ -171,16 +176,30 @@ export default {
       processData: {},
       customStyleData: "",
       customStyleData2: "",
+      processId:"",
     }
   },
 
-  async created() {
-    await this.switchStyleheight()
+   mounted () {
+     this.switchStyleheight()
   },
 
   methods: {
-     switchStyleheight() {
-      const mainRegion1 = this.$refs.dataTable // 表单页面区域
+
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop == 'productionOrderNo' || prop == 'productDrawingNo' || prop == 'processType' || prop == 'workGroupName' || prop == 'processName' || prop == 'waitReportNum' || prop == 'productCode' || prop == 'partnerCode'|| prop == 'warehouseName' || prop == 'shelfSpaceName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order === 'ascending'
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.getWorkListFun()
+    },
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.pageForm // 表单页面区域
+      console.log("this.$refs", this.$refs);
       console.log(mainRegion1);
       const mainHeight1 = mainRegion1.clientHeight
       // 其他同级组件占用高度
@@ -192,9 +211,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight = mainHeight1 - 350
-      console.log(maxHeight, 'maxHeight')
-      this.customStyleData = maxHeight
-      this.customStyleData2 = maxHeight + 70
+      this.customStyleData2 = maxHeight + 900
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -206,15 +223,38 @@ export default {
     init(row) {
       console.log("供需信息", row);
       this.processData = row
-      this.form.processId = row.id
+      this.processId=this.form.processId = row.id
+      
       this.getWorkListFun()
     },
-    search(){
+    search() {
       this.getWorkListFun()
     },
-    reset(){
-      this.form.productionOrderNo = ""
-      this.form.productDrawingNo = ""
+    reset() { 
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.form={
+        
+        productionOrderNo: "",
+        productDrawingNo: "",
+        processId: this.processId,
+        prodOrderStatus: 'normal',
+        workReportFlag: true,
+        processingType: "self_produced",
+        classAttribute: "semi_finished",
+        pageNum: -1,
+        pageSize: -1,
+        processId: "",
+        "orderItems": [
+          {
+            "asc": false,
+            "column": ""
+          },
+          {
+            "asc": false,
+            "column": "plan_start_date"
+          }
+        ],
+      },
       this.search()
     },
     getWorkListFun() {
@@ -237,7 +277,7 @@ export default {
     reportFun(row) {
       this.vibrateFormVisible = true
       this.$nextTick(() => {
-        this.$refs.VibrateForm.init(row, 'process')
+        this.$refs.drawerForm.init(row, 'process')
 
       })
 
@@ -255,9 +295,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.orderNosearch{
+.orderNosearch {
   padding-left: 0px;
 }
+
 // .main {
 //   padding: 10px 30px 0;
 // }
@@ -272,19 +313,16 @@ export default {
 
 
 
-//.el-button--small {
-// padding: 1;
-//}</style>
+
 ::v-deep .el-tabs__content {
-height: auto !important;
-padding: 0;
+  height: auto !important;
+  padding: 0;
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {
-padding: 9px 10px;
+  padding: 9px 10px;
 }
-</style>
-<style scoped lang="scss">
+
 .required {
   color: red;
   margin-right: 4px;

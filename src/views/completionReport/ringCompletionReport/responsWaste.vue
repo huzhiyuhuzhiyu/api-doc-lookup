@@ -2,7 +2,7 @@
 
   <el-dialog title="设置责废原因" :close-on-click-modal="false" :close-on-press-escape="false"
     @close="customerVisible = false" :visible.sync="customerVisible" lock-scroll
-    class="JNPF-dialog JNPF-dialog_center selectPro" width="40%" append-to-body>
+    class="JNPF-dialog JNPF-dialog_center selectPro" width="50%" append-to-body>
 
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
 

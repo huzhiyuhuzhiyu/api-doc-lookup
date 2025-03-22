@@ -51,7 +51,7 @@
                       <div v-if="btnType != 'look'">
                         <el-button type="text" style="margin-right:8px;font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                            class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                          class="iconfont-menu icon-saoma"></i>扫码录入</el-button>|
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                           @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -94,7 +94,7 @@
                           </template>
                           <template slot-scope="scope">
                             <ComSelect-list
-                              :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : ''  }"
+                              :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? this.wareHouseInfo.projectId || '' : ''  }"
                               :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                               @change="changeWarehousex"></ComSelect-list>
@@ -422,6 +422,7 @@ import WareHouseForm from './wareHouseForm.vue'
 export default {
   components: { WareHouseForm, Process, recordList },
   mixins: [flowMixin, busFlow,getProjectList],
+  
   data() {
     return {
       scanDialog: false,
@@ -450,7 +451,7 @@ export default {
       allProductTotal: 0,
       wareHouseVisible: false,
       ProductListRequestObj: {
-        classAttributeList: "",
+        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'],
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -584,7 +585,7 @@ export default {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
-        classAttributeList: this.classAttributeList,
+        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'], 
         orderItems: [
           {
             asc: false,
@@ -598,7 +599,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
       }
-      obj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      obj.projectId = this.isProjectSwitch === '1' ? this.wareHouseInfo.projectId || '' : ''
       getProductList(obj).then(res => {
         console.log("产品信息", res);
         res.data.records.forEach(item => {
@@ -651,7 +652,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttributeList: "",
+        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'], 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -676,10 +677,11 @@ export default {
     // 获取所有产品列表数据
     initData2() {
       this.listLoading = true
-      this.ProductListRequestObj.classAttributeList = this.classAttributeList
+      this.ProductListRequestObj.classAttributeList = ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB']
+
       this.ProductListRequestObj.warehouseId = this.wareHouseInfo.id
       console.log(this.wareHouseInfo);
-      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.wareHouseInfo.projectId || '' : ''
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
@@ -700,7 +702,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttributeList: this.classAttributeList,
+        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'], 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -833,7 +835,7 @@ export default {
       this.btnType = btnType
       console.log("btnty", btnType);
       if (btnType != 'look') {
-        this.getclassAttributeList()
+        // this.getclassAttributeList()
         this.getWarehouseListFun()
       }
       // this.refeshDataFormItems()
@@ -878,12 +880,12 @@ export default {
       }
 
     },
-    getclassAttributeList() {
-      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
-        console.log("类别属性", res);
-        this.classAttributeList = res.data
-      })
-    },
+    // getclassAttributeList() {
+    //   getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+    //     console.log("类别属性", res);
+    //     this.classAttributeList = res.data
+    //   })
+    // },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);

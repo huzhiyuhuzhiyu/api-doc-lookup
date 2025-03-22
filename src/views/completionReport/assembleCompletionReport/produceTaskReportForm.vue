@@ -90,6 +90,7 @@
                   <span class="left-title" v-if="processInfo.processType == 'pairs'">配对工序</span>
                   <span class="left-title" v-if="processInfo.processType == 'grinding'">磨孔工序</span>
                   <span class="left-title" v-if="processInfo.processType == 'accuracy'">精度工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'fatInjection'">注脂工序</span>
                 </div>
               </el-col>
 
@@ -252,7 +253,7 @@
                     <el-form-item label="总配对数量(对):" prop="matchedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.matchedQuantity"
-                        :disabled="currentProcess.pairingModeId === '' ? true : false" placeholder="总配对数量" class="ipt"
+                        :disabled=" !currentProcess.pairingModeId" placeholder="总配对数量" class="ipt"
                         @blur="countQualifiedQuantity" />
                     </el-form-item>
                   </el-col>
@@ -261,7 +262,7 @@
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity"
                         v-if="currentProcessType === 4 || currentProcessType === 5"
-                        :disabled="currentProcess.pairingModeId === '' ? false : true" placeholder="合格数量" class="ipt"
+                        :disabled=" currentProcess.pairingModeId" placeholder="合格数量" class="ipt"
                         @blur="handleBlur()" />
                       <el-input v-model="currentProcess.qualifiedQuantity"
                         v-if="currentProcessType === 1 || currentProcessType === 2 || currentProcessType === 3"
@@ -314,14 +315,7 @@
 
                     </el-form-item>
                   </el-col>
-                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcess.firstFlag !== true">
-                    <el-form-item label="不良数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.materialWasteQuantity" placeholder="不良数量" @blur="handleBlur2"
-                        class="ipt materialWaste" />
-                      <el-button type="primary" :disabled="!currentProcess.materialWasteQuantity"
-                        style="float: right;height: 50px" size="mini" @click='setBadReasons()'>设置不良原因</el-button>
-                    </el-form-item>
-                  </el-col> -->
+           
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -339,11 +333,7 @@
                         @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
                   </el-col>
-                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcessType == 1">
-                    <el-form-item label="返工数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt" />
-                    </el-form-item>
-                  </el-col> -->
+           
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
                       <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
@@ -614,9 +604,7 @@ export default {
       iptLabelMargin: '28px',
       producerMargin: '28px',
       stockFlag: '',
-      stockFlagList: [
-
-      ],
+      stockFlagList: [],
       vibrationLevelList: [],
       packagingMethodLiqqqqqqst: [],
       pairingModeList: [],
@@ -1079,6 +1067,33 @@ export default {
     reportingTimeChange(e) {
       this.currentProcess.reportingTime = e + ' 00:00:00'
     },
+        // 获取振动等级数据
+        getvibrationLevelFun() {
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj3).then(res => {
+        this.vibrationLevelList = res.data.records
+
+        this.$nextTick(() => {
+          const height = this.$refs.mycol.$el.clientHeight
+          this.targetHeight = height;
+        });
+      })
+
+    },
     commonFun() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
       // 如果是测振工序 则获取测振工序等级
@@ -1087,7 +1102,6 @@ export default {
 
       }
       // 如果是精度工序 则获取精度工序等级
-      console.log(999, this.currentProcessType, this.currentProcess.accuracyReportFlag);
       if (this.currentProcessType === 6 && this.currentProcess.accuracyReportFlag) {
         console.log("精度工序");
         this.getaccuracyFun()
@@ -1126,39 +1140,13 @@ export default {
             this.$set(this.currentProcess, 'producerId', result[0].id)
             this.$set(this.currentProcess, 'producerName', result[0].label)
 
-
+ 
           }
 
         }
       })
     },
-    // 获取振动等级数据
-    getvibrationLevelFun() {
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ]
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.vibrationLevelList = res.data.records
-
-        this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          this.targetHeight = height;
-        });
-      })
-
-    },
+    // 获取精度等级
     getaccuracyFun() {
       let obj3 = {
         pageNum: -1,
@@ -1280,9 +1268,7 @@ export default {
       // 先判断是否有测震工序(sort有值表示有测震工序)  
       // 如果有 拿当前工序排序值大于等于测震工序值 则表示是测震工序或测震后工序
       // 如果没有 则是测震前工序
-      console.log("this.currentProcess", this.currentProcess);
-      console.log("this.tableDataList)", this.tableDataList);
-      console.log("this.tableDataList2)", this.tableDataList2);
+     
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null

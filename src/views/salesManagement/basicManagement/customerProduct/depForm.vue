@@ -224,9 +224,9 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="remark" label="备注" min-width="200">
+                    <el-table-column prop="remark" label="备货工艺备注" min-width="200">
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btnType === 'look'" maxlength="200" />
+                        <el-input v-model="scope.row.remark" placeholder="请输入备货工艺备注" :disabled="btnType === 'look'" maxlength="200" />
                       </template>
                     </el-table-column>
 

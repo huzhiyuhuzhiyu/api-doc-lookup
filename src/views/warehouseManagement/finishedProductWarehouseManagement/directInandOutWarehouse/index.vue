@@ -788,12 +788,12 @@ export default {
         inspectionResults: "",
         partnerName: "",
         cooperativePartnerId: "",
+        cooperativePartnerIdText:"",
         approvalFlag: false,
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
         diffBatchNumFlag: true,
-        cooperativePartnerIdText:"",
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -1854,8 +1854,11 @@ export default {
       } else {
         this.partnerFlag = false
       }
-          this.dataForm.cooperativePartnerIdText=""
-    this.dataForm.cooperativePartnerId=""
+      if(this.btnType!='look'){
+
+        this.dataForm.cooperativePartnerIdText=""
+      this.dataForm.cooperativePartnerId=""
+      }
       console.log(111,this.$refs.products);
       setTimeout(() => {
         this.$nextTick(() => { this.$refs.products.doLayout() })
@@ -1949,7 +1952,9 @@ export default {
         // 获取详情
         detailWarehouseData(id).then(res => {
           this.$set(res.data.stockMove, 'cooperativePartnerIdText', res.data.stockMove.partnerName)
+          console.log("直接详情",res);
           this.dataForm = res.data.stockMove
+          console.log("this.datafo",this.dataForm);
           this.selectDocutementType(this.dataForm.businessType)
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)

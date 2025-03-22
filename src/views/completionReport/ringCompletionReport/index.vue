@@ -880,8 +880,10 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: "reporting_sort"
         }],
+        productClassAttribute: "semi_finished",
+        workReportFlag:true,
       }
       this.searchProcessData()
     },

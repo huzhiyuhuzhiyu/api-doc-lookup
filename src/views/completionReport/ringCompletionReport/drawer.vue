@@ -28,11 +28,18 @@
           <el-col :sm="24" :xs="24">
             <div class="info">
               <span class="left-title">工单类型：</span>
-              <span class="left-title" v-if="form.orderType == 'normal'">正常工单</span>
-              <span class="left-title" v-if="form.orderType == 'rework'">返工工单</span>
+              <span class="left-title" v-if="form.processType == 'normal'">正常工序</span>
+              <span class="left-title" v-if="form.processType == 'vibrate'">测振工序</span>
+              <span class="left-title" v-if="form.processType == 'heat_treatment'">热工工序</span>
+              <span class="left-title" v-if="form.processType == 'packing'">包装工序</span>
+              <span class="left-title" v-if="form.processType == 'pairs'">配对工序</span>
+              <span class="left-title" v-if="form.processType == 'grinding'">磨孔工序</span>
+              <span class="left-title" v-if="form.processType == 'accuracy'">精度工序</span>
+              <span class="left-title" v-if="form.processType == 'fatInjection'">注脂工序</span>
+              <span class="left-title" v-if="form.processType == 'typing'">打字工序</span>
             </div>
           </el-col>
-
+ 
           <el-col :sm="24" :xs="24">
             <div class="info">
               <span class="left-title">品名规格：</span>
@@ -129,7 +136,7 @@
             </div>
             <div style="padding: 0 20px;">
 
-           
+
 
               <el-col :sm="24" :xs="24">
                 <el-form-item label="合格数量" prop="qualifiedQuantity" class="iptLabel">
@@ -137,7 +144,7 @@
                     @blur="handleBlur(form.qualifiedQuantity)" />
                 </el-form-item>
               </el-col>
-              <el-col :sm="24" :xs="24">
+              <!-- <el-col :sm="24" :xs="24">
                 <el-form-item label="责废数量" class="iptLabel">
                   <el-input v-model="form.responsibilityWasteQuantity" placeholder="责废数量" @blur="handleBlur2"
                     class="ipt" />
@@ -147,14 +154,30 @@
                 <el-form-item label="料废数量" class="iptLabel">
                   <el-input v-model="form.materialWasteQuantity" placeholder="料废数量" @blur="handleBlur3" class="ipt" />
                 </el-form-item>
-              </el-col>
+              </el-col> -->
               <el-col :sm="24" :xs="24">
+                    <el-form-item label="责废数量:" class="iptLabel">
+                      <el-input v-model="form.responsibilityWasteQuantity" disabled placeholder="责废数量"
+                        @blur="handleBlur2" class="ipt materialWaste" />
+                        <el-button type="primary" 
+                        style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24">
+                    <el-form-item label="料废数量:" class="iptLabel">
+                      <el-input v-model="form.materialWasteQuantity" disabled placeholder="料废数量"  
+                        class="ipt materialWaste" />
+                      <el-button type="primary"  
+                        style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
+                    </el-form-item>
+                  </el-col>
+              <!-- <el-col :sm="24" :xs="24">
                 <el-form-item label="返工数量" class="iptLabel">
                   <el-input v-model="form.reworkQuantity" placeholder="返工数量" class="ipt" />
                 </el-form-item>
-              </el-col>
-      
-              <el-col :sm="24" :xs="24" class="iptLabel">
+              </el-col> -->
+
+              <el-col :sm="24" :xs="24" class="iptLabel" v-if="form.processType == 'grinding'">
                 <el-form-item label="孔径" :prop="aperture">
                   <el-select v-model="form.aperture" placeholder="孔径" style="width: 100%;" class="ipt">
                     <el-option v-for="(item, index) in apertureList" :key="index" :label="item.label"
@@ -163,10 +186,11 @@
                 </el-form-item>
               </el-col>
               <el-col :sm="24" :xs="24">
-                    <el-form-item label="报工时间" class="iptLabel">
-                  <el-date-picker v-model="form.reportingTime" value-format="yyyy-MM-dd" @change="reportingTimeChange" class="ipt" type="date" style="width: 100%;"  placeholder="选择报工时间"> </el-date-picker>
+                <el-form-item label="报工时间" class="iptLabel">
+                  <el-date-picker v-model="form.reportingTime" value-format="yyyy-MM-dd" @change="reportingTimeChange"
+                    class="ipt" type="date" style="width: 100%;" placeholder="选择报工时间"> </el-date-picker>
                 </el-form-item>
-                  </el-col>
+              </el-col>
               <el-col :sm="24" :xs="24" class="iptLabel">
                 <el-form-item label="生产人" prop="producerName" v-if="form.taskMethod != 'not_appoint'">
                   <el-select v-model="form.producerName" placeholder="生产人" style="width: 100%;" class="ipt">
@@ -217,18 +241,32 @@
       <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitReportFun()">
         提交</el-button>
     </span>
+    <MaterialWasteForm v-if="materialWasteFormVisible" ref="materialWasteFormRef" @change="materialWasteData">
+    </MaterialWasteForm>
+    <responsWaste v-if="responsWasteFormVisible" ref="responsWasteFormRef" @change="responsWasteData">
+    </responsWaste>
   </el-dialog>
 
 </template>
 <script>
 import { detailordershengchan, getWorkList, addWorkReport, detailWorkData } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
+import MaterialWasteForm from './materialWasteForm.vue';
+import responsWaste from './responsWaste.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
+  
+  components: {
+    MaterialWasteForm,responsWaste
+  },
   data() {
     return {
+      responsWasteFormVisible:false,
+      materialWasteFormVisible: false,
+      materialWasteDataList: [],
+      responsWasteDataList:[],
       targetHeight: "",
       title: "",
       dataRule: {
@@ -282,8 +320,8 @@ export default {
         equipmentName: "",
         equipmentId: "",
         remark: "",
-        workOrderNo: "", 
-        aperture:"",
+        workOrderNo: "",
+        aperture: "",
       },
       selectArr: [],
       listLoading: false,
@@ -294,14 +332,45 @@ export default {
       codeConfig: {},
       vibrationLevelList: [],
       totalReportNum: 0,
-      apertureList: [],
-      targetHeight:"",
+      apertureList: [], 
     }
   },
   mounted() {
 
   },
   methods: {
+    setMaterialWasteM() {
+      console.log("this.materialWasteDataList", this.materialWasteDataList);
+      this.materialWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.materialWasteFormRef.init(JSON.parse(JSON.stringify(this.materialWasteDataList)), this.form.materialWasteQuantity,this.form.projectId)
+      })
+    },
+    // 设置责废原因
+    setResponsWasteM() {
+      console.log("this.responsWasteDataList", this.responsWasteDataList);
+      this.responsWasteFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.responsWasteFormRef.init(JSON.parse(JSON.stringify(this.responsWasteDataList)), this.form.responsibilityWasteQuantity,this.form.projectId)
+      })
+    },
+    materialWasteData(data,totalNums) {
+      console.log("设置的料废金额", data,totalNums);
+      if(totalNums){
+     
+      this.materialWasteDataList = data
+      this.form.materialWasteQuantity=totalNums
+        this.handleBlur2()
+      }
+    },
+    responsWasteData(data,totalNums){
+      console.log("责废数据",data,totalNums);
+      this.responsWasteDataList = data
+      if(totalNums){
+        this.form.responsibilityWasteQuantity=totalNums
+        this.handleBlur2()
+      }
+    },
     //生产人
     hangleSelectSales(e, r) {
       this.$nextTick(() => {
@@ -309,19 +378,19 @@ export default {
       })
       this.form.producerId = e
     },
-    reportingTimeChange(e){
+    reportingTimeChange(e) {
       this.form.reportingTime = e + ' 00:00:00'
     },
     forceUpdata() {
       this.$forceUpdate()
     },
     handleBlur(item, data) {
-  
+
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [item, this.form.unqualifiedQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },
     init(workData, type) {
-      console.log("workData", workData,type);
+      console.log("workData", workData, type);
       if (type == 'process') {
         this.title = "工序报工"
       }
@@ -329,10 +398,10 @@ export default {
 
       this.getDetailWorkDataFun(workData.id)
       this.$nextTick(() => {
-          const height = this.$refs.mycol.$el.clientHeight
-          console.log('el-col的高度是1：', height);
-          this.targetHeight = height;
-        });
+        const height = this.$refs.mycol.$el.clientHeight
+        console.log('el-col的高度是1：', height);
+        this.targetHeight = height;
+      });
     },
     handleBlur2() {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
@@ -387,7 +456,7 @@ export default {
         this.producePersonListFun(res.data.id)
 
         const end = new Date();//获取当前的日期
-        this.$set(this.form,'reportingTime',this.dateFormat(end))
+        this.$set(this.form, 'reportingTime', this.dateFormat(end))
       })
     },
     // 获取生产人员数据
@@ -452,8 +521,10 @@ export default {
           obj.unqualifiedQuantity = this.form.unqualifiedQuantity
           obj.aperture = this.form.aperture
           obj.workOrderId = this.form.id
+          obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList] 
+          
           arr.push(obj)
-         
+
           addWorkReport(arr).then(res => {
             this.customerVisible = false
             this.$message.success("报工成功")
@@ -551,5 +622,8 @@ export default {
 
 .JNPF-dialog.JNPF-dialog_center ::v-deep.el-dialog .el-dialog__body {
   padding: 10px !important;
+}
+.materialWaste {
+  width: 70%;
 }
 </style>

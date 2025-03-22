@@ -108,12 +108,12 @@
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="280" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="demandProcessing(scope.row, 'add')" editText="直接处理" :hasDel="false">
-                  <!-- <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'add')">
+                  <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'add')">
                     发起处理评审
-                  </el-button> -->
+                  </el-button>
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
                     查看详情
                   </el-button>

@@ -200,6 +200,7 @@ export default {
         remark: '',
         approvalFlag: false
       },
+      workReport:{},
       defaultAddress: '',
       parentId: '',
       pickerOptions: {
@@ -401,6 +402,7 @@ export default {
       console.log(inspectionType, 'ddd')
 
       this.dataForm = { ...row }
+      this.workReport = {...row}
       this.dataForm.reportNo = this.dataForm.orderNo
       this.dataForm.actualResponsibilityWasteQuantity = Number(this.dataForm.responsibilityWasteQuantity) 
       this.dataForm.actualMaterialQuantity = Number(this.dataForm.materialWasteQuantity)
@@ -516,7 +518,7 @@ export default {
         let obj = {
           attachmentList: this.datafilelist,
           inspection: this.dataForm,
-          workReport: this.dataForm,
+          workReport: this.workReport,
           lines: [],
           flowData: this.flowData
         }

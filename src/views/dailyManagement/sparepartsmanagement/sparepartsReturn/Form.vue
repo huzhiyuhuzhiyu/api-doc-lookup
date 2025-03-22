@@ -188,7 +188,7 @@
     </div>
   </transition>
 </template>
-    
+
 <script>
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
@@ -386,7 +386,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    // 备件列表选中 
+    // 备件列表选中
     handeleProductInfoData(val) {
       console.log(val);
       this.selectRows = val
@@ -522,7 +522,7 @@ export default {
         }
         this.btnLoading = true
         let formMethod = null;
-        if (this.btnType == 'edit') {
+        if (this.btnType == 'edit' || this.btnType == 'return') {
           formMethod = updateCollectionandreturn
         } else if (this.btnType == 'add') {
           formMethod = addCollectionandreturn
@@ -636,4 +636,3 @@ export default {
   display: inline-block;
 }
 </style>
-    

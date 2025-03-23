@@ -38,7 +38,7 @@
                             </el-col>
                             <el-col :sm="6" :xs="24">
                               <el-form-item label="是否出库" prop="stockFlag">
-                                <el-select v-model="dataForm.stockFlag" placeholder="请选择是否出库" style="width: 100%;"
+                                <el-select v-model="dataForm.stockFlag" @focus="setMinWidth" placeholder="请选择是否出库" style="width: 100%;"
                                   :disabled="btnType == 'look' ? true : false">
                                   <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label"
                                     :value="item.value"></el-option>

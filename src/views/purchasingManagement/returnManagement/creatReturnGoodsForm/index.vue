@@ -663,6 +663,7 @@ export default {
         { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
 
       ], // 产品选择弹出框搜索条件
+      minWidth:0,
     }
   },
   computed: {

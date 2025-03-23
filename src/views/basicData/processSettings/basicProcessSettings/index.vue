@@ -87,8 +87,8 @@
           <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search" @click="moreQueries()">更多查询</el-button> -->
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding:8px" v-loading="listLoading">
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
+        <div class="JNPF-common-head" style="padding:8px">
           <topOpts @add="addOrUpdateHandle('', 'add')">
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"

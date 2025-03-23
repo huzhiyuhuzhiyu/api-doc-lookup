@@ -21,7 +21,7 @@
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" style="padding: 0 10px;">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="6" v-if="type === 'look'">
@@ -105,7 +105,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
+                      <el-table-column prop="productName" label="工序名称" min-width="160">
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
@@ -1524,7 +1524,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  /* padding: 10px; */
   border-top: none !important;
 }
 

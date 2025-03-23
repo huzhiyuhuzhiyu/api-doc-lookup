@@ -17,12 +17,12 @@
                 <el-button @click="goBack" v-if="!!dialogTitle">{{ $t('common.cancelButton') }}</el-button>
               </div>
             </div>
-            <div class="main">
+            <div class="main" ref="main">
               <el-tabs v-model="activeName">
                 <el-tab-pane label="基础信息" name="jcInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                      <el-row :gutter="15" class="">
+                      <el-row :gutter="15" style="padding: 0 10px;">
                         <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                           label-position="top">
                           <!-- <el-col :sm="6" :xs="24">
@@ -77,20 +77,18 @@
                         </el-button>
                         |
                       </div>
-                      <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                        <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true" ref="multipleTable"
+                      <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" :rules="productRules">
+                        <JNPF-table style="border: 1px solid #e3e7ee;" hasC :fixedNO="true" ref="multipleTable" 
                           @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                          id="table" border height="460">
-                          <el-table-column type="selection" width="55" fixed="left" align="center"
-                            :key="2"></el-table-column>
-                          <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                          id="table" border :height="customStyleData">
                           <el-table-column prop="projectName" label="所属项目" width="120"
                             v-if="abProjectSwitchVisible"></el-table-column>
                           <el-table-column prop="productCode" label="产品编码" width="160"
                             show-overflow-tooltip></el-table-column>
                           <el-table-column prop="productName" label="产品名称" width="160" show-overflow-tooltip
                             v-if="isProductNameSwitch === '1'"></el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                          <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip>
+                          </el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                             <template slot="header">
                               <span class="required">*</span>
@@ -103,14 +101,13 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="processName" label="工序名称" width="135" show-overflow-tooltip>
+                          <el-table-column prop="processName" label="工序名称" width="135" :showOverflowTooltip="false">
                             <template slot="header">
                               <span class="required">*</span>
                               工序名称
                             </template>
                             <template slot-scope="scope">
-                              <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
-                                :rules="productRules.processName">
+                              <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRules.processName">
                                 <!-- 工序选择弹窗  -->
                                 <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                                   v-model="scope.row.processName" @change="onOrganizeChangeTwo"
@@ -253,7 +250,7 @@
                               </el-button>
                             </template>
                           </el-table-column>
-                        </el-table>
+                        </JNPF-table>
                       </el-form>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                         <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
@@ -413,9 +410,6 @@ export default {
       sourceVisibled: false,
       type: 'add',
       dataFormArr: [],
-      rules: {
-        remark: [{ required: true, message: '请输入备注', trigger: ['blur'] }]
-      },
       productArr: [],
       defaultProps: {
         children: 'children',
@@ -509,7 +503,8 @@ export default {
           },
           { required: true, trigger: ['blur'] }
         ],
-        processName: [{
+        processName: [
+          {
           validator: this.formValidate({
             type: 'noEmtry',
             params: [
@@ -518,9 +513,8 @@ export default {
                 this.$message.error(`产品信息第${index + 1}行：工序名称${errMsg}`)
               }
             ]
-          }),
-          trigger: ['blur']
-        }, { required: true, message: '请选择工序名称', trigger: ['change'] }],
+          }),trigger: ['change']},
+        ],
         taxRate: [
           // 税率
           {
@@ -598,7 +592,7 @@ export default {
             ]
           }),
           trigger: ['blur']
-        }, { required: true, message: '请选择交货日期', trigger: ['change'] }]
+        }]
       },
 
       taxRateList: [],
@@ -608,7 +602,8 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       tipsvisible: false,
-      btnText: '继续新建'
+      btnText: '继续新建',
+      customStyleData:0,
     }
   },
   computed: {
@@ -700,8 +695,32 @@ export default {
 
     this.fetchData('EPDH')
     this.getBusInfo()
+    this.switchStyleheight()
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 340
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -1401,7 +1420,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  /* padding: 10px; */
   border-top: none !important;
 }
 

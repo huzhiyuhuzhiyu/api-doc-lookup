@@ -82,11 +82,9 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type == 'edit'" hasNO fixedNO
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type !== 'look'" hasNO fixedNO
                       ref="multipleTable" v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
                       @row-click="openDetails">
-                      <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
-                      <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="160"
@@ -137,7 +135,7 @@
                             :rules="productRules.deliveryDate">
                             <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
                               :disabled="type == 'look' ? true : false" style="width: 100%;"
-                              placeholder="请选择交货日期"></el-date-picker>
+                              placeholder="交货日期"></el-date-picker>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -148,7 +146,7 @@
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
                       <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
+                      <el-table-column prop="purchaseQuantity" label="数量" :min-width="isDeputyUnitSwitch === '1' ? 120 : 100">
                         <template slot="header">
                           <span class="required">*</span>
                           {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -365,10 +363,8 @@
                 |
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type == 'edit'" hasNO fixedNO ref="multipleTable"
+                <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type !== 'look'" hasNO fixedNO ref="multipleTable"
                   v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
-                  <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
-                  <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                   <el-table-column prop="projectName" label="所属项目" width="120"
                     v-if="abProjectSwitchVisible"></el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
@@ -428,7 +424,7 @@
                   </template>
                   <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                     :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                  <el-table-column prop="purchaseQuantity" label="数量" min-width="100">
+                  <el-table-column prop="purchaseQuantity" label="数量" :min-width="isDeputyUnitSwitch === '1' ? 150 : 100">
                     <template slot="header">
                       <span class="required">*</span>
                       {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
@@ -631,6 +627,8 @@ import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import { getBimProcessList } from '@/api/bimProcess/index'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: { Process, recordList, SourceArea },
   mixins: [busFlow, AbProjectMixin],
@@ -709,6 +707,30 @@ export default {
         // { prop: 'name', label: '产品名称', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
+      // 工序
+      getBimProcessList,
+      //  供应商 树请求
+      ProcessMethodArr: { method: getcategoryTree, requestObj: { type: 'process' } },
+      // 供应商 列表
+      ProcessTableItems: [
+        { prop: 'code', label: '工序编码' },
+        { prop: 'name', label: '工序名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 供应商搜索条件
+      ProcessTableSearchList: [
+        { prop: 'code', label: '工序编码', type: 'input' },
+        { prop: 'name', label: '工序名称', type: 'input' }
+      ],
+      // 供应商请求参数
+      ProcessListRequestObj: {
+        code: '',
+        name: '',
+        processingType: 'external_production',
+        pageNum: 1,
+        pageSize: 20
+      },
       title: '',
       datafilelist: [],
       activeName: 'jcInfo',
@@ -782,6 +804,9 @@ export default {
       isattachmentswitch: '',
       categoryId: ''
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
   },
   async created() {
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -1093,7 +1118,20 @@ export default {
         })
       }
     },
+      // 选择产品名称的弹框
+      onOrganizeChangeTwo(val, data, paramsObj) {
+      if (!data || !data.length) return
+      console.log(data)
+      console.log(paramsObj, '1111')
+      let index = paramsObj.scope.$index
+      console.log(index, '索引')
+      if (data.length) {
+        this.dataFormTwo.data[index].processName = data[0].name
+        this.dataFormTwo.data[index].processId = data[0].id
+      }
 
+      console.log(this.dataFormTwo, 'this.dataFormTwo')
+    },
     // 去除系数后两位的小数位
     numberFormat(number) {
       var formatted = parseFloat(number)

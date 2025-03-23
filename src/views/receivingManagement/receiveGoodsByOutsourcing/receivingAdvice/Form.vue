@@ -1750,11 +1750,14 @@ export default {
             // } else if (value == 'submit') {
             //   msg = '提交成功'
             // }
+            let msg = res.msg
+            if (res.msg === 'Success') { msg = this.dataForm.documentStatus == "submit" ? "提交成功" : "保存成功" }
             if (value == 'draft') {
               this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {
               this.submitmethodsTitle = '提交成功'
             }
+            this.$message.success(msg)
             if (type) {
               this.enCode = 'p018'
               this.formId = res.data.id
@@ -1767,17 +1770,6 @@ export default {
             } else {
               this.tipsvisible = true
             }
-
-            // this.$message({
-            //   message: msg,
-            //   type: 'success',
-            //   duration: 1500,
-            //   onClose: () => {
-            //     this.visible = false
-            //     this.btnLoading = false
-            //     this.$emit('close', true)
-            //   }
-            // })
           })
           .catch(() => {
             this.btnLoading = false
@@ -1802,6 +1794,10 @@ export default {
     closePrint() {
       this.btnLoading = false
       this.printVisible = false
+      this.$message.warning("取消打印")
+    },
+    closePrintPage() {
+      this.$emit('close', true)
     },
     // 测试审批流
     getBusInfo() {

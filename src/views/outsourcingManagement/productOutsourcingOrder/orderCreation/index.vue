@@ -302,7 +302,7 @@ import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
-
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     SourceArea,

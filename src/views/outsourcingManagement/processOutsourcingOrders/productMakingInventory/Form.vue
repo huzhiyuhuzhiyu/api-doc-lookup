@@ -33,7 +33,7 @@
                             "></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
 
                           <!-- 供应商选择弹窗  -->
@@ -166,7 +166,7 @@
                         :key="23" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="price" label="含税单价" width="180">
+                      <el-table-column prop="price" label="含税单价" width="180" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           单价(含税)
@@ -177,7 +177,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="totalAmount" label="金额" min-width="140">
+                      <el-table-column prop="totalAmount" label="金额" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           金额(含税)
@@ -190,7 +190,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="140">
+                      <el-table-column prop="taxRate" label="税率" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')"> 
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -205,7 +205,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                             <div class="viewData">
@@ -215,7 +215,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="taxAmount" label="税额" min-width="100">
+                      <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           税额
@@ -230,7 +230,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="180">
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           金额(不含税)
@@ -324,6 +324,7 @@ import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getBimProcessList, getNextBimProcess } from '@/api/bimProcess/index'
 import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     SourceArea,
@@ -693,6 +694,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0

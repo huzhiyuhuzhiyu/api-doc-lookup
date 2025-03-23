@@ -35,7 +35,7 @@
                                 "></el-input>
                             </el-form-item>
                           </el-col> -->
-                          <el-col :sm="6" :xs="24">
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                             <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                               <!-- 供应商选择弹窗  -->
                               <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
@@ -320,7 +320,7 @@ import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
-
+import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     SourceArea,
@@ -612,6 +612,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0

@@ -745,7 +745,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 425
+      let maxHeight = mainHeight1 - 430
       console.log(maxHeight, 'maxHeight')
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放
@@ -756,6 +756,100 @@ export default {
         }, 100)
       }
     },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
+    setMinWidth (val) {
+      this.minWidth = val.srcElement.clientWidth
+    },
+    // 弹窗节点的点击
+    treeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
+    // 切换供应商后给的提示
+    async beforeSubmit(data, paramsObj) {
+      let flag = true
+      if (paramsObj.oldData.length) {
+        flag = await this.$confirm('切换供应商将清空产品价格信息，是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$message({
+              type: 'success',
+              message: '更换成功!'
+            })
+            this.$refs['productForm'].resetFields()
+            return true
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+            return false
+          })
+      }
+      return flag
+    },
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('partnerName')
+      })
+      if (data.length === 0) {
+        this.dataForm.partnerName = ''
+        this.dataForm.cooperativePartnerCode = ''
+        this.dataForm.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.dataForm.partnerName = data[0].all.name
+        this.dataForm.cooperativePartnerCode = data[0].all.code
+        this.dataForm.cooperativePartnerId = data[0].all.id
+        let productIdList = []
+        this.dataFormTwo.productData.forEach((item) => {
+          productIdList.push(item.productsId)
+        })
+        let _data = {
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          productIdList
+        }
+      }
+    },
+
        // 产品组件回调
     addth(id, data) {
       this.getProductClassFun()

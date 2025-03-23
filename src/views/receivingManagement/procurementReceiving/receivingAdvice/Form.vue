@@ -115,8 +115,8 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
                   :rules="productRules">
-                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" hasNO fixedNO
-                    @selection-change="handeleProductInfoData" :height="customStyleData">
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
@@ -148,7 +148,7 @@
                           v-model="scope.row.proportion" placeholder="比重"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                    <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
                       v-if="isProportionSwitch === '1'">
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
@@ -357,8 +357,8 @@
               </el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" hasNO fixedNO
-                @selection-change="handeleProductInfoData" :height="customStyleData">
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip key="3" />
@@ -387,7 +387,7 @@
                       v-model="scope.row.proportion" placeholder="比重"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
                   v-if="isProportionSwitch === '1'">
                   <template slot-scope="scope">
                     <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
@@ -1107,7 +1107,7 @@ export default {
       let maxHeight = mainHeight1 - 420
       console.log(maxHeight, 'maxHeight')
       if (this.btnType === 'look') {
-        this.customStyleData = maxHeight + 40
+        this.customStyleData = maxHeight + 30
       } else {
         this.customStyleData = maxHeight
       }
@@ -2080,6 +2080,9 @@ export default {
             // } else if (value == 'submit') {
             //   msg = '提交成功'
             // }
+            let msg = res.msg
+            if (res.msg === 'Success') { msg = this.dataForm.documentStatus == "submit" ? "提交成功" : "保存成功" }
+            this.$message.success(msg)
             if (value == 'draft') {
               this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {
@@ -2097,16 +2100,6 @@ export default {
             } else {
               this.tipsvisible = true
             }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
           })
           .catch(() => {
             this.btnLoading = false
@@ -2131,6 +2124,10 @@ export default {
     closePrint() {
       this.btnLoading = false
       this.printVisible = false
+      this.$message.warning("取消打印")
+    },
+    closePrintPage() {
+      this.$emit('close', true)
     },
     // 测试审批流
     getBusInfo() {

@@ -114,8 +114,8 @@
                   </el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" hasNO fixedNO
-                    @selection-change="handeleProductInfoData" :height="customStyleData">
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" hasNO
+                   fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
@@ -359,11 +359,8 @@
               </el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" hasNO fixedNO
-                @selection-change="handeleProductInfoData" :height="customStyleData">
-                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
-                  key="0" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
@@ -1090,8 +1087,9 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 455
+      let maxHeight = mainHeight1 - 460
       console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
       if (this.btnType === 'look') {
         this.customStyleData = maxHeight + 30
       } else {
@@ -2062,11 +2060,14 @@ export default {
         }
         formMethod(obj)
           .then((res) => {
+            let msg = res.msg
+            if (res.msg === 'Success') { msg = this.dataForm.documentStatus == "submit" ? "提交成功" : "保存成功" }
             if (value == 'draft') {
               this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {
               this.submitmethodsTitle = '提交成功'
             }
+            this.$message.success(msg)
             if (type) {
               this.enCode = 'p018'
               this.formId = res.data.id
@@ -2079,16 +2080,6 @@ export default {
             } else {
               this.tipsvisible = true
             }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
           })
           .catch(() => {
             this.btnLoading = false
@@ -2114,6 +2105,10 @@ export default {
     closePrint() {
       this.btnLoading = false
       this.printVisible = false
+      this.$message.warning("取消打印")
+    },
+    closePrintPage() {
+      this.$emit('close', true)
     },
     // 测试审批流
     getBusInfo() {

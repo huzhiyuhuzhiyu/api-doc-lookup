@@ -115,11 +115,8 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
                   :rules="productRules">
-                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData" :height="customStyleData">
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
-                      key="0" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
@@ -256,7 +253,7 @@
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                       </template>
                     </el-table-column>
-                  </el-table>
+                  </JNPF-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin:0 10px">总收货数量：{{ totalDeliveryQuantity }}</span>
                   </div>
@@ -360,11 +357,8 @@
               </el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData" :height="customStyleData">
-                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
-                  key="0" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip key="3" />
@@ -510,7 +504,7 @@
                     <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                   </template>
                 </el-table-column>
-              </el-table>
+              </JNPF-table>
               <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                 <span style="font-weight:500;margin:0 10px">总收货数量：{{ totalDeliveryQuantity }}</span>
               </div>
@@ -1110,9 +1104,14 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 450
+      let maxHeight = mainHeight1 - 420
       console.log(maxHeight, 'maxHeight')
-      this.customStyleData = maxHeight
+      if (this.btnType === 'look') {
+        this.customStyleData = maxHeight + 30
+      } else {
+        this.customStyleData = maxHeight
+      }
+      
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)

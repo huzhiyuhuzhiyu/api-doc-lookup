@@ -33,9 +33,9 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="是否出库" prop="stockFlag">
-                        <el-select v-model="dataForm.stockFlag" placeholder="请选择是否出库" style="width: 100%;"
+                        <el-select v-model="dataForm.stockFlag" @focus="setMinWidth" placeholder="请选择是否出库" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label"
+                          <el-option v-for="(item, index) in stockFlagList" :key="index" :label="item.label" :style="{'min-width': minWidth + 2 + 'px'}"
                             :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
@@ -717,6 +717,7 @@ export default {
         { prop: 'productDrawingNo', label: "品名规格", type: 'input' },
 
       ], // 产品选择弹出框搜索条件
+      minWidth:0,
     }
   },
   computed: {
@@ -784,6 +785,9 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    setMinWidth (val) {
+      this.minWidth = val.srcElement.clientWidth
+    },
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
@@ -1605,9 +1609,5 @@ $footerPadding: '10px';
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
-}
-/* 使用 /deep/ 或者 ::v-deep 来穿透组件的 scoped CSS */
-::v-deep .el-select-dropdown__item {
-  width: 100%; /* 调整为你需要的宽度 */
 }
 </style>

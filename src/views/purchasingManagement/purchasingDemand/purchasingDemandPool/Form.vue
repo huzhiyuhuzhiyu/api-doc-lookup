@@ -41,6 +41,15 @@
                             style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                              <el-form-item label="是否生成免检通知单" prop="stockFlag">
+                                <el-select v-model="dataForm.noticeFlag" placeholder="请选择是否生成免检通知单" style="width: 100%;"
+                                  :disabled="btnType == 'look' ? true : false">
+                                  <el-option v-for="(item, index) in noticeFlagList" :key="index" :label="item.label"
+                                    :value="item.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
                     </el-form>
                   </el-row>
                 </el-collapse-item>
@@ -592,7 +601,7 @@ export default {
       },
       type: '',
       dataFormArr: [],
-
+      noticeFlagList: [{ label: '是', value: true }, { label: '否', value: false }],
       rules: {
         // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
@@ -1395,6 +1404,7 @@ export default {
           flowData: this.flowData
         }
         console.log(_data, 'data')
+        
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'
@@ -1466,7 +1476,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 325
+      let maxHeight = mainHeight1 - 430
       console.log(maxHeight, 'maxHeight')
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放

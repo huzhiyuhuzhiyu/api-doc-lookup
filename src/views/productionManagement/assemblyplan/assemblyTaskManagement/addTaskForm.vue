@@ -1426,7 +1426,7 @@ export default {
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160,
-          render: this.dataForm.pickingWay == 'production_order',
+    
         },
         { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
       ]

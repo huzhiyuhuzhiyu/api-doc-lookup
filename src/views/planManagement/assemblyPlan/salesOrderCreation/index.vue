@@ -104,7 +104,7 @@
             <el-table-column label="操作" min-width="120" fixed="right">
               <template slot-scope="scope">
 
-                <el-button size="mini" type="text" @click.native="printFun(scope.row.id)">打印</el-button>
+                <el-button size="mini" type="text" @click.native="printFun(scope.row.id)">打印备货工艺</el-button>
 
               </template>
             </el-table-column>
@@ -356,7 +356,7 @@ export default {
     },
     // 打印
     printFun(id) {
-      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p059' // 筛选出 businessType 等于 type 的项  
       this.formId = id
       this.fullName = "备货工艺" // 筛选出 businessType 等于 type 的项  
       this.printVisible = true

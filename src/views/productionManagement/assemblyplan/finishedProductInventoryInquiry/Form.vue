@@ -844,7 +844,6 @@ export default {
           pairingModeName : item.pairingModeName,
         }
       })
-      console.log(this.materialList, 'this.materialList')
     },
     deleteth(scope, index, type) {
       this.materialList.splice(scope.$index, 1)
@@ -894,7 +893,6 @@ export default {
     },
     changeMove(data) {
       data.forEach((item) => {
-        console.log(item, 'ooooo')
         item.sort = item.sortCode
 
       })
@@ -941,8 +939,6 @@ export default {
     },
     // 新增工序  所选的工序
     selectProcessFun(data) {
-      console.log(111, this.dataFormTwo.data);
-      console.log(222, data);
       this.dataFormTwo.data = [...this.dataFormTwo.data, ...data]
     },
     // 选中要删除的数据
@@ -981,7 +977,6 @@ export default {
     async getpairingModeListFun() {
       try {
         this.pairingModeList = await this.jnpf.getpairingModeListFun()
-        console.log("this.par", this.pairingModeList);
       } catch (error) { }
     },
     async getTechnicalSwitch(code, type) {
@@ -1004,7 +999,6 @@ export default {
     // 获取业务参数中 属性字段动态显示
     async getProductAttributeFun() {
       await getOrderFiledMap('sale').then(res => {
-        console.log("产品属性", res, this.bimProductAttributesList);
         // sealingCoverTypingFlag list1  pa007
         // accuracyLevelFlag list2  pa006
         // vibrationLevelFlag list3 pa005
@@ -1136,9 +1130,7 @@ export default {
       })
     },
     selectLine(e) {
-      console.log(e);
       getProductionLineInfo(e).then(res => {
-        console.log("产线", res);
         let list = res.data.workstationList
         // 遍历 arr 数组  
         this.dataFormTwo.data.forEach(item => {
@@ -1226,7 +1218,6 @@ export default {
     },
     // 点击详情
     getDetailFun(id, data, type) {
-      console.log(data);
       this.dispatchSearchForm.resIdList = [];
       this.dispatchSearchForm.resIdList.push(id.split("_")[0]);
       // this.detailDataList = data
@@ -1241,7 +1232,6 @@ export default {
       this.dataFormSubmit();
     },
     changresouce(item, type) {
-      console.log("单击item", item);
       if (type == "人员") {
         this.currentPersonId = item.split("_")[0];
       }
@@ -1272,7 +1262,6 @@ export default {
     },
     // 选择班组
     selectWorkgroupFun(scope) {
-      console.log("班组", scope);
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.work_group) {
           this.index = scope.$index;
@@ -1305,7 +1294,6 @@ export default {
     },
     // 选择设备
     selectDeviceFun(scope) {
-      console.log("设备", scope);
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.device) {
           this.index = scope.$index
@@ -1336,7 +1324,6 @@ export default {
     },
     //  选择人员
     selectPersonnelFun(scope) {
-      console.log(scope.row);
       if (scope.row.routingProResMap) {
         if (scope.row.routingProResMap.personnel) {
           this.currentPersonId = scope.row.personId;
@@ -1366,7 +1353,6 @@ export default {
       }
     },
     selectResouce(item, type) {
-      console.log("双击item", item);
       if (type == "人员") {
         this.dataFormTwo.data[this.index].personId = item.split("_")[0];
         this.dataFormTwo.data[this.index].routingProResMap.personnel.forEach((item) => {
@@ -1400,10 +1386,8 @@ export default {
     },
     // 选择工位
     selectworkstation(row) {
-      console.log(row);
       this.workstationList = [];
       getProductionLineInfo(row.productionLineId).then((res) => {
-        console.log("工位", res);
         this.workstationList = res.data.returnList;
         console.log(this.workstationList);
         this.$forceUpdate();
@@ -1459,7 +1443,6 @@ export default {
       // 获取产线
       objs.projectId = this.dataForm.projectId
       getProductionLineList(objs).then((res) => {
-        console.log("产线", res);
         this.productionLineList = res.data.records;
       });
     },
@@ -1467,7 +1450,6 @@ export default {
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
-        console.log("工艺详情", res);
         res.data.routingLineList.forEach((item) => {
           if (item.routingProResMap) {
             if (item.routingProResMap.personnel) {
@@ -1492,7 +1474,6 @@ export default {
       })
     },
     init(data, btnType, pageType) {
-      console.log(data);
       this.getProductionLineListFun()
       this.creaFun()
       // this.dataForm = data[0]
@@ -1517,7 +1498,8 @@ export default {
           productsDrawingNo: item.productDrawingNo,
           pairingModeId: item.pairingModeId,
           pairingModeName: item.pairingModeName,
-
+          stockInventoryLineId:item.id,
+          batchNumber:item.batchNumber,
         }
         this.materialList.push(obj)
       });
@@ -1525,7 +1507,7 @@ export default {
 
       this.$set(this.dataForm, 'taskMethod', 'appoint')
 
-      if (pageType == 'finish') this.dataForm.stockInventoryLineId = data[0].id
+      // if (pageType == 'finish') this.dataForm.stockInventoryLineId = data[0].id
       // if (pageType == 'sale') this.dataForm.stockInventoryLineId = data[0].stockInventoryLineId
 
       this.$set(this.dataForm, 'orderType', 'flipping')
@@ -1622,8 +1604,6 @@ export default {
       } else {
         this.dataForm.materialFlag = false
       }
-      console.log("表单", this.dataForm);
-      console.log("工序", this.dataFormTwo.data);
       if (submitFlag === false) return
       this.dataFormTwo.data.forEach(item => {
         item.routingProResList.forEach(items => {
@@ -1659,7 +1639,6 @@ export default {
       })
     },
     async handleConfirm(value) {
-      console.log(this.dataForm);
       try {
         try {
           await this.$refs['dataForm'].validate()

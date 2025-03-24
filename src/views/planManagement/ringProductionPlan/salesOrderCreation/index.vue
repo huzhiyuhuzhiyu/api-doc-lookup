@@ -356,7 +356,7 @@ export default {
     },
     // 打印
     printFun(id) {
-      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p059' // 筛选出 businessType 等于 type 的项  
       this.formId = id
       this.fullName = "备货工艺" // 筛选出 businessType 等于 type 的项  
       this.printVisible = true

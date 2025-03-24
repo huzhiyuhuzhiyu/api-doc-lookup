@@ -1548,6 +1548,7 @@ export default {
     }
   },
   async created() {
+    this.formLoading = true
     await this.getProductClassFun()
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
@@ -1559,6 +1560,7 @@ export default {
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
     await this.switchStyleheight()
     this.$nextTick(() => { this.$refs.product.doLayout() })
+    this.formLoading = false
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
@@ -3339,7 +3341,7 @@ export default {
       }
 
       console.log(maxHeight, 'maxHeight')
-      this.customStyleData = maxHeight
+      this.customStyleData = Number(maxHeight) > 0 ? maxHeight : 300
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)

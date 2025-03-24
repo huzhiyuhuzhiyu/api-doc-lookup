@@ -48,6 +48,11 @@
                         clearable auth />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="isval ? 8 : 12" :xs="24">
+                      <el-form-item label="直属主管" prop="managerId">
+                        <user-select v-model="dataForm.managerId" placeholder="请选择直属主管" :disabled="onlyRead" />
+                      </el-form-item>
+                  </el-col>
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="账户" prop="account">
                       <el-input v-model="dataForm.account" placeholder="请输入账户" :disabled="onlyRead" />
@@ -321,6 +326,7 @@ export default {
         }
         this.dataForm.mobilePhone = data[0].all.mobileNumber
         this.dataForm.realName = data[0].all.name
+        this.dataForm.managerId = data[0].all.managerId
       } else {
         // 不选择任何内容，置空绑定的值
         this.dataForm.employeeStatus = ''
@@ -330,6 +336,7 @@ export default {
         this.dataForm.mobilePhone = ''
         this.dataForm.realName = ''
         this.dataForm.name = ''
+        this.dataForm.managerId = ''
       }
     },
     goBack() {

@@ -256,11 +256,8 @@
                   </el-form>
 
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                    <span style="font-weight:500;margin-right:10px">
-                      总金额：{{ dataForm.excludingTaxTotalAmount }}
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
-                    <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
+                        <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
+                        <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_external_data')">总金额(含税)：{{ computedValue3 }}</span>
                   </div>
                 </el-collapse-item>
                 <el-collapse-item title="发料清单信息" name="materialInfo" v-if="type == 'look'">
@@ -441,7 +438,7 @@
                   <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                   <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100"
                     v-if="isDeputyUnitSwitch === '1'" />
-                  <el-table-column prop="price" label="含税单价" min-width="120">
+                  <el-table-column prop="price" label="含税单价" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       单价(含税)
@@ -453,7 +450,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="totalAmount" label="金额" min-width="120">
+                  <el-table-column prop="totalAmount" label="金额" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       金额(含税)
@@ -466,7 +463,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率" min-width="140">
+                  <el-table-column prop="taxRate" label="税率" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       税率
@@ -483,7 +480,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150">
+                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="150" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                         <div class="viewData">
@@ -493,20 +490,7 @@
                     </template>
                   </el-table-column>
 
-                  <!-- <el-table-column prop="excludingTaxAmount" label="总金额" min-width="160">
-                      <template slot="header">
-                        <span class="required">*</span>总金额
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxAmount }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column> -->
-
-                  <el-table-column prop="taxAmount" label="税额" min-width="100">
+                  <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       税额
@@ -520,7 +504,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
+                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       金额(不含税)
@@ -558,11 +542,8 @@
               </el-form>
 
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                <span style="font-weight:500;margin-right:10px">
-                  总金额：{{ dataForm.excludingTaxTotalAmount }}
-                </span>
-                <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
-                <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
+                <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
+                <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_external_data')">总金额(含税)：{{ computedValue3 }}</span>
               </div>
             </el-collapse-item>
             <el-collapse-item title="发料清单信息" name="materialInfo" v-if="type == 'look'">
@@ -817,6 +798,44 @@ export default {
   },
   mounted() {
     this.getProductClassFun()
+  },
+  computed: {
+    computedValue() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.excludingTaxAmount * 1
+      })
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count)
+
+      return this.dataForm.excludingTaxTotalAmount
+    },
+    computedValue3() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      let count1 = 0
+
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.totalAmount * 1
+        count1 += item.excludingTaxAmount * 1
+      })
+
+      this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count1)
+
+      return this.dataForm.totalAmount
+    },
+    computedValue2() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.purchaseQuantity * 1
+      })
+      this.dataForm.purchaseQuantity = this.jnpf.numberFormat(count)
+
+      return this.dataForm.purchaseQuantity
+    }
   },
   watch: {
     'dataFormTwo.data': {

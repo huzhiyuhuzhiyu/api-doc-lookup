@@ -231,7 +231,7 @@
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
+                    <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_external_data')">总金额(含税)：{{ computedValue3 }}</span>
                     <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
                   </div>
                 </el-collapse-item>
@@ -387,7 +387,7 @@
                   <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                   <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100"
                     v-if="isDeputyUnitSwitch === '1'" />
-                  <el-table-column prop="price" label="含税单价" width="120">
+                  <el-table-column prop="price" label="含税单价" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       单价(含税)
@@ -398,7 +398,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="totalAmount" label="金额" width="120">
+                  <el-table-column prop="totalAmount" label="金额" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       金额(含税)
@@ -411,7 +411,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率" width="100">
+                  <el-table-column prop="taxRate" label="税率" width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       税率
@@ -428,7 +428,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120">
+                  <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                         <div class="viewData">
@@ -437,7 +437,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxAmount" label="税额" width="100">
+                  <el-table-column prop="taxAmount" label="税额" width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       税额
@@ -450,7 +450,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
+                  <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       金额(不含税)
@@ -491,7 +491,7 @@
               </el-form>
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                 <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
-                <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
+                <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_external_data')">总金额(含税)：{{ computedValue3 }}</span>
                 <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
               </div>
             </el-collapse-item>

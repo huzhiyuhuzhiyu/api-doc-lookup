@@ -574,8 +574,8 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  mounted() {
-    this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
+  async mounted() {
+    await this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
   methods: {
     getOrderFiledMap() {

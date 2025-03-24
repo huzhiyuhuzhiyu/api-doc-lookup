@@ -68,6 +68,7 @@ const mutations = {
     const createProxy = (target) => {
       return new Proxy(target, {
         get(target, prop) {
+          if (typeof prop === 'symbol' || prop === '_isVue') return;
           if (!(prop in target)) {
             console.error(`$store.configData属性访问错误 "${prop}"\n`, state.configData);
             return {};

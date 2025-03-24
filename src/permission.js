@@ -58,6 +58,7 @@ router.beforeEach(async (to, from, next) => {
           let resField = await store.dispatch('base/getDictionaryData',{sort: 'FieldNameSet'})  // 调用数据字典
           store.commit('base/SET_FIELD_NAME', resField)
           // dynamically add accessible routes
+          await store.dispatch('base/refreshConfigData')
           router.addRoutes(accessRoutes)
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record

@@ -13,7 +13,6 @@ export default {
     let fontSizeValue = localStorage.getItem('fontSizeValue') ? localStorage.getItem('fontSizeValue') : 14
     document.getElementsByTagName('body')[0].style.setProperty('--fSize', fontSizeValue + 'px')
 
-    this.$store.dispatch('base/refreshConfigData')
     // if (process.env.NODE_ENV === 'development') return
     // this.$nextTick(() => {
     //   window.addEventListener('beforeunload', this.beforeUnload)

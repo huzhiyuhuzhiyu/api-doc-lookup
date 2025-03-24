@@ -273,8 +273,9 @@
                     <!-- <span style="font-weight:500;margin-right:10px">
                       总金额：{{ dataForm.excludingTaxTotalAmount }}
                     </span> -->
-                    <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总税额：{{ computedValue2 }}</span>
+                    <!-- <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总税额：{{ computedValue2 }}</span> -->
                     <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总金额：{{ computedValue }}</span>
+                    <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue3 }}</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -569,10 +570,13 @@
               </el-form>
 
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                <!-- <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.excludingTaxTotalAmount }}</span> -->
-                <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总税额：{{ dataForm.taxAmount }}</span>
-                <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总金额：{{ dataForm.totalAmount }}</span>
-              </div>
+                    <!-- <span style="font-weight:500;margin-right:10px">
+                      总金额：{{ dataForm.excludingTaxTotalAmount }}
+                    </span> -->
+                    <!-- <span style="font-weight:500;margin-right:10px">总税额：{{ computedValue2 }}</span> -->
+                    <span style="font-weight:500;margin-right:10px" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">总金额：{{ computedValue }}</span>
+                    <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue3 }}</span>
+                </div>
             </el-collapse-item>
           </el-collapse>
         </div>
@@ -722,6 +726,16 @@ export default {
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
       return this.dataForm.taxAmount
+    },
+    computedValue3() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.purchaseQuantity * 1
+      })
+      this.dataForm.purchaseQuantity = this.jnpf.numberFormat(count)
+
+      return this.dataForm.purchaseQuantity
     },
     backComputedValue() {
       let count = 0

@@ -253,8 +253,8 @@
                         </JNPF-table>
                       </el-form>
                       <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                        <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
                         <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
+                        <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
                       </div>
                     </el-collapse-item>
                   </el-collapse>

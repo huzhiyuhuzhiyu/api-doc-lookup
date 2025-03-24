@@ -1118,19 +1118,21 @@ export default {
         })
       })
     },
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code)
+        const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.dataForm.code = data.number
         }
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     init(id, btnType, approvalFlag, parentId) {
       this.visible = true
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
+      console.log(btnType,'nt')
       this.btnType = btnType
       if (this.btnType) {
         this.isdisabled = true
@@ -1138,6 +1140,7 @@ export default {
         this.isdisabled = false
       }
       if (this.dataForm.id) {
+        this.fetchData('bm_gysbm',false)
         getCooperativeInfo(this.dataForm.id).then((res) => {
           if (res.data.cooperativePartner.regionCode == 'domestic') {
             // 国内
@@ -1229,7 +1232,7 @@ export default {
           })
         })
       } else {
-        this.fetchData('bm_cg_gysgl')
+        this.fetchData('bm_gysbm',true)
       }
     },
     goBack() {

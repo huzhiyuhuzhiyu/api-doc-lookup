@@ -2398,11 +2398,11 @@ export default {
       allArray.forEach(item => {
         item.taxRate = item.taxRate * 1
         if (item.pairingModeId) {
-
           item.deputyUnit = item.mainUnit = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].unit
 
         }
         this.$set(item, 'pairingModeName', '')
+        this.$set(item, 'cooperativePartnerProductId', item.id)
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 2)
         } else {
@@ -3239,6 +3239,7 @@ export default {
               this.btnText = "继续新增"
             }
             console.log("obj", obj);
+            return
             formMethod(obj).then(res => {
               let msg = "";
               if (value == "draft") {

@@ -161,7 +161,7 @@
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                               :rules="productRules.purchaseQuantity">
                               <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="数量"></el-input>
+                                v-model="scope.row.purchaseQuantity" placeholder="数量"></el-input>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -390,7 +390,7 @@
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip key="1">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
+                              <el-input :title="scope.row.remark" v-model="scope.row.remark" 
                                 placeholder="备注"></el-input>
                             </el-form-item>
                           </template>

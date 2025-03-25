@@ -66,7 +66,7 @@
               <el-row :gutter="30" style="padding:0 10px">
                 <el-col :sm="12" :xs="24">
                   <el-form-item label="合格数量">
-                    <el-input v-model="dataForm.actualQualifiedQuantity" placeholder="合格数量" disabled></el-input>
+                    <el-input v-model="qualifiedQuantity" placeholder="合格数量" disabled></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
@@ -185,6 +185,7 @@ export default {
       dataForm: {
 
       },
+      qualifiedQuantity:0,
       defaultAddress: '',
       parentId: '',
       pickerOptions: {
@@ -373,6 +374,7 @@ export default {
           this.dataForm = res.data.workReport
           console.log(this.dataForm, 'oooooo')
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
+          this.qualifiedQuantity = Number(this.dataForm.actualQualifiedQuantity) - Number(this.dataForm.actualConcessionQuantity)
           this.dataForm.reportNo = this.dataForm.orderNo
           this.dataForm.causesList.forEach((item) => {
             if (item.scrapCategoryType === 'responsibility_fee') {

@@ -131,29 +131,29 @@
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
-
-                    <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                    <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
                       v-if="isProportionSwitch === '1'">
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.weight" placeholder="重量"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                    <el-table-column prop="proportion" label="比重" min-width="140" :key="727"
                       v-if="isProportionSwitch === '1'">
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.proportion" placeholder="比重"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                    <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
                       v-if="isProportionSwitch === '1'">
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                           v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
@@ -374,7 +374,7 @@
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
-
+                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
                 <el-table-column prop="weight" label="重量(kg)" width="140" :key="737" v-if="isProportionSwitch === '1'">
                   <template slot-scope="scope">
                     <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
@@ -387,14 +387,14 @@
                       v-model="scope.row.proportion" placeholder="比重"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
                   v-if="isProportionSwitch === '1'">
                   <template slot-scope="scope">
                     <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                       v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
                     <span class="required">*</span>
@@ -800,7 +800,7 @@ export default {
             }),
             trigger: ['blur']
           },
-          // { validator: this.calcValidate(), trigger: 'blur' },
+          { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
@@ -1248,7 +1248,7 @@ export default {
           let flag = false
           let list = this.dataFormTwo.productData
           let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].waitReceiptNum)
+          let num_2 = Number(list[index].maxReceiptNum)
 
           if (!(num_1 <= num_2)) {
             flag = true
@@ -1392,6 +1392,7 @@ export default {
       this.productVisible = false
       this.selectArr.forEach((item) => {
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
         this.dataFormTwo.productData.push(item)
       })
       let uniqueArr = []
@@ -1790,6 +1791,7 @@ export default {
             item.ordersNo = item.orderNo
             this.$set(item, 'receivedQuantity', item.waitReceiptNum)
             this.$set(item, 'discount', 1)
+            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
           })
         }
       }

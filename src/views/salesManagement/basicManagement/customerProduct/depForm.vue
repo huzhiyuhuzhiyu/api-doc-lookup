@@ -69,6 +69,14 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="application" label="应用" min-width="160">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.application" placeholder="请输入" :disabled="btnType === 'look'">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
@@ -397,8 +405,10 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
-                      <el-input v-model="scope.row.price" placeholder="单价" :disabled="btnType === 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" oninput="value=value.replace(/[^0-9.]/g,'')">
+                      <el-input v-model="scope.row.price" placeholder="单价" :disabled="btnType === 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)">
                       </el-input>
+                      <!-- <el-input v-model="scope.row.price" placeholder="单价" :disabled="btnType === 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" oninput="value=value.replace(/[^0-9.]/g,'')">
+                      </el-input> -->
                     </el-form-item>
                   </template>
                 </el-table-column>

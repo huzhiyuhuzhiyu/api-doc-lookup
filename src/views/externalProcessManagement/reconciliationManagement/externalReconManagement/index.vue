@@ -68,11 +68,18 @@
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
           <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
+          <template v-if="$store.getters.configData.warehouse.proportion">
+            <el-table-column prop="weight" label="重量(kg)" width="90" />
+            <el-table-column prop="proportion" label="比重" width="80" />
+            <el-table-column prop="discount" label="折扣" width="80" />
+          </template>
           <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom"
             v-if="isProductNameSwitch === '1'" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
+        
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="businessType" label="收/退货类型" width="140" sortable="custom">
             <template slot-scope="scope">
@@ -83,7 +90,16 @@
           <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
           <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-          <el-table-column prop="num" label="出入库数量" width="120" />
+          <el-table-column prop="num" label="出入库数量" width="120" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.businessType == 'inbound_external'" style="color: #67C23A">
+                +{{ scope.row.num }}
+              </div>
+              <div v-else-if="scope.row.businessType == 'outbound_external'" style="color:red">
+                -{{ scope.row.num }}
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="costPrice" label="单价(含税)" width="120" />
           <el-table-column prop="taxRate" label="税率" width="80">
             <template slot-scope="scope">
@@ -93,10 +109,20 @@
           <el-table-column prop="totalAmount" label="金额" width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.businessType == 'inbound_external'" style="color: #67C23A">
-                +{{ scope.row.totalAmount }}
+                <template v-if="scope.row.weight">
+                  +{{ scope.row.totalAmount }}
+                </template>
+                <template v-else>
+                  +{{ scope.row.totalAmount }}
+                </template>
               </div>
               <div v-else-if="scope.row.businessType == 'outbound_external'" style="color:red">
-                -{{ scope.row.totalAmount }}
+                <template v-if="scope.row.weight">
+                  -{{ scope.row.totalAmount }}
+                </template>
+                <template v-else>
+                  -{{ scope.row.totalAmount }}
+                </template>
               </div>
             </template>
           </el-table-column>

@@ -127,11 +127,11 @@ import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import busFlow from '@/mixins/generator/busFlow'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 export default {
   components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
-  mixins: [busFlow, getProjectList],
+  mixins: [busFlow, AbProjectMixin],
   data() {
     var checkQualifiedQuantity = (rule, value, callback) => {
       // if (value === '') {
@@ -632,7 +632,7 @@ export default {
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
-          render: this.isProjectSwitch === '1',
+          render: this.abProjectSwitchVisible,
           itemDisabled: true
         },
         {
@@ -1602,14 +1602,30 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      let code =
-        this.inspectionType === 'procure'
-          ? 'b003'
-          : this.inspectionType === 'sale_back'
-            ? 'b006'
-            : this.inspectionType === 'produce'
-              ? 'b008'
-              : 'b004'
+      let code;
+      if (this.inspectionType === 'procure') {
+        if (this.abProjectSwitchVisible) {
+          let APItem = this.abProjectList.find(item => item.code === "AP");
+          let BPItem = this.abProjectList.find(item => item.code === "BP");
+          if (this.abProjectId === '1') {
+            code = 'b003'
+          } else if (APItem && APItem.id === this.abProjectId) {
+            code = 'b003'
+          } else if (BPItem && BPItem.id === this.abProjectId) {
+            code = 'b003'
+          }
+        } else {
+          code = 'b003'
+        }
+      } else if (this.inspectionType === 'external') {
+        code = 'b004'
+      } else if (this.inspectionType === 'sale_back') {
+        code = 'b006'
+      } else if (this.inspectionType === 'produce') {
+        code = 'b008'
+      } else {
+        code = 'b004'
+      }
       getBusinessFlowInfo(code)
         .then((res) => {
           if (res.data) {

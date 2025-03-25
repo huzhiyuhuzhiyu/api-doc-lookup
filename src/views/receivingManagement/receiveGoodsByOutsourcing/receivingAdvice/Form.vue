@@ -119,23 +119,27 @@
                     hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-                    <template v-if="isProportionSwitch === '1'">
+                    <template v-if="$store.getters.configData.warehouse.proportion">
                       <el-table-column prop="weight" label="重量(kg)" width="90" />
                       <el-table-column prop="proportion" label="比重" width="80" />
                     </template>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
-                    <el-table-column prop="productCode" label="产品编码" width="140"
+                    <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="140" v-if="$store.getters.configData.product.enable_productName"
                       show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
+                    
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                      :width="isDeputyUnitSwitch ? 85 : 60" />
+                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch ? '数量(主)' : '数量'"
                       width="110" />
-                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
-                      v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                      v-if="isDeputyUnitSwitch" />
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"/>
+                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                    <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
@@ -334,19 +338,21 @@
                 hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="140" show-overflow-tooltip v-if="$store.getters.configData.product.enable_productName"></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
                 <el-table-column prop="productCategoryName" label="产品分类" width="140"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch ? 85 : 60" />
+                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch ? '数量(主)' : '数量'"
                   width="110" />
-                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
-                <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                   /> -->
-                <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch" />
+                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
+                   />
+                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
                     <span class="required">*</span>
@@ -637,7 +643,7 @@ export default {
             }),
             trigger: ['blur']
           },
-          // { validator: this.calcValidate(), trigger: 'blur' },
+          { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
@@ -857,15 +863,16 @@ export default {
     }
   },
   async created() {
+    this.formLoading = true
     await this.getProjectSwitch('system', 'project')
-    await this.getProportionSwitch('warehouse', 'proportion')
-    this.getDeputyUnit()
+    this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.outDeputyUnit
     this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
     this.getWarehouseList()
     this.switchStyleheight()
+    this.formLoading = false
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -885,13 +892,14 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 420
+      let maxHeight;
       console.log(maxHeight, 'maxHeight')
       if (this.btnType === 'look') {
-        this.customStyleData = maxHeight + 30
+        maxHeight = mainHeight1 - 470
       } else {
-        this.customStyleData = maxHeight
+        maxHeight = mainHeight1 - 420
       }
+      this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -936,20 +944,6 @@ export default {
           { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
         ]
       }
-    },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `outDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-      })
-    },
-    async getProportionSwitch(code, type) {
-      try {
-        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
     },
     getBimBusinessDetail() {
       let obj = {
@@ -1039,7 +1033,7 @@ export default {
           let flag = false
           let list = this.dataFormTwo.productData
           let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].waitReceiptNum)
+          let num_2 = Number(list[index].maxReceiptNum)
 
           if (!(num_1 <= num_2)) {
             flag = true
@@ -1225,7 +1219,8 @@ export default {
             remark: item.remark,
             orderNo: item.orderNo,
             id: item.id,
-            deliveryDate: '' // 交期
+            deliveryDate: '', // 交期
+            maxReceiptNum: Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum),
           })
         })
         let orderTypeFlag = this.hasDifferentOrderType(list)
@@ -1496,6 +1491,7 @@ export default {
           data.forEach((item) => {
             item.ordersNo = item.orderNo
             this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
           })
           this.oldData = data
           this.dataFormTwo.productData = data

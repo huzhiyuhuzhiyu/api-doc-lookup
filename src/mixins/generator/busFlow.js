@@ -37,7 +37,7 @@ export default {
           })
         }
       } else {
-        if (['b003','b004','b008','b006','b007','b005','b022'].includes(businessFlow)){
+        if (['b003','b074','b075','b004','b008','b006','b007','b005','b022'].includes(businessFlow)){
           if (data.dataForm.treatmentResults && data.endNode){
             this.$refs['dataForm'].$children[0].validate((valid) => {
               if (valid) {

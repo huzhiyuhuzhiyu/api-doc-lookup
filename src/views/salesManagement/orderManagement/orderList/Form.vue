@@ -3239,7 +3239,6 @@ export default {
               this.btnText = "继续新增"
             }
             console.log("obj", obj);
-            return
             formMethod(obj).then(res => {
               let msg = "";
               if (value == "draft") {

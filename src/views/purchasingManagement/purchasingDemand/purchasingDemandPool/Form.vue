@@ -24,7 +24,7 @@
                   <el-row :gutter="15" class="" style="margin: 0 5px;">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :span="12">
+                      <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
@@ -35,21 +35,30 @@
                             :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
-                      <el-col :span="12">
+                      <el-col :span="6">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                             style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                              <el-form-item label="是否生成免检通知单" prop="stockFlag">
-                                <el-select v-model="dataForm.noticeFlag" placeholder="请选择是否生成免检通知单" style="width: 100%;"
-                                  :disabled="btnType == 'look' ? true : false">
-                                  <el-option v-for="(item, index) in noticeFlagList" :key="index" :label="item.label"
-                                    :value="item.value"></el-option>
-                                </el-select>
-                              </el-form-item>
-                            </el-col>
+                        <el-form-item label="是否生成免检通知单" prop="stockFlag">
+                          <el-select v-model="dataForm.noticeFlag" placeholder="请选择是否生成免检通知单" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="(item, index) in noticeFlagList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                        <el-form-item label="是否存在外协收货方" prop="stockFlag">
+                          <el-select v-model="dataForm.outConsigneeFlag" placeholder="请选择是否存在外协收货方" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="(item, index) in noticeFlagList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                     </el-form>
                   </el-row>
                 </el-collapse-item>
@@ -589,7 +598,9 @@ export default {
         excludingTaxTotalAmount: '', //订单 不含税总金额
         totalAmount: '', //   含税总金额
         taxAmount: '', // 税额
-        approvalFlag: false //
+        noticeFlag:false,
+        outConsigneeFlag:false,
+        approvalFlag: false, //
       },
       dataPickerOptions2: {
         // 日期区间选择器通用选项

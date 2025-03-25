@@ -1603,14 +1603,22 @@ export default {
     // 测试审批流
     getBusInfo() {
       let code;
-      let APItem = this.abProjectList.find(item => item.code === "AP");
-      let targetItem = this.abProjectList.find(item => item.code === "A001");
       if (this.inspectionType === 'procure') {
-        if (this.abProjectId === '1') {
-          code = 'b003'
-        } else if (this.abProjectId === '1') {
+        if (this.abProjectSwitchVisible) {
+          let APItem = this.abProjectList.find(item => item.code === "AP");
+          let BPItem = this.abProjectList.find(item => item.code === "BP");
+          if (this.abProjectId === '1') {
+            code = 'b003'
+          } else if (APItem && APItem.id === this.abProjectId) {
+            code = 'b003'
+          } else if (BPItem && BPItem.id === this.abProjectId) {
+            code = 'b003'
+          }
+        } else {
           code = 'b003'
         }
+      } else if (this.inspectionType === 'external') {
+        code = 'b004'
       } else if (this.inspectionType === 'sale_back') {
         code = 'b006'
       } else if (this.inspectionType === 'produce') {

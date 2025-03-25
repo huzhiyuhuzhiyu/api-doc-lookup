@@ -155,6 +155,8 @@
                       </el-table-column>
                       <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
                       </el-table-column>
+                      <el-table-column prop="application" label="应用" width="160" key="application">
+                      </el-table-column>
                       <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
                         v-if="saleContractNoSwitch === '0'">
                         <template slot-scope="scope">
@@ -253,6 +255,8 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
+                    </el-table-column>
+                    <el-table-column prop="application" label="应用" width="160" key="application">
                     </el-table-column>
                     <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
                       v-if="saleContractNoSwitch === '0'">
@@ -632,6 +636,8 @@
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   </el-table-column>
                   <el-table-column prop="customerProductName" label="客户产品名称" width="160" key="customerProductName">
+                  </el-table-column>
+                  <el-table-column prop="application" label="应用" width="160" key="application">
                   </el-table-column>
                   <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
                     v-if="saleContractNoSwitch === '0'">
@@ -1262,6 +1268,7 @@ export default {
       ProductTableItems: [
         { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
         { prop: 'customerProductName', label: ' 客户产品名称', fixed: 'left' },
+        { prop: 'application', label: '应用' },
         { prop: 'productCode', label: '产品编码' },
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'mainUnit', label: '单位' },

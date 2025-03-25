@@ -779,6 +779,7 @@ export default {
     }
   },
   async created() {
+    this.formLoading = true
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')

@@ -714,6 +714,7 @@ export default {
     }
   },
   async created() {
+    this.formLoading = true
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit

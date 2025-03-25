@@ -89,7 +89,15 @@
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
-          <el-table-column prop="num" label="出入库数量" min-width="120" />
+          <el-table-column prop="num" label="出入库数量" min-width="120" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.businessType == 'outbound_sale_send'" style="color: #67C23A">+{{
+                scope.row.num }}</div>
+              <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{
+                scope.row.num
+              }}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="costPrice" label="单价(含税)" min-width="120" />
           <el-table-column prop="taxRate" label="税率" min-width="80">
             <template slot-scope="scope">

@@ -310,6 +310,8 @@ export default {
         'b013': 'salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue',
         'b014': 'externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue',
         'b003': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b074': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b075': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
         'b004': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
         'b006': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
         'b023': 'basicData/bomSettings/productionBom/Form.vue',

@@ -83,7 +83,16 @@
           <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
             :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
           <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-          <el-table-column prop="num" label="出入库数量" width="120" />
+          <el-table-column prop="num" label="出入库数量" width="120" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.businessType == 'inbound_external'" style="color: #67C23A">
+                +{{ scope.row.num }}
+              </div>
+              <div v-else-if="scope.row.businessType == 'outbound_external'" style="color:red">
+                -{{ scope.row.num }}
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="costPrice" label="单价(含税)" width="120" />
           <el-table-column prop="taxRate" label="税率" width="80">
             <template slot-scope="scope">

@@ -570,12 +570,14 @@ export default {
       if (!this.list.length) return this.$message.error('请选择您要新建的订单')
       let flag = this.hasDifferentCooperativePartnerId(this.list)
       if (flag) return this.$message.error('只能选择相同供应商的明细订单')
+      if (this.list.filter(item => item.outConsigneeFlag === true).length> 1) return this.$message.error('只能选择一条存在外协收货方的数据')
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse')
       })
     },
+   
     hasDifferentCooperativePartnerId(arr) {
       const codes = new Set()
 

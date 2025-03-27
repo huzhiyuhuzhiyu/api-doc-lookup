@@ -69,7 +69,49 @@
                           :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协类型" prop="outType">
+                        <el-select v-model="dataForm.outType" @focus="setMinWidth"  placeholder="请选择外协类型" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
+                            :value="item.value" :style="{'min-width': minWidth + 2 + 'px'}"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协供应商名称" prop="partnerName">
+                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
+                          v-model="dataForm.outPartnerName" ref="ComSelect-page"
+                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
+                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          :listRequestObj="PartnerListRequestObj" 
+                          :searchList="PartnerTableSearchList" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="回购单价" prop="buyBackPrice">
+                        <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType == 'look'"
+                         />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="回购税率" prop="buyBackRate">
+                        <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
+                         />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="成材率" prop="yieldRate">
+                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
+                          />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="损耗率" prop="lossRate">
+                        <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
+                       />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
                         <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -811,6 +853,8 @@ export default {
         { label: '备货订单', value: 'stock_up' },
         { label: '急件订单', value: 'urgent' }
       ],
+      outTypeList: [{ label: '采购销售', value: 'purchase_sale' }, { label: '外协', value: 'out' }],
+      minWidth:0,
       productRules: {
         receivedQuantity: [
           {
@@ -836,6 +880,32 @@ export default {
       totalNum: 0,
       totalAssistantNum: 0,
       totalAmount: 0,
+      getCooperativeData,
+      getcategoryTree,
+      //  供应商 树请求
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'outsourcing_suppliers' } },
+      // 供应商 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '供应商编码' },
+        { prop: 'name', label: '供应商名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 供应商搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '供应商编码', type: 'input' },
+        { prop: 'name', label: '供应商名称', type: 'input' }
+      ],
+      // 供应商请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'outsourcing_suppliers'
+      },
       // 选择客户产品参数
       productForm: {
         //   drawingNo: "",
@@ -1145,6 +1215,9 @@ export default {
         this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
+    setMinWidth (val) {
+      this.minWidth = val.srcElement.clientWidth
+    },
     warehouseIdChange(e) {
       this.dataForm.warehouseId = e
       if (this.isProjectSwitch === '1') {
@@ -1397,7 +1470,18 @@ export default {
       })
       this.dataFormTwo.productData = uniqueArr
     },
-    // },
+    supplierdata(id, data) {
+     
+      if (data.length === 0) {
+        this.dataForm.outPartnerName = ''
+        this.dataForm.outPartnerCode = ''
+        this.dataForm.outPartnerId = ''
+      } else {
+        this.dataForm.outPartnerName = data[0].all.name
+        this.dataForm.outPartnerCode = data[0].all.code
+        this.dataForm.outPartnerId = data[0].all.id
+      }
+    },
     // 获取所有订单列表数据
     initData2() {
       this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode
@@ -1930,6 +2014,7 @@ export default {
         }
         // this.dataForm.classAttribute = 'finish_product'
         this.dataForm.receiptReturnType = 'receipt'
+        this.dataForm.outProductId = this.dataFormTwo.productData[0].productsId
         let obj = {
           attachmentList: this.datafilelist,
           returnGoods: this.dataForm,

@@ -1834,6 +1834,14 @@ export default {
       this.$router.push('/outsourcingManagement/externalMaterialIssuance/materialsIssueNotice')
     },
     handleConfirm(value) {
+      if (!this.userInfo.roleCode.split(',').includes('show_external_data')) {
+          this.$message({
+            message: "没有外协数据可见权限，请配置",
+            type: 'error',
+            duration: 1500,
+          })
+          return
+      }
       this.$refs['productForm'].validate((valid) => {
         this.iszhi = valid ? false : true
       })

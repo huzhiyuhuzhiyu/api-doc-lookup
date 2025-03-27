@@ -635,26 +635,26 @@ export default {
             }),
             trigger: ['blur']
           },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                4,
-                '',
-                (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
-                }
-              ]
-            }),
-            trigger: ['blur']
-          },
-          {
-            validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
-              this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
-            }),
-            trigger: 'blur'
-          },
+          // {
+          //   validator: this.formValidate({
+          //     type: 'decimal',
+          //     params: [
+          //       20,
+          //       4,
+          //       '',
+          //       (errMsg, index) => {
+          //         this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+          //       }
+          //     ]
+          //   }),
+          //   trigger: ['blur']
+          // },
+          // {
+          //   validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
+          //     this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+          //   }),
+          //   trigger: 'blur'
+          // },
         ],
         purchaseQuantity2: [
           // 副数量

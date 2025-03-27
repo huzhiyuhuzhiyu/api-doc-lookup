@@ -1112,9 +1112,17 @@ export default {
     // 表单提交
     handleConfirm(type) {
       let submitFlag = true
+      if (!this.userInfo.roleCode.split(',').includes('show_external_data')) {
+          submitFlag = false
+          this.$message({
+            message: "没有外协数据可见权限，请配置",
+            type: 'error',
+            duration: 1500,
+          })
+          return
+      }
       this.dataFormTwo.data.map((ele, i) => {
         console.log(ele, 'ppp')
-        return
         if (!ele.purchaseQuantity) {
           submitFlag = false
           this.$message.error(`产品信息第${i + 1}行：数量不能为空`)

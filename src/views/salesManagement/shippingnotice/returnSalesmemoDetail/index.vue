@@ -248,6 +248,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        salesPersonFlag:1,
       },
 
       detailTotal: 0,

@@ -148,7 +148,7 @@
                   </div>
                   </div>
                   <div ref="boxresiz" v-if="btnType == 'look'">
-                    <JNPF-table ref="product" :data="productData" custom-column :fixedNO="false" border height="100%" key="191"
+                    <JNPF-table ref="product" :partent-or-child="'child'" :data="productData" custom-column :fixedNO="false" border height="100%" key="191"
                       style="width: 100%;height:100%" :height="customStyleData">
                       <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
@@ -239,7 +239,7 @@
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
                     </JNPF-table>
                   </div>
-                  <JNPF-table ref="product"
+                  <JNPF-table ref="product" :partent-or-child="'child'"
                     v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
                     :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border custom-column
                     @row-click="rowclick" key="165" style="width: 100%;" hasC :height="customStyleData">
@@ -630,7 +630,7 @@
                 </el-tooltip>
               </div>
               <div ref="boxresiz" v-if="btnType == 'look'">
-                <JNPF-table ref="product" :data="productData" :fixedNO="false" border :key="191" custom-column
+                <JNPF-table ref="product" :partent-or-child="'child'" :data="productData" :fixedNO="false" border :key="191" custom-column
                   :height="customStyleData">
                   <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
@@ -721,7 +721,7 @@
                   </el-table-column>
                 </JNPF-table>
               </div>
-              <JNPF-table ref="product"
+              <JNPF-table ref="product" :partent-or-child="'child'"
                 v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
                 :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border custom-column
                 :height="customStyleData" @row-click="rowclick" :key="165" style="width: 100%;" hasC>
@@ -3127,6 +3127,15 @@ export default {
             })
             return
           } else {
+            if (!this.userInfo.roleCode.split(',').includes('show_sale_data')) {
+              submitFlag = false
+              this.$message({
+                message: "没有销售数据可见权限，请配置",
+                type: 'error',
+                duration: 1500,
+              })
+              return
+            }
             let index = this.productData.findIndex(item =>
               item.drawingNo === "" &&
               item.productsId === "" &&

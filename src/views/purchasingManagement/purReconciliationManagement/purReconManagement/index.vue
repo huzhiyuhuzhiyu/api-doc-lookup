@@ -117,7 +117,8 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" >
           <div class="text">
             <span>合计：</span>
-            <span style="margin-left: 10px">出入库数量：{{ totalNum }}</span>
+            <span style="margin-left: 10px">入库数量：{{ InTotalNum }}</span>
+            <span style="margin-left: 10px">出库数量：{{ outTotalNum }}</span>
             <span style="margin-left: 10px">金额：{{ totalTotalAmount }}</span>
           </div>
         </pagination>
@@ -205,6 +206,8 @@ export default {
       selectData: [], // 选中的数据 带到form页
       total: 0,
       totalNum: 0,
+      InTotalNum:0,
+      outTotalNum:0,
       totalTotalAmount: 0,
       formVisible: false,
       superQueryJson: [
@@ -401,8 +404,14 @@ export default {
           return sum;  // 默认情况，无需改变 sum  
         }, 0);
       }
-      
-      this.totalNum = this.selectData.reduce((sum, e) => sum + Number(e.num || 0), 0)
+      function calculateSum(data, type) {
+        return data.reduce((sum, item) => {
+          return item.businessType === type ? sum + Number(item.num) : sum;
+        }, 0);
+      }
+      this.InTotalNum = calculateSum(this.selectData, 'inbound_purchase')
+      this.outTotalNum = calculateSum(this.selectData, 'outbound_purchase')
+      // this.totalNum = this.selectData.reduce((sum, e) => sum + Number(e.num || 0), 0)
       this.totalTotalAmount = calculateTotalValue(this.selectData)
     },
     moreQueries() {

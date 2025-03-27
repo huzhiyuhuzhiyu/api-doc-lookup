@@ -1382,6 +1382,7 @@ export default {
               obj.reportingQuantity = this.currentProcess.reportingQuantity
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+              obj.packagingMethod = this.currentProcess.packagingMethod
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
@@ -1408,6 +1409,7 @@ export default {
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
+              obj.packagingMethod = this.currentProcess.packagingMethod
               obj.stockFlag = this.stockFlag
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               console.log("测震到配对工序之间的工序");
@@ -1429,6 +1431,7 @@ export default {
               obj.productionOrderId = this.currentProcess.productionOrderId
               obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
               obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,]), 6)
+              obj.packagingMethod = this.currentProcess.packagingMethod
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
@@ -1456,6 +1459,7 @@ export default {
               obj.productionOrderId = this.currentProcess.productionOrderId
               obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
               obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
+              obj.packagingMethod = this.currentProcess.packagingMethod
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
@@ -1499,6 +1503,7 @@ export default {
                 this.$set(obj, 'accuracyLevel', item.accuracyLevel)
                 this.$set(obj, 'causesList', [...this.materialWasteDataList, ...this.responsWasteDataList])
 
+                this.$set(obj, 'packagingMethod', this.currentProcess.packagingMethod)
 
 
 
@@ -1528,7 +1533,8 @@ export default {
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
-              obj.stockFlag = this.stockFlag
+                obj.packagingMethod = this.currentProcess.packagingMethod
+                obj.stockFlag = this.stockFlag
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.oil = this.currentProcess.oil
               obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
@@ -1562,7 +1568,8 @@ export default {
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
-              arr.push(obj)
+                obj.packagingMethod = this.currentProcess.packagingMethod
+                arr.push(obj)
               console.log("配对工序");
             } else {
               let obj = {}
@@ -1594,7 +1601,8 @@ export default {
               obj.oil = this.currentProcess.oil
               obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
-              arr.push(obj)
+                obj.packagingMethod = this.currentProcess.packagingMethod
+                arr.push(obj)
             }
           } else {
             let obj = {
@@ -1622,6 +1630,7 @@ export default {
               "sealingCoverTyping": this.currentProcess.sealingCoverTyping,
               "workOrderId": this.currentProcess.id,
               causesList: [...this.materialWasteDataList, ...this.responsWasteDataList],
+                packagingMethod: this.currentProcess.packagingMethod
 
             }
             arr.push(obj)

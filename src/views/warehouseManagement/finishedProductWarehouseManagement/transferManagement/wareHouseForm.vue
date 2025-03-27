@@ -11,7 +11,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="tableQuery.code" placeholder="请输入库位编码" clearable />
+                <el-input @keyup.native.enter="search()" v-model="tableQuery.code" placeholder="请输入库位编码" clearable />
               </el-form-item>
             </el-col>
 
@@ -28,9 +28,9 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-  
+
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
-            @sort-change="sortChange" custom-column >
+            @sort-change="sortChange" custom-column>
             <el-table-column prop="name" label="库位名称" min-width="180">
             </el-table-column>
             <el-table-column prop="code" label="库位编码" width="180" sortable="custom">
@@ -43,6 +43,8 @@
               </template>
             </el-table-column>
           </JNPF-table>
+          <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
+            @pagination="initData(cpId)" />
         </div>
       </div>
     </div>
@@ -65,7 +67,9 @@ export default {
             column: ''
           }
         ],
-        warehouseId: ''
+        warehouseId: '',
+        pageNum: 1,
+        pageSize: 20,
       },
 
       expands: true,
@@ -73,7 +77,8 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-      cpId:""
+      cpId: "",
+      total: 0,
     }
   },
   methods: {
@@ -85,15 +90,15 @@ export default {
     },
     initData(id) {
       this.listLoading = true
-      this.tableQuery.warehouseId=id
-      this.cpId=JSON.parse(JSON.stringify(id))
-      this.locationVisible=true
+      this.tableQuery.warehouseId = id
+      this.cpId = JSON.parse(JSON.stringify(id))
+      this.locationVisible = true
       getLocationList(this.tableQuery).then(res => {
         this.tableDataList = res.data.records
         this.tableDataList.forEach((item) => {
         })
 
-        
+
 
         this.total = res.data.total
         this.listLoading = false
@@ -102,10 +107,10 @@ export default {
       ])
 
     },
-  
+
     // 选择客户
     seleceWareHouseFun(row) {
-      this.$emit("selectWareHouseFun", row) 
+      this.$emit("selectWareHouseFun", row)
       this.locationVisible = false
     },
 
@@ -113,10 +118,10 @@ export default {
 
 
     search() {
-      this.initData()
+      this.initData(this.cpId)
     },
     reset() {
-      this.form = {
+      this.tableQuery = {
         code: '',
         orderItems: [
           {
@@ -124,7 +129,9 @@ export default {
             column: ''
           }
         ],
-        warehouseId: ''
+        warehouseId: '',
+        pageNum: 1,
+        pageSize: 20,
       },
         this.initData(this.cpId)
     },

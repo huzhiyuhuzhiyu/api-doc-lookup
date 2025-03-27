@@ -44,7 +44,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="是否生成免检通知单" prop="stockFlag">
                           <el-select v-model="dataForm.noticeFlag" placeholder="请选择是否生成免检通知单" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
+                            :disabled="btnType == 'look' ? true : dataForm.outConsigneeFlag">
                             <el-option v-for="(item, index) in noticeFlagList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -53,7 +53,7 @@
                       <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
                         <el-form-item label="是否存在外协收货方" prop="stockFlag">
                           <el-select v-model="dataForm.outConsigneeFlag" placeholder="请选择是否存在外协收货方" style="width: 100%;"
-                            :disabled="btnType == 'look' ? true : false">
+                            :disabled="btnType == 'look' ? true : dataForm.noticeFlag">
                             <el-option v-for="(item, index) in noticeFlagList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>

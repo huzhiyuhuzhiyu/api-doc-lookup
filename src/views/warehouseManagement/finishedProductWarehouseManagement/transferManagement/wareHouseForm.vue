@@ -118,7 +118,7 @@ export default {
 
 
     search() {
-      this.initData()
+      this.initData(this.cpId)
     },
     reset() {
       this.tableQuery = {

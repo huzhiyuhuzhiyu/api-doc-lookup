@@ -44,7 +44,7 @@
                   <el-col :sm="isval ? 8 : 12" :xs="24">
                     <el-form-item label="所属组织" prop="organizeIdTree" ref="organizeIdTree">
                       <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
-                        :disabled="onlyRead || !!this.dataForm.id || isval" multiple @change="onOrganizeChange"
+                        :disabled="onlyRead  || isval" multiple @change="onOrganizeChange"
                         clearable auth />
                     </el-form-item>
                   </el-col>

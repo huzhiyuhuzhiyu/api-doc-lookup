@@ -1937,8 +1937,7 @@ export default {
           })
           return
         }
-        for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
-          const item = this.dataFormTwo.productData[index]
+        this.dataFormTwo.productData.forEach((item,index)=>{
           if (!item.receivedQuantity && item.productsId) {
             submitFlag = false
             this.btnLoading = false
@@ -1947,7 +1946,7 @@ export default {
               type: 'error',
               duration: 1500
             })
-            break
+            return
           }
           if (Number(item.receivedQuantity) == 0) {
             submitFlag = false
@@ -1957,9 +1956,20 @@ export default {
               type: 'error',
               duration: 1500
             })
-            break
+            return
           }
-        }
+          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
+            console.log(123)
+            submitFlag = false
+            this.btnLoading = false
+            this.$message({
+              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+        })
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             accuracyLevel: item.accuracyLevel,

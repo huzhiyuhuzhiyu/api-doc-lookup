@@ -633,7 +633,7 @@
               <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="110"
                 sortable="custom" v-if="dataForm.documentType == 'outbound' && specialRequireFlag == 1"
                 key="specialRequire" />
-              <el-table-column prop="remark" label="备注" width="100" sortable="custom"
+              <el-table-column prop="remark" label="备注" width="100"
                 v-if="dataForm.documentType == 'outbound'" key="remark" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="createTime" />

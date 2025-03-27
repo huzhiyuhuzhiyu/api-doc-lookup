@@ -5,30 +5,17 @@
         <el-form @submit.native.prevent>
           <el-col :span="5">
             <el-form-item>
-              <el-input v-model="listQuery.code" @keyup.enter.native="search()" placeholder="工艺路线编码" clearable
+              <el-input v-model="listQuery.lineCode" @keyup.enter.native="search()" placeholder="产线编码" clearable
                 maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item>
-              <el-input v-model="listQuery.name" @keyup.enter.native="search()" placeholder="工艺路线名称" clearable
+              <el-input v-model="listQuery.lineName" @keyup.enter.native="search()" placeholder="产线名称" clearable
                 maxlength="20"></el-input>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.state" placeholder="工艺状态" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in stateList"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-
-          <el-col :span="6">
+          <el-col :span="3">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">查询</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">重置</el-button>
@@ -39,14 +26,6 @@
       <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
         <div class="JNPF-common-head" style="padding:8px">
           <div>
-            <el-button type="primary" icon="el-icon-plus" @click.native="addOrUpdateHandle('', 'add')" size="mini">
-              新建
-            </el-button>
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-            <el-button :disabled="list.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
-              @click="exportForm">
-              导出
-            </el-button>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -63,62 +42,29 @@
         </div>
         <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
           class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
+          <el-table-column prop="lineCode" label="产线编码" align="left" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">
-                {{ scope.row.code }}
+                {{ scope.row.lineCode }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
-          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
-            <template slot-scope="scope">
-              <div v-if="scope.row.reportRulesFlag == '0'">否</div>
-              <div v-if="scope.row.reportRulesFlag == '1'">是</div>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
+          <el-table-column prop="lineName" label="产线名称" align="left" sortable="custom" min-width="180" />
+          <el-table-column prop="className" label="班次" width="120"></el-table-column>
+          <el-table-column prop="proDate" label="时间段" align="left" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom" />
-          <el-table-column prop="remark" label="备注" align="left" min-width="180" />
-          <!-- <el-table-column prop="state" label="工艺状态" align="center" sortable="custom" width="120" >
-              <template slot-scope="scope">
-                <div v-if="scope.row.state == 'enable'"><el-tag type="success">启用</el-tag></div>
-                <div v-if="scope.row.state == 'disable'"><el-tag type="danger">禁用</el-tag></div>
-              </template>
-            </el-table-column> -->
-          <el-table-column prop="documentStatus" label="单据状态" align="center" sortable="custom" width="120">
-            <template slot-scope="scope">
-              <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
-              <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
-            v-if="showAppCodeFlag">
-            <template slot-scope="scope">
-              <el-tag disable-transitions
-                v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
-                审批中
-              </el-tag>
-              <el-tag type="success" disable-transitions
-                v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">
-                审批通过
-              </el-tag>
-              <el-tag type="danger" disable-transitions
-                v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">
-                审批拒绝
-              </el-tag>
-              <el-tag type="warning" disable-transitions
-                v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus !== 'draft'">
-                审批撤回
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column prop="innerBlankConsumeQuantity" label="内圈毛坯耗料数量" align="right" min-width="180" />
+          <el-table-column prop="innerQualifiedQuantity" label="内圈合格数量" align="right" min-width="180" />
+          <el-table-column prop="innerUnqualifiedQuantity" label="内圈不合格数量" align="right" min-width="180" />
+          <el-table-column prop="outerBlankConsumeQuantity" label="外圈毛坯耗料数量" align="right" min-width="180" />
+          <el-table-column prop="outerQualifiedQuantity" label="外圈合格数量" align="right" min-width="180" />
+          <el-table-column prop="outerUnqualifiedQuantity" label="外圈不合格数量" align="right" min-width="180" />
+          <el-table-column prop="ballRetainerConsumeQuantity" label="钢球保持器耗料基准数量" align="right" min-width="180" />
+          <el-table-column prop="lidConsumeQuantity" label="盖子耗料基准数量" align="right" min-width="180" />
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">
-                编辑
+                确定
               </el-button>
               <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'look')">
                 详情
@@ -136,34 +82,6 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
-        <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
-          :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
-          <el-option v-for="item in projectIdDataList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-        </el-select>
-      </div>
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">
-          只能上传.xls/.xlsx文件
-          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
-            下载模板
-          </el-button>
-        </div>
-      </el-upload>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="saveSubmit()">
-          提交
-        </el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -176,8 +94,9 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import getProjectList from '@/mixins/generator/getProjectList'
+import { getProductionLineOutputData, detailProProductionLineOutput, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 export default {
-  name:'processSettingss',
+  name: 'processSettingss',
   components: { JNPFForm, ExportForm, SuperQuery },
   mixins: [getProjectList],
   data() {
@@ -322,14 +241,6 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        routeType:'processLibrary',
-        code: '',
-        name: '',
-        state: '',
-        approvalStatus: '',
-        documentStatus: '',
-        createEndTime: '',
-        createStartTime: ''
       },
       formVisible: false,
       dataDetail: [],
@@ -353,167 +264,10 @@ export default {
     this.initData()
   },
   methods: {
-    // 导入
-    importForm() {
-
-      // this.$refs.UploadProduct.$el.querySelector('input').click()
-      if (this.userInfo.projectId !== '1') {
-        this.importProjectId = this.userInfo.projectId
-      } else {
-        this.importProjectId = ''
-      }
-      this.uploadVisib = true
-
-    },
-    handleRemove(file, fileList) { },
-    handlePreview(file) { },
-    handleFileChange(file) {
-      this.file = file.raw
-    },
-    // 下载模板
-    downLoadTemplate() {
-      const a = document.createElement('a')
-      a.setAttribute('download', '')
-
-      a.setAttribute('href', location.origin + '/static/工艺路线导入模板.xlsx')
-
-
-      a.click()
-    },
-    // 上传产品
-    UploadProduct(data) {
-      this.loadingText = '正在导入数据'
-      this.formLoading = true
-      var formData = new FormData()
-      formData.append('file', data)
-      if (this.isProjectSwitch === '1') {
-        formData.append('projectId', this.importProjectId)
-      }
-      //调用上传文件接口
-
-      importProcess(formData)
-        .then((res) => {
-          if (!res.data) {
-            this.$message.success(`导入成功`)
-            this.uploadVisib = false
-            this.$refs['UploadProduct']
-            this.initData()
-          } else {
-            this.uploadVisib = false
-            this.handleMessage(res.data)
-          }
-
-          this.formLoading = false
-          this.loadingText = ''
-        })
-        .catch((err) => {
-          console.log(err, 'err')
-          this.uploadVisib = false
-          console.log(err, 'err')
-          this.formLoading = false
-          this.loadingText = ''
-        })
-
-
-    },
-    // 导入产品  下载导入错误数据
-    downNoProduct(res) {
-      this.jnpf.downloadFile(res.url, res.name)
-      this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles()
-    },
-    cancelFun() {
-      this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles()
-    },
-    saveSubmit() {
-      if (this.isProjectSwitch === '1') {
-        if (!this.importProjectId) return this.$message.error('请选择所属项目');
-      }
-      if (!this.file) return this.$message.error('请上传文件');
-      this.UploadProduct(this.file)
-    },
-    // 提示
-    handleMessage(data) {
-      const h = this.$createElement
-      this.$message({
-        type: 'error',
-        duration: 0,
-        showClose: true,
-        customClass: 'my-message', // 自定义类名，用于设置样式
-        message: h(
-          'div',
-          {
-            style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
-          },
-          [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在工艺路线相关信息错误！'),
-            h(
-              'el-button',
-              {
-                props: {
-                  type: 'text',
-                  size: 'mini',
-                  icon: 'el-icon-download'
-                },
-                on: {
-                  click: () => {
-                    this.downNoProduct(data)
-                  }
-                },
-                style: {
-                  border: 'none',
-                  textAlign: 'center',
-                  // width:"20%",
-                  margin: '0 5px 0 5px '
-                }
-              },
-              '下载导入错误数据'
-            )
-          ]
-        )
-      })
-      return
-    },
-    withdrawnHandle(formId) {
-      let _data = {
-        formId
-      }
-      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          withdrawn(_data).then((res) => {
-            this.$message({
-              type: 'success',
-              message: '撤回成功',
-              duration: 1500,
-              onClose: () => {
-                this.initData()
-              }
-            })
-          })
-        })
-        .catch(() => { })
-    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
-    },
-    moreQueries() {
-      this.visible = true
-    },
-    dataFormSubmit() {
-      this.listQuery.pageNum = 1
-      if (this.customerRecognitionTime && this.customerRecognitionTime.length > 0) {
-        this.listQuery.createStartTime = this.customerRecognitionTime[0] + ' 00:00:00'
-        this.listQuery.createEndTime = this.customerRecognitionTime[1] + ' 23:59:59'
-      } else {
-        this.listQuery.createStartTime = ''
-        this.listQuery.createEndTime = ''
-      }
-      this.initData()
     },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
@@ -521,15 +275,6 @@ export default {
       if (isRefresh) {
         this.initData()
       }
-    },
-    // 内容选择事件
-    handleCurrentChange(val) {
-      if (!val && data.length) return
-      this.detailLoading = true
-      detailProcess(val.id).then((res) => {
-        this.dataDetail = res.data || []
-        this.detailLoading = false
-      })
     },
     sortChange({ prop, order }) {
       let newProp
@@ -545,49 +290,15 @@ export default {
     columnSetFun() {
       this.$refs.listTable.showDrawer()
     },
-    // 导出
-    exportForm() {
-      this.exportFormVisible = true
-      let columnList = this.$refs.listTable.columnList.filter((item) => !!item.label && !!item.prop)
-      columnList = columnList.map((item) => {
-        return { label: item.label, prop: item.prop }
-      })
 
-      this.$nextTick(() => {
-        this.$refs.exportForm.init(columnList)
-      })
-    },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
-        }
-        let _data = {
-          ...this.listQuery,
-          exportType: '1033',
-          exportName: '工艺路线信息',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
-        }
-        excelExport(_data)
-          .then((res) => {
-            this.exportFormVisible = false
-            if (!res.data.url) return
-            this.jnpf.downloadFile(res.data.url)
-          })
-          .catch(() => { })
-      }
-    },
     initData() {
       this.listLoading = true
       this.detailLoading = false
-      if (this.isProjectSwitch === '1') {
-        this.listQuery.projectId = this.userInfo.projectId
-      }
+      // if (this.isProjectSwitch === '1') {
+      //   this.listQuery.projectId = this.userInfo.projectId
+      // }
       this.dataDetail = []
-      getProcessList(this.listQuery)
+      getProductionLineOutputData(this.listQuery)
         .then((res) => {
           this.list = res.data.records || []
           this.total = res.data.total
@@ -600,24 +311,6 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
-    },
-    // 删除数据
-    handleDel(index, id) {
-      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-        type: 'warning'
-      })
-        .then(() => {
-          deleteProcess(id).then((res) => {
-            if (res.msg === 'Success') res.msg = '删除成功'
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: '删除成功',
-              duration: 1500
-            })
-          })
-        })
-        .catch(() => { })
     },
     // 新增数据
     addOrUpdateHandle(id, type) {

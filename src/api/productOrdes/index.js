@@ -278,3 +278,29 @@ export function updateReport(data) {
     data
   })
 }
+
+// 产线产量表-列表
+export function getProductionLineOutputData(data) {
+  return request({
+    url: `/api/erp/proProductionLineOutput/list/condition`,
+    method: 'post',
+    data
+  })
+}
+
+// 产线产量表-详情
+export function detailProductionLineOutput(id) {
+  return request({
+    url: `/api/erp/proProductionLineOutput/detail/${id}`,
+    method: 'GET'
+  })
+}
+
+// 产线产量表-列表
+export function confirmProductionLineOutputData(data) {
+  return request({
+    url: `/api/erp/proProductionLineOutput/confirm`,
+    method: 'post',
+    data
+  })
+}

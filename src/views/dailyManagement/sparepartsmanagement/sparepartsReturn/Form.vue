@@ -45,6 +45,15 @@
                         </user-select>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="是否领用归还" prop="returnFlag">
+                        <el-select v-model="dataForm.returnFlag" @focus="setMinWidth"  placeholder="请选择是否领用归还" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="(item, index) in returnFlagList" :key="index" :label="item.label"
+                            :value="item.value" :style="{'min-width': minWidth + 2 + 'px'}"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
@@ -283,7 +292,9 @@ export default {
           { required: true, message: '归还日期不能为空', trigger: 'blur' }
         ]
       },
-      selectRows: []
+      selectRows: [],
+      returnFlagList: [{ label: '是', value: false }, { label: '否', value: true }],
+      minWidth:0,
     }
   },
   mounted() {
@@ -300,6 +311,9 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    setMinWidth (val) {
+      this.minWidth = val.srcElement.clientWidth
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);

@@ -137,7 +137,7 @@
                       :placeholder="'请输入' + item.label" clearable @keyup.enter.native="search()" />
 
                     <el-select v-else-if="item.type === 'select'" v-model="listQuery[item.prop]"
-                      :placeholder="'请输入' + item.label" clearable>
+                      :placeholder="'请输入' + item.label" clearable @change="selectChange">
                       <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
                         :value="item2.value"></el-option>
                     </el-select>
@@ -735,6 +735,10 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
+      this.listQuery.pageNum = 1
+      this.initData()
+    },
+    selectChange() {
       this.listQuery.pageNum = 1
       this.initData()
     },

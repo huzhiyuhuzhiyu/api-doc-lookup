@@ -111,14 +111,14 @@
 </el-table-column>
 <el-table-column prop="originRealityTotalNum" label="原箱数量" width="120" v-if="btnType !== 'look'"
   key="originRealityTotalNum" /> -->
-                    <el-table-column prop="mainUnit" label="单位" width="110" show-overflow-tooltip key="mainUnit" />
+                    <el-table-column prop="mainUnit" label="原单位" width="110" show-overflow-tooltip key="mainUnit" />
                     <el-table-column prop="num" label="转换数量" width="170" key="num">
                       <template slot="header">
                         <span class="required">*</span>转换数量
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                          <el-input v-model="scope.row.num"
+                          <el-input v-model="scope.row.num" @blur="countNum(scope)"
                             :disabled="scope.row.targetBoxBarcode === '整箱转换' || btnType === 'look'" maxlength="11"
                             placeholder="请输入转换数量" style="width: 145px;">{{
                               scope.row.num }}
@@ -142,19 +142,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="targetNum" label="转换目标数量" width="170" key="targetNum">
-                      <template slot="header">
-                        <span class="required">*</span>转换目标数量
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetNum'"
-                          :rules='productRules.targetNum'>
-                          <el-input v-model="scope.row.targetNum" :disabled="btnType === 'look'" maxlength="11"
-                            placeholder="请输入转换目标数量">{{ scope.row.targetNum }}
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+
                     <el-table-column prop="targetProcessName" label="转换目标工序" width="170" key="targetProcessName">
 
                       <template slot-scope="scope">
@@ -183,6 +171,32 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="targetPairingModeId" label="目标配对方式" width="160">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false"
+                          @change="(value) => changePairingMode(value, scope)">
+                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetNum" label="转换目标数量" width="170" key="targetNum">
+                      <template slot="header">
+                        <span class="required">*</span>转换目标数量
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'targetNum'"
+                          :rules='productRules.targetNum'>
+                          <el-input v-model="scope.row.targetNum" :disabled="btnType === 'look'" maxlength="11"
+                            placeholder="请输入转换目标数量">{{ scope.row.targetNum }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="targetProductsMainUnit" label="目标单位" width="110" show-overflow-tooltip
+                      key="targetProductsMainUnit" />
                     <el-table-column prop="targetBatchNumber" label="目标产品批次号" width="230" key="targetBatchNumber">
                       <!-- <template slot="header">
                         <span class="required">*</span>目标产品批次号
@@ -277,16 +291,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="targetPairingModeId" label="目标配对方式" width="160">
-                      <template slot-scope="scope">
-                        <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
-                            :value="item.id">
-                          </el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
+
                     <el-table-column v-if="specialRequireFlag == 1" prop="targetSpecialRequire" label="目标特殊要求"
                       width="200" key="targetSpecialRequire">
                       <template slot-scope="scope">
@@ -368,8 +373,7 @@
                       </template>
                     </el-table-column> -->
                     <!-- <el-table-column prop="targetRealityTotalNum" label="目标箱数量" width="120" v-if="btnType !== 'look'" key="targetRealityTotalNum" /> -->
-                    <el-table-column prop="targetProductsMainUnit" label="单位" width="110" show-overflow-tooltip
-                      key="targetProductsMainUnit" />
+
                     <el-table-column prop="remark" label="备注" min-width="230" key="remark">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -487,14 +491,14 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="originRealityTotalNum" label="原箱数量" width="120" v-if="btnType !== 'look'" key="originRealityTotalNum" /> -->
-                <el-table-column prop="mainUnit" label="单位" width="110" show-overflow-tooltip key="mainUnit" />
+                <el-table-column prop="mainUnit" label="原单位" width="110" show-overflow-tooltip key="mainUnit" />
                 <el-table-column prop="num" label="转换数量" width="170" key="num">
                   <template slot="header">
                     <span class="required">*</span>转换数量
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                      <el-input v-model="scope.row.num"
+                      <el-input v-model="scope.row.num"  @blur="countNum(scope)"
                         :disabled="scope.row.targetBoxBarcode === '整箱转换' || btnType === 'look'" maxlength="11"
                         placeholder="请输入转换数量" style="width: 145px;">{{
                           scope.row.num }}
@@ -534,13 +538,15 @@
                 <el-table-column prop="targetPairingModeId" label="目标配对方式" width="160">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.targetPairingModeId" placeholder="请选择" style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false">
+                      @change="(value) => changePairingMode(value, scope)" :disabled="btnType == 'look' ? true : false">
                       <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
                         :value="item.id">
                       </el-option>
                     </el-select>
                   </template>
                 </el-table-column>
+                <el-table-column prop="targetProductsMainUnit" label="目标单位" width="110" show-overflow-tooltip
+                  key="targetProductsMainUnit" />
                 <el-table-column prop="targetSpecialRequire" label="目标特殊要求" width="200" show-overflow-tooltip
                   key="targetSpecialRequire" />
                 <el-table-column prop="targetAperture" label="目标孔径" width="140" show-overflow-tooltip
@@ -614,8 +620,7 @@
                       </template>
                     </el-table-column> -->
                 <!-- <el-table-column prop="targetRealityTotalNum" label="目标箱数量" width="120" v-if="btnType !== 'look'" key="targetRealityTotalNum" /> -->
-                <el-table-column prop="targetProductsMainUnit" label="单位" width="110" show-overflow-tooltip
-                  key="targetProductsMainUnit" />
+
                 <el-table-column prop="remark" label="备注" min-width="230" key="remark">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -885,14 +890,14 @@ export default {
     this.calcHeight()
   },
   methods: {
-    
+
     submitProcess(id, data, params, index) {
-      console.log(123,id, data, params, index);
+      console.log(123, id, data, params, index);
       this.dataFormTwo.data[params.scope.$index].targetProcessId = data[0].id || ''
       this.dataFormTwo.data[params.scope.$index].targetProcessName = data[0].name || ''
-      console.log("object",this.dataFormTwo.data);
-    },   
-    
+      console.log("object", this.dataFormTwo.data);
+    },
+
     async getOrderFiledMap() {
       await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -1215,6 +1220,20 @@ export default {
       this.$set(this.dataFormTwo.data[index], 'targetProductsId', data[0].all.id)
       this.$set(this.dataFormTwo.data[index], 'targetProductsCode', data[0].all.code)
       this.$set(this.dataFormTwo.data[index], 'targetProductsMainUnit', data[0].all.mainUnit)
+    },
+    // 选择配对方式 计算目标转换数量
+    changePairingMode(value, scope) {
+      if (value) {
+        let pairNum = this.pairingModeList.filter(items => items.id === value)[0].quantity
+        this.$set(this.dataFormTwo.data[scope.$index], 'targetProductsMainUnit', this.pairingModeList.filter(items => items.id === value)[0].unit)
+        if (scope.row.num) this.$set(this.dataFormTwo.data[scope.$index], 'targetNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [scope.row.num, pairNum]), 6))
+      }
+    },
+    countNum(scope){
+      if(scope.row.targetPairingModeId){
+        let pairNum = this.pairingModeList.filter(items => items.id === scope.row.targetPairingModeId)[0].quantity
+        this.$set(this.dataFormTwo.data[scope.$index], 'targetNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [scope.row.num, pairNum]), 6))
+      }
     },
     //选择库存产品
     openSeleceProductDialogtes() {

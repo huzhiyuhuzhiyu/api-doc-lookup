@@ -114,7 +114,8 @@
                           <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                             min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                          <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                            show-overflow-tooltip></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                             show-overflow-tooltip> </el-table-column>
                           <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
@@ -135,16 +136,11 @@
                               </el-input>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
-
-                            <template slot-scope="scope">
-
-                              <div> {{ scope.row.shelfSpaceName }}</div>
-                            </template>
-                          </el-table-column>
+                          <el-table-column prop="warehouseName" label="原仓库" width="120" :key="10112"></el-table-column>
+                          <el-table-column prop="shelfSpaceName" label="原库位" width="120" :key="10112"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
-
+                            
 
                           <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
                             v-if="btnType != 'look'">
@@ -159,6 +155,30 @@
                             <template slot-scope="scope">
                               <el-input v-model="scope.row.num" placeholder="领料数量(主)" :disabled="btnType == 'look'"
                                 @input="watchNum(scope.row, scope.$index)">
+                              </el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888"
+                            v-if="dataForm.pickingWay == 'dispatch_list'">
+                            <template slot="header">
+                              <span class="required">*</span>目标仓库
+                            </template>
+                            <template slot-scope="scope">
+                              <ComSelect-list
+                                :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList }"
+                                :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'"
+                                v-model="scope.row.inWarehouseName" :method="getWarehouseList" placeholder="请选择仓库"
+                                :paramsObj="{ index: scope.$index }" @change="changeWarehouseIn"></ComSelect-list>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112"
+                            v-if="allocationFlag && dataForm.pickingWay == 'dispatch_list'">
+                            <template slot="header">
+                              <span class="required">*</span>目标库位
+                            </template>
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
+                                @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
                               </el-input>
                             </template>
                           </el-table-column>
@@ -313,7 +333,8 @@
                           <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                             min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                          <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                            show-overflow-tooltip></el-table-column>
                           <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                             show-overflow-tooltip>
                           </el-table-column>
@@ -335,13 +356,8 @@
                               </el-input>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
-
-                            <template slot-scope="scope">
-
-                              <div> {{ scope.row.shelfSpaceName }}</div>
-                            </template>
-                          </el-table-column>
+                          <el-table-column prop="warehouseName" label="原仓库" width="120"></el-table-column>
+                          <el-table-column prop="shelfSpaceName" label="原库位" width="120"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
 
@@ -359,6 +375,30 @@
                             <template slot-scope="scope">
                               <el-input v-model="scope.row.num" placeholder="领料数量(主)" :disabled="btnType == 'look'"
                                 @input="watchNum(scope.row, scope.$index)">
+                              </el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888"
+                            v-if="dataForm.pickingWay == 'dispatch_list'">
+                            <template slot="header">
+                              <span class="required">*</span>目标仓库
+                            </template>
+                            <template slot-scope="scope">
+                              <ComSelect-list
+                                :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList }"
+                                :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'"
+                                v-model="scope.row.inWarehouseName" :method="getWarehouseList" placeholder="请选择仓库"
+                                :paramsObj="{ index: scope.$index }" @change="changeWarehouseIn"></ComSelect-list>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112"
+                            v-if="allocationFlag && dataForm.pickingWay == 'dispatch_list'">
+                            <template slot="header">
+                              <span class="required">*</span>目标库位
+                            </template>
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
+                                @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
                               </el-input>
                             </template>
                           </el-table-column>
@@ -425,18 +465,21 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
+                      placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productCode"
+                      placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.processName" placeholder="工序名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.processName"
+                      placeholder="工序名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -527,6 +570,7 @@ import WareHouseForm from './wareHouseForm.vue'
 import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
+import { addTransferData } from '@/api/warehouseManagement/transferManagement'
 import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
@@ -777,17 +821,17 @@ export default {
       this.$set(this.productData[index], 'angle', data.angle)
       this.$set(this.productData[index], 'pairingModeNames', data.pairingModeName)
       this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
-      
+
 
 
 
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index) {
-      if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
+      if (!row.inWarehouseId) return this.$message.error("请先选择当前数据目标仓库!")
       this.wareHouseVisible = true
       this.$nextTick(() => {
-        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId)
+        this.$refs.WareHouseForms.initData(row.inWarehouseId)
       })
       this.currentProductIndex = index
     },
@@ -795,9 +839,8 @@ export default {
     selectWareHouseFun(data) {
       console.log("库位信息", data);
       let index = this.currentProductIndex
-      this.$set(this.productData[index], 'shelfSpaceName', data.name)
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-      this.$set(this.productData[index], 'shelfSpaceId', data.id)
+      this.$set(this.productData[index], 'inShelfSpaceName', data.name)
+      this.$set(this.productData[index], 'inShelfSpaceId', data.id)
     },
 
 
@@ -1071,6 +1114,21 @@ export default {
       this.dataForm.warehouseType = data[0].all.type
       this.dataForm.projectId = data[0].all.projectId
     },
+
+    changeWarehouseIn(val, data, index) {
+      console.log("data", val, data, index);
+      if (!val && !data.length) {
+        this.productData[index.index].inWarehouseId = ''
+        this.productData[index.index].inWarehouseName = ''
+        this.productData[index.index].inWarehouseType = ""
+        return
+      }
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
+      this.$set(this.productData[index.index], 'inWarehouseId', data[0].id)
+      this.$set(this.productData[index.index], 'inWarehouseName', data[0].name)
+      this.$set(this.productData[index.index], 'inWarehouseType', data[0].all.type)
+
+    },
     goBack() {
       this.$emit('close', true)
     },
@@ -1141,6 +1199,7 @@ export default {
         })
       } else {
         this.$set(this.dataForm, 'sourceNo', data.orderNo)
+        this.$set(this.dataForm, 'pickingWay', data.pickingWay)
         this.title = '新建出库单'
         this.datafilelist = []
 
@@ -1148,18 +1207,26 @@ export default {
         this.getBusInfo('b045')
         detailWithdrawal(data.id).then(res => {
           console.log("详情", res);
-          
-    this.dataForm.recipientBy=res.data.collect.createBy
+
+          this.dataForm.recipientBy = res.data.collect.createBy
           let filteredArray = res.data.collectLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.unReceiveQuantity);
           if (filteredArray.length) {
             filteredArray.forEach(item => {
+              this.$set(item, 'outWarehouseId', item.warehouseId)
+              this.$set(item, 'outShelfSpaceId', item.shelfSpaceId)
               item.classAttribute = item.classAttribute
               item.noticeId = item.materialCollectId
+              item.noticeLineId = item.id
               item.noticeLineId = item.id
               item.sourceNo = this.dataForm.sourceNo
               item.ordersId = res.data.collect.productionOrderId
               item.ordersLineId = item.materialListId
               item.num = item.unReceiveQuantity
+              item.warehouseId=item.stockInventoryLine.warehouseId
+              item.warehouseName=item.stockInventoryLine.warehouseName
+              item.shelfSpaceId=item.stockInventoryLine.shelfSpaceId
+              item.shelfSpaceName=item.stockInventoryLine.shelfSpaceName
+              item.inventoryQuantity=item.stockInventoryLine.inventoryQuantity
               if (this.mainUnitFlag == 1) {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
@@ -1251,7 +1318,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行领料数量不能为空")
                 break
               }
-              if(!item.batchNumber){
+              if (!item.batchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
                 break
@@ -1259,8 +1326,7 @@ export default {
 
 
               if (Number(item.num) > Number(item.unReceiveQuantity)) {
-                console.log(item.num);
-                console.log(item.ordersNum);
+
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行领料数量不能超过待领料数量")
                 break
@@ -1270,6 +1336,18 @@ export default {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行领料数量不能超过批次库存数量")
                 break
+              }
+              if (this.dataForm.pickingWay == 'dispatch_list') {
+                if (!item.inWarehouseId) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行目标仓库不能为空")
+                  break
+                }
+                if (!item.inShelfSpaceId && this.allocationFlag) {
+                  submitFlag = false
+                  this.$message.error("产品信息第" + (index + 1) + "行目标库位不能为空")
+                  break
+                }
               }
               // if (!totals[item.ordersLineId]) {
               //   totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
@@ -1291,8 +1369,7 @@ export default {
             this.dataForm.documentType = "outbound"
 
             this.dataForm.documentStatus = submitModel
-            // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
-            const formMethod = addWarehouseData
+        
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
 
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
@@ -1313,13 +1390,28 @@ export default {
                 }
               })
             }
-            let dataObj = {
-              attachmentList: this.datafilelist,
+            let formMethod;
+            let dataObj = {};
+            if (this.dataForm.pickingWay !== 'dispatch_list'){
 
-              stockMove: this.dataForm,
-              lines: this.productData,
-              spaceLines: this.copyLinesData,
-              flowData: this.flowData
+              formMethod = addWarehouseData
+              dataObj = {
+                attachmentList: this.datafilelist,
+
+                stockMove: this.dataForm,
+                lines: this.productData,
+                spaceLines: this.copyLinesData,
+                flowData: this.flowData
+              }
+            } else {
+              this.$set(this.dataForm, 'transferType', 'receive_material')
+              formMethod = addTransferData
+              dataObj = {
+                attachmentList: this.datafilelist,
+                picking: this.dataForm,
+                lines: this.productData,
+                flowData: this.flowData
+              }
             }
             console.log("this.dataForm", this.dataForm);
             // // 提交确认
@@ -1330,7 +1422,7 @@ export default {
             //     return this.btnLoading = false
             //   }
             // }
-            console.log("this.productData", this.productData);
+            console.log("dataObj",dataObj);
             this.btnLoading = true
             formMethod(dataObj).then(res => {
               let msg = res.msg

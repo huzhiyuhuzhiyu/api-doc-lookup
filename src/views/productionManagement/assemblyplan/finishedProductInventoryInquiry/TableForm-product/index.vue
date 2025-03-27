@@ -95,7 +95,7 @@
     </el-form>
 
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择产品"
-      treeTitle="物料分类" :methodArr="ProductMethodArr" :listMethod="inventoryWarehouseList"
+      treeTitle="物料分类" :methodArr="ProductMethodArr" :listMethod="getInventoryLineReport"
       :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
@@ -103,6 +103,7 @@
 <script>
 import FormItem from "@/components/JNPF-col-table/item"
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
 import {
   getProductList,
 } from '@/api/masterDataManagement/productManage'
@@ -118,7 +119,7 @@ export default {
       },
       tableVisible: true,
       customStyleData: {},
-      inventoryWarehouseList, // 产品选择弹出框树状列表请求api
+      getInventoryLineReport, // 产品选择弹出框树状列表请求api
       ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "finish_product" } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
         // classAttributeList: ["finish_product"],
@@ -145,6 +146,7 @@ export default {
           "column": ""
         }, ],
         productDrawingNo: '',
+        availableStock:true,
         totalInventoryFlag: true,
         scrapFlag: false,
         virtuallyFlag: false,
@@ -159,6 +161,7 @@ export default {
         { prop: 'productDrawingNo', label: '品名规格' },
         { prop: 'pairingModeName', label: '配对方式' },
         { prop: 'mainUnit', label: '单位' },
+        { prop: 'batchNumber', label: '批次号',width:'180' },
         // { prop: 'spec', label: '规格型号' },
         { prop: 'inventoryQuantity', label: '可用客库存' }
       ], // 产品选择弹出框表单展示字段

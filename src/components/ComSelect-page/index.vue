@@ -175,11 +175,11 @@
               <!-- 普通结构 -->
               <template v-if="!listDataTreeFlag">
                 <template v-for="item in tableItems">
-                  <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
-                  :fixed="item.fixed || false" :sortable="item.sortable" 
-                  v-bind="{ width: item.width ? item.width : 0, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }" />
+                  <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop"
+                    :prop="item.prop" :label="item.label" :fixed="item.fixed || false" :sortable="item.sortable"
+                    v-bind="{ width: item.width ? item.width : 0, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }" />
                 </template>
-                
+
               </template>
 
               <!-- 双级树状结构 -->
@@ -245,8 +245,8 @@
                   :value="item2.value"></el-option>
               </el-select>
               <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]" style="width: 100%;"
-                      :start-placeholder="'请选择' + item.label + '开始日期'" :end-placeholder="'请选择' + item.label + '结束日期'"
-                      clearable type="daterange" value-format="yyyy-MM-dd">
+                :start-placeholder="'请选择' + item.label + '开始日期'" :end-placeholder="'请选择' + item.label + '结束日期'"
+                clearable type="daterange" value-format="yyyy-MM-dd">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -267,7 +267,7 @@ export default {
   name: 'ComSelect-page',
   props: {
     value: {
-        type:String,
+      type: String,
     },
     ids: {
       type: Array | Function
@@ -455,7 +455,7 @@ export default {
       type: String,
       default: '70%'
     },
-    index:{
+    index: {
       type: String,
       default: ""
     },
@@ -683,13 +683,23 @@ export default {
         })
       }
       this.listMethod(this.listQuery).then(async listRes => {
-        console.log("listRes",listRes);
+        console.log("listRes", listRes);
         if (this.listDataFormatting) { this.tableData = this.listDataFormatting({ ...listRes, listQuery: this.listQuery }) }
-        else if (Array.isArray(listRes.data)) { this.tableData = listRes.data||listRes.data.whPage.records }
-        else { this.tableData = listRes.data.records||listRes.data.whPage.records  }
+        else if (Array.isArray(listRes.data)) { this.tableData = listRes.data || listRes.data.whPage.records || listRes.data.page.records }
+        else {
+          if (listRes.data.records) {
+            this.tableData = listRes.data.records
+          } else if (listRes.data.whPage) {
+
+            this.tableData = listRes.data.whPage.records
+          } else if (listRes.data.page) {
+
+            this.tableData = listRes.data.page.records
+          }
+        }
         this.tableData.forEach((row, index) => { row._index = index });
 
-        this.total = listRes.data ? listRes.data.total : 0 || listRes.data.whPage ? listRes.data.whPage.total : 0
+        this.total = listRes.data.records ? listRes.data.total : 0 || listRes.data.whPage ? listRes.data.whPage.total : listRes.data.page ? listRes.data.page.total : 0
         await this.$nextTick()
         if (!this.multiple && !this.$refs.defaultTableActionRef && !this.rowDblclick) { // 使用了自定义插槽且没有设置行双击事件的
           const allLines = [...document.querySelectorAll('.even-row'), ...document.querySelectorAll('.odd-row')]
@@ -841,7 +851,7 @@ export default {
           // this.innerValue = ''
           // this.tagsList = ""
           this.$emit('input', "")
-          this.$emit('change', [], [], this.paramsObj,index)
+          this.$emit('change', [], [], this.paramsObj, index)
         } else if (this.multiple) {
           // this.innerValue = ''
           this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
@@ -859,7 +869,7 @@ export default {
           if (!submitFlag) return this.btnLoading = false
           // this.innerValue = this.selectedData[0]
           this.$emit('input', this.selectedIds[0])
-          this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj,this.index)
+          this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj, this.index)
         }
         this.$nextTick(() => { this.btnLoading = false })
         this.visible = false
@@ -949,9 +959,11 @@ export default {
 
 <style lang="scss" scoped>
 $footerPadding : '10px';
+
 ::v-deep.JNPF-common-search-box .el-input__inner {
   padding: 0 10px;
 }
+
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
   padding: 0;
   border-left: 1px solid #EBEEF5;

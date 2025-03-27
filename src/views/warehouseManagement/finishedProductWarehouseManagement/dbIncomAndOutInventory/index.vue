@@ -648,7 +648,7 @@
                 v-if="categoryType == 'inbound_return'" @click="columnSetFun('inboundReturnForm')" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top"
-              v-if="categoryType != 'inbound_order_production' && categoryType != 'inbound_production'">
+              v-if="categoryType != 'inbound_order_production' && categoryType != 'inbound_production'&&categoryType != 'inbound_flip'">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="getTabdataList()" />
             </el-tooltip>
@@ -5168,6 +5168,7 @@ export default {
           orderType: "",
           productDrawingNo: "",
           classAttributeList: this.classAttributeList,
+        orderTypeList: ['flipping', 'transit'],
           stockFlag: true,
           orderItems: [{
             asc: false,

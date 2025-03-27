@@ -11,7 +11,7 @@
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
-            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
+            @click="handleConfirm('submit', 'print')">提交并打印1</el-button>
 
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -1012,8 +1012,8 @@ export default {
           item.processCode = ""
         }
         // this.$set(item, 'discount', '')
-        this.$set(item, 'proportion', '')
-        this.$set(item, 'weight', '')
+        // this.$set(item, 'proportion', '')
+        // this.$set(item, 'weight', '')
         item.ordersId = item.purchaseOrderId
         item.noticeId = item.purchaseReceiptReturnGoodsId
         item.noticeLineId = item.id
@@ -1336,8 +1336,8 @@ export default {
             this.$set(item, 'warehouseName', this.dataForm.warehouseName)
             this.$set(item, 'warehouseType', this.dataForm.warehouseType)
             this.$set(item, 'batchNumber', '')
-            this.$set(item, 'proportion', '')
-            this.$set(item, 'weight', '')
+            // this.$set(item, 'proportion', '')
+            // this.$set(item, 'weight', '')
             if (this.mainUnitFlag == 1) {
               if (item.calculationDirection == 'multiplication') {
                 this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

@@ -179,10 +179,11 @@
                 <el-table-column prop="originBatchNumber" label="原批次号" width="200" sortable="custom" />
                 <el-table-column prop="mainUnit" label="原单位" width="120" />
                 <el-table-column prop="num" label="转换数量" width="140" />
+                <el-table-column prop="targetNum" label="转换目标数量" width="160" />
+                <el-table-column prop="targetProductsMainUnit" label="目标单位" width="120" />
                 <el-table-column prop="targetProductDrawingNo" label="目标品名规格" min-width="200" sortable="custom" />
                 <el-table-column prop="targetShelfSpaceName" label="目标库位" width="200" />
                 <el-table-column prop="targetBatchNumber" label="目标批次号" width="200" sortable="custom" />
-                <el-table-column prop="targetProductsMainUnit" label="目标单位" width="120" />
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                 <el-table-column prop="createByName" label="创建人" width="120" />

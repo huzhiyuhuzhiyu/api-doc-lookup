@@ -104,7 +104,14 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="线边仓库" prop="lineEdgeId" ref="organizeIdTree">
+                          <el-select v-model="dataForm.lineEdgeId" placeholder="请选择" style="width: 100%;">
+                            <el-option v-for="item in warehouseList" :key="item.id" :label="item.name" :value="item.id">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
@@ -608,7 +615,7 @@ export default {
       routingVisible: false,
       collectForm: {
         orderNo: "",
-        operationDate: this.jnpf.getToday(), 
+        operationDate: this.jnpf.getToday(),
         personId: "",
       },
       collectConfig: {
@@ -660,6 +667,7 @@ export default {
         classAttribute: "finish_product",
         productsId: "",
         pairingModeId: "",
+        lineEdgeId: "",
 
       },
       dataFormTwo: {
@@ -836,12 +844,12 @@ export default {
           mainUnit: item.mainUnit,
           ratio: item.ratio,
           materialsUsedQuantity: this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, item.qty]), 6) || '',
-          reduceType: "picking",
+          reduceType: "auto",
           processName: '',
           processId: '',
           selectProduct: true,
-          pairingModeId : item.pairingModeId,
-          pairingModeName : item.pairingModeName,
+          pairingModeId: item.pairingModeId,
+          pairingModeName: item.pairingModeName,
         }
       })
     },
@@ -887,7 +895,21 @@ export default {
         },
 
         { prop: "mainUnit", label: "单位", value: "", type: 'view', minWidth: 80 },
-
+        {
+          prop: 'reduceType',
+          label: '扣减料方式',
+          value: 'auto',
+          type: 'select',
+          disabled: this.btnType === 'look',
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 160,
+    
+        },
         { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
       ]
     },
@@ -1106,6 +1128,7 @@ export default {
       this.$set(this.dataForm, 'productsId', data.id)
       this.$refs.dataForm.clearValidate('productsDrawingNo');
       this.creaFun()
+      this.getWarehouseListFun()
       if (!data.routingId) return
       this.getRoutingDetail(this.dataForm.routingId)
     },
@@ -1488,7 +1511,7 @@ export default {
         let obj = {
           materialsUsedQuantity: this.dataForm.productionQuantity,
           qty: 1,
-          reduceType: "picking",
+          reduceType: "auto",
           calculationDirection: item.calculationDirection,
           ratio: item.ratio,
           productsId: item.productsId,
@@ -1498,8 +1521,8 @@ export default {
           productsDrawingNo: item.productDrawingNo,
           pairingModeId: item.pairingModeId,
           pairingModeName: item.pairingModeName,
-          stockInventoryLineId:item.id,
-          batchNumber:item.batchNumber,
+          stockInventoryLineId: item.id,
+          batchNumber: item.batchNumber,
         }
         this.materialList.push(obj)
       });
@@ -1612,14 +1635,10 @@ export default {
         this.$set(item, 'workOrderResList', item.routingProResList)
       });
       let arr = []
-      // if (this.dataForm.autoMaterialFlag) {
-      //   this.dataForm.lineEdgeList.forEach(item => {
-      //     arr.push({
-      //       productionOrderId: "",
-      //       warehouseId: item
-      //     })
-      //   })
-      // }
+      arr.push({
+        productionOrderId: "",
+        warehouseId: this.dataForm.lineEdgeId
+      })
       let obj = {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,

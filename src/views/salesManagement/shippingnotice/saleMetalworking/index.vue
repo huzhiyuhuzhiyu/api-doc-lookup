@@ -306,6 +306,7 @@ export default {
           condition: [],
           matchLogic: ""
         },
+        salesPersonFlag:1,
       },
 
       detailTotal: 0,

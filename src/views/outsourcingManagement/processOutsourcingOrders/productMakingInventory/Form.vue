@@ -1308,6 +1308,14 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
+      if (!this.userInfo.roleCode.split(',').includes('show_external_data')) {
+          this.$message({
+            message: "没有外协数据可见权限，请配置",
+            type: 'error',
+            duration: 1500,
+          })
+          return
+      }
       this.request(type)
     },
 

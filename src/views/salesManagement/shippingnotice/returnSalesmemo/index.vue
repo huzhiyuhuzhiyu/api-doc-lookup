@@ -214,6 +214,7 @@ export default {
           column: "create_time"
         }],
         superQuery: {},
+        salesPersonFlag:1,
       },
 
       detailTotal: 0,

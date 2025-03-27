@@ -42,17 +42,16 @@
         </div>
         <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
           class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
-          <el-table-column prop="lineCode" label="产线编码" align="left" sortable="custom" min-width="180">
+          <el-table-column prop="lineCode" label="产线编码" align="left" sortable="custom" min-width="120">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">
                 {{ scope.row.lineCode }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="lineName" label="产线名称" align="left" sortable="custom" min-width="180" />
-          <el-table-column prop="className" label="班次" width="120"></el-table-column>
-          <el-table-column prop="proDate" label="时间段" align="left" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" align="left" width="100" sortable="custom" />
+          <el-table-column prop="lineName" label="产线名称" align="left" sortable="custom" min-width="120" />
+          <el-table-column prop="className" label="班次" width="80"></el-table-column>
+          <el-table-column prop="proDate" label="生产日期" align="left" min-width="120" sortable="custom" />
           <el-table-column prop="innerBlankConsumeQuantity" label="内圈毛坯耗料数量" align="right" min-width="180" />
           <el-table-column prop="innerQualifiedQuantity" label="内圈合格数量" align="right" min-width="180" />
           <el-table-column prop="innerUnqualifiedQuantity" label="内圈不合格数量" align="right" min-width="180" />
@@ -63,7 +62,7 @@
           <el-table-column prop="lidConsumeQuantity" label="盖子耗料基准数量" align="right" min-width="180" />
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">
+              <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')" :disabled="scope.row.confirmStatus">
                 确定
               </el-button>
               <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'look')">

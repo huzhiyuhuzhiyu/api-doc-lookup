@@ -21,8 +21,6 @@
                 <JNPF-table hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
                   @selection-change="handeleProductInfoData" :data="dataFormTwo.data" size="mini" id="table" row-key="code"
                   :height="customStyleData">
-                  <el-table-column prop="projectName" label="所属项目" width="120"
-                    v-if="abProjectSwitchVisible"></el-table-column>
                   <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip>
                     <template slot="header">
                       <span class="required">*</span>
@@ -247,6 +245,15 @@ export default {
       console.log(this.$refs['productForm'], 'kkkk')
       let APItem = this.abProjectList.find(item => item.code === "AP");
       console.log(APItem)
+      if (this.abProjectId !== APItem.id) {
+        this.$message({
+          message: '请选择常规项目',
+          type: 'error',
+          duration: 1500
+        })
+        this.btnLoading = false
+        return
+      }
       this.dataFormTwo.data.forEach((item,index)=>{
           if (!item.consumeFlag && !item.consumeQuantity) {
             submitFlag = false

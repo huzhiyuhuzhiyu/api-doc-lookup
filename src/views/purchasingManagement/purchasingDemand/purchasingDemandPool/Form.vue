@@ -721,20 +721,20 @@ export default {
             }),
             trigger: ['blur']
           },
-          {
-            validator: this.formValidate({
-              type: 'decimal',
-              params: [
-                20,
-                6,
-                '',
-                (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
-                }
-              ]
-            }),
-            trigger: 'blur'
-          },
+          // {
+          //   validator: this.formValidate({
+          //     type: 'decimal',
+          //     params: [
+          //       20,
+          //       6,
+          //       '',
+          //       (errMsg, index) => {
+          //         this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
+          //       }
+          //     ]
+          //   }),
+          //   trigger: 'blur'
+          // },
         ],
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },

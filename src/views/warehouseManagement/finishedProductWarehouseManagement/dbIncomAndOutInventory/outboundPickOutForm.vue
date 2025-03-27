@@ -1226,7 +1226,7 @@ export default {
               item.warehouseName=item.stockInventoryLine.warehouseName
               item.shelfSpaceId=item.stockInventoryLine.shelfSpaceId
               item.shelfSpaceName=item.stockInventoryLine.shelfSpaceName
-              item.inventoryQuantity=item.stockInventoryLine.inventoryQuantity
+              item.batchAvailableQuantity=item.stockInventoryLine.inventoryQuantity
               if (this.mainUnitFlag == 1) {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

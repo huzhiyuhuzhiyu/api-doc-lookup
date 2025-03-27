@@ -306,8 +306,8 @@
                   </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel"
                     v-if="currentProcess.processType === 'typing' && currentProcess.reportFlag">
-                    <el-form-item label="打字内容:" prop="sealingcoverTyping">
-                      <el-select v-model="currentProcess.sealingcoverTyping" placeholder="请选择打字内容" style="width: 100%;"
+                    <el-form-item label="打字内容:" prop="sealingCoverTyping">
+                      <el-select v-model="currentProcess.sealingCoverTyping" placeholder="请选择打字内容" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in sealingcoverTypingList" :key="item.id" :label="item.name"
                           :value="item.name"></el-option>
@@ -1463,7 +1463,7 @@ export default {
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.oil = this.currentProcess.oil
-              obj.sealingcoverTyping = this.currentProcess.sealingcoverTyping
+              obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
             }
             arr.push(obj)
@@ -1531,7 +1531,7 @@ export default {
               obj.stockFlag = this.stockFlag
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.oil = this.currentProcess.oil
-              obj.sealingcoverTyping = this.currentProcess.sealingcoverTyping
+              obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               arr.push(obj)
               console.log("测震到配对工序之间的工序");
@@ -1592,7 +1592,7 @@ export default {
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.oil = this.currentProcess.oil
-              obj.sealingcoverTyping = this.currentProcess.sealingcoverTyping
+              obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
               arr.push(obj)
             }
@@ -1619,7 +1619,7 @@ export default {
               "unqualifiedQuantity": this.currentProcess.unqualifiedQuantity,
               "vibrationLevel": this.currentProcess.vibrationLevel,
               "oil": this.currentProcess.oil,
-              "sealingcoverTyping": this.currentProcess.sealingcoverTyping,
+              "sealingCoverTyping": this.currentProcess.sealingCoverTyping,
               "workOrderId": this.currentProcess.id,
               causesList: [...this.materialWasteDataList, ...this.responsWasteDataList],
 

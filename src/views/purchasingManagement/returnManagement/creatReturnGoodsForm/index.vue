@@ -685,13 +685,18 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
+          if (item.price && item.receivedQuantity) {
+            item.totalAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity,2)
+          } else {
+            item.totalAmount = ''
+          }
           if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
-            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100),6)
           } else {
             item.excludingTaxPrice = ''
           }
           if (item.receivedQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice)
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice,2)
           } else {
             item.excludingTaxAmount = ''
           }
@@ -699,11 +704,6 @@ export default {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount)
           } else {
             item.taxAmount = ''
-          }
-          if (item.excludingTaxAmount && item.taxAmount) {
-            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
-          } else {
-            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -861,6 +861,7 @@ export default {
         if (this.isReturnSwitch) {
           list.forEach((item, index) => {
             item.ordersNum = item.num
+            item.taxRate = Number(item.taxRate)
             item.receiptQuantity = item.purchaseQuantity
             item.productName = item.productName
             item.deliveryDate = this.dataForm.deliveryDate // 交期
@@ -868,6 +869,7 @@ export default {
           })
         } else {
           list.forEach((item, index) => {
+            item.taxRate = Number(item.taxRate)
             item.receiptQuantity = item.inventoryQuantity
             item.productsId = item.id
             item.productName = item.name

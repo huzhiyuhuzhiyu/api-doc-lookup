@@ -867,13 +867,18 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
+          if (item.price && item.receivedQuantity) {
+            item.totalAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity,2)
+          } else {
+            item.totalAmount = ''
+          }
           if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
-            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100),6)
           } else {
             item.excludingTaxPrice = ''
           }
           if (item.receivedQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice)
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice,2)
           } else {
             item.excludingTaxAmount = ''
           }
@@ -881,11 +886,6 @@ export default {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount)
           } else {
             item.taxAmount = ''
-          }
-          if (item.excludingTaxAmount && item.taxAmount) {
-            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
-          } else {
-            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')
@@ -1073,6 +1073,53 @@ export default {
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
+    },
+        // 产品组件回调
+        addth(id, data) {
+      this.getProductClassFun()
+      if (data.length) {
+        let selectArr = []
+        let list = data.map((item) => item.all)
+        if (this.isReturnSwitch) {
+          list.forEach((item, index) => {
+            item.ordersNum = item.num
+            item.taxRate = Number(item.taxRate)
+            item.receiptQuantity = item.purchaseQuantity
+            item.productName = item.productName
+            item.deliveryDate = this.dataForm.deliveryDate // 交期
+            selectArr.push(item)
+          })
+        } else {
+          list.forEach((item, index) => {
+            item.taxRate = Number(item.taxRate)
+            item.receiptQuantity = item.inventoryQuantity
+            item.productsId = item.id
+            item.productName = item.name
+            item.deliveryDate = this.dataForm.deliveryDate // 交期
+            selectArr.push(item)
+          })
+        }
+       
+        if (this.dataFormTwo.productData && this.dataFormTwo.productData.length) {
+          const deletedArray = []
+          selectArr = selectArr.filter((item1) => {
+            const index = this.dataFormTwo.productData.findIndex((item2) => item2.productsId === item1.productsId)
+            if (index !== -1) {
+              deletedArray.push(item1.productName)
+              if (deletedArray.length) {
+                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+              }
+              return false
+            }
+            return true
+          })
+        }
+        console.log(selectArr,'kkk')
+        this.dataFormTwo.productData = [...this.dataFormTwo.productData, ...selectArr]
+        console.log(this.dataFormTwo.productData,'lll')
+        // 审批
+        // this.$nextTick(() => { this.getApproverData() })
+      }
     },
     // 批量删除
     batchDelete() {

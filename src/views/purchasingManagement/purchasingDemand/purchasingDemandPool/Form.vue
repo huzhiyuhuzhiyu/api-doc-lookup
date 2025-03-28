@@ -198,7 +198,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="totalAmount" label="金额" width="140">
+                        <el-table-column prop="totalAmount" label="金额(含税)" width="140">
                           <template slot="header">
                             <span class="required">*</span>
                             金额(含税)
@@ -822,13 +822,18 @@ export default {
       // immediate:true,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
+          if (item.price && item.purchaseQuantity) {
+            item.totalAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity,2)
+          } else {
+            item.totalAmount = ''
+          }
           if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
-            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100),6)
           } else {
             item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice,2)
           } else {
             item.excludingTaxAmount = ''
           }
@@ -836,11 +841,6 @@ export default {
             item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
           } else {
             item.taxAmount = ''
-          }
-          if (item.excludingTaxAmount && item.taxAmount) {
-            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
-          } else {
-            item.totalAmount = ''
           }
           // if (!item.price) {
           //   this.$message.error('未找到供应商单价')

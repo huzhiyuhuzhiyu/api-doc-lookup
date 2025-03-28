@@ -51,6 +51,15 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="库位" prop="shelfSpaceId">
+                        <el-select v-model="dataForm.shelfSpaceId" placeholder="请选择库位" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false" clearable >
+                          <el-option v-for="(item, index) in shelfSpaceIdList" :key="index" :label="item.name"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -69,7 +78,58 @@
                           :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协类型" prop="outType" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                        <el-select v-model="dataForm.outType" @focus="setMinWidth"  placeholder="请选择外协类型" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
+                            :value="item.value" :style="{'min-width': minWidth + 2 + 'px'}"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
+                          v-model="dataForm.outPartnerName"
+                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
+                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          :listRequestObj="PartnerListRequestObj" 
+                          :searchList="PartnerTableSearchList" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协产品" prop="outProductName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeProductClick"
+                          v-model="dataForm.outProductName" 
+                          @change="productDataChange" :tableItems="productTableItems" :placeholder="'请选择产品名称'" title="选择产品"
+                          treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList" :beforeOpen="beforeProductOpen"
+                          :listRequestObj="productListRequestObj" :searchList="productTableSearchList" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="回购单价" prop="buyBackPrice">
+                        <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType == 'look'"
+                         />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="回购税率" prop="buyBackRate">
+                        <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
+                         />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="成材率" prop="yieldRate">
+                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
+                          />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="损耗率" prop="lossRate">
+                        <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
+                       />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
                         <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -116,7 +176,7 @@
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" hasNO
                    fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
-                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                     <el-table-column prop="productCode" label="产品编码" width="140"
@@ -289,14 +349,23 @@
                 </el-col>
 
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="仓库" prop="warehouseId">
-                    <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
-                      <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
-                        :value="item.id"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
+                      <el-form-item label="仓库" prop="warehouseId">
+                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
+                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="库位" prop="shelfSpaceId">
+                        <el-select v-model="dataForm.shelfSpaceId" placeholder="请选择库位" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false" clearable >
+                          <el-option v-for="(item, index) in shelfSpaceIdList" :key="index" :label="item.name"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                 <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <el-form-item label="供应商名称" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -314,7 +383,58 @@
                       :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                   </el-form-item>
                 </el-col>
-
+                <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协类型" prop="outType" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                        <el-select v-model="dataForm.outType" @focus="setMinWidth"  placeholder="请选择外协类型" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false">
+                          <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
+                            :value="item.value" :style="{'min-width': minWidth + 2 + 'px'}"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
+                          v-model="dataForm.outPartnerName"
+                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
+                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          :listRequestObj="PartnerListRequestObj" 
+                          :searchList="PartnerTableSearchList" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="外协产品" prop="outProductName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeProductClick"
+                          v-model="dataForm.outProductName" 
+                          @change="productDataChange" :tableItems="productTableItems" :placeholder="'请选择产品名称'" title="选择产品"
+                          treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList" :beforeOpen="beforeProductOpen"
+                          :listRequestObj="productListRequestObj" :searchList="productTableSearchList" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="回购单价" prop="buyBackPrice">
+                        <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType == 'look'"
+                         />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="回购税率" prop="buyBackRate">
+                        <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
+                         />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="成材率" prop="yieldRate">
+                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
+                          />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="损耗率" prop="lossRate">
+                        <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
+                       />
+                      </el-form-item>
+                    </el-col>
                 <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                   <el-form-item label="创建时间" prop="createTime">
                     <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -361,7 +481,7 @@
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
                 hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
-                <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="130" show-overflow-tooltip></el-table-column>
@@ -643,7 +763,7 @@
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" min-width="220" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" width="120"
-                  v-if="isProjectSwitch === '1'"></el-table-column>
+                  v-if="abProjectSwitchVisible"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="140" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="60" />
@@ -736,16 +856,17 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import { getProductList } from '@/api/masterDataManagement/productManage'
+import { getList } from '@/api/basicData/stockGoodsShelves'
 export default {
   components: { Process, recordList, PrintBrowse, PrintDialog },
-  mixins: [busFlow, getProjectList],
+  mixins: [busFlow, AbProjectMixin],
   data() {
     return {
-      isProjectSwitch: '',
       isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
@@ -806,10 +927,79 @@ export default {
       },
       ordersLineId: '',
       code: '',
+      outTypeList: [{ label: '采购销售', value: 'purchase_sale' }, { label: '外协', value: 'out' }],
+      minWidth:0,
       iszhi: false,
       totalNum: 0,
       totalAssistantNum: 0,
       totalAmount: 0,
+
+      getCooperativeData,
+      getcategoryTrees,
+      //  供应商 树请求
+      PartnerMethodArr: { method: getcategoryTrees, requestObj: { type: 'outsourcing_suppliers' } },
+      // 供应商 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '供应商编码' },
+        { prop: 'name', label: '供应商名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 供应商搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '供应商编码', type: 'input' },
+        { prop: 'name', label: '供应商名称', type: 'input' }
+      ],
+      // 供应商请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'outsourcing_suppliers'
+      },
+      getcategoryTree,
+      getProductList,
+      //  产品 树请求
+      productMethodArr: { method: getcategoryTree, requestObj: { classAttribute: '' } },
+      // 产品 列表
+      productTableItems: [
+        { prop: 'code', label: '产品编码' },
+        { prop: 'name', label: '产品名称',render:false },
+        { prop: 'drawingNo', label: '品名规格' },
+      ],
+      // 供应商搜索条件
+      productTableSearchList: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+      ],
+      // 供应商请求参数
+      productListRequestObj: {
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        drawingNo: '', // 图号
+        productSource: '', // 产品来源
+        startAndEndTime: [], // 创建时间
+        productCategoryId: '', // 类型id
+        productStatus: '', // 产品状态
+        customerQueryFields: [],
+        createTimeArr: [],
+        classAttribute: ''
+      },
       // 选择客户产品参数
       productForm: {
         //   drawingNo: "",
@@ -940,6 +1130,7 @@ export default {
         returnDeliveryType: 'back',
         notificationType: 'procure',
         salesman: '',
+        shelfSpaceId:'',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -978,6 +1169,7 @@ export default {
       treeLoading: false,
       selectRows: [],
       warehouseIdList: [],
+      shelfSpaceIdList:[],
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
@@ -1118,9 +1310,12 @@ export default {
         this.specialRequireFlag = res.data.specialRequire
       })
     },
-    warehouseIdChange(e) {
+    setMinWidth (val) {
+      this.minWidth = val.srcElement.clientWidth
+    },
+    async warehouseIdChange(e) {
       this.dataForm.warehouseId = e
-      if (this.isProjectSwitch === '1') {
+      if (this.abProjectSwitchVisible) {
         this.warehouseIdList.forEach((item) => {
           if (e === item.id) {
             this.orderForm.projectId = item.projectId
@@ -1129,6 +1324,19 @@ export default {
         this.dataFormTwo.productData = this.dataFormTwo.productData.filter(
           (item) => item.projectId === this.orderForm.projectId
         )
+      }
+      if (this.dataForm.warehouseId) {
+        if (this.$store.getters.configData.purchase.outConsigneeFlag) {
+          let obj = {
+            warehouseId:this.dataForm.warehouseId
+          }
+          const res = await getList(obj)
+          this.shelfSpaceIdList = res.data.records
+          this.dataForm.shelfSpaceId = ''
+        } 
+      } else {
+        this.shelfSpaceIdList = []
+        this.dataForm.shelfSpaceId = ''
       }
     },
     getDeputyUnit() {
@@ -1214,17 +1422,21 @@ export default {
         console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
       })
     },
-    getWarehouseList() {
+    async getWarehouseList() {
       let obj = {
         type: 'virtually',
         category: 'warehouse'
       }
-      if (this.isProjectSwitch === '1') {
+      console.log(this.$store.getters.configData.purchase.outConsigneeFlag,'this.$store.getters.configData.purchase.outConsigneeFlag')
+      if (this.$store.getters.configData.purchase.outConsigneeFlag) {
+        obj.type = 'normal'
+      }
+      if (this.abProjectSwitchVisible) {
         obj.projectId = this.userInfo.projectId
       }
-      getWarehouseList(obj).then((res) => {
-        this.warehouseIdList = res.data
-      })
+      const res = await getWarehouseList(obj)
+      this.warehouseIdList = res.data
+  
     },
     //发货数量不能为0
     calcValidatenum() {
@@ -1406,7 +1618,65 @@ export default {
       })
       this.dataFormTwo.productData = uniqueArr
     },
-    // },
+     // 弹窗节点的点击
+     treeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
+    supplierdata(id, data) {
+     
+      if (data.length === 0) {
+        this.dataForm.outPartnerName = ''
+        this.dataForm.outPartnerCode = ''
+        this.dataForm.outPartnerId = ''
+      } else {
+        this.dataForm.outPartnerName = data[0].all.name
+        this.dataForm.outPartnerCode = data[0].all.code
+        this.dataForm.outPartnerId = data[0].all.id
+      }
+    },
+     // 弹窗节点的点击
+     treeProductClick(data, node, listQuery) {
+      if (listQuery.productCategoryId === data.id) return listQuery
+      listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
+    async beforeProductOpen(paramsObj) {
+      console.log(paramsObj, 'lll')
+      this.productTableSearchList = [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+      ]
+      if (this.abProjectSwitchVisible) {
+        this.productListRequestObj.projectId = this.abProjectId
+        this.productTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectList })
+      }
+      if (this.$store.getters.configData.product.enable_productName) {
+        this.productTableItems.forEach(tc=>{
+          if (tc.prop === 'name') {
+            tc.render = true
+          }
+        })
+        let productCodeIndex = this.productTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+        this.productTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      }
+      return true
+    },
+    productDataChange(id, data) {
+     
+     if (data.length === 0) {
+       this.dataForm.outPartnerName = ''
+       this.dataForm.outPartnerCode = ''
+       this.dataForm.outPartnerId = ''
+     } else {
+       this.dataForm.outPartnerName = data[0].all.name
+       this.dataForm.outPartnerCode = data[0].all.code
+       this.dataForm.outPartnerId = data[0].all.id
+     }
+   },
     // 获取所有订单列表数据
     initData2() {
       this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode

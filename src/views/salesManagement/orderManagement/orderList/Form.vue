@@ -1361,6 +1361,7 @@ export default {
         pageSize: 20,
         partnerCategoryId: "",
         type: "customer",
+        saleFlag:1,
       },
       defaultProps: {
         children: 'childrenList',

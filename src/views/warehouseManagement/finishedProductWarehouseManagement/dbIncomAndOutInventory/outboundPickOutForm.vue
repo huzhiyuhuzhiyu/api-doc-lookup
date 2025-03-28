@@ -136,11 +136,13 @@
                               </el-input>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="warehouseName" label="原仓库" width="120" :key="10112"></el-table-column>
-                          <el-table-column prop="shelfSpaceName" label="原库位" width="120" :key="10112"></el-table-column>
+                          <el-table-column prop="outWarehouseName" label="原仓库" width="120"
+                            :key="10112"></el-table-column>
+                          <el-table-column prop="outShelfSpaceName" label="原库位" width="120"
+                            :key="10112"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
-                            
+
 
                           <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
                             v-if="btnType != 'look'">
@@ -165,7 +167,7 @@
                             </template>
                             <template slot-scope="scope">
                               <ComSelect-list
-                                :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList }"
+                                :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList, projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
                                 :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'"
                                 v-model="scope.row.inWarehouseName" :method="getWarehouseList" placeholder="请选择仓库"
                                 :paramsObj="{ index: scope.$index }" @change="changeWarehouseIn"></ComSelect-list>
@@ -356,8 +358,8 @@
                               </el-input>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="warehouseName" label="原仓库" width="120"></el-table-column>
-                          <el-table-column prop="shelfSpaceName" label="原库位" width="120"></el-table-column>
+                          <el-table-column prop="outWarehouseName" label="原仓库" width="120"></el-table-column>
+                          <el-table-column prop="outShelfSpaceName" label="原库位" width="120"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
 
@@ -385,7 +387,7 @@
                             </template>
                             <template slot-scope="scope">
                               <ComSelect-list
-                                :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList }"
+                                :requestObj="{ type: 'line_edge', classAttributeList: classAttributeList, projectId: isProjectSwitch === '1' ? dataForm.projectId || '' : '' }"
                                 :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'"
                                 v-model="scope.row.inWarehouseName" :method="getWarehouseList" placeholder="请选择仓库"
                                 :paramsObj="{ index: scope.$index }" @change="changeWarehouseIn"></ComSelect-list>
@@ -717,6 +719,7 @@ export default {
       productNameFlag: null,
       tableDataFlag: false,
       columnList: [],
+      wareHouseInfo: {},
     }
   },
 
@@ -1222,11 +1225,26 @@ export default {
               item.ordersId = res.data.collect.productionOrderId
               item.ordersLineId = item.materialListId
               item.num = item.unReceiveQuantity
-              item.warehouseId=item.stockInventoryLine.warehouseId
-              item.warehouseName=item.stockInventoryLine.warehouseName
-              item.shelfSpaceId=item.stockInventoryLine.shelfSpaceId
-              item.shelfSpaceName=item.stockInventoryLine.shelfSpaceName
-              item.batchAvailableQuantity=item.stockInventoryLine.inventoryQuantity
+              item.outWarehouseId = item.stockInventoryLine.warehouseId
+              item.outWarehouseName = item.stockInventoryLine.warehouseName
+              item.outShelfSpaceId = item.stockInventoryLine.shelfSpaceId
+              item.outShelfSpaceName = item.stockInventoryLine.shelfSpaceName
+              item.batchAvailableQuantity = item.stockInventoryLine.inventoryQuantity
+              this.$set(item, 'sealingCoverTyping', item.stockInventoryLine.sealingCoverTyping)
+              this.$set(item, 'accuracyLevel', item.stockInventoryLine.accuracyLevel)
+              this.$set(item, 'vibrationLevel', item.stockInventoryLine.vibrationLevel)
+              this.$set(item, 'oil', item.stockInventoryLine.oil)
+              this.$set(item, 'clearance', item.stockInventoryLine.clearance)
+              this.$set(item, 'packagingMethod', item.stockInventoryLine.packagingMethod)
+              this.$set(item, 'specialRequire', item.stockInventoryLine.specialRequire)
+              this.$set(item, 'material', item.stockInventoryLine.material)
+              this.$set(item, 'colour', item.stockInventoryLine.colour)
+              this.$set(item, 'protrusion', item.stockInventoryLine.protrusion)
+              this.$set(item, 'preload', item.stockInventoryLine.preload)
+              this.$set(item, 'centerDiameter', item.stockInventoryLine.centerDiameter)
+              this.$set(item, 'angle', item.stockInventoryLine.angle)
+              this.$set(item, 'pairingModeNames', item.stockInventoryLine.pairingModeName)
+              this.$set(item, 'pairingModeId', item.stockInventoryLine.pairingModeId)
               if (this.mainUnitFlag == 1) {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
@@ -1298,14 +1316,14 @@ export default {
             submitFlag = false
             this.$message.error('请至少选择一个产品')
           }
-          if (this.allocationFlag) {
-            this.productData.forEach((item, index) => {
-              if (!item.shelfSpaceId) {
-                submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
-              }
-            })
-          }
+          // if (this.allocationFlag) {
+          //   this.productData.forEach((item, index) => {
+          //     if (!item.shelfSpaceId) {
+          //       submitFlag = false
+          //       this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
+          //     }
+          //   })
+          // }
 
           if (this.productData.length) {
             console.log(this.productData);
@@ -1369,7 +1387,7 @@ export default {
             this.dataForm.documentType = "outbound"
 
             this.dataForm.documentStatus = submitModel
-        
+
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
 
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
@@ -1392,7 +1410,7 @@ export default {
             }
             let formMethod;
             let dataObj = {};
-            if (this.dataForm.pickingWay !== 'dispatch_list'){
+            if (this.dataForm.pickingWay !== 'dispatch_list') {
 
               formMethod = addWarehouseData
               dataObj = {
@@ -1404,7 +1422,7 @@ export default {
                 flowData: this.flowData
               }
             } else {
-              this.$set(this.dataForm, 'transferType', 'receive_material')
+              this.$set(this.dataForm, 'transferType', 'product_pick_material')
               formMethod = addTransferData
               dataObj = {
                 attachmentList: this.datafilelist,
@@ -1422,7 +1440,7 @@ export default {
             //     return this.btnLoading = false
             //   }
             // }
-            console.log("dataObj",dataObj);
+            console.log("dataObj", dataObj);
             this.btnLoading = true
             formMethod(dataObj).then(res => {
               let msg = res.msg

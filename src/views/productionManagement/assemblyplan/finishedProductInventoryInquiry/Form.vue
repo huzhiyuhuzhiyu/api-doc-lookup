@@ -1627,6 +1627,19 @@ export default {
       } else {
         this.dataForm.materialFlag = false
       }
+      if(this.materialList.length){
+        for (let index = 0; index < this.materialList.length; index++) {
+          const item = this.materialList[index];
+          if(!item.materialsUsedQuantity){
+            submitFlag = false;
+              this.$message({
+                message: "领料清单第" + (index + 1) + "行领料数量不能为空",
+                type: "error",
+              });
+              break;
+          }
+        }
+      }
       if (submitFlag === false) return
       this.dataFormTwo.data.forEach(item => {
         item.routingProResList.forEach(items => {

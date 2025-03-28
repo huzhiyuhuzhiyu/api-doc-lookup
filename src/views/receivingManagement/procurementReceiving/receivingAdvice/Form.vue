@@ -50,7 +50,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="库位" prop="shelfSpaceId">
                         <el-select v-model="dataForm.shelfSpaceId" placeholder="请选择库位" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false" clearable >
@@ -78,7 +78,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协类型" prop="outType" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="外协类型" prop="outType" v-if="outConsigneeFlag">
                         <el-select v-model="dataForm.outType" @focus="setMinWidth"  placeholder="请选择外协类型" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false">
                           <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
@@ -87,7 +87,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.outPartnerName"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -97,7 +97,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协产品" prop="outProductName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="外协产品" prop="outProductName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeProductClick"
                           v-model="dataForm.outProductName" 
                           @change="productDataChange" :tableItems="productTableItems" :placeholder="'请选择产品名称'" title="选择产品"
@@ -105,25 +105,25 @@
                           :listRequestObj="productListRequestObj" :searchList="productTableSearchList" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="回购单价" prop="buyBackPrice">
                         <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType == 'look'"
                          />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="回购税率" prop="buyBackRate">
                         <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
                          />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="成材率" prop="yieldRate">
                         <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
                           />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="损耗率" prop="lossRate">
                         <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
                        />
@@ -354,7 +354,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="库位" prop="shelfSpaceId">
                         <el-select v-model="dataForm.shelfSpaceId" placeholder="请选择库位" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false" clearable >
@@ -382,7 +382,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协类型" prop="outType" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="外协类型" prop="outType" v-if="outConsigneeFlag">
                         <el-select v-model="dataForm.outType" @focus="setMinWidth"  placeholder="请选择外协类型" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false">
                           <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
@@ -391,7 +391,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.outPartnerName"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -401,7 +401,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协产品" prop="outProductName" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                      <el-form-item label="外协产品" prop="outProductName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeProductClick"
                           v-model="dataForm.outProductName" 
                           @change="productDataChange" :tableItems="productTableItems" :placeholder="'请选择产品名称'" title="选择产品"
@@ -409,25 +409,25 @@
                           :listRequestObj="productListRequestObj" :searchList="productTableSearchList" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="回购单价" prop="buyBackPrice">
                         <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType == 'look'"
                          />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="回购税率" prop="buyBackRate">
                         <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
                          />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="成材率" prop="yieldRate">
                         <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
                           />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.purchase.outConsigneeFlag">
+                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="损耗率" prop="lossRate">
                         <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
                        />
@@ -945,6 +945,7 @@ export default {
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
+      outConsigneeFlag:'',
       ordersLineId: '',
       code: '',
       iszhi: false,
@@ -1330,7 +1331,7 @@ export default {
         )
       }
       if (this.dataForm.warehouseId) {
-        if (this.$store.getters.configData.purchase.outConsigneeFlag) {
+        if (this.outConsigneeFlag) {
           let obj = {
             warehouseId:this.dataForm.warehouseId
           }
@@ -1419,8 +1420,8 @@ export default {
         type: 'virtually',
         category: 'warehouse'
       }
-      console.log(this.$store.getters.configData.purchase.outConsigneeFlag,'this.$store.getters.configData.purchase.outConsigneeFlag')
-      if (this.$store.getters.configData.purchase.outConsigneeFlag) {
+      console.log(this.outConsigneeFlag,'this.outConsigneeFlag')
+      if (this.outConsigneeFlag) {
         obj.type = 'normal'
       }
       if (this.abProjectSwitchVisible) {
@@ -1636,13 +1637,13 @@ export default {
     productDataChange(id, data) {
      
      if (data.length === 0) {
-       this.dataForm.outPartnerName = ''
-       this.dataForm.outPartnerCode = ''
-       this.dataForm.outPartnerId = ''
+       this.dataForm.outProductName = ''
+       this.dataForm.outProductCode = ''
+       this.dataForm.outProductId = ''
      } else {
-       this.dataForm.outPartnerName = data[0].all.name
-       this.dataForm.outPartnerCode = data[0].all.code
-       this.dataForm.outPartnerId = data[0].all.id
+       this.dataForm.outProductName = data[0].all.name
+       this.dataForm.outProductCode = data[0].all.code
+       this.dataForm.outProductId = data[0].all.id
      }
    },
     // 获取所有订单列表数据
@@ -2018,7 +2019,7 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data) {
+    init(id, btnType, approvalFlag, data,outConsigneeFlag) {
       console.log(id, '[]')
       this.dataForm.id = id || ''
 
@@ -2041,6 +2042,8 @@ export default {
           })
         }
       }
+      this.outConsigneeFlag = outConsigneeFlag // 判断 是否存在外协供应方
+
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice

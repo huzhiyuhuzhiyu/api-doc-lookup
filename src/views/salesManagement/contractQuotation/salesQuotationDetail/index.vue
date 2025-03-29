@@ -239,7 +239,6 @@ export default {
           condition: [],
           matchLogic: ""
         },
-        salesPersonFlag:1,
       },
       superQueryJson: [
         {
@@ -383,6 +382,9 @@ export default {
     if (this.isProductNameSwitch == 1) {
       this.searchList.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
       
+    }
+    if (this.$store.getters.configData.sale.salePersonFlag) {
+      this.form.salesPersonFlag = 1
     }
     this.advancedQueryFun()
     this.search('basic')

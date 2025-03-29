@@ -284,7 +284,6 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        salesPersonFlag:1,
       },
 
       detailTotal: 0,
@@ -432,6 +431,9 @@ export default {
       console.error('请求失败:', error);
     });
     this.getUserList()
+    if (this.$store.getters.configData.sale.salePersonFlag) {
+      this.orderForm.salesPersonFlag = 1
+    }
     this.superForm = this.orderForm
     this.search('basic')
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')

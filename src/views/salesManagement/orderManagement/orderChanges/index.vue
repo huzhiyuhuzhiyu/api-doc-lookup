@@ -544,7 +544,6 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        salesPersonFlag:1,
       },
       dataForm: {
 
@@ -583,6 +582,9 @@ export default {
     }
     this.dataForm = JSON.parse(JSON.stringify(this.initListQuery))
     this.linesQuery = JSON.parse(JSON.stringify(this.initLinesQuery))
+    if (this.$store.getters.configData.sale.salePersonFlag) {
+      this.linesQuery.salesPersonFlag = 1
+    }
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },

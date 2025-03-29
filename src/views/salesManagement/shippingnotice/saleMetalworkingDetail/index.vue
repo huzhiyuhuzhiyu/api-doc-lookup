@@ -294,7 +294,6 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        salesPersonFlag:1,
       },
       linesQuery: {},
 
@@ -761,7 +760,9 @@ export default {
       }
     },
     initData() {
-
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.orderForm.salesPersonFlag = 1
+      }
 
       getQuotationdatasenddatalist(this.orderForm).then(res => {
         setTimeout(() => {

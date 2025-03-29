@@ -254,7 +254,6 @@ export default {
           condition: [],
           matchLogic: ""
         },
-        salesPersonFlag:1,
       },
 
       detailTotal: 0,
@@ -435,6 +434,9 @@ export default {
           return {label:item.name,value:item.name}
         })
       })
+    }
+    if (this.$store.getters.configData.sale.salePersonFlag) {
+      this.orderForm.salesPersonFlag = 1
     }
     this.superForm = this.orderForm
     this.search('basic')

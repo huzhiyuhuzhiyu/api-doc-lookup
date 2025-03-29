@@ -87,7 +87,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="outConsigneeFlag">
+                      <el-form-item label="外协供应商名称" prop="outPartnerName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.outPartnerName"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -215,7 +215,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="receivedQuantity" label="收货数量" min-width="130"
-                      v-if="!dataForm.exchangeGoodsFlag" :key="719">
+                       :key="719">
                       <template slot="header">
                         <span class="required">*</span>
                         收货数量
@@ -391,7 +391,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="outConsigneeFlag">
+                      <el-form-item label="外协供应商名称" prop="outPartnerName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.outPartnerName"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -422,8 +422,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="成材率" prop="yieldRate">
-                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
+                      <el-form-item label="成材比例" prop="yieldRate">
+                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材比例" :disabled="btnType == 'look'"
                           />
                       </el-form-item>
                     </el-col>
@@ -519,7 +519,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="receivedQuantity" label="收货数量" min-width="130"
-                      v-if="!dataForm.exchangeGoodsFlag" :key="719">
+                       :key="719">
                       <template slot="header">
                         <span class="required">*</span>
                         收货数量
@@ -898,7 +898,6 @@ export default {
         { label: '已完成', value: 'returned' },
         { label: '已取消', value: 'canceled' }
       ],
-      documentStatusList: [{ label: '收货', value: false }, { label: '换货', value: true }],
       approvalStatusList: [
         { label: '审批中', value: 'ing' },
         { label: '审批通过', value: 'ok' },
@@ -1142,7 +1141,6 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        exchangeGoodsFlag: false,
         inspectionStatus: '',
         warehouseId: '',
         shelfSpaceId:'',
@@ -1173,8 +1171,26 @@ export default {
       dataRule: {
         salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
         partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
-        exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
-        orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
+        warehouseId: [{
+          required: true,
+          message: '仓库不能为空',
+          trigger: 'change',
+          validator: (rule, value, callback) => {
+            if (this.outConsigneeFlag && (!value || value.length === 0)) {
+              callback(new Error('仓库不能为空'));
+            } else {
+              callback();
+            }
+          },
+        },],
+        shelfSpaceId: [{ required: true, message: '库位不能为空', trigger: 'change' }],
+        outType: [{ required: true, message: '外协类型不能为空', trigger: 'change' }],
+        outPartnerName: [{ required: true, message: '外协供应商名称不能为空', trigger: 'change' }],
+        outProductName: [{ required: true, message: '外协产品不能为空', trigger: 'change' }],
+        buyBackPrice: [{ required: true, message: '回购单价不能为空', trigger: 'blur' }],
+        buyBackRate: [{ required: true, message: '回购税率不能为空', trigger: 'blur' }],
+        yieldRate: [{ required: true, message: '成材比例不能为空', trigger: 'blur' }],
+        lossRate: [{ required: true, message: '损耗率不能为空', trigger: 'blur' }],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
       },
       customerData: {},
@@ -1451,7 +1467,7 @@ export default {
       return (rule, value, callback) => {
         console.log(value, 'p')
         let index = Number(rule.field.match(/\d+/)[0])
-        let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
+        let msg =`收货数量超过最大可收货数量`
         if (!value || value == 0) {
           callback()
         } else {
@@ -1845,7 +1861,6 @@ export default {
                 message: '切换成功'
               })
               // this.dataForm = {
-              //   exchangeGoodsFlag: false,
               //   // orderCategory: "assembly",
               //   returnDeliveryType: 'back',
               //   notificationType: 'procure',
@@ -1876,7 +1891,6 @@ export default {
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
           // this.dataForm = {
-          //   exchangeGoodsFlag: false,
           //   // orderCategory: "assembly",
           //   returnDeliveryType: 'back',
           //   notificationType: 'procure',
@@ -2119,7 +2133,6 @@ export default {
     continueAdd() {
       this.dataFormTwo.productData = []
       this.dataForm = {
-        exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
         // returnDeliveryType: 'back',

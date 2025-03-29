@@ -229,7 +229,6 @@ export default {
           condition: [],
           matchLogic: ""
         },
-        salesPersonFlag:1,
       },
       detailTotal: 0,
       gradeList: [],
@@ -718,6 +717,9 @@ export default {
       }
       if (this.orderNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      }
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.orderForm.salesPersonFlag = 1
       }
       getsaleOrderDetailList(this.orderForm).then(res => {
         setTimeout(() => {

@@ -88,7 +88,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="outConsigneeFlag">
+                      <el-form-item label="外协供应商名称" prop="outPartnerName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.outPartnerName"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -394,7 +394,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="partnerName" v-if="outConsigneeFlag">
+                      <el-form-item label="外协供应商名称" prop="outPartnerName" v-if="outConsigneeFlag">
                         <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.outPartnerName"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -1149,11 +1149,27 @@ export default {
       dataRule: {
         salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
         partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
-        exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
-        orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
+        warehouseId: [{
+          required: true,
+          message: '仓库不能为空',
+          trigger: 'change',
+          validator: (rule, value, callback) => {
+            if (this.outConsigneeFlag && (!value || value.length === 0)) {
+              callback(new Error('仓库不能为空'));
+            } else {
+              callback();
+            }
+          },
+        },],
+        shelfSpaceId: [{ required: true, message: '库位不能为空', trigger: 'change' }],
+        outType: [{ required: true, message: '外协类型不能为空', trigger: 'change' }],
+        outPartnerName: [{ required: true, message: '外协供应商名称不能为空', trigger: 'change' }],
+        outProductName: [{ required: true, message: '外协产品不能为空', trigger: 'change' }],
+        buyBackPrice: [{ required: true, message: '回购单价不能为空', trigger: 'blur' }],
+        buyBackRate: [{ required: true, message: '回购税率不能为空', trigger: 'blur' }],
+        yieldRate: [{ required: true, message: '成材比例不能为空', trigger: 'blur' }],
+        lossRate: [{ required: true, message: '损耗率不能为空', trigger: 'blur' }],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }],
-        logisticsCompany: [{ required: true, message: '物流公司不能为空', trigger: 'change' }],
-        logisticsNumber: [{ required: true, message: '物流单号不能为空', trigger: 'change' }]
       },
       customerData: {},
       treeLoading: false,

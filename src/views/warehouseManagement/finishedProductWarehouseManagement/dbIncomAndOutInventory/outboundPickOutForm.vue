@@ -1227,7 +1227,7 @@ export default {
               item.ordersId = res.data.collect.productionOrderId
               item.ordersLineId = item.materialListId
               item.num = item.unReceiveQuantity
-              if (res.data.collect.pickingWay == "dispatch_list") {
+              if (res.data.collect.pickingWay == "dispatch_list"&&item.stockInventoryLineId) {
 
                 item.outWarehouseId = item.stockInventoryLine.warehouseId
                 item.outWarehouseName = item.stockInventoryLine.warehouseName

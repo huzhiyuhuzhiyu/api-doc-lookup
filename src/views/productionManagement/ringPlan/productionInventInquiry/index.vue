@@ -488,20 +488,18 @@ export default {
 
     addSupplier(id, type) {
       if(!this.selectData.length)return this.$message.error("请选择你要新建的任务数据")
-      if(this.selectData.length>1)return this.$message.error("只能选择一条数据")
-      if (this.selectData.length === 0) {
-        return this.$message({
-          message: '请选择你要新建的任务数据',
-          type: 'error',
-          duration: 1500
-        })
-      } else {
+      // if (this.selectData.length === 0) {
+      //   return this.$message({
+      //     message: '请选择你要新建的任务数据',
+      //     type: 'error',
+      //     duration: 1500
+      //   })
+      // } else {
           this.formVisible = true
           this.$nextTick(() => {
-            console.log(this.$refs, 'this.$refs')
             this.$refs.form.init(this.selectData, 'add', this.isProjectSwitch)
           })
-      }
+      // }
     }
   }
 }

@@ -1221,13 +1221,26 @@ export default {
         yieldRate: [{ required: true, message: '成材比例不能为空', trigger: 'blur' },
         {
           validator: (rule, value, callback) => {
-            const num = parseFloat(value)
-            const reg = /^[0-9]\d*$/; // 正则表达式，匹配正整数
-            if (reg.test(value)) {
-              callback();
-            } else {
-              callback(new Error('请输入正整数'));
+            function getDecimalPlaces(num) {
+              // 将数字转换为字符串
+              const numStr = num.toString();
+              // 检查是否有小数点
+              if (numStr.indexOf('.') === -1) {
+                return 0;
+              }
+              // 分割字符串并返回小数部分长度
+              return numStr.split('.')[1].length;
             }
+            if (isNaN(value)) {
+                callback('成材比例只能是数字')
+            } else {
+              if (getDecimalPlaces(value) <5) {
+                callback();
+              } else {
+                callback(new Error('只能输入小数点后4位小数'));
+              }
+            }
+            
           },
           trigger: ['blur']
         }

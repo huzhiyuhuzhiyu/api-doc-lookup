@@ -115,19 +115,23 @@
                     <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="回购税率" prop="buyBackRate">
                         <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
-                         />
+                         >
+                         <template slot="append">%</template>
+                        </el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="成材率" prop="yieldRate">
-                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
+                      <el-form-item label="成材比例" prop="yieldRate">
+                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材比例" :disabled="btnType == 'look'"
                           />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="损耗率" prop="lossRate">
                         <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
-                       />
+                        >
+                         <template slot="append">%</template>
+                        </el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
@@ -420,20 +424,23 @@
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="回购税率" prop="buyBackRate">
-                        <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
-                         />
+                        <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'">
+                         <template slot="append">%</template>
+                        </el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="成材率" prop="yieldRate">
-                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType == 'look'"
+                      <el-form-item label="成材比例" prop="yieldRate">
+                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材比例" :disabled="btnType == 'look'"
                           />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="损耗率" prop="lossRate">
                         <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
-                       />
+                        >
+                         <template slot="append">%</template>
+                        </el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
@@ -1166,9 +1173,66 @@ export default {
         outPartnerName: [{ required: true, message: '外协供应商名称不能为空', trigger: 'change' }],
         outProductName: [{ required: true, message: '外协产品不能为空', trigger: 'change' }],
         buyBackPrice: [{ required: true, message: '回购单价不能为空', trigger: 'blur' }],
-        buyBackRate: [{ required: true, message: '回购税率不能为空', trigger: 'blur' }],
-        yieldRate: [{ required: true, message: '成材比例不能为空', trigger: 'blur' }],
-        lossRate: [{ required: true, message: '损耗率不能为空', trigger: 'blur' }],
+        buyBackRate: [{ required: true, message: '回购税率不能为空', trigger: 'blur' },
+        {
+          validator: (rule, value, callback) => {
+            const num = parseFloat(value)
+            const reg = /^[0-9]\d*$/; // 正则表达式，匹配正整数
+            if (reg.test(value)) {
+              if (isNaN(num)) {
+                callback('回购税率只能是数字')
+              } else {
+                if (num <= 100 && num >= 0) {
+                  callback()
+                } else {
+                  callback(new Error('请输入0到100的值'))
+                }
+              }
+            } else {
+              callback(new Error('请输入正整数'));
+            }
+            
+          },
+          trigger: ['blur']
+        }
+        ],
+        yieldRate: [{ required: true, message: '成材比例不能为空', trigger: 'blur' },
+        {
+          validator: (rule, value, callback) => {
+            const num = parseFloat(value)
+            const reg = /^[0-9]\d*$/; // 正则表达式，匹配正整数
+            if (reg.test(value)) {
+              callback();
+            } else {
+              callback(new Error('请输入正整数'));
+            }
+          },
+          trigger: ['blur']
+        }
+        ],
+        lossRate: [{ required: true, message: '损耗率不能为空', trigger: 'blur' },
+        {
+          validator: (rule, value, callback) => {
+            const num = parseFloat(value)
+            const reg = /^[0-9]\d*$/; // 正则表达式，匹配正整数
+            if (reg.test(value)) {
+              if (isNaN(num)) {
+                callback('损耗率只能是数字')
+              } else {
+                if (num <= 100 && num >= 0) {
+                  callback()
+                } else {
+                  callback(new Error('请输入0到100的值'))
+                }
+              }
+            } else {
+              callback(new Error('请输入正整数'));
+            }
+            
+          },
+          trigger: ['blur']
+        }
+        ],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }],
       },
       customerData: {},
@@ -2075,7 +2139,9 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-
+          this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)*100
+          this.dataForm.lossRate = Number(this.dataForm.lossRate)*100
+          this.outConsigneeFlag = this.dataForm.outType ? true : false // 判断 是否存在外协供应方
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -2200,6 +2266,8 @@ export default {
         }
         // this.dataForm.classAttribute = 'finish_product'
         this.dataForm.receiptReturnType = 'receipt'
+        this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)/100
+        this.dataForm.lossRate = Number(this.dataForm.lossRate)/100
         let obj = {
           attachmentList: this.datafilelist,
           returnGoods: this.dataForm,

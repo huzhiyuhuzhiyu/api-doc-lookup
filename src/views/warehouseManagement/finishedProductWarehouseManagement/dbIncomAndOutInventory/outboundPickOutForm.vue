@@ -1,4 +1,7 @@
 <template>
+
+
+
   <!-- 生产领料 outbound_pick_out -->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
@@ -1209,7 +1212,7 @@ export default {
         this.fetchData("CKDH", true)
         this.getBusInfo('b045')
         detailWithdrawal(data.id).then(res => {
-          console.log("详情", res);
+          console.log("详情", res, classAttributeList);
 
           this.dataForm.recipientBy = res.data.collect.createBy
           let filteredArray = res.data.collectLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.unReceiveQuantity);
@@ -1220,31 +1223,34 @@ export default {
               item.classAttribute = item.classAttribute
               item.noticeId = item.materialCollectId
               item.noticeLineId = item.id
-              item.noticeLineId = item.id
               item.sourceNo = this.dataForm.sourceNo
               item.ordersId = res.data.collect.productionOrderId
               item.ordersLineId = item.materialListId
               item.num = item.unReceiveQuantity
-              item.outWarehouseId = item.stockInventoryLine.warehouseId
-              item.outWarehouseName = item.stockInventoryLine.warehouseName
-              item.outShelfSpaceId = item.stockInventoryLine.shelfSpaceId
-              item.outShelfSpaceName = item.stockInventoryLine.shelfSpaceName
-              item.batchAvailableQuantity = item.stockInventoryLine.inventoryQuantity
-              this.$set(item, 'sealingCoverTyping', item.stockInventoryLine.sealingCoverTyping)
-              this.$set(item, 'accuracyLevel', item.stockInventoryLine.accuracyLevel)
-              this.$set(item, 'vibrationLevel', item.stockInventoryLine.vibrationLevel)
-              this.$set(item, 'oil', item.stockInventoryLine.oil)
-              this.$set(item, 'clearance', item.stockInventoryLine.clearance)
-              this.$set(item, 'packagingMethod', item.stockInventoryLine.packagingMethod)
-              this.$set(item, 'specialRequire', item.stockInventoryLine.specialRequire)
-              this.$set(item, 'material', item.stockInventoryLine.material)
-              this.$set(item, 'colour', item.stockInventoryLine.colour)
-              this.$set(item, 'protrusion', item.stockInventoryLine.protrusion)
-              this.$set(item, 'preload', item.stockInventoryLine.preload)
-              this.$set(item, 'centerDiameter', item.stockInventoryLine.centerDiameter)
-              this.$set(item, 'angle', item.stockInventoryLine.angle)
-              this.$set(item, 'pairingModeNames', item.stockInventoryLine.pairingModeName)
-              this.$set(item, 'pairingModeId', item.stockInventoryLine.pairingModeId)
+              if (res.data.collect.pickingWay == "dispatch_list") {
+
+                item.outWarehouseId = item.stockInventoryLine.warehouseId
+                item.outWarehouseName = item.stockInventoryLine.warehouseName
+                item.outShelfSpaceId = item.stockInventoryLine.shelfSpaceId
+                item.outShelfSpaceName = item.stockInventoryLine.shelfSpaceName
+                item.batchAvailableQuantity = item.stockInventoryLine.inventoryQuantity
+                this.$set(item, 'sealingCoverTyping', item.stockInventoryLine.sealingCoverTyping)
+                this.$set(item, 'accuracyLevel', item.stockInventoryLine.accuracyLevel)
+                this.$set(item, 'vibrationLevel', item.stockInventoryLine.vibrationLevel)
+                this.$set(item, 'oil', item.stockInventoryLine.oil)
+                this.$set(item, 'clearance', item.stockInventoryLine.clearance)
+                this.$set(item, 'packagingMethod', item.stockInventoryLine.packagingMethod)
+                this.$set(item, 'specialRequire', item.stockInventoryLine.specialRequire)
+                this.$set(item, 'material', item.stockInventoryLine.material)
+                this.$set(item, 'colour', item.stockInventoryLine.colour)
+                this.$set(item, 'protrusion', item.stockInventoryLine.protrusion)
+                this.$set(item, 'preload', item.stockInventoryLine.preload)
+                this.$set(item, 'centerDiameter', item.stockInventoryLine.centerDiameter)
+                this.$set(item, 'angle', item.stockInventoryLine.angle)
+                this.$set(item, 'pairingModeNames', item.stockInventoryLine.pairingModeName)
+                this.$set(item, 'pairingModeId', item.stockInventoryLine.pairingModeId)
+              }
+              console.log(123);
               if (this.mainUnitFlag == 1) {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
@@ -1253,9 +1259,12 @@ export default {
                 }
               }
             });
+            this.productData = filteredArray
+          } else {
+            this.productData = []
+
           }
           console.log("filteredArray", filteredArray);
-          this.productData = filteredArray
           this.formLoading = false
         }).catch(() => { this.formLoading = false })
       }

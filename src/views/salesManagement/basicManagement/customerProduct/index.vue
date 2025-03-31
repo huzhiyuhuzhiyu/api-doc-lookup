@@ -1012,6 +1012,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.superForm.salesPersonFlag = 1
+      }
       if (this.activeName == "historicalprice") {
         getQuotationmxLists(this.superForm).then(res => {
           this.tableDataList = res.data.records

@@ -2152,9 +2152,11 @@ export default {
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-          this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)*100
-          this.dataForm.lossRate = Number(this.dataForm.lossRate)*100
           this.outConsigneeFlag = this.dataForm.outType ? true : false // 判断 是否存在外协供应方
+          if (this.outConsigneeFlag) {
+            this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)*100
+            this.dataForm.lossRate = Number(this.dataForm.lossRate)*100
+          }
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -2279,8 +2281,10 @@ export default {
         }
         // this.dataForm.classAttribute = 'finish_product'
         this.dataForm.receiptReturnType = 'receipt'
-        this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)/100
-        this.dataForm.lossRate = 0
+        if (this.outConsigneeFlag) {
+          this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)/100
+          this.dataForm.lossRate = 0
+        }
         let obj = {
           attachmentList: this.datafilelist,
           returnGoods: this.dataForm,

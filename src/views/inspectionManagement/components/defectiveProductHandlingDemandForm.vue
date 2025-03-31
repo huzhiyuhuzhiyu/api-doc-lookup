@@ -1271,7 +1271,7 @@ export default {
       }
       if (this.dataForm.treatmentResults == 'discard_repair') {
         console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('报废数量+返修数量不等于报检数量。');
+        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('报废数量+返修数量不等于不合格数量。');
       }
 
 

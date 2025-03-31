@@ -1382,7 +1382,7 @@ export default {
           Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
           Number(this.dataForm.inspectionQuantity)
         )
-          return this.$message.error('报废数量+返修数量不等于报检数量。')
+          return this.$message.error('报废数量+返修数量不等于不合格数量。')
       }
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用

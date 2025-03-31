@@ -252,9 +252,8 @@
                   <el-col :sm="24" :xs="24" v-if="currentProcessType === 4 || currentProcessType === 5">
                     <el-form-item label="总配对数量(对):" prop="matchedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
-                      <el-input v-model="currentProcess.matchedQuantity"
-                        :disabled=" !currentProcess.pairingModeId" placeholder="总配对数量" class="ipt"
-                        @blur="countQualifiedQuantity" />
+                      <el-input v-model="currentProcess.matchedQuantity" :disabled="!currentProcess.pairingModeId"
+                        placeholder="总配对数量" class="ipt" @blur="countQualifiedQuantity" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" v-if="currentProcessType !== 6">
@@ -262,8 +261,7 @@
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity"
                         v-if="currentProcessType === 4 || currentProcessType === 5"
-                        :disabled=" currentProcess.pairingModeId" placeholder="合格数量" class="ipt"
-                        @blur="handleBlur()" />
+                        :disabled="!!currentProcess.pairingModeId" placeholder="合格数量" class="ipt" @blur="handleBlur()" />
                       <el-input v-model="currentProcess.qualifiedQuantity"
                         v-if="currentProcessType === 1 || currentProcessType === 2 || currentProcessType === 3"
                         placeholder="合格数量" class="ipt" @blur="handleBlur()" />
@@ -315,7 +313,7 @@
 
                     </el-form-item>
                   </el-col>
-           
+
                   <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -333,7 +331,7 @@
                         @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
                   </el-col>
-           
+
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
                       <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
@@ -966,7 +964,10 @@ export default {
 
           this.getReprotNum(this.currentProcess.pairingModeId)
         }
+      } else {
+        this.currentProcess.pairingModeId = ""
       }
+      this.currentProcess.vibrationLevel = ""
     },
     // 获取上一道工序的配对方式 配对工序后面的可用
     getPrvePairingModelListFun() {
@@ -1067,8 +1068,8 @@ export default {
     reportingTimeChange(e) {
       this.currentProcess.reportingTime = e + ' 00:00:00'
     },
-        // 获取振动等级数据
-        getvibrationLevelFun() {
+    // 获取振动等级数据
+    getvibrationLevelFun() {
       let obj3 = {
         pageNum: -1,
         pageSize: 20,
@@ -1140,7 +1141,7 @@ export default {
             this.$set(this.currentProcess, 'producerId', result[0].id)
             this.$set(this.currentProcess, 'producerName', result[0].label)
 
- 
+
           }
 
         }
@@ -1268,7 +1269,7 @@ export default {
       // 先判断是否有测震工序(sort有值表示有测震工序)  
       // 如果有 拿当前工序排序值大于等于测震工序值 则表示是测震工序或测震后工序
       // 如果没有 则是测震前工序
-     
+
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null
@@ -1533,8 +1534,8 @@ export default {
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
               obj.workOrderId = this.currentProcess.id
-                obj.packagingMethod = this.currentProcess.packagingMethod
-                obj.stockFlag = this.stockFlag
+              obj.packagingMethod = this.currentProcess.packagingMethod
+              obj.stockFlag = this.stockFlag
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.oil = this.currentProcess.oil
               obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
@@ -1568,8 +1569,8 @@ export default {
               obj.pairingModeId = this.currentProcess.pairingModeId
               obj.accuracyLevel = this.currentProcess.accuracyLevel
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
-                obj.packagingMethod = this.currentProcess.packagingMethod
-                arr.push(obj)
+              obj.packagingMethod = this.currentProcess.packagingMethod
+              arr.push(obj)
               console.log("配对工序");
             } else {
               let obj = {}
@@ -1601,8 +1602,8 @@ export default {
               obj.oil = this.currentProcess.oil
               obj.sealingCoverTyping = this.currentProcess.sealingCoverTyping
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
-                obj.packagingMethod = this.currentProcess.packagingMethod
-                arr.push(obj)
+              obj.packagingMethod = this.currentProcess.packagingMethod
+              arr.push(obj)
             }
           } else {
             let obj = {
@@ -1630,7 +1631,7 @@ export default {
               "sealingCoverTyping": this.currentProcess.sealingCoverTyping,
               "workOrderId": this.currentProcess.id,
               causesList: [...this.materialWasteDataList, ...this.responsWasteDataList],
-                packagingMethod: this.currentProcess.packagingMethod
+              packagingMethod: this.currentProcess.packagingMethod
 
             }
             arr.push(obj)
@@ -1638,8 +1639,8 @@ export default {
 
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
-            this.materialWasteDataList=[]
-            this.responsWasteDataList=[]
+            this.materialWasteDataList = []
+            this.responsWasteDataList = []
             this.init(this.id)
           })
         } else {

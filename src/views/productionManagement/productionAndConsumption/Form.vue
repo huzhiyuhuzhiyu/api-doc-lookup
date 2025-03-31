@@ -45,7 +45,7 @@
                   <el-table-column prop="output" label="产量" width="180" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item >
-                        <el-input v-model="scope.row.output" :disabled="type === 'look' ? true : !scope.row.outFlag"
+                        <el-input v-model="scope.row.output" :disabled="type === 'look' ? true : !scope.row.outputFlag"
                         ></el-input>
                       </el-form-item>
                     </template>

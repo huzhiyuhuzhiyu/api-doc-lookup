@@ -324,7 +324,6 @@ export default {
   },
 
   mounted () {
-    this.search('basic')
     
   },
   async created() {
@@ -332,7 +331,7 @@ export default {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     this.superForm = this.orderForm
-    this.search('basic')
+    await this.search('basic')
       this.createDirectlyVisible=false
       this.FormVisible = false
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -616,7 +615,7 @@ export default {
     },
 
 
-    search(type) {
+    async search(type) {
       console.log("2");
       this.orderForm.pageNum = 1
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
@@ -643,7 +642,7 @@ export default {
 
 
 
-      this.initData()
+      await this.initData()
     },
 
     reset() {

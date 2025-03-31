@@ -461,7 +461,6 @@ export default {
       oldData: [],
       oldProcessData: [],
       rules: {
-        // remark: [{ required: true, message: '请输入备注', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
@@ -964,9 +963,10 @@ export default {
       return flag
     },
     supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('cooperativePartnerName')
-      })
+      this.dataForm.cooperativePartnerName = ''
+      this.dataForm.cooperativePartnerCode = ''
+      this.dataForm.cooperativePartnerId = ''
+      this.oldData = []
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''

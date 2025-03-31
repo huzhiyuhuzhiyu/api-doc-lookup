@@ -733,6 +733,7 @@ export default {
       this.dataForm = {}
       this.linesList = []
       this.datafilelist = []
+      this.oldData = []
       this.tipsvisible = false
       this.btnLoading = false
     },
@@ -864,6 +865,7 @@ export default {
     },
     // 切换供应商后给的提示
     async beforeSubmit(data, paramsObj) {
+      console.log(data,'呃呃')
       let flag = true
       if (paramsObj.oldData.length) {
         flag = await this.$confirm('切换供应商将清空产品价格信息，是否继续？', '提示', {
@@ -890,9 +892,11 @@ export default {
       return flag
     },
     supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('cooperativePartnerName')
-      })
+      console.log(data,'问问')
+      this.dataForm.cooperativePartnerName = ''
+      this.dataForm.cooperativePartnerCode = ''
+      this.dataForm.cooperativePartnerId = ''
+      this.oldData = []
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''

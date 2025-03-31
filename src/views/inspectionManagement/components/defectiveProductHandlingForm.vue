@@ -526,9 +526,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionQuantity)
+                  Number(this.dataForm.unqualifiedQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于报检数量'))
+                  callback(new Error('报废数量+返修数量要等于不合格数量'))
                 } else {
                   callback()
                 }
@@ -568,9 +568,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionQuantity)
+                  Number(this.dataForm.unqualifiedQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于报检数量'))
+                  callback(new Error('报废数量+返修数量要等于不合格数量'))
                 } else {
                   callback()
                 }

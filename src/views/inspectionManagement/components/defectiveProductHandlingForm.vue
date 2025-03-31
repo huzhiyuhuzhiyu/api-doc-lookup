@@ -1380,7 +1380,7 @@ export default {
       if (this.dataForm.treatmentResults == 'discard_repair') {
         if (
           Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-          Number(this.dataForm.inspectionQuantity)
+          Number(this.dataForm.unqualifiedQuantity)
         )
           return this.$message.error('报废数量+返修数量不等于不合格数量。')
       }

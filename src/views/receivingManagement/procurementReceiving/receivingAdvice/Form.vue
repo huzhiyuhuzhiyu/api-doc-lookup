@@ -125,14 +125,14 @@
                           />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
+                    <!-- <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="损耗率" prop="lossRate">
                         <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
                         >
                          <template slot="append">%</template>
                         </el-input>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
                         <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -433,13 +433,13 @@
                           />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
+                    <!-- <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
                       <el-form-item label="损耗率" prop="lossRate">
                         <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'">
                          <template slot="append">%</template>
                         </el-input>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
                         <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -2260,7 +2260,7 @@ export default {
         // this.dataForm.classAttribute = 'finish_product'
         this.dataForm.receiptReturnType = 'receipt'
         this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)/100
-        this.dataForm.lossRate = Number(this.dataForm.lossRate)/100
+        this.dataForm.lossRate = 0
         let obj = {
           attachmentList: this.datafilelist,
           returnGoods: this.dataForm,

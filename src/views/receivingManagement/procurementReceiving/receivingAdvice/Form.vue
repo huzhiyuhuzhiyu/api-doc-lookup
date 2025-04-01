@@ -2,6 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
+        <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
           ? '新建收货单'
           : btnType == 'edit'
@@ -50,15 +51,6 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="库位" prop="shelfSpaceId">
-                        <el-select v-model="dataForm.shelfSpaceId" placeholder="请选择库位" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable >
-                          <el-option v-for="(item, index) in shelfSpaceIdList" :key="index" :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
                     <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -77,62 +69,7 @@
                           :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协类型" prop="outType" v-if="outConsigneeFlag">
-                        <el-select v-model="dataForm.outType" @focus="setMinWidth"  placeholder="请选择外协类型" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
-                            :value="item.value" :style="{'min-width': minWidth + 2 + 'px'}"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="outPartnerName" v-if="outConsigneeFlag">
-                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                          v-model="dataForm.outPartnerName"
-                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                          :listRequestObj="PartnerListRequestObj" 
-                          :searchList="PartnerTableSearchList" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协产品" prop="outProductName" v-if="outConsigneeFlag">
-                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeProductClick"
-                          v-model="dataForm.outProductName" 
-                          @change="productDataChange" :tableItems="productTableItems" :placeholder="'请选择产品名称'" title="选择产品"
-                          treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList" :beforeOpen="beforeProductOpen"
-                          :listRequestObj="productListRequestObj" :searchList="productTableSearchList" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="回购单价" prop="buyBackPrice">
-                        <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType == 'look'"
-                         />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="回购税率" prop="buyBackRate">
-                        <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
-                        >
-                         <template slot="append">%</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="成材比例" prop="yieldRate">
-                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材比例" :disabled="btnType == 'look'"
-                          />
-                      </el-form-item>
-                    </el-col>
-                    <!-- <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="损耗率" prop="lossRate">
-                        <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'"
-                        >
-                         <template slot="append">%</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col> -->
+
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
                         <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -180,10 +117,10 @@
                   :rules="productRules">
                   <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
                     hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
-                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
+                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
-                    <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
@@ -219,7 +156,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="receivedQuantity" label="收货数量" min-width="130"
-                       :key="719">
+                      v-if="!dataForm.exchangeGoodsFlag" :key="719">
                       <template slot="header">
                         <span class="required">*</span>
                         收货数量
@@ -335,302 +272,245 @@
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
-              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" style="padding:0 10px">
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="单号" prop="orderNo">
-                        <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
-                          "></el-input>
-                      </el-form-item>
-                    </el-col>
+          <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-row :gutter="30" style="padding: 0 10px;">
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="单号" prop="orderNo">
+                    <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
+                      ? true
+                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                        ? false
+                        : true
+                      "></el-input>
+                  </el-form-item>
+                </el-col>
 
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="仓库" prop="warehouseId">
-                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
-                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="库位" prop="shelfSpaceId">
-                        <el-select v-model="dataForm.shelfSpaceId" placeholder="请选择库位" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable >
-                          <el-option v-for="(item, index) in shelfSpaceIdList" :key="index" :label="item.name"
-                            :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <el-form-item label="供应商名称" prop="partnerName">
-                        <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
-                          :disabled="btnType == 'look'"></el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="操作人" prop="salesman">
-                        <el-input v-model="dataForm.salesman" placeholder="请选择操作人"
-                          :disabled="btnType == 'look'"></el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="收货日期" prop="deliverDate">
-                        <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择收货日期" type="date"
-                          :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协类型" prop="outType" v-if="outConsigneeFlag">
-                        <el-select v-model="dataForm.outType" @focus="setMinWidth"  placeholder="请选择外协类型" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
-                            :value="item.value" :style="{'min-width': minWidth + 2 + 'px'}"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协供应商名称" prop="outPartnerName" v-if="outConsigneeFlag">
-                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                          v-model="dataForm.outPartnerName"
-                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                          :listRequestObj="PartnerListRequestObj" 
-                          :searchList="PartnerTableSearchList" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="外协产品" prop="outProductName" v-if="outConsigneeFlag">
-                        <ComSelect-page :clearable="btnType !== 'look'" :isdisabled="btnType === 'look'" :treeNodeClick="treeProductClick"
-                          v-model="dataForm.outProductName" 
-                          @change="productDataChange" :tableItems="productTableItems" :placeholder="'请选择产品名称'" title="选择产品"
-                          treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList" :beforeOpen="beforeProductOpen"
-                          :listRequestObj="productListRequestObj" :searchList="productTableSearchList" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="回购单价" prop="buyBackPrice">
-                        <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType == 'look'"
-                         />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="回购税率" prop="buyBackRate">
-                        <el-input v-model="dataForm.buyBackRate" placeholder="请输入回购税率" :disabled="btnType == 'look'"
-                        >
-                         <template slot="append">%</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="成材比例" prop="yieldRate">
-                        <el-input v-model="dataForm.yieldRate" placeholder="请输入成材比例" :disabled="btnType == 'look'"
-                          />
-                      </el-form-item>
-                    </el-col>
-                    <!-- <el-col :sm="6" :xs="24" v-if="outConsigneeFlag">
-                      <el-form-item label="损耗率" prop="lossRate">
-                        <el-input v-model="dataForm.lossRate" placeholder="请输入损耗率" :disabled="btnType == 'look'">
-                         <template slot="append">%</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col> -->
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="创建时间" prop="createTime">
-                        <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
-                          :disabled="btnType == 'look'" style="width: 100%;" clearable></el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                      <el-form-item label="创建人" prop="createByName">
-                        <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
-                          maxlength="20" />
-                      </el-form-item>
-                    </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="仓库" prop="warehouseId">
+                    <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
+                      :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
+                      <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
+                        :value="item.id"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <el-form-item label="供应商名称" prop="partnerName">
+                    <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
+                      :disabled="btnType == 'look'"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="操作人" prop="salesman">
+                    <el-input v-model="dataForm.salesman" placeholder="请选择操作人" :disabled="btnType == 'look'"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24">
+                  <el-form-item label="收货日期" prop="deliverDate">
+                    <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择收货日期" type="date"
+                      :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
+                  </el-form-item>
+                </el-col>
 
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'"
-                          type="textarea" maxlength="200" :rows="2" />
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-form>
-              </el-collapse-item>
-              <el-collapse-item title="产品信息" name="productInfo">
-                <div v-if="btnType !== 'look'">
-                  <el-button type="text" style="margin-right:8px;font-size:14px!important"
-                    :disabled="btnType == 'look' ? true : false" @click="scanFun()">
-                    <i class="iconfont icon-saoma"></i>
-                    扫码录入
-                  </el-button>
-                  |
-                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                    icon="el-icon-plus" @click="openSeleceProductDialog()">
-                    选择产品
-                  </el-button>
-                  |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                  <el-form-item label="创建时间" prop="createTime">
+                    <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
+                      :disabled="btnType == 'look'" style="width: 100%;" clearable></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                  <el-form-item label="创建人" prop="createByName">
+                    <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
+                      maxlength="20" />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :sm="12" :xs="24">
+                  <el-form-item label="备注" prop="remark">
+                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'"
+                      type="textarea" maxlength="200" :rows="2" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="产品信息" name="productInfo">
+            <div v-if="btnType !== 'look'">
+              <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+                <i class="iconfont icon-saoma"></i>
+                扫码录入
+              </el-button>
+              |
+              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                icon="el-icon-plus" @click="openSeleceProductDialog()">
+                选择产品
+              </el-button>
+              |
+              <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
                   :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择订单</el-button>| -->
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                    :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
-                    批量删除
-                  </el-button>
-                </div>
-                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
-                  :rules="productRules">
-                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
-                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
-                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
-                      key="2"></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
-                    <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
-                      show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140"
-                      show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                      width="110" />
-                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
-                      v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
-                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
-                    <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.weight" placeholder="重量"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="proportion" label="比重" min-width="140" :key="727"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.proportion" placeholder="比重"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
-                      v-if="isProportionSwitch === '1'">
-                      <template slot-scope="scope">
-                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
-                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="receivedQuantity" label="收货数量" min-width="130"
-                       :key="719">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        收货数量
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
-                          :rules="productRules.receivedQuantity">
-                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
-                            :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)">
-                            {{ scope.row.receivedQuantity }}
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <template slot-scope="scope">
-                        <el-form-item>
-                          <div class="viewData">
-                            <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <template slot-scope="scope">
-                        <el-form-item>
-                          <div class="viewData">
-                            <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <template slot-scope="scope">
-                        <el-form-item>
-                          <div class="viewData">
-                            <span>{{ scope.row.taxRate ? scope.row.taxRate : 0 }}%</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+              <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                批量删除
+              </el-button>
+            </div>
+            <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
+                <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
+                  key="2"></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip key="3" />
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                  width="110" />
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="120" />
+                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737" v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.weight" placeholder="重量"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="proportion" label="比重" min-width="140" :key="727" v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.proportion" placeholder="比重"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
+                  v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="receivedQuantity" label="收货数量" min-width="140" v-if="!dataForm.exchangeGoodsFlag"
+                  key="789">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    收货数量
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
+                      :rules="productRules.receivedQuantity">
+                      <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量" :disabled="btnType == 'look'"
+                        maxlength="11" @input="watchnums(scope.row, scope.$index)">
+                        {{ scope.row.receivedQuantity }}
+                      </el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    单价(含税)
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item>
+                      <div class="viewData">
+                        <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="totalAmount" label="金额" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    金额(含税)
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
+                      <div class="viewData">
+                        <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    税率
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item>
+                      <div class="viewData">
+                        <span>{{ scope.row.taxRate ? scope.row.taxRate : 0 }}%</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <template slot-scope="scope">
-                        <el-form-item>
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxPrice }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
+                      <div class="viewData">
+                        <span>{{ scope.row.excludingTaxPrice }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        税额
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item>
-                          <div class="viewData">
-                            <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <template slot="header">
-                        <span class="required">*</span>
-                        金额(不含税)
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="material" label="材质" width="130" :key="1015"
-                      v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" :key="1015"
-                      v-if="colourFlag == 1"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="110" />
-                    <el-table-column prop="ordersNo" label="订单号" width="200" />
-                    <el-table-column prop="remark" label="备注" min-width="200">
-                      <template slot-scope="scope">
-                        <el-input v-model="scope.row.remark" placeholder="请输入备注"
-                          :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
-                      </template>
-                    </el-table-column>
+                <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    税额
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
+                      <div class="viewData">
+                        <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <template slot="header">
+                    <span class="required">*</span>
+                    金额(不含税)
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
+                      <div class="viewData">
+                        <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
+                      </div>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="material" label="材质" width="130" :key="1015"
+                  v-if="materialFlag == 1"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="130" :key="1015"
+                  v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="processName" label="工序" width="110" />
+                <el-table-column prop="ordersNo" label="订单号" width="180" />
+                <el-table-column prop="remark" label="备注" min-width="200">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.remark" placeholder="请输入备注"
+                      :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
+                  </template>
+                </el-table-column>
 
-                    <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
-                      <template slot-scope="scope">
-                        <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
-                      </template>
-                    </el-table-column>
-                  </JNPF-table>
-                  <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
-                    <span style="font-weight:500;margin:0 10px">总收货数量：{{ totalDeliveryQuantity }}</span>
-                  </div>
-                </el-form>
-              </el-collapse-item>
+                <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
+                <span style="font-weight:500;margin:0 10px">总收货数量：{{ totalDeliveryQuantity }}</span>
+              </div>
+            </el-form>
+          </el-collapse-item>
         </el-collapse>
-         
       </div>
       <el-dialog title="选择供应商" :close-on-click-modal="false" :close-on-press-escape="false"
         :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="80%"
@@ -755,9 +635,9 @@
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" width="120"
-                  v-if="abProjectSwitchVisible"></el-table-column>
+                  v-if="isProjectSwitch === '1'"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
-                <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="130" />
 
@@ -835,21 +715,21 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList, getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
-import { getProductList } from '@/api/masterDataManagement/productManage'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
-import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
+import getProjectList from '@/mixins/generator/getProjectList'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
-import { getList } from '@/api/basicData/stockGoodsShelves'
 export default {
   components: { Process, recordList, PrintBrowse, PrintDialog },
-  mixins: [busFlow, AbProjectMixin],
+  mixins: [busFlow, getProjectList],
   data() {
     return {
+      isProjectSwitch: '',
+      isProductNameSwitch: '',
       isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
@@ -905,6 +785,7 @@ export default {
         { label: '已完成', value: 'returned' },
         { label: '已取消', value: 'canceled' }
       ],
+      documentStatusList: [{ label: '收货', value: false }, { label: '换货', value: true }],
       approvalStatusList: [
         { label: '审批中', value: 'ing' },
         { label: '审批通过', value: 'ok' },
@@ -930,8 +811,6 @@ export default {
         { label: '备货订单', value: 'stock_up' },
         { label: '急件订单', value: 'urgent' }
       ],
-      outTypeList: [{ label: '采购销售', value: 'purchase_sale' }, { label: '外协', value: 'out' }],
-      minWidth:0,
       productRules: {
         receivedQuantity: [
           {
@@ -951,79 +830,12 @@ export default {
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
-      outConsigneeFlag:'',
       ordersLineId: '',
       code: '',
       iszhi: false,
       totalNum: 0,
       totalAssistantNum: 0,
       totalAmount: 0,
-      getCooperativeData,
-      getcategoryTrees,
-      //  供应商 树请求
-      PartnerMethodArr: { method: getcategoryTrees, requestObj: { type: 'outsourcing_suppliers' } },
-      // 供应商 列表
-      PartnerTableItems: [
-        { prop: 'code', label: '供应商编码' },
-        { prop: 'name', label: '供应商名称' },
-        { prop: 'nameEn', label: '英文名称' },
-        { prop: 'taxId', label: '税号' }
-      ],
-      // 供应商搜索条件
-      PartnerTableSearchList: [
-        { prop: 'code', label: '供应商编码', type: 'input' },
-        { prop: 'name', label: '供应商名称', type: 'input' }
-      ],
-      // 供应商请求参数
-      PartnerListRequestObj: {
-        code: '',
-        name: '',
-        taxId: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerCategoryId: '',
-        type: 'outsourcing_suppliers'
-      },
-      getcategoryTree,
-      getProductList,
-      //  产品 树请求
-      productMethodArr: { method: getcategoryTree, requestObj: { classAttribute: '' } },
-      // 产品 列表
-      productTableItems: [
-        { prop: 'code', label: '产品编码' },
-        { prop: 'name', label: '产品名称',render:false },
-        { prop: 'drawingNo', label: '品名规格' },
-      ],
-      // 供应商搜索条件
-      productTableSearchList: [
-        { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
-      ],
-      // 供应商请求参数
-      productListRequestObj: {
-        code: '',
-        name: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        drawingNo: '', // 图号
-        productSource: '', // 产品来源
-        startAndEndTime: [], // 创建时间
-        productCategoryId: '', // 类型id
-        productStatus: '', // 产品状态
-        customerQueryFields: [],
-        createTimeArr: [],
-        classAttribute: ''
-      },
       // 选择客户产品参数
       productForm: {
         //   drawingNo: "",
@@ -1148,9 +960,9 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        exchangeGoodsFlag: false,
         inspectionStatus: '',
         warehouseId: '',
-        shelfSpaceId:'',
         createTime: '',
         createByName: '',
         id: '',
@@ -1164,6 +976,14 @@ export default {
         partnerName: '',
         orderNo: '',
         logisticsNumber: '',
+        //   phone: '',
+        //   country: '',
+        //   province: '',
+        //   city: '',
+        //   area: '',
+        //   address: '',
+        //   delivery: '',
+        //   shipperId: '',
         cooperativePartnerId: '',
         remark: '',
         approvalFlag: false
@@ -1178,103 +998,14 @@ export default {
       dataRule: {
         salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
         partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
-        warehouseId: [{
-          required: true,
-          message: '仓库不能为空',
-          trigger: 'change',
-          validator: (rule, value, callback) => {
-            if (this.outConsigneeFlag && (!value || value.length === 0)) {
-              callback(new Error('仓库不能为空'));
-            } else {
-              callback();
-            }
-          },
-        },],
-        shelfSpaceId: [{ required: true, message: '库位不能为空', trigger: 'change' }],
-        outType: [{ required: true, message: '外协类型不能为空', trigger: 'change' }],
-        outPartnerName: [{ required: true, message: '外协供应商名称不能为空', trigger: 'change' }],
-        outProductName: [{ required: true, message: '外协产品不能为空', trigger: 'change' }],
-        buyBackPrice: [{ required: true, message: '回购单价不能为空', trigger: 'blur' }],
-        buyBackRate: [{ required: true, message: '回购税率不能为空', trigger: 'blur' },
-        {
-          validator: (rule, value, callback) => {
-            const num = parseFloat(value)
-            const reg = /^[0-9]\d*$/; // 正则表达式，匹配正整数
-            if (reg.test(value)) {
-              if (isNaN(num)) {
-                callback('回购税率只能是数字')
-              } else {
-                if (num <= 100 && num >= 0) {
-                  callback()
-                } else {
-                  callback(new Error('请输入0到100的值'))
-                }
-              }
-            } else {
-              callback(new Error('请输入正整数'));
-            }
-            
-          },
-          trigger: ['blur']
-        }
-        ],
-        yieldRate: [{ required: true, message: '成材比例不能为空', trigger: 'blur' },
-        {
-          validator: (rule, value, callback) => {
-            function getDecimalPlaces(num) {
-              // 将数字转换为字符串
-              const numStr = num.toString();
-              // 检查是否有小数点
-              if (numStr.indexOf('.') === -1) {
-                return 0;
-              }
-              // 分割字符串并返回小数部分长度
-              return numStr.split('.')[1].length;
-            }
-            if (isNaN(value)) {
-                callback('成材比例只能是数字')
-            } else {
-              if (getDecimalPlaces(value) <5) {
-                callback();
-              } else {
-                callback(new Error('只能输入小数点后4位小数'));
-              }
-            }
-            
-          },
-          trigger: ['blur']
-        }
-        ],
-        lossRate: [{ required: true, message: '损耗率不能为空', trigger: 'blur' },
-        {
-          validator: (rule, value, callback) => {
-            const num = parseFloat(value)
-            const reg = /^[0-9]\d*$/; // 正则表达式，匹配正整数
-            if (reg.test(value)) {
-              if (isNaN(num)) {
-                callback('损耗率只能是数字')
-              } else {
-                if (num <= 100 && num >= 0) {
-                  callback()
-                } else {
-                  callback(new Error('请输入0到100的值'))
-                }
-              }
-            } else {
-              callback(new Error('请输入正整数'));
-            }
-            
-          },
-          trigger: ['blur']
-        }
-        ],
+        exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
+        orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
       },
       customerData: {},
       treeLoading: false,
       selectRows: [],
       warehouseIdList: [],
-      shelfSpaceIdList:[],
       flowTemplateJson: {},
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
@@ -1344,6 +1075,7 @@ export default {
   async created() {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
     this.getBimBusinessDetail()
     await this.getDeputyUnit()
@@ -1403,17 +1135,19 @@ export default {
         this.specialRequireFlag = res.data.specialRequire
       })
     },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     async getProportionSwitch(code, type) {
       try {
         this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    setMinWidth (val) {
-      this.minWidth = val.srcElement.clientWidth
-    },
-    async warehouseIdChange(e) {
+    warehouseIdChange(e) {
       this.dataForm.warehouseId = e
-      if (this.abProjectSwitchVisible) {
+      if (this.isProjectSwitch === '1') {
         this.warehouseIdList.forEach((item) => {
           if (e === item.id) {
             this.orderForm.projectId = item.projectId
@@ -1422,19 +1156,6 @@ export default {
         this.dataFormTwo.productData = this.dataFormTwo.productData.filter(
           (item) => item.projectId === this.orderForm.projectId
         )
-      }
-      if (this.dataForm.warehouseId) {
-        if (this.outConsigneeFlag) {
-          let obj = {
-            warehouseId:this.dataForm.warehouseId
-          }
-          const res = await getList(obj)
-          this.shelfSpaceIdList = res.data.records
-          this.dataForm.shelfSpaceId = ''
-        } 
-      } else {
-        this.shelfSpaceIdList = []
-        this.dataForm.shelfSpaceId = ''
       }
     },
     getDeputyUnit() {
@@ -1508,21 +1229,17 @@ export default {
         }
       })
     },
-    async  getWarehouseList() {
+    getWarehouseList() {
       let obj = {
         type: 'virtually',
         category: 'warehouse'
       }
-      console.log(this.outConsigneeFlag,'this.outConsigneeFlag')
-      if (this.outConsigneeFlag) {
-        obj.type = 'normal'
-      }
-      if (this.abProjectSwitchVisible) {
+      if (this.isProjectSwitch === '1') {
         obj.projectId = this.userInfo.projectId
       }
-      const res = await getWarehouseList(obj)
-      this.warehouseIdList = res.data
-  
+      getWarehouseList(obj).then((res) => {
+        this.warehouseIdList = res.data
+      })
     },
     //发货数量不能为0
     calcValidatenum() {
@@ -1544,7 +1261,7 @@ export default {
       return (rule, value, callback) => {
         console.log(value, 'p')
         let index = Number(rule.field.match(/\d+/)[0])
-        let msg =`收货数量超过最大可收货数量`
+        let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
         if (!value || value == 0) {
           callback()
         } else {
@@ -1680,65 +1397,7 @@ export default {
       })
       this.dataFormTwo.productData = uniqueArr
     },
-    // 弹窗节点的点击
-    treeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      listQuery.classAttribute = data.classAttribute
-      return listQuery
-    },
-    supplierdata(id, data) {
-     
-      if (data.length === 0) {
-        this.dataForm.outPartnerName = ''
-        this.dataForm.outPartnerCode = ''
-        this.dataForm.outPartnerId = ''
-      } else {
-        this.dataForm.outPartnerName = data[0].all.name
-        this.dataForm.outPartnerCode = data[0].all.code
-        this.dataForm.outPartnerId = data[0].all.id
-      }
-    },
-     // 弹窗节点的点击
-     treeProductClick(data, node, listQuery) {
-      if (listQuery.productCategoryId === data.id) return listQuery
-      listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      listQuery.classAttribute = data.classAttribute
-      return listQuery
-    },
-    async beforeProductOpen(paramsObj) {
-      console.log(paramsObj, 'lll')
-      this.productTableSearchList = [
-        { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
-      ]
-      if (this.abProjectSwitchVisible) {
-        this.productListRequestObj.projectId = this.abProjectId
-        this.productTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectList })
-      }
-      if (this.$store.getters.configData.product.enable_productName) {
-        this.productTableItems.forEach(tc=>{
-          if (tc.prop === 'name') {
-            tc.render = true
-          }
-        })
-        let productCodeIndex = this.productTableSearchList.findIndex((obj) => obj.prop === 'productCode')
-        this.productTableSearchList.splice(productCodeIndex +1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
-      }
-      return true
-    },
-    productDataChange(id, data) {
-     
-     if (data.length === 0) {
-       this.dataForm.outProductName = ''
-       this.dataForm.outProductCode = ''
-       this.dataForm.outProductId = ''
-     } else {
-       this.dataForm.outProductName = data[0].all.name
-       this.dataForm.outProductCode = data[0].all.code
-       this.dataForm.outProductId = data[0].all.id
-     }
-   },
+    // },
     // 获取所有订单列表数据
     initData2() {
       this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode
@@ -1938,6 +1597,7 @@ export default {
                 message: '切换成功'
               })
               // this.dataForm = {
+              //   exchangeGoodsFlag: false,
               //   // orderCategory: "assembly",
               //   returnDeliveryType: 'back',
               //   notificationType: 'procure',
@@ -1968,6 +1628,7 @@ export default {
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
           // this.dataForm = {
+          //   exchangeGoodsFlag: false,
           //   // orderCategory: "assembly",
           //   returnDeliveryType: 'back',
           //   notificationType: 'procure',
@@ -2110,7 +1771,7 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data,outConsigneeFlag) {
+    init(id, btnType, approvalFlag, data) {
       console.log(id, '[]')
       this.dataForm.id = id || ''
 
@@ -2133,16 +1794,10 @@ export default {
           })
         }
       }
-      this.outConsigneeFlag = outConsigneeFlag // 判断 是否存在外协供应方
-
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
-          this.outConsigneeFlag = this.dataForm.outType ? true : false // 判断 是否存在外协供应方
-          if (this.outConsigneeFlag) {
-            this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)*100
-            this.dataForm.lossRate = Number(this.dataForm.lossRate)*100
-          }
+
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -2214,6 +1869,7 @@ export default {
     continueAdd() {
       this.dataFormTwo.productData = []
       this.dataForm = {
+        exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
         // returnDeliveryType: 'back',
@@ -2274,11 +1930,6 @@ export default {
         }
         // this.dataForm.classAttribute = 'finish_product'
         this.dataForm.receiptReturnType = 'receipt'
-        if (this.outConsigneeFlag) {
-          this.dataForm.buyBackRate = Number(this.dataForm.buyBackRate)/100
-          this.dataForm.lossRate = 0
-        }
-        
         let obj = {
           attachmentList: this.datafilelist,
           returnGoods: this.dataForm,

@@ -96,7 +96,7 @@
           @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom">
           </el-table-column>
-          <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+          <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
           v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
           <!-- 这里的 width 会被转成 min-width -->

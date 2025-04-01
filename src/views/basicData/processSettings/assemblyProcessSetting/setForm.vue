@@ -49,7 +49,7 @@
                       </el-button>
                       |
                     </div>
-
+                    <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
                       @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
                       row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData">
@@ -124,83 +124,61 @@
                       </el-table-column>
                       <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                         <template slot-scope="scope">
-                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
                             <el-form-item prop="firstFlag" ref="firstFlag">
-                              <el-checkbox :label="true" v-model="scope.row.firstFlag" :true-label="1" disabled>
+                              <el-checkbox :label="true" v-model="scope.row.firstFlag" disabled>
                                 {{ scope.row.firstFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
                       <el-table-column prop="pickingFlag" label="是否领料" width="90">
                         <template slot-scope="{ row }">
-                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="pickingFlag" ref="pickingFlag">
-                              <el-checkbox v-model="row.pickingFlag" :true-label="1" :disabled="type == 'look'"
-                                :false-label="0">
+                              <el-checkbox v-model="row.pickingFlag" :disabled="type == 'look'"
+                                >
                                 {{ row.pickingFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
                       <el-table-column prop="firstInspection" label="是否首检" width="90">
                         <template slot-scope="{ row }">
-                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="firstInspection" ref="firstInspection">
-                              <el-checkbox v-model="row.firstInspection" :true-label="1"
+                              <el-checkbox v-model="row.firstInspection" 
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0">
+                                >
                                 {{ row.firstInspection ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
                       <el-table-column prop="checkFlag" label="是否检验" width="90">
                         <template slot-scope="{ row }">
-                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="checkFlag" ref="checkFlag">
-                              <el-checkbox v-model="row.checkFlag" :true-label="1"
+                              <el-checkbox v-model="row.checkFlag" 
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0">
+                                >
                                 {{ row.checkFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
                       <el-table-column prop="reportFlag" label="是否报工" width="90">
                         <template slot-scope="scope">
-                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="reportFlag" ref="reportFlag">
-                              <el-checkbox v-model="scope.row.reportFlag" :true-label="1" :disabled="scope.row.defaultReport ||
+                              <el-checkbox v-model="scope.row.reportFlag":disabled="scope.row.defaultReport ||
                                 scope.row.defaultFlag ||
                                 scope.$index === dataFormTwo.length - 1 ||
                                 type === 'look'
-                                " :false-label="0">
+                                " >
                                 {{ scope.row.reportFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column prop="checkFlag" label="是否检验工序" min-width="140">
-                          <template slot-scope="{row}">
-                            <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
-                              <el-form-item prop="checkFlag" ref="checkFlag">
-                                <el-checkbox v-model="row.checkFlag" :true-label="1" :disabled="type == 'look'"
-                                  :false-label="0"></el-checkbox>
-                              </el-form-item>
-                            </el-form>
-                          </template>
-                        </el-table-column> -->
-
                       <el-table-column prop="stockFlag" label="是否入库" width="90">
                         <template slot-scope="scope">
-                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="stockFlag" ref="stockFlag">
                               <el-checkbox v-model="scope.row.stockFlag" :disabled="scope.$index === dataFormTwo.length - 1 ||
                                 type === 'look'
@@ -208,31 +186,26 @@
                                 {{ scope.row.stockFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
 
                       <el-table-column prop="lastFlag" label="是否末道工序" width="120">
                         <template slot-scope="scope">
-                          <el-form :ref="`tableForm_1_${scope.row.index}`" :model="scope.row">
                             <el-form-item prop="lastFlag" ref="lastFlag">
                               <el-checkbox :label="true" v-model="scope.row.lastFlag" disabled>
                                 {{ scope.row.lastFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
                       <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
                         <template slot-scope="{ row }">
-                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="workOrderFlag" ref="workOrderFlag">
-                              <el-checkbox v-model="row.workOrderFlag" :true-label="1"
-                                :disabled="type == 'look' || row.processingType === 'self_produced'" :false-label="0">
+                              <el-checkbox v-model="row.workOrderFlag" 
+                                :disabled="type == 'look' || row.processingType === 'self_produced'" >
                                 {{ row.workOrderFlag ? '是' : '否' }}
                               </el-checkbox>
                             </el-form-item>
-                          </el-form>
                         </template>
                       </el-table-column>
                       <el-table-column label="操作" width="180" fixed="right">
@@ -249,6 +222,7 @@
                         </template>
                       </el-table-column>
                     </JNPF-table>
+                    </el-form>
                   </el-col>
                 </el-collapse-item>
               </el-collapse>

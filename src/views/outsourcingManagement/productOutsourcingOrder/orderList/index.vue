@@ -327,7 +327,7 @@ export default {
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
-      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName']
+      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount','createByName']
     }
   },
   created() {

@@ -1919,6 +1919,9 @@ export default {
     init(id, btnType, approvalFlag) {
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.partnerRequestObj.salesPersonFlag = 1
+      }
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       // this.oldId = JSON.parse(JSON.stringify(id)) || ""

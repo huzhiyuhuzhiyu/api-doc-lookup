@@ -2745,6 +2745,9 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+      this.form.salesPersonFlag = 1
+      }
       getCooperativeData(this.form).then(res => {
         this.tableDataCustomer = res.data.records
         this.total = res.data.total

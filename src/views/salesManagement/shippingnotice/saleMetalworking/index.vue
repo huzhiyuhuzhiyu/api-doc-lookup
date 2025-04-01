@@ -306,7 +306,6 @@ export default {
           condition: [],
           matchLogic: ""
         },
-        salesPersonFlag:1,
       },
 
       detailTotal: 0,
@@ -595,7 +594,9 @@ export default {
     initData() {
       this.listLoading = true
 
-
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.orderForm.salesPersonFlag = 1
+      }
 
 
       getQuotationdatasendlist(this.orderForm).then(res => {

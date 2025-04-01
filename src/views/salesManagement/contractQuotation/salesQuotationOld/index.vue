@@ -225,7 +225,6 @@ export default {
           condition: [],
           matchLogic: ""
         },
-        salesPersonFlag:1,
       },
       superQueryJson: [
         {
@@ -340,6 +339,9 @@ export default {
       this.showAppCodeFlag = res.enabledMark
     } else {
       this.showAppCodeFlag = false
+    }
+    if (this.$store.getters.configData.sale.salePersonFlag) {
+      this.form.salesPersonFlag = 1
     }
     this.search('basic')
   },

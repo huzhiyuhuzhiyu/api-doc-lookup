@@ -205,7 +205,6 @@ export default {
           condition: [],
           matchLogic: ""
         },
-        salesPersonFlag:1,
       },
       detailTotal: 0,
       gradeList: [],
@@ -343,6 +342,9 @@ export default {
     this.deliveryDateArr = ["", end];
     this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+    if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.orderForm.salesPersonFlag = 1
+    }
     this.superForm = this.orderForm
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(7, 0, {

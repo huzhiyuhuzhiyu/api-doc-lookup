@@ -57,16 +57,14 @@
                         批量删除
                       </el-button>
                       |
-                      <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                      <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                        id="table" border>
-                        <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
-                        <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                        id="table" border :height="customStyleData">
                         <el-table-column prop="projectName" label="所属项目" width="120"
                           v-if="abProjectSwitchVisible"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120"
-                          v-if="isProductNameSwitch === '1'"></el-table-column>
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                          v-if="$store.getters.configData.product.enable_productName"></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                           <template slot="header">
                             <span class="required">*</span>
@@ -233,7 +231,7 @@
                             </el-button>
                           </template>
                         </el-table-column>
-                      </el-table>
+                      </JNPF-table>
                     </el-form>
                   </div>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
@@ -595,10 +593,7 @@ export default {
   },
   async created() {
     await this.getDeputyUnit()
-    await this.getProjectSwitch('system', 'project')
-    await this.getProductNameSwitch('product', 'enable_productName')
-    await this.getProjectList()
-
+    this.switchStyleheight()
     this.tableDataFlag = true
 
 
@@ -666,10 +661,30 @@ export default {
     }
   },
   methods: {
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
+    
+    switchStyleheight() {
+      console.log(123)
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 500
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
     },
     getDeputyUnit() {
       let obj = {
@@ -779,14 +794,14 @@ export default {
         { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
       ]
-      if (this.isProductNameSwitch === '1') {
-      this.ProductTableItems.forEach(tc=>{
-        if (tc.prop === 'name') {
-          tc.render = true
-        }
-      })
-      let index = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
-      this.ProductTableSearchList.splice(index+1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
+      if (this.$store.getters.configData.product.enable_productName) {
+        this.ProductTableItems.forEach(tc=>{
+          if (tc.prop === 'name') {
+            tc.render = true
+          }
+        })
+        let index = this.ProductTableSearchList.findIndex((obj) => obj.prop === 'productCode')
+        this.ProductTableSearchList.splice(index+1, 0, { prop: 'productName', label: '产品名称', type: 'input' })
       }
       if (this.abProjectSwitchVisible) {
         this.ProductTableItems.forEach(tc=>{

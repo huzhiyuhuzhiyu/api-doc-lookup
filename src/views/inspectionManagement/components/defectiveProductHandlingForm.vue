@@ -526,9 +526,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionQuantity)
+                  Number(this.dataForm.unqualifiedQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于报检数量'))
+                  callback(new Error('报废数量+返修数量要等于不合格数量'))
                 } else {
                   callback()
                 }
@@ -568,9 +568,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionQuantity)
+                  Number(this.dataForm.unqualifiedQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于报检数量'))
+                  callback(new Error('报废数量+返修数量要等于不合格数量'))
                 } else {
                   callback()
                 }
@@ -1380,9 +1380,9 @@ export default {
       if (this.dataForm.treatmentResults == 'discard_repair') {
         if (
           Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-          Number(this.dataForm.inspectionQuantity)
+          Number(this.dataForm.unqualifiedQuantity)
         )
-          return this.$message.error('报废数量+返修数量不等于报检数量。')
+          return this.$message.error('报废数量+返修数量不等于不合格数量。')
       }
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用

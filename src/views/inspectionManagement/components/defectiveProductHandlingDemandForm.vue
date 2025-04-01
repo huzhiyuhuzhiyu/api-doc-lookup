@@ -506,9 +506,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionQuantity)
+                  Number(this.dataForm.unqualifiedQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于报检数量'))
+                  callback(new Error('报废数量+返修数量要等于不合格数量'))
                 } else {
                   callback()
                 }
@@ -547,9 +547,9 @@ export default {
                   callback()
                 } else if (
                   Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !==
-                  Number(this.dataForm.inspectionQuantity)
+                  Number(this.dataForm.unqualifiedQuantity)
                 ) {
-                  callback(new Error('报废数量+返修数量要等于报检数量'))
+                  callback(new Error('报废数量+返修数量要等于不合格数量'))
                 } else {
                   callback()
                 }
@@ -1271,7 +1271,7 @@ export default {
       }
       if (this.dataForm.treatmentResults == 'discard_repair') {
         console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
-        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('报废数量+返修数量不等于报检数量。');
+        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.unqualifiedQuantity)) return this.$message.error('报废数量+返修数量不等于不合格数量。');
       }
 
 

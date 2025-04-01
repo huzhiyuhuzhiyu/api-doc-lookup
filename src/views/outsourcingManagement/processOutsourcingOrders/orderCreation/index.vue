@@ -461,7 +461,6 @@ export default {
       oldData: [],
       oldProcessData: [],
       rules: {
-        // remark: [{ required: true, message: '请输入备注', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
@@ -798,6 +797,19 @@ export default {
       this.datafilelist = []
       this.tipsvisible = false
       this.btnLoading = false
+      this.dataForm = {
+        remark: '', // 备注
+        approvalCompletionDate: '', // 审批完成时间
+        cooperativePartnerName:'',
+        deliveryDate:"",
+        // approvalStatus: "",               // 审批状态
+        documentStatus: '', // 单据状态
+        id: '',
+        orderNo: '', //申请单号
+        reasonRejection: '', //驳回理由
+        submitDate: '', //提交时间
+        approvalFlag: false
+      }
     },
     goBom() {
       this.dataForm = {}
@@ -964,9 +976,10 @@ export default {
       return flag
     },
     supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('cooperativePartnerName')
-      })
+      this.dataForm.cooperativePartnerName = ''
+      this.dataForm.cooperativePartnerCode = ''
+      this.dataForm.cooperativePartnerId = ''
+      this.oldData = []
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''

@@ -512,7 +512,7 @@ export default {
               this.dataForm.projectId = this.userInfo.projectId
               this.ProductListRequestObj.projectId = this.dataForm.projectId
               this.dataForm.drawNo = ''
-              this.linesList = []
+              // this.linesList = []
               tc.itemDisabled = true
             }
             tc.change = (val) => {

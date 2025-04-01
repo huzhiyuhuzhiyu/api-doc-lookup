@@ -904,7 +904,7 @@ export default {
       }
       getvibrationList(obj).then(res => {
         console.log("测振数据", res);
-        this.vibrationLevelList = res.data
+        this.vibrationLevelList = res.data 
       })
     },
     // 获取 可选的精度等级
@@ -958,12 +958,13 @@ export default {
       if (value) {
         console.log(this.pairingModeListCopy);
         this.pairingModeNum = this.pairingModeListCopy.filter(items => items.id === value)[0].quantity;
+        this.currentProcess.waitReportNum=this.pairingModeList.filter(items => items.id === value)[0].waitReportNum
         this.currentProcess.qualifiedQuantity = ''
         this.currentProcess.reportingQuantity = 0
-        if (this.currentProcessType !== 4) {
+        // if (this.currentProcessType !== 4) {
 
-          this.getReprotNum(this.currentProcess.pairingModeId)
-        }
+        //   this.getReprotNum(this.currentProcess.pairingModeId)
+        // }
       } else {
         this.currentProcess.pairingModeId = ""
       }

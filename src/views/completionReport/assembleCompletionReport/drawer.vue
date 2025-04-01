@@ -573,12 +573,14 @@ export default {
       if (value) {
         console.log(this.pairingModeListCopy);
         this.pairingModeNum = this.pairingModeListCopy.filter(items => items.id === value)[0].quantity;
+        this.form.waitReportNum=this.pairingModeList.filter(items => items.id === value)[0].waitReportNum 
+
         this.form.qualifiedQuantity = ''
         this.form.reportingQuantity = 0
-        if (this.currentProcessType !== 4) {
+        // if (this.currentProcessType !== 4) {
 
-          this.getReprotNum(this.form.pairingModeId)
-        }
+        //   this.getReprotNum(this.form.pairingModeId)
+        // }
       }
     },
     handleSelectionChangeJD(value) {

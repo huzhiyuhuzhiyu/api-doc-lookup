@@ -149,12 +149,15 @@
           <el-table-column prop="brand" label="品牌" width="120" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" @del="handleDel(scope.row.id)">
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
+                </el-button>
+                <el-button type="text" size="mini" @click.native="copyHandle('', false,scope.row)">
+                  复制
                 </el-button>
                 <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -1476,6 +1479,13 @@ export default {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType, this.isProjectSwitch)
+      })
+    },
+    // 复制
+    copyHandle(id, btnType,row) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType,row)
       })
     },
     handleDel(id) {

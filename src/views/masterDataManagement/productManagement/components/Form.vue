@@ -53,6 +53,7 @@ import { getbimProductAttributesList, getbimProductsModelList } from '@/api/mast
 import { getProjectList } from '@/api/system/projectManagement'
 import tabs from './params'
 import { mapGetters } from "vuex"
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 export default {
   props: {
     productName: {
@@ -68,6 +69,7 @@ export default {
       default: ''
     }
   },
+  mixins: [AbProjectMixin],
   data() {
     return {
       getbimProductAttributesList, // 产品类别属性列表请求api
@@ -391,14 +393,13 @@ export default {
         }
       } catch (error) { }
     },
-   async init(id, btnType = false, isProjectSwitch) {
-      this.isProjectSwitch = isProjectSwitch
+   async init(id, btnType = false,row ) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
       console.log(this.btnType,'看')
       this.dataForm.id = id || ''
-      if (this.isProjectSwitch === '1') {
+      if (this.abProjectSwitchVisible) {
         this.tabs[0].tabContent.forEach((ele) => {
           if (ele.prop == 'projectId') {
 
@@ -516,6 +517,33 @@ export default {
         })
       } else {
         this.title = `新建${this.productName}档案`
+        if (row) {
+          console.log(row,'订单')
+          // 获取详情
+        detailProduct(row.id).then((res) => {
+          // 记录编码和图号，用于校验唯一性
+        
+          if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                })
+              })
+            }
+          // 处理普通属性
+          let detailObj = res.data
+          for (const key in detailObj) {
+            this.dataForm[key] = detailObj[key]
+          }
+          this.dataForm.id = ''
+          this.dataForm.code = ''
+          this.dataForm.drawingNo = ''
+        })
+        }
         this.fetchData(this.busSetId, true)
       }
       this.formLoading = false

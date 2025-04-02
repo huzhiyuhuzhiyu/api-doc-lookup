@@ -53,11 +53,12 @@ import tabs from './params'
 import { getProjectList } from '@/api/system/projectManagement'
 import { mapGetters } from 'vuex'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 export default {
   name: 'finished_product',
+  mixins: [AbProjectMixin],
   data() {
     return {
-      isProjectSwitch: '',
       datafilelist: [],
       activeName: 'basicInfo',
       activeNames: ['modelInfo', 'basicInfo', 'otherInfo'],
@@ -673,8 +674,8 @@ export default {
         }
       } catch (error) { }
     },
-    async init(id, btnType = false, flag, isProjectSwitch) {
-      this.isProjectSwitch = isProjectSwitch
+    async init(id, btnType = false, flag,row) {
+   
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -748,7 +749,7 @@ export default {
           }
         })
       }
-      if (this.isProjectSwitch === '1') {
+      if (this.abProjectSwitchVisible) {
         this.tabs[0].tabContent.forEach((ele) => {
           if (ele.prop == 'projectId') {
             console.log(this.userInfo.projectId, 'pr')
@@ -905,7 +906,42 @@ export default {
         })
       } else {
         this.title = '新建成品档案'
+        if (row) {
+         // 获取详情
+         detailProduct(row.id).then((res) => {
+          // 记录编码和图号，用于校验唯一性
+          if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                })
+              })
+            }
+          // 处理普通属性
+          let detailObj = res.data
+          for (const key in detailObj) {
+            this.dataForm[key] = detailObj[key]
+          }
+          this.dataForm.id = ''
+          this.dataForm.code = ''
+          this.dataForm.drawingNo = ''
+          this.steelBallManufacturerOption.forEach((item) => {
+            if (item.code == this.dataForm.steelBallManufacturer) {
+              this.dataForm.steelBallManufacturerName = item.name
+            }
+          })
+        
 
+          this.modelForm.model = this.dataForm.model
+
+          this.formLoading = false
+        })
+        }
+        
         this.fetchData('CPBM', true)
         this.formLoading = false
       }
@@ -978,7 +1014,7 @@ export default {
           })
         }
         this.dataForm.attachmentList = this.datafilelist
-        
+        console.log(this.dataForm.id,'this.dataForm.id')
         const formMethod = this.dataForm.id ? updateProductData : cpAddProduct
         formMethod(this.dataForm)
           .then((res) => {

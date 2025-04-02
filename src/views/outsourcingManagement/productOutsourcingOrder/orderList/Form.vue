@@ -16,7 +16,7 @@
           </div>
         </div>
 
-        <div class="main">
+        <div class="main" ref="main">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
@@ -215,7 +215,7 @@
                       </el-table-column>
 
 
-                      <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
+                      <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" :disabled="sourceDisabled"
                             @click="handlerOpenSource(scope.$index, 'source')">
@@ -329,7 +329,7 @@
                 |
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'"
+                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
                   ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
                   :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
                   :row-style="rowStyle">
@@ -749,6 +749,7 @@ export default {
     await this.getProportionSwitch('warehouse', 'proportion')
     this.getDeputyUnit()
     this.getBimBusinessDetail()
+    this.switchStyleheight()
   },
   watch: {
     'dataFormTwo.data': {
@@ -784,6 +785,29 @@ export default {
     }
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 305
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',

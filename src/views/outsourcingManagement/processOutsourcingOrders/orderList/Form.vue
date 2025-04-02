@@ -84,7 +84,7 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type !== 'look'" hasNO fixedNO
                       ref="multipleTable" v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
-                      @row-click="openDetails">
+                      @row-click="openDetails" >
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="160"
@@ -241,7 +241,7 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
+                      <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                             配置发料清单
@@ -527,7 +527,7 @@
                       </el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
+                  <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                         配置发料清单

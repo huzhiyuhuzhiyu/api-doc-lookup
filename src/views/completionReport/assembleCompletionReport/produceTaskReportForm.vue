@@ -261,7 +261,8 @@
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity"
                         v-if="currentProcessType === 4 || currentProcessType === 5"
-                        :disabled="!!currentProcess.pairingModeId" placeholder="合格数量" class="ipt" @blur="handleBlur()" />
+                        :disabled="!!currentProcess.pairingModeId" placeholder="合格数量" class="ipt"
+                        @blur="handleBlur()" />
                       <el-input v-model="currentProcess.qualifiedQuantity"
                         v-if="currentProcessType === 1 || currentProcessType === 2 || currentProcessType === 3"
                         placeholder="合格数量" class="ipt" @blur="handleBlur()" />
@@ -904,7 +905,7 @@ export default {
       }
       getvibrationList(obj).then(res => {
         console.log("测振数据", res);
-        this.vibrationLevelList = res.data 
+        this.vibrationLevelList = res.data
       })
     },
     // 获取 可选的精度等级
@@ -958,7 +959,9 @@ export default {
       if (value) {
         console.log(this.pairingModeListCopy);
         this.pairingModeNum = this.pairingModeListCopy.filter(items => items.id === value)[0].quantity;
-        this.currentProcess.waitReportNum=this.pairingModeList.filter(items => items.id === value)[0].waitReportNum
+        if(this.currentProcessType!==4){
+          this.currentProcess.waitReportNum = this.pairingModeList.filter(items => items.id === value)[0].waitReportNum
+        }
         this.currentProcess.qualifiedQuantity = ''
         this.currentProcess.reportingQuantity = 0
         // if (this.currentProcessType !== 4) {
@@ -994,6 +997,8 @@ export default {
       })
 
       this.setProcessType()
+      this.currentProcess.pairingModeId = ''
+      this.currentProcess.matchedQuantity = ""
       this.stockFlag = 0
       //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
       if (this.currentProcessType == 5) {

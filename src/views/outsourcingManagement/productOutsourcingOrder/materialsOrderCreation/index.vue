@@ -1026,6 +1026,7 @@ export default {
           shipmentType: 'out_orders',
           mainUnit:item.mainUnit,
           deputyUnit:item.deputyUnit,
+          qty:1,
         }]
       }
 

@@ -115,8 +115,9 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
                   :rules="productRules">
-                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
-                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData"
+                    :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData"
+                    :height="customStyleData">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
@@ -171,7 +172,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                    <el-table-column prop="price" label="单价(含税)" width="130"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -180,7 +182,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                    <el-table-column prop="totalAmount" label="金额" width="140"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -189,7 +192,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                    <el-table-column prop="taxRate" label="税率" width="140"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -199,7 +203,8 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -209,7 +214,8 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                    <el-table-column prop="taxAmount" label="税额" min-width="100"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot="header">
                         <span class="required">*</span>
                         税额
@@ -222,7 +228,8 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot="header">
                         <span class="required">*</span>
                         金额(不含税)
@@ -357,8 +364,9 @@
               </el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
-                hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData"
+                :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData"
+                :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip key="3" />
@@ -375,13 +383,15 @@
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="120" />
                 <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
-                <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737" v-if="isProportionSwitch === '1'">
+                <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
+                  v-if="isProportionSwitch === '1'">
                   <template slot-scope="scope">
                     <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                       v-model="scope.row.weight" placeholder="重量"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="proportion" label="比重" min-width="140" :key="727" v-if="isProportionSwitch === '1'">
+                <el-table-column prop="proportion" label="比重" min-width="140" :key="727"
+                  v-if="isProportionSwitch === '1'">
                   <template slot-scope="scope">
                     <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                       v-model="scope.row.proportion" placeholder="比重"></el-input>
@@ -410,7 +420,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                <el-table-column prop="price" label="单价(含税)" width="130"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     单价(含税)
@@ -423,7 +434,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="totalAmount" label="金额" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                <el-table-column prop="totalAmount" label="金额" width="140"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     金额(含税)
@@ -436,7 +448,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                <el-table-column prop="taxRate" label="税率" width="140"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     税率
@@ -450,7 +463,8 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot-scope="scope">
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
                       <div class="viewData">
@@ -460,7 +474,8 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                <el-table-column prop="taxAmount" label="税额" min-width="100"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     税额
@@ -473,7 +488,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     金额(不含税)
@@ -1111,7 +1127,6 @@ export default {
       } else {
         this.customStyleData = maxHeight
       }
-      
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -1383,7 +1398,7 @@ export default {
       this.productVisible = false
       this.selectArr.forEach((item) => {
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
+        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
         this.dataFormTwo.productData.push(item)
       })
       let uniqueArr = []
@@ -1779,7 +1794,7 @@ export default {
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if(data!='outInboundWarehouse'){
+      if (data != 'outInboundWarehouse') {
 
         if (data && data.length) {
           this.dataFormTwo.productData = data
@@ -1790,7 +1805,7 @@ export default {
             item.ordersNo = item.orderNo
             this.$set(item, 'receivedQuantity', item.waitReceiptNum)
             this.$set(item, 'discount', 1)
-            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
+            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
           })
         }
       }
@@ -1944,7 +1959,8 @@ export default {
           })
           return
         }
-        this.dataFormTwo.productData.forEach((item,index)=>{
+        for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
+          const item = this.dataFormTwo.productData[index];
           if (!item.receivedQuantity && item.productsId) {
             submitFlag = false
             this.btnLoading = false
@@ -1976,7 +1992,34 @@ export default {
             })
             return
           }
-        })
+          if (item.classType == 'inner_ring_blank' || item.classType == 'outer_ring_blank') {
+            if (this.isProportionSwitch === '1') {
+              if (!item.weight || !item.proportion || !item.discount) {
+                submitFlag = false
+                this.btnLoading = false
+                this.$message({
+                  message: '请填写第' + (index + 1) + '行产品的重量、比重、折扣',
+                  type: 'error',
+                  duration: 1500
+                })
+                return
+
+              }
+            }
+          }
+          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
+            console.log(123)
+            submitFlag = false
+            this.btnLoading = false
+            this.$message({
+              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+        }
+
 
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
@@ -2070,7 +2113,6 @@ export default {
             obj.lines.push(dep1)
           }
         })
-        this.btnLoading = true
         let formMethod = null
 
         if (this.btnType == 'edit') {
@@ -2080,8 +2122,11 @@ export default {
           formMethod = addpurPurchaseReceiptReturnGoods
         }
         console.log(obj, 'obj')
+        if(submitFlag===false) return
+        this.btnLoading = true
         formMethod(obj)
           .then((res) => {
+            this.btnLoading = false
             // let msg = "";
             // if (formMethod == addpurPurchaseReceiptReturnGoods) {
             //   msg = "新建成功"

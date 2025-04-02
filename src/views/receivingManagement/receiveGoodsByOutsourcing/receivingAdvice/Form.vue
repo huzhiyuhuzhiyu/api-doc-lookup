@@ -24,13 +24,13 @@
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
+      <div class="main" ref="main" v-loading="formLoading">
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
+                  <el-row :gutter="30" style="padding: 0 10px;">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
@@ -115,30 +115,31 @@
                   </el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
-                      key="0" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-                    <template v-if="isProportionSwitch === '1'">
+                    <template v-if="$store.getters.configData.warehouse.proportion">
                       <el-table-column prop="weight" label="重量(kg)" width="90" />
                       <el-table-column prop="proportion" label="比重" width="80" />
                     </template>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
-                    <el-table-column prop="productCode" label="产品编码" width="140"
+                    <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productName" label="产品名称" width="140" v-if="$store.getters.configData.product.enable_productName"
                       show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
+                    
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                      :width="isDeputyUnitSwitch ? 85 : 60" />
+                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch ? '数量(主)' : '数量'"
                       width="110" />
-                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
-                      v-if="isDeputyUnitSwitch === '1'" />
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                      v-if="isDeputyUnitSwitch" />
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"/>
+                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                    <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
@@ -225,7 +226,7 @@
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                       </template>
                     </el-table-column>
-                  </el-table>
+                  </JNPF-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin:0 10px">总收货数量：{{ totalDeliveryQuantity }}</span>
                   </div>
@@ -246,7 +247,7 @@
         <el-collapse v-model="activeNames" v-else>
           <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
+              <el-row :gutter="30" style="padding: 0 10px;">
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
@@ -333,27 +334,25 @@
               </el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData">
-                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
-                  key="0" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="1" />
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
+                hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
-
-                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
                 <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="140" show-overflow-tooltip v-if="$store.getters.configData.product.enable_productName"></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
                 <el-table-column prop="productCategoryName" label="产品分类" width="140"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch ? 85 : 60" />
+                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch ? '数量(主)' : '数量'"
                   width="110" />
-                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
-                <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                   /> -->
-                <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch" />
+                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
+                   />
+                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
                     <span class="required">*</span>
@@ -459,7 +458,7 @@
                     <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                   </template>
                 </el-table-column>
-              </el-table>
+              </JNPF-table>
               <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                 <span style="font-weight:500;margin:0 10px">总收货数量：{{ totalDeliveryQuantity }}</span>
               </div>
@@ -644,7 +643,7 @@ export default {
             }),
             trigger: ['blur']
           },
-          // { validator: this.calcValidate(), trigger: 'blur' },
+          { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
@@ -809,7 +808,8 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       scanDialog: false,
-      scanResult: ''
+      scanResult: '',
+      customStyleData:0
     }
   },
   computed: {
@@ -863,14 +863,16 @@ export default {
     }
   },
   async created() {
+    this.formLoading = true
     await this.getProjectSwitch('system', 'project')
-    await this.getProportionSwitch('warehouse', 'proportion')
-    this.getDeputyUnit()
+    this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.outDeputyUnit
     this.getBimBusinessDetail()
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
     this.getWarehouseList()
+    this.switchStyleheight()
+    this.formLoading = false
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -878,6 +880,34 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight;
+      console.log(maxHeight, 'maxHeight')
+      if (this.btnType === 'look') {
+        maxHeight = mainHeight1 - 470
+      } else {
+        maxHeight = mainHeight1 - 420
+      }
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     warehouseIdChange(e) {
       this.dataForm.warehouseId = e
       if (this.isProjectSwitch === '1') {
@@ -914,20 +944,6 @@ export default {
           { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
         ]
       }
-    },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `outDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-      })
-    },
-    async getProportionSwitch(code, type) {
-      try {
-        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
     },
     getBimBusinessDetail() {
       let obj = {
@@ -1017,7 +1033,7 @@ export default {
           let flag = false
           let list = this.dataFormTwo.productData
           let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].waitReceiptNum)
+          let num_2 = Number(list[index].maxReceiptNum)
 
           if (!(num_1 <= num_2)) {
             flag = true
@@ -1203,7 +1219,8 @@ export default {
             remark: item.remark,
             orderNo: item.orderNo,
             id: item.id,
-            deliveryDate: '' // 交期
+            deliveryDate: '', // 交期
+            maxReceiptNum: Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum),
           })
         })
         let orderTypeFlag = this.hasDifferentOrderType(list)
@@ -1474,6 +1491,7 @@ export default {
           data.forEach((item) => {
             item.ordersNo = item.orderNo
             this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
           })
           this.oldData = data
           this.dataFormTwo.productData = data
@@ -1622,27 +1640,39 @@ export default {
           })
           return
         }
-        for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
-          const item = this.dataFormTwo.productData[index]
+        this.dataFormTwo.productData.forEach((item,index)=>{
           if (!item.receivedQuantity && item.productsId) {
             submitFlag = false
+            this.btnLoading = false
             this.$message({
               message: '请输入第' + (index + 1) + '行产品的收货数量',
               type: 'error',
               duration: 1500
             })
-            break
+            return
           }
           if (Number(item.receivedQuantity) == 0) {
             submitFlag = false
+            this.btnLoading = false
             this.$message({
               message: '第' + (index + 1) + '行产品的收货数量必须大于0',
               type: 'error',
               duration: 1500
             })
-            break
+            return
           }
-        }
+          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
+            console.log(123)
+            submitFlag = false
+            this.btnLoading = false
+            this.$message({
+              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+        })
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             accuracyLevel: item.accuracyLevel,
@@ -1750,11 +1780,14 @@ export default {
             // } else if (value == 'submit') {
             //   msg = '提交成功'
             // }
+            let msg = res.msg
+            if (res.msg === 'Success') { msg = this.dataForm.documentStatus == "submit" ? "提交成功" : "保存成功" }
             if (value == 'draft') {
               this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {
               this.submitmethodsTitle = '提交成功'
             }
+            this.$message.success(msg)
             if (type) {
               this.enCode = 'p018'
               this.formId = res.data.id
@@ -1767,17 +1800,6 @@ export default {
             } else {
               this.tipsvisible = true
             }
-
-            // this.$message({
-            //   message: msg,
-            //   type: 'success',
-            //   duration: 1500,
-            //   onClose: () => {
-            //     this.visible = false
-            //     this.btnLoading = false
-            //     this.$emit('close', true)
-            //   }
-            // })
           })
           .catch(() => {
             this.btnLoading = false
@@ -1802,6 +1824,10 @@ export default {
     closePrint() {
       this.btnLoading = false
       this.printVisible = false
+      this.$message.warning("取消打印")
+    },
+    closePrintPage() {
+      this.$emit('close', true)
     },
     // 测试审批流
     getBusInfo() {
@@ -2010,7 +2036,7 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  // padding: 10px;
   border-top: none !important;
 }
 

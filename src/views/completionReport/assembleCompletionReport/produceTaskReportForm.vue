@@ -915,7 +915,7 @@ export default {
         pairingModeId: id,
       }
       getaccuracyList(obj).then(res => {
-        console.log("测振数据", res);
+        console.log("精度数据", res);
         this.accuracyLevelList = res.data
       })
     },
@@ -984,7 +984,6 @@ export default {
         this.currentProcess.pairingModeId = ""
         this.pairingModeNum = ""
         this.pairingModeList = res.data
-        this.vibrationLevelList = []
       })
     },
     async getProcessFun(item) {
@@ -1646,6 +1645,8 @@ export default {
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
             this.getPrvePairingModelListFun()
+            this.getReprotNumJD('')
+            this.getReprotNum('')
             this.materialWasteDataList = []
             this.responsWasteDataList = []
             this.init(this.id)

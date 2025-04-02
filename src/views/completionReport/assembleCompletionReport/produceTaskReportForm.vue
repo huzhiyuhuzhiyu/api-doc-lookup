@@ -964,10 +964,10 @@ export default {
         }
         this.currentProcess.qualifiedQuantity = ''
         this.currentProcess.reportingQuantity = 0
-        // if (this.currentProcessType !== 4) {
+        if (this.currentProcessType !== 4) {
 
-        //   this.getReprotNum(this.currentProcess.pairingModeId)
-        // }
+          this.getReprotNum(this.currentProcess.pairingModeId)
+        }
       } else {
         this.currentProcess.pairingModeId = ""
       }
@@ -987,6 +987,7 @@ export default {
       })
     },
     async getProcessFun(item) {
+      this.$set(item,'matchedQuantity','')
       this.currentProcess = item
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       if (this.currentProcess.processType == 'pairs') this.$set(this.currentProcess, 'pairsReportFlag', true)
@@ -997,7 +998,6 @@ export default {
 
       this.setProcessType()
       this.currentProcess.pairingModeId = ''
-      this.currentProcess.matchedQuantity = ""
       this.stockFlag = 0
       //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
       if (this.currentProcessType == 5) {
@@ -1644,7 +1644,9 @@ export default {
 
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
-            this.getPrvePairingModelListFun()
+            if(this.currentProcessType!==4){
+              this.getPrvePairingModelListFun()
+            }
             this.getReprotNumJD('')
             this.getReprotNum('')
             this.materialWasteDataList = []

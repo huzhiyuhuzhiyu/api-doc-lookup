@@ -1296,6 +1296,9 @@ export default {
               })
             }
             this.dataForm.sourceType = 'notice'
+            if (localStorage.getItem('loginTenant')) {
+              this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+            }
             let dataObj = {
               attachmentList: this.datafilelist,
 

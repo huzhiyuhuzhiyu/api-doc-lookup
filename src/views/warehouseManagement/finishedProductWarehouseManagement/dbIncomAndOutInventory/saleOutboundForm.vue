@@ -1378,6 +1378,9 @@ export default {
             });
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'
+            if (localStorage.getItem('loginTenant')) {
+              this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+            }
             if (this.datafilelist.length) {
               this.datafilelist.map((item, index) => {
                 item.bimAttachments = {

@@ -997,8 +997,11 @@ export default {
       // this.listQuery.approvalStatus = 'ok' 
 
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.initListQuery.projectId || '' : ''
+      if (localStorage.getItem('loginTenant')) {
+        this.listQuery.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
       getWarehouseList(this.listQuery).then(res => {
-
+        
         this.tableData = res.data.records ? res.data.records : []
         this.total = res.data.total
         this.listLoading = false

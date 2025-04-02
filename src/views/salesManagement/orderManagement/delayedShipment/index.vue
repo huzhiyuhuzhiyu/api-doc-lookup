@@ -342,9 +342,7 @@ export default {
     this.deliveryDateArr = ["", end];
     this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-    if (this.$store.getters.configData.sale.salePersonFlag) {
-        this.orderForm.salesPersonFlag = 1
-    }
+
     this.superForm = this.orderForm
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(7, 0, {
@@ -654,6 +652,12 @@ export default {
             matchLogic: ""
           }
         }
+      }
+      if (localStorage.getItem('loginTenant')) {
+        this.orderForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.orderForm.salesPersonFlag = 1
       }
       getsaleOrderDetailList(this.orderForm).then(res => {
         setTimeout(() => {

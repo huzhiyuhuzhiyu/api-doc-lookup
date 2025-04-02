@@ -650,6 +650,9 @@ export default {
             this.dataForm.adjustExcludingTaxAmount = totalExcludingTaxAmount
             this.dataForm.adjustIncludingTaxAmount = totalIncludingTaxAmount
             this.dataForm.adjustTaxAmount = totalTaxAmount
+            if (localStorage.getItem('loginTenant')) {
+              this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+            }
             let _data = {
               reconciliation: JSON.parse(JSON.stringify(this.dataForm)),
               reconciliationLine: JSON.parse(JSON.stringify(this.dataFormTwo.data)),

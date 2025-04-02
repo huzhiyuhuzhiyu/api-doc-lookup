@@ -562,7 +562,9 @@ export default {
     },
     initData() {
       this.listLoading = true
-
+      if (localStorage.getItem('loginTenant')) {
+        this.form.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
       getQuotationmxLists(this.form).then(res => {
         this.tableDataList = res.data.records
         this.listLoading = false

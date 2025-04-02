@@ -393,9 +393,7 @@ export default {
       console.error('请求失败:', error);
     });
     this.getUserList()
-    if (this.$store.getters.configData.sale.salePersonFlag) {
-      this.orderForm.salesPersonFlag = 1
-    }
+   
     this.superForm = this.orderForm
     this.search('basic')
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -467,8 +465,12 @@ export default {
     },
     initData() {
       this.listLoading = true
-
-
+      if (localStorage.getItem('loginTenant')) {
+        this.orderForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
+      if (this.$store.getters.configData.sale.salePersonFlag) {
+        this.orderForm.salesPersonFlag = 1
+      }
 
       getsaleOrderList(this.orderForm).then(res => {
         this.tableData = res.data.records

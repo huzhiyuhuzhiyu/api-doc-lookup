@@ -3102,6 +3102,9 @@ export default {
           this.dataForm.excludingTaxTotalAmount = this.excludingTaxAmount
           this.dataForm.totalAmount = this.totalAmount
           this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount, 2)
+          if (localStorage.getItem('loginTenant')) {
+            this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+          }
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {

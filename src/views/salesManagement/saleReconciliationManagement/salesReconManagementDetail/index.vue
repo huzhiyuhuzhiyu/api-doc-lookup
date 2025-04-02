@@ -425,6 +425,9 @@ export default {
         this.listQuery.createStartTime = ''
         this.listQuery.createEndTime = ''
       }
+      if (localStorage.getItem('loginTenant')) {
+        this.listQuery.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
       this.listLoading = true
       getfinAccountLineList(this.listQuery)
         .then((res) => {

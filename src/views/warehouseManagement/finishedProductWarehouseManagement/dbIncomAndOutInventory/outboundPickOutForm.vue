@@ -140,9 +140,12 @@
                             </template>
                           </el-table-column>
                           <el-table-column prop="outWarehouseName" label="原仓库" width="120"
-                            :key="10112"></el-table-column>
+                            :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
                           <el-table-column prop="outShelfSpaceName" label="原库位" width="120"
-                            :key="10112"></el-table-column>
+                            :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
+             
+                          <el-table-column prop="shelfSpaceName" label="库位" width="120"
+                            :key="10112"  v-if="dataForm.pickingWay !== 'dispatch_list'"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
 
@@ -191,6 +194,7 @@
                           <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
                           <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                          <el-table-column prop="pairingModeName" label="配对方式" width="160" />
                           <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
                           </el-table-column>
@@ -361,8 +365,13 @@
                               </el-input>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="outWarehouseName" label="原仓库" width="120"></el-table-column>
-                          <el-table-column prop="outShelfSpaceName" label="原库位" width="120"></el-table-column>
+                          <el-table-column prop="outWarehouseName" label="原仓库" width="120"
+                            :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
+                          <el-table-column prop="outShelfSpaceName" label="原库位" width="120"
+                            :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
+             
+                          <el-table-column prop="shelfSpaceName" label="库位" width="120"
+                            :key="10112"  v-if="dataForm.pickingWay !== 'dispatch_list'"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
 
@@ -411,6 +420,7 @@
                           <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
                           <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                          <el-table-column prop="pairingModeName" label="配对方式" width="160" />
                           <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
                           </el-table-column>
@@ -1227,7 +1237,7 @@ export default {
               item.ordersId = res.data.collect.productionOrderId
               item.ordersLineId = item.materialListId
               item.num = item.unReceiveQuantity
-              if (res.data.collect.pickingWay == "dispatch_list"&&item.stockInventoryLineId) {
+              if (res.data.collect.pickingWay == "dispatch_list" && item.stockInventoryLineId) {
 
                 item.outWarehouseId = item.stockInventoryLine.warehouseId
                 item.outWarehouseName = item.stockInventoryLine.warehouseName

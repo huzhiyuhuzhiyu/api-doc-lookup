@@ -45,15 +45,15 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
-                                <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
-                                    <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
-                                               style="width: 100%;">
-                                        <el-option v-for="(item, index) in diffBatchList" :key="index"
-                                                   :label="item.label" :value="item.value"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
+                          <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
+                            <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                              <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in diffBatchList" :key="index" :label="item.label"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="6" :xs="24" v-if="allocationFlag && btnType != 'look'">
                             <el-form-item label="库位" prop="shelfSpaceName">
                               <el-input v-model="shelfSpaceName" placeholder="库位" readonly
@@ -109,8 +109,8 @@
 
                       </div> -->
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165" class="inboundProduct"
-                        style="width: 100%;height: auto">
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
+                        class="inboundProduct" style="width: 100%;height: auto">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
@@ -118,12 +118,13 @@
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column  prop="batchNumber" label="批次号" min-width="160" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="160" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber" style="width: 100%;" :disabled="btnType == 'look'"
                               placeholder="批次号">
@@ -192,8 +193,8 @@
 
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -201,7 +202,8 @@
                         </el-table-column>
                         <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="1">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable :disabled="btnType == 'look'">
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable
+                              :disabled="btnType == 'look'">
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -210,8 +212,8 @@
 
                         <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -238,8 +240,8 @@
                         </el-table-column>
                         <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="6">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -247,8 +249,8 @@
                         </el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="7">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -312,15 +314,15 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
-                                <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
-                                    <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
-                                               style="width: 100%;">
-                                        <el-option v-for="(item, index) in diffBatchList" :key="index"
-                                                   :label="item.label" :value="item.value"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
+                          <el-col :sm="6" :xs="24" v-if="btnType !== 'look'">
+                            <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
+                              <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则"
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in diffBatchList" :key="index" :label="item.label"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
                           <el-col :sm="6" :xs="24" v-if="allocationFlag && btnType != 'look'">
                             <el-form-item label="库位" prop="shelfSpaceName">
                               <el-input v-model="shelfSpaceName" placeholder="库位" readonly
@@ -376,8 +378,8 @@
 
                       </div> -->
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165" class="inboundProduct"
-                        style="width: 100%;">
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
+                        class="inboundProduct" style="width: 100%;">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
@@ -385,13 +387,14 @@
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
                           min-width="160" />
-                    <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                          show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" :key="6"
                           show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
                           min-width="160" />
-                        <el-table-column   prop="batchNumber" label="批次号" min-width="180" :key="101132">
+                        <el-table-column prop="batchNumber" label="批次号" min-width="180" :key="101132">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                             </el-input>
@@ -450,8 +453,8 @@
 
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="12">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -459,7 +462,8 @@
                         </el-table-column>
                         <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="1">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable :disabled="btnType == 'look'">
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable
+                              :disabled="btnType == 'look'">
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -468,8 +472,8 @@
 
                         <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -496,8 +500,8 @@
                         </el-table-column>
                         <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="6">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -505,8 +509,8 @@
                         </el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="7">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable :disabled="btnType == 'look'"
-                              style="width: 100%;">
+                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
+                              :disabled="btnType == 'look'" style="width: 100%;">
                               <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
                             </el-select>
@@ -556,12 +560,14 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
+                      placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.productCode" placeholder="产品编码" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productCode"
+                      placeholder="产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -683,7 +689,7 @@ export default {
         sourceNo: "",
         orderDate: this.jnpf.getToday(),
         projectId: "",
-        diffBatchNumFlag:1
+        diffBatchNumFlag: 1
       },
       businessTypes: "inbound_flip",
       getWarehouseList,
@@ -785,10 +791,10 @@ export default {
       pairingModeList: [],
       pairingModeNum: "",//配对方式的基本数量
       productDataCopy: [],
-        diffBatchList:[
-            {label:'产品生成同批次号',value:0},
-            {label:'产品生成不同批次号',value:1},
-        ]
+      diffBatchList: [
+        { label: '产品生成同批次号', value: 0 },
+        { label: '产品生成不同批次号', value: 1 },
+      ]
     }
   },
   async created() {
@@ -1058,43 +1064,36 @@ export default {
 
     // 打开选择库位弹框
     openSeleceWareDialog(row, index, type) {
-      console.log(row,index,type);
+      console.log(row, index, type);
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
       this.wareHouseVisible = true
       this.$nextTick(() => {
-        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId, type)
+        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId, type,index)
       })
-      if (index) this.currentProductIndex = index
     },
 
     // 所选的库位信息
-    selectWareHouseFun(data, type) {
-      console.log("库位信息", data,type,this.currentProductIndex);
-      let index = this.currentProductIndex
-      if (!type) {
+    selectWareHouseFun(data, type,index) {
+      console.log("库位信息", data, type, index);
+      if (type) {
+        this.$set(this.productData[index], 'shelfSpaceName', data.name)
+        this.$set(this.productData[index], 'warehouseId', data.warehouseId)
+        this.$set(this.productData[index], 'shelfSpaceId', data.id)
+      } else {
         this.shelfSpaceId = data.id
         this.shelfSpaceName = data.name
-      }
-
-      if (this.productData.length) {
-        this.productData.forEach(item => {
-          if (!item.shelfSpaceId) {
-            this.$set(item, 'shelfSpaceName', data.name)
-            this.$set(item, 'warehouseId', data.warehouseId)
-            this.$set(item, 'shelfSpaceId', data.id)
-          }else if(item.shelfSpaceId&&type){
-            this.$set(item, 'shelfSpaceName', data.name)
-            this.$set(item, 'warehouseId', data.warehouseId)
-            this.$set(item, 'shelfSpaceId', data.id)
-          }
-        });
-        if (index) {
-          this.$set(this.productData[index], 'shelfSpaceName', data.name)
-          this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-          this.$set(this.productData[index], 'shelfSpaceId', data.id)
+        if (this.productData.length) {
+          this.productData.forEach(item => {
+            if (!item.shelfSpaceId) {
+              this.$set(item, 'shelfSpaceName', data.name)
+              this.$set(item, 'warehouseId', data.warehouseId)
+              this.$set(item, 'shelfSpaceId', data.id)
+            } 
+          });
+          
         }
       }
-      this.index = ""
+
     },
 
 
@@ -1358,7 +1357,7 @@ export default {
       this.$emit('close', true)
     },
     init(data, btnType, classAttributeList, warehouseCode, type) {
-      console.log(655656,"订单");
+      console.log(655656, "订单");
       this.productData = []
       this.dataForm.businessType = type
       console.log("11", data, btnType, classAttributeList, warehouseCode);
@@ -1524,11 +1523,11 @@ export default {
             // const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
             this.productData.forEach(item => {
-              this.$set(item,'ordersLineId',item.workFinishId)
+              this.$set(item, 'ordersLineId', item.workFinishId)
               item.warehouseType = this.dataForm.warehouseType
             });
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
-           
+
             if (this.datafilelist.length) {
               this.datafilelist.map((item, index) => {
                 item.bimAttachments = {
@@ -1700,7 +1699,7 @@ export default {
   padding: 0;
 }
 
- .inboundProduct ::v-deep .el-table__body-wrapper { 
+.inboundProduct ::v-deep .el-table__body-wrapper {
   height: auto !important;
 }
 </style>

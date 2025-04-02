@@ -83,6 +83,7 @@ export default {
       },
       cpId: "",
       type:"",
+      index:"",
     }
   },
   methods: {
@@ -92,10 +93,11 @@ export default {
       this.tableQuery.orderItems[0].column = newProp
       this.initData()
     },
-    initData(id,type) {
+    initData(id,type,index) {
       console.log(id,type);
       this.listLoading = true
       this.type=type
+      this.index=index
       this.tableQuery.warehouseId = id
       this.cpId = JSON.parse(JSON.stringify(id))
       this.locationVisible = true
@@ -115,7 +117,7 @@ export default {
 
     // 选择客户
     seleceWareHouseFun(row) {
-      this.$emit("selectWareHouseFun", row,this.type)
+      this.$emit("selectWareHouseFun", row,this.type,this.index)
       this.locationVisible = false
     },
 

@@ -809,6 +809,11 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
+      
+      this.$set(this.productData[index], 'outWarehouseId', data.warehouseId)
+      this.$set(this.productData[index], 'outWarehouseName', data.warehouseName)
+      this.$set(this.productData[index], 'outShelfSpaceId', data.shelfSpaceId)
+      this.$set(this.productData[index], 'outShelfSpaceName', data.shelfSpaceName)
       this.$set(this.productData[index], 'batchAvailableQuantity', data.inventoryQuantity)
 
       this.$set(this.productData[index], 'specSize', data.specSize)

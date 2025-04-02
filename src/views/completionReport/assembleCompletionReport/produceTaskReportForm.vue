@@ -1645,6 +1645,7 @@ export default {
 
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
+            this.getPrvePairingModelListFun()
             this.materialWasteDataList = []
             this.responsWasteDataList = []
             this.init(this.id)

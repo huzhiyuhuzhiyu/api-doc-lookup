@@ -53,7 +53,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
+          ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <template v-for="item in tableItems">
             <el-table-column v-if="item.prop == 'effectiveDate'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center" :sortable="item.sortable"
@@ -61,13 +61,13 @@
             <el-table-column v-else-if="item.prop == 'receivingStatus'" :prop="item.prop" :key="item.prop"
               :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 130"
               :sortable="item.sortable">
-              <template slot-scope="{ row }">
-                <template v-if="row.receivingStatus == 'not_finished'">
-                  未完成
-                </template>
-                <template v-else-if="row.receivingStatus == 'finished'">
-                  已完成
-                </template>
+              <template slot-scope="scope">
+                <div v-if="scope.row.receivingStatus == 'not_finished'">
+                  <el-tag type="primary">未完成</el-tag>
+                </div>
+                <div v-else-if="scope.row.receivingStatus == 'finished'">
+                  <el-tag type="success">已完成</el-tag>
+                </div>
               </template>
             </el-table-column>
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
@@ -224,6 +224,11 @@ export default {
     this.initData()
   },
   methods: {
+    checkSelectable(row) {
+      return row.receivingStatus == 'not_finished'
+        && row.documentStatus === DocumentStatus.SUBMIT
+        && row.approvalStatus !== ApprovalStatus.ING
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false

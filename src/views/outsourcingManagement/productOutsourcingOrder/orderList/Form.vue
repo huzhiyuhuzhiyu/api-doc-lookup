@@ -21,7 +21,7 @@
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" style="padding: 0 10px;">
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="6" v-if="type === 'look'">
@@ -82,10 +82,10 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true"  :hasC="type !== 'look'"
                       ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
                       :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
-                      :row-style="rowStyle">
+                      :row-style="rowStyle" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                       <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="projectName" label="所属项目" width="120"
@@ -214,19 +214,20 @@
                         </template>
                       </el-table-column>
 
-
-                      <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
-                        <template slot-scope="scope">
-                          <el-button size="mini" type="text" :disabled="sourceDisabled"
-                            @click="handlerOpenSource(scope.$index, 'source')">
-                            查看发料清单
-                          </el-button>
-                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                            :disabled="dataFormTwo.data.length < 2" @click="delequipment_process_relList(scope.$index)">
-                            删除
-                          </el-button>
-                        </template>
-                      </el-table-column>
+                      <template v-if="type !== 'look'">
+                        <el-table-column label="操作" width="180" fixed="right">
+                          <template slot-scope="scope">
+                            <el-button size="mini" type="text" :disabled="sourceDisabled"
+                              @click="handlerOpenSource(scope.$index, 'source')">
+                              查看发料清单
+                            </el-button>
+                            <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                              :disabled="dataFormTwo.data.length < 2" @click="delequipment_process_relList(scope.$index)">
+                              删除
+                            </el-button>
+                          </template>
+                        </el-table-column>
+                      </template>
                     </JNPF-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
@@ -268,7 +269,7 @@
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-              <el-row :gutter="15" class="">
+              <el-row :gutter="15" style="padding: 0 10px;">
                 <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="6" v-if="type === 'look'">
@@ -332,7 +333,7 @@
                 <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
                   ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
                   :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
-                  :row-style="rowStyle">
+                  :row-style="rowStyle" :height="customStyleData">
                   <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                   <el-table-column prop="projectName" label="所属项目" width="120"
@@ -709,7 +710,8 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
-      categoryId: ''
+      categoryId: '',
+      customStyleData:0,
     }
   },
   computed: {
@@ -797,7 +799,12 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 305
+      let maxHeight;
+      if (this.type === 'look') {
+        maxHeight = mainHeight1 - 305
+      } else {
+        maxHeight = mainHeight1 - 340
+      }
       console.log(maxHeight, 'maxHeight')
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放
@@ -1569,7 +1576,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  /* padding: 10px; */
   border-top: none !important;
 }
 

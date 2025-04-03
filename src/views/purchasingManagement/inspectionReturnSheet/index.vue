@@ -63,8 +63,7 @@ export default {
         totalRowFlag: false
       },
       tableItems: [
-        // { prop: 'qcOrderNo', label: '检验单号', minWidth: '160', sortable: 'custom' },
-        { prop: 'orderNo', label: '收货单号', minWidth: '160' },
+        { prop: 'orderNo', label: '退货单号', minWidth: '160' },
         { prop: 'productCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
         { prop: 'productDrawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
 

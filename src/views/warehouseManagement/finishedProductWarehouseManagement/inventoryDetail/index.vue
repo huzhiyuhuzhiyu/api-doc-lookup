@@ -434,6 +434,9 @@ export default {
       this.tableQuery.projectId = this.projectId
       this.tableQuery.warehouseId = this.warehouseInfo.id
       this,tableQuery.totalInventoryFlag =false
+      if (localStorage.getItem('loginTenant')) {
+        this.tableQuery.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         this.tableData = res.data.whPage.records || []

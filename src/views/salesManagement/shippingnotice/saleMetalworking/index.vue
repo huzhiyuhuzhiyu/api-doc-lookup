@@ -597,7 +597,9 @@ export default {
       if (this.$store.getters.configData.sale.salePersonFlag) {
         this.orderForm.salesPersonFlag = 1
       }
-
+      if (localStorage.getItem('loginTenant')) {
+        this.orderForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
 
       getQuotationdatasendlist(this.orderForm).then(res => {
         this.tableData = res.data.records

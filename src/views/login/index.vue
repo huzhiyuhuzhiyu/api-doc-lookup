@@ -608,6 +608,13 @@ export default {
               localStorage.setItem('qhxt', false)
               this.$store.commit('jx/SET_LOGO')
               localStorage.setItem("sys", this.loginForm.busCode)
+              if (['zgt_zy','zhongya'].includes(this.loginForm.busCode)) {
+                localStorage.setItem('loginTenant', '0')
+              } else if (['zgt_xzy','xzhongya'].includes(this.loginForm.busCode)) {
+                localStorage.setItem('loginTenant', '1')
+              } else {
+                localStorage.setItem('loginTenant', '')
+              }
               location.href = location.origin + '/' + response.data.systemVO.homeAdress
             }).catch(error => {
               this.$store.commit('user/SET_LOGIN_LOADING', false)

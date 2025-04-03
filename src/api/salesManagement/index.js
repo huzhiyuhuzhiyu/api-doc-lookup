@@ -270,6 +270,16 @@ export function getStockMovelist (data,projectId,warehouseCode) {
     data
   })
 }
+
+// 获取租户分类类型
+export function getStockMoveTenantlist (data,projectId,warehouseCode,tenant) {
+  let classAttributeList=data.classAttributeList
+  return request({
+    url: `/api/wms/stock/move/todo/tenant/list?projectId=${projectId}&warehouseCode=${warehouseCode}&tenant=${tenant}`,
+    method: 'POST',
+    data
+  })
+}
 // 新增
 export function addQuotationsendlist (data) {
   return request({

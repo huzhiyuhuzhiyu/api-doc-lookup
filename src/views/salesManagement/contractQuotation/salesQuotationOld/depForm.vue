@@ -2149,6 +2149,9 @@ export default {
         this.btnLoading = true
         this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice
+        if (localStorage.getItem('loginTenant')) {
+          this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        }
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {

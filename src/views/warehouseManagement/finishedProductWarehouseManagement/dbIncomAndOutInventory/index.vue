@@ -1580,7 +1580,7 @@
 </template>
 
 <script>
-import { getQuotationdatasendlist, getStockMovelist } from '@/api/salesManagement/index'
+import { getQuotationdatasendlist, getStockMovelist,getStockMoveTenantlist } from '@/api/salesManagement/index'
 import { purPurchaseReceiptReturnGoodsList, detailpurchaseOrderList } from "@/api/purchasingAndOutsourcingOrders/index"
 import { ordershengchanList, detailordershengchan, getWorkPage } from '@/api/productOrdes/index.js'
 import { getBimBusinessSwitchConfigList, getWarehouseInfo, getOrderFiledMap, getWarehouseList, batchInboundList } from '@/api/basicData/index'
@@ -2776,73 +2776,144 @@ export default {
         classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
-      getStockMovelist(obj.classAttributeList, obj.projectId, this.warehouseCode).then(res => {
-        if (res.data.length) {
-          res.data.forEach(item => {
-            if (item.businessType == 'outbound_sale_send') {
-              if (this.saleFlag) item.num = item.orderTodoNum
-              this.$set(item, 'fullName', '销售发货')
-            }
-            if (item.businessType == 'inbound_sale_return') {
-              item.fullName = '销售退货'
-            }
-            if (item.businessType == 'inbound_purchase') {
-              if (this.purchaseFlag) item.num = item.orderTodoNum
-              item.fullName = '采购收货'
-            }
-            if (item.businessType == 'outbound_purchase') {
-              item.fullName = '采购退货'
-            }
+      if (localStorage.getItem('loginTenant')) {
+        getStockMoveTenantlist(obj.classAttributeList, obj.projectId, this.warehouseCode,JSON.parse(localStorage.getItem('loginTenant'))).then(res => {
+          if (res.data.length) {
+            res.data.forEach(item => {
+              if (item.businessType == 'outbound_sale_send') {
+                if (this.saleFlag) item.num = item.orderTodoNum
+                this.$set(item, 'fullName', '销售发货')
+              }
+              if (item.businessType == 'inbound_sale_return') {
+                item.fullName = '销售退货'
+              }
+              if (item.businessType == 'inbound_purchase') {
+                if (this.purchaseFlag) item.num = item.orderTodoNum
+                item.fullName = '采购收货'
+              }
+              if (item.businessType == 'outbound_purchase') {
+                item.fullName = '采购退货'
+              }
 
-            if (item.businessType == 'outbound_external_send') {
-              if (this.outboundExternalSendFlag) item.num = item.orderTodoNum
-              item.fullName = '外协发料'
-            }
-            if (item.businessType == 'inbound_external') {
-              if (this.externalFlag) item.num = item.orderTodoNum
-              item.fullName = '外协收货'
-            }
-            if (item.businessType == 'outbound_pick_out') {
-              item.fullName = '生产领料'
+              if (item.businessType == 'outbound_external_send') {
+                if (this.outboundExternalSendFlag) item.num = item.orderTodoNum
+                item.fullName = '外协发料'
+              }
+              if (item.businessType == 'inbound_external') {
+                if (this.externalFlag) item.num = item.orderTodoNum
+                item.fullName = '外协收货'
+              }
+              if (item.businessType == 'outbound_pick_out') {
+                item.fullName = '生产领料'
 
-            }
-            if (item.businessType == 'inbound_return_materials') {
-              item.fullName = '生产退料'
+              }
+              if (item.businessType == 'inbound_return_materials') {
+                item.fullName = '生产退料'
 
-            }
-            // if (item.businessType == 'inbound_mock_production') {
-            //   item.fullName = '生产入库'
+              }
+              // if (item.businessType == 'inbound_mock_production') {
+              //   item.fullName = '生产入库'
 
-            // }
-            if (item.businessType == 'inbound_order_production') {
-              item.fullName = '生产产品入库'
+              // }
+              if (item.businessType == 'inbound_order_production') {
+                item.fullName = '生产产品入库'
 
-            }
-            if (item.businessType == 'inbound_production') {
-              item.fullName = '生产工单入库'
+              }
+              if (item.businessType == 'inbound_production') {
+                item.fullName = '生产工单入库'
 
-            }
-            if (item.businessType == 'inbound_flip') {
-              item.fullName = '翻库入库'
+              }
+              if (item.businessType == 'inbound_flip') {
+                item.fullName = '翻库入库'
 
-            }
-            if (item.businessType == 'outbound_use') {
-              item.fullName = '资产领用'
+              }
+              if (item.businessType == 'outbound_use') {
+                item.fullName = '资产领用'
 
-            }
-            if (item.businessType == 'inbound_return') {
-              item.fullName = '资产归还'
+              }
+              if (item.businessType == 'inbound_return') {
+                item.fullName = '资产归还'
 
-            }
+              }
 
-          });
-        }
-        this.$nextTick(() => {
-          this.treeData = res.data
-          this.getTabdataList('basic')
+            });
+          }
+          this.$nextTick(() => {
+            this.treeData = res.data
+            this.getTabdataList('basic')
+          })
+
         })
+      } else {
+        getStockMovelist(obj.classAttributeList, obj.projectId, this.warehouseCode).then(res => {
+          if (res.data.length) {
+            res.data.forEach(item => {
+              if (item.businessType == 'outbound_sale_send') {
+                if (this.saleFlag) item.num = item.orderTodoNum
+                this.$set(item, 'fullName', '销售发货')
+              }
+              if (item.businessType == 'inbound_sale_return') {
+                item.fullName = '销售退货'
+              }
+              if (item.businessType == 'inbound_purchase') {
+                if (this.purchaseFlag) item.num = item.orderTodoNum
+                item.fullName = '采购收货'
+              }
+              if (item.businessType == 'outbound_purchase') {
+                item.fullName = '采购退货'
+              }
 
-      })
+              if (item.businessType == 'outbound_external_send') {
+                if (this.outboundExternalSendFlag) item.num = item.orderTodoNum
+                item.fullName = '外协发料'
+              }
+              if (item.businessType == 'inbound_external') {
+                if (this.externalFlag) item.num = item.orderTodoNum
+                item.fullName = '外协收货'
+              }
+              if (item.businessType == 'outbound_pick_out') {
+                item.fullName = '生产领料'
+
+              }
+              if (item.businessType == 'inbound_return_materials') {
+                item.fullName = '生产退料'
+
+              }
+              // if (item.businessType == 'inbound_mock_production') {
+              //   item.fullName = '生产入库'
+
+              // }
+              if (item.businessType == 'inbound_order_production') {
+                item.fullName = '生产产品入库'
+
+              }
+              if (item.businessType == 'inbound_production') {
+                item.fullName = '生产工单入库'
+
+              }
+              if (item.businessType == 'inbound_flip') {
+                item.fullName = '翻库入库'
+
+              }
+              if (item.businessType == 'outbound_use') {
+                item.fullName = '资产领用'
+
+              }
+              if (item.businessType == 'inbound_return') {
+                item.fullName = '资产归还'
+
+              }
+
+            });
+          }
+          this.$nextTick(() => {
+            this.treeData = res.data
+            this.getTabdataList('basic')
+          })
+
+        })
+      }
+      
     },
     // 点击出库/入库按钮
     incomAndOutInventFun(data, btnType, ref) {
@@ -3118,6 +3189,9 @@ export default {
           }
           this.listLoading = true
           this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
+          if (localStorage.getItem('loginTenant')) {
+            this.saleOrderForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+          }
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
             this.listLoading = false
             if (this.mainUnitFlag == 1) {
@@ -3165,6 +3239,9 @@ export default {
             this.superForm.superQuery = this.superQuery
           }
           this.fhForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
+          if (localStorage.getItem('loginTenant')) {
+            this.fhForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+          }
           getQuotationdatasendlist(this.fhForm).then(res => {
             this.fhTableList = res.data.records
             this.fhTotal = res.data.total

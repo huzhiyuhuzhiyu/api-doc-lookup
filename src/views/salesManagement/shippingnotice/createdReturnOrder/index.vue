@@ -1879,6 +1879,9 @@ export default {
       })
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
+        if (localStorage.getItem('loginTenant')) {
+          this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        }
         if (valid) {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {

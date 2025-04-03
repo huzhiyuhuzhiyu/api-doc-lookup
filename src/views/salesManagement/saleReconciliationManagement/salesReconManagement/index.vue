@@ -371,7 +371,9 @@ export default {
         this.listQuery.reconciliationStartDate = ''
         this.listQuery.reconciliationEndDate = ''
       }
-
+      if (localStorage.getItem('loginTenant')) {
+        this.superForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+      }
       this.listLoading = true
       getfinAccountList(this.listQuery).then(res => {
         console.log(res, '对账单列表');

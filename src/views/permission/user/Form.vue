@@ -100,6 +100,15 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="8" :xs="24">
+                    <el-form-item label="数据权限标识" prop="dataFlag">
+                      <el-select v-model="dataForm.dataFlag" filterable placeholder="请选择数据权限标识" :disabled="onlyRead"
+                        clearable style="width: 100%;">
+                        <el-option v-for="item in dataFlagList" :key="item.id" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="onlyRead" type="textarea"
@@ -146,6 +155,7 @@ export default {
         { prop: 'jobNumber', label: '工号', type: 'input' },
         { prop: 'name', label: '姓名', type: 'input' }
       ],
+      dataFlagList: [{ label: '全部权限', value: 0 },{ label: '员工权限', value: 1 }, { label: '部门权限', value: 2}],
       partnerRequestObj: {
         account: '',
         userFlag: 1,
@@ -185,6 +195,7 @@ export default {
       btnLoading: false,
       dataForm: {
         enabledMark: 1,
+        dataFlag:0,
         submitpassword: '',
         roleId: '', //角色id
         id: '',
@@ -212,6 +223,7 @@ export default {
           { validator: this.formValidate('iphone'), trigger: 'blur' }
         ],
         organizeIdTree: [{ required: true, message: '请选择所属组织', trigger: 'blur' }],
+        dataFlag: [{ required: true, message: '请选择数据权限标识', trigger: 'blur' }],
         roleId: [{ required: true, message: '请选择角色', trigger: 'blur' }],
         enabledMark: [{ required: true, message: '请选择状态', trigger: 'blur' }],
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
@@ -357,6 +369,7 @@ export default {
           getUserInfo(this.dataForm.id)
             .then((res) => {
               this.dataForm = res.data
+              this.dataForm.dataFlag = Number(this.dataForm.dataFlag)
               if (this.dataForm.roleId) this.roleId = this.dataForm.roleId.split(',')
               if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
                 this.getOptionsByOrgIds(this.dataForm.organizeIdTree)

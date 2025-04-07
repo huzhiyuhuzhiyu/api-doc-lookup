@@ -1390,35 +1390,7 @@ export default {
             productsId: item.productsId ? item.productsId : '',
             classAttribute: item.classAttribute ? item.classAttribute : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
-            purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
-            pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-            ratio: item.ratio ? item.ratio : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            remark: item.remark ? item.remark : '',
-            returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-            receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
-            price: item.price ? item.price : '',
-            totalAmount: item.totalAmount ? item.totalAmount : '',
-            taxRate: item.taxRate ? item.taxRate : '',
-            excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
-            taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-          }
-          let dep1 = {
-            billStatus: item.billStatus ? item.billStatus : '',
-            calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
-            deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-            mainUnit: item.mainUnit ? item.mainUnit : '',
-            ordersId: item.ordersId,
-            notificationType: 'procure',
-            id: item.id ? item.id : '',
-            productsId: item.productsId ? item.productsId : '',
-            classAttribute: item.classAttribute ? item.classAttribute : '',
-            // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            ordersLineId: this.isReturnSwitch ? item.id : '',
             purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
             pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
@@ -1435,9 +1407,7 @@ export default {
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)
-          } else {
-            obj.lines.push(dep1)
-          }
+          } 
         })
         this.btnLoading = true
         let formMethod = null

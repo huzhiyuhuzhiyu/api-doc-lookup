@@ -1645,7 +1645,7 @@ export default {
             productsId: item.productsId ? item.productsId : '',
             classAttribute: item.classAttribute ? item.classAttribute : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-            ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+            ordersLineId: this.isReturnSwitch ? item.id : '',
             purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
             pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',

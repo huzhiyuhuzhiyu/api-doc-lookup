@@ -73,10 +73,11 @@
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
               :min-width="item.minWidth || 130" :sortable="item.sortable" />
           </template>
-          <el-table-column label="操作" width="100" fixed="right">
+          <el-table-column label="操作" width="160" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text" :disabled="scope.row.receivingStatus ==='finished'"
                 @click="addOrUpdateHandle(scope.row, 'look')">处理</el-button>
+                <el-button size="mini" type="text"  @click="printFun(scope.row.id, 'look')">打印退货单</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -88,14 +89,20 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: { SuperQuery },
+  components: { SuperQuery, PrintBrowse, PrintDialog, },
   mixins: [AbProjectMixin],
   props: {
     priceType: {
@@ -170,6 +177,11 @@ export default {
   },
   data() {
     return {
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printVisible: false,
+      printBrowseVisible: false,
       priceTypeName: '',
       importProjectId: '',
       isProjectSwitch: '',
@@ -228,6 +240,33 @@ export default {
       return row.receivingStatus == 'not_finished'
         && row.documentStatus === DocumentStatus.SUBMIT
         && row.approvalStatus !== ApprovalStatus.ING
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    printFun(id) {
+      this.enCode = 'p008' // 筛选出 businessType 等于 type 的项
+      this.formId = id
+      this.fullName = "质检退货通知单" // 筛选出 businessType 等于 type 的项
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    closePrint() {
+      this.printVisible = false
     },
     superQuerySearch(query) {
       this.superQuery = query

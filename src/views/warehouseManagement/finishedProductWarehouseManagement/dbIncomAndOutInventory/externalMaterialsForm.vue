@@ -1021,7 +1021,7 @@ export default {
         console.log("发料清单数据", res, this.dataForm.warehouseId);
         res.data.records.forEach(item => {
           this.$set(item, 'num', item.waitDeliverNum)
-          this.$set(item, 'availableBatchNumber', item.availableBatchQuantity)
+          this.$set(item, 'availableBatchNumber', item.inventoryBatchQuantity)
           this.$set(item, 'warehouseId', this.dataForm.warehouseId)
           this.$set(item, 'warehouseType', this.dataForm.warehouseType)
           // this.$set(item, 'discount', '')

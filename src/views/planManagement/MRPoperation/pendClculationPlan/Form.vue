@@ -67,6 +67,7 @@
                     <el-checkbox-group v-model="dataForm.type" style="line-height: 33px;height: 33px">
                       <el-checkbox label="考虑安全库存" name="type"></el-checkbox>
                       <el-checkbox label="考虑可用库存" name="type"></el-checkbox>
+                      <el-checkbox label="是否生成外协需求" name="type"></el-checkbox>
                     </el-checkbox-group>
                   </el-form-item>
                 </el-col>
@@ -1244,7 +1245,7 @@ export default {
       deliveryDateArr: [],
       planVisible: false,
       dataForm: {
-        type: ["考虑可用库存", "考虑安全库存"],
+        type: ["考虑可用库存", "考虑安全库存",],
         calcBomLevel: "calc_first_bom",
         schemeName: "上一次运算方案",
         schemeNames: "",
@@ -1944,6 +1945,7 @@ export default {
             let obj = {
               availableStockFlag: item.availableStockFlag,
               safeInventoryFlag: item.safeInventoryFlag,
+              outFlag:item.outFlag,
               calcBomLevel: item.calcBomLevel,
               schemeName: item.schemeName,
               id: item.id
@@ -1961,6 +1963,9 @@ export default {
           }
           if (this.schemeList[0].availableStockFlag) {
             this.dataForm.type.push('考虑可用库存')
+          }
+          if (this.schemeList[0].outFlag) {
+            this.dataForm.type.push('是否生成外协需求')
           }
           this.dataForm.schemeName = '上一次运算方案'
         }else{
@@ -1983,6 +1988,9 @@ export default {
       }
       if (result.availableStockFlag) {
         this.dataForm.type.push('考虑可用库存')
+      }
+      if (result.outFlag) {
+        this.dataForm.type.push('是否生成外协需求')
       }
     },
     // 删除方案
@@ -2014,10 +2022,15 @@ export default {
             obj.scheme.safeInventoryFlag = 1
 
           }
+          if (item == '是否生成外协需求') {
+            obj.scheme.outFlag = 1
+
+          }
         });
       } else {
         obj.scheme.availableStockFlag = 0
         obj.scheme.safeInventoryFlag = 0
+        obj.scheme.outFlag = 0
       }
       console.log(obj);
       if (!obj.scheme.schemeName) return this.$message.error("方案名称不能为空")
@@ -2104,7 +2117,8 @@ export default {
         arithmetic: {
           arithmeticNo: this.dataForm.arithmeticNo,
           availableStockFlag: 0,
-          availableStockFlag: 0,
+          safeInventoryFlag: 0,
+          outFlag: 0,
           calcBomLevel: this.dataForm.calcBomLevel,
           documentStatus: "submit",
           projectId: this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
@@ -2123,10 +2137,15 @@ export default {
             obj.arithmetic.safeInventoryFlag = 1
 
           }
+          if (item == '是否生成外协需求') {
+            obj.arithmetic.outFlag = 1
+
+          }
         });
       } else {
         obj.arithmetic.availableStockFlag = 0
         obj.arithmetic.safeInventoryFlag = 0
+        obj.arithmetic.outFlag = 0
       }
       this.tableData.forEach(item => {
         obj.planIdList.push(item.id)

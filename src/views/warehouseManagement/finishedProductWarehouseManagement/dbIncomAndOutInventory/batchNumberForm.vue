@@ -65,7 +65,7 @@
                 <div v-if="scope.row.inspectionResults == 'concessive_acceptance'">让步接收</div>
               </template>
             </el-table-column>
-            <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120" />
+            <el-table-column prop="inventoryQuantity" label="可用数量" sortable="custom" min-width="120" />
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
               <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
               <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>

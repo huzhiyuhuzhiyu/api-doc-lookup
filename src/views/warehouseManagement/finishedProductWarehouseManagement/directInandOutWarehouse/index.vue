@@ -1633,6 +1633,7 @@ export default {
     },
     // 含税价格输入失去焦点 检验不能为  0
     checkPrice(row, index) {
+      if (!this.$store.getters.configData.warehouse.unitPriceSetting) return
       if (!row.costPrice) {
         this.$message({
           message: "请填写第" + (index + 1) + "行产品的单价(含税)",
@@ -2036,6 +2037,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
               }
+              if (!this.$store.getters.configData.warehouse.unitPriceSetting) break
               if (!item.costPrice) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行单价不能为空或为0")

@@ -33,14 +33,14 @@
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
-                        <el-form-item label="有效起始时间" prop="dateOrderStart">
+                        <el-form-item label="有效起始时间" prop="dateOrderStart" v-if="$store.getters.configData.purchase.productTimeSetting">
                           <el-date-picker v-model="dataForm.dateOrderStart" type="date" value-format="yyyy-MM-dd"
                             style="width: 100%;" placeholder="请选择有效起始时间"
                             :disabled="type == 'look' ? true : false"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
-                        <el-form-item label="有效结束时间" prop="dateOrderStop">
+                        <el-form-item label="有效结束时间" prop="dateOrderStop" v-if="$store.getters.configData.purchase.productTimeSetting">
                           <el-date-picker v-model="dataForm.dateOrderStop" type="date" value-format="yyyy-MM-dd"
                             style="width: 100%;" placeholder="请选择有效结束时间"  @change="handleEndDateChange"  
                             :disabled="type == 'look' ? true : false"></el-date-picker>
@@ -1511,7 +1511,10 @@ export default {
       //     })
       //   }
       // }
-
+      if (!this.$store.getters.configData.purchase.productTimeSetting) {
+        this.dataForm.dateOrderStop = '2099-12-31'
+      }
+     
       _data = {
         ...this.dataForm,
         list: this.dataFormTwo.data

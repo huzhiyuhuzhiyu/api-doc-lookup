@@ -84,7 +84,7 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type !== 'look'" hasNO fixedNO
                       ref="multipleTable" v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
-                      @row-click="openDetails">
+                      @row-click="openDetails"  v-if="tableDataFlag">
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="160"
@@ -184,7 +184,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                      <el-table-column prop="taxRate" label="税率" min-width="110" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -192,7 +192,7 @@
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
 
-                            <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                            <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
                               :disabled="type == 'look' ? true : false">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                 :value="item.taxRate"></el-option>
@@ -241,7 +241,7 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
+                      <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                             配置发料清单
@@ -361,7 +361,7 @@
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                 <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type !== 'look'" hasNO fixedNO ref="multipleTable"
-                  v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails">
+                  v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" @row-click="openDetails" v-if="tableDataFlag">
                   <el-table-column prop="projectName" label="所属项目" width="120"
                     v-if="abProjectSwitchVisible"></el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
@@ -463,7 +463,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率" min-width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                  <el-table-column prop="taxRate" label="税率" min-width="110" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       税率
@@ -471,7 +471,7 @@
                     <template slot-scope="scope">
                       <el-form-item :rules="productRules.taxRate">
 
-                        <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
                           :disabled="type == 'look' ? true : false">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
@@ -527,7 +527,7 @@
                       </el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
+                  <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                         配置发料清单
@@ -795,6 +795,7 @@ export default {
   
     this.getDeputyUnit()
     this.getBimBusinessDetail()
+    this.tableDataFlag = true
   },
   mounted() {
     this.getProductClassFun()

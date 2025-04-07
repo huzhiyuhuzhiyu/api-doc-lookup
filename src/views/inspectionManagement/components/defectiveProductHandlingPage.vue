@@ -202,7 +202,7 @@ export default {
       basicQuery: {},
       superQuery: {},
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '出入库单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '处理单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],

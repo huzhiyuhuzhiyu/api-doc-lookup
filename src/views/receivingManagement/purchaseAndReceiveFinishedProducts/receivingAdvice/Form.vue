@@ -1179,7 +1179,7 @@ export default {
     computedNumFun(data, index) {
       if (data.proportion && data.weight) {
         this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight * data.discount)
-        this.watchNum(data, index)
+        this.watchnums(data, index)
       }
     },
     closeScanDiaFun() {

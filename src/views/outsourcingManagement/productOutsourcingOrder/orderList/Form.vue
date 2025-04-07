@@ -16,12 +16,12 @@
           </div>
         </div>
 
-        <div class="main">
+        <div class="main" ref="main">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
+                  <el-row :gutter="15" style="padding: 0 10px;">
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="6" v-if="type === 'look'">
@@ -82,12 +82,10 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true"  :hasC="type !== 'look'"
                       ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
-                      :row-style="rowStyle">
-                      <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
-                      <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
+                      :data="dataFormTwo.data" id="table" border  @row-click="openDetails" v-if="tableDataFlag"
+                      :row-style="rowStyle" :height="customStyleData">
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
@@ -120,26 +118,26 @@
                         <el-table-column prop="weight" label="重量(kg)" width="90" />
                         <el-table-column prop="proportion" label="比重" width="80" />
                       </template>
-                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                      <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch === '1' ? 110 : 100">
+                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                        :width="isDeputyUnitSwitch ? 85 : 60" />
+                      <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch ? 110 : 100">
                         <template slot="header">
                           <span class="required">*</span>
-                          {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
+                          {{ isDeputyUnitSwitch ? '数量(主)' : '数量' }}
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                              :placeholder="isDeputyUnitSwitch ? '数量(主)' : '数量'"
                               :disabled="type === 'look'"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
-                        v-if="isDeputyUnitSwitch === '1'" />
+                        v-if="isDeputyUnitSwitch" />
                       <el-table-column prop="price" label="含税单价" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
@@ -160,7 +158,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                      <el-table-column prop="taxRate" label="税率" min-width="110" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                         <template slot="header">
                           <span class="required">*</span>
                           税率
@@ -168,7 +166,7 @@
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
 
-                            <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                            <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
                               :disabled="type === 'look'">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                 :value="item.taxRate"></el-option>
@@ -213,20 +211,19 @@
                           </el-input>
                         </template>
                       </el-table-column>
-
-
-                      <el-table-column label="操作" width="180" fixed="right" v-if="type == 'edit'">
-                        <template slot-scope="scope">
-                          <el-button size="mini" type="text" :disabled="sourceDisabled"
-                            @click="handlerOpenSource(scope.$index, 'source')">
-                            查看发料清单
-                          </el-button>
-                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                            :disabled="dataFormTwo.data.length < 2" @click="delequipment_process_relList(scope.$index)">
-                            删除
-                          </el-button>
-                        </template>
-                      </el-table-column>
+                        <el-table-column label="操作" width="180" fixed="right" v-if="type !== 'look'">
+                          <template slot-scope="scope">
+                            <el-button size="mini" type="text" :disabled="sourceDisabled"
+                              @click="handlerOpenSource(scope.$index, 'source')">
+                              查看发料清单
+                            </el-button>
+                            <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                              :disabled="dataFormTwo.data.length < 2" @click="delequipment_process_relList(scope.$index)">
+                              删除
+                            </el-button>
+                          </template>
+                        </el-table-column>
+  
                     </JNPF-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
@@ -268,7 +265,7 @@
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-              <el-row :gutter="15" class="">
+              <el-row :gutter="15" style="padding: 0 10px;">
                 <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="6" v-if="type === 'look'">
@@ -329,10 +326,10 @@
                 |
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type == 'edit'"
+                <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" :hasC="type !== 'look'"
                   ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
-                  :data="dataFormTwo.data" id="table" border height="460" @row-click="openDetails"
-                  :row-style="rowStyle">
+                  :data="dataFormTwo.data" id="table" border  @row-click="openDetails"
+                  :row-style="rowStyle" :height="customStyleData">
                   <!-- <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column> -->
                   <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                   <el-table-column prop="projectName" label="所属项目" width="120"
@@ -367,26 +364,26 @@
                     <el-table-column prop="weight" label="重量(kg)" width="90" />
                     <el-table-column prop="proportion" label="比重" width="80" />
                   </template>
-                  <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                    :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                  <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch === '1' ? 110 : 100">
+                  <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
+                    :width="isDeputyUnitSwitch ? 85 : 60" />
+                  <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch ? 110 : 100">
                     <template slot="header">
                       <span class="required">*</span>
-                      {{ isDeputyUnitSwitch === '1' ? '数量(主)' : '数量' }}
+                      {{ isDeputyUnitSwitch ? '数量(主)' : '数量' }}
                     </template>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                         :rules="productRules.purchaseQuantity">
                         <el-input v-model="scope.row.purchaseQuantity"
                           @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                          :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                          :placeholder="isDeputyUnitSwitch ? '数量(主)' : '数量'"
                           :disabled="type === 'look'"></el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                   <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100"
-                    v-if="isDeputyUnitSwitch === '1'" />
+                    v-if="isDeputyUnitSwitch" />
                   <el-table-column prop="price" label="含税单价" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
@@ -411,7 +408,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="taxRate" label="税率" width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                  <el-table-column prop="taxRate" label="税率" min-width="110" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
                     <template slot="header">
                       <span class="required">*</span>
                       税率
@@ -419,7 +416,7 @@
                     <template slot-scope="scope">
                       <el-form-item :rules="productRules.taxRate">
 
-                        <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
                           :disabled="type === 'look'">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
@@ -709,7 +706,8 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       isattachmentswitch: '',
-      categoryId: ''
+      categoryId: '',
+      customStyleData:0,
     }
   },
   computed: {
@@ -747,8 +745,11 @@ export default {
   },
   async created() {
     await this.getProportionSwitch('warehouse', 'proportion')
-    this.getDeputyUnit()
+    // this.getDeputyUnit()
     this.getBimBusinessDetail()
+    this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.outDeputyUnit
+    this.switchStyleheight()
+    this.tableDataFlag = true
   },
   watch: {
     'dataFormTwo.data': {
@@ -784,6 +785,34 @@ export default {
     }
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight;
+      if (this.type === 'look') {
+        maxHeight = mainHeight1 - 305
+      } else {
+        maxHeight = mainHeight1 - 340
+      }
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
@@ -1477,9 +1506,6 @@ export default {
         .catch(() => { })
     }
   },
-  updated() {
-    this.$refs['multipleTable'].doLayout()
-  },
 }
 </script>
 <style scoped>
@@ -1545,7 +1571,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 10px;
+  /* padding: 10px; */
   border-top: none !important;
 }
 

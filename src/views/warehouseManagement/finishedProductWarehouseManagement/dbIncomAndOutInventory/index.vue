@@ -2777,7 +2777,7 @@ export default {
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
       if (localStorage.getItem('loginTenant')) {
-        getStockMoveTenantlist(obj.classAttributeList, obj.projectId, this.warehouseCode,JSON.parse(localStorage.getItem('loginTenant'))).then(res => {
+        getStockMoveTenantlist(obj.classAttributeList, obj.projectId, this.warehouseCode,localStorage.getItem('loginTenant')).then(res => {
           if (res.data.length) {
             res.data.forEach(item => {
               if (item.businessType == 'outbound_sale_send') {
@@ -3190,7 +3190,7 @@ export default {
           this.listLoading = true
           this.saleOrderForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           if (localStorage.getItem('loginTenant')) {
-            this.saleOrderForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+            this.saleOrderForm.tenant = localStorage.getItem('loginTenant')
           }
           getsaleOrderDetailList(this.saleOrderForm).then(res => {
             this.listLoading = false
@@ -3240,7 +3240,7 @@ export default {
           }
           this.fhForm.projectId = this.isProjectSwitch === '1' ? this.projectId || '' : ''
           if (localStorage.getItem('loginTenant')) {
-            this.fhForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+            this.fhForm.tenant = localStorage.getItem('loginTenant')
           }
           getQuotationdatasendlist(this.fhForm).then(res => {
             this.fhTableList = res.data.records

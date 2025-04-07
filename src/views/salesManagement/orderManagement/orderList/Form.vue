@@ -3103,7 +3103,7 @@ export default {
           this.dataForm.totalAmount = this.totalAmount
           this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount, 2)
           if (localStorage.getItem('loginTenant')) {
-            this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+            this.dataForm.tenant = localStorage.getItem('loginTenant')
           }
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {

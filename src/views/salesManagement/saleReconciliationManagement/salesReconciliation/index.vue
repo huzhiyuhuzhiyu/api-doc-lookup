@@ -610,7 +610,7 @@ export default {
         this.listQuery.endTime = ''
       }
       if (localStorage.getItem('loginTenant')) {
-        this.listQuery.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        this.listQuery.tenant = localStorage.getItem('loginTenant')
       }
       getsalefinAccountList(this.listQuery).then(res => {
         console.log(res, '销售发/退货列表');

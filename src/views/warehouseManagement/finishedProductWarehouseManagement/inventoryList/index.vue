@@ -998,7 +998,7 @@ export default {
 
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.initListQuery.projectId || '' : ''
       if (localStorage.getItem('loginTenant')) {
-        this.listQuery.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        this.listQuery.tenant = localStorage.getItem('loginTenant')
       }
       getWarehouseList(this.listQuery).then(res => {
         

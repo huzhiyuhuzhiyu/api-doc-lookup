@@ -1719,7 +1719,7 @@ export default {
             this.dataForm.inspectionStatus = 'inspected'
           }
           if (localStorage.getItem('loginTenant')) {
-            this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+            this.dataForm.tenant = localStorage.getItem('loginTenant')
           }
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {

@@ -1010,7 +1010,7 @@ export default {
       // this.listQuery.approvalStatus = 'ok'
       this.listQuery.projectId = this.isProjectSwitch === '1' ? this.initListQuery.projectId || '' : ''
       if (localStorage.getItem('loginTenant')) {
-        this.listQuery.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        this.listQuery.tenant = localStorage.getItem('loginTenant')
       }
       getInventorySummaryData(this.listQuery).then(res => {
         this.tableData = res.data.page.records

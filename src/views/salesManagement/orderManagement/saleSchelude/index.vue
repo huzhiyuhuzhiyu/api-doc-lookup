@@ -466,7 +466,7 @@ export default {
     initData() {
       this.listLoading = true
       if (localStorage.getItem('loginTenant')) {
-        this.orderForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        this.orderForm.tenant = localStorage.getItem('loginTenant')
       }
       if (this.$store.getters.configData.sale.salePersonFlag) {
         this.orderForm.salesPersonFlag = 1

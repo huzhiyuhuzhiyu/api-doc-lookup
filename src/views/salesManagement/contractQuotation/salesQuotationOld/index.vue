@@ -376,7 +376,7 @@ export default {
     initData() {
       this.listLoading = true
       if (localStorage.getItem('loginTenant')) {
-        this.superForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        this.superForm.tenant = localStorage.getItem('loginTenant')
       }
 
       getQuotationLists(this.superForm).then(res => {

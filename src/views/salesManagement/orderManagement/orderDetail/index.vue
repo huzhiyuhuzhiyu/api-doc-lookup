@@ -727,7 +727,7 @@ export default {
     },
     initData() {
       if (localStorage.getItem('loginTenant')) {
-        this.orderForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+        this.orderForm.tenant = localStorage.getItem('loginTenant')
       }
       getsaleOrderDetailList(this.orderForm).then(res => {
         console.log("5555");

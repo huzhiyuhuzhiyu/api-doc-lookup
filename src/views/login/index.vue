@@ -609,9 +609,9 @@ export default {
               this.$store.commit('jx/SET_LOGO')
               localStorage.setItem("sys", this.loginForm.busCode)
               if (['zgt_zy','zhongya'].includes(this.loginForm.busCode)) {
-                localStorage.setItem('loginTenant', this.loginForm.busCode)
+                localStorage.setItem('loginTenant', 'zhongya')
               } else if (['zgt_xzy','xzhongya'].includes(this.loginForm.busCode)) {
-                localStorage.setItem('loginTenant', this.loginForm.busCode)
+                localStorage.setItem('loginTenant', 'xzhongya')
               } else {
                 localStorage.setItem('loginTenant', '')
               }

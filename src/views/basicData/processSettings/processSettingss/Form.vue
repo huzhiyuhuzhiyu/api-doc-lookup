@@ -185,7 +185,7 @@
                       <el-table-column prop="firstInspection" label="是否首检" width="90">
                         <template slot-scope="{ row }">
                             <el-form-item prop="firstInspection" ref="firstInspection">
-                              <el-checkbox v-model="row.firstInspection" 
+                              <el-checkbox v-model="row.firstInspection"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
                                 >
                                 {{ row.firstInspection ? '是' : '否' }}
@@ -196,7 +196,7 @@
                       <el-table-column prop="checkFlag" label="是否检验" width="90">
                         <template slot-scope="{ row }">
                             <el-form-item prop="checkFlag" ref="checkFlag">
-                              <el-checkbox v-model="row.checkFlag" 
+                              <el-checkbox v-model="row.checkFlag"
                                 :disabled="type == 'look' || row.processingType === 'external_production'">
                                 {{ row.checkFlag ? '是' : '否' }}
                               </el-checkbox>
@@ -239,7 +239,7 @@
                       <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
                         <template slot-scope="{ row }">
                             <el-form-item prop="workOrderFlag" ref="workOrderFlag">
-                              <el-checkbox v-model="row.workOrderFlag" 
+                              <el-checkbox v-model="row.workOrderFlag"
                                 :disabled="type == 'look' || row.processingType === 'self_produced'">
                                 {{ row.workOrderFlag ? '是' : '否' }}
                               </el-checkbox>
@@ -440,7 +440,7 @@
                   <el-table-column prop="checkFlag" label="是否检验" width="90">
                     <template slot-scope="{ row }">
                         <el-form-item prop="checkFlag" ref="checkFlag">
-                          <el-checkbox v-model="row.checkFlag" 
+                          <el-checkbox v-model="row.checkFlag"
                             :disabled="type == 'look' || row.processingType === 'external_production'"
                             ></el-checkbox>
                         </el-form-item>
@@ -895,7 +895,7 @@ export default {
         } else if (item.processType == 'fatInjection') {
           item.processTypeName = '注脂工序'
         }
- 
+
         return item
       })
       return treeData
@@ -1081,7 +1081,7 @@ export default {
         return
       }
       if (this.dataFormTwo.length > 1) {
-        // 判断是否存在 "vibrate" 和 "accuracy"  
+        // 判断是否存在 "vibrate" 和 "accuracy"
         let hasVibrate = this.dataFormTwo.some(item => item.processType === "vibrate");
         let hasAccuracy = this.dataFormTwo.some(item => item.processType === "accuracy");
 
@@ -1092,9 +1092,9 @@ export default {
           flag = false
           return
         }
-        // 筛选出 processType 为 "vibrate" 的元素  
+        // 筛选出 processType 为 "vibrate" 的元素
         let vibrateItems = this.dataFormTwo.filter(item => item.processType === "vibrate");
-        // 判断是否有两条及以上  
+        // 判断是否有两条及以上
         let hasTwoOrMoreVibrate = vibrateItems.length >= 2;
         if (hasTwoOrMoreVibrate) {
           this.$message.error('存在多条测振工序的数据，请检查后重试')
@@ -1105,7 +1105,7 @@ export default {
 
 
         let heatTrearmentItems = this.dataFormTwo.filter(item => item.processType === "heat_treatment");
-        // 判断是否有两条及以上  
+        // 判断是否有两条及以上
         let hasTwoOrMoreHeatTrearmentItems = heatTrearmentItems.length >= 2;
         if (hasTwoOrMoreHeatTrearmentItems) {
           this.$message.error('存在多条热工工序的数据，请检查后重试')
@@ -1116,7 +1116,7 @@ export default {
 
 
         let packingItems = this.dataFormTwo.filter(item => item.processType === "packing");
-        // 判断是否有两条及以上  
+        // 判断是否有两条及以上
         let hasTwoOrMorepacking = packingItems.length >= 2;
         if (hasTwoOrMorepacking) {
           this.$message.error('存在多条包装工序的数据，请检查后重试')
@@ -1126,7 +1126,7 @@ export default {
         }
 
         let pairsItems = this.dataFormTwo.filter(item => item.processType === "pairs");
-        // 判断是否有两条及以上  
+        // 判断是否有两条及以上
         let hasTwoOrMorepairs = pairsItems.length >= 2;
         if (hasTwoOrMorepairs) {
           this.$message.error('存在多条配对工序的数据，请检查后重试')
@@ -1136,7 +1136,7 @@ export default {
         }
 
         let grindingItems = this.dataFormTwo.filter(item => item.processType === "grinding");
-        // 判断是否有两条及以上  
+        // 判断是否有两条及以上
         let hasTwoOrMoregrinding = grindingItems.length >= 2;
         if (hasTwoOrMoregrinding) {
           this.$message.error('存在多条磨孔工序的数据，请检查后重试')
@@ -1146,7 +1146,7 @@ export default {
         }
 
         let accuracyItems = this.dataFormTwo.filter(item => item.processType === "accuracy");
-        // 判断是否有两条及以上  
+        // 判断是否有两条及以上
         let hasTwoOrMoreaccuracy = accuracyItems.length >= 2;
         if (hasTwoOrMoreaccuracy) {
           this.$message.error('存在多条精度工序的数据，请检查后重试')
@@ -1341,108 +1341,91 @@ export default {
       if (data && data.length) return true // 如果判断条件真，直接提交，不弹出提示
       return this.$message.error('请选择数据')
     },
-    submit(id, data) {
+    async submit(id, data) {
       let list = data.map((item) => item.all)
-      if (list.length) {
-        this.responseLoading = true
-        let ind = list.length
-        let responseFlag = null
-        if (this.dataFormTwo.length) {
-          this.dataFormTwo = this.dataFormTwo.filter((item) => {
-            return !list.some((element) => element.id === item.processId)
-          })
+      this.responseLoading = true
+      let responseFlag = null
+      list = list.filter(item => !this.dataFormTwo.some(ele => ele.processId === item.id))
+      list = list.map((item, index) => {
+        const obj = {
+          index: item._index,
+          projectName: item.projectName, // 所属项目名称
+          projectId: item.projectId, // 所属项目Id
+          name: item.name, // 工序名称
+          code: item.code,
+          processType: item.processType,
+          // routingId:
+          processId: item.id,
+          // bimRoutingProcessResourceDTOList: [],
+          reportFlag: false, // 是否报工
+          checkFlag: false, // 是否检验
+          processingType: item.processingType, // 加工类型
+          cooperativePartnerId: null, // 合作伙伴id
+          cooperativePartnerName: '',
+          departmentId: null, // 部门id
+          stockFlag: false, // 是否入库
+          firstInspection: false, // 是否首检
+          firstFlag: false, //是否首道工序
+          lastFlag: false, // 是否末道工序
+          workOrderFlag: true, // 是否生成工单
+          defaultFlag: false,
+          defaultReport: false
         }
-        list = list.sort((a, b) => a._index - b._index)
-        list.forEach((item, index) => {
-          let obj = {
-            index: item._index,
-            projectName: item.projectName, // 所属项目名称
-            projectId: item.projectId, // 所属项目Id
-            name: item.name, // 工序名称
-            code: item.code,
-            processType: item.processType,
-            // routingId:
-            processId: item.id,
-            // bimRoutingProcessResourceDTOList: [],
-            pickingFlag: item.pickingFlag, // 是否领料
-            reportFlag: item.reportFlag, // 是否报工
-            checkFlag: item.checkFlag, // 是否检验
-            processingType: item.processingType, // 加工类型
-            cooperativePartnerId: null, // 合作伙伴id
-            cooperativePartnerName: '',
-            departmentId: null, // 部门id
-            stockFlag: item.stockFlag, // 是否入库
-            firstInspection: 0, // 是否首检
-            firstFlag: false, //是否首道工序
-            lastFlag: false, // 是否末道工序
-            workOrderFlag: item.workOrderFlag, // 是否生成工单
-            technicalRequirement: item.technicalRequirement,
-            inspectionInformation: item.inspectionInformation
+
+        if (item.processingType === 'external_production') {
+          obj.stockFlag = true
+          obj.defaultFlag = true
+          obj.reportFlag = false
+          obj.defaultReport = true
+        }
+        return obj
+      })
+
+      await new Promise((resolve, reject) => {
+        let responseTotal = 0
+        const callBackFun = () => {
+          if (++responseTotal === list.length) {
+            return resolve()
           }
-          responseFlag = true
-
-          this.dataFormTwo.push(obj)
-          this.$nextTick(() => {
-            this.dataFormTwo.forEach((item, index) => {
-              item.defaultFlag = false
-              item.defaultReport = false
-              if (index == this.dataFormTwo.length - 1) {
-                item.lastFlag = true
-                item.stockFlag = true
-                if (this.dataFormTwo[index].processingType == 'external_production') {
-                  item.reportFlag = false
-                } else {
-                  item.reportFlag = true
-                }
-              } else {
-                item.lastFlag = false
-                // item.stockFlag = false
-                // item.reportFlag = false
-              }
-              if (index === 0) {
-                item.firstFlag = true
-              } else {
-                item.firstFlag = false
-              }
-              if (item.processingType === 'external_production') {
-                item.stockFlag = true
-                item.defaultFlag = true
-                item.reportFlag = false
-
-                if (index != 0 && this.dataFormTwo[index - 1].processingType != 'external_production') {
-                  this.dataFormTwo[index - 1].reportFlag = 1
-                  this.dataFormTwo[index - 1].stockFlag = 1
-                  // this.$set()
-                  this.dataFormTwo[index - 1].defaultFlag = true
-                }
-                this.dataFormTwo[index].defaultReport = true
-              }
-            })
+        }
+        list.forEach((item) => {
+          getBimProcessDetail(item.processId).then((res) => {
+            if (res.data.resourceList.length) {
+              item.bimRoutingProcessResourceDTOList = res.data.resourceList
+            }
+            callBackFun()
+          }).catch((error) => {
+            callBackFun()
+            responseFlag = false
           })
         })
+      })
 
-        this.dataFormTwo.forEach((item) => {
-          getBimProcessDetail(item.processId)
-            .then((res) => {
-              if (res.data.resourceList && res.data.resourceList.length) {
-                item.bimRoutingProcessResourceDTOList = res.data.resourceList
-              } else {
-                item.bimRoutingProcessResourceDTOList = []
-              }
-            })
-            .catch((error) => {
-              responseFlag = false
-            })
-        })
-        if (responseFlag === false) {
-          this.responseLoading = true
-        } else {
-          this.responseLoading = false
-        }
+      if (responseFlag === false) {
+        this.$message.error('添加失败，请重试！')
       } else {
-        let ind = 0
-        this.dataFormTwo = []
+        const tempList = [
+          ...this.dataFormTwo,
+          ...list
+        ]
+        this.dataFormTwo = tempList.map((item, index) => {
+          item.firstFlag = index === 0;
+          if (index === tempList.length - 1) {
+            item.lastFlag = true
+            item.stockFlag = true
+          } else {
+            item.lastFlag = false
+          }
+          // if (item.processingType === 'external_production' && tempList[index - 1] && tempList[index - 1].processingType !== 'external_production') {
+          //   tempList[index - 1].reportFlag = true
+          //   tempList[index - 1].stockFlag = true
+          //   tempList[index - 1].defaultFlag = true
+          // }
+          return item
+        })
       }
+
+      this.responseLoading = false
       this.calcHeight()
     },
     // 删除项

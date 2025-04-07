@@ -2083,6 +2083,14 @@ export default {
               })
             }
             this.dataForm.classAttributeList = this.classAttributeList
+            if (localStorage.getItem('loginTenant')) {
+              if (this.dataForm.businessType === 'outbound_sale_send') {
+                this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+              } else if (this.dataForm.businessType === 'inbound_sale_return') {
+                this.dataForm.tenant = JSON.parse(localStorage.getItem('loginTenant'))
+              }
+            }
+            
             let dataObj = {
               attachmentList: this.datafilelist,
               stockMove: this.dataForm,

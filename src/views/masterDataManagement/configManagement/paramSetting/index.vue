@@ -390,7 +390,7 @@ export default {
             } else if (item.configKey === 'outbound_sale_send') {
               item.radioOff = '按通知单出库'
               item.radioOn = '按订单出库'
-            } else if (['proportion', 'inventorySearcheListFlag'].includes(item.configKey)) {
+            } else if (['proportion', 'inventorySearcheListFlag','unitPriceSetting'].includes(item.configKey)) {
               item.radioOff = '关闭'
               item.radioOn = '启用'
             } else if (item.configKey === 'auto_material') {

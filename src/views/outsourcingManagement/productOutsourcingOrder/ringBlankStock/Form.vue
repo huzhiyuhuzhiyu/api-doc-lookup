@@ -342,6 +342,7 @@ export default {
   mixins: [AbProjectMixin],
   data() {
     return {
+      sourceData:[],
       columnList:[],
       orderType: '',
       isProjectSwitch: '',
@@ -899,176 +900,7 @@ export default {
       }
       return msg
     },
-    // 产品组件回调
-    addth(id, data) {
-      if (data.length) {
-        let selectArr = []
-        let list = data.map((item) => item.all)
-        for (let i = 0; i < list.length; i++) {
-          let item = list[i]
-          console.log(item.externalProductsId, 'item.externalProductsId')
-          if (!item.externalProductsId) {
-            this.$message.error(`请配置毛坯产品所对应主产品的BOM！`)
-            return false
-          }
-        }
-        list.forEach((item, index) => {
-          selectArr.push({
-            productCategoryName: item.productCategoryName,
-            materialProductsId: item.productsId,
-            projectName: item.projectName,
-            projectId: item.projectId,
-            batchNumber: item.batchNumber,
-            weight: item.weight,
-            proportion: item.proportion,
-            discount: item.discount,
-            productDrawingNo: item.externalProductDrawingNo,
-            productCode: item.externalProductCode,
-            productName: item.externalProductName,
-            stockInventoryLineId: item.id,
-            deliveryDate: item.deliveryDate,
-            mainUnit: item.externalMainUnit,
-            deputyUnit: item.externalDeputyUnit,
-            purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
-            productsId: item.externalProductsId,
-            classAttribute: item.externalClassAttribute,
-            calculationDirection: item.externalCalculationDirection,
-            ratio: item.externalRatio,
-            processName: '',
-            processId: '',
-            price: item.price,
-            totalAmount: item.totalAmount,
-            taxRate: 13,
-            excludingTaxPrice: item.excludingTaxPrice,
-            taxAmount: item.taxAmount,
-            excludingTaxAmount: item.excludingTaxAmount,
-            inventoryQuantity: item.inventoryQuantity, //库存数量
-            outsourcingQuantity: item.outsourcingQuantity, //转外协数量
-            remark: item.remark,
-            outShipmentList: []
-          })
-        })
-
-        if (this.dataFormTwo.data.length) {
-          const deletedArray = []
-          selectArr = selectArr.filter((item1) => {
-            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
-            if (index !== -1) {
-              deletedArray.push(item1.productDrawingNo)
-              if (deletedArray.length) {
-                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
-              }
-              return false
-            }
-            return true
-          })
-        }
-        selectArr.forEach((item, index) => {
-          let ProcessListRequestObj = {
-            code: '',
-            name: '',
-            processType: 'heat_treatment',
-            pageNum: 1,
-            pageSize: 20,
-            orderItems: [
-              {
-                asc: true,
-                column: 'create_time'
-              }
-            ]
-          }
-          getBimProcessList(ProcessListRequestObj).then((res) => {
-            console.log(res, 'pjj')
-            let data = res.data.records
-            if (this.orderType === 'external') {
-              selectArr[index].processName = ''
-              selectArr[index].processId = ''
-            } else {
-              selectArr[index].processName = data[0].name
-              selectArr[index].processId = data[0].id
-            }
-            
-          })
-          if (this.dataForm.cooperativePartnerId) {
-            let priceObj = {
-              orderType:this.orderType,
-              productCode: item.productCode,
-              cooperativePartnerId: this.dataForm.cooperativePartnerId
-            }
-            purPurchaseOrderLineLast(priceObj).then((res) => {
-              this.$set(item, 'price',res.data ? res.data.price :'')
-              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
-            })
-          }
-          if (item.calculationDirection === 'multiplication') {
-            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
-          } else {
-            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
-          }
-        })
-        this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
-        // 审批
-        // this.$nextTick(() => { this.getApproverData() })
-      }
-    },
-    async beforeOpen(paramsObj) {
-      console.log(paramsObj, 'lll')
-      if (this.isProjectSwitch === '1') {
-        this.ProcessListRequestObj.projectId = paramsObj.scope.row.projectId
-      }
-      return true
-    },
-    // 查看资源
-    handlerOpenSource(index, type) {
-      if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
-
-      this.sourceVisibled = true
-      this.index = index
-
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-      }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        console.log(this.dataFormTwo.data[this.index])
-        this.sourceData = res.data.filter(item => item.productsId === this.dataFormTwo.data[this.index].materialProductsId)
-        this.dataFormTwo.data[this.index].outShipmentList = this.dataFormTwo.data[index].outShipmentList.filter(item => item.productsId === this.dataFormTwo.data[this.index].materialProductsId)
-        if (this.dataFormTwo.data[this.index].outShipmentList) {
-          this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-            this.sourceData[ind].demandQuantity1 = item.demandQuantity
-            if (this.orderType === 'external') {
-              this.sourceData[ind].processId = ''
-              this.sourceData[ind].processName = ''
-            } else {
-              this.sourceData[ind].processId = item.processId
-              this.sourceData[ind].processName = item.processName
-            }
-            
-            this.sourceData[ind].batchNumber = this.dataFormTwo.data[index].batchNumber
-            this.sourceData[ind].weight = this.dataFormTwo.data[index].weight
-            this.sourceData[ind].proportion = this.dataFormTwo.data[index].proportion
-            this.sourceData[ind].discount = this.dataFormTwo.data[index].discount
-            // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
-          })
-        } else {
-          this.sourceData.forEach((item, index) => {
-            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
-          })
-        }
-
-        console.log(this.dataFormTwo.data[this.index].outShipmentList, 'llll')
-        if (this.sourceData.length === 0) {
-          this.sourceDisabled = true
-        } else {
-          this.sourceDisabled = false
-        }
-
-        this.$nextTick(() => {
-          this.$refs['sourceRef'].init(this.sourceData, '')
-        })
-      })
-    },
+  
 
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
@@ -1342,10 +1174,11 @@ export default {
       arr = data.map((item) => {
         console.log(data, 'pp')
         return {
-          materialProductsId: item.productsId,
+            productCategoryName: item.productCategoryName,
+            materialProductsId: item.productsId,
           batchNumber: item.batchNumber,
           projectName: item.projectName,
-          productName: item.productName,
+          // productName: item.productName,
           projectId: item.projectId,
           productDrawingNo: item.externalProductDrawingNo,
           productCode: item.externalProductCode,
@@ -1373,7 +1206,22 @@ export default {
           inventoryQuantity: item.inventoryQuantity, //库存数量
           outsourcingQuantity: item.outsourcingQuantity, //转外协数量
           remark: item.remark,
-          outShipmentList: []
+          outShipmentList: [
+          {  demandQuantity1 : Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
+              processId :item.processId,
+              processName :item.processName,
+              batchNumber :item.batchNumber,
+              weight :item.weight,
+              productsId:item.productsId,
+              proportion :item.proportion,
+          mainUnit: item.mainUnit,
+          discount :item.discount,
+              productName:item.productName,
+              productsId:item.productsId,
+              productDrawingNo:item.productDrawingNo,
+              productCode:item.productCode,
+            }
+          ]
         }
       })
       this.ProcessListRequestObj = {
@@ -1396,14 +1244,11 @@ export default {
       this.dataForm.id = data.id || ''
       this.dataFormTwo.data = arr
       this.dataFormTwo.data.forEach((item, index) => {
-        let obj = {
-          productsId: this.dataFormTwo.data[index].productsId,
-          purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-        }
-        // 通过需求池id 获取明细的数据
-        getShipmentList(obj).then((res) => {
-          this.dataFormTwo.data[index].outShipmentList = res.data
-          this.dataFormTwo.data[index].outShipmentList = this.dataFormTwo.data[index].outShipmentList.filter(item => item.productsId === this.dataFormTwo.data[index].materialProductsId)
+        // let obj = {
+        //   productsId: this.dataFormTwo.data[index].productsId,
+        //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+        // }
+        this.dataFormTwo.data[index].outShipmentList = this.dataFormTwo.data[index].outShipmentList.filter(item => item.productsId === this.dataFormTwo.data[index].materialProductsId)
           this.dataFormTwo.data[index].outShipmentList.forEach((item) => {
             item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity,
               item.batchNumber = this.dataFormTwo.data[index].batchNumber,
@@ -1412,11 +1257,23 @@ export default {
               item.discount = this.dataFormTwo.data[index].discount,
               item.stockInventoryLineId = this.dataFormTwo.data[index].stockInventoryLineId
           })
-          console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
-        })
+          console.log("this.dataFormTwo.data",this.dataFormTwo.data);
+        // 通过需求池id 获取明细的数据
+        // getShipmentList(obj).then((res) => {
+        //   this.dataFormTwo.data[index].outShipmentList = res.data
+        //   this.dataFormTwo.data[index].outShipmentList = this.dataFormTwo.data[index].outShipmentList.filter(item => item.productsId === this.dataFormTwo.data[index].materialProductsId)
+        //   this.dataFormTwo.data[index].outShipmentList.forEach((item) => {
+        //     item.demandQuantity = this.dataFormTwo.data[index].purchaseQuantity,
+        //       item.batchNumber = this.dataFormTwo.data[index].batchNumber,
+        //       item.weight = this.dataFormTwo.data[index].weight,
+        //       item.proportion = this.dataFormTwo.data[index].proportion,
+        //       item.discount = this.dataFormTwo.data[index].discount,
+        //       item.stockInventoryLineId = this.dataFormTwo.data[index].stockInventoryLineId
+        //   })
+        //   console.log(this.dataFormTwo.data[index].outShipmentList, 'o')
+        // })
 
         let ProcessListRequestObj = {}
-        console.log(this.isProjectSwitch, 'jjjjj')
         if (this.isProjectSwitch === '1') {
           ProcessListRequestObj = {
             code: '',
@@ -1473,6 +1330,202 @@ export default {
 
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
+    },
+      // 产品组件回调
+      addth(id, data) {
+      console.log("所选产品",data);
+      if (data.length) {
+        let selectArr = []
+        let list = data.map((item) => item.all)
+        for (let i = 0; i < list.length; i++) {
+          let item = list[i]
+          console.log(item.externalProductsId, 'item.externalProductsId')
+          if (!item.externalProductsId) {
+            this.$message.error(`请配置毛坯产品所对应主产品的BOM！`)
+            return false
+          }
+        }
+        list.forEach((item, index) => {
+          selectArr.push({
+            productCategoryName: item.productCategoryName,
+            materialProductsId: item.productsId,
+            projectName: item.projectName,
+            projectId: item.projectId,
+            batchNumber: item.batchNumber,
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount,
+            productDrawingNo: item.externalProductDrawingNo,
+            mainUnit: item.externalMainUnit,
+            productCode: item.externalProductCode,
+            productName: item.externalProductName,
+            stockInventoryLineId: item.id,
+            deliveryDate: item.deliveryDate,
+         
+            deputyUnit: item.externalDeputyUnit,
+            purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
+            productsId: item.externalProductsId,
+            classAttribute: item.externalClassAttribute,
+            calculationDirection: item.externalCalculationDirection,
+            ratio: item.externalRatio,
+            processName: '',
+            processId: '',
+            price: item.price,
+            totalAmount: item.totalAmount,
+            taxRate: 13,
+            excludingTaxPrice: item.excludingTaxPrice,
+            taxAmount: item.taxAmount,
+            excludingTaxAmount: item.excludingTaxAmount,
+            inventoryQuantity: item.inventoryQuantity, //库存数量
+            outsourcingQuantity: item.outsourcingQuantity, //转外协数量
+            remark: item.remark,
+            outShipmentList: [
+            {  
+              demandQuantity1 : Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
+              processId :item.processId,
+              processName :item.processName,
+              batchNumber :item.batchNumber,
+              weight :item.weight,
+              productsId:item.productsId,
+              proportion :item.proportion,
+          mainUnit: item.mainUnit,
+          discount :item.discount,
+              productName:item.productName,
+              productsId:item.productsId,
+              productDrawingNo:item.productDrawingNo,
+              productCode:item.productCode,
+            }
+            ]
+          })
+        })
+
+        if (this.dataFormTwo.data.length) {
+          const deletedArray = []
+          selectArr = selectArr.filter((item1) => {
+            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
+            if (index !== -1) {
+              deletedArray.push(item1.productDrawingNo)
+              if (deletedArray.length) {
+                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+              }
+              return false
+            }
+            return true
+          })
+        }
+        selectArr.forEach((item, index) => {
+          let ProcessListRequestObj = {
+            code: '',
+            name: '',
+            processType: 'heat_treatment',
+            pageNum: 1,
+            pageSize: 20,
+            orderItems: [
+              {
+                asc: true,
+                column: 'create_time'
+              }
+            ]
+          }
+          getBimProcessList(ProcessListRequestObj).then((res) => {
+            console.log(res, 'pjj')
+            let data = res.data.records
+            selectArr[index].processName = data[0].name
+            selectArr[index].processId = data[0].id
+          })
+          if (this.dataForm.cooperativePartnerId) {
+            let priceObj = {
+              orderType:this.orderType,
+              productCode: item.productCode,
+              cooperativePartnerId: this.dataForm.cooperativePartnerId
+            }
+            purPurchaseOrderLineLast(priceObj).then((res) => {
+              this.$set(item, 'price',res.data ? res.data.price :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+            })
+          }
+          if (item.calculationDirection === 'multiplication') {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          } else {
+            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          }
+        })
+        this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        // 审批
+        // this.$nextTick(() => { this.getApproverData() })
+      }
+    },
+    async beforeOpen(paramsObj) {
+      console.log(paramsObj, 'lll')
+      if (this.isProjectSwitch === '1') {
+        this.ProcessListRequestObj.projectId = paramsObj.scope.row.projectId
+      }
+      return true
+    },
+    // 查看资源
+    handlerOpenSource(index, type) {
+      if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
+
+      this.sourceVisibled = true
+      this.index = index
+      console.log(" this.dataFormTwo.data[this.index]", this.dataFormTwo.data[this.index]);
+      // let obj = {
+      //   productsId: this.dataFormTwo.data[index].productsId,
+      //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      // }
+      // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+        // console.log(this.dataFormTwo.data[this.index])
+        // this.sourceData = res.data.filter(item => item.productsId === this.dataFormTwo.data[this.index].materialProductsId)
+        this.dataFormTwo.data[this.index].outShipmentList = this.dataFormTwo.data[index].outShipmentList.filter(item => item.productsId === this.dataFormTwo.data[this.index].materialProductsId)
+        console.log("1342",this.dataFormTwo.data[this.index].outShipmentList);
+        if (this.dataFormTwo.data[this.index].outShipmentList) {
+          this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
+            console.log("ITEM",item);
+            // this.sourceData[ind].demandQuantity1 = item.demandQuantity
+            // this.sourceData[ind].processId = item.processId
+            // this.sourceData[ind].processName = item.processName
+            // this.sourceData[ind].batchNumber = this.dataFormTwo.data[index].batchNumber
+            // this.sourceData[ind].weight = this.dataFormTwo.data[index].weight
+            // this.sourceData[ind].proportion = this.dataFormTwo.data[index].proportion
+            // this.sourceData[ind].discount = this.dataFormTwo.data[index].discount
+            // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
+            console.log("this.dataFormTwo.data[index]",this.dataFormTwo.data[index]);
+            let obj={
+              processId:item.processId,
+              demandQuantity1:item.demandQuantity1,
+              processName:item.processName,
+              batchNumber:item.batchNumber,
+              weight:item.weight,
+              proportion:item.proportion,
+              discount:item.discount,
+              productsId:item.productsId,
+              productDrawingNo: item.productDrawingNo,
+            mainUnit: item.mainUnit,
+            productCode: item.productCode,
+            productName: item.productName,
+            drawingNo: item.productDrawingNo,
+            }
+            
+            this.sourceData=[obj]
+          })
+        } else {
+          this.sourceData.forEach((item, index) => {
+            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
+          })
+        }
+
+        console.log(this.dataFormTwo.data[this.index].outShipmentList, 'llll')
+        if (this.sourceData.length === 0) {
+          this.sourceDisabled = true
+        } else {
+          this.sourceDisabled = false
+        }
+
+        this.$nextTick(() => {
+          this.$refs['sourceRef'].init(this.sourceData, '')
+        })
+      // })
     },
     // 表单提交
     handleSubmit(type) {

@@ -142,8 +142,7 @@
                 style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ form.waitReportNum }}]</span>
               <span style="font-size: 18px;font-weight: bold;margin-left: 10px;">报工数量：</span><span
                 style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{ form.reportingQuantity }}]</span>
-              <span style="font-size: 18px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量{{
-                currentProcessType }}：</span><span style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{
+              <span style="font-size: 18px;font-weight: bold;margin-left: 10px;display: inline-block;">不合格数量：</span><span style="color: #3fb9f8;font-size: 18px;font-weight: bold">[{{
                   form.unqualifiedQuantity }}]</span>
             </div>
             <div style="padding: 0 20px;">

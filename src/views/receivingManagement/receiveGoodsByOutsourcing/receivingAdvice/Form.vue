@@ -212,10 +212,10 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" width="100"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip />
-                    <el-table-column prop="ordersNo" label="订单号" min-width="200" />
-                    <el-table-column prop="remark" label="备注" min-width="200">
+                    <el-table-column prop="standardValue" label="规值" width="100" key="standardValue"></el-table-column>
+                    <el-table-column prop="processName" label="工序" width="160" key="processName" show-overflow-tooltip />
+                    <el-table-column prop="ordersNo" label="订单号" min-width="200"  key="ordersNo"/>
+                    <el-table-column prop="remark" label="备注" min-width="200"  key="remark">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
@@ -444,10 +444,10 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="standardValue" label="规值" min-width="120"></el-table-column>
-                <el-table-column prop="processName" label="工序" width="160" show-overflow-tooltip />
-                <el-table-column prop="ordersNo" label="订单号" width="180" />
-                <el-table-column prop="remark" label="备注" min-width="200">
+                <el-table-column prop="standardValue" label="规值" width="100" key="standardValue"></el-table-column>
+                    <el-table-column prop="processName" label="工序" width="160" key="processName" show-overflow-tooltip />
+                    <el-table-column prop="ordersNo" label="订单号" min-width="200"  key="ordersNo"/>
+                    <el-table-column prop="remark" label="备注" min-width="200"  key="remark">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
                       :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
@@ -873,8 +873,10 @@ export default {
     this.getWarehouseList()
     this.switchStyleheight()
     this.formLoading = false
+
   },
   mounted() {
+    this.$nextTick(() => { this.$refs.product.doLayout() })
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'

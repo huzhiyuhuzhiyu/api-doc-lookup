@@ -86,7 +86,8 @@
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="调拨数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120"   />
+                        
 
                         <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                           <template slot="header">
@@ -215,6 +216,7 @@
                     </el-table-column>
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" label="调拨数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120"   />
                     <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                       <template slot="header">
                         <span class="required">*</span>目标仓库
@@ -343,6 +345,7 @@
                 </el-table-column>
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"   />
 
                 <el-table-column prop="standardValue" label="规值" min-width="120" v-if="standardValueFlag == 1" />
                     <el-table-column prop="colour" label="颜色" min-width="120" v-if="colourFlag == 1" />
@@ -994,9 +997,11 @@ export default {
                 processId: item.processId,
                 productsId: item.productsId,
                 ratio: item.ratio,
+                packagingMethod:item.packagingMethod,
                 sealingCoverTyping: item.sealingCoverTyping,
                 standardValue: item.standardValue,
                 vibrationLevel: item.vibrationLevel,
+                pairingModeId:item.pairingModeId
               }
               arr.push(obj)
             });

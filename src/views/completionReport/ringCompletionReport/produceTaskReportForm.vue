@@ -502,13 +502,10 @@ export default {
       })
     },
     handleBlur2() {
-      console.log(555);
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
-      console.log(666);
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
-      console.log(777,this.currentProcess.reportingQuantity);
-      console.log(777,this.currentProcess.unqualifiedQuantity);
+  
     },
     reportingTimeChange(e) {
       this.currentProcess.reportingTime = e + ' 00:00:00'

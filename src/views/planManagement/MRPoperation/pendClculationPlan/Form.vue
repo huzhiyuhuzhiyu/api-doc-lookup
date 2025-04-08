@@ -2025,6 +2025,9 @@ export default {
           if (item == '是否生成外协需求') {
             obj.scheme.outFlag = 1
 
+          }else{
+            obj.scheme.outFlag = 0
+
           }
         });
       } else {

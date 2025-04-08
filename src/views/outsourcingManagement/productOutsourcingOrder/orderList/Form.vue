@@ -985,32 +985,15 @@ export default {
       this.getProductClassFun()
       if (data.length) {
         let selectArr = []
-        let list = data.map((item) => item.all)
-        list.forEach((item, index) => {
-          selectArr.push({
-            productCategoryName: item.productCategoryName,
-            productSource: item.productSource, // 产品来源 采购
-            classAttribute: item.classAttribute,
-            productsId: item.id, // 产品id
-            productName: item.name, // 产品名称
-            productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
-            ratio: item.ratio, // 转换系数
-            calculationDirection: item.calculationDirection, // 计算方向
-            mainUnit: item.mainUnit, // 主单位
-            purchaseQuantity: item.purchaseQuantity, // 数量
-            price: item.price, // 含税单价
-            totalAmount: item.totalAmount, // 金额(含税)
+        selectArr = data.map((item)=>{
+          return {...item.all,
+            productsId: item.all.id, // 产品id
+            productName: item.all.name, // 产品名称
+            productCode: item.all.code, // 产品编码
+            productDrawingNo: item.all.drawingNo, // 品名规格
             taxRate: 13, // 税率
-            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
-            taxAmount: item.taxAmount, // 税额
-            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
-            deputyUnit: item.deputyUnit, // 副单位
-            planQuantity: '', //计划数量主
-            planQuantity2: '', //计划数量副
-            remark: item.remark,
             deliveryDate: this.dataForm.deliveryDate // 交期
-          })
+           }
         })
         if (this.dataFormTwo.data.length) {
           const deletedArray = []

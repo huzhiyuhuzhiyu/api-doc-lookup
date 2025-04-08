@@ -16,7 +16,7 @@
           </div>
         </div>
 
-        <div class="main">
+        <div class="main" ref="main">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
@@ -84,12 +84,12 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type !== 'look'" hasNO fixedNO
                       ref="multipleTable" v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
-                      @row-click="openDetails"  v-if="tableDataFlag">
+                      @row-click="openDetails" :height="customStyleData"  v-if="tableDataFlag" >
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="160"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
@@ -145,7 +145,6 @@
                       </template>
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="purchaseQuantity" label="数量" :min-width="isDeputyUnitSwitch === '1' ? 120 : 100">
                         <template slot="header">
                           <span class="required">*</span>
@@ -160,6 +159,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch === '1'" />
                       <el-table-column prop="price" label="含税单价" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
@@ -268,7 +268,7 @@
                       v-if="abProjectSwitchVisible"></el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="160"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
 
@@ -365,7 +365,7 @@
                   <el-table-column prop="projectName" label="所属项目" width="120"
                     v-if="abProjectSwitchVisible"></el-table-column>
                   <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140"
                     show-overflow-tooltip></el-table-column>
@@ -553,7 +553,7 @@
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="abProjectSwitchVisible"></el-table-column>
                 <el-table-column prop="productCode" label="产品编码" width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
 
@@ -615,7 +615,6 @@ export default {
   mixins: [busFlow, AbProjectMixin],
   data() {
     return {
-      isProductNameSwitch: '',
       isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
@@ -783,18 +782,19 @@ export default {
       tipsvisible: false,
       btnText: '继续新建',
       isattachmentswitch: '',
-      categoryId: ''
+      categoryId: '',
+      customStyleData:0,
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   async created() {
-    await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
   
     this.getDeputyUnit()
     this.getBimBusinessDetail()
+    this.switchStyleheight()
     this.tableDataFlag = true
   },
   mounted() {
@@ -872,10 +872,33 @@ export default {
     }
   },
   methods: {
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight;
+      if (this.type === 'look') {
+        maxHeight = mainHeight1 - 305
+      } else {
+        maxHeight = mainHeight1 - 340
+      }
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
     },
     async getProportionSwitch(code, type) {
       try {
@@ -933,7 +956,7 @@ export default {
         { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
       ]
-      if (this.isProductNameSwitch === '1') {
+      if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{
         if (tc.prop === 'name') {
           tc.render = true
@@ -999,33 +1022,15 @@ export default {
       console.log(data)
       if (data.length) {
         let selectArr = []
-        let list = data.map((item) => item.all)
-        list.forEach((item, index) => {
-          selectArr.push({
-            productCategoryName: item.productCategoryName,
-            projectName: item.projectName,
-            productSource: item.productSource, // 产品来源 采购
-            classAttribute: item.classAttribute,
-            productsId: item.id, // 产品id
-            productName: item.name, // 产品名称
-            productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
-            ratio: item.ratio, // 转换系数
-            calculationDirection: item.calculationDirection, // 计算方向
-            mainUnit: item.mainUnit, // 主单位
-            purchaseQuantity: item.purchaseQuantity, // 数量
-            price: item.price, // 含税单价
-            totalAmount: item.totalAmount, // 金额(含税)
+        selectArr = data.map((item)=>{
+          return {...item.all,
+            productsId: item.all.id, // 产品id
+            productName: item.all.name, // 产品名称
+            productCode: item.all.code, // 产品编码
+            productDrawingNo: item.all.drawingNo, // 品名规格
             taxRate: Number(item.taxRate), // 税率
-            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
-            taxAmount: item.taxAmount, // 税额
-            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
-            deputyUnit: item.deputyUnit, // 副单位
-            planQuantity: '', //计划数量主
-            planQuantity2: '', //计划数量副
-            remark: item.remark,
             deliveryDate: this.dataForm.deliveryDate // 交期
-          })
+           }
         })
         if (this.dataFormTwo.data.length) {
           const deletedArray = []
@@ -1493,7 +1498,11 @@ export default {
     }
   },
   updated() {
-    this.$refs['multipleTable'].doLayout()
+    this.$nextTick(() => {
+      if (this.tableDataFlag) {
+        this.$refs['multipleTable'].doLayout()
+      }
+    })
   },
 }
 </script>

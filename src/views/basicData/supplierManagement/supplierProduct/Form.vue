@@ -141,7 +141,7 @@
 
                       <el-table-column prop="standardValue" label="规值" width="120" :key="211">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" @change="standardValueChange(scope.$index)"
+                          <el-select v-model="scope.row.standardValue" placeholder="请选择"
                             :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
                               :value="item.name"></el-option>
@@ -152,7 +152,7 @@
                           prop="sealingCoverTyping" label="打字内容" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                              style="width: 100%;" @change="sealingCoverTypingChange(scope.$index)">
+                              style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -161,8 +161,7 @@
                         <el-table-column
                           prop="accuracyLevel" label="精度等级" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable 
-                              @change="accuracyLevelChange(scope.$index)">
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable >
                               <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -172,8 +171,7 @@
                         <el-table-column
                           prop="vibrationLevel" label="振动等级" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                              style="width: 100%;" @change="vibrationLevelChange(scope.$index)">
+                            <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -181,8 +179,7 @@
                         </el-table-column>
                         <el-table-column prop="oil" label="油脂" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
-                              @change="oilChange(scope.$index)">
+                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -190,8 +187,7 @@
                         </el-table-column>
                         <el-table-column prop="oilQuantity" label="油脂量" min-width="160">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
-                              @change="oilQuantityChange(scope.$index)">
+                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -199,8 +195,7 @@
                         </el-table-column>
                         <el-table-column prop="clearance" label="游隙" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
-                              @change="clearanceChange(scope.$index)">
+                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -208,8 +203,7 @@
                         </el-table-column>
                         <el-table-column prop="packagingMethod" label="包装方式" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                              style="width: 100%;" @change="packagingMethodChange(scope.$index)">
+                            <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -217,8 +211,7 @@
                         </el-table-column>
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" min-width="120" >
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
-                              style="width: 100%;" @change="specialRequireChange(scope.$index)">
+                            <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -227,8 +220,7 @@
                         <el-table-column prop="colour" :label="$store.getters.colour" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
-                                @change="colourChange(scope.$index)">
+                              <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
                                 <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
@@ -245,11 +237,16 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column label="操作" width="180" fixed="right" v-if="type != 'look'" key="look">
+                      <el-table-column label="操作" :width="$store.getters.configData.purchase.uniqueProduct ? 100 : 60" 
+                        fixed="right" v-if="type != 'look'" key="look">
                         <template slot-scope="scope">
                           <el-button type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
                             @click="delequipment_process_relList(scope.$index)">
                             删除
+                          </el-button>
+                          <el-button type="text" :disabled="type === 'look'" v-if="$store.getters.configData.purchase.uniqueProduct"
+                            @click="copyHander(scope.row)">
+                            复制
                           </el-button>
                         </template>
                       </el-table-column>
@@ -708,117 +705,7 @@ export default {
     columnSetFun() {
       this.$refs.product.showDrawer()
     },
-    standardValueChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-      
-    },
-    sealingCoverTypingChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    accuracyLevelChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    vibrationLevelChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    oilChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    oilQuantityChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    clearanceChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    packagingMethodChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    specialRequireChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
-    colourChange(index){
-      if (this.$store.getters.configData.purchase.uniqueProduct) {
-        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
-          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
-          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
-          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
-          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
-          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
-        )
-      }
-    },
+ 
     handleEndDateChange(value) {  
       const startDate = new Date(this.dataForm.dateOrderStart)  
       const endDate = new Date(value)  
@@ -877,26 +764,25 @@ export default {
             productName: item.all.name, // 产品名称
             productCode: item.all.code, // 产品编码
             taxRate: 13, // 税率
-            onlyProductsId: item.all.id + item.all.standardValue + item.all.sealingCoverTyping + 
-             item.all.accuracyLevel + item.all.vibrationLevel + item.all.oil + 
-             item.all.oilQuantity + item.all.clearance + item.all.packagingMethod + 
-             item.all.specialRequire + item.all.colour
            }
         })
-        if (this.dataFormTwo.data.length) {
-          const deletedArray = []
-          selectArr = selectArr.filter((item1) => {
-            const index = this.dataFormTwo.data.findIndex((item2) => item2.onlyProductsId === item1.onlyProductsId)
-            if (index !== -1) {
-              deletedArray.push(item1.drawingNo)
-              if (deletedArray.length) {
-                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+        if (!this.$store.getters.configData.purchase.uniqueProduct) {
+          if (this.dataFormTwo.data.length) {
+            const deletedArray = []
+            selectArr = selectArr.filter((item1) => {
+              const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
+              if (index !== -1) {
+                deletedArray.push(item1.drawingNo)
+                if (deletedArray.length) {
+                  this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+                }
+                return false
               }
-              return false
-            }
-            return true
-          })
+              return true
+            })
+          }
         }
+        
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 获取审批模版
         this.$nextTick(() => {
@@ -1292,24 +1178,24 @@ export default {
         this.taxRateList = res.data.list
       })
     },
-    hasDifferentOnlyProductsId(arr) {
-      const codes = new Set()
-
-      for (const item of arr) {
-        if (this.$store.getters.configData.purchase.uniqueProduct) {
-          codes.add(item.onlyProductsId)
-        } else {
-          codes.add(item.productsId)
-        }
-        
-      }
-
-      return codes.size == 1 // 如果有多个不同的代码，则返回 true
-    },
     // 表单提交
     handleConfirm(type) {
-      let flag = this.hasDifferentOnlyProductsId(this.dataFormTwo.data)
-      if (flag) return this.$message.error('有相同的产品')
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.dataFormTwo.data = this.dataFormTwo.data.map(item=>{
+          return {
+            ...item,
+            onlyProductsId:`${item.productsId}${item.standardValue?item.standardValue:''}${item.sealingCoverTyping?item.sealingCoverTyping:''}${item.accuracyLevel?item.accuracyLevel:''}${item.vibrationLevel?item.vibrationLevel:''}${item.oil?item.oil:''}${item.oilQuantity?item.oilQuantity:''}${item.clearance?item.clearance:''}${item.packagingMethod?item.packagingMethod:''}${item.specialRequire?item.specialRequire:''}${item.colour?item.colour:''}`
+          }
+        })
+        function hasDuplicateFieldValues(arr, field) {
+          const values = arr.map(obj => obj[field]);
+          return values.length !== new Set(values).size;
+        }
+        console.log(this.dataFormTwo.data,'this.dataFormTwo.data')
+        let flag = hasDuplicateFieldValues(this.dataFormTwo.data,'onlyProductsId')
+        if (flag) return this.$message.error('有相同的产品')
+      }
+     
       this.request(type)
     },
 
@@ -1673,6 +1559,9 @@ export default {
     // 删除项
     delequipment_process_relList(index) {
       this.dataFormTwo.data.splice(index, 1)
+    },
+    copyHander(row) {
+      this.dataFormTwo.data.push(row)
     },
     //  选择产品弹框传递的数据
     productsSubmit(data) {

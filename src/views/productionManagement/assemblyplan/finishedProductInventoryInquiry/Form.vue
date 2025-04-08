@@ -1127,6 +1127,8 @@ export default {
       // this.$set(this.dataForm, 'productionQuantity', data.inventoryQuantity)
       this.$set(this.dataForm, 'productsId', data.id)
       this.$refs.dataForm.clearValidate('productsDrawingNo');
+      this.$set(this.dataForm, 'bomId', data.bomId)
+if(!this.dataForm.bomId) this.$message.error("该产品没有BOM，请配置BOM后再试")
       this.creaFun()
       this.getWarehouseListFun()
       if (!data.routingId) return
@@ -1640,6 +1642,7 @@ export default {
           }
         }
       }
+      if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       if (submitFlag === false) return
       this.dataFormTwo.data.forEach(item => {
         item.routingProResList.forEach(items => {

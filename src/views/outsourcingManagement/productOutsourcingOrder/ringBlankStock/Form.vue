@@ -980,8 +980,14 @@ export default {
           getBimProcessList(ProcessListRequestObj).then((res) => {
             console.log(res, 'pjj')
             let data = res.data.records
-            selectArr[index].processName = data[0].name
-            selectArr[index].processId = data[0].id
+            if (this.orderType === 'external') {
+              selectArr[index].processName = ''
+              selectArr[index].processId = ''
+            } else {
+              selectArr[index].processName = data[0].name
+              selectArr[index].processId = data[0].id
+            }
+            
           })
           if (this.dataForm.cooperativePartnerId) {
             let priceObj = {
@@ -1031,8 +1037,14 @@ export default {
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
             this.sourceData[ind].demandQuantity1 = item.demandQuantity
-            this.sourceData[ind].processId = item.processId
-            this.sourceData[ind].processName = item.processName
+            if (this.orderType === 'external') {
+              this.sourceData[ind].processId = ''
+              this.sourceData[ind].processName = ''
+            } else {
+              this.sourceData[ind].processId = item.processId
+              this.sourceData[ind].processName = item.processName
+            }
+            
             this.sourceData[ind].batchNumber = this.dataFormTwo.data[index].batchNumber
             this.sourceData[ind].weight = this.dataFormTwo.data[index].weight
             this.sourceData[ind].proportion = this.dataFormTwo.data[index].proportion
@@ -1147,8 +1159,14 @@ export default {
       let index = paramsObj.scope.$index
 
       if (data.length) {
-        this.dataFormTwo.data[index].processName = data[0].name
-        this.dataFormTwo.data[index].processId = data[0].id
+        if (this.orderType === 'external') {
+          this.dataFormTwo.data[index].processName = ''
+          this.dataFormTwo.data[index].processId = ''
+        } else {
+          this.dataFormTwo.data[index].processName = data[0].name
+          this.dataFormTwo.data[index].processId = data[0].id
+        }
+        
       }
     },
 
@@ -1433,8 +1451,15 @@ export default {
         getBimProcessList(ProcessListRequestObj).then((res) => {
           console.log(res, 'pjj')
           let data = res.data.records
-          this.dataFormTwo.data[index].processName = data[0].name
-          this.dataFormTwo.data[index].processId = data[0].id
+          
+          if (this.orderType === 'external') {
+            this.dataFormTwo.data[index].processName = ''
+            this.dataFormTwo.data[index].processId = ''
+          } else {
+            this.dataFormTwo.data[index].processName = data[0].name
+            this.dataFormTwo.data[index].processId = data[0].id
+          }
+          
           console.log(this.dataFormTwo.data, '[[this.dataFormTwo.data]]')
         })
 
@@ -1451,6 +1476,7 @@ export default {
     },
     // 表单提交
     handleSubmit(type) {
+      console.log(this.dataFormTwo.data)
       if (!this.userInfo.roleCode.split(',').includes('show_external_data')) {
           this.$message({
             message: "没有外协数据可见权限，请配置",

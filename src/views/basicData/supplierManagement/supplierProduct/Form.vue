@@ -133,9 +133,9 @@
 
                       <el-table-column prop="standardValue" label="规值" width="120" :key="211">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择"
+                          <el-select v-model="scope.row.standardValue" placeholder="请选择" @change="standardValueChange(scope.$index)"
                             :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list0" :key="index" :label="item.name"
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
@@ -638,7 +638,6 @@ export default {
       ] // 产品选择弹出框表单展示字段
 
     }
-    this.getBimBusinessDetail()
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -660,6 +659,9 @@ export default {
     }
   },
   methods: {
+    standardValueChange(index){
+      console.log(index)
+    },
     handleEndDateChange(value) {  
       const startDate = new Date(this.dataForm.dateOrderStart)  
       const endDate = new Date(value)  
@@ -712,38 +714,22 @@ export default {
     addth(id, data) {
       if (data.length) {
         let selectArr = []
-        let list = data.map((item) => item.all)
-        list.forEach((item, index) => {
-          selectArr.push({
-            productCategoryName:item.productCategoryName,
-            projectName: item.projectName, // 所属项目
-            productSource: item.productSource, // 产品来源 采购
-            productsId: item.id, // 产品id
-            productsName: item.name, // 产品名称
-            productsCode: item.code,
-            drawingNo: item.drawingNo,
-            mainUnit: item.mainUnit,
-            taxRate: '13', // 产品税率
-            materialPrice: '', // 产品价格
-            price: '', // 协议价
-            excludingTaxPrice: 0, // 不含税价
-            historicalPrice: item.historicalPrice, // 历史价格
-            targetPrice: '', // 目标价格
-            // contrastProductsId:'',              // 对比物料id
-            contrastProducts: '', // 对比物料
-            costPrice: '', // 对比价格
-
-            standardValue: item.standardValue,
-            colour: item.colour,
-            sealingCoverTyping: item.sealingCoverTyping,
-            accuracyLevel: item.accuracyLevel,
-            vibrationLevel: item.vibrationLevel
-          })
+        selectArr = data.map((item)=>{
+          return {...item.all,
+            productsId: item.all.id, // 产品id
+            productName: item.all.name, // 产品名称
+            productCode: item.all.code, // 产品编码
+            taxRate: 13, // 税率
+            onlyProductsId: item.all.id + item.all.standardValue + item.all.sealingCoverTyping + 
+             item.all.accuracyLevel + item.all.vibrationLevel + item.all.oil + 
+             item.all.oilQuantity + item.all.clearance + item.all.packagingMethod + 
+             item.all.specialRequire + item.all.colour
+           }
         })
         if (this.dataFormTwo.data.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
-            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
+            const index = this.dataFormTwo.data.findIndex((item2) => item2.onlyProductsId === item1.onlyProductsId)
             if (index !== -1) {
               deletedArray.push(item1.productsName)
               if (deletedArray.length) {

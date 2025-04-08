@@ -85,7 +85,6 @@
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" width="130" />
 
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="colour" label="颜色" width="60" />
                 <el-table-column prop="sealingCoverTyping" width="110" label="打字内容" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
@@ -93,7 +92,8 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="specialRequire" width="140" label="特殊要求"></el-table-column>
+                <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
+                <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
               </JNPF-table>
               <pagination :total="total" :page.sync="lastListQuery.pageNum" :background="background"
@@ -182,7 +182,6 @@
                 <el-table-column prop="effectiveTimeStart" label="有效日期起" width="130" sortable="custom" />
                 <el-table-column prop="effectiveTimeEnd" label="有效日期止" width="130" sortable="custom" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
@@ -190,7 +189,8 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="130" sortable="custom" />
+                <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
+                <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
                 <el-table-column prop="remark" label="备注" width="150" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="createByName" label="创建人" sortable="custom" width="180" />
@@ -451,13 +451,6 @@ export default {
           options: []
         },
         {
-          prop: 'colour',
-          label: '颜色',
-          type: 'select',
-          options: []
-        },
-
-        {
           prop: 'sealingCoverTyping',
           label: '打字内容',
           type: 'select',
@@ -501,7 +494,13 @@ export default {
         },
         {
           prop: 'specialRequire',
-          label: '特殊要求',
+          label: this.$store.getters.specialRequire,
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'colour',
+          label: this.$store.getters.colour,
           type: 'select',
           options: []
         },
@@ -595,57 +594,14 @@ export default {
           options: []
         },
         {
-          prop: 'sealingCoverStructure',
-          label: '密封盖-结构',
+          prop: 'standardValue',
+          label: '规值',
           type: 'select',
           options: []
         },
         {
           prop: 'sealingCoverTyping',
-          label: '密封盖-打字',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'structureType',
-          label: '结构类型',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'steelBallManufacturer',
-          label: '钢球厂家',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'noise',
-          label: '噪音',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'holder',
-          label: '保持架',
+          label: '打字内容',
           type: 'select',
           options: []
         },
@@ -662,14 +618,38 @@ export default {
           options: []
         },
         {
-          prop: 'colour',
-          label: '颜色',
+          prop: 'oil',
+          label: '油脂',
           type: 'select',
           options: []
         },
         {
-          prop: 'aperture',
-          label: '孔径',
+          prop: 'oilQuantity',
+          label: '油脂量',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'clearance',
+          label: '游隙',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: this.$store.getters.specialRequire,
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'colour',
+          label: this.$store.getters.colour,
           type: 'select',
           options: []
         },

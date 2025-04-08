@@ -68,25 +68,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <!-- <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4">
-              <el-form-item>
-                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
-                  @keyup.enter.native="search('basic')" />
-
-                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
-                  clearable>
-                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
-                    :value="item2.value"></el-option>
-                </el-select>
-                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
-                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
-                  :type="item.dateType"
-                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
-              </el-form-item>
-            </el-col>
-          </template> -->
-
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search('basic', 'search')" class="commonBox">
@@ -313,7 +294,13 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     this.isProjectSwitchFlag = true
-    this.getWarehouseTree(true)
+    await this.getWarehouseTree(true)
+    // this.currentLivingId = this.treeData[0].children[0].value
+    console.log(this.treeData[0].id,'所属')
+    this.$nextTick(function () {
+      this.$refs.treeBox.setCurrentKey(this.treeData[0].id)
+      this.tableQuery.warehouseId = this.treeData[0].id
+    })
   },
   methods: {
     // 点击高级查询
@@ -371,7 +358,7 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-    getWarehouseTree(isInit) {
+    async getWarehouseTree(isInit) {
       this.filterText = ''
       this.treeLoading = true
       let obj = {
@@ -389,17 +376,14 @@ export default {
         }
       })
       console.log(obj, 'lll')
-      getWarehouseList(obj)
-        .then((res) => {
-          this.treeData = res.data
-          this.$nextTick(() => {
-            this.treeLoading = false
-            if (isInit) this.search('basic')
-          })
-        })
-        .catch(() => {
-          this.treeLoading = false
-        })
+      const res = await getWarehouseList(obj)
+    
+      this.treeData = res.data
+      this.$nextTick(() => {
+        this.treeLoading = false
+        if (isInit) this.search('basic')
+      })
+     
     },
     initData() {
       this.tableQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''

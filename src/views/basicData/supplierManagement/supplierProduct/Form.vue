@@ -14,7 +14,7 @@
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
-        <div class="main">
+        <div class="main" ref="main">
           <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
@@ -57,22 +57,30 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <div v-if="type !== 'look'" style="margin-left: -12px;">
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      icon="el-icon-plus" :disabled="type == 'look' ? true : false" @click="openSeleceProductDialog()">
-                      选择产品
-                    </el-button>
-                    |
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                      :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
-                      删除产品
-                    </el-button>
+                  <div class="JNPF-common-head">
+                    <div v-if="type !== 'look'" style="margin-left: -12px;">
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        icon="el-icon-plus" :disabled="type == 'look' ? true : false" @click="openSeleceProductDialog()">
+                        选择产品
+                      </el-button>
+                      |
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                        删除产品
+                      </el-button>
+                    </div>
+                    <div class="JNPF-common-head-right fixedRight">
+                      <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                        <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                          @click="columnSetFun()" />
+                      </el-tooltip>
+                    </div>
                   </div>
 
                   <el-form :model="dataFormTwo" ref="productForm" style="margin: 0 -12px;">
-                    <JNPF-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData"
+                    <JNPF-table ref="product" custom-column style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData"
                       :hasC="type != 'look'" hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                      id="table">
+                      id="table" :partent-or-child="'child'" :height="customStyleData">
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
                       <el-table-column prop="productName" label="产品名称" width="120"
@@ -144,7 +152,7 @@
                           prop="sealingCoverTyping" label="打字内容" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                              style="width: 100%;">
+                              style="width: 100%;" @change="sealingCoverTypingChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -153,7 +161,8 @@
                         <el-table-column
                           prop="accuracyLevel" label="精度等级" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                            <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable 
+                              @change="accuracyLevelChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -164,7 +173,7 @@
                           prop="vibrationLevel" label="振动等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                              style="width: 100%;">
+                              style="width: 100%;" @change="vibrationLevelChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -172,7 +181,8 @@
                         </el-table-column>
                         <el-table-column prop="oil" label="油脂" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                            <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
+                              @change="oilChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -180,7 +190,8 @@
                         </el-table-column>
                         <el-table-column prop="oilQuantity" label="油脂量" min-width="160">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                            <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
+                              @change="oilQuantityChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -188,7 +199,8 @@
                         </el-table-column>
                         <el-table-column prop="clearance" label="游隙" min-width="120">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                            <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
+                              @change="clearanceChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -197,7 +209,7 @@
                         <el-table-column prop="packagingMethod" label="包装方式" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                              style="width: 100%;">
+                              style="width: 100%;" @change="packagingMethodChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -206,7 +218,7 @@
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" min-width="120" >
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
-                              style="width: 100%;">
+                              style="width: 100%;" @change="specialRequireChange(scope.$index)">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -215,7 +227,8 @@
                         <el-table-column prop="colour" :label="$store.getters.colour" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">
+                              <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
+                                @change="colourChange(scope.$index)">
                                 <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
@@ -602,6 +615,7 @@ export default {
       uploadVisib: false,
       isattachmentswitch: '',
       bimProductAttributesList:{},
+      customStyleData:0,
     }
   },
   mounted() {
@@ -638,6 +652,7 @@ export default {
       ] // 产品选择弹出框表单展示字段
 
     }
+    this.switchStyleheight()
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -659,8 +674,150 @@ export default {
     }
   },
   methods: {
+    switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      console.log("this.$refs.main", this.$refs.main);
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight;
+      if (this.btnType == 'look') {
+         maxHeight = mainHeight1 - 580
+
+      } else {
+         maxHeight = mainHeight1 - 320
+      }
+
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = Number(maxHeight) > 0 ? maxHeight : 300
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
+    columnSetFun() {
+      this.$refs.product.showDrawer()
+    },
     standardValueChange(index){
-      console.log(index)
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+      
+    },
+    sealingCoverTypingChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    accuracyLevelChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    vibrationLevelChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    oilChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    oilQuantityChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    clearanceChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    packagingMethodChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    specialRequireChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
+    },
+    colourChange(index){
+      if (this.$store.getters.configData.purchase.uniqueProduct) {
+        this.$set(this.dataFormTwo.data[index],'onlyProductsId',this.dataFormTwo.data[index].productsId + 
+          this.dataFormTwo.data[index].standardValue + this.dataFormTwo.data[index].sealingCoverTyping + 
+          this.dataFormTwo.data[index].accuracyLevel + this.dataFormTwo.data[index].vibrationLevel + 
+          this.dataFormTwo.data[index].oil + this.dataFormTwo.data[index].oilQuantity + 
+          this.dataFormTwo.data[index].clearance + this.dataFormTwo.data[index].packagingMethod + 
+          this.dataFormTwo.data[index].specialRequire + this.dataFormTwo.data[index].colour
+        )
+      }
     },
     handleEndDateChange(value) {  
       const startDate = new Date(this.dataForm.dateOrderStart)  
@@ -731,7 +888,7 @@ export default {
           selectArr = selectArr.filter((item1) => {
             const index = this.dataFormTwo.data.findIndex((item2) => item2.onlyProductsId === item1.onlyProductsId)
             if (index !== -1) {
-              deletedArray.push(item1.productsName)
+              deletedArray.push(item1.drawingNo)
               if (deletedArray.length) {
                 this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
               }
@@ -1135,8 +1292,24 @@ export default {
         this.taxRateList = res.data.list
       })
     },
+    hasDifferentOnlyProductsId(arr) {
+      const codes = new Set()
+
+      for (const item of arr) {
+        if (this.$store.getters.configData.purchase.uniqueProduct) {
+          codes.add(item.onlyProductsId)
+        } else {
+          codes.add(item.productsId)
+        }
+        
+      }
+
+      return codes.size == 1 // 如果有多个不同的代码，则返回 true
+    },
     // 表单提交
     handleConfirm(type) {
+      let flag = this.hasDifferentOnlyProductsId(this.dataFormTwo.data)
+      if (flag) return this.$message.error('有相同的产品')
       this.request(type)
     },
 

@@ -208,7 +208,7 @@
                             <el-form-item prop="reportFlag" ref="reportFlag">
                               <el-checkbox v-model="scope.row.reportFlag"  :disabled="scope.row.defaultReport ||
                                 scope.row.defaultFlag ||
-                                scope.$index === dataFormTwo.length - 1 ||
+                                
                                 type === 'look'">
                                 {{ scope.row.reportFlag ? '是' : '否' }}
                               </el-checkbox>
@@ -1156,7 +1156,18 @@ export default {
         }
 
       }
-
+     if(this.dataFormTwo.length) {
+      for (let index = 0; index < this.dataFormTwo.length; index++) {
+        const item = this.dataFormTwo[index];
+        if(index==this.dataFormTwo.length-1&&item.processingType !== 'external_production'&&!item.reportFlag){
+          this.$message.error('最后一道工序为自制工序，必须设置报工')
+          this.btnLoading = false
+          flag = false
+          return
+        }
+        
+      }
+     }
 
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
@@ -1290,6 +1301,7 @@ export default {
               this.$message.error('请至少选择一条工序')
               this.btnLoading = false
             } else {
+
               if (!this.dataForm.id) {
                 addProcess(_data)
                   .then((res) => {

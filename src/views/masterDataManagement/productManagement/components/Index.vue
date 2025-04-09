@@ -1495,14 +1495,14 @@ export default {
       console.log(123)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id, btnType,'',this.isProjectSwitch)
       })
     },
     // 复制
     copyHandle(id, btnType,row) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType,row)
+        this.$refs.Form.init(id, btnType,row,this.isProjectSwitch)
       })
     },
     handleDel(id) {

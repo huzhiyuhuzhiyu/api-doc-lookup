@@ -53,10 +53,9 @@ import tabs from './params'
 import { getProjectList } from '@/api/system/projectManagement'
 import { mapGetters } from 'vuex'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
+
 export default {
   name: 'finished_product',
-  mixins: [AbProjectMixin],
   data() {
     return {
       datafilelist: [],
@@ -674,11 +673,12 @@ export default {
         }
       } catch (error) { }
     },
-    async init(id, btnType = false, flag,row) {
-   
+    async init(id, btnType = false, flag,row,isProjectSwitch) {
+      
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
+      this.isProjectSwitch = isProjectSwitch
       console.log(this.btnType,'看')
       this.flag = flag
       if (flag) {
@@ -749,7 +749,7 @@ export default {
           }
         })
       }
-      if (this.abProjectSwitchVisible) {
+      if (this.isProjectSwitch === '1') {
         this.tabs[0].tabContent.forEach((ele) => {
           if (ele.prop == 'projectId') {
             console.log(this.userInfo.projectId, 'pr')

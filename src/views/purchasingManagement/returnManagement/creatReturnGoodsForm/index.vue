@@ -150,7 +150,7 @@
                               v-if="isDeputyUnitSwitch" />
                             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
                               v-if="isDeputyUnitSwitch && isReturnSwitch" />
-                            <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                            <el-table-column prop="receiptQuantity" label="库存数量" width="160" sortable="custom" />
                             <el-table-column prop="receivedQuantity" label="退货数量" width="170"
                               v-if="!dataForm.exchangeGoodsFlag" key="789">
                               <template slot="header">
@@ -799,8 +799,9 @@ export default {
     },
     // 切换供应商后给的提示
     async beforeSubmit(data, paramsObj) {
+      console.log(paramsObj);
       let flag = true
-      if (paramsObj.oldData.length) {
+      if (this.dataFormTwo.productData.length) {
         flag = await this.$confirm('切换供应商将清空产品价格信息，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -825,6 +826,7 @@ export default {
       return flag
     },
     supplierdata(id, data) {
+      console.log("111",id,data);
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerName')
       })

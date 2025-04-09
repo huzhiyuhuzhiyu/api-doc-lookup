@@ -109,9 +109,9 @@
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" :hasC="btnType !== 'look'" hasNO fixedNO
                     @selection-change="handeleProductInfoData" :height="customStyleData">
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
+                    <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                     <el-table-column prop="projectName" label="所属项目" width="120"
                       v-if="isProjectSwitch === '1'"></el-table-column>
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
@@ -127,7 +127,7 @@
                       v-if="isReturnSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
                       v-if="isDeputyUnitSwitch && isReturnSwitch" />
-                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                    <el-table-column prop="receiptQuantity" label="库存数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -337,9 +337,9 @@
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" hasNO fixedNO
                 @selection-change="handeleProductInfoData">
-                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
+                <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="1" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
                 <el-table-column prop="projectName" label="所属项目" width="120"
@@ -355,7 +355,7 @@
                   v-if="isReturnSwitch" />
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
                   v-if="isDeputyUnitSwitch && isReturnSwitch" />
-                <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                <el-table-column prop="receiptQuantity" label="库存数量" width="160" sortable="custom" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -917,6 +917,34 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    supplierdata(id, data) {
+      console.log("111",id,data);
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('partnerName')
+      })
+      if (data.length === 0) {
+        this.dataForm.partnerName = ''
+        this.dataForm.cooperativePartnerCode = ''
+        this.dataForm.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.dataForm.partnerName = data[0].all.name
+        this.dataForm.cooperativePartnerCode = data[0].all.code
+        this.dataForm.cooperativePartnerId = data[0].all.id
+        let productIdList = []
+        this.dataFormTwo.productData.forEach((item) => {
+          productIdList.push(item.productsId)
+        })
+        let _data = {
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          productIdList
+        }
+      }
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight

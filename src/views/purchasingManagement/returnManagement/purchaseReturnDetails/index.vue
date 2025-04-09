@@ -235,7 +235,6 @@ export default {
         keyword: '',
         classAttribute: 'other',
         notificationType: 'procure',
-        stockFlag:1,
         notificationTypeList: [],
         orderItems: [
           {
@@ -649,6 +648,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.inspectionFlag=false
       purPurchaseReceiptReturnGoodsDetailList(this.orderForm)
         .then((res) => {
           this.tableData = res.data.records

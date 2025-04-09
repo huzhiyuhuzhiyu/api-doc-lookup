@@ -62,7 +62,7 @@
           </el-col> -->
           <el-col :span="5">
             <el-form-item>
-              <el-select v-model="tableQuery.excludeProcessFlag" placeholder="工序">
+              <el-select v-model="tableQuery.excludeProcessFlag" placeholder="工序" @change="excludeProcessFlagChange">
                 <el-option v-for="item in excludeProcessFlagData" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -221,13 +221,8 @@ export default {
       selectedNodeKey: '',
       superQueryJson: [
         {
-          prop: 'productDrawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
           prop: 'productCode',
-          label: '产品编码',
+          label: '物料编号',
           type: 'input'
         },
         {
@@ -236,35 +231,27 @@ export default {
           type: 'input'
         },
         {
-          prop: 'processName',
-          label: '工序名称',
+          prop: 'vibrationLevel',
+          label: '振动等级',
           type: 'input'
         },
         {
-          prop: 'processCode',
-          label: '工序编码',
+          prop: 'shelves',
+          label: '库位',
           type: 'input'
         },
         {
-          prop: 'batchNumber',
-          label: '批次号',
+          prop: 'inventoryQuantity',
+          label: '库存',
           type: 'input'
         },
 
         {
-          prop: 'warehouseName',
+          prop: 'processName',
           label: '仓库名称',
           type: 'input'
         },
-        {
-          prop: 'latestStorageTime',
-          label: '最新入库时间',
-          type: 'datetimerange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '创建开始时间',
-          endPlaceholder: '创建结束时间',
-          pickerOptions: this.global.timePickerOptions
-        }
+       
       ],
       isProjectSwitch: '',
       // 属性字段  控制属性字段显示隐藏
@@ -383,7 +370,7 @@ export default {
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1007',
+        exportType: '1245',
         exportName: '常规库存',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
@@ -395,11 +382,15 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.tableQuery.superQuery = query
+      console.log(query)
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super','search')
     },
     shelfSpaceChange(){
+      this.search('basic', 'search')
+    },
+    excludeProcessFlagChange(){
       this.search('basic', 'search')
     },
     changeLeft() {
@@ -445,7 +436,7 @@ export default {
       inventoryWarehouseTotalRoutineReport(this.tableQuery)
         .then((res) => {
           console.log(res)
-          this.tableData = res.data.page.records
+          this.tableData = res.data.records
 
           this.totalData = res.data.stockSts || {
             inventoryQuantity: 0,
@@ -453,7 +444,7 @@ export default {
             occupancyQuantity: 0
           }
 
-          this.total = res.data.page.total
+          this.total = res.data.total
           this.listLoading = false
         })
         .catch(() => {
@@ -494,6 +485,7 @@ export default {
             column: ''
           }
         ],
+        excludeProcessFlag:'',
         pageNum: 1,
         pageSize: 20,
         scrapFlag: false,
@@ -535,6 +527,7 @@ export default {
       const nodePath = this.getNodePath(node)
       this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       this.organizeIdTree = nodePath.map((o) => o.id)
+      this.tableQuery.excludeProcessFlag = ''
       this.getShelvesName()
     },
     getNodePath(node) {

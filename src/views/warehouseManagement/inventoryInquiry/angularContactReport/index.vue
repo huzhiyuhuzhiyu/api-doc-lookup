@@ -51,7 +51,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.productCode" placeholder="品名规格" clearable
+              <el-input v-model="tableQuery.productCode" placeholder="物料编号" clearable
                 @keyup.enter.native="search('basic', 'search')" />
             </el-form-item>
           </el-col>
@@ -62,7 +62,7 @@
           </el-col> -->
           <el-col :span="5">
             <el-form-item>
-              <el-select v-model="tableQuery.excludeProcessFlag" placeholder="工序">
+              <el-select v-model="tableQuery.excludeProcessFlag" placeholder="工序" @change="excludeProcessFlagChange">
                 <el-option v-for="item in excludeProcessFlagData" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -182,7 +182,7 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
-
+      columnList:['processName'],
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -384,7 +384,7 @@ export default {
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1007',
+        exportType: '1244',
         exportName: '角接触库存',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
@@ -401,6 +401,9 @@ export default {
       this.search('super','search')
     },
     shelfSpaceChange(){
+      this.search('basic', 'search')
+    },
+    excludeProcessFlagChange(){
       this.search('basic', 'search')
     },
     changeLeft() {
@@ -446,7 +449,7 @@ export default {
       inventoryWarehouseTotalReport(this.tableQuery)
         .then((res) => {
           console.log(res)
-          this.tableData = res.data.page.records
+          this.tableData = res.data.records
 
           this.totalData = res.data.stockSts || {
             inventoryQuantity: 0,
@@ -454,7 +457,7 @@ export default {
             occupancyQuantity: 0
           }
 
-          this.total = res.data.page.total
+          this.total = res.data.total
           this.listLoading = false
         })
         .catch(() => {
@@ -494,6 +497,7 @@ export default {
             column: ''
           }
         ],
+        excludeProcessFlag:'',
         pageNum: 1,
         pageSize: 20,
         scrapFlag: false,
@@ -535,6 +539,7 @@ export default {
       const nodePath = this.getNodePath(node)
       this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       this.organizeIdTree = nodePath.map((o) => o.id)
+      this.tableQuery.excludeProcessFlag = ''
       this.getShelvesName()
     },
     getNodePath(node) {

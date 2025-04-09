@@ -1223,15 +1223,16 @@ export default {
 
     addOrUpdateHandle(id, btnType, flag) {
       this.formVisible = true
+      
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, flag,)
+        this.$refs.Form.init(id, btnType, flag,'',this.isProjectSwitch)
       })
     },
     // 复制
     copyHandle(id, btnType, flag,row) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, flag,row)
+        this.$refs.Form.init(id, btnType, flag,row,this.isProjectSwitch)
       })
     },
     handleDel(id) {

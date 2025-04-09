@@ -393,13 +393,14 @@ export default {
         }
       } catch (error) { }
     },
-   async init(id, btnType = false,row ) {
+   async init(id, btnType = false,row,isProjectSwitch ) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
+      this.isProjectSwitch = isProjectSwitch
       console.log(this.btnType,'看')
       this.dataForm.id = id || ''
-      if (this.abProjectSwitchVisible) {
+      if (this.isProjectSwitch === '1') {
         this.tabs[0].tabContent.forEach((ele) => {
           if (ele.prop == 'projectId') {
 

@@ -269,7 +269,6 @@ export default {
         productDrawingNo: '',
         productName: '',
         receiptReturnType: 'back',
-        stockFlag:1,
         receivingStatus: '',
         salesman: '',
         startTime: '',
@@ -700,6 +699,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.inspectionFlag=false
       purPurchaseReceiptReturnGoodsDetailList(this.orderForm)
         .then((res) => {
           this.tableData = res.data.records

@@ -647,7 +647,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click=" productVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading===true" @click="submitAllProduct()">
           确定</el-button>
       </span>
     </el-dialog>
@@ -1405,6 +1405,7 @@ export default {
       if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.productVisible = true
+    this.btnLoading=false
       this.orderForm.productName = ""
       this.listQuery.productName = ""
       this.listQuery.pageNum = 1
@@ -1507,9 +1508,10 @@ export default {
     // 选完产品后  渲染在产品信息列表
     submitAllProduct() {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
+       
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      console.log("arr", arr);
+      console.log("arr", arr,this.btnLoading);
       arr.forEach(item => {
         if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
           this.$set(item, 'discount', '')
@@ -1596,9 +1598,11 @@ export default {
         //   });
 
         // }
-        this.productData.push(item)
-        console.log("this.productData", this.productData);
+        
       });
+      this.productData=[...this.productData,...arr]
+      this.btnLoading=true
+      if (this.btnLoading) return; 
     },
     columnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);

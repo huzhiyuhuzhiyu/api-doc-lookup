@@ -206,9 +206,9 @@ export default {
         inspectionStatus: '',
         keyword: '',
         classAttribute: 'finish_product',
-        notificationType: 'procure',
-        stockFlag:1,
+        notificationType: 'procure', 
         notificationTypeList: [],
+        inspectionFlag:false,
         orderItems: [
           {
             asc: true,

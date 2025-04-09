@@ -44,11 +44,11 @@ export default {
         productCode: '',
         productDrawingNo: '',
         productName: '',
-        receiptReturnType: 'back',
-        stockFlag:0,
+        receiptReturnType: 'back', 
         receivingStatus: '',
         salesman: '',
         startTime: '',
+        inspectionFlag:true,
         startUpdateTime: '',
         superQuery: {
           condition: [

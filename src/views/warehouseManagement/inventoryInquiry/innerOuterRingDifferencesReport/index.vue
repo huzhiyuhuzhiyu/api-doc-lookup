@@ -1,30 +1,20 @@
 
 
 <template>
-    <ReportTypeTable :need-super-query="false" :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag" :list-request-obj="listRequestObj" :list-method="balanceQueryReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName" />
+    <ReportTypeTable :need-super-query="false" :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag" :list-request-obj="listRequestObj" :list-method="innerOuterRingReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName" :pageSizes="[50, 100, 500,1000]" :renderSummary="false" :renderPage="false" :renderSearch="false" />
 </template>
 
 <script>
 import ReportTypeTable from '@/components/no_mount/ReportTypeTable/index.vue';
-import {getcategoryTree} from '@/api/basicData/materialSettings';
-import { balanceQueryReport, canStockBalance } from '@/api/balances'
-import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+import { innerOuterRingReport } from '@/api/warehouseManagement/inventory'
 export default {
     name: 'innerOuterRingDifferencesReport',
     components: {ReportTypeTable},
-    mixins:[AbProjectMixin],
+    mixins:[],
     data(){
         return {
-            balanceQueryReport,
+            innerOuterRingReport,
             listRequestObj:{
-                accountPeriod: '',
-                classAttribute: "",
-                createByName: "",
-                drawingNo: "",
-                endTime: "",
-                endUpdateTime: "",
-                keyword: "",
-                orderEndDate: "",
                 orderItems: [{
                     asc: false,
                     column: ''
@@ -32,74 +22,52 @@ export default {
                     asc: false,
                     column: '',
                 }],
-                orderStartDate: "",
                 pageNum: 1,
-                pageSize: 20,
-                productCategoryId: '',
-                productsCode: "",
-                productsName: "",
-                projectId: '',
-                startTime: "",
-                startUpdateTime: "",
-                superQuery: {},
-                totalRowFlag: false,
-                warehouseCode: "",
-                warehouseName: ""
+                pageSize: 50,
+                
             },
             tableItems:[],
-            columnList:['productsCode','warehouseCode'],
+            columnList:[],
             searchList:[],
             superQueryJson:[],
-            exportType:'1232',
-            exportName:'结存查询',
-            isProductNameSwitch:'',
+            exportType:'1246',
+            exportName:'内外圈差异报表',
             accountPeriod:'',
             indexFlag:false,
-            defaultProjectId:''
         }
     },
     async created() {
-        await this.awaitAbProject()
-        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
-        console.log(this.abProjectId,'this.defaultProjectId')
-        this.listRequestObj.projectId = this.defaultProjectId
-        await this.getProductNameSwitch('product', 'enable_productName')
         this.setTableItems()
         this.setSuperQueryJson()
         this.setSearchList()
         this.indexFlag = true
     },
     methods: {
-        async getProductNameSwitch(code, type) {
-            try {
-                this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-            } catch (error) { }
-        },
         setTableItems(){
             this.tableItems = [
-                {prop:"accountPeriod", label:"外圈01",minWidth:160,sortable:'custom'},
-                {prop:"drawingNo", label:'单位01',minWidth:160,},
-                {prop:"productsName", label:'原材料01',minWidth:140,sortable:'custom'},
-                {prop:"productsCode", label:'委外01',minWidth:140,sortable:'custom'},
-                {prop:"processName", label:'磨工01',minWidth:140,sortable:'custom'},
-                {prop:"warehouseName", label:'装配01',minWidth:140,sortable:'custom'},
-                {prop:"warehouseCode", label:'待装区01',minWidth:140,sortable:'custom'},
-                {prop:"mainUnit", label:'热处理01',minWidth:120,sortable:'custom'},
-                {prop:"initInventoryQuantity", label:'报废01',minWidth:120,sortable:'custom'},
-                {prop:"inboundQuantity", label:'总计01',minWidth:120,sortable:'custom'},
-                {prop:"outboundQuantity", label:'内圈02',minWidth:120,sortable:'custom'},
-                {prop:"drawingNo", label:'单位02',minWidth:160,},
-                {prop:"productsName", label:'原材料02',minWidth:140,sortable:'custom'},
-                {prop:"productsCode", label:'委外02',minWidth:140,sortable:'custom'},
-                {prop:"processName", label:'磨工02',minWidth:140,sortable:'custom'},
-                {prop:"warehouseName", label:'装配02',minWidth:140,sortable:'custom'},
-                {prop:"warehouseCode", label:'待装区02',minWidth:140,sortable:'custom'},
-                {prop:"mainUnit", label:'热处理02',minWidth:120,sortable:'custom'},
-                {prop:"initInventoryQuantity", label:'报废02',minWidth:120,sortable:'custom'},
-                {prop:"inboundQuantity", label:'总计02',minWidth:120,sortable:'custom'},
-                {prop:"initInventoryQuantity", label:'磨工01/02差额',minWidth:120,sortable:'custom'},
-                {prop:"initInventoryQuantity", label:'装配01/02差额',minWidth:120,sortable:'custom'},
-                {prop:"initInventoryQuantity", label:'汇总01/02差额',minWidth:120,sortable:'custom'},
+                {prop:"outerDrawingNo", label:"外圈图号",minWidth:160,sortable:'custom'},
+                {prop:"outerMainUnit", label:'外圈单位',minWidth:160,},
+                {prop:"outerYclNum", label:'原材料库',minWidth:140,sortable:'custom'},
+                {prop:"outerWwNum", label:'委外库',minWidth:140,sortable:'custom'},
+                {prop:"outerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom'},
+                {prop:"outerZpNum", label:'装配线边仓',minWidth:140,sortable:'custom'},
+                {prop:"outerDzNum", label:'半成品待装库',minWidth:130,sortable:'custom'},
+                {prop:"outerRclNum", label:'半成品热处理库',minWidth:150,sortable:'custom'},
+                {prop:"outerBfNum", label:'报废',minWidth:120,sortable:'custom'},
+                {prop:"outerTotal", label:'总计',minWidth:120,sortable:'custom'},
+                {prop:"innerDrawingNo", label:'内圈图号',minWidth:120,sortable:'custom'},
+                {prop:"innerMainUnit", label:'内圈单位',minWidth:160,},
+                {prop:"innerYclNum", label:'原材料库',minWidth:140,sortable:'custom'},
+                {prop:"innerWwNum", label:'委外库',minWidth:140,sortable:'custom'},
+                {prop:"innerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom'},
+                {prop:"innerZpNum", label:'装配线边仓',minWidth:140,sortable:'custom'},
+                {prop:"innerDzNum", label:'半成品待装库',minWidth:130,sortable:'custom'},
+                {prop:"innerRclNum", label:'半成品热处理库',minWidth:150,sortable:'custom'},
+                {prop:"innerBfNum", label:'报废',minWidth:120,sortable:'custom'},
+                {prop:"innerTotal", label:'总计',minWidth:120,sortable:'custom'},
+                {prop:"mgDiffNum", label:'磨工差额',minWidth:120,sortable:'custom'},
+                {prop:"zpDiffNum", label:'装配差额',minWidth:120,sortable:'custom'},
+                {prop:"totalDiff", label:'汇总差额',minWidth:120,sortable:'custom'},
             ]
         },
         setSuperQueryJson(){
@@ -128,7 +96,7 @@ export default {
                     prop: 'productsName',
                     label: '产品名称',
                     type: 'input',
-                    render:this.isProductNameSwitch === '1'
+                    render:this.$store.getters.configData.product.enable_productName
                 },
                 {
                     prop: 'productsCode',

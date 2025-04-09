@@ -1208,12 +1208,17 @@ export default {
               weight :item.weight,
               productsId:item.productsId,
               proportion :item.proportion,
+              ratio :item.ratio,
+              deputyUnit :item.deputyUnit,
+              classAttribute :item.classAttribute,
+              calculationDirection :item.calculationDirection,
           mainUnit: item.mainUnit,
           discount :item.discount,
               productName:item.productName,
               productsId:item.productsId,
               productDrawingNo:item.productDrawingNo,
               productCode:item.productCode,
+              qty:1,
             }
           ]
         }
@@ -1369,18 +1374,25 @@ export default {
             outShipmentList: [
             {  
               demandQuantity1 : Number(item.inventoryQuantity) - Number(item.outsourcingQuantity),
+         
+
               processId :item.processId,
               processName :item.processName,
               batchNumber :item.batchNumber,
               weight :item.weight,
               productsId:item.productsId,
               proportion :item.proportion,
+              ratio :item.ratio,
+              deputyUnit :item.deputyUnit,
+              classAttribute :item.classAttribute,
+              calculationDirection :item.calculationDirection,
           mainUnit: item.mainUnit,
           discount :item.discount,
               productName:item.productName,
               productsId:item.productsId,
               productDrawingNo:item.productDrawingNo,
               productCode:item.productCode,
+              qty:1,
             }
             ]
           })
@@ -1479,19 +1491,22 @@ export default {
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
             console.log("this.dataFormTwo.data[index]",this.dataFormTwo.data[index]);
             let obj={
-              processId:item.processId,
+           
+
+            processId :item.processId,
               demandQuantity1:item.demandQuantity1,
-              processName:item.processName,
-              batchNumber:item.batchNumber,
-              weight:item.weight,
-              proportion:item.proportion,
-              discount:item.discount,
+              processName :item.processName,
+              batchNumber :item.batchNumber,
+              weight :item.weight,
               productsId:item.productsId,
-              productDrawingNo: item.productDrawingNo,
-            mainUnit: item.mainUnit,
-            productCode: item.productCode,
-            productName: item.productName,
-            drawingNo: item.productDrawingNo,
+              proportion :item.proportion,
+          mainUnit: item.mainUnit,
+          discount :item.discount,
+              productName:item.productName,
+              productsId:item.productsId,
+              productDrawingNo:item.productDrawingNo,
+              productCode:item.productCode,
+              qty:1,
             }
             
             this.sourceData=[obj]

@@ -1404,10 +1404,9 @@ export default {
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
             excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-          }
-          if (this.btnType == 'add' || this.btnType == 'copy') {
-            obj.lines.push(dep)
-          } 
+          }       
+          obj.lines.push(dep)
+           
         })
         this.btnLoading = true
         let formMethod = null

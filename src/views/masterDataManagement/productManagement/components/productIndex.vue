@@ -1478,7 +1478,7 @@ export default {
     addOrUpdateHandle(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, this.isProjectSwitch)
+        this.$refs.Form.init(id, btnType)
       })
     },
     // 复制

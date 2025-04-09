@@ -1492,9 +1492,10 @@ export default {
     },
 
     addOrUpdateHandle(id, btnType) {
+      console.log(123)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType,)
+        this.$refs.Form.init(id, btnType)
       })
     },
     // 复制

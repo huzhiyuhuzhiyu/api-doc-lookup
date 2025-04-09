@@ -51,7 +51,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.productCode" placeholder="品名规格" clearable
+              <el-input v-model="tableQuery.productCode" placeholder="物料编号" clearable
                 @keyup.enter.native="search('basic', 'search')" />
             </el-form-item>
           </el-col>
@@ -106,8 +106,7 @@
           @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList">
           <el-table-column prop="productCode" label="物料编号" min-width="130" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
-          <el-table-column prop="pairingMode" label="配对方式" width="130" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="130" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="130" />
           <el-table-column prop="shelves" label="库位" width="180" />
           <el-table-column prop="inventoryQuantity" label="库存" width="100" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" width="160" />
@@ -133,7 +132,7 @@
 <script>
 import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { inventoryWarehouseTotalReport } from '@/api/warehouseManagement/inventory'
+import { inventoryWarehouseTotalRoutineReport } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -182,7 +181,7 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
-
+      columnList:['processName'],
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -385,7 +384,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1007',
-        exportName: '角接触库存',
+        exportName: '常规库存',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -427,7 +426,7 @@ export default {
       console.log(this.projectIdData)
       this.projectIdData.forEach((element) => {
         console.log(element)
-        if (element.code === 'BP') {
+        if (element.code === 'AP') {
           obj.projectId = element.id
           this.tableQuery.projectId = element.id
         }
@@ -443,7 +442,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      inventoryWarehouseTotalReport(this.tableQuery)
+      inventoryWarehouseTotalRoutineReport(this.tableQuery)
         .then((res) => {
           console.log(res)
           this.tableData = res.data.page.records
@@ -462,6 +461,7 @@ export default {
         })
     },
     search(type, flag) {
+      console.log(this.tableQuery)
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',

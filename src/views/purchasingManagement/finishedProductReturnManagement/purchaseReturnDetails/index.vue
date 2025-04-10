@@ -106,9 +106,9 @@
               v-if="specialRequireFlag === '1'" />
             <el-table-column prop="material" label="材质" width="130" sortable="custom"
               v-if="materialFlag === '1'"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+            <el-table-column prop="colour" label="颜色" width="130"
               v-if="colourFlag === '1'"></el-table-column>
-            <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" v-if="$store.getters.configData.return.purchase_order" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
@@ -660,25 +660,31 @@ export default {
     handleClick(e) {
       this.activeName = e.name
     },
-    //   sortChange({ prop, order }) {
-    //   const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-    //   this.listQuery.orderItems[0].asc = order !== 'descending'
-    //   this.listQuery.orderItems[0].column = order === null ? "" : newProp
-    //   this.initData()
-    // },
     //排序
     sortChange({ prop, order }) {
       let newProp
       if (
-        prop === 'partnerCode' ||
-        prop === 'partnerName' ||
-        prop === 'createByName' ||
-        prop === 'productCode' ||
-        prop === 'productName' ||
-        prop === 'productDrawingNo'
+        [
+          'orderNo',
+          'partnerName',
+          'partnerCode',
+          'productCode',
+          'productName',
+          'productDrawingNo',
+          'projectName',
+          'productCategoryName',
+          'createByName',
+          'sealingCoverTyping',
+          'accuracyLevel',
+          'vibrationLevel',
+          'oilQuantity',
+          'ordersNo',
+          'documentStatus',
+          'createTime'
+        ].includes(prop)
       ) {
         if (prop === 'createByName') {
-          newProp = 'create_by'
+          newProp = 'createBy'
         } else {
           newProp = prop
         }
@@ -686,7 +692,7 @@ export default {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.orderForm.orderItems[0].asc = order !== 'descending'
-
+      this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     // 关闭新建编辑页面

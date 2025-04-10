@@ -29,7 +29,7 @@
             </el-scrollbar>
         </div>
         <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box" :gutter="16">
+            <el-row class="JNPF-common-search-box" :gutter="16" v-if="renderSearch">
                 <el-form @submit.native.prevent>
 
                     <template v-for="item in domSearchList">
@@ -129,7 +129,7 @@
                     </template>
                 </JNPF-table>
                 <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-                            @pagination="initData"
+                            @pagination="initData"  :page-sizes="pageSizes" 
                 />
             </div>
         </div>
@@ -272,7 +272,20 @@ export default {
          queryRequestMethon: {
             required: true,
         },
-    },
+        pageSizes: {
+            type: Array,
+            default () {
+              return [20, 50, 100, 500]
+            }
+        },
+        renderPage:{
+            type:Boolean,
+            default:true
+        },
+        renderSearch:{
+            type:Boolean,
+            default:true
+        },    },
     data() {
         return {
             lineEdgeLineReport,
@@ -362,10 +375,13 @@ export default {
         sortChange({ prop, order }) {
             let newProp = ''
             console.log(prop)
-            if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode','customerProductNo','orderNum','remainingQuantity','costPrice','salePurchaseDate','orderDate'].includes(prop)) {
-                newProp = prop
-            } else {
-                newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+            if (this.tableItems.some(item => item.prop === prop && item.sortable === 'custom2')) { newProp = prop }
+            else {  
+                if (['productsDrawingNo','productsCode','productsName','warehouseName','partnerName','costPrice','processName','warehouseCode','customerProductNo','orderNum','remainingQuantity','costPrice','salePurchaseDate','orderDate'].includes(prop)) {
+                    newProp = prop
+                } else {
+                    newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+                }
             }
             this.listQuery.orderItems[0].asc = order === 'ascending'
             this.listQuery.orderItems[0].column = order === null ? '' : newProp
@@ -456,11 +472,18 @@ export default {
             this.jnpf.searchDateFormat(this.listQuery, 'orderDate', 'startDate', 'endDate')
             this.jnpf.searchDateFormat(this.listQuery, 'orderDate', 'orderStartDate', 'orderEndDate')
             this.listMethod(this.listQuery).then(res => {
-                this.tableData = res.data.page ? res.data.page.records : res.data.list ? res.data.list : []
+                if (this.renderPage) {
+                    this.tableData = res.data.page ? res.data.page.records : res.data.list ? res.data.list : []
+                    this.total = res.data.page ? res.data.page.total : 0
+                } else {
+                    this.tableData = res.data ? res.data.records : res.data.list ? res.data.list : []
+                    this.total = res.data ? res.data.total : 0
+                }
+                
                 this.totalData = res.data.total || {}
                 // 合计 以后用到放开即可
                 // res.data.total ? this.totalList.push(res.data.total) : ''
-                this.total = res.data.page ? res.data.page.total : 0
+                
                 this.listLoading = false
             }).catch(() => {
                 this.listLoading = false

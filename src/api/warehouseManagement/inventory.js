@@ -138,7 +138,16 @@ export function inventoryWarehouseExport(data) {
   })
 }
 
-// 倍宁- 库存明细汇总报表
+// 倍宁- 常规报表
+export function inventoryWarehouseTotalRoutineReport(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/total/routine/report`,
+    method: 'POST',
+    data
+  })
+}
+
+// 倍宁- 角接触报表
 export function inventoryWarehouseTotalReport(data) {
   return request({
     url: `/api/wms/stock/inventory/line/total/report`,
@@ -146,3 +155,13 @@ export function inventoryWarehouseTotalReport(data) {
     data
   })
 }
+
+// 倍宁- 角接触报表
+export function innerOuterRingReport(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/innerOuterRingReport`,
+    method: 'POST',
+    data
+  })
+}
+

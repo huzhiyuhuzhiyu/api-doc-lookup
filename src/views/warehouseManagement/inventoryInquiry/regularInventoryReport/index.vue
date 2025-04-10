@@ -106,8 +106,7 @@
           @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList">
           <el-table-column prop="productCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
-          <el-table-column prop="pairingMode" label="配对方式" width="130" sortable="custom" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="130" sortable="custom" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="130" sortable="custom" />
           <el-table-column prop="shelves" label="库位" width="180" sortable="custom" />
           <el-table-column prop="inventoryQuantity" label="库存" width="100" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
@@ -133,7 +132,7 @@
 <script>
 import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { inventoryWarehouseTotalReport } from '@/api/warehouseManagement/inventory'
+import { inventoryWarehouseTotalRoutineReport } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -232,13 +231,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'pairingMode',
-          label: '配对方式',
-          type: 'input'
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
+          prop: 'vibrationLevel',
+          label: '振动等级',
           type: 'input'
         },
         {
@@ -251,11 +245,13 @@ export default {
           label: '库存',
           type: 'input'
         },
+
         {
           prop: 'processName',
-          label: '工序名称',
-          type: 'input',
-        }
+          label: '仓库名称',
+          type: 'input'
+        },
+       
       ],
       isProjectSwitch: '',
       // 属性字段  控制属性字段显示隐藏
@@ -374,8 +370,8 @@ export default {
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1244',
-        exportName: '角接触库存',
+        exportType: '1245',
+        exportName: '常规库存',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -386,7 +382,8 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.tableQuery.superQuery = query
+      console.log(query)
+      this.superQuery = query
       this.superQueryVisible = false
       this.search('super','search')
     },
@@ -420,7 +417,7 @@ export default {
       console.log(this.projectIdData)
       this.projectIdData.forEach((element) => {
         console.log(element)
-        if (element.code === 'BP') {
+        if (element.code === 'AP') {
           obj.projectId = element.id
           this.tableQuery.projectId = element.id
         }
@@ -436,7 +433,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      inventoryWarehouseTotalReport(this.tableQuery)
+      inventoryWarehouseTotalRoutineReport(this.tableQuery)
         .then((res) => {
           console.log(res)
           this.tableData = res.data.records
@@ -455,6 +452,7 @@ export default {
         })
     },
     search(type, flag) {
+      console.log(this.tableQuery)
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
@@ -518,6 +516,8 @@ export default {
       ]
       await this.getWarehouseTree(true)
       this.$nextTick(function () {
+        console.log(this.treeData,'忍忍')
+        console.log(this.$refs.treeBox)
         this.$refs.treeBox.setCurrentKey(this.treeData[0].id)
         this.tableQuery.warehouseId = this.treeData[0].id
         this.getShelvesName()

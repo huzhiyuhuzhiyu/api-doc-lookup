@@ -74,7 +74,7 @@ export default {
         { prop: 'taxRate', label: '税率', minWidth: '100' },
         { prop: 'totalAmount', label: '总金额', minWidth: '100' },
         { prop: 'partnerName', label: '供应商名称', minWidth: '180', sortable: 'custom' },
-        { prop: 'ordersNo', label: '采购单号', minWidth: '100' },
+        { prop: 'ordersNo', label: '采购单号', minWidth: '160' },
         { prop: 'receivingStatus', label: '是否处理', minWidth: '100' },
       ],
       searchList: [

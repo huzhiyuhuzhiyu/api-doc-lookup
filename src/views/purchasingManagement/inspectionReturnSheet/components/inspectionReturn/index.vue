@@ -101,6 +101,7 @@ import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
   components: { SuperQuery, PrintBrowse, PrintDialog, },
   mixins: [AbProjectMixin],
@@ -227,6 +228,9 @@ export default {
   watch: {
   },
   computed: {
+    DocumentStatus() {
+      return DocumentStatus
+    }
   },
   async created() {
    
@@ -278,14 +282,12 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (this.processFlag) {
-        if (['productsCode', 'productsName', 'processName', 'processCode'].includes(prop)) {
-          newProp = prop
-        } else {
-          newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-        }
+      if (['productCode', 'productName', 'productDrawingNo', 'productCategoryName','partnerName'].includes(prop)) {
+        newProp = prop
       } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
+     
 
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
@@ -300,17 +302,6 @@ export default {
         .then((res) => {
           this.tableData = res.data.records
           this.tableDataFlag = true
-          if (this.processFlag) {
-            this.tableData.forEach((item) => {
-              if (item.pricingType === 'by_time') {
-                item.price = item.timePrice
-              } else if (item.pricingType === 'by_piece') {
-                item.price = item.unitPrice
-              } else if (item.pricingType === 'no_piece') {
-                item.price = 0
-              }
-            })
-          }
 
           this.total = res.data.total
           this.listLoading = false

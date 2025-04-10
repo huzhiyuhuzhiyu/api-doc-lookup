@@ -1044,7 +1044,7 @@ export default {
           }
 
 
-          if (flag) {
+          if (flag&&this.dataForm.stockFlag) {
             this.$message.error(`第${index + 1}行${msg}`)
             callback(new Error(msg))
           } else {

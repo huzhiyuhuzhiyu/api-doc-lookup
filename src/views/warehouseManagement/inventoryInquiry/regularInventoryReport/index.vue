@@ -89,10 +89,10 @@
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
+            <!-- <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="advancedQueryFun()" />
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -104,12 +104,12 @@
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
           @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList">
-          <el-table-column prop="productCode" label="物料编号" min-width="130" />
+          <el-table-column prop="productCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="130" />
-          <el-table-column prop="shelves" label="库位" width="180" />
+          <el-table-column prop="vibrationLevel" label="振动等级" width="130" sortable="custom" />
+          <el-table-column prop="shelves" label="库位" width="180" sortable="custom" />
           <el-table-column prop="inventoryQuantity" label="库存" width="100" sortable="custom" />
-          <el-table-column prop="processName" label="工序名称" width="160" />
+          <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="initData()" :pageSizes="[50, 100, 500,1000]">
@@ -473,7 +473,7 @@ export default {
       if (flag) this.tableQuery.pageNum = 1
       this.initData()
     },
-    reset() {
+    async reset() {
       if (this.treeData.length > 1) {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
@@ -514,8 +514,10 @@ export default {
           ]
         }
       ]
-      this.getWarehouseTree(true)
+      await this.getWarehouseTree(true)
       this.$nextTick(function () {
+        console.log(this.treeData,'忍忍')
+        console.log(this.$refs.treeBox)
         this.$refs.treeBox.setCurrentKey(this.treeData[0].id)
         this.tableQuery.warehouseId = this.treeData[0].id
         this.getShelvesName()

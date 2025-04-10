@@ -45,84 +45,148 @@ export default {
     methods: {
         setTableItems(){
             this.tableItems = [
-                {prop:"outerDrawingNo", label:"外圈图号",minWidth:160,sortable:'custom'},
-                {prop:"outerMainUnit", label:'外圈单位',minWidth:160,},
-                {prop:"outerYclNum", label:'原材料库',minWidth:140,sortable:'custom'},
-                {prop:"outerWwNum", label:'委外库',minWidth:140,sortable:'custom'},
-                {prop:"outerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom'},
-                {prop:"outerZpNum", label:'装配线边仓',minWidth:140,sortable:'custom'},
-                {prop:"outerDzNum", label:'半成品待装库',minWidth:130,sortable:'custom'},
-                {prop:"outerRclNum", label:'半成品热处理库',minWidth:150,sortable:'custom'},
-                {prop:"outerBfNum", label:'报废',minWidth:120,sortable:'custom'},
-                {prop:"outerTotal", label:'总计',minWidth:120,sortable:'custom'},
-                {prop:"innerDrawingNo", label:'内圈图号',minWidth:120,sortable:'custom'},
-                {prop:"innerMainUnit", label:'内圈单位',minWidth:160,},
-                {prop:"innerYclNum", label:'原材料库',minWidth:140,sortable:'custom'},
-                {prop:"innerWwNum", label:'委外库',minWidth:140,sortable:'custom'},
-                {prop:"innerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom'},
-                {prop:"innerZpNum", label:'装配线边仓',minWidth:140,sortable:'custom'},
-                {prop:"innerDzNum", label:'半成品待装库',minWidth:130,sortable:'custom'},
-                {prop:"innerRclNum", label:'半成品热处理库',minWidth:150,sortable:'custom'},
-                {prop:"innerBfNum", label:'报废',minWidth:120,sortable:'custom'},
-                {prop:"innerTotal", label:'总计',minWidth:120,sortable:'custom'},
-                {prop:"mgDiffNum", label:'磨工差额',minWidth:120,sortable:'custom'},
-                {prop:"zpDiffNum", label:'装配差额',minWidth:120,sortable:'custom'},
-                {prop:"totalDiff", label:'汇总差额',minWidth:120,sortable:'custom'},
+                {prop:"outerDrawingNo", label:"外圈图号",minWidth:160,sortable:'custom2'},
+                {prop:"outerMainUnit", label:'外圈单位',minWidth:120,},
+                {prop:"outerYclNum", label:'原材料库',minWidth:140,sortable:'custom2'},
+                {prop:"outerWwNum", label:'委外库',minWidth:140,sortable:'custom2'},
+                {prop:"outerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom2'},
+                {prop:"outerZpNum", label:'装配线边仓',minWidth:140,sortable:'custom2'},
+                {prop:"outerDzNum", label:'半成品待装库',minWidth:130,sortable:'custom2'},
+                {prop:"outerRclNum", label:'半成品热处理库',minWidth:150,sortable:'custom2'},
+                {prop:"outerBfNum", label:'报废',minWidth:120,sortable:'custom2'},
+                {prop:"outerTotal", label:'总计',minWidth:120,sortable:'custom2'},
+                {prop:"innerDrawingNo", label:'内圈图号',minWidth:160,sortable:'custom2'},
+                {prop:"innerMainUnit", label:'内圈单位',minWidth:120,},
+                {prop:"innerYclNum", label:'原材料库',minWidth:140,sortable:'custom2'},
+                {prop:"innerWwNum", label:'委外库',minWidth:140,sortable:'custom2'},
+                {prop:"innerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom2'},
+                {prop:"innerZpNum", label:'装配线边仓',minWidth:140,sortable:'custom2'},
+                {prop:"innerDzNum", label:'半成品待装库',minWidth:130,sortable:'custom2'},
+                {prop:"innerRclNum", label:'半成品热处理库',minWidth:150,sortable:'custom2'},
+                {prop:"innerBfNum", label:'报废',minWidth:120,sortable:'custom2'},
+                {prop:"innerTotal", label:'总计',minWidth:120,sortable:'custom2'},
+                {prop:"mgDiffNum", label:'磨工差额',minWidth:120,sortable:'custom2'},
+                {prop:"zpDiffNum", label:'装配差额',minWidth:120,sortable:'custom2'},
+                {prop:"totalDiff", label:'汇总差额',minWidth:120,sortable:'custom2'},
             ]
         },
         setSuperQueryJson(){
             this.superQueryJson = [
                 {
-                    prop: 'accountPeriod',
-                    label: '账期',
-                    type: 'month',
-                    valueFormat: 'yyyy-MM',
-                },
-                {
-                    prop: 'balanceState',
-                    label: '结存状态',
-                    type: 'select',
-                    options: [
-                        { label: '未结存', value: 'not_finished' },
-                        { label: '已结存', value: 'finished' }
-                    ]
-                },
-                {
-                    prop: 'drawingNo',
-                    label: '品名规格',
+                    prop: 'outerDrawingNo',
+                    label: '外圈图号',
                     type: 'input',
                 },
                 {
-                    prop: 'productsName',
-                    label: '产品名称',
+                    prop: 'outerMainUnit',
+                    label: '外圈单位',
                     type: 'input',
-                    render:this.$store.getters.configData.product.enable_productName
                 },
                 {
-                    prop: 'productsCode',
-                    label: '产品编码',
+                    prop: 'outerYclNum',
+                    label: '原材料库',
+                    type: 'input',
+                },
+                {
+                    prop: 'outerWwNum',
+                    label: '委外库',
+                    type: 'input',
+                },
+                {
+                    prop: 'outerMgNum',
+                    label: '磨工线边仓',
                     type: 'input'
                 },
                 {
-                    prop: 'processName',
-                    label: '工序名称',
+                    prop: 'outerZpNum',
+                    label: '装配线边仓',
                     type: 'input'
                 },
                 {
-                    prop: 'warehouseName',
-                    label: '仓库名称',
+                    prop: 'outerDzNum',
+                    label: '半成品待装库',
                     type: 'input'
                 },
                 {
-                    prop: 'warehouseCode',
-                    label: '仓库编码',
+                    prop: 'outerRclNum',
+                    label: '半成品热处理库',
                     type: 'input'
                 },
                 {
-                    prop: 'mainUnit',
-                    label: '单位',
+                    prop: 'outerBfNum',
+                    label: '报废',
                     type: 'input'
-                }
+                },
+                {
+                    prop: 'outerTotal',
+                    label: '总计',
+                    type: 'input',
+                },
+                {
+                    prop: 'innerDrawingNo',
+                    label: '内圈图号',
+                    type: 'input',
+                },
+                {
+                    prop: 'innerMainUnit',
+                    label: '内圈单位',
+                    type: 'input',
+                },
+                {
+                    prop: 'innerYclNum',
+                    label: '原材料库',
+                    type: 'input',
+                },
+                {
+                    prop: 'innerWwNum',
+                    label: '委外库',
+                    type: 'input',
+                },
+                {
+                    prop: 'innerMgNum',
+                    label: '磨工线边仓',
+                    type: 'input'
+                },
+                {
+                    prop: 'innerZpNum',
+                    label: '装配线边仓',
+                    type: 'input'
+                },
+                {
+                    prop: 'innerDzNum',
+                    label: '半成品待装库',
+                    type: 'input'
+                },
+                {
+                    prop: 'innerRclNum',
+                    label: '半成品热处理库',
+                    type: 'input'
+                },
+                {
+                    prop: 'innerBfNum',
+                    label: '报废',
+                    type: 'input'
+                },
+                {
+                    prop: 'innerTotal',
+                    label: '总计',
+                    type: 'input',
+                },
+                {
+                    prop: 'mgDiffNum',
+                    label: '磨工差额',
+                    type: 'input'
+                },
+                {
+                    prop: 'zpDiffNum',
+                    label: '装配差额',
+                    type: 'input'
+                },
+                {
+                    prop: 'totalDiff',
+                    label: '汇总差额',
+                    type: 'input'
+                },
             ]
         },
         setSearchList(){
@@ -134,7 +198,8 @@ export default {
                     prop: 'drawingNo',
                     symbol: 'like',
                     searchType: 1
-                },{
+                },
+                {
                     fieldValue: '',
                     field: 'productsName',
                     label: '产品名称',

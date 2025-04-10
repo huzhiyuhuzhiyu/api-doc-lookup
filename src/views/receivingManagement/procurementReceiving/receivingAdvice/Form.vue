@@ -1994,11 +1994,11 @@ export default {
           }
           if (item.classType == 'inner_ring_blank' || item.classType == 'outer_ring_blank') {
             if (this.isProportionSwitch === '1') {
-              if (!item.weight || !item.proportion || !item.discount) {
+              if (!item.weight) {
                 submitFlag = false
                 this.btnLoading = false
                 this.$message({
-                  message: '请填写第' + (index + 1) + '行产品的重量、比重、折扣',
+                  message: '请填写第' + (index + 1) + '行产品的重量',
                   type: 'error',
                   duration: 1500
                 })

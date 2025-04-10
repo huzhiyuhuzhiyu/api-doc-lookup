@@ -83,10 +83,11 @@
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-            <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
             <el-table-column prop="weight" label="重量" min-width="120" />
           <el-table-column prop="proportion" label="比重" min-width="120" />
           <el-table-column prop="discount" label="折扣" min-width="120" />
+            <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
+     
             <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" width="130" sortable="custom"
               v-if="standardValueFlag == 1"></el-table-column>

@@ -154,6 +154,9 @@
                       v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
+                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row)">
+                      拆分
+                    </el-dropdown-item>
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >
                       生成二维码
                     </el-dropdown-item>
@@ -197,6 +200,38 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="拆分" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="splitVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="splitForm" :model="splitForm" :rules="splitDataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="生产任务单号" prop="orderNo">
+              <el-input v-model="splitForm.orderNo" placeholder="生产任务单号" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="品名规格" prop="productDrawingNo">
+              <el-input v-model="splitForm.productDrawingNo" placeholder="品名规格" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="可拆分数量" prop="productionQuantity">
+              <el-input v-model="splitForm.canSplitQuantity" placeholder="原生产数" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="拆分数量" prop="appendQuantity">
+              <el-input v-model="splitForm.splitQuantity" placeholder="追加数量" clearable />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="splitVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="splitSubmitFun()">
           提交</el-button>
       </span>
     </el-dialog>
@@ -264,7 +299,7 @@
   </div>
 </template>
 <script>
-import { ordershengchanList, addOrderNum, detailordershengchan } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, detailordershengchan, splitOrderNum} from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
@@ -323,6 +358,20 @@ export default {
       },
       reworkVisible: false,
       addOrderVisible: false,
+      // 拆分
+      splitVisible: false, 
+      splitForm: {
+        splitQuantity: "",
+        canSplitQuantity: "",
+        orderNo: ""
+      },
+      splitDataRule: {
+        splitQuantity: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["追加数量不能为空", (errMsg, index) => { this.$message.error(`追加数量：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' }
+        ],
+      },
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
       superQueryVisible: false,
       btnLoading: false,
@@ -790,6 +839,30 @@ export default {
     addition1(data) {
       this.form = data
       this.addOrderVisible = true
+    },
+    // 拆分
+    splitHander(data) {
+      this.splitForm = {...data}
+      this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity)
+      this.splitVisible = true
+    },
+    // 拆分数量 提交
+    splitSubmitFun() {
+      this.$refs['splitForm'].validate((valid) => {
+        if (valid) {
+          console.log(this.splitForm);
+          this.btnLoading = true
+          splitOrderNum(this.splitForm).then(res => {
+            this.splitVisible = false
+            this.btnLoading = false
+            this.$message.success("拆分成功")
+            this.search('basic')
+          }).catch(error => {
+            this.splitVisible = false
+            this.btnLoading = false
+          })
+        }
+      })
     },
     // 新建任务
     addTaskFun() {

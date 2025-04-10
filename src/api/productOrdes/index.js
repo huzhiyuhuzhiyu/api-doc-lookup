@@ -304,3 +304,13 @@ export function confirmProductionLineOutputData(data) {
     data
   })
 }
+
+// 生产订单-拆单
+
+export function splitOrderNum(data) {
+  return request({
+    url: `/api/mrp/prod/order/split`,
+    method: 'POST',
+    data
+  })
+}

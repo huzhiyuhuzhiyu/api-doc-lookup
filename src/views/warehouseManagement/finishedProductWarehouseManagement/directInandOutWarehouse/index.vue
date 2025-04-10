@@ -647,7 +647,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click=" productVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading===true" @click="submitAllProduct()">
+        <el-button type="primary" :loading="seleBtnLoading" :disabled="seleBtnLoading===true" @click="submitAllProduct()">
           确定</el-button>
       </span>
     </el-dialog>
@@ -714,6 +714,7 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
+      seleBtnLoading:false,
       customStyleData:0,
       columnList: [],
       datafilelist: [],
@@ -1510,8 +1511,7 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
        
       this.productVisible = false
-      let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      console.log("arr", arr,this.btnLoading);
+      let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr)) 
       arr.forEach(item => {
         if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
           this.$set(item, 'discount', '')
@@ -1601,8 +1601,8 @@ export default {
         
       });
       this.productData=[...this.productData,...arr]
-      this.btnLoading=true
-      if (this.btnLoading) return; 
+      this.seleBtnLoading=true
+      if (this.seleBtnLoading) return  ; 
     },
     columnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);

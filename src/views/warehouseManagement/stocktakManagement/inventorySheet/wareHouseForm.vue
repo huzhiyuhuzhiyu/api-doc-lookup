@@ -18,7 +18,7 @@
 
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search(tableQuery.warehouseId)">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -43,6 +43,8 @@
               </template>
             </el-table-column>
           </JNPF-table>
+          <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
+          @pagination="initData(cpId)" />
         </div>
       </div>
     </div>
@@ -59,6 +61,8 @@ export default {
       listLoading: false,
       tableQuery: {
         code: '',
+        pageNum: 1,
+        pageSize: 20,
         orderItems: [
           {
             asc: true,
@@ -81,7 +85,7 @@ export default {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
-      this.initData()
+      this.initData(this.cpId)
     },
     initData(id) {
       this.listLoading = true
@@ -112,8 +116,8 @@ export default {
 
 
 
-    search() {
-      this.initData()
+    search(id) {
+      this.initData(id)
     },
     reset() {
       this.form = {

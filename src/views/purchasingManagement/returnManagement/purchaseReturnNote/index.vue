@@ -396,7 +396,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+      if (['partnerName', 'partnerCode', 'shipperName', 'createByName'].includes(prop)) {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

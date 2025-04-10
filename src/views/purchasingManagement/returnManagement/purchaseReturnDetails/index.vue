@@ -95,7 +95,7 @@
             <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" /> -->
-            <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" v-if="$store.getters.configData.return.purchase_order" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
@@ -609,22 +609,22 @@ export default {
     handleClick(e) {
       this.activeName = e.name
     },
-    //   sortChange({ prop, order }) {
-    //   const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-    //   this.listQuery.orderItems[0].asc = order !== 'descending'
-    //   this.listQuery.orderItems[0].column = order === null ? "" : newProp
-    //   this.initData()
-    // },
     //排序
     sortChange({ prop, order }) {
       let newProp
       if (
-        prop === 'partnerCode' ||
-        prop === 'partnerName' ||
-        prop === 'createByName' ||
-        prop === 'productCode' ||
-        prop === 'productName' ||
-        prop === 'productDrawingNo'
+        [
+          'orderNo',
+          'partnerName',
+          'partnerCode',
+          'productCode',
+          'productName',
+          'productDrawingNo',
+          'projectName',
+          'productCategoryName',
+          'ordersNo',
+          'createByName'
+        ].includes(prop)
       ) {
         if (prop === 'createByName') {
           newProp = 'create_by'
@@ -635,6 +635,7 @@ export default {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.orderForm.orderItems[0].asc = order !== 'descending'
+      this.orderForm.orderItems[0].column = order === null ? '' : newProp
 
       this.initData()
     },

@@ -1406,7 +1406,7 @@ export default {
       if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.productVisible = true
-    this.btnLoading=false
+    this.seleBtnLoading=false
       this.orderForm.productName = ""
       this.listQuery.productName = ""
       this.listQuery.pageNum = 1

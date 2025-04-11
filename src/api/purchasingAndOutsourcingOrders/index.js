@@ -204,3 +204,12 @@ export function insertOutOrder(data) {
       data
     })
   }
+  // 批量撤回收货单
+  
+  export const batchWithdrawalOrder = (data) => {
+    return request({
+      url: `/api/erp/purPurchaseReceiptReturnGoods/revoke`,
+      method: 'post',
+      data
+    })
+  }

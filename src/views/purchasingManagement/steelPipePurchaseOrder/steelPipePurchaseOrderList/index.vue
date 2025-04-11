@@ -46,6 +46,7 @@
           <div class="JNPF-common-head">
             <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
             <div>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle('','add')">新建订单</el-button>
               <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
@@ -190,7 +191,7 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getQueryConfirm } from '@/utils';
 import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
-  name: 'purchaseOrder',
+  name: 'steelPipePurchaseOrderList',
   components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
   data() {
     return {
@@ -654,7 +655,7 @@ export default {
     addOrUpdateHandle(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init(id, type)
+        this.$refs.procureForm.init(id,'', type)
       })
     },
     // 导出订货单

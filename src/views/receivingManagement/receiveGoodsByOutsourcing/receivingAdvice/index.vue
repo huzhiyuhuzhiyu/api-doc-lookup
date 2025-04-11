@@ -49,6 +49,8 @@
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
+                <el-button  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+                  icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
               </topOpts>
             </div>
             <div class="JNPF-common-head-right">
@@ -67,7 +69,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange">
+            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="通知单单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -133,7 +135,8 @@
 </template>
 
 <script>
-import { purPurchaseReceiptReturnGoodsList } from '@/api/purchasingAndOutsourcingOrders'
+import { purPurchaseReceiptReturnGoodsList,batchWithdrawalOrder
+} from '@/api/purchasingAndOutsourcingOrders'
 import { deletepurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -337,9 +340,25 @@ export default {
   },
 
   methods: {
+    withdrawFun() {
+      if (!this.selectArr.length) return this.$message.error("请选择您要撤回的数据")
+      const idArray = this.selectArr.map(item => item.id); 
+      this.$confirm("您确定撤回所选择的数据吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        batchWithdrawalOrder(idArray).then(res => {
+          this.$message.success('撤回成功')
+          this.initData()
+        })
+      }).catch(() => {
+
+      })
+
+    },
     //禁用复选框
     checkSelectable(row) {
-      if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false
+      if (row.documentStatus == 'draft' ) return false
+ 
       return true
     },
     // 选中得数据

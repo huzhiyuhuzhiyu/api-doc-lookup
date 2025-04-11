@@ -45,8 +45,8 @@ export default {
     methods: {
         setTableItems(){
             this.tableItems = [
-                {prop:"outerDrawingNo", label:"外圈图号",minWidth:160,sortable:'custom2'},
-                {prop:"outerMainUnit", label:'外圈单位',minWidth:120,},
+                {prop:"outerDrawingNo", label:"物料编号",minWidth:160,sortable:'custom2'},
+                {prop:"outerMainUnit", label:'单位',minWidth:120,},
                 {prop:"outerYclNum", label:'原材料库',minWidth:140,sortable:'custom2'},
                 {prop:"outerWwNum", label:'委外库',minWidth:140,sortable:'custom2'},
                 {prop:"outerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom2'},
@@ -55,8 +55,8 @@ export default {
                 {prop:"outerRclNum", label:'半成品热处理库',minWidth:150,sortable:'custom2'},
                 {prop:"outerBfNum", label:'报废',minWidth:120,sortable:'custom2'},
                 {prop:"outerTotal", label:'总计',minWidth:120,sortable:'custom2'},
-                {prop:"innerDrawingNo", label:'内圈图号',minWidth:160,sortable:'custom2'},
-                {prop:"innerMainUnit", label:'内圈单位',minWidth:120,},
+                {prop:"innerDrawingNo", label:'物料编号',minWidth:160,sortable:'custom2'},
+                {prop:"innerMainUnit", label:'单位',minWidth:120,},
                 {prop:"innerYclNum", label:'原材料库',minWidth:140,sortable:'custom2'},
                 {prop:"innerWwNum", label:'委外库',minWidth:140,sortable:'custom2'},
                 {prop:"innerMgNum", label:'磨工线边仓',minWidth:140,sortable:'custom2'},
@@ -74,12 +74,12 @@ export default {
             this.superQueryJson = [
                 {
                     prop: 'outerDrawingNo',
-                    label: '外圈图号',
+                    label: '物料编号',
                     type: 'input',
                 },
                 {
                     prop: 'outerMainUnit',
-                    label: '外圈单位',
+                    label: '单位',
                     type: 'input',
                 },
                 {
@@ -124,12 +124,12 @@ export default {
                 },
                 {
                     prop: 'innerDrawingNo',
-                    label: '内圈图号',
+                    label: '物料编号',
                     type: 'input',
                 },
                 {
                     prop: 'innerMainUnit',
-                    label: '内圈单位',
+                    label: '单位',
                     type: 'input',
                 },
                 {

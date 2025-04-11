@@ -303,7 +303,7 @@ export default {
         orderItems: [
           {
             asc: true,
-            column: ''
+            column: 'name'
           }
         ],
         pageNum: 1,
@@ -331,10 +331,6 @@ export default {
         }
       });
 
-      // 排序规则：字母按 A-Za-z 顺序，中文按原字符串排序
-      newData.sort((a, b) => {
-        return a.name.localeCompare(b.name);
-      });
       this.shelvesData = newData
       console.log(this.shelvesData,'this.shelvesData3333')
       if (this.shelvesData.length) {

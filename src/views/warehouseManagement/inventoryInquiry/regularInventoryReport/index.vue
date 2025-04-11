@@ -299,7 +299,7 @@ export default {
         orderItems: [
           {
             asc: true,
-            column: ''
+            column: 'name'
           }
         ],
         pageNum: 1,

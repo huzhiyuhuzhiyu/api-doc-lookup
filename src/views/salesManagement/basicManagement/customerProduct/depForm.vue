@@ -22,7 +22,7 @@
 
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="客户" prop="cooperativePartnerIdText">
-                        <ComSelect-page key="partner" ref="ComSelect-page" :value="dataForm.cooperativePartnerIdText" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType !== 'add'" />
+                        <ComSelect-page key="partner" ref="ComSelect-page" :value="dataForm.cooperativePartnerIdText" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType == 'look'" />
                       </el-form-item>
                     </el-col>
 
@@ -55,7 +55,7 @@
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
-                          <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType !== 'add'">
+                          <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType == 'look'">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -64,7 +64,7 @@
                   
                       <template slot-scope="scope">
                         <el-form-item  >
-                          <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType !== 'add'">
+                          <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType == 'look'">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -85,7 +85,7 @@
                         <span class="required">*</span> 品名规格
                       </template>
                       <template slot-scope="scope">
-                        <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
+                        <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType == 'look'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
 
                       </template>
                       <!-- @select="handleSelect(scope.row, scope.$index, $event)" -->
@@ -346,7 +346,7 @@
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
-                      <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType !== 'add'">
+                      <el-input :title="scope.row.customerProductNo" v-model="scope.row.customerProductNo" placeholder="请输入" :disabled="btnType == 'look'">
                       </el-input>
                     </el-form-item>
                   </template>
@@ -355,7 +355,7 @@
                   
                   <template slot-scope="scope">
                     <el-form-item  >
-                      <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType !== 'add'">
+                      <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType == 'look'">
                       </el-input>
                     </el-form-item>
                   </template>
@@ -368,7 +368,7 @@
                     <span class="required">*</span> 品名规格
                   </template>
                   <template slot-scope="scope">
-                    <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType !== 'add'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
+                    <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType == 'look'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
 
                     <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                             style="width: 100%;"  /> -->
@@ -1908,12 +1908,12 @@ export default {
       return `${year}-${month}-${day}`;  
     },
     init(row, btnType, approvalFlag) {
+      console.log("btntyoe",btnType);
       this.formLoading = true
       this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName,taxRate:row.taxRate*1 } || '' : ''
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
-      this.getProject()
-      this.row && (this.dataForm = this.row)
+      this.getProject() 
       this.approvalFlag = approvalFlag
       this.btnType = btnType
 
@@ -1926,6 +1926,9 @@ export default {
 
       } else {
         getcooperativeproductInfo(row.id).then(res => {
+          this.dataForm.cooperativePartnerId=res.data.cooperativePartnerId
+          this.dataForm.cooperativePartnerIdText=res.data.partnerName
+          this.dataForm.id=res.data.id
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push(
@@ -2066,9 +2069,9 @@ export default {
           partnerType: "customer",
         }
         console.log(obj, '参数');
-        let queryBody = this.btnType === 'add' ? obj : editObj
+        let queryBody = (this.btnType === 'add'||this.btnType=='copy') ? obj : editObj
         // return
-        const formMethod = this.btnType === 'add' ? addPartnerOrProductData : updatePartnerOrProductData
+        const formMethod =  (this.btnType === 'add'||this.btnType=='copy') ? addPartnerOrProductData : updatePartnerOrProductData
         formMethod(queryBody).then(res => {
           let msg = "";
           if (value == "draft") {

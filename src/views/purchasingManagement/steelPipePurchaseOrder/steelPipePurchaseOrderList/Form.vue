@@ -99,7 +99,7 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <div>
+                  <div class="table"> 
                     <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                       <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">
                         选择产品
@@ -1577,7 +1577,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 530
+      let maxHeight = mainHeight1 - 560
       console.log(maxHeight, 'maxHeight')
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放
@@ -1749,8 +1749,8 @@ export default {
 /* ::v-deep .el-table--small .el-table__cell {
   padding: 0 10px !important;
 } */
-/* ::v-deep .el-form-item--mini.el-form-item,
+.table ::v-deep 
 .el-form-item--small.el-form-item {
   margin-bottom: 0;
-} */
+}
 </style>

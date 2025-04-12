@@ -208,23 +208,31 @@
       <el-row :gutter="20">
         <el-form ref="splitForm" :model="splitForm" :rules="splitDataRule" label-width="120px" label-position="left">
           <el-col :span="24">
-            <el-form-item label="生产任务单号" prop="orderNo">
+            <el-form-item label="生产任务单号">
               <el-input v-model="splitForm.orderNo" placeholder="生产任务单号" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="品名规格" prop="productDrawingNo">
+            <el-form-item label="品名规格">
               <el-input v-model="splitForm.productDrawingNo" placeholder="品名规格" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="可拆分数量" prop="productionQuantity">
+            <el-form-item label="可拆分数量">
               <el-input v-model="splitForm.canSplitQuantity" placeholder="原生产数" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="拆分数量" prop="appendQuantity">
+            <el-form-item label="拆分数量" prop="splitQuantity">
               <el-input v-model="splitForm.splitQuantity" placeholder="追加数量" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="工艺路线" prop="routingId">
+              <el-select v-model="splitForm.routingId" placeholder="工艺路线" @change="routingChange">
+                <el-option :key="item.id" :label="item.name" :value="item.id"
+                      v-for="item in routingOptions" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-form>
@@ -321,6 +329,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
+import { getProcessList,detailProcess } from '@/api/basicData/processSettingss'
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
@@ -363,13 +372,17 @@ export default {
       splitForm: {
         splitQuantity: "",
         canSplitQuantity: "",
-        orderNo: ""
+        orderNo: "",
+        routingId:"",
       },
+      routingOptions:[],
       splitDataRule: {
         splitQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["追加数量不能为空", (errMsg, index) => { this.$message.error(`追加数量：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
-          { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' }
+          { required: true, message: '请输入拆分数量', trigger: 'blur' },
+          { validator: this.calcValidate(), trigger: 'blur' },
+        ],
+        routingId: [
+          { required: true, message: '请选择工艺路线', trigger: 'change' },
         ],
       },
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
@@ -544,6 +557,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductionLineListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.getProcessList()
     this.advancedQueryFuns()
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(3, 0, {
@@ -561,6 +575,38 @@ export default {
   mounted() {
   },
   methods: {
+     //数量验证
+    calcValidate() {
+      console.log(12332222)
+      return (rule, value, callback) => {
+        console.log(value, 'p')
+        if (!value || value == 0) {
+          callback('请输入拆分数量')
+        } else {
+          let flag = false
+          let num_1 = Number(this.splitForm.splitQuantity)
+          let num_2 = Number(this.splitForm.canSplitQuantity)
+
+          if (!(num_1 <= num_2)) {
+            flag = true
+          }
+          if (flag) {
+            callback(new Error('拆分数量超过可拆分数量'))
+          } else {
+            callback()
+          }
+        }
+      }
+    },
+    getProcessList(){
+      const obj = {
+        pageNum: 1,
+        pageSize: -1,
+      }
+      getProcessList(obj).then(res=>{
+        this.routingOptions = res.data.records
+      })
+    },
     // 生成二维码
     generateQRcode(row){
       if (!row.orderNo) {
@@ -843,8 +889,26 @@ export default {
     // 拆分
     splitHander(data) {
       this.splitForm = {...data}
-      this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity)
+      this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
       this.splitVisible = true
+      this.$nextTick(() => {
+        this.$refs.splitForm.resetFields();
+      });
+    },
+    routingChange(val){
+      detailProcess(val).then(res=>{
+        for (let index = 0; index < res.data.routingLineList.length; index++) {
+          const item = res.data.routingLineList[index];
+          if (!item.routingProResList.length) {
+            this.$message({
+              message: "工艺路线第" + (index + 1) + "行班组、人员、设备需要配置",
+              type: "error",
+            });
+            this.splitForm.routingId = ''
+            break;
+          }
+        }
+      })
     },
     // 拆分数量 提交
     splitSubmitFun() {

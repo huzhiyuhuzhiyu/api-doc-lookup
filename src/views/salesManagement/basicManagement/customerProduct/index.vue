@@ -133,6 +133,9 @@
                         <el-dropdown-item @click.native="addSupplier(scope.row, 'look')">
                           查看详情
                         </el-dropdown-item>
+                                 <el-dropdown-item @click.native="addSupplier(scope.row, 'copy')">
+                          复制
+                        </el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </template>

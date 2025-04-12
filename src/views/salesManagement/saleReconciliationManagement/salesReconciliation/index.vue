@@ -72,6 +72,8 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <el-table-column prop="orderNo" label="出入库单号" min-width="200" sortable="custom" />
+          <el-table-column prop="saleOrderNo" label="销售订单号" min-width="200" sortable="custom" />
+          <el-table-column prop="saleNoticeNo" label="销售通知单号" min-width="200" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" min-width="200" sortable="custom" />
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
@@ -227,6 +229,16 @@ export default {
         {
           prop: 'orderNo',
           label: "出入库单号",
+          type: 'input'
+        },
+        {
+          prop: 'saleOrderNo',
+          label: "销售订单号",
+          type: 'input'
+        },
+        {
+          prop: 'saleNoticeNo',
+          label: "销售通知单号",
           type: 'input'
         },
         {

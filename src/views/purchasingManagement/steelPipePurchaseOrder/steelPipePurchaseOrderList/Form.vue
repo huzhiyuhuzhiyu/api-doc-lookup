@@ -1500,6 +1500,7 @@ export default {
         })
         this.dataForm.attachmentList = this.datafilelist
         this.dataForm.purchaseOrderLines = dataTwo
+        this.dataForm.classAttribute = 'out'
         let _data = {
           ...this.dataForm,
           flowData: this.flowData
@@ -1509,7 +1510,14 @@ export default {
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'
-
+            this.$message({
+                message: res.msg,
+                type: 'success',
+                duration: 1000,
+                onClose: () => {
+                  this.btnLoading = false
+                }
+              })
             if (printType) {
 
               this.enCode = 'p006'
@@ -1519,16 +1527,6 @@ export default {
               this.printVisible = true
               this.$nextTick(() => {
                 this.$refs.printTemplate.init(this.enCode)
-              })
-            } else {
-              this.$message({
-                message: res.msg,
-                type: 'success',
-                duration: 1000,
-                onClose: () => {
-                  this.btnLoading = false
-                  this.$emit('close', true)
-                }
               })
             }
           })
@@ -1556,6 +1554,7 @@ export default {
       this.btnLoading =false
       this.printVisible = false
       this.$message.warning("取消打印")
+      this.$emit('close', true)
     },
     closePrintPage() {
       this.$emit('close', true)

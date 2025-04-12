@@ -64,6 +64,36 @@
                           <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" />
                         </el-form-item>
                       </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品名称" prop="outProductName" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.outProductName" placeholder="选择委外产品名称" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品编码" prop="outProductCode" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.outProductCode" placeholder="选择委外产品编码" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购单价" prop="buyBackPrice" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.buyBackPrice" placeholder="选择回购单价" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购税率" prop="buyBackRate" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="成材率" prop="yieldRate" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.yieldRate" placeholder="选择成材率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="中转仓库" prop="warehouseName" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.warehouseName" placeholder="选择中转仓库" disabled  />
+                        </el-form-item>
+                      </el-col>
                     </el-form>
                   </el-row>
                 </el-collapse-item>
@@ -471,7 +501,6 @@ import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
-import { getOrderFiledMap } from '@/api/basicData/index'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
@@ -626,6 +655,14 @@ export default {
         outPartnerName:"",
         outPartnerCode:"",
         outPartnerId:"",
+        outProductCode:"",
+        outProductName:"",
+        productDrawingNo:"",
+        buyBackPrice:"",
+        buyBackRate:"",
+        warehouseName:"",
+        warehouseId:"",
+        outProductId:"",
       },
       dataPickerOptions2: {
         // 日期区间选择器通用选项
@@ -806,7 +843,6 @@ export default {
     }
   },
   async created() {
-    await this.getOrderFiledMap()
     await this.getProjectList()
     await this.switchStyleheight()
    
@@ -880,6 +916,20 @@ export default {
   methods: {
     // 选择外协供应商及关联产品
     changeOutPartner(data){
+      console.log("data",data);
+      this.dataForm.outPartnerId=data.outPartnerId
+      this.dataForm.outPartnerName=data.outPartnerName
+       this.dataForm.outPartnerCode=data.outPartnerCode
+       this.dataForm.outPartnerId=data.outPartnerId
+       this.dataForm.outProductCode=data.outProductCode
+       this.dataForm.outProductName=data.outProductName
+       this.dataForm.productDrawingNo=data.productDrawingNo
+       this.dataForm.buyBackPrice=data.buyBackPrice
+       this.dataForm.buyBackRate=data.buyBackRate
+       this.dataForm.warehouseName=data.warehouseName
+       this.dataForm.warehouseId=data.warehouseId
+       this.dataForm.outProductId=data.outProductId
+       this.dataForm.yieldRate=data.yieldRate
 
     },
     closeFun(){
@@ -891,21 +941,7 @@ export default {
         this.$refs.outForm.init()
       })
     },
-    getOrderFiledMap() {
-      getOrderFiledMap('purchase').then((res) => {
-        this.standardValueFlag = res.data.standardValue
-        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-        this.accuracyLevelFlag = res.data.accuracyLevel
-        this.vibrationLevelFlag = res.data.vibrationLevel
-        this.oilFlag = res.data.oil
-        this.oilQuantityFlag = res.data.oilQuantity
-        this.clearanceFlag = res.data.clearance
-        this.packagingMethodFlag = res.data.packagingMethod
-        this.specialRequireFlag = res.data.specialRequire
-        this.materialFlag = res.data.material
-        this.colourFlag = res.data.colour
-      })
-    },
+
     deliveryDateChange(val) {
       this.dataFormTwo.data.forEach((item) => {
         if (!item.deliveryDate) {
@@ -1541,7 +1577,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 400
+      let maxHeight = mainHeight1 - 530
       console.log(maxHeight, 'maxHeight')
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放

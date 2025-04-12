@@ -592,6 +592,7 @@ export default {
         this.listQuery.deliveryStartDate = ''
         this.listQuery.deliveryEndDate = ''
       }
+      this.listQuery.classAttribute='out'
       purchaseOrderList(this.listQuery)
         .then((res) => {
           console.log(res, '采购订单列表')

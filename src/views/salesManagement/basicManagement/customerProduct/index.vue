@@ -302,7 +302,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 export default {
-  name: 'PartnerProduct',
+  name: 'customerProduct',
   mixins: [getProjectList],
 
   components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm, DepForm },

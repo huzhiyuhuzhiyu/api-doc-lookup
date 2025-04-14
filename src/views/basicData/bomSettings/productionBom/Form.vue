@@ -177,7 +177,8 @@ export default {
           type: 'select',
           options: [
             { label: '按生产订单领料', value: 'production_order' },
-            { label: '按工单领料', value: 'dispatch_list' }
+            { label: '按工单领料', value: 'dispatch_list' },
+            { label: '无需领料', value: 'none' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 12,
@@ -296,7 +297,7 @@ export default {
           options: [
             { label: '生成领料单', value: 'picking' },
             { label: '自动扣减料', value: 'auto' },
-            { label: '都不是', value: 'none' }
+            { label: '不扣减料', value: 'none' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160

@@ -654,6 +654,7 @@ export default {
 
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle(id, type) {
+      console.log("id",id,type);
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.procureForm.init(id,'', type)

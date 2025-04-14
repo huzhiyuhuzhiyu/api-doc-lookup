@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div class="JNPF-common-page-header">
-          <el-page-header @back="goBack" content="生成采购订单" />
+          <el-page-header @back="goBack" :content="purchOrderTitle" />
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -516,6 +516,7 @@ export default {
 
   data() {
     return {
+      purchOrderTitle:"",
       outVisible:false,
       printVisible: false,
       printBrowseVisible: false,
@@ -1329,12 +1330,16 @@ export default {
       this.$emit('close')
     },
     init(id, classAttributeFlag, type) {
+      console.log("type",type);
+      console.log("id",id);
       this.formLoading = true
       this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
       this.purchasingType = type
       console.log(this.purchasingType, 'this.purchasingType')
-
-
+      if(type=='look') this.purchOrderTitle="查看采购订单"
+      if(type=='add') this.purchOrderTitle="新建采购订单"
+      if(type=='edit') this.purchOrderTitle="编辑采购订单"
+ 
       this.dataForm.classAttribute = classAttributeFlag
       this.ProductListRequestObj = {
         classAttribute: this.dataForm.classAttribute,

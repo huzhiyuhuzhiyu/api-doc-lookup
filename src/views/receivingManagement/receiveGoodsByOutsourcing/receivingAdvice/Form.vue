@@ -1534,6 +1534,7 @@ export default {
             this.dataFormTwo.productData.forEach((item) => {
               console.log(item, 'item')
               item.drawingNo = item.productDrawingNo
+              this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
             })
             if (this.btnType === 'edit') {
               this.getBusInfo()

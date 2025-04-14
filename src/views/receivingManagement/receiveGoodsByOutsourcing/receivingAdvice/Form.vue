@@ -12,13 +12,13 @@
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
-          <el-button v-if="mergeFlag ==1" type="success" :loading="btnLoading" @click="handleConfirm('draft')">
+          <el-button v-if="mergeFlag !==1" type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿
           </el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
           </el-button>
-          <el-button type="primary" v-if="mergeFlag ==1"  :loading="btnLoading" @click="handleConfirm('submit', 'print')">
+          <el-button type="primary" v-if="mergeFlag !==1"  :loading="btnLoading" @click="handleConfirm('submit', 'print')">
             提交并打印
           </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -1715,6 +1715,7 @@ export default {
             ordersId: item.ordersId,
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
+            purchaseOrderLineIds:this.mergeFlag===1?item.ids:'',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
             ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
             // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1740,6 +1741,7 @@ export default {
             ordersId: item.ordersId,
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
+            purchaseOrderLineIds:this.mergeFlag===1?item.ids:'',
             purchaseOrderId: item.purchaseOrderId,
             purchaseQuantity: item.purchaseQuantity,
             productsId: item.productsId ? item.productsId : '',
@@ -1768,6 +1770,7 @@ export default {
         this.btnLoading = true
         let formMethod = null
         if(this.mergeFlag==1){
+          formMethod = mergeOutOrderAdd
 
         }else{
 

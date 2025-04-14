@@ -109,7 +109,7 @@
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right" v-if="orderForm.mergeFlag!=1">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -565,12 +565,14 @@ export default {
     },
     mergeOrdrFun(){
       this.orderForm.mergeFlag=1
-      this.dataFormSubmit()
+    this.$nextTick(() => { this.$refs.dataTable.doLayout() })
+    this.dataFormSubmit()
     },
     reset() {
      
       this.orderForm.mergeFlag=0
-      this.$nextTick(()=>{
+    this.$nextTick(() => { this.$refs.dataTable.doLayout() })
+    this.$nextTick(()=>{
         this.$refs['dataTable'].$refs.JNPFTable.clearSort()
       }) // 清除排序箭头高亮
       // 默认设置为近3天

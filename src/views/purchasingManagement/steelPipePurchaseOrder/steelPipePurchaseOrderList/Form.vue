@@ -59,6 +59,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+            
                       <el-col  :span="6" >
                         <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
                           <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
@@ -142,7 +143,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
                               :rules="productRules.deliveryDate">
-                              <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd" disabled
+                              <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd" :disabled="btnType === 'look'?true:false"
                                 style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
                             </el-form-item>
                           </template>
@@ -197,7 +198,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                               :rules="productRules.purchaseQuantity">
-                              <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"  disabled
+                              <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"  :disabled="btnType === 'look'?true:false"
                                 v-model="scope.row.purchaseQuantity" placeholder="数量"></el-input>
                             </el-form-item>
                           </template>
@@ -231,7 +232,7 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price" >
-                              <el-input v-model="scope.row.price" placeholder="单价(含税)" disabled/>
+                              <el-input v-model="scope.row.price" placeholder="单价(含税)" :disabled="btnType === 'look'?true:false"/>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -256,7 +257,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'"
                               :rules="productRules.taxRate">
-                              <el-select v-model="scope.row.taxRate" placeholder="请选择" disabled>
+                              <el-select v-model="scope.row.taxRate" placeholder="请选择" :disabled="btnType === 'look'?true:false">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                   :value="item.taxRate"></el-option>
                               </el-select>
@@ -1422,6 +1423,17 @@ export default {
               })
             }
             this.dataForm = res.data
+            this.dataForm.outType=res.data.relatedOut.outType
+            this.dataForm.outPartnerName=res.data.relatedOut.outPartnerName
+            this.dataForm.outPartnerId=res.data.relatedOut.outPartnerId
+            this.dataForm.outProductName=res.data.relatedOut.outProductName
+            this.dataForm.outProductId=res.data.relatedOut.outProductId
+            this.dataForm.outProductCode=res.data.relatedOut.outProductCode
+            this.dataForm.buyBackPrice=res.data.relatedOut.buyBackPrice
+            this.dataForm.buyBackRate=res.data.relatedOut.buyBackRate
+            this.dataForm.yieldRate=res.data.relatedOut.yieldRate
+            this.dataForm.warehouseName=res.data.relatedOut.warehouseName
+            this.dataForm.warehouseId=res.data.relatedOut.warehouseId
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)

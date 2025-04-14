@@ -1830,6 +1830,8 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
+              this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+
             })
             if (this.btnType === 'edit') {
               this.getBusInfo()

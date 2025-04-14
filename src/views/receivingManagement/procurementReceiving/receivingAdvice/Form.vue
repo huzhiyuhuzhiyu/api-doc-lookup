@@ -1234,6 +1234,10 @@ export default {
             newRecord.forEach((item) => mergedMap.set(item.id, item))
 
             this.dataFormTwo.productData = Array.from(mergedMap.values())
+            this.dataFormTwo.productData.forEach(item => {
+        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+              
+            });
           }
         } else {
           this.$message({
@@ -1832,6 +1836,8 @@ export default {
             data.forEach((item) => {
               console.log('ooo888oooo', item)
               item.drawingNo = item.productDrawingNo
+              this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+
             })
             this.dataFormTwo.productData = data
 

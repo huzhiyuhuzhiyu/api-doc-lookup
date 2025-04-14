@@ -96,7 +96,10 @@
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" label="单位" min-width="140" />
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
+          <el-table-column prop="costPrice" label="单价" sortable="custom" min-width="140" />
+          <el-table-column prop="totalAmount" label="金额" sortable="custom" min-width="140" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
+          <el-table-column prop="warehouseName" label="仓库" width="160" sortable="custom" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"></el-table-column>
           <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"></el-table-column>
@@ -143,6 +146,7 @@
           <div class="text">
             <span>合计：</span>
             <span style="margin-left: 10px">数量:{{ num }}</span>
+            <span style="margin-left: 10px">金额:{{ totalAmount }}</span>
           </div>
         </pagination>
       </div>

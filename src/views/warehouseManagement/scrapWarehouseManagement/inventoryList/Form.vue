@@ -14,8 +14,8 @@
       </div>
       <div class="contain">
         <div class="JNPF-common-layout">
-          <div class="JNPF-common-layout-center JNPF-flex-main">
-            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
+          <div class="JNPF-common-layout-center JNPF-flex-main" ref="main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" 
               :element-loading-text="loadingText">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -79,15 +79,15 @@
                   </div>
 
                   <el-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData"
-                    border :key="165" style="width: 100%;">
+                    border :key="165" style="width: 100%;"  :height="customStyleData">
                     <el-table-column type="selection" width="55" fixed="left" :key="2" v-if="btnType != 'look'">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
-                    <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
-                    </el-table-column>
+             
                     <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="productName" label="产品名称" width="140" :key="4" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                       v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase'">
                       <template slot="header">
@@ -314,6 +314,7 @@ export default {
 
   data() {
     return {
+      customStyleData:0,
       batchNumVisible: false,
       wareHouseVisible: false,
       // 选择批次号请求条件
@@ -418,8 +419,9 @@ export default {
       customerType: "",
     }
   },
-  created() {
+  async created() {
     this.getWarehouseConfig()
+   await this.switchStyleheight()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -429,6 +431,30 @@ export default {
     }
   },
   methods: {
+    async switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      console.log("2342",mainRegion1);
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight = mainHeight1 - 420
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")

@@ -32,8 +32,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
-            <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120"/>
-            <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120"/>
+            <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120"/>
+            <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="120"/>
+            <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom" min-width="120"/>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="sealingCoverTyping" label="打字内容" sortable="custom" min-width="120"/>

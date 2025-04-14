@@ -51,6 +51,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
+              <el-button type="primary" size="mini" icon="el-icon-plus" @click="mergeOrdrFun('dataTable')">
+                合并待收货订单
+              </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -546,7 +549,6 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
-          this.tableFlag = true
 
           this.total = res.data.page.total
           this.listLoading = false
@@ -554,14 +556,23 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
-    },
+        this.tableFlag = true
+      },
 
     search() {
+      this.orderForm.mergeFlag=this.orderForm.mergeFlag==1?1:0
       this.dataFormSubmit()
     },
-
+    mergeOrdrFun(){
+      this.orderForm.mergeFlag=1
+      this.dataFormSubmit()
+    },
     reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+     
+      this.orderForm.mergeFlag=0
+      this.$nextTick(()=>{
+        this.$refs['dataTable'].$refs.JNPFTable.clearSort()
+      }) // 清除排序箭头高亮
       // 默认设置为近3天
       const end = new Date()
       const start = new Date()
@@ -613,7 +624,7 @@ export default {
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse')
+        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse',this.orderForm.mergeFlag)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {

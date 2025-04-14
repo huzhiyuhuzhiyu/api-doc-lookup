@@ -538,6 +538,8 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.orderForm.classAttribute="out"
+
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records

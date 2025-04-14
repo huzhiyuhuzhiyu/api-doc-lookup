@@ -745,6 +745,7 @@ export default {
         this.listsQuery.deliveryStartTime = ''
         this.listsQuery.deliveryEndTime = ''
       }
+      this.listsQuery.classAttribute="out"
       detailpurchaseOrderList(this.listsQuery)
         .then((res) => {
           console.log(res, '明细列表')

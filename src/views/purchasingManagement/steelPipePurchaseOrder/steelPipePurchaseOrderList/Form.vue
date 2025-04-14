@@ -7,7 +7,7 @@
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
-            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
+            <el-button type="primary" v-if="btnType !== 'look'" :loading="btnLoading" @click="dataFormSubmit('submit')">
               {{ $t('common.submitButton') }}
             </el-button>
             <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
@@ -27,7 +27,7 @@
                       <el-col :span="6">
                         <el-form-item label="采购供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <!-- 供应商选择弹窗  -->
-                          <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                          <ComSelect-page clearable :isdisabled="btnType === 'look'?true:false" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择采购供应商'"
                             title="选择采购供应商" treeTitle="采购供应商分类" :methodArr="PartnerMethodArr"
@@ -37,7 +37,7 @@
                       </el-col>
                       <el-col :span="6">
                         <el-form-item label="交货日期" prop="deliveryDate">
-                          <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                          <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd" :disabled="btnType === 'look'?true:false"
                             style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -61,7 +61,7 @@
                       </el-col>
                       <el-col  :span="6" >
                         <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" />
+                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
@@ -101,7 +101,8 @@
                 <el-collapse-item title="产品信息" name="productInfo">
                   <div class="table"> 
                     <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">
+                      <div v-if="btnType!='look'">
+                        <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">
                         选择产品
                       </el-button>
                       |
@@ -109,7 +110,8 @@
                         批量删除
                       </el-button>
                       |
-                      <JNPF-table :fixedNO="true" hasC ref="multipleTable" @selection-change="handeleProductInfoData"
+                      </div>
+                      <JNPF-table :fixedNO="true" :hasC="btnType!='look'" ref="multipleTable" @selection-change="handeleProductInfoData"
                         hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" border
                         :height="customStyleData">
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
@@ -118,7 +120,7 @@
                           key="3" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productCategoryName" label="产品分类" width="140"
                           show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip
+                        <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip
                           key="5">
                           <template slot="header">
                             <span class="required">*</span>
@@ -140,14 +142,14 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
                               :rules="productRules.deliveryDate">
-                              <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                              <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd" disabled
                                 style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
                             </el-form-item>
                           </template>
                         </el-table-column>
 
 
-                        <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
+                        <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
                           v-if="this.purchasingType === 'safe'" key="9">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'availableQuantity'">
@@ -166,8 +168,8 @@
                               </div>
                             </el-form-item>
                           </template>
-                        </el-table-column>
-                        <el-table-column prop="orderQuantity" label="可下单数量" min-width="120" show-overflow-tooltip
+                        </el-table-column> -->
+                        <!-- <el-table-column prop="orderQuantity" label="可下单数量" min-width="120" show-overflow-tooltip
                           v-if="this.purchasingType === 'pool'" :key="13">
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'orderQuantity'">
@@ -176,7 +178,7 @@
                               </div>
                             </el-form-item>
                           </template>
-                        </el-table-column>
+                        </el-table-column> -->
                         <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                           :min-width="isDeputyUnitSwitch ? 100 : 60" show-overflow-tooltip :key="15">
                           <template slot-scope="scope">
@@ -195,7 +197,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                               :rules="productRules.purchaseQuantity">
-                              <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
+                              <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"  disabled
                                 v-model="scope.row.purchaseQuantity" placeholder="数量"></el-input>
                             </el-form-item>
                           </template>
@@ -228,8 +230,8 @@
                             单价(含税)
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
-                              <el-input v-model="scope.row.price" placeholder="单价(含税)" />
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price" >
+                              <el-input v-model="scope.row.price" placeholder="单价(含税)" disabled/>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -254,7 +256,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'"
                               :rules="productRules.taxRate">
-                              <el-select v-model="scope.row.taxRate" placeholder="请选择">
+                              <el-select v-model="scope.row.taxRate" placeholder="请选择" disabled>
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                   :value="item.taxRate"></el-option>
                               </el-select>
@@ -303,7 +305,7 @@
                           v-if="dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
+                              <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable disabled
                                 style="width: 100%;">
                                 <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
@@ -415,8 +417,8 @@
                         <el-table-column prop="processId" label="工序" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-select v-model="scope.row.processId" placeholder="请选择" clearable>
-                                <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                              <el-select v-model="scope.row.processId" placeholder="请选择" clearable disabled>
+                                <el-option v-for="(item, index) in list8" :key="index" :label="item.name" 
                                   :value="item.id"></el-option>
                               </el-select>
                             </el-form-item>
@@ -425,7 +427,7 @@
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip key="1">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-input :title="scope.row.remark" v-model="scope.row.remark" 
+                              <el-input :title="scope.row.remark" v-model="scope.row.remark"  disabled
                                 placeholder="备注"></el-input>
                             </el-form-item>
                           </template>
@@ -452,7 +454,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
-              <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
+              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
@@ -462,11 +464,11 @@
       </div>
     </transition>
     <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
-    <ComSelect-page v-if="purchasingType == 'pool'" ref="comSelect-page" @change="submitCustomerProduct"
+    <!-- <ComSelect-page v-if="purchasingType == 'pool'" ref="comSelect-page" @change="submitCustomerProduct"
       :tableItems="ProductPoolTableItems" dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList"
       :listRequestObj="ProductPoolListRequestObj" :listDataFormatting="listDataFormatting"
-      :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
-    <ComSelect-page v-else ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
+      :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" /> -->
+    <ComSelect-page  ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
       dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="true" :renderTree="false" />
@@ -478,6 +480,7 @@
   </div>
 </template>
 <script>
+import {  purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
 import sourceForm from '../../purchasingDemand/purchasingDemandPool/source.vue'
 import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
@@ -673,7 +676,7 @@ export default {
         // 日期区间选择器通用选项
         disabledDate: this.disabledDate
       },
-      type: '',
+      btnType: '',
       dataFormArr: [],
       noticeFlagList: [{ label: '是', value: true }, { label: '否', value: false }],
       outTypeList:[{label:"采购销售",value:"purchase_sale"},{label:"外协",value:"out"},],
@@ -808,7 +811,7 @@ export default {
         children: 'children',
         label: 'fullName'
       },
-      purchasingType: 'safe',
+      // purchasingType: 'safe',
       demandDelivery: '',
       demandDelivery2: '',
       olddeliveryDateArr: [], // 表格中旧的数据值
@@ -1047,14 +1050,14 @@ export default {
       data.forEach((i) => {
         const item = i.all
         console.log(item, 'oooo')
-        if (this.purchasingType == 'pool') {
-          this.$set(item, 'purchaseQuantity', item.planDemandQuantity)
-          if (item.calculationDirection === 'multiplication') {
-            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
-          } else {
-            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
-          }
-        } else {
+        // if (this.purchasingType == 'pool') {
+        //   this.$set(item, 'purchaseQuantity', item.planDemandQuantity)
+        //   if (item.calculationDirection === 'multiplication') {
+        //     item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+        //   } else {
+        //     item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+        //   }
+        // } else {
           // this.$set(item, 'purchaseQuantity', Number(item.maxInventory) - Number(item.availableQuantity))
           item.productDrawingNo = item.drawingNo
           item.productName = item.name
@@ -1063,7 +1066,7 @@ export default {
           } else {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           }
-        }
+        // }
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + Number(item.taxRate) / 100), 6)
         } else {
@@ -1334,11 +1337,11 @@ export default {
       console.log("id",id);
       this.formLoading = true
       this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
-      this.purchasingType = type
-      console.log(this.purchasingType, 'this.purchasingType')
-      if(type=='look') this.purchOrderTitle="查看采购订单"
-      if(type=='add') this.purchOrderTitle="新建采购订单"
-      if(type=='edit') this.purchOrderTitle="编辑采购订单"
+      // this.purchasingType = type
+      this.btnType=type 
+      if(type=='look') this.purchOrderTitle="查看钢管采购订单"
+      if(type=='add') this.purchOrderTitle="新建钢管采购订单"
+      if(type=='edit') this.purchOrderTitle="编辑钢管采购订单"
  
       this.dataForm.classAttribute = classAttributeFlag
       this.ProductListRequestObj = {
@@ -1403,6 +1406,26 @@ export default {
           (this.dataFormTwo.data[i].orderedQuantity ? this.dataFormTwo.data[i].orderedQuantity : 0)
         ) // 	可下单数量
         this.olddeliveryDateArr.push(this.dataFormTwo.data[i].deliveryDate)
+      }
+      if(id){
+        purPurchaseOrderdetail(id).then((res) => {
+            console.log(res, '详情')
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                })
+              })
+            }
+            this.dataForm = res.data
+            this.dataFormTwo.data = res.data.purchaseOrderLineVOList
+            // 流程信息和流转记录
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+          })
       }
       // 明细中最大的交货日期
       // this.demandDelivery = maxDate.toISOString().split('T')[0];

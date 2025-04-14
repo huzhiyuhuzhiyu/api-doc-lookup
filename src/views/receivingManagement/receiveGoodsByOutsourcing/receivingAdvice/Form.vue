@@ -12,13 +12,13 @@
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
+          <el-button v-if="mergeFlag ==1" type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿
           </el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
           </el-button>
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">
+          <el-button type="primary" v-if="mergeFlag ==1"  :loading="btnLoading" @click="handleConfirm('submit', 'print')">
             提交并打印
           </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -520,7 +520,8 @@ import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/in
 import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
-  getpurPurchaseReceiptReturnGoodsdetail
+  getpurPurchaseReceiptReturnGoodsdetail,
+  mergeOutOrderAdd
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -809,7 +810,8 @@ export default {
       endTime: 0,
       scanDialog: false,
       scanResult: '',
-      customStyleData:0
+      customStyleData:0,
+      mergeFlag:"",
     }
   },
   computed: {
@@ -1481,13 +1483,14 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data) {
+    init(id, btnType, approvalFlag, data,pageFlag,mergeFlag) {
+      console.log(111,id, btnType, approvalFlag, data,pageFlag,mergeFlag);
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
       console.log(data, 'kk')
-      if(data!='outInboundWarehouse'){
+      this.mergeFlag=mergeFlag
 
         if (data && data.length !== 0) {
           data.forEach((item) => {
@@ -1500,7 +1503,6 @@ export default {
           this.dataForm.partnerName = data[0].cooperativePartnerName
           this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
         }
-      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1765,11 +1767,15 @@ export default {
         })
         this.btnLoading = true
         let formMethod = null
+        if(this.mergeFlag==1){
 
-        if (this.btnType == 'edit') {
-          formMethod = editpurPurchaseReceiptReturnGoods
-        } else if (this.btnType == 'add' || this.btnType == 'copy') {
-          formMethod = addpurPurchaseReceiptReturnGoods
+        }else{
+
+          if (this.btnType == 'edit') {
+            formMethod = editpurPurchaseReceiptReturnGoods
+          } else if (this.btnType == 'add' || this.btnType == 'copy') {
+            formMethod = addpurPurchaseReceiptReturnGoods
+          }
         }
         console.log(obj, 'ohh')
         formMethod(obj)

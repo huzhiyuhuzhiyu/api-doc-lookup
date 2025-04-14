@@ -141,7 +141,7 @@ import { getWarehouseList,deleteWarehouseData } from '@/api/warehouseManagement/
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import Form from './Form'
+import Form from '../directInandOutWarehouse/index.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {

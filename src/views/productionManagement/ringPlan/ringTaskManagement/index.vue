@@ -93,7 +93,7 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
-            <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" sortable="custom" />
+            <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" sortable="custom" v-has="'btn_split'" />
             <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
               <template slot-scope="scope">
                 <el-progress

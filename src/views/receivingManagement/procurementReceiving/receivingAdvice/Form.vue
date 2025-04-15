@@ -2080,7 +2080,8 @@ export default {
             taxRate: item.taxRate ? item.taxRate : '',
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+            inspectionStatus:item.inspectionStatus
           }
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
@@ -2111,7 +2112,8 @@ export default {
             excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
             weight: item.weight,
             proportion: item.proportion,
-            discount: item.discount
+            discount: item.discount,
+            inspectionStatus:item.inspectionStatus
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

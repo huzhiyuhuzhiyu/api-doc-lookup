@@ -50,6 +50,17 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <!-- 1862314777798295553//为常规项目ID -->
+                      <el-col :sm="6" :xs="24" v-if="userInfo.projectId=='1862314777798295553'">
+                        <el-form-item label="翻库类型" prop="orderSubtype">
+                          <el-select v-model="dataForm.orderSubtype" placeholder="请选择翻库类型" clearable style="width: 100%;"
+                            >
+                            <el-option v-for="(item, index) in orderSubtypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
@@ -604,6 +615,13 @@ export default {
   },
   data() {
     return {
+      orderSubtypeList:[
+        {label:"内返",value:"inner_flipping",},
+        {label:"外返",value:"out_flipping",},
+        {label:"仓返",value:"warehouse_flipping",},
+      
+      ],
+        
       linesFormItems_right: [],
       processVisible: false,
       productVisible: false,
@@ -668,6 +686,7 @@ export default {
         productsId: "",
         pairingModeId: "",
         lineEdgeId: "",
+        orderSubtype:"",
 
       },
       dataFormTwo: {
@@ -684,6 +703,7 @@ export default {
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
+        orderSubtype:[{ required: true, message: '请选择翻库类型', trigger: 'change' }],
         productionQuantity: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["生产数量不能为空", (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },

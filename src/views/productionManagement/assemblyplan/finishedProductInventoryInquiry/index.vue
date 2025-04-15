@@ -578,6 +578,7 @@ export default {
         this.listQuery.lsEd = ''
       }
       if (this.isProjectSwitch === '1') {
+        console.log("this.userInfo",this.userInfo);
         this.listQuery.projectId = this.userInfo.projectId
       }
       getInventoryLineReport(this.listQuery)

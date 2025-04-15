@@ -64,8 +64,8 @@
             <el-table-column prop="remark" label="备注" min-width="200" sortable="custom"> </el-table-column>
             <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="editFun(scope.row.id, 'edit')">编辑</el-button>
-                <el-button size="mini" type="text" @click="handleDel(scope.row.id,)">删除</el-button>
+                <el-button size="mini" type="text" @click="editFun(scope.row, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id,)">删除</el-button>
                
               </template>
             </el-table-column>
@@ -81,7 +81,7 @@
         <el-form ref="diaForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
           <el-col :span="24">
             <el-form-item label="外协供应商" prop="outPartnerName">
-              <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+              <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.outPartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                             @change="selectOutPartner" :tableItems="PartnerTableItems" :placeholder="'请选择外协供应商'"
                             title="选择外协供应商" treeTitle="外协供应商分类" :methodArr="outPartnerMethodArr"
@@ -91,24 +91,24 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="产品名称" prop="outProductName">
-              <el-input v-model="dataForm.outProductName" placeholder="产品名称"  readonly @focus="addProduct"/>
+              <el-input v-model="dataForm.outProductName" placeholder="产品名称" :disabled="btnType === 'look'"  readonly @focus="addProduct"/>
             </el-form-item>
           </el-col>
      
           <el-col :span="24">
             <el-form-item label="成材率" prop="yieldRate">
-              <el-input v-model="dataForm.yieldRate" placeholder="成材率" clearable />
+              <el-input v-model="dataForm.yieldRate" placeholder="成材率" clearable :disabled="btnType === 'look'"/>
             </el-form-item>
           </el-col>
 
           <el-col :span="24">
             <el-form-item label="回购单价" prop="buyBackPrice">
-              <el-input v-model="dataForm.buyBackPrice" placeholder="回购单价" clearable />
+              <el-input v-model="dataForm.buyBackPrice" placeholder="回购单价" clearable :disabled="btnType === 'look'"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="回购税率" prop="buyBackRate">
-              <el-select v-model="dataForm.buyBackRate" placeholder="请选择" style="width: 100%;" >
+              <el-select v-model="dataForm.buyBackRate" placeholder="请选择" style="width: 100%;" :disabled="btnType === 'look'">
                       <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
                         :value="item.taxRate"></el-option>
                     </el-select>
@@ -116,12 +116,12 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="仓库名称" prop="warehouseName">
-              <ComSelect-list v-model="dataForm.warehouseName" :requestObj="{ type: 'normal', state: 'enable',  }" :dialogTitle="'选择仓库'"  :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+              <ComSelect-list v-model="dataForm.warehouseName" :disabled="btnType === 'look'" :requestObj="{ type: 'normal', state: 'enable',  }" :dialogTitle="'选择仓库'"  :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="dataForm.remark" placeholder="请输入备注"  type="textarea" :rows="2" maxlength="200"   clearable />
+              <el-input v-model="dataForm.remark" placeholder="请输入备注"  type="textarea" :rows="2" maxlength="200"   clearable :disabled="btnType === 'look'"/>
             </el-form-item>
           </el-col>
         </el-form>
@@ -379,7 +379,7 @@ export default {
           }
         },
       ],
-
+      btnType:"",
 
   
     
@@ -577,6 +577,15 @@ export default {
       this.ProductListRequestObj.classAttribute = data.classAttribute
       this.searchAllProduct()
     },
+    getNodePathProduct(node) {
+      let fullPath = []
+      const loop = (node) => {
+        if (node.level) fullPath.unshift(node.data)
+        if (node.parent) loop(node.parent)
+      }
+      loop(node)
+      return fullPath
+    },
     toggleExpand(expands) {
       this.refreshTree = false
       this.expands = expands
@@ -617,11 +626,45 @@ export default {
       })
     },
     addFun(){
+      this.btnType='add'
       this.title="新建委外关联产品"
       this.addOrderVisible=true
+      this.dataForm.outPartnerName=''
+        this.dataForm.outPartnerId=''
+        this.dataForm.outProductName=''
+        this.dataForm.outProductId=''
+        this.dataForm.outProductCode=''
+        this.dataForm.outProductDrawingNo=''
+        this.dataForm.yieldRate=''
+        this.dataForm.buyBackPrice=''
+        this.dataForm.buyBackRate=''
+        this.dataForm.warehouseName=''
+        this.dataForm.warehouseId=''
+        this.dataForm.warehouseType=''
+        this.dataForm.warehouseCode=''
+        this.dataForm.remark=''
+        this.dataForm.id=''
+        this.$refs['diaForm'].resetFields()
     },
-    editFun(id){
+    editFun(row,type){
+      this.btnType='edit'
       this.title="编辑委外关联产品"
+      this.addOrderVisible=true
+        this.dataForm.outPartnerName=row.outPartnerName
+        this.dataForm.outPartnerId=row.outPartnerId
+        this.dataForm.outProductName=row.outProductName
+        this.dataForm.outProductId=row.outProductId
+        this.dataForm.outProductCode=row.outProductCode
+        this.dataForm.outProductDrawingNo=row.outProductDrawingNo
+        this.dataForm.yieldRate=row.yieldRate
+        this.dataForm.buyBackPrice=row.buyBackPrice
+        this.dataForm.buyBackRate=row.buyBackRate
+        this.dataForm.warehouseName=row.warehouseName
+        this.dataForm.warehouseId=row.warehouseId
+        this.dataForm.warehouseType=row.warehouseType
+        this.dataForm.warehouseCode=row.warehouseCode
+        this.dataForm.remark=row.remark
+        this.dataForm.id=row.id
     },
    // 弹窗节点的点击
    treeNodeClick(data, node, listQuery) {
@@ -720,8 +763,14 @@ export default {
       this.$refs['diaForm'].validate((valid) => {
         console.log(4444);
         if (valid) { 
+          let methods=null
           this.btnLoading = true
-          addOutRelatedProduct(this.dataForm).then(res => {
+          if(this.btnType=='add'){
+            methods=addOutRelatedProduct
+          }else{
+            methods=editOutRelatedProduct
+          }
+          methods(this.dataForm).then(res => {
             this.addOrderVisible = false
             this.btnLoading = false
             this.$message.success("新建委外关联产品成功")
@@ -808,7 +857,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteQuotationsendlist(id).then(res => {
+        delOutRelatedProduct(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

@@ -41,7 +41,7 @@
                             style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col  :span="6">
+                      <!-- <el-col  :span="6">
                         <el-form-item label="是否生成免检通知单" prop="stockFlag">
                           <el-select v-model="dataForm.noticeFlag" placeholder="请选择是否生成免检通知单" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : dataForm.outConsigneeFlag">
@@ -49,7 +49,7 @@
                               :value="item.value"></el-option>
                           </el-select>
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
                       <el-col  :span="6" >
                         <el-form-item label="委外类型" prop="outType">
                           <el-select v-model="dataForm.outType" placeholder="请选择委外类型" style="width: 100%;"
@@ -472,7 +472,7 @@
     <ComSelect-page  ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
       dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
-      :multiple="true" :renderTree="false" />
+      :multiple="false" :renderTree="false" />
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"

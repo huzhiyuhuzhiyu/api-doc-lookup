@@ -4,7 +4,7 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建收货单1'
+          ? '新建收货单'
           : btnType == 'edit'
             ? '编辑收货单'
             : btnType == 'copy'
@@ -26,7 +26,7 @@
       </div>
       <div class="main" ref="main" v-loading="formLoading">
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
-          <el-tab-pane label="基础信息1" name="orderInfo">
+          <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
@@ -324,7 +324,7 @@
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
-          <el-collapse-item title="基本信息2" name="basicInfo" class="orderInfo">
+          <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" style="padding: 0 10px;">
                 <el-col :sm="6" :xs="24">

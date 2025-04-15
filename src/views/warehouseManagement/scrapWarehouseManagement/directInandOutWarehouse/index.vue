@@ -41,7 +41,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
                         <ComSelect-list
-                          :requestObj="{ type: 'scrap', state: 'enable',  }"
+                          :requestObj="{ type: 'scrap', state: 'enable', projectId: isProjectSwitch === '1' ? userInfo.projectId || '' : '' }"
                           :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                           :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                       </el-form-item>
@@ -124,7 +124,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="totalAmount" label="金额" width="200" :key="1128"></el-table-column>
+                  <el-table-column prop="totalAmount" label="金额" width="200" :key="1128" v-if="documentType=='outbound'"></el-table-column>
                   <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                   <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
                     <template slot-scope="scope">
@@ -261,7 +261,7 @@
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" />
             </JNPF-table>
-            <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+            <pagination :total="productTotal" :page.sync="dataForm.documentType=='outbound'?orderForm.pageNum:listQuery.pageNum" :limit.sync="dataForm.documentType=='outbound'?orderForm.pageSize:listQuery.pageSize"
               @pagination="searchProductFun" />
           </div>
         </div>
@@ -350,6 +350,7 @@ export default {
         orderNo: "",
         warehouseName: "",
         warehouseId: "",
+        projectId:"",
         documentType: "",
         businessType: "",
         sourceType: "io_other",
@@ -379,6 +380,7 @@ export default {
         deliveryEndTime: "",
         pageNum: 1,
         pageSize: 20,
+        availableBatch:true,
         orderItems: [{
           asc: false,
           column: ""
@@ -547,14 +549,19 @@ export default {
       if (!this.dataForm.documentType) return this.$message.error("请先选择单据类型")
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.productVisible = true
+    this.orderForm.pageNum=1
+    this.orderForm.pageSize=20
+    this.listQuery.pageNum=1
+    this.listQuery.pageSize=20
       this.searchProductFun()
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
       if (this.dataForm.documentType == 'outbound') {
 
-        // this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.orderForm.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId : ''
         this.orderForm.warehouseId=this.dataForm.warehouseId
+        this.orderForm.availableBatch= true
         getBatchNumber(this.orderForm).then(res => {
           console.log("产品", res);
 
@@ -573,7 +580,8 @@ export default {
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
         this.listQuery.classAttribute = this.classAttribute
-        // this.listQuery.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+        this.listQuery.projectId = this.isProjectSwitch === '1' ? this.dataForm.projectId : ''
+        console.log("listQuery",this.listQuery);
         getProductList(this.listQuery)
           .then((res) => {
             console.log("res.", res);
@@ -600,7 +608,7 @@ export default {
         drawingNo: "",        // customerProductNo: "",
         productName: "",
         productCode: "",
-
+        availableBatch:true,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -783,6 +791,7 @@ export default {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+      this.dataForm.projectId = data[0].all.projectId
     },
     goBack() {
       this.$router.push({

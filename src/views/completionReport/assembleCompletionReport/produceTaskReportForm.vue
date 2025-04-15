@@ -248,7 +248,17 @@
 
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24" class="iptLabel"
+                    v-if="currentProcessType ==2 && currentProcess.vibrateReportFlag &&currentProcess.projectId=='1862314777798295553'">
+                    <el-form-item label="测振方式:" prop="vibrationType" :style="{ marginBottom: producerMargin }">
+                      <el-select v-model="currentProcess.vibrationType" placeholder="请选择测振方式" style="width: 100%;" class="ipt">
+                        <el-option v-for="(item, index) in vibrationTypeList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
 
+                    </el-form-item>
+                  </el-col>
+       
                   <el-col :sm="24" :xs="24" v-if="currentProcessType === 4 || currentProcessType === 5">
                     <el-form-item label="总配对数量(对):" prop="matchedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -610,6 +620,11 @@ export default {
       pairingModeListCopy: [],
       pairingModeNum: 0,
       currentProcessType: 0,
+      vibrationTypeList:[
+        {label:"连线",value:"online"},
+        {label:"单机",value:"alone"},
+        {label:"手动",value:"manual"},
+      ],
       // 属性字段  控制属性字段显示隐藏
       accuracyLevelFlag: "",
       clearanceFlag: "",
@@ -1390,6 +1405,8 @@ export default {
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.packagingMethod = this.currentProcess.packagingMethod
               obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.vibrationType = this.currentProcess.vibrationType
+              
               obj.workOrderId = this.currentProcess.id
               obj.stockFlag = this.stockFlag
               obj.causesList = [...this.materialWasteDataList, ...this.responsWasteDataList]
@@ -1414,6 +1431,7 @@ export default {
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.vibrationType = this.currentProcess.vibrationType
               obj.workOrderId = this.currentProcess.id
               obj.packagingMethod = this.currentProcess.packagingMethod
               obj.stockFlag = this.stockFlag
@@ -1441,6 +1459,7 @@ export default {
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.vibrationType = this.currentProcess.vibrationType
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
@@ -1469,6 +1488,7 @@ export default {
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.vibrationType = this.currentProcess.vibrationType
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
@@ -1503,7 +1523,8 @@ export default {
                 this.$set(obj, 'reportingType', 'normal')
                 this.$set(obj, 'unqualifiedQuantity', this.currentProcess.unqualifiedQuantity)
                 this.$set(obj, 'vibrationLevel', this.currentProcess.vibrationLevel)
-                this.$set(obj, 'workOrderId', this.currentProcess.id)
+                this.$set(obj, 'vibrationType', this.currentProcess.vibrationType)
+              this.$set(obj, 'workOrderId', this.currentProcess.id)
                 this.$set(obj, 'matchedQuantity', this.currentProcess.matchedQuantity)
                 this.$set(obj, 'pairingModeId', this.currentProcess.pairingModeId)
                 this.$set(obj, 'accuracyLevel', item.accuracyLevel)
@@ -1538,6 +1559,7 @@ export default {
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.vibrationType = this.currentProcess.vibrationType
               obj.workOrderId = this.currentProcess.id
               obj.packagingMethod = this.currentProcess.packagingMethod
               obj.stockFlag = this.stockFlag
@@ -1569,6 +1591,7 @@ export default {
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.vibrationType = this.currentProcess.vibrationType
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
@@ -1600,6 +1623,7 @@ export default {
               obj.reportingType = "normal"
               obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
               obj.vibrationLevel = this.currentProcess.vibrationLevel
+              obj.vibrationType = this.currentProcess.vibrationType
               obj.workOrderId = this.currentProcess.id
               obj.matchedQuantity = this.currentProcess.matchedQuantity
               obj.pairingModeId = this.currentProcess.pairingModeId
@@ -1632,6 +1656,7 @@ export default {
               "reportingType": "normal ",
               "unqualifiedQuantity": this.currentProcess.unqualifiedQuantity,
               "vibrationLevel": this.currentProcess.vibrationLevel,
+              "vibrationType": this.currentProcess.vibrationType,
               "oil": this.currentProcess.oil,
               "sealingCoverTyping": this.currentProcess.sealingCoverTyping,
               "workOrderId": this.currentProcess.id,

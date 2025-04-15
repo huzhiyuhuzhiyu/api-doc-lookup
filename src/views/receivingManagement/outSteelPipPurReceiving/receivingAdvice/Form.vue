@@ -4,7 +4,7 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建收货单'
+          ? '新建收货单1'
           : btnType == 'edit'
             ? '编辑收货单'
             : btnType == 'copy'
@@ -26,7 +26,7 @@
       </div>
       <div class="main" ref="main" v-loading="formLoading">
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
-          <el-tab-pane label="基础信息" name="orderInfo">
+          <el-tab-pane label="基础信息1" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
@@ -57,6 +57,51 @@
                           :disabled="btnType == 'look'"></el-input>
                       </el-form-item>
                     </el-col>
+                    <el-col  :span="6" >
+                        <el-form-item label="委外类型" prop="outType">
+                          <el-select v-model="dataForm.outType" placeholder="请选择委外类型" style="width: 100%;"
+                             disabled> 
+                            <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+            
+                      <el-col  :span="6" >
+                        <el-form-item label="外协供应商" prop="outPartnerName" >
+                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品名称" prop="outProductName" >
+                          <el-input v-model="dataForm.outProductName" placeholder="选择委外产品名称" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品编码" prop="outProductCode" >
+                          <el-input v-model="dataForm.outProductCode" placeholder="选择委外产品编码" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购单价" prop="buyBackPrice" >
+                          <el-input v-model="dataForm.buyBackPrice" placeholder="选择回购单价" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购税率" prop="buyBackRate" >
+                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="成材率" prop="yieldRate" >
+                          <el-input v-model="dataForm.yieldRate" placeholder="选择成材率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="中转仓库" prop="warehouseName" >
+                          <el-input v-model="dataForm.warehouseName" placeholder="选择中转仓库" disabled  />
+                        </el-form-item>
+                      </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="操作人" prop="salesman">
                         <el-input v-model="dataForm.salesman" placeholder="请选择操作人"
@@ -279,7 +324,7 @@
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
-          <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+          <el-collapse-item title="基本信息2" name="basicInfo" class="orderInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" style="padding: 0 10px;">
                 <el-col :sm="6" :xs="24">
@@ -308,6 +353,51 @@
                       :disabled="btnType == 'look'"></el-input>
                   </el-form-item>
                 </el-col>
+                <el-col  :span="6" >
+                        <el-form-item label="委外类型" prop="outType">
+                          <el-select v-model="dataForm.outType" placeholder="请选择委外类型" style="width: 100%;"
+                             disabled> 
+                            <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+            
+                      <el-col  :span="6" >
+                        <el-form-item label="外协供应商" prop="outPartnerName" >
+                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品名称" prop="outProductName" >
+                          <el-input v-model="dataForm.outProductName" placeholder="选择委外产品名称" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品编码" prop="outProductCode" >
+                          <el-input v-model="dataForm.outProductCode" placeholder="选择委外产品编码" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购单价" prop="buyBackPrice" >
+                          <el-input v-model="dataForm.buyBackPrice" placeholder="选择回购单价" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购税率" prop="buyBackRate" >
+                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="成材率" prop="yieldRate" >
+                          <el-input v-model="dataForm.yieldRate" placeholder="选择成材率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="中转仓库" prop="warehouseName" >
+                          <el-input v-model="dataForm.warehouseName" placeholder="选择中转仓库" disabled  />
+                        </el-form-item>
+                      </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="操作人" prop="salesman">
                     <el-input v-model="dataForm.salesman" placeholder="请选择操作人" :disabled="btnType == 'look'"></el-input>
@@ -708,6 +798,7 @@
         :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
       <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
         @closePrintPage="closePrintPage" />
+      <outPartnerDia :visible.sync="outVisible"  ref="outForm" @close="closeFun" @selectOut="changeOutPartner"/>
     </div>
   </transition>
 </template>
@@ -739,11 +830,13 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import outPartnerDia from '@//views/purchasingManagement/steelPipePurchaseOrder/steelPipePurchaseOrderList/outPartnerDia.vue'
 export default {
-  components: { Process, recordList, PrintBrowse, PrintDialog },
+  components: { Process, recordList,outPartnerDia, PrintBrowse, PrintDialog },
   mixins: [busFlow, getProjectList],
   data() {
     return {
+      outVisible:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       isProportionSwitch: '',
@@ -1002,7 +1095,19 @@ export default {
         //   shipperId: '',
         cooperativePartnerId: '',
         remark: '',
-        approvalFlag: false
+        approvalFlag: false,
+        outType:'purchase_sale',
+        outPartnerName:"",
+        outPartnerCode:"",
+        outPartnerId:"",
+        outProductCode:"",
+        outProductName:"",
+        productDrawingNo:"",
+        buyBackPrice:"",
+        buyBackRate:"",
+        warehouseName:"",
+        warehouseId:"",
+        outProductId:"",
       },
       defaultAddress: '',
       parentId: '',
@@ -1014,6 +1119,7 @@ export default {
       dataRule: {
         salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
         partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
+        outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
@@ -1034,7 +1140,8 @@ export default {
       formId: '',
       enCode: '',
       printBrowseVisible: false,
-      printVisible: false
+      printVisible: false,
+      outTypeList:[{label:"采购销售",value:"purchase_sale"},{label:"外协",value:"out"},],
     }
   },
   computed: {
@@ -1108,6 +1215,34 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+
+        // 选择外协供应商及关联产品
+        changeOutPartner(data){
+      console.log("data",data);
+      this.dataForm.outPartnerId=data.outPartnerId
+      this.dataForm.outPartnerName=data.outPartnerName
+       this.dataForm.outPartnerCode=data.outPartnerCode
+       this.dataForm.outPartnerId=data.outPartnerId
+       this.dataForm.outProductCode=data.outProductCode
+       this.dataForm.outProductName=data.outProductName
+       this.dataForm.productDrawingNo=data.productDrawingNo
+       this.dataForm.buyBackPrice=data.buyBackPrice
+       this.dataForm.buyBackRate=data.buyBackRate
+       this.dataForm.warehouseName=data.warehouseName
+       this.dataForm.warehouseId=data.warehouseId
+       this.dataForm.outProductId=data.outProductId
+       this.dataForm.yieldRate=data.yieldRate
+
+    },
+    closeFun(){
+      this.outVisible=false
+    },
+    openSelectOutPartner(){
+      this.outVisible=true
+      this.$nextTick(()=>{
+        this.$refs.outForm.init()
+      })
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight

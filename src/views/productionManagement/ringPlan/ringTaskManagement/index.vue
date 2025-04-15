@@ -93,6 +93,7 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
+            <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" sortable="custom" />
             <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
               <template slot-scope="scope">
                 <el-progress
@@ -154,7 +155,7 @@
                       v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
-                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row)">
+                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
                       拆分
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >
@@ -300,6 +301,8 @@
     <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
     <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData" @close="closeForm">
     </AddTaskForm>
+    <SplitTaskForm v-if="splitTaskFormVisible" ref="splitTaskForm" @refreshDataList="initData" @close="closeForm">
+    </SplitTaskForm>
     <el-dialog title="生产任务码" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="dialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" style="text-align: center;">
       <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
@@ -329,18 +332,20 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
+import SplitTaskForm from './splitTaskForm.vue'
 import { getProcessList,detailProcess } from '@/api/basicData/processSettingss'
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm, PrintDialog2, PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
       dialogVisible:false,
       qrCode:"",
       addTaskFormVisible: false,
+      splitTaskFormVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -887,13 +892,17 @@ export default {
       this.addOrderVisible = true
     },
     // 拆分
-    splitHander(data) {
-      this.splitForm = {...data}
-      this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
-      this.splitVisible = true
+    splitHander(id) {
+      this.splitTaskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.splitForm.resetFields();
-      });
+        this.$refs.splitTaskForm.init(id)
+      })
+      // this.splitForm = {...data}
+      // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
+      // this.splitVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.splitForm.resetFields();
+      // });
     },
     routingChange(val){
       detailProcess(val).then(res=>{
@@ -1023,6 +1032,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.addTaskFormVisible = false
+      this.splitTaskFormVisible = false
       this.formVisible = false
       this.reworkVisible = false
       this.BatchDispatchVisible = false

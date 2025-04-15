@@ -187,18 +187,18 @@ export default {
                 if(!item){
                     return ;
                 }
-                // if(e === 'dispatch_list') {
-                //     item.options = [
-                //         {label: '生成领料单', value: 'picking'},
-                //         {label: '都不是', value: 'none'}
-                //     ]
-                // }else{
-                //     item.options = [
-                //         {label: '生成领料单', value: 'picking'},
-                //         {label: '自动扣减料', value: 'auto'},
-                //         {label: '都不是', value: 'none'}
-                //     ]
-                // }
+                if(e === 'none') {
+                    item.options = [
+                        {label: '不扣减料', value: 'none'}
+                    ]
+                    item.value = "none"
+                }else{
+                    item.options = [
+                        {label: '生成领料单', value: 'picking'},
+                        {label: '自动扣减料', value: 'auto'},
+                        {label: '不扣减料', value: 'none'}
+                    ]
+                }
                 const arr =item.options.map(item=>item.value)
                 this.linesList.forEach(item=>{
                     if(!arr.includes(item.reduceType)){

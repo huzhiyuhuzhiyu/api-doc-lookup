@@ -46,12 +46,13 @@
           <div class="JNPF-common-head">
             <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
             <div>
-              <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle('','add')">新建订单</el-button>
+              <!-- <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
               <el-button :disabled="tableDataList.length <= 0" size="mini" type="primary"   icon="iconfont-menu  icon-chehui"
-                @click="backFn">撤回</el-button>
+                @click="backFn">撤回</el-button> -->
             </div>
 
             <div class="JNPF-common-head-right">
@@ -68,9 +69,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
+          <JNPF-table   v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+            custom-column  :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="采购单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
@@ -190,7 +191,7 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getQueryConfirm } from '@/utils';
 import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 export default {
-  name: 'purchaseOrder',
+  name: 'steelPipePurchaseOrderList',
   components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
   data() {
     return {
@@ -591,6 +592,7 @@ export default {
         this.listQuery.deliveryStartDate = ''
         this.listQuery.deliveryEndDate = ''
       }
+      this.listQuery.classAttribute='out'
       purchaseOrderList(this.listQuery)
         .then((res) => {
           console.log(res, '采购订单列表')
@@ -652,9 +654,10 @@ export default {
 
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle(id, type) {
+      console.log("id",id,type);
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init(id, type)
+        this.$refs.procureForm.init(id,'', type)
       })
     },
     // 导出订货单

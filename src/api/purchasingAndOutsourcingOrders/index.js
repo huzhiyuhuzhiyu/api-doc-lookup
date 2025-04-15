@@ -213,3 +213,39 @@ export function insertOutOrder(data) {
       data
     })
   }
+
+
+  // 委外关联产品列表
+  export const outRelatedProductList = (data) => {
+    return request({
+      url: `/api/zgt/purPurchaseRelatedOutProduct/list`,
+      method: 'post',
+      data
+    })
+  }
+
+   // 委外关联产品列表——新增
+  export const addOutRelatedProduct = (data) => {
+    return request({
+      url: `/api/zgt/purPurchaseRelatedOutProduct/add`,
+      method: 'post',
+      data
+    })
+  }
+     // 委外关联产品列表——编辑
+     export const editOutRelatedProduct = (data) => {
+      return request({
+        url: `/api/zgt/purPurchaseRelatedOutProduct/update`,
+        method: 'put',
+        data
+      })
+    }
+      // 委外关联产品列表——删除
+      export const delOutRelatedProduct = (id) => {
+        return request({
+          url: `/api/zgt/purPurchaseRelatedOutProduct/del/${id}`,
+          method: 'delete',
+          
+        })
+      }
+      

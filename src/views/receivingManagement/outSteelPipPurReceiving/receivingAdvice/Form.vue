@@ -12,13 +12,13 @@
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
-          <el-button v-if="mergeFlag !==1" type="success" :loading="btnLoading" @click="handleConfirm('draft')">
+          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿
           </el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
           </el-button>
-          <el-button type="primary" v-if="mergeFlag !==1"  :loading="btnLoading" @click="handleConfirm('submit', 'print')">
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit', 'print')">
             提交并打印
           </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -30,7 +30,7 @@
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" style="padding: 0 10px;">
+                  <el-row :gutter="30" style="padding:0 10px">
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
@@ -51,16 +51,57 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <el-form-item label="供应商名称" prop="partnerName">
-                        <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                          v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                          :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
-                          :searchList="PartnerTableSearchList" />
+                        <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
+                          :disabled="btnType == 'look'"></el-input>
                       </el-form-item>
                     </el-col>
+                    <el-col  :span="6" >
+                        <el-form-item label="委外类型" prop="outType">
+                          <el-select v-model="dataForm.outType" placeholder="请选择委外类型" style="width: 100%;"
+                             disabled> 
+                            <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+            
+                      <el-col  :span="6" >
+                        <el-form-item label="外协供应商" prop="outPartnerName" >
+                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品名称" prop="outProductName" >
+                          <el-input v-model="dataForm.outProductName" placeholder="选择委外产品名称" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品编码" prop="outProductCode" >
+                          <el-input v-model="dataForm.outProductCode" placeholder="选择委外产品编码" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购单价" prop="buyBackPrice" >
+                          <el-input v-model="dataForm.buyBackPrice" placeholder="选择回购单价" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购税率" prop="buyBackRate" >
+                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="成材率" prop="yieldRate" >
+                          <el-input v-model="dataForm.yieldRate" placeholder="选择成材率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="中转仓库" prop="warehouseName" >
+                          <el-input v-model="dataForm.warehouseName" placeholder="选择中转仓库" disabled  />
+                        </el-form-item>
+                      </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="操作人" prop="salesman">
                         <el-input v-model="dataForm.salesman" placeholder="请选择操作人"
@@ -109,38 +150,59 @@
                     选择产品
                   </el-button>
                   |
+                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+                  :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择订单</el-button>| -->
+                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除
                   </el-button>
                 </div>
-                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
-                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
+                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
+                  :rules="productRules">
+                  <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData"
+                    :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData"
+                    :height="customStyleData">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
-                    <template v-if="$store.getters.configData.warehouse.proportion">
-                      <el-table-column prop="weight" label="重量(kg)" width="90" />
-                      <el-table-column prop="proportion" label="比重" width="80" />
-                    </template>
-                    <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productName" label="产品名称" width="140" v-if="$store.getters.configData.product.enable_productName"
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
-                    
+                    <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
                     <el-table-column prop="productCategoryName" label="产品分类" width="140"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
-                      :width="isDeputyUnitSwitch ? 85 : 60" />
-                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch ? '数量(主)' : '数量'"
+                    <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                      :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                    <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
                       width="110" />
-                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
+                    <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
-                      v-if="isDeputyUnitSwitch" />
-                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"/>
+                      v-if="isDeputyUnitSwitch === '1'" />
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
                     <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
-                    <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
-                      key="789">
+                    <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.weight" placeholder="重量"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="proportion" label="比重" min-width="140" :key="727"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.proportion" placeholder="比重"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
+                      v-if="isProportionSwitch === '1'">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                          v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="receivedQuantity" label="收货数量" min-width="130"
+                      v-if="!dataForm.exchangeGoodsFlag" :key="719">
                       <template slot="header">
                         <span class="required">*</span>
                         收货数量
@@ -149,32 +211,34 @@
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
                           :rules="productRules.receivedQuantity">
                           <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
-                            :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
-                            style="width: 145px;">
+                            :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)">
                             {{ scope.row.receivedQuantity }}
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="单价(含税)" width="130" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                    <el-table-column prop="price" label="单价(含税)" width="130"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
                           </div>
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="totalAmount" label="金额(含税)" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                    <el-table-column prop="totalAmount" label="金额" width="140"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'totalAmount'">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.totalAmount ? scope.row.totalAmount : 0 }}</span>
                           </div>
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                    <el-table-column prop="taxRate" label="税率" width="140"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
                         <el-form-item>
                           <div class="viewData">
@@ -184,9 +248,10 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.excludingTaxPrice }}</span>
                           </div>
@@ -194,16 +259,26 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                    <el-table-column prop="taxAmount" label="税额" min-width="100"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        税额
+                      </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'taxAmount'">
+                        <el-form-item>
                           <div class="viewData">
                             <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                           </div>
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180"
+                      v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                      <template slot="header">
+                        <span class="required">*</span>
+                        金额(不含税)
+                      </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxAmount'">
                           <div class="viewData">
@@ -212,15 +287,19 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" width="100" key="standardValue"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="160" key="processName" show-overflow-tooltip />
-                    <el-table-column prop="ordersNo" label="订单号" min-width="200"  key="ordersNo"/>
-                    <el-table-column prop="remark" label="备注" min-width="200"  key="remark">
+                    <el-table-column prop="material" label="材质" width="130" :key="1015"
+                      v-if="materialFlag == 1"></el-table-column>
+                    <el-table-column prop="colour" label="颜色" width="130" :key="1015"
+                      v-if="colourFlag == 1"></el-table-column>
+                    <el-table-column prop="processName" label="工序" width="110" />
+                    <el-table-column prop="ordersNo" label="订单号" width="200" />
+                    <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
+
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -268,16 +347,57 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <el-form-item label="供应商名称" prop="partnerName">
-                    <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                      v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                      @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                      treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                      :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
-                      :searchList="PartnerTableSearchList" />
+                    <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
+                      :disabled="btnType == 'look'"></el-input>
                   </el-form-item>
                 </el-col>
+                <el-col  :span="6" >
+                        <el-form-item label="委外类型" prop="outType">
+                          <el-select v-model="dataForm.outType" placeholder="请选择委外类型" style="width: 100%;"
+                             disabled> 
+                            <el-option v-for="(item, index) in outTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+            
+                      <el-col  :span="6" >
+                        <el-form-item label="外协供应商" prop="outPartnerName" >
+                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品名称" prop="outProductName" >
+                          <el-input v-model="dataForm.outProductName" placeholder="选择委外产品名称" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外产品编码" prop="outProductCode" >
+                          <el-input v-model="dataForm.outProductCode" placeholder="选择委外产品编码" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购单价" prop="buyBackPrice" >
+                          <el-input v-model="dataForm.buyBackPrice" placeholder="选择回购单价" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="回购税率" prop="buyBackRate" >
+                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="成材率" prop="yieldRate" >
+                          <el-input v-model="dataForm.yieldRate" placeholder="选择成材率" disabled  />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="中转仓库" prop="warehouseName" >
+                          <el-input v-model="dataForm.warehouseName" placeholder="选择中转仓库" disabled  />
+                        </el-form-item>
+                      </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="操作人" prop="salesman">
                     <el-input v-model="dataForm.salesman" placeholder="请选择操作人" :disabled="btnType == 'look'"></el-input>
@@ -313,13 +433,13 @@
             </el-form>
           </el-collapse-item>
           <el-collapse-item title="产品信息" name="productInfo">
-            <el-button type="text" style="margin-right:8px;font-size:14px!important"
-              :disabled="btnType == 'look' ? true : false" @click="scanFun()">
-              <i class="iconfont icon-saoma"></i>
-              扫码录入
-            </el-button>
-            |
             <div v-if="btnType !== 'look'">
+              <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+                <i class="iconfont icon-saoma"></i>
+                扫码录入
+              </el-button>
+              |
               <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                 icon="el-icon-plus" @click="openSeleceProductDialog()">
                 选择产品
@@ -334,25 +454,47 @@
               </el-button>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
-                hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
+              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData"
+                :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData"
+                :height="customStyleData">
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="productName" label="产品名称" width="140" show-overflow-tooltip v-if="$store.getters.configData.product.enable_productName"></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
+                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip key="3" />
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="140" key="4" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="140"
                   show-overflow-tooltip></el-table-column>
-                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
-                  :width="isDeputyUnitSwitch ? 85 : 60" />
-                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch ? '数量(主)' : '数量'"
+                <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
+                  :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+                <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
                   width="110" />
-                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
-                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch" />
-                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                   />
+                <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
+                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="120" />
                 <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
-                <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
+                <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
+                  v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.weight" placeholder="重量"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="proportion" label="比重" min-width="140" :key="727"
+                  v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.proportion" placeholder="比重"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="discount" label="折扣(0~1)" min-width="140" :key="717"
+                  v-if="isProportionSwitch === '1'">
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
+                      v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="receivedQuantity" label="收货数量" min-width="140" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
                     <span class="required">*</span>
@@ -362,26 +504,28 @@
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
                       :rules="productRules.receivedQuantity">
                       <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量" :disabled="btnType == 'look'"
-                        maxlength="11" @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
+                        maxlength="11" @input="watchnums(scope.row, scope.$index)">
                         {{ scope.row.receivedQuantity }}
                       </el-input>
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="price" label="含税单价" width="130" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                <el-table-column prop="price" label="单价(含税)" width="130"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     单价(含税)
                   </template>
                   <template slot-scope="scope">
-                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                    <el-form-item>
                       <div class="viewData">
                         <span>{{ scope.row.price ? scope.row.price : 0 }}</span>
                       </div>
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="totalAmount" label="金额" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                <el-table-column prop="totalAmount" label="金额" width="140"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     金额(含税)
@@ -394,7 +538,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="taxRate" label="税率" width="140" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                <el-table-column prop="taxRate" label="税率" width="140"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     税率
@@ -408,7 +553,8 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot-scope="scope">
                     <el-form-item :prop="'productData.' + scope.$index + '.' + 'excludingTaxPrice'">
                       <div class="viewData">
@@ -418,7 +564,8 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column prop="taxAmount" label="税额" min-width="100" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                <el-table-column prop="taxAmount" label="税额" min-width="100"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     税额
@@ -431,7 +578,8 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="180"
+                  v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                   <template slot="header">
                     <span class="required">*</span>
                     金额(不含税)
@@ -444,15 +592,19 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="standardValue" label="规值" width="100" key="standardValue"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="160" key="processName" show-overflow-tooltip />
-                    <el-table-column prop="ordersNo" label="订单号" min-width="200"  key="ordersNo"/>
-                    <el-table-column prop="remark" label="备注" min-width="200"  key="remark">
+                <el-table-column prop="material" label="材质" width="130" :key="1015"
+                  v-if="materialFlag == 1"></el-table-column>
+                <el-table-column prop="colour" label="颜色" width="130" :key="1015"
+                  v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="processName" label="工序" width="110" />
+                <el-table-column prop="ordersNo" label="订单号" width="180" />
+                <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
                       :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                   </template>
                 </el-table-column>
+
                 <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                   <template slot-scope="scope">
                     <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -466,7 +618,156 @@
           </el-collapse-item>
         </el-collapse>
       </div>
+      <el-dialog title="选择供应商" :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="80%"
+        append-to-body @close="handleClose">
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+          <div class="JNPF-common-layout-left">
+            <div class="JNPF-common-title">
+              <h2>供应商分类</h2>
+              <span class="options">
+                <el-dropdown>
+                  <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                    <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </span>
+            </div>
+            <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+              <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
+                class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
+                <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+                  <i :class="[
+                    data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+                  ]" />
+                  <span class="text" :title="data.name">{{ data.name }}</span>
+                </span>
+              </el-tree>
+            </el-scrollbar>
+          </div>
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="search()" v-model="form.code" placeholder="请输入客户编码" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="search()" v-model="form.name" placeholder="请输入客户名称" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="search()" v-model="form.taxId" placeholder="请输入税号" clearable />
+                  </el-form-item>
+                </el-col>
 
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                      {{ $t('common.search') }}
+                    </el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+                      {{ $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
+                <el-table-column prop="code" label="供应商编码" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="name" label="供应商名称" />
+                <el-table-column prop="taxId" label="税号" />
+                <el-table-column label="操作" width="100">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="seleceCustomer(scope.row)" size="mini">选择</el-button>
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize" @pagination="initData" />
+            </div>
+          </div>
+        </div>
+      </el-dialog>
+      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
+        append-to-body @close="productVisible = false">
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productDrawingNo"
+                      placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchProductFun()" v-model="orderForm.productCode"
+                      placeholder="请输入产品编码" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-form-item label="">
+                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
+                      style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期"
+                      clearable></el-date-picker>
+                  </el-form-item>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                      {{ $t('common.search') }}
+                    </el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">
+                      {{ $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table v-loading="listLoading" :data="productList" hasC
+                @selection-change="handleSelectionChangeAllPruduct">
+                <el-table-column prop="orderNo" label="订单号" width="180"></el-table-column>
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip />
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="130" />
+
+                <el-table-column prop="mainUnit" label="单位" width="160" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="160" />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" />
+                <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
+
+                <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
+                <el-table-column prop="remark" label="备注" width="160" />
+                <el-table-column prop="createTime" label="创建时间" width="180" />
+              </JNPF-table>
+              <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+                @pagination="searchProductFun" />
+            </div>
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="productVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+            确定
+          </el-button>
+        </span>
+      </el-dialog>
       <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
         width="500px">
@@ -482,9 +783,6 @@
           <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
         </span>
       </el-dialog>
-      <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
-        :methodArr="ProductMethodArr" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj"
-        :searchList="ProductTableSearchList" :elementShow="false" multiple :renderTree="false" />
       <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
         @close="closeScanDiaFun()">
@@ -500,30 +798,29 @@
         :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
       <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
         @closePrintPage="closePrintPage" />
+      <outPartnerDia :visible.sync="outVisible"  ref="outForm" @close="closeFun" @selectOut="changeOutPartner"/>
     </div>
   </transition>
 </template>
 
 <script>
 import { getProvinceList } from '@/api/system/province'
-import { getcategoryTree } from '@/api/basicData/index'
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
+import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import {
   getcategoryTrees,
   getAttributeline,
-  getcooperativeProduct,
   getOrderDetail,
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeInfo, getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
+import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
-  getpurPurchaseReceiptReturnGoodsdetail,
-  mergeOutOrderAdd
+  getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { getWarehouseList } from '@/api/basicData/index'
+import { getWarehouseList, getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
@@ -533,62 +830,41 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import outPartnerDia from '@//views/purchasingManagement/steelPipePurchaseOrder/steelPipePurchaseOrderList/outPartnerDia.vue'
 export default {
-  components: { Process, recordList, PrintBrowse, PrintDialog },
+  components: { Process, recordList,outPartnerDia, PrintBrowse, PrintDialog },
   mixins: [busFlow, getProjectList],
   data() {
     return {
+      outVisible:false,
       isProjectSwitch: '',
+      isProductNameSwitch: '',
       isProportionSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
-      tableFlag: false,
       isattachmentswitch: '',
       categoryId: '',
+      scanDialog: false,
       tipsvisible: false,
-      getCooperativeData,
-      getcategoryTree,
-      //  供应商 树请求
-      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'outsourcing_suppliers' } },
-      // 供应商 列表
-      PartnerTableItems: [
-        { prop: 'code', label: '供应商编码' },
-        { prop: 'name', label: '供应商名称' },
-        { prop: 'nameEn', label: '英文名称' },
-        { prop: 'taxId', label: '税号' }
-      ],
-      // 供应商搜索条件
-      PartnerTableSearchList: [
-        { prop: 'code', label: '供应商编码', type: 'input' },
-        { prop: 'name', label: '供应商名称', type: 'input' }
-      ],
-      // 供应商请求参数
-      PartnerListRequestObj: {
-        code: '',
-        name: '',
-        taxId: '',
-        pageNum: 1,
-        pageSize: 20,
-        partnerCategoryId: '',
-        type: 'outsourcing_suppliers'
-      },
-
-      detailpurchaseOrderList, // 产品选择弹出框树状列表请求api
-      ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
-        // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
-      ], // 产品选择弹出框树状列表
-      ProductListRequestObj: {
+      submitmethodsTitle: '',
+      btnText: '',
+      productList: [],
+      deliveryDateArr: [],
+      activeNames: ['productInfo', 'basicInfo'],
+      productTotal: 0,
+      codeConfig: {},
+      datafilelist: [],
+      provinces: [],
+      orderForm: {
         cooperativePartnerCode: '',
-        cooperativePartnerId: '',
-        partnerName: '',
+        cooperativePartnerName: '',
         createByName: '',
         deliveryEndDate: '',
         deliveryStartDate: '',
+        receiptQueryFlag: 1,
         endTime: '',
         orderNo: '',
-        orderType: 'external',
-        receiptQueryFlag: 1,
+        orderType: 'procure',
         orderItems: [
           {
             asc: false,
@@ -600,36 +876,50 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: '',
+        classAttribute: 'other',
         receivingStatus: 'receiving'
-      }, // 产品选择弹出框列表请求参数
-      ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },
-        { prop: 'productCode', label: '产品编码', sortable: 'custom', minWidth: 180 },
-        { prop: 'mainUnit', label: '单位' },
-        { prop: 'purchaseQuantity', label: '数量' },
-        { prop: 'waitReceiptNum', label: '待收货数量' },
-        { prop: 'deliveryDate', label: '交货日期' },
-        { prop: 'processName', label: '工序' },
-        { prop: 'remark', label: '备注' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
-      ], // 产品选择弹出框搜索条件
-
-      ProductTableSearchList: [
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        { prop: 'productName', label: '产品名称', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
-      ], // 产品选择弹出框搜索条件
-
-      submitmethodsTitle: '',
-      btnText: '',
-      productList: [],
-      deliveryDateArr: [],
-      activeNames: ['productInfo', 'basicInfo'],
-      productTotal: 0,
-      codeConfig: {},
-      datafilelist: [],
-      provinces: [],
+      },
+      scanResult: '',
+      // orderList: [
+      //   { label: "外协通知", value: "external" },
+      //   { label: "采购通知", value: "sale" },
+      // ],
+      inspectionStatusList: [
+        { label: '待检验', value: 'unInspect' },
+        { label: '已检验', value: 'inspected' },
+        { label: '检验中', value: 'inspecting' }
+      ],
+      deliveryStatusList: [
+        { label: '未完成', value: 'not_returned' },
+        { label: '已完成', value: 'returned' },
+        { label: '已取消', value: 'canceled' }
+      ],
+      documentStatusList: [{ label: '收货', value: false }, { label: '换货', value: true }],
+      approvalStatusList: [
+        { label: '审批中', value: 'ing' },
+        { label: '审批通过', value: 'ok' },
+        { label: '审批拒绝', value: 'rebut' }
+      ],
+      orderListtf: [{ label: '收货', value: 'back' }, { label: '发货', value: 'delivery' }],
+      orderListdd: [
+        { label: '外贸', value: 'foreign_trade' },
+        { label: '内销', value: 'domestic_market' },
+        { label: '总成', value: 'assembly' }
+      ],
+      orderListfhfs: [
+        { label: '送货', value: 'deliver_goods' },
+        { label: '自提', value: 'self_pickup' },
+        { label: '快递', value: 'express_delivery' },
+        { label: '货运', value: 'freight_transport' },
+        { label: '到付', value: 'collect_payment' }
+      ],
+      orderList: [
+        { label: '正常任务', value: 'normal' },
+        { label: '预测订单', value: 'prediction' },
+        { label: '样品订单', value: 'sample' },
+        { label: '备货订单', value: 'stock_up' },
+        { label: '急件订单', value: 'urgent' }
+      ],
       productRules: {
         receivedQuantity: [
           {
@@ -638,6 +928,7 @@ export default {
               params: [
                 '',
                 (errMsg, index) => {
+                  console.log(index)
                   this.$message.error(`产品信息第${index + 1}行：收货数量${errMsg}`)
                 }
               ]
@@ -680,28 +971,52 @@ export default {
       allProVisible: false,
       ProductMethodArr: [
         {
-          label: '物料分类',
-          classAttribute: 'material',
+          label: '产品分类',
+          classAttribute: '',
           method: getcategoryTree,
-          requestObj: { classAttribute: 'material' }
+          requestObj: { classAttribute: '' }
         }
       ],
       allproductData: [],
       allProductTotal: 0,
       orderDateArr: [],
       ProductTreeData: [],
-      productArr: [],
-      defaultProps: {
-        children: 'children',
-        label: 'fullName'
+      ProductListRequestObj: {
+        // neOrderState: 'finish',
+        orderNo: '',
+        cooperativePartnerCode: '',
+        cooperativePartnerName: '',
+        orderType: '',
+        salesName: '',
+        workOrderNo: '',
+        sourceOrderNo: '',
+        orderStartDate: '',
+        orderEndDate: '',
+        contractNo: '',
+        deliveryStartDate: '',
+        deliveryEndDate: '',
+        distributeStatus: 'distributed',
+        // orderCategory: "assembly",
+        shipmentStatus: '',
+        orderState: '',
+        productionStatus: '',
+        documentStatus: '',
+        approvalStatus: '',
+        startTime: '',
+        endTime: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
       },
-      getProductList, // 产品选择弹出框树状列表请求api
-      ProductMethodArr: [
-        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { type: 'supplier' } }
-        // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
-      ], // 产品选择弹出框树状列表
-      oldData: [],
-
       attributeLines: [],
       dataFormTwo: {
         productData: []
@@ -731,7 +1046,11 @@ export default {
       paymentCycleList: [],
       activeNameDetail: 'productInfo',
       coverNum: '', //用于计算
-
+      invoicingStatusList: [
+        { label: '未开票', value: 'not_invoiced' },
+        { label: '部分开票', value: 'partial_invoicing' },
+        { label: '已开票', value: 'invoiced' }
+      ],
       btnType: undefined,
       areaList: [],
       provinces: [],
@@ -749,11 +1068,6 @@ export default {
       visible: false,
       btnLoading: false,
       formLoading: false,
-      prindId: '',
-      formId: '',
-      enCode: '',
-      printBrowseVisible: false,
-      printVisible: false,
       dataForm: {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
@@ -762,8 +1076,8 @@ export default {
         createByName: '',
         id: '',
         // orderCategory: "assembly",
-
-        notificationType: 'external',
+        returnDeliveryType: 'back',
+        notificationType: 'procure',
         salesman: '',
         logisticsCompany: '',
         ordersId: '',
@@ -781,7 +1095,19 @@ export default {
         //   shipperId: '',
         cooperativePartnerId: '',
         remark: '',
-        approvalFlag: false
+        approvalFlag: false,
+        outType:'purchase_sale',
+        outPartnerName:"",
+        outPartnerCode:"",
+        outPartnerId:"",
+        outProductCode:"",
+        outProductName:"",
+        productDrawingNo:"",
+        buyBackPrice:"",
+        buyBackRate:"",
+        warehouseName:"",
+        warehouseId:"",
+        outProductId:"",
       },
       defaultAddress: '',
       parentId: '',
@@ -792,12 +1118,11 @@ export default {
       },
       dataRule: {
         salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
-        partnerName: [{ required: true, message: '供应商不能为空', trigger: 'change' }],
+        partnerName: [{ required: true, message: '所属供应商不能为空', trigger: 'change' }],
+        outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
-        deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }],
-        logisticsCompany: [{ required: true, message: '物流公司不能为空', trigger: 'change' }],
-        logisticsNumber: [{ required: true, message: '物流单号不能为空', trigger: 'change' }]
+        deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
       },
       customerData: {},
       treeLoading: false,
@@ -808,10 +1133,15 @@ export default {
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      scanDialog: false,
-      scanResult: '',
-      customStyleData:0,
-      mergeFlag:"",
+      selectArr: [],
+      customStyleData: 0,
+      formLoading: true,
+      prindId: '',
+      formId: '',
+      enCode: '',
+      printBrowseVisible: false,
+      printVisible: false,
+      outTypeList:[{label:"采购销售",value:"purchase_sale"},{label:"外协",value:"out"},],
     }
   },
   computed: {
@@ -819,6 +1149,7 @@ export default {
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0
+      console.log(this.dataFormTwo.productData, 'oooo')
       if (this.dataFormTwo.productData) {
         for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
           totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
@@ -865,25 +1196,53 @@ export default {
     }
   },
   async created() {
-    this.formLoading = true
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
-    this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.outDeputyUnit
+    await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getProportionSwitch('warehouse', 'proportion')
     this.getBimBusinessDetail()
+    await this.getDeputyUnit()
+    await this.switchStyleheight()
+    this.formLoading = false
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
     this.getWarehouseList()
-    this.switchStyleheight()
-    this.formLoading = false
-
   },
   mounted() {
-    this.$nextTick(() => { this.$refs.product.doLayout() })
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+
+        // 选择外协供应商及关联产品
+        changeOutPartner(data){
+      console.log("data",data);
+      this.dataForm.outPartnerId=data.outPartnerId
+      this.dataForm.outPartnerName=data.outPartnerName
+       this.dataForm.outPartnerCode=data.outPartnerCode
+       this.dataForm.outPartnerId=data.outPartnerId
+       this.dataForm.outProductCode=data.outProductCode
+       this.dataForm.outProductName=data.outProductName
+       this.dataForm.productDrawingNo=data.productDrawingNo
+       this.dataForm.buyBackPrice=data.buyBackPrice
+       this.dataForm.buyBackRate=data.buyBackRate
+       this.dataForm.warehouseName=data.warehouseName
+       this.dataForm.warehouseId=data.warehouseId
+       this.dataForm.outProductId=data.outProductId
+       this.dataForm.yieldRate=data.yieldRate
+
+    },
+    closeFun(){
+      this.outVisible=false
+    },
+    openSelectOutPartner(){
+      this.outVisible=true
+      this.$nextTick(()=>{
+        this.$refs.outForm.init()
+      })
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight
@@ -896,14 +1255,13 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight;
+      let maxHeight = mainHeight1 - 420
       console.log(maxHeight, 'maxHeight')
       if (this.btnType === 'look') {
-        maxHeight = mainHeight1 - 470
+        this.customStyleData = maxHeight + 30
       } else {
-        maxHeight = mainHeight1 - 420
+        this.customStyleData = maxHeight
       }
-      this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -912,47 +1270,57 @@ export default {
         }, 100)
       }
     },
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    async getProportionSwitch(code, type) {
+      try {
+        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
     warehouseIdChange(e) {
       this.dataForm.warehouseId = e
       if (this.isProjectSwitch === '1') {
-        this.ProductTableItems = [
-          { prop: 'projectName', label: '所属项目', sortable: 'custom', minWidth: 120 },
-          { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },
-          { prop: 'productCode', label: '产品编码', sortable: 'custom', minWidth: 180 },
-          { prop: 'mainUnit', label: '单位' },
-          { prop: 'purchaseQuantity', label: '数量' },
-          { prop: 'waitReceiptNum', label: '待收货数量' },
-          { prop: 'deliveryDate', label: '交货日期' },
-          { prop: 'processName', label: '工序' },
-          { prop: 'remark', label: '备注' },
-          { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
-        ]
         this.warehouseIdList.forEach((item) => {
           if (e === item.id) {
-            this.ProductListRequestObj.projectId = item.projectId
+            this.orderForm.projectId = item.projectId
           }
         })
         this.dataFormTwo.productData = this.dataFormTwo.productData.filter(
-          (item) => item.projectId === this.ProductListRequestObj.projectId
+          (item) => item.projectId === this.orderForm.projectId
         )
-      } else {
-        this.ProductTableItems = [
-          { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },
-          { prop: 'productCode', label: '产品编码', sortable: 'custom', minWidth: 180 },
-          { prop: 'mainUnit', label: '单位' },
-          { prop: 'purchaseQuantity', label: '数量' },
-          { prop: 'waitReceiptNum', label: '待收货数量' },
-          { prop: 'deliveryDate', label: '交货日期' },
-          { prop: 'processName', label: '工序' },
-          { prop: 'remark', label: '备注' },
-          { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
-        ]
       }
+    },
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
     },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
-        configKey: 'fj_wxshd'
+        configKey: 'fj_cgshd'
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isattachmentswitch = res.data.configValue1
@@ -969,15 +1337,23 @@ export default {
     closeScanDiaFun() {
       this.scanDialog = false
       this.scanResult = ''
-      this.ProductListRequestObj.productCode = ''
+      this.orderForm.productCode = ''
     },
     getProductFun() {
       console.log(21341234)
       console.log(this.scanResult)
-      this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      this.ProductListRequestObj.productCode = this.scanResult
-      detailpurchaseOrderList(this.ProductListRequestObj).then((res) => {
+      if (this.deliveryDateArr.length) {
+        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartTime = ''
+        this.orderForm.deliveryEndTime = ''
+      }
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      this.orderForm.productCode = this.scanResult
+      detailpurchaseOrderList(this.orderForm).then((res) => {
         console.log(res.data.records, 'p')
+        this.scanResult = ''
         console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
         const newRecord = res.data.records
 
@@ -1018,8 +1394,12 @@ export default {
     //发货数量不能为0
     calcValidatenum() {
       return (rule, value, callback) => {
+        console.log(value, 'oo999')
         let msg = `收货数量不能为'0'`
         if (value == 0) {
+          callback(new Error(msg)), this.$message.error(msg)
+        }
+        if (!value) {
           callback(new Error(msg)), this.$message.error(msg)
         }
       }
@@ -1027,8 +1407,9 @@ export default {
     //数量验证
     // list 中 a 不能 operator b 的校验规则
     calcValidate() {
+      console.log(12332222)
       return (rule, value, callback) => {
-        console.log(value, 'ooo')
+        console.log(value, 'p')
         let index = Number(rule.field.match(/\d+/)[0])
         let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
         if (!value || value == 0) {
@@ -1052,98 +1433,9 @@ export default {
       }
     },
 
-    dateFormat(dateData) {
-      var date = new Date(dateData)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      m = m < 10 ? '0' + m : m
-      var d = date.getDate()
-      d = d < 10 ? '0' + d : d
-      const time = y + '-' + m + '-' + d
-      return time
-    },
-    // handleChange($event) {
-    //   this.dataForm.country = ''
-
-    //   this.countryList = []
-    //   let obj = {
-    //     "keyword": "",
-    //     "orderItems": [
-    //       {
-    //         "asc": true,
-    //         "column": ""
-    //       }
-    //     ],
-    //     "pageNum": 1,
-    //     "pageSize": -1
-    //   }
-    //   getCounryData(obj).then(res => {
-    //     this.countryList = res.data.records
-    //   })
-    // },
-
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
-    },
-
-    // 弹窗节点的点击
-    treeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      listQuery.classAttribute = data.classAttribute
-      return listQuery
-    },
-    // 切换供应商后给的提示
-    async beforeSubmit(data, paramsObj) {
-      let flag = true
-      if (this.dataFormTwo.productData.length) {
-        if (paramsObj.oldData.length) {
-          flag = await this.$confirm('切换供应商将清空产品信息，是否继续？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-            .then(() => {
-              this.$message({
-                type: 'success',
-                message: '更换成功!'
-              })
-              this.$refs['productForm'].resetFields()
-              this.dataFormTwo.productData = []
-              return true
-            })
-            .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消'
-              })
-              return false
-            })
-        }
-      }
-
-      return flag
-    },
-    supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('partnerName')
-      })
-      if (data.length === 0) {
-        this.dataForm.partnerName = ''
-        this.dataForm.cooperativePartnerCode = ''
-        this.dataForm.cooperativePartnerId = ''
-        this.oldData = []
-      } else {
-        if (this.oldData.length) {
-        } else {
-          this.oldData.push(data)
-        }
-        this.dataForm.partnerName = data[0].all.name
-        this.dataForm.cooperativePartnerCode = data[0].all.code
-        this.dataForm.cooperativePartnerId = data[0].all.id
-        this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      }
     },
     // 批量删除
     batchDelete() {
@@ -1181,82 +1473,108 @@ export default {
       }
     },
 
+    // 选择产品——搜索
+    searchProductFun() {
+      if (this.deliveryDateArr.length) {
+        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartDate = ''
+        this.orderForm.deliveryEndDate = ''
+      }
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      detailpurchaseOrderList(this.orderForm)
+        .then((res) => {
+          this.productList = res.data.records
+          this.productTotal = res.data.total
+          this.listLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
+    },
+    // 选择产品——重置
+    resetProductFun() {
+      this.deliveryDateArr = []
+      this.orderForm = {
+        cooperativePartnerCode: '',
+        cooperativePartnerName: '',
+        createByName: '',
+        deliveryEndDate: '',
+        deliveryStartDate: '',
+        receiptQueryFlag: 1,
+        endTime: '',
+        orderNo: '',
+        orderType: 'procure',
+        orderItems: [
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        startTime: '',
+        productCode: '',
+        productName: '',
+        classAttribute: 'other',
+        receivingStatus: 'receiving'
+      }
+      this.searchProductFun()
+    },
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
-      this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      this.$refs['ComSelect-page'].openDialog()
+      this.productVisible = true
+      this.searchProductFun()
     },
-    // 产品组件回调
-    addth(id, data) {
-      console.log(data, 'l')
-      if (data.length) {
-        let selectArr = []
-        let list = data.map((item) => item.all)
-        list.forEach((item, index) => {
-          selectArr.push({
-            productCategoryName: item.productCategoryName,
-            projectName: item.projectName, // 所属项目
-            productSource: item.productSource, // 产品来源 采购
-            classAttribute: item.classAttribute,
-            orderType: item.orderType,
-            purchaseOrderId: item.purchaseOrderId,
-            productsId: item.productsId, // 产品id
-            productName: item.name, // 产品名称
-            productCode: item.productCode, // 产品编码
-            drawingNo: item.drawingNo, // 品名规格
-            ratio: item.ratio, // 转换系数
-            calculationDirection: item.calculationDirection, // 计算方向
-            mainUnit: item.mainUnit, // 主单位
-            purchaseQuantity: item.purchaseQuantity, // 数量
-            waitReceiptNum: item.waitReceiptNum,
-            receivedQuantity: item.waitReceiptNum,
-            price: item.price, // 含税单价
-            totalAmount: item.totalAmount, // 金额(含税)
-            taxRate: item.taxRate, // 税率
-            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
-            taxAmount: item.taxAmount, // 税额
-            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
-            deputyUnit: item.deputyUnit, // 副单位
-            planQuantity: '', //计划数量主
-            planQuantity2: '', //计划数量副
-            remark: item.remark,
-            orderNo: item.orderNo,
-            id: item.id,
-            deliveryDate: '', // 交期
-            maxReceiptNum: Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum),
-          })
-        })
-        let orderTypeFlag = this.hasDifferentOrderType(list)
-        if (orderTypeFlag) return this.$message.error('只能选择相同外协订单类型的明细订单')
-        if (this.dataFormTwo.productData.length) {
-          const deletedArray = []
-          selectArr = selectArr.filter((item1) => {
-            const index = this.dataFormTwo.productData.findIndex((item2) => item2.productsId === item1.productsId)
-            if (index !== -1) {
-              deletedArray.push(item1.drawingNo)
-              if (deletedArray.length) {
-                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
-              }
-              return false
-            }
-            return true
-          })
+    submitAllProduct() {
+      if (this.selectArr.length == 0) return this.$message.error('请选择产品！')
+      this.productVisible = false
+      this.selectArr.forEach((item) => {
+        this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+        this.dataFormTwo.productData.push(item)
+      })
+      let uniqueArr = []
+      let idSet = new Set()
+
+      this.dataFormTwo.productData.forEach((item) => {
+        if (!idSet.has(item.id)) {
+          uniqueArr.push(item)
+          idSet.add(item.id)
         }
-        this.dataFormTwo.productData = [...this.dataFormTwo.productData, ...selectArr]
-
-        // 审批
-        // this.$nextTick(() => { this.getApproverData() })
-      }
+      })
+      this.dataFormTwo.productData = uniqueArr
     },
-    hasDifferentOrderType(arr) {
-      const codes = new Set()
-
-      for (const item of arr) {
-        codes.add(item.orderType)
+    // },
+    // 获取所有订单列表数据
+    initData2() {
+      this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode
+      this.listLoading = true
+      getsaleOrderList(this.ProductListRequestObj).then((listRes) => {
+        if (Array.isArray(listRes.data)) {
+          this.allproductData = listRes.data
+        } else {
+          this.allproductData = listRes.data.records
+        }
+        this.allProductTotal = listRes.data.total
+        this.$forceUpdate()
+        this.treeLoading = false
+        this.listLoading = false
+      })
+    },
+    // 搜索所有产品 列表
+    searchAllProduct() {
+      this.ProductListRequestObj.pageNum = 1
+      if (this.orderDateArr && this.orderDateArr.length > 0) {
+        this.ProductListRequestObj.orderStartDate = this.orderDateArr[0]
+        this.ProductListRequestObj.orderEndDate = this.orderDateArr[1]
+      } else {
+        this.ProductListRequestObj.orderStartDate = ''
+        this.ProductListRequestObj.orderEndDate = ''
       }
-
-      return codes.size > 1 // 如果有多个不同的代码，则返回 true
+      this.initData2()
     },
     // 监听主数量输入
     watchnums(row, index) {
@@ -1347,7 +1665,46 @@ export default {
         }
       }
     },
-
+    // 所有产品弹框 重置搜索条件
+    resetAllProduct() {
+      this.orderDateArr = []
+      this.ProductListRequestObj = {
+        // neOrderState: 'finish',
+        orderNo: '',
+        cooperativePartnerName: '',
+        orderType: '',
+        salesName: '',
+        workOrderNo: '',
+        sourceOrderNo: '',
+        orderStartDate: '',
+        orderEndDate: '',
+        contractNo: '',
+        deliveryStartDate: '',
+        deliveryEndDate: '',
+        distributeStatus: 'distributed',
+        // orderCategory: "assembly",
+        shipmentStatus: '',
+        orderState: '',
+        productionStatus: '',
+        documentStatus: '',
+        approvalStatus: '',
+        startTime: '',
+        endTime: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
+      }
+      this.searchAllProduct()
+    },
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
     },
@@ -1358,7 +1715,7 @@ export default {
       })
     },
 
-    // 选完所属外协，带出所属部门
+    // 选完所属采购，带出所属部门
     hangleSelectSales(e, r) {
       this.dataForm.departmentId = r.parentId
       this.dataForm.departmentName = r.organize
@@ -1375,7 +1732,81 @@ export default {
       }
       this.initData()
     },
-
+    // 选择客户
+    seleceCustomer(e) {
+      getCooperativeInfo(e.id).then((res) => {
+        if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
+          this.$confirm('切换供应商后将清空订单和产品信息，是否继续！', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: '切换成功'
+              })
+              // this.dataForm = {
+              //   exchangeGoodsFlag: false,
+              //   // orderCategory: "assembly",
+              //   returnDeliveryType: 'back',
+              //   notificationType: 'procure',
+              //   logisticsCompany: '',
+              //   ordersId: '',
+              //   deliverDate: '',
+              //   logisticsNumber: '',
+              //   cooperativePartnerId: '',
+              //   remark: '',
+              //   orderNo: this.codeConfig.number
+              // }
+              this.dataFormTwo.productData = []
+              this.customerData = e
+              this.dataForm.cooperativePartnerId = e.id
+              this.ProductListRequestObj.cooperativePartnerCode = e.code
+              this.code = e.code
+              this.dataForm.partnerName = e.name
+              this.dataForm.code = e.code
+              this.customerVisible = false
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消'
+              })
+              this.customerVisible = true
+            })
+        } else {
+          // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
+          // this.dataForm = {
+          //   exchangeGoodsFlag: false,
+          //   // orderCategory: "assembly",
+          //   returnDeliveryType: 'back',
+          //   notificationType: 'procure',
+          //   logisticsCompany: '',
+          //   ordersId: '',
+          //   orderNo: this.codeConfig.number,
+          //   deliverDate: '',
+          //   logisticsNumber: '',
+          //   cooperativePartnerId: '',
+          //   remark: ''
+          // }
+          this.dataFormTwo.productData = []
+          this.customerData = e
+          this.dataForm.cooperativePartnerId = e.id
+          this.ProductListRequestObj.cooperativePartnerCode = e.code
+          this.code = e.code
+          this.dataForm.partnerName = e.name
+          this.dataForm.code = e.code
+          this.customerVisible = false
+        }
+      })
+    },
+    computedNumFun(data, index) {
+      if (data.proportion && data.weight) {
+        this.dataFormTwo.productData[index].receivedQuantity = Math.floor(data.proportion * data.weight * data.discount)
+        this.watchnums(data, index)
+      }
+    },
     search() {
       this.form.pageNum = 1
       this.initData()
@@ -1390,7 +1821,7 @@ export default {
         partnerCategoryId: '',
         type: 'supplier'
       }
-      // this.getcategoryTree()
+      this.getcategoryTree()
     },
     initData() {
       this.listLoading = true
@@ -1429,7 +1860,14 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-
+    handleNodeAllProduct(data, node) {
+      if (this.ProductListRequestObj.productCategoryId === data.id) return
+      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      const nodePath = this.getNodePathProduct(node)
+      this.organizeIdTree = nodePath.map((o) => o.id)
+      this.ProductListRequestObj.classAttribute = data.classAttribute
+      this.searchAllProduct()
+    },
     getNodePathProduct(node) {
       let fullPath = []
       const loop = (node) => {
@@ -1449,25 +1887,25 @@ export default {
         })
       })
     },
-    // // 获取客户数据
-    // getcategoryTree(isInit) {
-    //   this.treeLoading = true
-    //   let listQuery = {
-    //     keyword: '',
-    //     type: 'supplier'
-    //   }
-    //   getcategoryTrees(listQuery)
-    //     .then((res) => {
-    //       this.treeData = res.data
-    //       this.$nextTick(() => {
-    //         this.initData()
-    //         this.treeLoading = false
-    //       })
-    //     })
-    //     .catch(() => {
-    //       this.treeLoading = false
-    //     })
-    // },
+    // 获取客户数据
+    getcategoryTree(isInit) {
+      this.treeLoading = true
+      let listQuery = {
+        keyword: '',
+        type: 'supplier'
+      }
+      getcategoryTrees(listQuery)
+        .then((res) => {
+          this.treeData = res.data
+          this.$nextTick(() => {
+            this.initData()
+            this.treeLoading = false
+          })
+        })
+        .catch(() => {
+          this.treeLoading = false
+        })
+    },
     // 打开选择客户弹框
     openDialog() {
       this.customerVisible = true
@@ -1483,29 +1921,63 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data,pageFlag,mergeFlag) {
-      console.log(111,id, btnType, approvalFlag, data,pageFlag,mergeFlag);
+    init(id, btnType, approvalFlag, data) {
+      console.log(id, '[]')
       this.dataForm.id = id || ''
-      this.approvalFlag = approvalFlag
-      this.btnType = btnType
-      console.log(this.btnType, 'this.btnType')
-      console.log(data, 'kk')
-      this.mergeFlag=mergeFlag
 
-        if (data && data.length !== 0) {
-          data.forEach((item) => {
-            item.ordersNo = item.orderNo
-            this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
-          })
-          this.oldData = data
+      this.btnType = btnType
+      console.log(btnType, 'iiiiii')
+      this.approvalFlag = approvalFlag
+      console.log(data, 'ddd')
+      if (data != 'outInboundWarehouse') {
+
+        if (data && data.length) {
           this.dataFormTwo.productData = data
           this.dataForm.partnerName = data[0].cooperativePartnerName
           this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+          data.forEach((item) => {
+            console.log('ooooooo', item)
+            item.ordersNo = item.orderNo
+            this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+            this.$set(item, 'discount', 1)
+            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+          })
         }
+      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
+
+          if (this.btnType == 'copy') {
+            this.dataForm.inspectionStatus = ''
+            this.dataForm.id = ''
+            this.dataForm.deliverDate = this.jnpf.getToday()
+            this.datafilelist = []
+            this.dataForm.approvalStatus = ''
+            this.dataForm.packingStatus = 'unboxed'
+            this.dataForm.salesman = this.userInfo.userName
+            this.fetchData('CGSH')
+            this.getBusInfo()
+
+            res.data.noticeLineList.forEach((item) => {
+              item.receivedQuantity = ''
+            })
+          } else if (this.btnType == 'edit' || this.btnType == 'look') {
+            let data = res.data.noticeLineList
+            data.forEach((item) => {
+              console.log('ooo888oooo', item)
+              item.drawingNo = item.productDrawingNo
+            })
+            this.dataFormTwo.productData = data
+
+            if (this.btnType === 'edit') {
+              this.getBusInfo()
+            } else {
+              // 流程信息和流转记录
+              console.log(this.dataForm.approvalFlag, 'this.dataForm.approvalFlag666')
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
+          }
           if (res.data.attachmentList.length !== 0) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push({
@@ -1517,50 +1989,23 @@ export default {
               })
             })
           }
-          if (this.btnType == 'copy') {
-            this.dataForm.inspectionStatus = ''
-            this.dataForm.id = ''
-            this.dataForm.deliverDate = this.jnpf.getToday()
-            this.datafilelist = []
-            this.dataForm.approvalStatus = ''
-            this.dataForm.packingStatus = 'unboxed'
-            this.fetchData('WXSH')
-            this.getBusInfo()
-            // this.dataForm.salesman = this.userInfo.userName
-            res.data.noticeLineList.forEach((item) => {
-              item.receivedQuantity = ''
-            })
-          } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            this.dataFormTwo.productData = res.data.noticeLineList
-            console.log(this.dataFormTwo.productData, 'k')
-            this.dataFormTwo.productData.forEach((item) => {
-              console.log(item, 'item')
-              item.drawingNo = item.productDrawingNo
-              this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
-            })
-            if (this.btnType === 'edit') {
-              this.getBusInfo()
-            } else {
-              // 流程信息和流转记录
-              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-            }
-          }
         })
       } else {
-        this.fetchData('WXSH')
         this.dataForm.salesman = this.userInfo.userName
         this.dataForm.deliverDate = this.jnpf.getToday()
+        this.fetchData('CGSH')
         this.getBusInfo()
       }
-
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
         this.getBusInfo()
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
+        console.log(6)
         this.getBusInfo()
       }
     },
+
     goBack() {
       this.$emit('close', true)
     },
@@ -1577,8 +2022,8 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
-
-        // notificationType: 'external',
+        // returnDeliveryType: 'back',
+        // notificationType: 'procure',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -1604,16 +2049,20 @@ export default {
     },
     handleConfirm(value, type) {
       let submitFlag = true
-
+      console.log(this.$refs['dataForm'])
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (!valid) {
           submitFlag = false
+          this.btnLoading = false
         }
       })
+      console.log(this.$refs['productForm'], 'kkkk')
       this.$refs['productForm'].validate((valid) => {
+        console.log(valid, 'p999')
         if (!valid) {
           submitFlag = false
+          this.btnLoading = false
         }
       })
       if (submitFlag) {
@@ -1621,7 +2070,7 @@ export default {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
               businessType: 'system_attachment',
-              configKey: 'fj_wxshd',
+              configKey: 'fj_cgshd',
               categoryId: this.categoryId,
               documentId: item.id,
               fileFlag: '',
@@ -1645,7 +2094,8 @@ export default {
           })
           return
         }
-        this.dataFormTwo.productData.forEach((item,index)=>{
+        for (let index = 0; index < this.dataFormTwo.productData.length; index++) {
+          const item = this.dataFormTwo.productData[index];
           if (!item.receivedQuantity && item.productsId) {
             submitFlag = false
             this.btnLoading = false
@@ -1677,7 +2127,35 @@ export default {
             })
             return
           }
-        })
+          if (item.classType == 'inner_ring_blank' || item.classType == 'outer_ring_blank') {
+            if (this.isProportionSwitch === '1') {
+              if (!item.weight) {
+                submitFlag = false
+                this.btnLoading = false
+                this.$message({
+                  message: '请填写第' + (index + 1) + '行产品的重量',
+                  type: 'error',
+                  duration: 1500
+                })
+                return
+
+              }
+            }
+          }
+          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
+            console.log(123)
+            submitFlag = false
+            this.btnLoading = false
+            this.$message({
+              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+        }
+
+
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             accuracyLevel: item.accuracyLevel,
@@ -1686,21 +2164,23 @@ export default {
             clearance: item.clearance,
             customColumn: item.customColumn,
             deputyUnit: item.deputyUnit,
-            drawingNo: item.drawingNo,
             // id: 0,
-            notificationType: 'external',
+            notificationType: 'procure',
             inspectionResults: item.inspectionResults,
             mainUnit: item.mainUnit,
             // notificationType: item.notificationType,
             oil: item.oil,
             oilQuantity: item.oilQuantity,
-
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount,
             packagingMethod: item.packagingMethod,
             packingQuantity: item.packingQuantity,
             processId: item.processId,
             productsId: item.productsId ? item.productsId : '',
             purchaseOrderId: item.purchaseOrderId,
             purchaseQuantity: item.purchaseQuantity,
+            purchaseQuantity2: item.purchaseQuantity2,
             purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
             qualifiedQuantity: item.qualifiedQuantity,
             ratio: item.ratio,
@@ -1716,7 +2196,6 @@ export default {
             ordersId: item.ordersId,
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
-            purchaseOrderLineIds:this.mergeFlag===1?item.ids:'',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
             ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
             // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1737,14 +2216,12 @@ export default {
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
             receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
-            drawingNo: item.drawingNo ? item.drawingNo : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,
             classAttribute: item.classAttribute,
             id: item.id ? item.id : '',
-            purchaseOrderLineIds:this.mergeFlag===1?item.ids:'',
-            purchaseOrderId: item.purchaseOrderId,
             purchaseQuantity: item.purchaseQuantity,
+            purchaseQuantity2: item.purchaseQuantity2,
             productsId: item.productsId ? item.productsId : '',
             waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
             // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
@@ -1760,7 +2237,10 @@ export default {
             taxRate: item.taxRate ? item.taxRate : '',
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
-            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : ''
+            excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
+            weight: item.weight,
+            proportion: item.proportion,
+            discount: item.discount
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)
@@ -1768,22 +2248,20 @@ export default {
             obj.lines.push(dep1)
           }
         })
-        this.btnLoading = true
         let formMethod = null
-        if(this.mergeFlag==1){
-          formMethod = mergeOutOrderAdd
 
-        }else{
-
-          if (this.btnType == 'edit') {
-            formMethod = editpurPurchaseReceiptReturnGoods
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            formMethod = addpurPurchaseReceiptReturnGoods
-          }
+        if (this.btnType == 'edit') {
+          formMethod = editpurPurchaseReceiptReturnGoods
+        } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          // obj.notice.deliveryStatus = 'not_returned'
+          formMethod = addpurPurchaseReceiptReturnGoods
         }
-        console.log(obj, 'ohh')
+        console.log(obj, 'obj')
+        if(submitFlag===false) return
+        this.btnLoading = true
         formMethod(obj)
           .then((res) => {
+            this.btnLoading = false
             // let msg = "";
             // if (formMethod == addpurPurchaseReceiptReturnGoods) {
             //   msg = "新建成功"
@@ -1794,12 +2272,12 @@ export default {
             // }
             let msg = res.msg
             if (res.msg === 'Success') { msg = this.dataForm.documentStatus == "submit" ? "提交成功" : "保存成功" }
+            this.$message.success(msg)
             if (value == 'draft') {
               this.submitmethodsTitle = '保存成功'
             } else if (value == 'submit') {
               this.submitmethodsTitle = '提交成功'
             }
-            this.$message.success(msg)
             if (type) {
               this.enCode = 'p018'
               this.formId = res.data.id
@@ -1843,7 +2321,7 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b036')
+      getBusinessFlowInfo('b034')
         .then((res) => {
           if (res.data) {
             if (res.data.enabledMark) {

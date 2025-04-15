@@ -51,9 +51,6 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
-              <el-button type="primary" size="mini" icon="el-icon-plus" @click="mergeOrdrFun('dataTable')">
-                合并待收货订单
-              </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -75,7 +72,7 @@
           <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column hasC
             @selection-change="selectCustomerFun">
-            <el-table-column prop="orderNo" label="订单号" width="220" sortable="custom">
+            <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
@@ -86,16 +83,11 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" width="120"
               v-if="isProjectSwitch === '1'"></el-table-column>
-            <el-table-column prop="productName" label="产品名称" width="120"
-              v-if="isProductNameSwitch === '1'"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+              show-overflow-tooltip></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
-            <template v-if="isProportionSwitch === '1'">
-              <el-table-column prop="weight" label="重量(kg)" width="90" />
-              <el-table-column prop="proportion" label="比重" width="80" />
-            </template>
             <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
@@ -103,13 +95,15 @@
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
-
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
-
+            <el-table-column prop="material" label="材质" width="130" sortable="custom"
+              v-if="materialFlag == 1"></el-table-column>
+            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+              v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="100" fixed="right" v-if="orderForm.mergeFlag!=1">
+            <el-table-column prop="createByName" label="创建人" min-width="100" sortable="custom" />
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -130,6 +124,7 @@
 
     <Detail v-if="detailVisible" ref="Detail" @refreshDataList="initData" @close="closeForm" :customList="customList" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
@@ -150,7 +145,7 @@ import {
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Detail from '../../../outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
+import Detail from '../../../purchasingManagement/purchaseOrders/purchaseOrder/Form.vue'
 import Form from '../receivingAdvice/Form.vue'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
@@ -158,17 +153,18 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
+
 export default {
   name: 'pendingOrders',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery, Detail },
   mixins: [getProjectList],
+
   data() {
     return {
-      isProductNameSwitch: '',
       isProjectSwitch: '',
-      isProportionSwitch: '',
+      isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
       tableFlag: false,
@@ -185,29 +181,34 @@ export default {
       detailFlag: false,
 
       orderForm: {
-        approvalStatus: 'ok',
-        documentStatus: 'submit',
-        orderState: 'not_finish',
-        externalFlag: 1,
+        // approvalStatus: 'ok',
+        // documentStatus: 'submit',
+        // orderState: 'not_finish',
+        orderType: 'procure',
         receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
-        deliverQueryFlag: 1,
-        shipmentStatus: 'finish',
+        classAttribute: 'out',
+        // extensionFlag: 1,
+        // deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
             column: 't1.create_time'
           }
         ],
-
-        superQuery: {}
+        superQuery: {
+          condition: [
+            {
+              field: '',
+              fieldValue: '',
+              symbol: ''
+            }
+          ],
+          matchLogic: ''
+        }
       },
 
       detailTotal: 0,
@@ -248,11 +249,11 @@ export default {
           type: 'input'
         },
 
-        {
-          prop: 'processName',
-          label: '工序名称',
-          type: 'input'
-        },
+        // {
+        //   prop: 'productName',
+        //   label: '产品名称',
+        //   type: 'input'
+        // },
         {
           prop: 'productCode',
           label: '产品编码',
@@ -263,16 +264,8 @@ export default {
           label: '单位',
           type: 'input'
         },
-        {
-          prop: 'purchaseQuantity',
-          label: '数量',
-          type: 'input'
-        },
-        {
-          prop: 'waitReceiptNum',
-          label: '待收货数量',
-          type: 'input'
-        },
+
+
         {
           prop: 'deliveryDate',
           label: '交货日期',
@@ -283,54 +276,6 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
 
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'input'
-        },
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: []
-        },
         {
           prop: 'createTime',
           label: '创建时间',
@@ -364,32 +309,30 @@ export default {
     this.getProductClassFun()
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    await this.getProportionSwitch('warehouse', 'proportion')
+
     if (this.isDeputyUnitSwitch === '1') {
-      this.superQueryJson.forEach(item => {
+      this.superQueryJson.forEach((item) => {
         if (item.prop === 'mainUnit') {
           item.label = '单位(主)'
         }
       })
-      this.superQueryJson.splice(7, 0, {
+      this.superQueryJson.splice(6, 0, {
         prop: 'deputyUnit',
         label: '单位(副)',
         type: 'input'
       })
-
     }
     if (this.isProductNameSwitch === '1') {
-
-      this.superQueryJson.splice(6, 0, {
+      this.superQueryJson.splice(4, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
       })
     }
-
     // 默认设置为近3天
     const end = new Date()
     const start = new Date()
@@ -401,20 +344,30 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('purchase').then((res) => {
+        this.materialFlag = res.data.material
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    async getProportionSwitch(code, type) {
-      try {
-        this.isProportionSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
-    },
     getDeputyUnit() {
       let obj = {
         businessCode: 'deputyUnit',
-        configKey: `outDeputyUnit`
+        configKey: `procureDeputyUnit`
       }
       getBimBusinessDetail(obj).then((res) => {
         this.isDeputyUnitSwitch = res.data.configValue1
@@ -500,7 +453,7 @@ export default {
     sortChange({ prop, order }) {
       let newProp
       if (
-        prop === 'processName' ||
+        prop === 'productName' ||
         prop === 'productCode' ||
         prop === 'documentStatus' ||
         prop === 'cooperativePartnerName' ||
@@ -515,6 +468,7 @@ export default {
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
+
       this.orderForm.orderItems[0].asc = order === 'ascending'
       this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()
@@ -549,6 +503,7 @@ export default {
       purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
+          this.tableFlag = true
 
           this.total = res.data.page.total
           this.listLoading = false
@@ -556,25 +511,14 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
-        this.tableFlag = true
-      },
+    },
 
     search() {
-      this.orderForm.mergeFlag=this.orderForm.mergeFlag==1?1:0
       this.dataFormSubmit()
     },
-    mergeOrdrFun(){
-      this.orderForm.mergeFlag=1
-    this.$nextTick(() => { this.$refs.dataTable.doLayout() })
-    this.dataFormSubmit()
-    },
+
     reset() {
-     
-      this.orderForm.mergeFlag=0
-    this.$nextTick(() => { this.$refs.dataTable.doLayout() })
-    this.$nextTick(()=>{
-        this.$refs['dataTable'].$refs.JNPFTable.clearSort()
-      }) // 清除排序箭头高亮
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       // 默认设置为近3天
       const end = new Date()
       const start = new Date()
@@ -582,29 +526,34 @@ export default {
       end.setDate(end.getDate() + 3)
       this.deliveryDateArr = [start, end]
       this.orderForm = {
-        approvalStatus: 'ok',
-        documentStatus: 'submit',
-        orderState: 'not_finish',
-        externalFlag: 1,
+        // approvalStatus: 'ok',
+        // documentStatus: 'submit',
+        // orderState: 'not_finish',
+        orderType: 'procure',
+        receiptQueryFlag: 1,
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
-        deliverQueryFlag: 1,
-        receiptQueryFlag: 1,
-        shipmentStatus: 'finish',
+        classAttribute: 'out',
+        // extensionFlag: 1,
+        // deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
             column: 't1.create_time'
           }
         ],
-
-        superQuery: {}
+        superQuery: {
+          condition: [
+            {
+              field: '',
+              fieldValue: '',
+              symbol: ''
+            }
+          ],
+          matchLogic: ''
+        }
       }
       this.$refs.SuperQuery.conditionList = []
       this.search()
@@ -619,34 +568,30 @@ export default {
     },
     addSupplier(id, btntype) {
       if (!this.list.length) return this.$message.error('请选择您要新建的订单')
-      let flag = this.hasDifferentCooperativePartnerCode(this.list)
+      let flag = this.hasDifferentCooperativePartnerId(this.list)
       if (flag) return this.$message.error('只能选择相同供应商的明细订单')
-      let orderTypeFlag = this.hasDifferentOrderType(this.list)
-      if (orderTypeFlag) return this.$message.error('只能选择相同外协订单类型的明细订单')
       console.log(this.list)
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse',this.orderForm.mergeFlag)
+        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse')
       })
     },
-    hasDifferentCooperativePartnerCode(arr) {
+    hasDifferentCooperativePartnerId(arr) {
       const codes = new Set()
 
       for (const item of arr) {
-        codes.add(item.cooperativePartnerCode)
+        codes.add(item.cooperativePartnerId)
       }
 
       return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
-    hasDifferentOrderType(arr) {
-      const codes = new Set()
-
-      for (const item of arr) {
-        codes.add(item.orderType)
-      }
-
-      return codes.size > 1 // 如果有多个不同的代码，则返回 true
+    getCopyOrders(id, btntype) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btntype)
+      })
     },
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'

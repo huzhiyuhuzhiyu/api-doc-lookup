@@ -400,3 +400,13 @@ export function batchReturnLine(data) {
     data
   })
 }
+
+// 钢管物料外协收货 合并提交
+
+export function mergeOutOrderAdd(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/merge/out/add`,
+    method: 'post',
+    data
+  })
+}

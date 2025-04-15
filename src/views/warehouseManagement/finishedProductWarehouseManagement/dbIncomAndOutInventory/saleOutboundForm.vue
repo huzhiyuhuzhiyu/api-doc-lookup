@@ -214,7 +214,9 @@
                           </template>
                         </el-table-column>
                       </JNPF-table>
-
+                      <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
+                        <span style="font-weight:500;margin:0 10px">总发货数量：{{ totalDeliveryQuantity }}</span>
+                      </div>
 
 
                     </el-collapse-item>
@@ -425,7 +427,9 @@
                           </template>
                         </el-table-column>
                       </JNPF-table>
-
+                      <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
+                        <span style="font-weight:500;margin:0 10px">总发货数量：{{ totalDeliveryQuantity }}</span>
+                      </div>
 
 
                     </el-collapse-item>
@@ -748,7 +752,19 @@ export default {
     })
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    // 总发货数量
+    totalDeliveryQuantity: function () {
+      var totalNum = 0
+      console.log(this.productData, 'oooo')
+      if (this.productData) {
+        for (var i = 0; i < this.productData.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.productData[i].num])
+        }
+      }
+
+      return totalNum
+    }
   },
   watch: {
     "dataForm.warehouseId": {
@@ -839,7 +855,13 @@ export default {
       this.$set(this.productData[index], 'angle', data.angle)
       this.$set(this.productData[index], 'pairingModeName', data.pairingModeName)
       this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
-      
+      // 如果批次数量小于待出库数量，则把出库数量设为批次数量，反之则为待出库数量
+      const newNum = Math.min(this.productData[index].availableBatchNumber, this.productData[index].waitDeliverNum)
+      if (newNum !== Number(this.productData[index].num)) {
+        this.$message.success(`产品信息第${index + 1}行：自动更新发货数量数量成功`)
+        this.$set(this.productData[index], 'num', newNum)
+        console.log(this.productData,'this.productData')
+      }
     }, 
 
 

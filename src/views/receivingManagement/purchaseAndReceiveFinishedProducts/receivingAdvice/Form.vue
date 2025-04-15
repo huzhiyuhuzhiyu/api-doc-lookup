@@ -1047,7 +1047,7 @@ export default {
             item.totalAmount = ''
           }
           if ((item.price && item.taxRate) || (item.price && item.taxRate === 0)) {
-            item.excludingTaxPrice = this.jnpf.numberFormat(item.price * (1 - Number(item.taxRate) / 100),6)
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100),6)
           } else {
             item.excludingTaxPrice = ''
           }

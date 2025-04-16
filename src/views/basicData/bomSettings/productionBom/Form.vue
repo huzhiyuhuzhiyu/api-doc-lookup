@@ -475,6 +475,25 @@ export default {
     async init(id, btnType, approvalFlag, approvalStatus) {
       this.formLoading = true
       this.btnType = btnType
+      console.log(this.btnType)
+      if (this.$store.getters.configData.produce.bom) {
+        
+        if (this.btnType === 'add' || this.btnType === 'edit') {
+          this.dataFormItems.forEach((tc) => {
+            if (tc.prop === 'pickingWay') {
+              // this.dataForm.pickingWay = 'dispatch_list'
+              tc.value = 'dispatch_list'
+              this.$set(tc,'itemDisabled',true)
+            }
+          })
+          this.linesListItems.forEach((tc) => {
+            if (tc.prop === 'reduceType') {
+              tc.value = 'auto'
+              this.$set(tc,'itemDisabled',true)
+            }
+          })
+        }
+      }
       this.approvalFlag = approvalFlag
       this.approvalStatus = approvalStatus ? approvalStatus.approvalStatus : ''
       this.getBimBusinessDetail()

@@ -32,4 +32,8 @@ export default {
         configKeyLabel: '套圈毛坯采购生成任务',
         description: '启用后，套圈毛坯采购入库自动生成套圈任务。'
     },
+    bom: {
+        configKeyLabel: '默认按工单领料自动扣减料',
+        description: '不勾选，则BOM不作限制;勾选后， 默认按工单领料自动扣减料。'
+    },
 }

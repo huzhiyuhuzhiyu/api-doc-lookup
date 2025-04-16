@@ -105,7 +105,7 @@
           <el-table-column prop="maximum" label="最高值" />
           <el-table-column prop="productCategoryIdText" label="所属分类" width="140" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createBy" label="创建人" width="100" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">

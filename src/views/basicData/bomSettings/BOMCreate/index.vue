@@ -169,18 +169,18 @@ export default {
               if(!item){
                   return ;
               }
-                if(e === 'dispatch_list') {
-                    item.options = [
-                        {label: '生成领料单', value: 'picking'},
-                        {label: '都不是', value: 'none'}
-                    ]
-                }else{
-                    item.options = [
-                        {label: '生成领料单', value: 'picking'},
-                        {label: '自动扣减料', value: 'auto'},
-                        {label: '都不是', value: 'none'}
-                    ]
-                }
+                // if(e === 'dispatch_list') {
+                //     item.options = [
+                //         {label: '生成领料单', value: 'picking'},
+                //         {label: '都不是', value: 'none'}
+                //     ]
+                // }else{
+                //     item.options = [
+                //         {label: '生成领料单', value: 'picking'},
+                //         {label: '自动扣减料', value: 'auto'},
+                //         {label: '都不是', value: 'none'}
+                //     ]
+                // }
               const arr =item.options.map(item=>item.value)
               this.linesList.forEach(item=>{
                   if(!arr.includes(item.reduceType)){
@@ -467,11 +467,28 @@ export default {
           trigger: 'blur'
         })
       }
+      if (tc.prop === 'pickingWay') {
+        if (this.$store.getters.configData.produce.bom) {
+          this.dataForm.pickingWay = 'dispatch_list'
+          this.$set(tc,'itemDisabled',true)
+        } 
+          
+      }
     })
+    if (this.$store.getters.configData.produce.bom) {
+        this.linesListItems.forEach((tc) => {
+          if (tc.prop === 'reduceType') {
+            tc.value = 'auto'
+            this.$set(tc,'itemDisabled',true)
+          }
+        })
+    }
+  
 
     this.dataForm.approvalFlag = false
     this.getBusInfo()
     this.getBimBusinessDetail()
+    
   },
   methods: {
     async init(productId, btnType, approvalStatus, nodeData) {

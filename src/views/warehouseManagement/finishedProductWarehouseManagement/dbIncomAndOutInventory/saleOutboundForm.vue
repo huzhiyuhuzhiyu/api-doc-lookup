@@ -98,6 +98,7 @@
 
 
                     <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
+                      <div class="JNPF-common-head">
                       <div v-if="btnType !== 'look'">
                         <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
                           @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -105,9 +106,16 @@
                           icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
 
                       </div>
-
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                      <div v-else></div>
+                      <div class="JNPF-common-head-right fixedRight">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun()" />
+                        </el-tooltip>
+                      </div>
+                      </div>
+                      <JNPF-table ref="product" :data="productData" custom-column :fixedNO="true" :hasC="btnType != 'look'"
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'">
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
@@ -311,6 +319,7 @@
 
 
                     <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
+                      <div class="JNPF-common-head">
                       <div v-if="btnType !== 'look'">
                         <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
                           @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -318,9 +327,16 @@
                           icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
 
                       </div>
-
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                      <div v-else></div>
+                      <div class="JNPF-common-head-right fixedRight">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun()" />
+                        </el-tooltip>
+                      </div>
+                      </div>
+                      <JNPF-table ref="product" :data="productData" custom-column :fixedNO="true" :hasC="btnType != 'look'"
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'">
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
@@ -747,9 +763,10 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
     let objs = { "pageSize": -1, "businessCode": "product" }
-    getBimBusinessSwitchConfigList(objs).then(res => {
+    await getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
     })
+    this.$nextTick(() => { this.$refs.product.doLayout() })
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -779,6 +796,9 @@ export default {
 
   },
   methods: {
+    columnSetFun() {
+      this.$refs.product.showDrawer()
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

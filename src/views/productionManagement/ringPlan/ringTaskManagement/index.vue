@@ -94,6 +94,8 @@
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
             <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" sortable="custom" v-has="'btn_split'" />
+            <el-table-column prop="productionWeight" label="生产重量" min-width="140" sortable="custom" />
+            <el-table-column prop="productionBarrels" label="生产桶数" min-width="140" sortable="custom" />
             <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
               <template slot-scope="scope">
                 <el-progress
@@ -110,6 +112,7 @@
             <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
+            <el-table-column prop="standardValue" label="规值" width="120" sortable="custom"/>
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
               v-if="accuracyLevelFlag == 1" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
@@ -157,6 +160,9 @@
                     </el-dropdown-item>
                     <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
                       拆分
+                    </el-dropdown-item>
+                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="redesignateHander(scope.row.id)">
+                      改制
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >
                       生成二维码
@@ -303,6 +309,8 @@
     </AddTaskForm>
     <SplitTaskForm v-if="splitTaskFormVisible" ref="splitTaskForm" @refreshDataList="initData" @close="closeForm">
     </SplitTaskForm>
+    <RedesignateTaskForm v-if="redesignateTaskFormVisible" ref="redesignateTaskForm" @refreshDataList="initData" @close="closeForm">
+    </RedesignateTaskForm>
     <el-dialog title="生产任务码" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="dialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" style="text-align: center;">
       <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
@@ -333,12 +341,13 @@ import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
 import SplitTaskForm from './splitTaskForm.vue'
+import RedesignateTaskForm from './redesignateTaskForm.vue'
 import { getProcessList,detailProcess } from '@/api/basicData/processSettingss'
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm, PrintDialog2, PrintBrowse2 },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
@@ -346,6 +355,7 @@ export default {
       qrCode:"",
       addTaskFormVisible: false,
       splitTaskFormVisible:false,
+      redesignateTaskFormVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -904,6 +914,19 @@ export default {
       //   this.$refs.splitForm.resetFields();
       // });
     },
+     // 改制
+     redesignateHander(id) {
+      this.redesignateTaskFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.redesignateTaskForm.init(id)
+      })
+      // this.splitForm = {...data}
+      // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
+      // this.splitVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.splitForm.resetFields();
+      // });
+    },
     routingChange(val){
       detailProcess(val).then(res=>{
         for (let index = 0; index < res.data.routingLineList.length; index++) {
@@ -1033,6 +1056,7 @@ export default {
     closeForm(isRefresh) {
       this.addTaskFormVisible = false
       this.splitTaskFormVisible = false
+      this.redesignateTaskFormVisible = false
       this.formVisible = false
       this.reworkVisible = false
       this.BatchDispatchVisible = false

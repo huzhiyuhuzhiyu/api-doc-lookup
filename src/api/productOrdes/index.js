@@ -314,3 +314,13 @@ export function splitOrderNum(data) {
     data
   })
 }
+
+// 生产订单-改制
+
+export function reformOrderNum(data) {
+  return request({
+    url: `/api/mrp/prod/order/reform`,
+    method: 'POST',
+    data
+  })
+}

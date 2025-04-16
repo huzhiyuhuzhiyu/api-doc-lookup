@@ -763,9 +763,10 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.isProjectSwitchFlag = true
     let objs = { "pageSize": -1, "businessCode": "product" }
-    getBimBusinessSwitchConfigList(objs).then(res => {
+    await getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
     })
+    this.$nextTick(() => { this.$refs.product.doLayout() })
   },
   computed: {
     ...mapGetters(['userInfo']),

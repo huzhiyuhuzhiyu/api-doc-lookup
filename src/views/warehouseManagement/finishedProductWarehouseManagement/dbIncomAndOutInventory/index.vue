@@ -683,6 +683,7 @@
           </el-table-column>
           <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
           <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
+          <el-table-column prop="contractNo" label="客户合同号" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="deliverDate" label="发货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="recipient" label="收件人" min-width="120" sortable="custom" />
           <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
@@ -748,6 +749,7 @@
           </el-table-column>
           <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
           <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
+          <el-table-column prop="contractNo" label="客户合同号" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="departmentName" label="所属部门" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="salesName" label="所属销售" min-width="160" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" min-width="160" sortable="custom" />

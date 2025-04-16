@@ -2081,7 +2081,7 @@ export default {
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
             excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-            inspectionStatus:item.inspectionStatus
+            inspectionStatus:item.inspectionStatus,
           }
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
@@ -2113,7 +2113,14 @@ export default {
             weight: item.weight,
             proportion: item.proportion,
             discount: item.discount,
-            inspectionStatus:item.inspectionStatus
+            inspectionStatus:item.inspectionStatus,
+            purchaseOrderId:item.purchaseOrderId,
+            receiptQuantity:item.receiptQuantity,
+            qualifiedQuantity:item.qualifiedQuantity,
+            unqualifiedQuantity:item.unqualifiedQuantity,
+            packingQuantity:item.packingQuantity,
+            inspectionResults:item.inspectionResults,
+            receivingStatus:item.receivingStatus,
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

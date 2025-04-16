@@ -5,6 +5,14 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
+            <el-col :span="6" v-if="abProjectSwitchVisible" >
+                    <el-form-item>
+                      <el-select v-model="orderForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable>
+                        <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -78,7 +86,7 @@
 
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
-              v-if="isProjectSwitch == 1" />
+              v-if="abProjectSwitchVisible" />
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>
@@ -188,7 +196,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters, mapState } from 'vuex'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
@@ -196,14 +204,14 @@ import {
 export default {
   name: 'orderDetails',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
-  mixins: [getProjectList],
+  mixins: [AbProjectMixin],
   data() {
-    return {
-      isProjectSwitch: '',
+    return { 
       superQuery: {},
       superForm: {},
       basicQuery: {},
       searchList: [
+      
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
@@ -418,6 +426,10 @@ export default {
     await this.getpairingModeListFun()
     this.advancedQueryFun()
     this.tableDataFlag = true
+    // if (this.abProjectSwitchVisible){
+    //       this.searchList.unshift({ prop: "projectId", label: "所属项目", type: 'select',options:this.abProjectList });
+    //       this.orderForm.projectId = this.userInfo.projectId
+    //     }
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(7, 0, {
         prop: 'productName',

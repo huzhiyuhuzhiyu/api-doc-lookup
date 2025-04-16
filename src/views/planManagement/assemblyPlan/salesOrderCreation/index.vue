@@ -33,6 +33,14 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-select v-model="orderForm.planStatus"  >
+                  <el-option v-for="item in planStatusList" :key="item.value" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -162,7 +170,17 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+       
       ],
+
+                planStatusList:[ {
+                            label: '未转计划' ,
+                            value: 'not_generated'
+                        },
+                        {
+                            label: '已转计划',
+                            value: 'generated'
+                        },],
       columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
@@ -669,6 +687,7 @@ export default {
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+ 
       ]
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')

@@ -55,8 +55,10 @@
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true" v-if="isProjectSwitchFlag"
           @sort-change="sortChange">
 
-          <el-table-column prop="productDrawingNo" label="品名规格" width="330" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
           v-if="isProjectSwitch == 1" />
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
@@ -130,8 +132,8 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
@@ -181,13 +183,18 @@ export default {
       },
       superQueryJson: [
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'productCode',
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
+          prop: 'productName',
+          label: "产品名称",
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -380,8 +387,8 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 }, 
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
       ]
  

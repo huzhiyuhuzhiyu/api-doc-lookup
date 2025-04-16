@@ -129,8 +129,8 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
@@ -180,16 +180,22 @@ export default {
         totalOccupancy:0,
       },
       superQueryJson: [
+      {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'productName',
+          label: "产品名称",
+          type: 'input'
+        },
         {
           prop: 'productDrawingNo',
           label: "品名规格",
           type: 'input'
         },
-        {
-          prop: 'productCode',
-          label: "产品编码",
-          type: 'input'
-        },
+        
 
         {
           prop: 'classAttribute',
@@ -377,8 +383,8 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.initData()

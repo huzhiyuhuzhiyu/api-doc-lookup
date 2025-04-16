@@ -133,8 +133,11 @@
                         <el-dropdown-item @click.native="addSupplier(scope.row, 'look')">
                           查看详情
                         </el-dropdown-item>
-                                 <el-dropdown-item @click.native="addSupplier(scope.row, 'copy')">
+                        <el-dropdown-item @click.native="addSupplier(scope.row, 'copy')">
                           复制
+                        </el-dropdown-item>
+                        <el-dropdown-item @click.native="printFun(scope.row.id)">
+                          打印备货工艺
                         </el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
@@ -283,6 +286,9 @@
       </span>
     </el-dialog>
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -301,11 +307,15 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   name: 'customerProduct',
   mixins: [getProjectList],
 
-  components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm, DepForm },
+  components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm, DepForm,PrintBrowse,
+    PrintDialog, },
   data() {
     return {
       isProductNameSwitch: '',
@@ -513,6 +523,12 @@ export default {
       colourFlag: '',
       angleFlag: '',
       centerDiameterFlag: '',
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printVisible: false,
+      printBrowseVisible: false,
+
     }
   },
   computed: {
@@ -542,6 +558,34 @@ export default {
     }
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 打印
+    printFun(id) {
+      this.enCode = 'p059' // 筛选出 businessType 等于 type 的项  
+      this.formId = id
+      this.fullName = "客户产品备货工艺" // 筛选出 businessType 等于 type 的项  
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
     getOrderFiledMap() {
 
       getOrderFiledMap('sale').then((res) => {

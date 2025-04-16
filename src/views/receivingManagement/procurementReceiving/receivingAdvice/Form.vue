@@ -2121,6 +2121,7 @@ export default {
             packingQuantity:item.packingQuantity,
             inspectionResults:item.inspectionResults,
             receivingStatus:item.receivingStatus,
+            notificationType:item.notificationType,
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

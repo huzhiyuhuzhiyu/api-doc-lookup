@@ -376,7 +376,7 @@ export default {
     printFun(id) {
       this.enCode = 'p059' // 筛选出 businessType 等于 type 的项  
       this.formId = id
-      this.fullName = "备货工艺" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "销售订单备货工艺" // 筛选出 businessType 等于 type 的项  
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)

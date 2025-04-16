@@ -404,7 +404,7 @@ export default {
           }
         ],
         productStatus: 'enable',
-        productSource: 'out',
+        productSource: '',
         pageNum: 1,
         pageSize: 20
         // queryType: 3

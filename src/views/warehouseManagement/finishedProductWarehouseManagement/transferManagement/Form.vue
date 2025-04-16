@@ -95,7 +95,7 @@
                           </template>
                           <template slot-scope="scope">
                             <ComSelect-list
-                              :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? this.wareHouseInfo.projectId || '' : ''  }"
+                              :requestObj="{ type: '',  virtuallyFlag: false, state: 'enable', projectId: isProjectSwitch === '1' ? this.wareHouseInfo.projectId || '' : ''  }"
                               :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                               :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                               @change="changeWarehousex"></ComSelect-list>
@@ -223,7 +223,7 @@
                       </template>
                       <template slot-scope="scope">
                         <ComSelect-list
-                          :requestObj="{ type: '', scrapFlag: false, virtuallyFlag: false, state: 'enable' }"
+                          :requestObj="{ type: '',  virtuallyFlag: false, state: 'enable' }"
                           :dialogTitle="'选择仓库'" :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName"
                           :method="getWarehouseList" placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                           @change="changeWarehousex"></ComSelect-list>

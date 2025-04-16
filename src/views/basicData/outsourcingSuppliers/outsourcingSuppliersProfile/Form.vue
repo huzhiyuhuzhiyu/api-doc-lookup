@@ -681,6 +681,7 @@ export default {
         remark: ''
       },
       taxRateList: [],
+      codeConfig:{},
       parentId: '',
       pickerOptions: {
         disabledDate(time) {
@@ -762,6 +763,7 @@ export default {
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
+        console.log("fetchData",data);
         this.codeConfig = data
         if (flag) {
           this.dataForm.code = data.number

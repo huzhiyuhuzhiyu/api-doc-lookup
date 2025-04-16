@@ -1279,6 +1279,7 @@ export default {
         }
       })
       if (submitFlag) {
+        this.dataForm.classAttribute = 'other'
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {

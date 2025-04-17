@@ -38,5 +38,6 @@ const getters = {
     sealingCoverTyping: state => state.base.sealingCoverTyping,  // 打字内容
     specialRequire: state => state.base.specialRequire,  // 特殊要求
     colour: state => state.base.colour,  // 颜色
+    accuracyLevel: state => state.base.accuracyLevel,  // 精度等级
 }
 export default getters

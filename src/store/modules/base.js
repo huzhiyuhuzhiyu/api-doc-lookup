@@ -52,14 +52,18 @@ const mutations = {
     state.printFormTree = printTree
   },
   SET_FIELD_NAME: (state, FieldNameJson) => { // 获取数据字典中字段名称配置
-    const sealingCoverTypingIndex = FieldNameJson.findIndex(obj => obj.enCode === 'sealingCoverTyping')
-    state.sealingCoverTyping = sealingCoverTypingIndex !== -1 ?  FieldNameJson[sealingCoverTypingIndex].fullName : ''
-
-    const specialRequireIndex = FieldNameJson.findIndex(obj => obj.enCode === 'specialRequire')
-    state.specialRequire = specialRequireIndex !== -1 ?  FieldNameJson[specialRequireIndex].fullName : ''
-
-    const colourIndex = FieldNameJson.findIndex(obj => obj.enCode === 'colour')
-    state.colour = colourIndex !== -1 ?  FieldNameJson[colourIndex].fullName : ''
+    if (!FieldNameJson.length) {
+      state.sealingCoverTyping = '打字内容'
+      state.specialRequire = '特殊要求'
+      state.colour = '颜色'
+      state.accuracyLevel = '精度等级'
+      return
+    }
+    state.sealingCoverTyping = FieldNameJson.find(item=>item.enCode === 'sealingCoverTyping').fullName
+    state.specialRequire = FieldNameJson.find(item=>item.enCode === 'specialRequire').fullName
+    state.colour = FieldNameJson.find(item=>item.enCode === 'colour').fullName
+    state.accuracyLevel = FieldNameJson.find(item=>item.enCode === 'accuracyLevel').fullName
+  
   },
   SET_CONFIG_GLOBAL: (state, configGlobal) => {
     state.configGlobal = configGlobal

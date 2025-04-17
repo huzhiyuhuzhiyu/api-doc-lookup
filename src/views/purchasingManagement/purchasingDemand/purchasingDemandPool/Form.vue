@@ -79,6 +79,21 @@
                         :height="customStyleData">
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                           key="1"></el-table-column>
+                          <!-- <el-table-column prop="projectName" label="成本核算归属" width="120" v-if="abProjectSwitchVisible"
+                          key="1">
+                          <template slot="header">
+                            <span class="required">*</span>成本核算归属
+                          </template>
+                          <template slot-scope="scope">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'costProjectId'"
+                              :rules="productRules.costProjectId">
+                              <el-select v-model="scope.row.costProjectId" placeholder="请选择">
+                                <el-option v-for="(item, index) in abProjectNoCommonList" :key="index" :label="item.label"
+                                  :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </template>
+                        </el-table-column> -->
                         <el-table-column prop="productName" label="产品名称" width="120" v-if="$store.getters.configData.product.enable_productName"
                           key="3" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productCategoryName" label="产品分类" width="140"
@@ -408,7 +423,10 @@
                     </el-form>
                     <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin-right:10px;margin-left: 5px;">
-                        总金额：{{ computedValue }}
+                        不含税总金额：{{ computedValue }}
+                      </span>
+                      <span style="font-weight:500;margin-right:10px;margin-left: 5px;">
+                        含税总金额：{{ totalAmount }}
                       </span>
                       <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                     </div>
@@ -619,6 +637,22 @@ export default {
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
       productRules: {
+
+        costProjectId:[
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：成本核算归属${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['change']
+          },
+
+        ],
         productDrawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
         productName: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
         purchaseQuantity: [
@@ -806,6 +840,7 @@ export default {
       this.dataForm.taxAmount = this.jnpf.numberFormat(taxAmountCount)
       return this.dataForm.excludingTaxTotalAmount
     },
+ 
     computedValue2() {
       // 在这里计算第三个输入框的值
       let count = 0
@@ -966,7 +1001,7 @@ export default {
     // 选完客户产品数据后 渲染在列表上
     submitCustomerProduct(val, data, paramsObj) {
       this.productVisible = false
-      data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
+      // data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
       data.forEach((i) => {
         const item = i.all
         console.log(item, 'oooo')

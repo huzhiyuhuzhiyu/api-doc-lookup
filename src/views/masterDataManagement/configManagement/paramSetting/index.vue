@@ -1,6 +1,10 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div v-if="userInfo.userId === 'admin'" class="tag-group JNPF-common-search-box treeBox_bot" 
+        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
+        <el-button type="primary" size="mini" @click="addSet">新建设置</el-button>
+      </div>
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-radio-group v-model="activeName">
@@ -213,6 +217,9 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    addSet(){
+
+    },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       const visibleData = this.tableData
       const fields = ['mainModule']

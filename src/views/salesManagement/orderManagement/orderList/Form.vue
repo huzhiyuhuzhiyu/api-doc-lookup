@@ -435,7 +435,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" :label="$store.getters.sealingCoverTyping" width="120"
+                    <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120"
                       v-if="specialRequireFlag == 1" :key="101">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"

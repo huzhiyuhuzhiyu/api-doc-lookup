@@ -51,7 +51,7 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                     <el-table-column prop="customerProductNo" label=" 客户料号" min-width="160">
                       <template slot="header">
-                        <span class="required">*</span> 客户料号
+                        <span class="required">*</span> 客户料号（编码）
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
@@ -69,7 +69,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="application" label="应用" min-width="160">
+                    <el-table-column prop="application" label="应用（规格型号）" min-width="160">
                       <template slot-scope="scope">
                         <el-form-item>
                           <el-input v-model="scope.row.application" placeholder="请输入" :disabled="btnType === 'look'">
@@ -342,7 +342,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                 <el-table-column prop="customerProductNo" label=" 客户料号" min-width="120">
                   <template slot="header">
-                    <span class="required">*</span> 客户料号
+                    <span class="required">*</span> 客户料号（编码）
                   </template>
                   <template slot-scope="scope">
                     <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerProductNo'" :rules='productRules.customerProductNo'>
@@ -360,6 +360,14 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
+                <el-table-column prop="application" label="应用（规格型号）" min-width="160">
+                      <template slot-scope="scope">
+                        <el-form-item>
+                          <el-input v-model="scope.row.application" placeholder="请输入" :disabled="btnType === 'look'">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>

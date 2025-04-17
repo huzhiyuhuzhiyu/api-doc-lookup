@@ -519,7 +519,7 @@ export default {
               type: 'decimal',
               params: [
                 20,
-                4,
+                12,
                 '',
                 (errMsg) => {
                   this.$message.error('协议价' + errMsg)

@@ -112,6 +112,7 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item @click.native="viewFun(scope.row.id, 'look')">查看详情</el-dropdown-item>
+                    <el-dropdown-item @click.native="PrintFun(scope.row.id)" :disabled="scope.row.businessType=='inbound_other'">打印</el-dropdown-item>
 
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -132,6 +133,9 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -144,9 +148,13 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from '../directInandOutWarehouse/index.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 export default {
   name: 'finishedProductWarehouseManagement',
-  components: { Form, ExportForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery,  PrintBrowse,
+    PrintDialog, },
   props:{
     classAttribute:"",
   },
@@ -268,6 +276,11 @@ export default {
 
       ],
       isProjectSwitch: '',
+      printVisible: false,
+      printBrowseVisible: false,
+      prindId: '',
+      formId: '',
+      enCode: "",
     }
   },
  
@@ -282,6 +295,41 @@ export default {
     this.search('basic')
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    // 打印
+    PrintFun(row) {
+      console.log(this.arr, row);
+      this.enCode = 'p031' // 筛选出 businessType 等于 type 的项  
+      this.formId = row.id
+      this.fullName = "报废出库单" // 筛选出 businessType 等于 type 的项  
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    nbwPrintFun(row) {
+      getPrintDeliveryNote(row.id).then(res => {
+        console.log(res, 'res')
+        this.jnpf.downloadFile(res.data.url)
+      })
+    },
+    closePrint() {
+      this.printVisible = false
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

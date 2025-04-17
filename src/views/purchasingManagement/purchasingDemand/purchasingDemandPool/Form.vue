@@ -1030,7 +1030,7 @@ export default {
     // 选完客户产品数据后 渲染在列表上
     submitCustomerProduct(val, data, paramsObj) {
       this.productVisible = false
-      // data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
+      data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
       data.forEach((i) => {
         const item = i.all
         console.log(item, 'oooo')

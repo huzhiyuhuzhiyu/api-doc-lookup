@@ -2,6 +2,9 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
+
+
+
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="goBack" :content="title" />
         <div class="options">

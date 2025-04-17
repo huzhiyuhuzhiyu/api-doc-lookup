@@ -5,12 +5,12 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.name" placeholder="不良名称" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.productCode" placeholder="产品编码" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.code" placeholder="不良编码" clearable />
+                            <el-input @keyup.native.enter="search()"  v-model.trim="tableQuery.productName" placeholder="产品名称" clearable />
                         </el-form-item>
                     </el-col>
 
@@ -48,8 +48,12 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
                     custom-column :setColumnDisplayList="columnList">
-                    <el-table-column prop="name" label="不良名称" sortable="custom" />
-                    <el-table-column prop="code" label="不良编码" sortable="custom"></el-table-column>
+                    
+                    <el-table-column prop="productsCode" label="产品编码" sortable="custom"></el-table-column>
+                    <el-table-column prop="productsName" label="产品名称" sortable="custom" v-if="$store.getters.configData.product.enable_productName" />
+                    <el-table-column prop="productsDrawing" label="品名规格" sortable="custom"></el-table-column>
+                    <el-table-column prop="weight" label="重量" sortable="custom"></el-table-column>
+                    <el-table-column prop="quantity" label="数量" sortable="custom"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                     <el-table-column prop="createByName" label="创建人"></el-table-column>
                     <el-table-column label="操作" width="180">
@@ -73,13 +77,13 @@
 </template>
 
 <script>
-import { deleteAdverseCausesData, getAdverseCausesList } from '@/api/basicData/index'
+import { deleteProductsWeightQuantity, getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 import DepForm from './depForm'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
-    name: 'weightQuantityForm',
+    name: 'productsWeightQuantity',
     components: { DepForm, SuperQuery },
     data() {
         return {
@@ -167,7 +171,7 @@ export default {
             }
         },
         initData() {
-            getAdverseCausesList(this.tableQuery)
+            getProductsWeightQuantityList(this.tableQuery)
                 .then((res) => {
                     //
                     console.log('货位表格', res)
@@ -224,7 +228,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    deleteAdverseCausesData(id).then((res) => {
+                    deleteProductsWeightQuantity(id).then((res) => {
                         this.initData()
                         this.$message({
                             type: 'success',

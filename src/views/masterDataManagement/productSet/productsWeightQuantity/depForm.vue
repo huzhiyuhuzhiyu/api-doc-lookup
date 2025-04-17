@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :title="!dataForm.id ? '新建不良原因' : '编辑不良原因'" :close-on-click-modal="false" :close-on-press-escape="false"
+  <el-drawer :title="!dataForm.id ? '新建重量数量换算' : '编辑重量数量换算'" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="visible" lock-scroll width="600px" @close="handleClose" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">
@@ -9,28 +9,28 @@
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="不良名称" prop="productName">
+        <el-form-item label="品名规格" prop="productsDrawingNo">
           <template slot="label">
-            不良名称<span class="required">*</span>
+            品名规格<span class="required">*</span>
           </template>
           <ComSelect-page clearable :isdisabled="btnType === 'look'" 
-            v-model="dataForm.productName" :beforeSubmit="beforeSubmit" 
-            @change="addth" :tableItems="productTableItems" :placeholder="'请选择产品名称'" title="选择产品"
+            v-model="dataForm.productsDrawingNo" :beforeSubmit="beforeSubmit" 
+            @change="addth" :tableItems="productTableItems" :placeholder="'请选择品名规格'" title="选择品名规格"
             treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList"
             :listRequestObj="productListRequestObj" :paramsObj="{ oldData }"
             :searchList="productTableSearchList" />
         </el-form-item>
-        <el-form-item label="不良编码" prop="code">
+        <el-form-item label="重量" prop="weight">
           <template slot="label">
-            不良编码<span class="required">*</span>
+            重量<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.code" placeholder="请输入不良编码" maxlength="20" :disabled="btntype ? true : false" />
+          <el-input v-model="dataForm.weight" placeholder="请输入重量" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
-        <el-form-item label="不良编码" prop="code">
+        <el-form-item label="数量" prop="quantity">
           <template slot="label">
-            不良编码<span class="required">*</span>
+            数量<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.code" placeholder="请输入不良编码" maxlength="20" :disabled="btntype ? true : false" />
+          <el-input v-model="dataForm.quantity" placeholder="请输入数量" maxlength="20" :disabled="btntype ? true : false" />
         </el-form-item>
 
       </el-form>
@@ -47,11 +47,11 @@
 
 <script>
 import {
-  addAdverseCausesData,
-  getAdverseCausesInfo,
-  editAdverseCausesData,
+  addProductsWeightQuantity,
+  detailProductsWeightQuantity,
+  updateProductsWeightQuantity,
   checkadverseCausesCode
-} from '@/api/basicData/index'
+} from '@/api/basicData/productsWeightQuantity'
 import formValidate from '@/utils/formValidate'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getProductList, } from '@/api/masterDataManagement/productManage'
@@ -64,10 +64,11 @@ export default {
       isdisabled: false,
       title: '',
       dataForm: {
-        name: '',
-        code: '',
-        id: ''
+        productsDrawingNo: '',
+        weight: '',
+        quantity: ''
       },
+      oldData:[],
       codeConfig: {},
       btntype: false,
       getcategoryTree,
@@ -77,13 +78,12 @@ export default {
       productTableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'nameEn', label: '英文名称' },
-        { prop: 'taxId', label: '税号' }
+        { prop: 'drawingNo', label: '品名规格' },
       ],
       // 产品搜索条件
       productTableSearchList: [
-        { prop: 'code', label: '产品编码', type: 'input' },
-        { prop: 'name', label: '产品名称', type: 'input' }
+        { prop: 'productsCode', label: '产品编码', type: 'input' },
+        { prop: 'productName', label: '产品名称', type: 'input' }
       ],
       // 产品请求参数
       productListRequestObj: {
@@ -97,26 +97,12 @@ export default {
       },
       getProductList,
       dataRule: {
-        name: [{ required: true, message: '请输入不良名称', trigger: 'blur' }],
-        code: [
-          { required: true, message: '请输入不良编码', trigger: 'blur' },
-          { validator: formValidate('enCode'), trigger: 'blur' },
-          {
-            validator: (rule, value, callback) => {
-              console.log(value, this.dataForm.id)
-              checkadverseCausesCode(value, this.dataForm.id)
-                .then((res) => {
-                  console.log('res===>', res)
-                  if (res.data) {
-                    callback(new Error('不良编码重复'))
-                  } else {
-                    callback()
-                  }
-                })
-                .catch((error) => { })
-            },
-            trigger: 'blur'
-          }
+        productsDrawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
+        weight: [
+          { required: true, message: '请输入重量', trigger: 'blur' },
+        ],
+        quantity: [
+          { required: true, message: '请输入数量', trigger: 'blur' },
         ]
       }
     }
@@ -125,29 +111,30 @@ export default {
   methods: {
     handleClose() { },
     addth(id, data) {
+      console.log(data,'结局')
       this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('productName')
+        this.$refs['dataForm'].validateField('productsDrawingNo')
       })
       if (data.length === 0) {
-        this.dataForm.productName = ''
-        this.dataForm.productCode = ''
-        this.dataForm.productId = ''
+        this.dataForm.productsDrawingNo = ''
+        this.dataForm.productsCode = ''
+        this.dataForm.productsId = ''
         this.oldData = []
       } else {
         if (this.oldData.length) {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.productName = data[0].all.name
-        this.dataForm.productCode = data[0].all.code
-        this.dataForm.productId = data[0].all.id
+        this.dataForm.productsDrawingNo = data[0].all.drawingNo
+        this.dataForm.productsCode = data[0].all.code
+        this.dataForm.productsId = data[0].all.id
       }
     },
     init(id, type) {
 
       this.visible = true
       this.dataForm.id = id || ''
-      this.title = !this.dataForm.id ? '新建不良原因' : '编辑不良原因'
+      this.title = !this.dataForm.id ? '新建重量数量换算' : '编辑重量数量换算'
       if (type == 'edit' || type == 'add') {
         this.btntype = false
       } else if (type == 'look') {
@@ -157,7 +144,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-          getAdverseCausesInfo(this.dataForm.id).then((res) => {
+          detailProductsWeightQuantity(this.dataForm.id).then((res) => {
             console.log(123321, res)
             this.dataForm = res.data
             this.fetchData("BLYY", false)
@@ -173,15 +160,13 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
-          let formMethod = this.dataForm.id ? editAdverseCausesData : addAdverseCausesData
-          let obj = {
-            causes: this.dataForm
-          }
-          formMethod(obj)
+          let formMethod = this.dataForm.id ? updateProductsWeightQuantity : addProductsWeightQuantity
+          if (!this.dataForm.id) delete this.dataForm.id
+          formMethod(this.dataForm)
             .then((res) => {
               console.log(666, res)
               let msg = ''
-              if (formMethod == editAdverseCausesData) {
+              if (formMethod == updateProductsWeightQuantity) {
                 msg = '修改成功'
               } else {
                 msg = '新建成功'

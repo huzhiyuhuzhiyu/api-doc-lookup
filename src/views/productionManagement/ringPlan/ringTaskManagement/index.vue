@@ -161,7 +161,7 @@
                     <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
                       拆分
                     </el-dropdown-item>
-                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="redesignateHander(scope.row.id)">
+                    <el-dropdown-item v-has="'btn_redesignate'" v-if="scope.row.orderStatus==='normal'" @click.native="redesignateHander(scope.row.id)">
                       改制
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >

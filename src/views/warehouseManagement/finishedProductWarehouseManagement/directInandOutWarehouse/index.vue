@@ -359,7 +359,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                      <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel" width="120"
                         key="123">
                         <!-- <template slot="header">
                             <span class="required">*</span>精度等级

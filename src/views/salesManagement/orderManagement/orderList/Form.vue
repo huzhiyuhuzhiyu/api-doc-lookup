@@ -236,6 +236,7 @@
                         v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
 
+                      <el-table-column prop="remark2" label="客户产品备注" width="200" :key="1228"> </el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128"> </el-table-column>
                     </JNPF-table>
                   </div>
@@ -470,7 +471,8 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="remark" label="备注" width="200" :key="128">
+                      <el-table-column prop="remark2" label="客户产品备注" width="200" :key="1282"> </el-table-column>
+                      <el-table-column prop="remark" label="备注" width="200" :key="128">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
                       </template>
@@ -717,7 +719,8 @@
                     v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
 
-                  <el-table-column prop="remark" label="备注" width="200" :key="128">
+                      <el-table-column prop="remark2" label="客户产品备注" width="200" :key="1228"> </el-table-column>
+                      <el-table-column prop="remark" label="备注" width="200" :key="128">
                   </el-table-column>
                 </JNPF-table>
               </div>
@@ -936,7 +939,8 @@
                     <el-input v-model="scope.row.receivingAddress" placeholder="请输入" maxlength="200" />
                   </template>
                 </el-table-column>
-                <el-table-column prop="remark" label="备注" width="200" :key="128">
+                      <el-table-column prop="remark2" label="客户产品备注" width="200" :key="1228"> </el-table-column>
+                      <el-table-column prop="remark" label="备注" width="200" :key="128">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
                   </template>
@@ -2410,6 +2414,8 @@ export default {
           item.deputyUnit = item.mainUnit = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].unit
 
         }
+        item.remark2=JSON.parse(JSON.stringify(item.remark))
+        delete item.remark
         this.$set(item, 'pairingModeName', '')
         this.$set(item, 'cooperativePartnerProductId', item.id)
         if (item.taxRate) {

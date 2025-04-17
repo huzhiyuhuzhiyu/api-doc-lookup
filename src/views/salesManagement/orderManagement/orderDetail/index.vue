@@ -101,7 +101,7 @@
             <el-table-column prop="contractNo" label="客户合同号" width="120"></el-table-column>
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" min-width="150" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" sortable="custom"
               v-if="accuracyLevelFlag == 1" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
               v-if="vibrationLevelFlag == 1" />
@@ -590,7 +590,7 @@ export default {
       if (this.accuracyLevelFlag === '1') {
         this.superQueryJson.splice(classIndex + 1, 0, {
           prop: 'accuracyLevel',
-          label: '精度等级',
+          label: this.$store.getters.accuracyLevel,
           type: 'select',
           options: this.bimProductAttributesList.pa006.map((item) => {
             return {

@@ -171,7 +171,7 @@
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" />
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
+                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
                         <el-table-column prop="oil" label="油脂" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="100" />
@@ -375,7 +375,7 @@
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" />
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
+                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
                         <el-table-column prop="oil" label="油脂" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="100" />
@@ -487,7 +487,7 @@
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="undeliveredQuantity" label="待发货数量" width="130" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />

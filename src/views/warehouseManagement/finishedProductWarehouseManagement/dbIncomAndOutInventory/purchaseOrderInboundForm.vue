@@ -222,6 +222,7 @@
                         </el-table-column>
 
                         <el-table-column prop="standardValue" label="规值" width="100" />
+                        <el-table-column prop="pairingModeName" label="配对方式" width="100" />
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
@@ -464,6 +465,7 @@
                         </el-table-column>
 
                         <el-table-column prop="standardValue" label="规值" width="100" />
+                        <el-table-column prop="pairingModeName" label="配对方式" width="100" />
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />

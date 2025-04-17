@@ -79,7 +79,7 @@
                         :height="customStyleData">
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                           key="1"></el-table-column>
-                          <!-- <el-table-column prop="projectName" label="成本核算归属" width="120" v-if="abProjectSwitchVisible"
+                          <el-table-column prop="projectName" label="成本核算归属" width="140" v-if="abProjectSwitchVisible"
                           key="1">
                           <template slot="header">
                             <span class="required">*</span>成本核算归属
@@ -93,7 +93,7 @@
                               </el-select>
                             </el-form-item>
                           </template>
-                        </el-table-column> -->
+                        </el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120" v-if="$store.getters.configData.product.enable_productName"
                           key="3" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productCategoryName" label="产品分类" width="140"
@@ -292,7 +292,18 @@
                           </template>
                         </el-table-column>
                         <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
+                          v-if=" sealingCoverTypingFlag === '1'"
+                          prop="pairingModeName" label="陪对方式" min-width="120">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.pairingModeId" placeholder="请选择" clearable
+                              style="width: 100%;">
+                              <el-option v-for="(item, index) in pairingModeList" :key="index"
+                                :label="item.name" :value="item.id"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          v-if=" sealingCoverTypingFlag === '1'"
                           prop="sealingCoverTyping" label="打字内容" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
@@ -303,7 +314,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
+                          v-if=" accuracyLevelFlag === '1'"
                           prop="accuracyLevel" label="精度等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
@@ -314,7 +325,7 @@
                         </el-table-column>
 
                         <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && vibrationLevelFlag === '1'"
+                          v-if=" vibrationLevelFlag === '1'"
                           prop="vibrationLevel" label="振动等级" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
@@ -324,7 +335,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product' && oilFlag === '1'"
+                        <el-table-column v-if=" oilFlag === '1'"
                           prop="oil" label="油脂" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
@@ -334,7 +345,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && oilQuantityFlag === '1'"
+                          v-if=" oilQuantityFlag === '1'"
                           prop="oilQuantity" label="油脂量" min-width="160">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
@@ -344,7 +355,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && clearanceFlag === '1'"
+                          v-if=" clearanceFlag === '1'"
                           prop="clearance" label="游隙" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
@@ -354,7 +365,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column
-                          v-if="this.dataForm.classAttribute == 'finish_product' && packagingMethodFlag === '1'"
+                          v-if=" packagingMethodFlag === '1'"
                           prop="packagingMethod" label="包装方式" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
@@ -365,7 +376,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
-                          v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
+                          v-if=" specialRequireFlag === '1'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -374,7 +385,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="material" label="材质" width="120" v-if="materialFlag == 1">
+                        <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index"
@@ -426,7 +437,7 @@
                         不含税总金额：{{ computedValue }}
                       </span>
                       <span style="font-weight:500;margin-right:10px;margin-left: 5px;">
-                        含税总金额：{{ totalAmount }}
+                        含税总金额：{{ dataForm.totalAmount }}
                       </span>
                       <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
                     </div>
@@ -523,7 +534,7 @@ export default {
         pageSize: 20
       },
       ProductPoolListRequestObj: {
-        demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        // demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
           {
@@ -809,14 +820,17 @@ export default {
       clearanceFlag: '',
       packagingMethodFlag: '',
       specialRequireFlag: '',
-      bimProductAttributesList: {}
+      bimProductAttributesList: {},
+      pairingModeList:[],
+      isPairingModeSwitch:"",
     }
   },
   async created() {
     await this.getOrderFiledMap()
     await this.getProjectList()
     await this.switchStyleheight()
-   
+    await this.getpairingModeListFun()
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
 
     this.tableDataFlag = true
     this.formLoading = false
@@ -886,6 +900,22 @@ export default {
     }
   },
   methods: {
+       // 配对方式显示隐藏
+       async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
+        // 获取配对方式
+        async getpairingModeListFun() {
+      try {
+        this.pairingModeList = await this.jnpf.getpairingModeListFun()
+        this.pairingModeListCopy = JSON.parse(JSON.stringify(this.pairingModeList))
+      } catch (error) { }
+
+
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.standardValueFlag = res.data.standardValue
@@ -1285,7 +1315,7 @@ export default {
       }
       this.ProductPoolListRequestObj = {
         classAttribute: this.dataForm.classAttribute,
-        demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        // demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
           {

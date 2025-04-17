@@ -178,7 +178,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="sealingCoverTyping"
+                      <el-table-column  prop="sealingCoverTyping"
                         label="打字内容" width="120" :key="212">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" disabled clearable
@@ -188,7 +188,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
+                      <el-table-column  prop="accuracyLevel"
                         label="精度等级" width="120" :key="123">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" disabled clearable>
@@ -198,7 +198,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="vibrationLevel"
+                      <el-table-column  prop="vibrationLevel"
                         label="振动等级" width="120" :key="17">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" disabled clearable
@@ -208,7 +208,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oil" label="油脂"
+                      <el-table-column  prop="oil" label="油脂"
                         width="120" :key="61">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.oil" placeholder="请选择" disabled clearable style="width: 100%;">
@@ -217,7 +217,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oilQuantity"
+                      <el-table-column  prop="oilQuantity"
                         label="油脂量" width="160" :key="51">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.oilQuantity" placeholder="请选择" disabled clearable
@@ -227,7 +227,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="clearance"
+                      <el-table-column  prop="clearance"
                         label="游隙" width="120" :key="100">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.clearance" placeholder="请选择" disabled clearable
@@ -237,7 +237,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="packagingMethod"
+                      <el-table-column  prop="packagingMethod"
                         label="包装方式" width="120" :key="101">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable disabled
@@ -248,7 +248,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"
-                        v-if="this.dataForm.classAttribute == 'finish_product'">
+                        >
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable disabled
                             style="width: 100%;">
@@ -478,7 +478,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="sealingCoverTyping"
+                  <el-table-column  prop="sealingCoverTyping"
                     label="打字内容" width="120" :key="212">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable disabled
@@ -488,7 +488,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
+                  <el-table-column  prop="accuracyLevel"
                     label="精度等级" width="120" :key="123">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable disabled>
@@ -498,7 +498,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="vibrationLevel"
+                  <el-table-column  prop="vibrationLevel"
                     label="振动等级" width="120" :key="17">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable disabled
@@ -508,7 +508,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oil" label="油脂"
+                  <el-table-column  prop="oil" label="油脂"
                     width="120" :key="61">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.oil" placeholder="请选择" clearable disabled style="width: 100%;">
@@ -517,7 +517,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oilQuantity"
+                  <el-table-column  prop="oilQuantity"
                     label="油脂量" width="160" :key="51">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.oilQuantity" placeholder="请选择" disabled clearable
@@ -527,7 +527,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="clearance" label="游隙"
+                  <el-table-column  prop="clearance" label="游隙"
                     width="120" :key="100">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.clearance" placeholder="请选择" disabled clearable
@@ -537,7 +537,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="packagingMethod"
+                  <el-table-column  prop="packagingMethod"
                     label="包装方式" width="120" :key="101">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.packagingMethod" placeholder="请选择" disabled clearable
@@ -548,7 +548,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"
-                    v-if="this.dataForm.classAttribute == 'finish_product'">
+                    >
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable
                         style="width: 100%;">

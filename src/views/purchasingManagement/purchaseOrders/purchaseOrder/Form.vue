@@ -43,6 +43,10 @@
                       :data="dataFormTwo.data" id="table" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <el-table-column prop="costProjectName" label="成本核算归属" width="160" v-if="abProjectSwitchVisible"
+                    show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
+                    key="1"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -324,7 +328,10 @@
                   :data="dataFormTwo.data" id="table" :height="customStyleData">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-
+                  <el-table-column prop="costProjectName" label="成本核算归属" width="160" v-if="abProjectSwitchVisible"
+                    show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
+                    key="1"></el-table-column>
                   <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
@@ -593,6 +600,7 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import {
   getbimProductAttributesList,
   getbimProductAttributes,
@@ -607,7 +615,7 @@ export default {
     Process,
     recordList
   },
-  mixins: [busFlow],
+  mixins: [busFlow,AbProjectMixin],
   data() {
     return {
       isDeputyUnitSwitch: '',

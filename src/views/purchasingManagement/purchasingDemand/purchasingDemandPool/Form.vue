@@ -85,8 +85,7 @@
                             <span class="required">*</span>成本核算归属
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'costProjectId'"
-                              :rules="productRules.costProjectId">
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'costProjectId'" >
                               <el-select v-model="scope.row.costProjectId" placeholder="请选择">
                                 <el-option v-for="(item, index) in abProjectNoCommonList" :key="index" :label="item.label"
                                   :value="item.value"></el-option>
@@ -1031,7 +1030,7 @@ export default {
     // 选完客户产品数据后 渲染在列表上
     submitCustomerProduct(val, data, paramsObj) {
       this.productVisible = false
-      // data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
+      data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
       data.forEach((i) => {
         const item = i.all
         console.log(item, 'oooo')
@@ -1441,6 +1440,16 @@ export default {
       } else {
         this.dataForm.approvalStatus = 'ok'
       }
+      
+      for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+        const item = this.dataFormTwo.data[index];
+        if(item.projectCode=='common'&&!item.costProjectId){
+          submitFlag=false
+      this.btnLoading = false
+      this.$message.error("产品信息第"+(index+1)+"行产品为通用产品，须选择成本核算归属")
+      break
+        }
+      }
       if (submitFlag) {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -1494,6 +1503,7 @@ export default {
                 this.$refs.printTemplate.init(this.enCode)
               })
             } else {
+              this.$emit('close',true)
           
             }
           })

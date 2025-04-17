@@ -1001,7 +1001,8 @@ export default {
                 sealingCoverTyping: item.sealingCoverTyping,
                 standardValue: item.standardValue,
                 vibrationLevel: item.vibrationLevel,
-                pairingModeId:item.pairingModeId
+                pairingModeId:item.pairingModeId,
+                specialRequire:item.specialRequire,
               }
               arr.push(obj)
             });

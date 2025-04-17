@@ -9,12 +9,12 @@
     <div style="padding: 10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="品名规格" prop="productsDrawingNo">
+        <el-form-item label="品名规格" prop="drawingNo">
           <template slot="label">
             品名规格<span class="required">*</span>
           </template>
           <ComSelect-page clearable :isdisabled="btnType === 'look'" 
-            v-model="dataForm.productsDrawingNo" :beforeSubmit="beforeSubmit" 
+            v-model="dataForm.drawingNo" :beforeSubmit="beforeSubmit" 
             @change="addth" :tableItems="productTableItems" :placeholder="'请选择品名规格'" title="选择品名规格"
             treeTitle="产品分类" :methodArr="productMethodArr" :listMethod="getProductList"
             :listRequestObj="productListRequestObj" :paramsObj="{ oldData }"
@@ -64,7 +64,7 @@ export default {
       isdisabled: false,
       title: '',
       dataForm: {
-        productsDrawingNo: '',
+        drawingNo: '',
         weight: '',
         quantity: ''
       },
@@ -82,7 +82,7 @@ export default {
       ],
       // 产品搜索条件
       productTableSearchList: [
-        { prop: 'productsCode', label: '产品编码', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' },
         { prop: 'productName', label: '产品名称', type: 'input' }
       ],
       // 产品请求参数
@@ -97,7 +97,7 @@ export default {
       },
       getProductList,
       dataRule: {
-        productsDrawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
+        drawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
         weight: [
           { required: true, message: '请输入重量', trigger: 'blur' },
         ],
@@ -113,11 +113,11 @@ export default {
     addth(id, data) {
       console.log(data,'结局')
       this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('productsDrawingNo')
+        this.$refs['dataForm'].validateField('drawingNo')
       })
       if (data.length === 0) {
-        this.dataForm.productsDrawingNo = ''
-        this.dataForm.productsCode = ''
+        this.dataForm.drawingNo = ''
+        this.dataForm.productCode = ''
         this.dataForm.productsId = ''
         this.oldData = []
       } else {
@@ -125,36 +125,21 @@ export default {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.productsDrawingNo = data[0].all.drawingNo
-        this.dataForm.productsCode = data[0].all.code
+        this.dataForm.drawingNo = data[0].all.drawingNo
+        this.dataForm.productCode = data[0].all.code
         this.dataForm.productsId = data[0].all.id
       }
     },
-    init(id, type) {
+    init(row, type) {
 
       this.visible = true
-      this.dataForm.id = id || ''
       this.title = !this.dataForm.id ? '新建重量数量换算' : '编辑重量数量换算'
-      if (type == 'edit' || type == 'add') {
-        this.btntype = false
-      } else if (type == 'look') {
-        this.btntype = true
-      }
-      // this.formLoading = true
-      this.$nextTick(() => {
+      if (type == 'add') {
         this.$refs['dataForm'].resetFields()
-        if (this.dataForm.id) {
-          detailProductsWeightQuantity(this.dataForm.id).then((res) => {
-            console.log(123321, res)
-            this.dataForm = res.data
-            this.fetchData("BLYY", false)
-            this.formLoading = false
-          })
-        } else {
-          this.fetchData("BLYY", true)
-          this.formLoading = false
-        }
-      })
+      } else if (type == 'edit') {
+        this.dataForm = {...row }
+      
+      }
     },
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {

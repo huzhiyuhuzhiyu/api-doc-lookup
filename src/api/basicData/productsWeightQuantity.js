@@ -22,7 +22,7 @@ export function addProductsWeightQuantity(data) {
 export function updateProductsWeightQuantity(data) {
   return request({
     url: `/api/zgt/bimProductsWeightQuantity/update`,
-    method: 'put',
+    method: 'post',
     data
   })
 }

@@ -374,7 +374,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           allow-create style="width: 100%;">
-                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name" 
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index" :label="item.name" 
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -384,7 +384,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           allow-create>
-                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -394,7 +394,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           allow-create style="width: 100%;">
-                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -403,7 +403,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oil" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           style="width: 100%;">
-                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -412,7 +412,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           style="width: 100%;">
-                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -421,7 +421,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           style="width: 100%;">
-                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -431,7 +431,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           allow-create style="width: 100%;">
-                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -441,7 +441,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           allow-create style="width: 100%;">
-                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -450,7 +450,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.material" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           style="width: 100%;">
-                          <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -460,7 +460,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           style="width: 100%;">
-                          <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -845,7 +845,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       allow-create style="width: 100%;">
-                      <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -853,7 +853,7 @@
                 <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1" :key="123">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false">
-                      <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -863,7 +863,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa005" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -872,7 +872,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.oil" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa002" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -881,7 +881,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa003" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -890,7 +890,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.clearance" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa001" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -900,7 +900,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa015" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -910,7 +910,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa016" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -919,7 +919,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.material" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -929,7 +929,7 @@
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create 
                       style="width: 100%;">
-                      <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
+                      <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index" :label="item.name"
                         :value="item.name"></el-option>
                     </el-select>
                   </template>
@@ -1491,14 +1491,7 @@ export default {
       createcontractId: "",
       createcontractName: "",
       customStyleData: 0,
-      list1: [],
-      list2: [],
-      list3: [],
-      list4: [],
-      list5: [],
-      list6: [],
-      list7: [],
-      list8: [],
+ 
       taxRateList: [],
       // productFormVisible: false
       flowTemplateJson: {},
@@ -1662,112 +1655,33 @@ export default {
       })
     },
     // 获取业务参数中 属性字段动态显示
-    getProductAttributeFun() {
-      getOrderFiledMap('sale').then(res => {
+   async getProductAttributeFun() {
+     await getOrderFiledMap('sale').then(res => {
         console.log("产品属性", res);
-        // sealingCoverTypingFlag list1  pa007
-        // accuracyLevelFlag list2  pa006
-        // vibrationLevelFlag list3 pa005
-        // oilFlag list4 pa002
-        // oilQuantityFlag list5 pa003
-        // clearanceFlag list6 pa001
-        // packagingMethodFlag list7 pa015
-        // specialRequireFlag list8 pa016
+
 
         this.accuracyLevelFlag = res.data.accuracyLevel //list1
-        if (this.accuracyLevelFlag == 1) {
-          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+        
         this.clearanceFlag = res.data.clearance
-        if (this.clearanceFlag == 1) {
-          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        console.log("this.list6", this.list6);
+    
         this.oilFlag = res.data.oil
-        if (this.oilFlag == 1) {
-          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+       
         this.oilQuantityFlag = res.data.oilQuantity
-        if (this.oilQuantityFlag == 1) {
-          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+  
         this.packagingMethodFlag = res.data.packagingMethod
-        if (this.packagingMethodFlag == 1) {
-          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+  
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-        if (this.sealingCoverTypingFlag == 1) {
-          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+       
         this.specialRequireFlag = res.data.specialRequire
-        if (this.specialRequireFlag == 1) {
-          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+       
         // 保持架材质
         this.materialFlag = res.data.material
-        if (this.materialFlag == 1) {
-          this.list9 = this.bimProductAttributesList.pa021.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+       
         // 颜色
         this.colourFlag = res.data.colour
-        if (this.colourFlag == 1) {
-          this.list10 = this.bimProductAttributesList.pa010.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
+        
         this.vibrationLevelFlag = res.data.vibrationLevel
-        if (this.vibrationLevelFlag == 1) {
-          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-          console.log(this.list3);
-        }
+        
 
 
         if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
@@ -1989,6 +1903,7 @@ export default {
     getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
+        console.log("res产品属性",res);
         this.bimProductAttributesList = res.data
       })
       // 获取税率(数据字典)

@@ -703,11 +703,11 @@ export default {
       this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
       if (row.businessType == 'outbound_sale_send' && row.sourceType == 'notice') {
         this.enCode = 'p003'
-        detailWarehouseData(row.id).then(res => {
-          console.log("详情", res);
-          this.formId = res.data.spaceLines[0].noticeId
+        // detailWarehouseData(row.id).then(res => {
+        //   console.log("详情", res);
+        //   this.formId = res.data.spaceLines[0].noticeId
 
-        })
+        // })
       }
       this.printVisible = true
       this.$nextTick(() => {

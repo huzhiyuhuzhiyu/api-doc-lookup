@@ -32,4 +32,8 @@ export default {
         configKeyLabel: '套圈毛坯采购生成任务',
         description: '启用后，套圈毛坯采购入库自动生成套圈任务。'
     },
+    steelBallTask: {
+        configKeyLabel: '钢球任务',
+        description: '开启后，显示相关属性字段'
+    },
 }

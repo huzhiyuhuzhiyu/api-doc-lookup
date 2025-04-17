@@ -410,8 +410,9 @@ export default {
         { prop: 'colour', label: '颜色' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productName', label: '产品名称', type: 'input' },
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
       dataFormTwo: {

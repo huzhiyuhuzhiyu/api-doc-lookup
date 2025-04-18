@@ -179,7 +179,7 @@ export default {
 
         scrapFlag: '',
         virtuallyFlag: '',
-        warehouseId: '1868848271110225922',
+        warehouseId: '1868889766953533441',
         productDrawingNo: '',
         productCode: '',
         superQuery: {},

@@ -179,7 +179,7 @@ export default {
 
         scrapFlag: '',
         virtuallyFlag: '',
-        warehouseId: '1868848271110225922',
+        warehouseId: '1859200167750713345',
         productDrawingNo: '',
         productCode: '',
         superQuery: {},
@@ -270,7 +270,7 @@ export default {
         ],
         pageNum: 1,
         pageSize: -1,
-        warehouseId: '1868848271110225922'
+        warehouseId: '1859200167750713345'
       }
       const res = await getList(obj)
       console.log(res, 'dd')
@@ -420,7 +420,7 @@ export default {
         pageSize: 20,
         scrapFlag: false,
         virtuallyFlag: false,
-        warehouseId: '1868848271110225922',
+        warehouseId: '1859200167750713345',
         productDrawingNo: '',
         productCode: '',
         superQuery: {},

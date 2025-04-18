@@ -494,7 +494,7 @@ export default {
     this.fetchData('DZDH')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProductClassFun()
-    this.discountFlag = true
+    this.discountFlag = this.$store.getters.configData.sale.discount
     if (this.discountFlag) {
       this.productFormRules.includingTaxAmount = []
       
@@ -807,10 +807,9 @@ export default {
 
     async request() {
       let submitFlag = true
-      for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+      if (this.discountFlag) {
+        for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];
-          console.log(item.receiptReturnType)
-          console.log(item.discountPrice,'item.discountPrice')
           if (item.receiptReturnType && !item.discountPrice) {
             submitFlag = false
             this.btnLoading = false
@@ -832,6 +831,8 @@ export default {
             return
           }
         }
+      }
+      
       // this.btnLoading = true
    
       let form_2 = this.$refs['productForm']

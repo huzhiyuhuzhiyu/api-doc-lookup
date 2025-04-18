@@ -513,11 +513,11 @@ export default {
       }
 
     },
-    getProductClassFun() {
-      // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
+   async getProductClassFun() {
+     // 产品属性
+     const res = await getbimProductAttributesListMap()
+     this.bimProductAttributesList = res.data
+  
 
     },
     async getProductNameSwitch(code, type) {

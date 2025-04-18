@@ -68,7 +68,7 @@
 
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table">
+                      :data="dataFormTwo.data" id="table" ref="product" v-if="tableFlag">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
@@ -137,7 +137,42 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="discountPrice" label="折扣单价" width="120" v-if="discountFlag">
+                      <template slot="header">
+                        <span class="required">*</span>折扣单价
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'discountPrice'"
+                            :rules="productFormRules.discountPrice">
+                        <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.discountPrice"
+                               :disabled="discountFlag">{{
+                                scope.row.discountPrice }}</el-input>
+                        <el-input v-else v-model="scope.row.discountPrice" :disabled="btnType == 'look' ? true : false"
+                           placeholder="请输入"
+                          >{{
+                            scope.row.discountPrice }}
+                        </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="discount" label="折扣" width="120" v-if="discountFlag">
+                      <template slot="header">
+                        <span class="required">*</span>折扣
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'discount'"
+                            :rules="productFormRules.discount">
+                        <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.discount"
+                               :disabled="discountFlag">{{
+                                scope.row.discount }}</el-input>
+                        <el-select v-else v-model="scope.row.discount" placeholder="请选择" style="width: 100%;"
+                          >
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                            :value="item.taxRate"></el-option>
+                        </el-select>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
 
 
                       <!-- 
@@ -247,13 +282,72 @@
                               <span v-else-if="scope.row.receiptReturnType === 'inbound_sale_return'">{{
                                 scope.row.includingTaxAmount
                               }}</span>
-                              <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">{{
+                              <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount"
+                               :disabled="discountFlag">{{
                                 scope.row.includingTaxAmount }}</el-input>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
+                     
+                      <el-table-column prop="excludingTaxDiscountAmount" label="不含税折扣总金额" min-width="140" v-if="discountFlag">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxDiscountAmount'"
+                            :rules="productFormRules.excludingTaxDiscountAmount">
+                            <div
+                              :class="['viewData', scope.row.receiptReturnType === 'outbound_sale_send' ? 'green' : 'red']">
 
+
+                              <span v-if="scope.row.receiptReturnType === 'outbound_sale_send'">+{{
+                                scope.row.excludingTaxDiscountAmount
+                              }}</span>
+                              <span v-else-if="scope.row.receiptReturnType === 'inbound_sale_return'">{{
+                                scope.row.excludingTaxDiscountAmount
+                              }}</span>
+                              <el-input v-if="!scope.row.receiptReturnType" disabled
+                                v-model="scope.row.excludingTaxDiscountAmount">{{
+                                  scope.row.excludingTaxDiscountAmount }}</el-input>
+                            </div>
+
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="taxDiscountAmount" label="折扣税额" min-width="140" v-if="discountFlag">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'taxDiscountAmount'"
+                            :rules="productFormRules.taxDiscountAmount">
+                            <div
+                              :class="['viewData', scope.row.receiptReturnType === 'outbound_sale_send' ? 'green' : 'red']">
+                              <span v-if="scope.row.receiptReturnType === 'outbound_sale_send'">+{{ scope.row.taxDiscountAmount
+                              }}</span>
+                              <span v-else-if="scope.row.receiptReturnType === 'inbound_sale_return'">{{
+                                scope.row.taxDiscountAmount
+                              }}</span>
+
+                              <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.taxDiscountAmount" disabled>{{
+                                scope.row.taxDiscountAmount }}</el-input>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="discountAmount" label="含税折扣总金额" min-width="140" v-if="discountFlag">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'discountAmount'"
+                            :rules="productFormRules.discountAmount">
+                            <div
+                              :class="['viewData', scope.row.receiptReturnType === 'outbound_sale_send' ? 'green' : 'red']">
+                              <span v-if="scope.row.receiptReturnType === 'outbound_sale_send'">+{{
+                                scope.row.discountAmount
+                              }}</span>
+                              <span v-else-if="scope.row.receiptReturnType === 'inbound_sale_return'">{{
+                                scope.row.discountAmount
+                              }}</span>
+                              <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.discountAmount">{{
+                                scope.row.discountAmount }}</el-input>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" maxlength="20" placeholder="请输入备注">{{
@@ -315,12 +409,14 @@ import { mapGetters, mapState } from 'vuex'
 import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
+import {getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap} from "@/api/masterDataManagement/index";
 export default {
   components: {
     Process, recordList
   },
   data() {
     return {
+      tableFlag:false,
       activeNames: ["productInfo", "basicInfo"],
       activeName: 'jcInfo',
       dialogTitle: '',
@@ -373,6 +469,11 @@ export default {
           { required: true, message: '请输入含税总金额', trigger: ['blur'] },
           { validator: this.formValidate({ type: 'decimal2', params: [20, 6, "", (errMsg, index) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
         ],
+        discountAmount: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["请输入含税折扣总金额", (errMsg) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
+          { required: true, message: '请输入含税折扣总金额', trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 6, "", (errMsg, index) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
+        ],
       },
       defaultProps: {
         children: 'children',
@@ -392,7 +493,14 @@ export default {
   async created() {
     this.fetchData('DZDH')
     await this.getProductNameSwitch('product', 'enable_productName')
-     
+    await this.getProductClassFun()
+    this.discountFlag = true
+    if (this.discountFlag) {
+      this.productFormRules.includingTaxAmount = []
+      
+    }
+    this.$nextTick(() => { this.$refs.product.doLayout() })
+    this.tableFlag = true
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -402,7 +510,12 @@ export default {
       let num = 0
       let num2 = 0
       this.dataFormTwo.data.forEach(item => {
-        count += item.excludingTaxAmount * 1
+        if (this.discountFlag) {
+          count += item.excludingTaxDiscountAmount * 1
+        } else {
+          count += item.excludingTaxAmount * 1
+        }
+        
       })
       this.dataForm.excludingTaxAmount = this.jnpf.numberFormat(count)
       return this.dataForm.excludingTaxAmount
@@ -411,7 +524,12 @@ export default {
       // 在这里计算第三个输入框的值
       let count = 0
       this.dataFormTwo.data.forEach(item => {
-        count += item.taxAmount * 1
+        if (this.discountFlag) {
+          count += item.taxDiscountAmount * 1
+        } else {
+          count += item.taxAmount * 1
+        }
+        
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
       return this.dataForm.taxAmount
@@ -420,7 +538,11 @@ export default {
       let count = 0
       this.dataFormTwo.data.forEach(item => {
         if (item.receiptReturnType == 'inbound_sale_return') {
-          count += item.includingTaxAmount * 1
+          if (this.discountFlag) {
+            count += item.discountAmount * 1
+          } else {
+            count += item.includingTaxAmount * 1
+          }
         }
       })
       this.dataForm.backAmount = this.jnpf.numberFormat(count)
@@ -430,14 +552,21 @@ export default {
       let count = 0
       this.dataFormTwo.data.forEach(item => {
         if (item.receiptReturnType === 'outbound_sale_send') {
-          count += item.includingTaxAmount * 1
+          if (this.discountFlag) {
+            count += item.discountAmount * 1
+          } else {
+            count += item.includingTaxAmount * 1
+          }
         }
       })
       this.dataForm.receiptAmount = this.jnpf.numberFormat(count)
       return this.dataForm.receiptAmount
     },
     brComputedValue() {
+      console.log(123)
       let count = 0
+      console.log(this.dataForm.excludingTaxAmount)
+      console.log(this.dataForm.taxAmount)
       if (this.dataForm.excludingTaxAmount !== '' && this.dataForm.taxAmount !== '') {
         count = this.dataForm.excludingTaxAmount * 1 + this.dataForm.taxAmount * 1
       }
@@ -464,6 +593,26 @@ export default {
                 item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
               }
             }
+            if (item.discountPrice && item.reconciliationUnitPrice) {
+              item.discountAmount = this.jnpf.numberFormat(item.discountPrice * item.reconciliationUnitPrice,2)
+            } else {
+              item.discountAmount = ''
+            }
+            if ((item.discountPrice && item.discount) || (item.discountPrice && item.discount === 0)) {
+              item.excludingTaxDiscountPrice = this.jnpf.numberFormat(item.discountPrice / (1 + (item.discount * 1) / 100),6)
+            } else {
+              item.excludingTaxDiscountPrice = ''
+            }
+            if (item.reconciliationUnitPrice && item.excludingTaxDiscountPrice) {
+              item.excludingTaxDiscountAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.excludingTaxDiscountPrice,2)
+            } else {
+              item.excludingTaxDiscountAmount = ''
+            }
+            if (item.discountPrice && item.reconciliationUnitPrice && item.excludingTaxDiscountAmount) {
+              item.taxDiscountAmount = this.jnpf.numberFormat(item.discountPrice * item.reconciliationUnitPrice - item.excludingTaxDiscountAmount)
+            } else {
+              item.taxDiscountAmount = ''
+            }
           } else if (item.receiptReturnType === 'inbound_sale_return') {
             if (item.includingTaxAmount) {
               if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
@@ -474,13 +623,38 @@ export default {
                 item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
               }
             }
+            if (item.discountPrice && item.reconciliationUnitPrice) {
+              item.discountAmount = this.jnpf.numberFormat(item.discountPrice * item.reconciliationUnitPrice,2)
+            } else {
+              item.discountAmount = ''
+            }
+            if ((item.discountPrice && item.discount) || (item.discountPrice && item.discount === 0)) {
+              item.excludingTaxDiscountPrice = this.jnpf.numberFormat(item.discountPrice / (1 + (item.discount * 1) / 100),6)
+            } else {
+              item.excludingTaxDiscountPrice = ''
+            }
+            if (item.reconciliationUnitPrice && item.excludingTaxDiscountPrice) {
+              item.excludingTaxDiscountAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.excludingTaxDiscountPrice,2)
+            } else {
+              item.excludingTaxDiscountAmount = ''
+            }
+            if (item.discountPrice && item.reconciliationUnitPrice && item.excludingTaxDiscountAmount) {
+              item.taxDiscountAmount = this.jnpf.numberFormat(item.discountPrice * item.reconciliationUnitPrice - item.excludingTaxDiscountAmount)
+            } else {
+              item.taxDiscountAmount = ''
+            }
           } else {
             if (item.includingTaxAmount) {
               item.excludingTaxAmount = this.jnpf.numberFormat(item.includingTaxAmount / (1 + (newVal[0].taxRate / 100)), 2)
               item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
             }
+            if (item.discountAmount) {
+              item.excludingTaxDiscountAmount = this.jnpf.numberFormat(item.discountAmount / (1 + (newVal[0].discount / 100)), 2)
+              item.taxDiscountAmount = this.jnpf.numberFormat(item.discountAmount - item.excludingTaxDiscountAmount, 2)
+            
+            }
           }
-
+          
         })
       },
       deep: true,
@@ -494,6 +668,16 @@ export default {
     },
   },
   methods: {
+    async getProductClassFun() {
+      // 获取税率(数据字典)
+      const res = await getbimProductAttributes("585438081021126405")
+      res.data.list.forEach(item => {
+        item.taxRate = item.enCode.replace('%', '') * 1
+      })
+      this.taxRateList = res.data.list
+      console.log("税率", this.taxRateList);
+  
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
@@ -526,6 +710,11 @@ export default {
         taxRate: "",
         price: "",
         adjustmentLineFlag: true,
+        discountPrice:null,
+        discountAmount:null,
+        excludingTaxDiscountPrice:null,
+        excludingTaxDiscountAmount:null,
+        taxDiscountAmount:null,
       })
       this.newArr = this.dataFormTwo.data.filter(item => item.adjustmentLineFlag === false);
       console.log(" this.dataFormTwo.data", this.dataFormTwo.data);
@@ -617,8 +806,34 @@ export default {
     },
 
     async request() {
-      // this.btnLoading = true
       let submitFlag = true
+      for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+          const item = this.dataFormTwo.data[index];
+          console.log(item.receiptReturnType)
+          console.log(item.discountPrice,'item.discountPrice')
+          if (item.receiptReturnType && !item.discountPrice) {
+            submitFlag = false
+            this.btnLoading = false
+            this.$message({
+              message: '请输入第' + (index + 1) + '行产品的折扣单价',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+          if (item.receiptReturnType && !item.discount) {
+            submitFlag = false
+            this.btnLoading = false
+            this.$message({
+              message: '请输入第' + (index + 1) + '行产品的折扣',
+              type: 'error',
+              duration: 1500
+            })
+            return
+          }
+        }
+      // this.btnLoading = true
+   
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch(err => false)
       console.log(this.dataForm, '参数');
@@ -642,9 +857,9 @@ export default {
 
             this.dataFormTwo.data.forEach(item => {
               if (item.productsId === "") {
-                totalExcludingTaxAmount += parseInt(item.excludingTaxAmount);
-                totalTaxAmount += parseInt(item.taxAmount);
-                totalIncludingTaxAmount += parseInt(item.includingTaxAmount);
+                totalExcludingTaxAmount += item.excludingTaxAmount;
+                totalTaxAmount += item.taxAmount;
+                totalIncludingTaxAmount += item.includingTaxAmount;
               }
             });
             this.dataForm.adjustExcludingTaxAmount = totalExcludingTaxAmount

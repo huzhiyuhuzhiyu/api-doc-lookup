@@ -73,6 +73,7 @@
           <el-table-column prop="orderNo" label="出入库单号" min-width="200" sortable="custom" />
           <el-table-column prop="saleOrderNo" label="销售订单号" min-width="200" sortable="custom" />
           <el-table-column prop="saleNoticeNo" label="销售通知单号" min-width="200" sortable="custom" />
+          <el-table-column prop="deliverDate" label="发货日期" min-width="200" sortable="custom" />
           <el-table-column prop="customerProductNo" label="客户料号" min-width="200" sortable="custom" />
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
@@ -240,6 +241,16 @@ export default {
           label: "销售通知单号",
           type: 'input'
         },
+        {
+          prop: 'deliverDate',
+          label: '发货日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        
         {
           prop: 'partnerName',
           label: "客户名称",

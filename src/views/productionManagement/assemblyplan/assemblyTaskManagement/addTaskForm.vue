@@ -1008,6 +1008,7 @@ export default {
     },
     selectLine(e) {
       console.log(e);
+      if(!e) return
       getProductionLineInfo(e).then(res => {
         console.log("产线", res);
         let list = res.data.workstationList

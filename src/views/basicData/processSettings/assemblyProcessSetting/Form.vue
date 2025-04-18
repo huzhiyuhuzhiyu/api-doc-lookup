@@ -125,6 +125,9 @@
                           <template v-if="scope.row.processType == 'fatInjection'">
                             注脂工序
                           </template>
+                          <template v-if="scope.row.processType == 'boxing'">
+                            装盒工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -387,6 +390,9 @@
                       </template>
                       <template v-if="scope.row.processType == 'fatInjection'">
                         注脂工序
+                      </template>
+                      <template v-if="scope.row.processType == 'boxing'">
+                            装盒工序
                       </template>
                     </template>
                   </el-table-column>

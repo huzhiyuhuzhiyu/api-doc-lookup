@@ -60,13 +60,13 @@
                             </el-date-picker>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
-                          <el-form-item label="客户名称" prop="partnerName">
-                            <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="planForm.partnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="客户名称" prop="cooperativePartnerName">
+                            <ComSelect-page clearable :isdisabled="btnType === 'look'"
+                              v-model="planForm.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
                               :placeholder="'请选择客户名称'" title="选择客户"
                               treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                              :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                              :listRequestObj="PartnerListRequestObj" 
                               :searchList="PartnerTableSearchList" />
                           </el-form-item>
                         </el-col>
@@ -408,6 +408,7 @@ export default {
       ],
       planForm: {
         planType: "add_plan",
+        cooperativePartnerName:"",
         planDate: [],
         planStartDate: "",
         planEndDate: "",
@@ -476,6 +477,9 @@ export default {
         // ],
         projectId: [
           { required: true, message: '所属项目不能为空', trigger: 'change' }
+        ],
+        cooperativePartnerName: [
+          { required: true, message: '客户名称不能为空', trigger: 'change' }
         ],
       },
       customerData: {},
@@ -783,7 +787,32 @@ export default {
       this.productData.splice(data.$index, 1)
     },
 
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
+      })
+      if (data.length === 0) {
+        this.planForm.cooperativePartnerName = ''
+        this.planForm.cooperativePartnerCode = ''
+        this.planForm.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.planForm.cooperativePartnerName = data[0].all.name
+        this.planForm.cooperativePartnerCode = data[0].all.code
+        this.planForm.cooperativePartnerId = data[0].all.id
 
+        this.planFormTwo.data.forEach((item) => {
+          if (this.planForm.cooperativePartnerId) {
+           this.$set(item, 'cooperativePartnerId',this.planForm.cooperativePartnerId)
+          }
+        })
+       
+      }
+    },
 
 
 

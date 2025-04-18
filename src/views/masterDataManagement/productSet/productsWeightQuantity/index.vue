@@ -171,8 +171,7 @@ export default {
         initData() {
             getProductsWeightQuantityList(this.tableQuery)
                 .then((res) => {
-                    //
-                    console.log('货位表格', res)
+                    
                     this.tableDataList = res.data.records
                     this.total = res.data.total
                     this.listLoading = false

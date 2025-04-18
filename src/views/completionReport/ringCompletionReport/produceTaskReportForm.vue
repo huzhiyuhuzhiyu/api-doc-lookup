@@ -131,7 +131,23 @@
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
-
+                  <template v-if="$store.getters.configData.produce.steelBallTask">
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="生产桶数:" prop="productionBarrels" class="iptLabel"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.productionBarrels" placeholder="生产桶数" class="ipt"
+                          @blur="handleBlur(item)" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="生产重量:" prop="productionWeight" class="iptLabel"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt"
+                          @blur="handleBlur(item)" />
+                      </el-form-item>
+                    </el-col>
+                  </template>
+                  
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -213,6 +229,15 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
+                    <el-form-item label="是否强制完成:" class="iptLabel">
+                      <el-select v-model="currentProcess.forceCompleteFlag" placeholder="是否强制完成" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24">
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">
@@ -290,6 +315,7 @@ import responsWaste from './responsWaste.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 export default {
 
   components: {
@@ -350,6 +376,16 @@ export default {
           // { required: true, message: '合格数量不能为空', trigger: 'blur' },
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
           // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
+        ],
+        productionBarrels: [
+          { required: true, message: '生产桶数不能为空', trigger: 'blur' },
+          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
+        ],
+        productionWeight: [
+          { required: true, message: '生产重量不能为空', trigger: 'blur' },
+          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ]
       },
       iptLabelMargin: '30px',
@@ -360,7 +396,21 @@ export default {
       copyCurrentProcess: {}
     }
   },
-
+  watch: {
+    'currentProcess.productionWeight': {
+      handler: function (newVal, oldVal) {
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          if (newVal) {
+            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+          } else {
+            this.currentProcess.qualifiedQuantity = 0
+          }
+          
+        }
+      },
+      deep: true
+    }
+  },
   mounted() {
   },
 
@@ -440,7 +490,15 @@ export default {
         this.dataForm = res.data.prodOrder
         this.workList = res.data.workOrderList
         this.materialList = res.data.materialList
-  
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          let obj = {
+            productsId: this.dataForm.productsId
+          }
+          getProductsWeightQuantityList(obj).then(res=>{
+            this.weight = res.data.records[0].weight
+            this.quantity = res.data.records[0].quantity
+          })
+        }
         
         if (Object.keys(this.copyCurrentProcess).length !== 0) {
           const matchingItem = res.data.workOrderList.find(item => item.processId === this.copyCurrentProcess.processId);
@@ -649,6 +707,13 @@ export default {
           obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
           obj.aperture = this.currentProcess.aperture
           obj.workOrderId = this.currentProcess.id
+          if (this.currentProcess.processType === 'boxing') {
+            obj.processType = this.currentProcess.processType
+            obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
+            obj.actualQualifiedQuantity = this.currentProcess.qualifiedQuantity
+            obj.mainUnit = '盒'
+          }
+          
           arr.push(obj)
       
           addWorkReport(arr).then(res => {

@@ -36,4 +36,8 @@ export default {
         configKeyLabel: '钢球任务',
         description: '开启后，显示相关属性字段'
     },
+    production_related_customers: {
+        configKeyLabel: '生产关联客户',
+        description: '开启后，计划管理安全库存创建、直接创建；生产管理编排和新建任务将显示客户名称选择，进行生产关联客户'
+    },
 }

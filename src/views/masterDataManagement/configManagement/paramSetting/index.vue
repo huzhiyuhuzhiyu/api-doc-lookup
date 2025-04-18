@@ -99,17 +99,71 @@
                 <div><i class="el-icon el-icon-edit-outline"></i> 文件分类</div>
               </template>
             </el-table-column>
-            <el-table-column prop="description" label="说明" />
+            <el-table-column prop="description" label="说明"  />
+            <el-table-column prop="set" label="编辑设置" width="80" v-if="userInfo.userId === 'admin'" >
+              <template slot-scope="scope">
+                <el-button type="text" size="mini" @click="editSet(scope.row)">编辑设置</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </div>
     </div>
-
+    <el-dialog title="快速创建" :visible.sync="quickVisible" width="50%" :before-close="handleClose"
+      class="JNPF-dialog JNPF-dialog_center" :close-on-click-modal="false" :close-on-press-escape="false">
+      <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
+        hide-required-asterisk="fasle" :close-on-click-modal="false">
+        <el-row :gutter="15">
+          <el-col :span="12">
+            <el-form-item label="业务编码" prop="businessCode">
+              <template slot="label">
+                业务编码
+                <span class="required">*</span>
+              </template>
+              <el-input v-model="quickForm.businessCode" placeholder="请输入"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="配置键" prop="configKey">
+              <template slot="label">
+                配置键
+                <span class="required">*</span>
+              </template>
+              <el-input v-model="quickForm.configKey" placeholder="请输入"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="配置值1" prop="configValue1">
+              <template slot="label">
+                配置值1
+                <span class="required">*</span>
+              </template>
+              <el-input v-model="quickForm.configValue1" placeholder="请输入"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="配置值2" >
+              <el-input v-model="quickForm.configValue2" placeholder="请输入"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="配置值3">
+              <el-input v-model="quickForm.configValue3" placeholder="请输入"></el-input>
+            </el-form-item>
+          </el-col>
+         
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="submitForm('quickForm')">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
+import { getBimBusinessSwitchConfigList, editBimBusinessData,saveBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getLabel, isEmpty, notEmpty, sleep } from '@/utils/index'
 import { FileCategoryType } from "@/views/esop/fileCategoryManagement/constants";
 import ConfigKey from "@/views/masterDataManagement/configManagement/paramSetting/ConfigKey";
@@ -119,6 +173,7 @@ export default {
   name: 'ParamSetting',
   data() {
     return {
+      quickVisible: false,
       tableRerender: false,
       maxHeight: null,
       activeName: 'product',
@@ -129,6 +184,18 @@ export default {
       listQuery: {
         pageSize: 1, // 1是编码 0是财务
         businessCode: '' //attachment——附件   warehouse——仓库
+      },
+      quickForm: {
+        businessCode: '',
+        configKey: '',
+        configValue1: '',
+        configValue2: '',
+        configValue3: ''
+      },
+      quickRules: {
+        businessCode: [{ required: true, message: '请输入', trigger: 'blur' }],
+        configKey: [{ required: true, message: '请输入', trigger: 'blur' }],
+        configValue1: [{ required: true, message: '请输入', trigger: 'blur' }],
       },
       codeSetData: [],
       tableData: [],
@@ -218,7 +285,38 @@ export default {
   },
   methods: {
     addSet(){
-
+      this.quickVisible = true
+    },
+    editSet(row){
+      this.quickForm = {...row}
+      this.quickVisible = true
+    },
+    handleClose(){
+      this.quickVisible = false
+      this.this.quickForm = {}
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        console.log(valid)
+        if (valid) {
+          saveBimBusinessSwitchConfigList(this.quickForm).then(res=>{
+            if (res.code == '200') {
+              this.$message({
+                message: this.quickForm.id ? '修改成功' : '新建成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.quickVisible = false
+                  this.$refs.quickForm.resetFields()
+                  this.initData()
+                }
+              })
+            }
+          })
+        } else {
+          return false
+        }
+      })
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       const visibleData = this.tableData
@@ -575,5 +673,9 @@ export default {
 .multiline {
   width: 100px;
   white-space: pre-wrap;
+}
+.required {
+  color: red;
+  margin-left: 4px;
 }
 </style>

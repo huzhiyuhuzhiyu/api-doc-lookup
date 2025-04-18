@@ -85,8 +85,8 @@
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" width="130" />
 
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" width="110" label="打字内容" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" width="110" :label="$store.getters.sealingCoverTyping" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
@@ -182,8 +182,8 @@
                 <el-table-column prop="effectiveTimeStart" label="有效日期起" width="130" sortable="custom" />
                 <el-table-column prop="effectiveTimeEnd" label="有效日期止" width="130" sortable="custom" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="110" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
@@ -452,13 +452,13 @@ export default {
         },
         {
           prop: 'sealingCoverTyping',
-          label: '打字内容',
+          label: this.$store.getters.sealingCoverTyping,
           type: 'select',
           options: []
         },
         {
           prop: 'accuracyLevel',
-          label: '精度等级',
+          label: this.$store.getters.accuracyLevel,
           type: 'select',
           options: []
         },
@@ -601,13 +601,13 @@ export default {
         },
         {
           prop: 'sealingCoverTyping',
-          label: '打字内容',
+          label: this.$store.getters.sealingCoverTyping,
           type: 'select',
           options: []
         },
         {
           prop: 'accuracyLevel',
-          label: '精度等级',
+          label: this.$store.getters.accuracyLevel,
           type: 'select',
           options: []
         },

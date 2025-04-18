@@ -359,7 +359,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                      <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel" width="120"
                         key="123">
                         <!-- <template slot="header">
                             <span class="required">*</span>精度等级
@@ -618,7 +618,7 @@
               <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="110"
                 sortable="custom" v-if="dataForm.documentType == 'outbound' && sealingCoverTypingFlag == 1"
                 key="sealingCoverTyping" />
-              <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom"
+              <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && accuracyLevelFlag == 1" key="accuracyLevel" />
               <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && vibrationLevelFlag == 1" key="vibrationLevel" />

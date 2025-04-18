@@ -214,7 +214,7 @@
                       <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
                       <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
                         :key="211" v-if="sealingCoverTypingFlag == 1"></el-table-column>
-                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"
+                      <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"width="120" :key="123"
                         v-if="accuracyLevelFlag == 1">
                       </el-table-column>
                       <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
@@ -229,7 +229,7 @@
                         v-if="packagingMethodFlag == 1">
                       </el-table-column>
                       <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120"
-                        :key="1012" v-if="vibrationLevelFlag == 1"></el-table-column>
+                        :key="1012" v-if="specialRequireFlag == 1"></el-table-column>
                       <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                         v-if="materialFlag == 1"></el-table-column>
                       <el-table-column prop="colour" :label="$store.getters.colour" width="120" :key="1020"
@@ -379,7 +379,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
+                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" v-if="accuracyLevelFlag == 1"
                       :key="123">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
@@ -697,22 +697,22 @@
                   <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                   <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
                   <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
-                    :key="211" v-if="accuracyLevelFlag == 1"></el-table-column>
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123" v-if="clearanceFlag == 1">
+                    :key="211" v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                  <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" :key="123" v-if="accuracyLevelFlag == 1">
                   </el-table-column>
                   <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
-                    v-if="oilFlag == 1"></el-table-column>
+                    v-if="vibrationLevelFlag == 1"></el-table-column>
                   <el-table-column prop="oil" label="油脂" width="120" :key="61"
-                    v-if="oilQuantityFlag == 1"></el-table-column>
+                    v-if="oilFlag == 1"></el-table-column>
                   <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
-                    v-if="packagingMethodFlag == 1"></el-table-column>
+                    v-if="oilQuantityFlag == 1"></el-table-column>
                   <el-table-column prop="clearance" label="游隙" width="120" :key="100"
-                    v-if="sealingCoverTypingFlag == 1"></el-table-column>
+                    v-if="clearanceFlag == 1"></el-table-column>
                   <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"
-                    v-if="specialRequireFlag == 1">
+                    v-if="packagingMethodFlag == 1">
                   </el-table-column>
                   <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="120" :key="1012"
-                    v-if="vibrationLevelFlag == 1"></el-table-column>
+                    v-if="specialRequireFlag == 1"></el-table-column>
                   <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                     v-if="materialFlag == 1"></el-table-column>
                   <el-table-column prop="colour" :label="$store.getters.colour" width="120" :key="1020"
@@ -850,7 +850,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1" :key="123">
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" v-if="accuracyLevelFlag == 1" :key="123">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable allow-create :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false">
                       <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index" :label="item.name"
@@ -1277,7 +1277,7 @@ export default {
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'pairingModeName', label: '配对方式' },
-        { prop: 'accuracyLevel', label: '精度等级' },
+        { prop: 'accuracyLevel', label: this.$store.getters.accuracyLevel },
         { prop: 'vibrationLevel', label: '振动等级' },
         { prop: 'oil', label: '油脂' },
         { prop: 'oilQuantity', label: '油脂量' },

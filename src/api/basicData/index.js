@@ -1167,6 +1167,15 @@ export function getBimBusinessDetail(data) {
   })
 }
 
+// 业务配置-保存
+export function saveBimBusinessSwitchConfigList(data) {
+  return request({
+    url: `/api/erp/bimBusinessSwitchConfig/save`,
+    method: 'post',
+    data
+  })
+}
+
 export function getOrderFiledMap(configValue2) {
   return request({
     url: `/api/erp/bimBusinessSwitchConfig/orderFiledMap?configValue2=` + configValue2,

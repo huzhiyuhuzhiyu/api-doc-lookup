@@ -149,7 +149,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column
-                          prop="sealingCoverTyping" label="打字内容" min-width="120">
+                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -159,7 +159,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column
-                          prop="accuracyLevel" label="精度等级" min-width="120">
+                          prop="accuracyLevel" :label="$store.getters.accuracyLevel" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable >
                               <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
@@ -633,7 +633,7 @@ export default {
         { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'colour', label: '颜色' },
-        { prop: 'sealingCoverTyping', label: '打字内容', sortable: 'custom' },
+        { prop: 'sealingCoverTyping', label: this.$store.getters.sealingCoverTyping, sortable: 'custom' },
         { prop: 'accuracyLevel', label: '精度等级', sortable: 'custom' },
         { prop: 'vibrationLevel', label: '振动等级', sortable: 'custom' },
         { prop: 'oil', label: '油脂', sortable: 'custom' },

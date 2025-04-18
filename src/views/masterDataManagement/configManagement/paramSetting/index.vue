@@ -285,6 +285,7 @@ export default {
   },
   methods: {
     addSet(){
+      this.quickForm = {}
       this.quickVisible = true
     },
     editSet(row){

@@ -60,6 +60,16 @@
                             </el-date-picker>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                          <el-form-item label="客户名称" prop="partnerName">
+                            <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
+                              v-model="planForm.partnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
+                              :placeholder="'请选择客户名称'" title="选择客户"
+                              treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                              :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                              :searchList="PartnerTableSearchList" />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="12" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="planForm.remark" placeholder="请输入备注"
@@ -348,7 +358,7 @@
 import { batchAddPlan } from '@/api/plan/index.js'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, } from '@/api/salesManagement/assemblyOrders'
-import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList, getOrderFiledMap, getProductionLineList } from '@/api/basicData/index'
+import { getCounryData, getCooperativeInfo,getcategoryTree, getCooperativeData, getscheduleList, getOrderFiledMap, getProductionLineList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
 import { updatePlanList } from '@/api/calculationList/calculationList'
@@ -364,6 +374,32 @@ export default {
 
   data() {
     return {
+      getCooperativeData,
+      getcategoryTree,
+      //  客户 树请求
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'customer' } },
+      // 客户 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '客户编码' },
+        { prop: 'name', label: '客户名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 客户搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '客户编码', type: 'input' },
+        { prop: 'name', label: '客户名称', type: 'input' }
+      ],
+      // 客户请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'customer'
+      },
       isattachmentswitch: "",
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },

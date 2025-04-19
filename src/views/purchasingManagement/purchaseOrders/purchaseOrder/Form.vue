@@ -609,7 +609,6 @@ import {
 } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { mapGetters, mapState } from 'vuex'
-import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 export default {
   components: {
     workFlow,

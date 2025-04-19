@@ -15,23 +15,23 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.productCode" placeholder="物料编号" clearable
+              <el-input v-model="tableQuery.productsCode" placeholder="物料编号" clearable
                 @keyup.enter.native="search('basic', 'search')" />
             </el-form-item>
           </el-col>
           <!-- <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search('basic')" />
+              <el-input v-model="tableQuery.productsCode" placeholder="产品编码" clearable @keyup.enter.native="search('basic')" />
             </el-form-item>
           </el-col> -->
-          <el-col :span="5">
+          <!-- <el-col :span="5">
             <el-form-item>
               <el-select v-model="tableQuery.excludeProcessFlag" placeholder="工序" @change="excludeProcessFlagChange">
                 <el-option v-for="item in excludeProcessFlagData" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search('basic', 'search')" class="commonBox">
@@ -68,17 +68,16 @@
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
           @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList">
-          <el-table-column prop="productCode" label="物料分类" min-width="130" sortable="custom" />
-          <el-table-column prop="productCode" label="物料编号" min-width="130" sortable="custom" />
-          <el-table-column prop="mainUnit" label="期初" width="120" />
-          <el-table-column prop="mainUnit" label="采购入库" width="120" />
-          <el-table-column prop="mainUnit" label="入库合计" width="120" />
-          <el-table-column prop="mainUnit" label="采购退货" width="120" />
-          <el-table-column prop="mainUnit" label="外协发料" width="120" />
-          <el-table-column prop="mainUnit" label="原料消耗" width="120" />
-          <el-table-column prop="mainUnit" label="其他出库" width="120" />
-          <el-table-column prop="mainUnit" label="出库合计" width="120" />
-          <el-table-column prop="mainUnit" label="本期结存" width="120" />
+          <el-table-column prop="productsCategoryName" label="物料分类" min-width="130" sortable="custom" />
+          <el-table-column prop="productsCode" label="物料编号" min-width="130" sortable="custom" />
+          <el-table-column prop="initInventoryQuantity" label="期初" width="120" />
+          <el-table-column prop="inboundPurchaseQuantity" label="采购入库" width="120" />
+          <el-table-column prop="inboundQuantity" label="入库合计" width="120" />
+          <el-table-column prop="outboundPurchaseQuantity" label="采购退货" width="120" />
+          <el-table-column prop="outboundExternalSendQuantity" label="外协发料" width="120" /> 
+          <el-table-column prop="outboundIoOtherQuantity" label="其他出库" width="120" />
+          <el-table-column prop="outboundQuantity" label="出库合计" width="120" />
+          <el-table-column prop="endInventoryQuantity" label="本期结存" width="120" />
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="initData()" :pageSizes="[50, 100, 500,1000]">
@@ -101,7 +100,7 @@
 <script>
 import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { inventoryWarehouseTotalReport } from '@/api/warehouseManagement/inventory'
+import { stockBalanceMergePage } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -121,20 +120,20 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        {
-          field: 'excludeProcessFlag',
-          fieldValue: '',
-          label: '工序',
-          symbol: 'like',
-          searchType: 4,
-          width: 120,
-          options: [
-            { label: '所有', value: '' },
-            { label: '有工序', value: 0 },
-            { label: '无工序', value: 1 }
-          ]
-        }
+        { field: 'productsCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        // {
+        //   field: 'excludeProcessFlag',
+        //   fieldValue: '',
+        //   label: '工序',
+        //   symbol: 'like',
+        //   searchType: 4,
+        //   width: 120,
+        //   options: [
+        //     { label: '所有', value: '' },
+        //     { label: '有工序', value: 0 },
+        //     { label: '无工序', value: 1 }
+        //   ]
+        // }
       ],
       excludeProcessFlagData: [
         { label: '所有', value: '' },
@@ -182,14 +181,14 @@ export default {
         virtuallyFlag: '',
         warehouseId: '1853746783774097410',
         productDrawingNo: '',
-        productCode: '',
+        productsCode: '',
         superQuery: {},
         lineFlag: 1
       },
       selectedNodeKey: '',
       superQueryJson: [
         {
-          prop: 'productCode',
+          prop: 'productsCode',
           label: '物料编号',
           type: 'input'
         },
@@ -368,11 +367,17 @@ export default {
     initData() {
       this.listLoading = true
       this.tableQuery.projectId='1862314935462182913'
-      inventoryWarehouseTotalReport(this.tableQuery)
+      stockBalanceMergePage(this.tableQuery)
         .then((res) => {
           console.log(res)
           this.tableData = res.data.records
-
+          if(this.tableData.length){
+            this.tableData.forEach(item => {
+          
+              item.outboundIoOtherQuantity=this.jnpf.math('subtract', [item.outboundQuantity, item.outboundPurchaseQuantity,item.outboundExternalSendQuantity,])
+          
+          });
+          }
           this.totalData = res.data.stockSts || {
             inventoryQuantity: 0,
             availableQuantity: 0,
@@ -423,27 +428,27 @@ export default {
         virtuallyFlag: false,
         warehouseId: '1853746783774097410',
         productDrawingNo: '',
-        productCode: '',
+        productsCode: '',
         superQuery: {},
         lineFlag: 1
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        {
-          field: 'excludeProcessFlag',
-          fieldValue: '',
-          label: '工序',
-          symbol: 'like',
-          searchType: 4,
-          width: 120,
-          options: [
-            { label: '所有', value: '' },
-            { label: '有工序', value: 0 },
-            { label: '无工序', value: 1 }
-          ]
-        }
+        { field: 'productsCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        // {
+        //   field: 'excludeProcessFlag',
+        //   fieldValue: '',
+        //   label: '工序',
+        //   symbol: 'like',
+        //   searchType: 4,
+        //   width: 120,
+        //   options: [
+        //     { label: '所有', value: '' },
+        //     { label: '有工序', value: 0 },
+        //     { label: '无工序', value: 1 }
+        //   ]
+        // }
       ]
       this.$nextTick(function () {
 
@@ -467,7 +472,7 @@ export default {
         prop == 'productDrawingNo' ||
         prop == 'mainUnit' ||
         prop == 'projectName' ||
-        prop == 'productCode' ||
+        prop == 'productsCode' ||
         prop == 'warehouseName'
       ) {
         newProp = prop

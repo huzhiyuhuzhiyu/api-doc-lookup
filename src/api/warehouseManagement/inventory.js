@@ -165,3 +165,14 @@ export function innerOuterRingReport(data) {
   })
 }
 
+
+
+// 结存报表
+
+export function stockBalanceMergePage(data) {
+  return request({
+    url: `/api/wms/stock/balance/query/merge/page`,
+    method: 'POST',
+    data
+  })
+}

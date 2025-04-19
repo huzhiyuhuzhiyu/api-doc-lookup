@@ -341,6 +341,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
+
                   <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140"
@@ -608,6 +609,7 @@ import {
 } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { mapGetters, mapState } from 'vuex'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 export default {
   components: {
     workFlow,

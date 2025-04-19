@@ -15,6 +15,40 @@ const global = {
     { label: "是", value: true },
     { label: "否", value: false },
   ],
+  // 字典数据映射方法
+  getDictLabelGlobal(dictType, enCode, options = {}) {
+   // 先从本地获取字典
+   let targetList = this[dictType]
+   // 本地不存在字典时，从store获取
+   if (!Array.isArray(targetList)) {
+     const data = store.getters.dictionaryMap[dictType][enCode]
+     return data || this.handleFallback(enCode, options);
+   }
+   // 空值处理逻辑
+   if (enCode == null || enCode === '') {
+     return options.withType ? {label: '', type: ''} : '--';
+   }
+   // 精确匹配字典项
+   const matchedItem = targetList.find(item =>
+     String(item.value) === String(enCode)
+   );
+   // 返回匹配结果或兜底数据
+   return matchedItem
+     ? this.formatResult(matchedItem, options)
+     : this.handleFallback(enCode, options);
+  },
+  // 统一格式化成功结果
+  formatResult(item, options) {
+    return options.withType
+      ? {label: item.label, type: item.type}
+      : item.label;
+  },
+  // 统一处理兜底数据
+  handleFallback(enCode, options) {
+    return options.withType
+      ? {label: enCode || '--', type: 'default'}
+      : enCode || '--';
+  },
   timePicker: { // 日期/时间选择器通用选项（禁用未发生的时间）
     disabledDate(time) {
       return time.getTime() > Date.now();

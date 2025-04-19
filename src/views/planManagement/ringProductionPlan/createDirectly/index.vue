@@ -60,7 +60,7 @@
                             </el-date-picker>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24">
+                        <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.production_related_customers">
                           <el-form-item label="客户名称" prop="cooperativePartnerName">
                             <ComSelect-page clearable :isdisabled="btnType === 'look'"
                               v-model="planForm.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
@@ -400,6 +400,7 @@ export default {
         partnerCategoryId: '',
         type: 'customer'
       },
+      oldData:[],
       isattachmentswitch: "",
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
@@ -805,7 +806,7 @@ export default {
         this.planForm.cooperativePartnerCode = data[0].all.code
         this.planForm.cooperativePartnerId = data[0].all.id
 
-        this.planFormTwo.data.forEach((item) => {
+        this.productData.forEach((item) => {
           if (this.planForm.cooperativePartnerId) {
            this.$set(item, 'cooperativePartnerId',this.planForm.cooperativePartnerId)
           }
@@ -889,6 +890,7 @@ export default {
         item.productsId = item.id
         item.bomId = item.bomId
         item.planType = 'add_plan'
+        this.$set(item, 'cooperativePartnerId',this.planForm.cooperativePartnerId)
         if (this.planForm.planDate.length) {
           this.$set(item, 'planStartDate', this.planForm.planDate[0])
           this.$set(item, 'planEndDate', this.planForm.planDate[1])

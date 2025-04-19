@@ -26,6 +26,16 @@
                             :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.production_related_customers">
+                        <el-form-item label="客户名称" prop="cooperativePartnerName">
+                          <ComSelect-page clearable :isdisabled="btnType === 'look'"
+                            v-model="codeConfig.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
+                            :placeholder="'请选择客户名称'" title="选择客户"
+                            treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                            :listRequestObj="PartnerListRequestObj" 
+                            :searchList="PartnerTableSearchList" />
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
                         <el-form-item label="产品名称" prop="productsName">
                           <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
@@ -545,7 +555,7 @@ import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getcategoryTree, getCooperativeData } from '@/api/basicData/index'
 import {
   BOMLineList
 } from "@/api/calculationList/MRPOperation"
@@ -562,6 +572,33 @@ export default {
   },
   data() {
     return {
+      getCooperativeData,
+      getcategoryTree,
+      //  客户 树请求
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'customer' } },
+      // 客户 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '客户编码' },
+        { prop: 'name', label: '客户名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 客户搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '客户编码', type: 'input' },
+        { prop: 'name', label: '客户名称', type: 'input' }
+      ],
+      // 客户请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'customer'
+      },
+      oldData:[],
       productVisible: false,
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
@@ -640,7 +677,10 @@ export default {
         ],
         productsDrawingNo: [
           { required: true, message: '品名规格不能为空', trigger: 'blur' }
-        ]
+        ],
+        cooperativePartnerName: [
+          { required: true, message: '客户名称不能为空', trigger: 'change' }
+        ],
       },
       selectArr: [],
 
@@ -768,6 +808,25 @@ export default {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
+    },
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
+      })
+      if (data.length === 0) {
+        this.codeConfig.cooperativePartnerName = ''
+        this.codeConfig.cooperativePartnerCode = ''
+        this.codeConfig.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.codeConfig.cooperativePartnerName = data[0].all.name
+        this.codeConfig.cooperativePartnerCode = data[0].all.code
+        this.codeConfig.cooperativePartnerId = data[0].all.id   
+      }
     },
     openSelectProductFun() {
       this.productVisible = true

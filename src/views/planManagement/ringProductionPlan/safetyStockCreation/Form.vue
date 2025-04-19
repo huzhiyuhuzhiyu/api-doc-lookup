@@ -37,6 +37,16 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.production_related_customers">
+                      <el-form-item label="客户名称" prop="cooperativePartnerName">
+                        <ComSelect-page clearable :isdisabled="btnType === 'look'"
+                          v-model="planForm.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
+                          :placeholder="'请选择客户名称'" title="选择客户"
+                          treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          :listRequestObj="PartnerListRequestObj" 
+                          :searchList="PartnerTableSearchList" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="计划日期" prop="planDate" class="date" style="margin-bottom: 20px;">
                         <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
@@ -268,7 +278,7 @@
 import { batchAddPlan } from '@/api/plan/index.js'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, } from '@/api/salesManagement/assemblyOrders'
-import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
+import { getCounryData, getCooperativeInfo,getcategoryTree, getCooperativeData, getscheduleList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
 import { getBimBusinessDetail,getOrderFiledMap } from '@/api/basicData/index'
@@ -285,6 +295,33 @@ export default {
 
   data() {
     return {
+      getCooperativeData,
+      getcategoryTree,
+      //  客户 树请求
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'customer' } },
+      // 客户 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '客户编码' },
+        { prop: 'name', label: '客户名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 客户搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '客户编码', type: 'input' },
+        { prop: 'name', label: '客户名称', type: 'input' }
+      ],
+      // 客户请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'customer'
+      },
+      oldData:[],
       isattachmentswitch: '',
 
       planTypeList: [
@@ -553,7 +590,32 @@ export default {
       this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
+      })
+      if (data.length === 0) {
+        this.planForm.cooperativePartnerName = ''
+        this.planForm.cooperativePartnerCode = ''
+        this.planForm.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.planForm.cooperativePartnerName = data[0].all.name
+        this.planForm.cooperativePartnerCode = data[0].all.code
+        this.planForm.cooperativePartnerId = data[0].all.id
 
+        this.productData.forEach((item) => {
+          if (this.planForm.cooperativePartnerId) {
+           this.$set(item, 'cooperativePartnerId',this.planForm.cooperativePartnerId)
+          }
+        })
+       
+      }
+    },
 
     //多选
     handleRowClick(row) {
@@ -686,6 +748,7 @@ export default {
         item.productName = item.name
         item.productsId = item.id
         item.planType = 'safety_stock_plan'
+        this.$set(item, 'cooperativePartnerId',this.planForm.cooperativePartnerId)
         if (this.codeConfig.codeWay != 'auto') {
           item.planNo = ""
         }

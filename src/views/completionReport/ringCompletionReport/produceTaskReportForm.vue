@@ -1,11 +1,13 @@
 <template>
   <div class="JNPF-preview-main org-form">
-    <div v-if="!processOutFormVisible">
+    <div v-if="!processOutFormVisible && !TransitionRemakeVisible && !TransitionRemakeRecordVisible">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="'生产任务报工'" />
         <div class="options">
 
           <el-button @click="printBarCode">打印二维码</el-button>
+          <el-button type="primary" plain v-has="'remakeRecord'" @click="()=>{TransitionRemakeRecordVisible = true}">重制生产申请记录</el-button>
+          <el-button type="primary" plain v-has="'remake'" @click="orderRemakeRequest('add')" :disabled="isRemakeRequest">重制生产申请</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -295,6 +297,8 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+    <TransitionRemake ref="TransitionRemake" v-if="TransitionRemakeVisible" @close="()=>{TransitionRemakeVisible = false}" :productionOrderId="dataForm.id" :workList="workList" :currentProcessId="currentProcessId" :currentWorkOrderId="currentProcess.id"></TransitionRemake>
+    <TransitionRemakeRecord ref="TransitionRemakeRecord" v-if="TransitionRemakeRecordVisible" :productionOrderId="dataForm.id" @close="TransitionRemakeRecordVisible = false"></TransitionRemakeRecord>
   </div>
 
 </template>
@@ -316,16 +320,20 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
 import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
+import TransitionRemake from "@/views/completionReport/ringCompletionReport/TransitionRemake";
+import TransitionRemakeRecord from "@/views/completionReport/ringCompletionReport/TransitionRemakeRecord.vue";
 export default {
 
   components: {
     recordForm, OutForm, MaterialWasteForm,responsWaste,PrintBrowse,
-    PrintDialog,
+    PrintDialog, TransitionRemake, TransitionRemakeRecord,
   },
   data() {
     return {
       printVisible: false,
       printBrowseVisible: false,
+      TransitionRemakeVisible:false,
+      TransitionRemakeRecordVisible:false,
       enCode: "p035",
       fullName: "打印工单码",
       formId: "",
@@ -396,6 +404,12 @@ export default {
       copyCurrentProcess: {}
     }
   },
+  computed: {
+        isRemakeRequest(){
+          // return this.workList.length > 0 && this.currentProcessId === this.workList[0].processId || !+this.currentProcess.unqualifiedQuantity
+          return false
+        },
+  },
   watch: {
     'currentProcess.productionWeight': {
       handler: function (newVal, oldVal) {
@@ -415,6 +429,14 @@ export default {
   },
 
   methods: {
+    // 工单顺序调换申请
+    orderRemakeRequest(type){
+      this.TransitionRemakeVisible = true
+      this.$nextTick(() => {
+        console.log(this.$refs.TransitionRemake,'所属')
+        this.$refs.TransitionRemake.init('',type)
+      })
+    },
     closePrint() {
       this.printVisible = false
     },

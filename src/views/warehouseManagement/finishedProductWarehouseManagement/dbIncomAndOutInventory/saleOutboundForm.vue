@@ -717,7 +717,7 @@ export default {
         deliverQueryFlag: true,
         pageNum: 1,
         pageSize: 20,
-        orderNo: [],
+        orderNo: '',
         orderItems: [{
           asc: false,
           column: ""
@@ -886,7 +886,7 @@ export default {
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
       this.orderForm.classAttributeList = this.classAttributeList
-      this.orderForm.orderNo = this.dataForm.orderNo
+      // this.orderForm.orderNo = this.dataForm.orderNo
       if (this.deliveryDateArr.length) {
         this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
         this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
@@ -935,7 +935,7 @@ export default {
         deliverQueryFlag: true,
         pageNum: 1,
         pageSize: 20,
-        orderNo: [],
+        orderNo: '',
         orderItems: [{
           asc: false,
           column: ""

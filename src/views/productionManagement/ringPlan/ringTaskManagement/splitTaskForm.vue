@@ -19,8 +19,8 @@
                     <el-row :gutter="30" class="custom-row">
 
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="生产任务单号" prop="orderNo">
-                          <el-input v-model="dataForm.orderNo" disabled />
+                        <el-form-item label="生产任务单号" prop="oldOrderNo">
+                          <el-input v-model="dataForm.oldOrderNo" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
@@ -35,13 +35,29 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <template v-if="$store.getters.configData.produce.steelBallTask">
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="生产桶数:" prop="productionBarrels" >
+                            <el-input v-model="dataForm.productionBarrels" placeholder="生产桶数" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="生产重量:" prop="productionWeight">
+                            <el-input v-model="dataForm.productionWeight" placeholder="生产重量"  />
+                          </el-form-item>
+                        </el-col>
+                      </template>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="拆分数量" prop="splitQuantity">
                           <el-input v-model="dataForm.splitQuantity" placeholder="拆分数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
-        
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="新生产任务单号" prop="orderNo">
+                          <el-input v-model="dataForm.orderNo"  />
+                        </el-form-item>
+                      </el-col>
                     </el-row>
                   </el-form>
                 </el-collapse-item>
@@ -78,6 +94,7 @@ import {
 import { mapGetters, mapState } from 'vuex'
 import { getBimProcessList } from '@/api/bimProcess'
 import { detailordershengchan } from '@/api/productOrdes/index.js'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 export default {
   mixins: [],
   components: {
@@ -134,6 +151,7 @@ export default {
         orderType: "manually",
         lineEdgeId: "",
         splitNo:null,
+        splitQuantity:0,
       },
       dataFormTwo: {
         data: [],
@@ -146,14 +164,14 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataRule: {
-        lineEdgeId: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
+        orderNo: [{ required: true, message: '请输入生产单号', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
-        productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["生产数量不能为空", (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }] }), trigger: 'blur' },
+        splitQuantity: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["拆分数量不能为空", (errMsg, index) => { this.$message.error(`拆分数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '生产数量必须大于0', (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '拆分数量必须大于0', (errMsg, index) => { this.$message.error(`拆分数量：${errMsg}`) }), trigger: 'blur' }
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
@@ -201,7 +219,9 @@ export default {
       isCheckingSwitch: "",
       materialList: [],
       linesFormItems_right: [],
-      lineIndex: null
+      lineIndex: null,
+      weight:null,
+      quantity:null,
     }
   },
   computed: {
@@ -212,7 +232,21 @@ export default {
   async created() {
  
   },
-
+  watch: {
+    'dataForm.productionWeight': {
+      handler: function (newVal, oldVal) {
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          if (newVal) {
+            this.dataForm.splitQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+          } else {
+            this.dataForm.splitQuantity = 0
+          }
+          
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
  
     getProcessData(id, data, params, index) {
@@ -244,9 +278,23 @@ export default {
       detailordershengchan(id).then(res => {
           console.log("生产任务详情", res);
           this.dataForm = res.data.prodOrder
+          this.dataForm.oldOrderNo = res.data.prodOrder.orderNo
+          this.dataForm.productionBarrels = 0
+          this.dataForm.productionWeight = 0
+          this.dataForm.splitQuantity = 0
+          this.dataForm.orderNo = ''
           this.$set(this.dataForm,'splitNo',1)
           this.oldWorkOrderList = res.data.workOrderList
           this.dataFormTwo.data = res.data.workOrderList
+          if (this.$store.getters.configData.produce.steelBallTask) {
+          let obj = {
+            productsId: this.dataForm.productsId
+          }
+          getProductsWeightQuantityList(obj).then(res=>{
+            this.weight = res.data.records[0].weight
+            this.quantity = res.data.records[0].quantity
+          })
+      }
       })
       
       this.creaFun()
@@ -330,8 +378,8 @@ export default {
     checkFun() {
       let submitFlag = null;
       if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
-
-      if (this.naturalResourcesFlag) {
+      console.log()
+      if (this.dataForm.taskMethod == 'appoint') {
 
         for (let index = 0; index < this.dataFormTwo.data.length; index++) {
           const item = this.dataFormTwo.data[index];

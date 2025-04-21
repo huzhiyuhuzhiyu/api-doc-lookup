@@ -137,15 +137,13 @@
                     <el-col :sm="24" :xs="24">
                       <el-form-item label="生产桶数:" prop="productionBarrels" class="iptLabel"
                         :style="{ marginBottom: iptLabelMargin }">
-                        <el-input v-model="currentProcess.productionBarrels" placeholder="生产桶数" class="ipt"
-                          @blur="handleBlur(item)" />
+                        <el-input v-model="currentProcess.productionBarrels" placeholder="生产桶数" class="ipt" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="24" :xs="24">
                       <el-form-item label="生产重量:" prop="productionWeight" class="iptLabel"
                         :style="{ marginBottom: iptLabelMargin }">
-                        <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt"
-                          @blur="handleBlur(item)" />
+                        <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt" />
                       </el-form-item>
                     </el-col>
                   </template>

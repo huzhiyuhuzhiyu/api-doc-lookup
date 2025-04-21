@@ -64,7 +64,18 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-
+                      <template v-if="$store.getters.configData.produce.steelBallTask">
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="生产桶数:" prop="productionBarrels">
+                            <el-input v-model="dataForm.productionBarrels" placeholder="生产桶数" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="生产重量:" prop="productionWeight">
+                            <el-input v-model="dataForm.productionWeight" placeholder="生产重量"  />
+                          </el-form-item>
+                        </el-col>
+                      </template>
 
 
                       <el-col :sm="6" :xs="24">
@@ -563,6 +574,7 @@ import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 export default {
   mixins: [getProjectList],
   components: {
@@ -633,7 +645,7 @@ export default {
         mainUnit: "",
         planProductionQuantity: "",
         availableArrangeQuantity: "",
-        productionQuantity: "",
+        productionQuantity: null,
         taskMethod: "appoint",
         planStartDate: "",
         planEndDate: "",
@@ -721,7 +733,9 @@ export default {
       isCheckingSwitch: "",
       materialList: [],
       linesFormItems_right: [],
-      lineIndex: null
+      lineIndex: null,
+      weight:null,
+      quantity:null,
     }
   },
   computed: {
@@ -750,7 +764,22 @@ export default {
       return totalNums
     },
   },
-
+  watch: {
+    'dataForm.productionWeight': {
+      handler: function (newVal, oldVal) {
+        if (!this.dataForm.productsDrawingNo) return this.$message.error('请先选择品名规格')
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          if (newVal) {
+            this.dataForm.productionQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+          } else {
+            this.dataForm.productionQuantity = 0
+          }
+          
+        }
+      },
+      deep: true
+    }
+  },
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
@@ -862,6 +891,15 @@ export default {
       this.dataForm.productsCode = data.code
       this.dataForm.productsName = data.name
       this.dataForm.productsId = data.id
+      if (this.$store.getters.configData.produce.steelBallTask) {
+          let obj = {
+            productsId: this.dataForm.productsId
+          }
+          getProductsWeightQuantityList(obj).then(res=>{
+            this.weight = res.data.records[0].weight
+            this.quantity = res.data.records[0].quantity
+          })
+      }
       this.getWarehouseListFun()
       if (!this.dataForm.bomId) {
         this.$message.error("该产品没有BOM，请配置BOM后再试")

@@ -119,7 +119,7 @@
                 v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
               </el-table-column>
-              <el-table-column prop="productName" label="产品名称" width="120"
+              <el-table-column prop="name" label="产品名称" width="120"
                 v-if="isProductNameSwitch === '1'"></el-table-column>
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
               <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />

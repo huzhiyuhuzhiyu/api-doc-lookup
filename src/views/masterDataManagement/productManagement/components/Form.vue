@@ -489,6 +489,7 @@ export default {
               }
             })
           } else {
+            this.fetchData(this.busSetId, false)
              // 编辑时，如果已经品名规格那些，不允许修改
             this.tabs[0].tabContent.forEach((tc) => {
               if (
@@ -514,8 +515,6 @@ export default {
             })
           }
 
-
-          this.fetchData(this.busSetId, false)
         })
       } else {
         this.title = `新建${this.productName}档案`

@@ -2096,7 +2096,7 @@ export default {
     // 下一步
     next() {
       this.btnLoading = true
-      if(!this.dataForm.projectId){
+      if(this.isProjectSwitch == 1 && !this.dataForm.projectId){
         this.btnLoading = false
         return this.$message.error("请选择所属项目")
       } 

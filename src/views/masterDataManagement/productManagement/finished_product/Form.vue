@@ -851,6 +851,7 @@ export default {
               }
             })
           } else {
+            this.fetchData('CPBM', false)
             // 编辑时，如果已经品名规格那些，不允许修改
             this.tabs[0].tabContent.forEach((tc) => {
               if (
@@ -902,7 +903,7 @@ export default {
 
           let targetOther = this.otherItems.find((tc) => tc.prop === 'bomFlag')
           targetOther.itemDisabled = true
-          this.fetchData('CPBM', false)
+         
           this.formLoading = false
         })
       } else {

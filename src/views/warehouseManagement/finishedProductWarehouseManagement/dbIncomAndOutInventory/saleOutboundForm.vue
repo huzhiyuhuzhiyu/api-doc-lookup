@@ -207,7 +207,7 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                        <el-table-column label="操作" width="100" v-if="btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
                             <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
@@ -420,7 +420,7 @@
                               placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                        <el-table-column label="操作" width="100" v-if=" btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
                             <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
@@ -1248,12 +1248,14 @@ export default {
             }
           });
           this.productData = data
+          console.log('this.productData',this.productData);
+          console.log('this.btntype',this.btnType);
         }, 600);
 
 
 
 
-
+      
       }
 
 

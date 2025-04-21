@@ -662,6 +662,14 @@ export default {
         },
 
         addOrUpdateHandle(accountPeriod, type = 'normal') {
+          console.log("this",this.listQuery);
+          this.searchList.filter(item => item.fieldValue).map(item => {
+                        this.listQuery[item.field] = item.fieldValue
+                        return {
+                            ...item,
+                            fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+                        }
+                    })
             this.formVisible = true
             this.$nextTick(() => {
                 this.$refs.Form.init(accountPeriod, type,this.listQuery.projectId)

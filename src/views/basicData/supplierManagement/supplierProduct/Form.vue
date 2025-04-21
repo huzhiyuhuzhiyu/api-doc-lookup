@@ -627,8 +627,9 @@ export default {
       console.log(this.projectIdData, 'lllljj')
 
       this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
         { prop: 'code', label: '产品编码', minWidth: 140 },
+        { prop: 'name', label: '产品名称', minWidth: 140 },
+        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
         { prop: 'projectName', label: '所属项目', minWidth: 140 },
         { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
         { prop: 'mainUnit', label: '单位' },
@@ -642,8 +643,9 @@ export default {
       ] // 产品选择弹出框表单展示字段
     } else {
       this.ProductTableItems = [
-        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
         { prop: 'code', label: '产品编码', minWidth: 140 },
+        { prop: 'name', label: '产品名称', minWidth: 140 },
+        { prop: 'drawingNo', label: '品名规格', minWidth: 140 },
         { prop: 'classAttributeName', label: '所属分类', minWidth: 140 },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'colour', label: '颜色' }

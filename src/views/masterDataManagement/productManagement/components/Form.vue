@@ -386,10 +386,11 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
+        let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
+        this.$set(target,'itemDisabled',!this.codeConfig.modifyFlag)
         if (flag) {
           this.dataForm.code = data.number
-          let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-          target.itemDisabled = !this.codeConfig.modifyFlag
+          
         }
       } catch (error) { }
     },

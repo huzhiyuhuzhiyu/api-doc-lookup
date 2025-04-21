@@ -602,6 +602,7 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import {
   getbimProductAttributesList,
   getbimProductAttributes,
@@ -609,7 +610,6 @@ import {
 } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { mapGetters, mapState } from 'vuex'
-import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 export default {
   components: {
     workFlow,

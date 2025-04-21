@@ -63,6 +63,8 @@
             </template>
           </el-table-column>
           <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" sortable="custom" />
+          <el-table-column prop="ordersNo" label="销售订单号" min-width="200" sortable="custom" />
+          <el-table-column prop="noticeNo" label="销售通知单号" min-width="200" sortable="custom" />
           <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
           <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
           <el-table-column prop="totalReconciliationAmount" label="出入库金额" width="140" sortable="custom">
@@ -180,6 +182,16 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'ordersNo',
+          label: "销售订单号",
+          type: 'input'
+        },
+        {
+          prop: 'noticeNo',
+          label: "销售通知单号",
+          type: 'input'
         },
         {
           prop: 'cooperativePartnerName',

@@ -70,7 +70,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" sortable="custom" /> 
-          <el-table-column prop="ordersNo" label="销售订单号" min-width="200" sortable="custom" />
+          <el-table-column prop="saleOrderNo" label="销售订单号" min-width="200" sortable="custom" />
           <el-table-column prop="noticeNo" label="销售通知单号" min-width="200" sortable="custom" />
           <!-- <el-table-column prop="orderNo" label="对账单号" width="180" sortable="custom" /> -->
           <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
@@ -242,7 +242,7 @@ export default {
           type: 'input'
         },
               {
-          prop: 'ordersNo',
+          prop: 'saleOrderNo',
           label: "销售订单号",
           type: 'input'
         },

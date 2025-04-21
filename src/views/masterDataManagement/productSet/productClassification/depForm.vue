@@ -74,7 +74,8 @@ export default {
     return {
       requestObjTwo: {
         pageSize: -1,
-        classAttribute: ''
+        classAttribute: '',
+        type: 'material',
       },
       title: '',
       getcategoryTree,

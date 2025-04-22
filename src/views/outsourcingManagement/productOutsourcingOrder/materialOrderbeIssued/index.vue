@@ -84,8 +84,8 @@
 
             <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" min-width="140" :label="$store.getters.sealingCoverTyping"  sortable="custom" />
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="140" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
             <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />

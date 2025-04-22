@@ -135,14 +135,14 @@
                     <!-- <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                     </el-table-column> -->
 
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag === '1'" :key="211">
+                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" v-if="sealingCoverTypingFlag === '1'" :key="211">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
                           <el-option v-for="(item, index) in list1" :key="index" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag === '1'" :key="123">
+                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" v-if="accuracyLevelFlag === '1'" :key="123">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.accuracyLevel" filterable allow-create placeholder="请选择" clearable>
                           <el-option v-for="(item, index) in list2" :key="index" :label="item.name" :value="item.name"></el-option>
@@ -184,7 +184,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag === '1'" key="specialRequire">
+                    <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag === '1'" key="specialRequire">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list8" :key="index" :label="item.name" :value="item.name"></el-option>

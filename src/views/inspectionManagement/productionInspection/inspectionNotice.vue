@@ -103,8 +103,8 @@
           <el-table-column prop="completedQuantity" label="返工数量" min-width="120" />
           <el-table-column prop="planStartDate" label="计划开始日期" width="150" sortable="custom" />
           <el-table-column prop="planEndDate" label="计划结束日期" width="150" sortable="custom" />
-          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" sortable="custom" />
+          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom" />
           <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
           <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
           <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />

@@ -172,7 +172,7 @@
                       </el-table-column>
                       <el-table-column
                         v-if="dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
-                        prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
+                        prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="212">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable disabled
                             style="width: 100%;">
@@ -182,7 +182,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column v-if="dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
-                        prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                        prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable disabled>
                             <el-option v-for="(item, index) in bimProductAttributesObj.pa006" :key="index"
@@ -240,7 +240,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"
+                      <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" :key="102"
                         v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable

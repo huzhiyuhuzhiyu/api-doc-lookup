@@ -107,7 +107,7 @@
           <el-table-column prop="productCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="pairingMode" label="配对方式" width="130" sortable="custom" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="130" sortable="custom" />
+          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="130" sortable="custom" />
           <el-table-column prop="shelves" label="库位" width="180" sortable="custom" />
           <el-table-column prop="inventoryQuantity" label="库存" width="100" sortable="custom" />
           <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />

@@ -84,8 +84,8 @@
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="160" />
             <el-table-column prop="receivedQuantity" label="退货数量" width="160" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
             <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />

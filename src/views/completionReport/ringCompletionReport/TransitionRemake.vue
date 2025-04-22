@@ -27,7 +27,7 @@
                 <el-collapse v-model="activeNames" style="margin-top: 5px;">
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                     <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
-                      :btnType="btnType"/>
+                      :btnType="btnType" style="padding: 10px;"/>
                     <div class="process-manager">
                       <!-- 当前工序 -->
                       <div class="process-column">

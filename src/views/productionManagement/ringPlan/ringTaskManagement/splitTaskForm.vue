@@ -57,10 +57,24 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
+                  <div v-if="type !== 'look'">
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        icon="el-icon-plus" :disabled="type == 'look' ? true : false"
+                        @click="openSeleceProcessDialog(dataFormTwo.length, 'add')">
+                        选择工序
+                      </el-button>
+                      |
+
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                        批量删除
+                      </el-button>
+                      |
+                    </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table  hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                    <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
                       @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
-                      row-key="code"  @changeMove="changeMove" :height="customStyleData">
+                      row-key="processCode" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
@@ -230,7 +244,13 @@
                 </el-collapse-item>
               </el-collapse>
         </div>
+      
+        <ComSelect-page ref="ComSelect-page" :beforeSubmit="beforeSubmit" @change="submit" :tableItems="ProductTableItems"
+          title="选择工序" treeTitle="工序分类" :methodArr="ProductMethodArr" :listMethod="getBimProcessList"
+          :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple
+          :listDataFormatting="listDataFormatting" />
       </div>
+      <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
     </transition>
   </div>
 </template>
@@ -246,15 +266,19 @@ import {
   BOMLineList
 } from "@/api/calculationList/MRPOperation"
 import { mapGetters, mapState } from 'vuex'
-import { getBimProcessList } from '@/api/bimProcess'
+import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
+import { getcategoryTree } from '@/api/basicData/materialSettings'
+import SourceArea from '../../../basicData/processSettings/processSettingss/source.vue'
 export default {
   mixins: [],
   components: {
+    SourceArea
   },
   data() {
     return {
+      sourceVisibled:false,
       productVisible: false,
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
@@ -262,7 +286,44 @@ export default {
       activeNamess: ['pickInfo', 'productInfos'],
       allocationFlag: false,
       routingVisible: false,
-   
+      getBimProcessList,
+      ProductMethodArr: [
+        {
+          label: '工序分类',
+          type: 'process',
+          method: getcategoryTree,
+          requestObj: { type: 'process' }
+        }
+      ], // 产品选择弹出框树状列表
+      ProductListRequestObj: {
+        name: '',
+        code: '',
+        processingType: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        productCategoryId: ''
+      }, // 产品选择弹出框列表请求参数
+      ProductTableItems: [
+        { prop: 'code', label: '工序编码', fixed: 'left' },
+        { prop: 'name', label: '工序名称', fixed: 'left' },
+        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
+        { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
+      ], // 产品选择弹出框表单展示字段
+      ProductTableSearchList: [
+        { prop: 'code', label: '工序编码', type: 'input' },
+        { prop: 'name', label: '工序名称', type: 'input' }
+      ], // 产品选择弹出框搜索条件
+
       collectConfig: {
 
       },
@@ -438,6 +499,31 @@ export default {
       })
       this.calcHeight()
     },
+      // 工艺资源
+      handlerOpenSource(index, type) {
+      // if (!this.dataFormTwo[index].resourceType) {
+      //     this.$message({
+      //         message: '请选择工艺资源类型',
+      //         type: 'warning',
+      //         duration: 1000,
+      //     })
+      //     return
+      // }
+
+      this.currntIndex = index
+      this.sourceVisibled = true
+      this.$nextTick(() => {
+        console.log(this.$refs)
+        this.$refs['sourceRef'].init([this.dataFormTwo[index]], 'add')
+      })
+    },
+    // 抽屉提交
+    handlerConfirm(data) {
+      console.log('抽屉提交');
+      console.log(this.dataFormTwo[this.currntIndex], data);
+      this.dataFormTwo[this.currntIndex].bimRoutingProcessResourceDTOList = data
+      this.sourceVisibled = false
+    },
     getProcessData(id, data, params, index) {
       this.materialList[params.scope.$index].processId = data[0].id || ''
       this.materialList[params.scope.$index].processName = data[0].name || ''
@@ -452,7 +538,88 @@ export default {
         this.isattachmentswitch = res.data.configValue1
       })
     },
+    async submit(id, data) {
+      let list = data.map((item) => item.all)
+      this.responseLoading = true
+      let responseFlag = null
+      list = list.filter(item => !this.dataFormTwo.some(ele => ele.processId === item.id))
+      list = list.map((item, index) => {
+        const obj = {
+          index: item._index,
+          projectName: item.projectName, // 所属项目名称
+          projectId: item.projectId, // 所属项目Id
+          processName: item.name, // 工序名称
+          processCode: item.code,
+          processType: item.processType,
+          // routingId:
+          processId: item.id,
+          // bimRoutingProcessResourceDTOList: [],
+          reportFlag: false, // 是否报工
+          checkFlag: false, // 是否检验
+          processingType: item.processingType, // 加工类型
+          cooperativePartnerId: null, // 合作伙伴id
+          cooperativePartnerName: '',
+          departmentId: null, // 部门id
+          stockFlag: false, // 是否入库
+          firstInspection: false, // 是否首检
+          firstFlag: false, //是否首道工序
+          lastFlag: false, // 是否末道工序
+          workOrderFlag: true, // 是否生成工单
+          defaultFlag: false,
+          defaultReport: false
+        }
 
+        if (item.processingType === 'external_production') {
+          obj.stockFlag = true
+          obj.defaultFlag = true
+          obj.reportFlag = false
+          obj.defaultReport = true
+        }
+        return obj
+      })
+
+      await new Promise((resolve, reject) => {
+        let responseTotal = 0
+        const callBackFun = () => {
+          if (++responseTotal === list.length) {
+            return resolve()
+          }
+        }
+        list.forEach((item) => {
+          getBimProcessDetail(item.processId).then((res) => {
+            if (res.data.resourceList.length) {
+              item.bimRoutingProcessResourceDTOList = res.data.resourceList
+            }
+            callBackFun()
+          }).catch((error) => {
+            callBackFun()
+            responseFlag = false
+          })
+        })
+      })
+
+      if (responseFlag === false) {
+        this.$message.error('添加失败，请重试！')
+      } else {
+        const tempList = [
+          ...this.dataFormTwo,
+          ...list
+        ]
+        this.dataFormTwo = tempList.map((item, index) => {
+          item.firstFlag = index === 0;
+          if (index === tempList.length - 1) {
+            item.lastFlag = true
+            item.stockFlag = true
+          } else {
+            item.lastFlag = false
+          }
+          return item
+        })
+      }
+
+      this.responseLoading = false
+      this.calcHeight()
+    },
  
     init(id) {
       detailordershengchan(id).then(res => {
@@ -466,6 +633,7 @@ export default {
           this.$set(this.dataForm,'splitNo',1)
           this.oldWorkOrderList = res.data.workOrderList
           this.dataFormTwo = res.data.workOrderList
+          
           if (this.$store.getters.configData.produce.steelBallTask) {
           let obj = {
             productsId: this.dataForm.productsId
@@ -480,11 +648,11 @@ export default {
       this.creaFun()
     },
     changeMove(data) {
-      // data.forEach((item) => {
-      //   console.log(item, 'ooooo')
-      //   item.sort = item.sortCode
+      data.forEach((item) => {
+        console.log(item, 'ooooo')
+        item.sort = item.sortCode
 
-      // })
+      })
       this.dataFormTwo = this.dataFormTwo.map((item, index) => {
         console.log(index, 'in')
         // 复制当前的item
@@ -495,14 +663,14 @@ export default {
 
           newItem.firstFlag = true
           newItem.lastFlag = false
-          newItem.reportFlag = false
+          // newItem.reportFlag = true
           newItem.stockFlag = false
         }
         if (index === this.dataFormTwo.length - 1) {
 
           newItem.firstFlag = false
           newItem.lastFlag = true
-          newItem.reportFlag = true
+          // newItem.reportFlag = true
           newItem.stockFlag = true
         }
         if (index < this.dataFormTwo.length - 1 && index !== 0) {
@@ -597,7 +765,10 @@ export default {
         },
       ]
     },
- 
+     // 可以多选工序
+     openSeleceProcessDialog(e, type) {
+      this.$refs['ComSelect-page'].openDialog()
+    },
 
     goBack() {
       this.$emit('close', true)

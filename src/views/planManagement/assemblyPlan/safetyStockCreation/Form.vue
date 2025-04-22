@@ -105,7 +105,7 @@
                   </el-table-column>
 
 
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag == 1"
+                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" v-if="sealingCoverTypingFlag == 1"
                     :key="211">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
@@ -115,7 +115,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1"
+                  <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" v-if="accuracyLevelFlag == 1"
                     :key="123">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
@@ -166,7 +166,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1"
+                  <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag == 1"
                     :key="101">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">

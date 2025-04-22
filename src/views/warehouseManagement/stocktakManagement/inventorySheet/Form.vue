@@ -219,8 +219,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
-                          width="120" key="2111">
+                        <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping" 
+                          width="140" key="2111">
                           <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -232,7 +232,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                        <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel"  width="120"
                           key="123">
                           <!-- <template slot="header">
                             <span class="required">*</span>精度等级
@@ -296,7 +296,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  v-if="specialRequireFlag == 1" width="160"
                           key="202">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
@@ -714,11 +714,11 @@
                 <el-table-column prop="colour" :label="$store.getters.colour"  width="120" key="210">
 
                 </el-table-column>
-                <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容" width="120"
+                <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping"  width="140"
                   key="2111">
 
                 </el-table-column>
-                <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120" key="123">
+                <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel"  width="120" key="123">
                   <!-- <template slot="header">
                             <span class="required">*</span>精度等级
                           </template> -->
@@ -740,7 +740,7 @@
                   key="101">
 
                 </el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  v-if="specialRequireFlag == 1" width="160"
                   key="202">
 
                 </el-table-column>

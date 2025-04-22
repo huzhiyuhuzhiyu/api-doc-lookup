@@ -77,9 +77,9 @@
             <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="603"></el-table-column>
             <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120" sortable="custom"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
               sortable="custom"></el-table-column>
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
               sortable="custom"></el-table-column>
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
               sortable="custom"></el-table-column>
@@ -91,7 +91,7 @@
               sortable="custom"></el-table-column>
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
               sortable="custom"></el-table-column>
-            <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag == 1"
+            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="specialRequireFlag == 1"
               sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">

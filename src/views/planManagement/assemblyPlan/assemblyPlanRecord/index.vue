@@ -82,9 +82,9 @@
             <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="150" sortable="custom" />
             <el-table-column prop="relaxQuantity" label="宽放需求数量" min-width="150" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
               v-if="accuracyLevelFlag == 1" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
               v-if="vibrationLevelFlag == 1" />
@@ -93,7 +93,7 @@
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
               v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
               v-if="specialRequireFlag == 1" />
             <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
               v-if="materialFlag == 1"></el-table-column>

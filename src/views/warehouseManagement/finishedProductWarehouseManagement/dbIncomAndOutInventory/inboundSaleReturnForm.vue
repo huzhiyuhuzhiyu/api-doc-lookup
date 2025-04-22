@@ -168,13 +168,13 @@
                               placeholder="原批次号"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
+                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" />
+                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                         <el-table-column prop="oil" label="油脂" width="160" />
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120"></el-table-column>
                         <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
                         <el-table-column prop="colour" :label="$store.getters.colour"  width="120" ></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
@@ -445,13 +445,13 @@
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="undeliveredQuantity" label="待退货数量" width="130" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
                 <el-table-column prop="colour" :label="$store.getters.colour"  width="120" ></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />

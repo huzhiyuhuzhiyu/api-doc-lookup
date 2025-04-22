@@ -186,13 +186,13 @@
 
 
 
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="100" />
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
+                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
+                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
                         <el-table-column prop="oil" label="油脂" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
+                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="100"></el-table-column>
                         <el-table-column prop="material" label="保持架材质" width="130"></el-table-column>
                         <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
@@ -526,13 +526,13 @@
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="waitDeliverNum" label="待发货数量" width="130" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom" />
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="110" sortable="custom" />
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                 <!-- { label: "销售发货", value: "outbound_sale_send" },

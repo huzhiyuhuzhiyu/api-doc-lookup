@@ -129,9 +129,9 @@
                 <el-tag type="danger" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="sealingCoverTyping" width="120" label="打字内容" sortable="custom"
+            <el-table-column prop="sealingCoverTyping" width="140" :label="$store.getters.sealingCoverTyping"  sortable="custom"
               v-if="sealingCoverTypingFlag === '1'" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
               v-if="accuracyLevelFlag === '1'" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
               v-if="vibrationLevelFlag === '1'" />
@@ -141,7 +141,7 @@
             <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" v-if="clearanceFlag === '1'" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
               v-if="packagingMethodFlag === '1'" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
               v-if="specialRequireFlag === '1'" />
             <el-table-column prop="material" label="材质" width="130" sortable="custom"
               v-if="materialFlag == 1"></el-table-column>

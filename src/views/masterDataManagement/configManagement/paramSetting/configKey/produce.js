@@ -36,4 +36,8 @@ export default {
         configKeyLabel: '默认按工单领料自动扣减料',
         description: '不勾选，则BOM不作限制;勾选后， 默认按工单领料自动扣减料。'
     },
+    inventory_balance: {
+        configKeyLabel: '结存方式',
+        description: '勾选，按出入库单日期结存；不勾选，按出入库单创建时间结存。'
+    },
 }

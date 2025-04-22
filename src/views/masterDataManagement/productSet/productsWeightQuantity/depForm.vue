@@ -133,13 +133,15 @@ export default {
     init(row, type) {
 
       this.visible = true
-      this.title = !this.dataForm.id ? '新建重量数量换算' : '编辑重量数量换算'
+      
       if (type == 'add') {
         this.$refs['dataForm'].resetFields()
+        this.dataForm = { }
       } else if (type == 'edit') {
         this.dataForm = {...row }
       
       }
+      this.title = !this.dataForm.id ? '新建重量数量换算' : '编辑重量数量换算'
     },
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {

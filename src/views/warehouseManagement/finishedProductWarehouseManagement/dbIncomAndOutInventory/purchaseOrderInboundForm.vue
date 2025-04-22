@@ -223,15 +223,15 @@
 
                         <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="pairingModeName" label="配对方式" width="100" />
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
+                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" />
+                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                         <el-table-column prop="oil" label="油脂" width="160" />
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120"></el-table-column>
                         <el-table-column prop="material" label="材质" width="130" ></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -566,15 +566,15 @@
                 <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="80" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom" />
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="110" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -1290,7 +1290,9 @@ export default {
             item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
             item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
             item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-
+            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+              this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
             if (this.mainUnitFlag == 1) {
               if (item.calculationDirection == 'multiplication') {
                 this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

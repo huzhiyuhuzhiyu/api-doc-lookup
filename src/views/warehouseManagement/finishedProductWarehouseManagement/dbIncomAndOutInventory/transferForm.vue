@@ -66,16 +66,16 @@
                       :label="dataForm.businessType == 'inbound_transfer' ? '入库仓库' : '出库仓库'" width="160"
                       :key="889"></el-table-column>
                     <el-table-column prop="standardValue" label="规值" width="120" :key="211"> </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" :key="216"> </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="2111"></el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="216"> </el-table-column>
+                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="2111"></el-table-column>
+                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123"></el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
                     <el-table-column prop="aperture" label="孔径" width="120" :key="200"></el-table-column>
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="900"></el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101"></el-table-column>
+                    <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" :key="101"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
 
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>

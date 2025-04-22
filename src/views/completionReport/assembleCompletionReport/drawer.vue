@@ -296,7 +296,7 @@
                     <p class="accTitle">02精度</p>
                     <JNPF-table v-loading="listLoading" ref="dataTable" custom-column :data="tableDataList"
                       :fixedNO="true">
-                      <el-table-column prop="accuracyLevel" label="精度等级">
+                      <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" >
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
                             @change="(value) => handleSelectionChangeaccOne(scope, value)">
@@ -324,7 +324,7 @@
                     <p class="accTitle">01精度</p>
                     <JNPF-table v-loading="listLoading" ref="dataTables" custom-column :data="tableDataList2"
                       :fixedNO="true">
-                      <el-table-column prop="accuracyLevel" label="精度等级">
+                      <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" >
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
                             @change="selectAccuracyFun(scope)">

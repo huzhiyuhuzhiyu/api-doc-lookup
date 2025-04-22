@@ -316,7 +316,7 @@
                         </el-table-column>
                         <el-table-column
                           v-if="this.dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
-                          prop="sealingCoverTyping" label="打字内容" min-width="120">
+                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -327,7 +327,7 @@
                         </el-table-column>
                         <el-table-column
                           v-if="this.dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
-                          prop="accuracyLevel" label="精度等级" min-width="120">
+                          prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
@@ -387,7 +387,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
+                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120"
                           v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
@@ -405,7 +405,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" min-width="120" v-if="colourFlag === '1'">
+                        <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120" v-if="colourFlag === '1'">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">

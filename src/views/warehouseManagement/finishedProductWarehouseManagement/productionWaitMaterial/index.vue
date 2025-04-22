@@ -76,7 +76,7 @@
             <el-table-column prop="processName" label="工序名称" min-width="140" sortable="custom" />
             <el-table-column prop="processCode" label="工序编码" min-width="140" sortable="custom" />
             <el-table-column prop="material" label="保持架材质" min-width="130" sortable="custom" />
-            <el-table-column prop="colour" label="颜色" min-width="100" sortable="custom" />
+            <el-table-column prop="colour" :label="$store.getters.colour"  min-width="100" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="materialsUsedQuantity" label="计划用量" min-width="140" sortable="custom" />
             <el-table-column prop="receivedQuantity" label="已领数量" min-width="140" sortable="custom" />

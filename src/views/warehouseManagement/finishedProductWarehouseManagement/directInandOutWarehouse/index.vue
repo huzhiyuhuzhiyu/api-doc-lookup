@@ -347,7 +347,7 @@
                       </el-table-column>
 
                       <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1"
-                        :label="$store.getters.sealingCoverTyping" width="120" key="2111">
+                        :label="$store.getters.sealingCoverTyping" width="140" key="2111">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -615,7 +615,7 @@
                 v-if="dataForm.documentType == 'outbound' && standardValueFlag == 1" key="standardValue" />
               <el-table-column prop="colour" :label="$store.getters.colour" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && colourFlag == 1" key="colour" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="110"
+              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                 sortable="custom" v-if="dataForm.documentType == 'outbound' && sealingCoverTypingFlag == 1"
                 key="sealingCoverTyping" />
               <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom"

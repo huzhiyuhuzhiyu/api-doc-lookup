@@ -144,7 +144,7 @@
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="processName" label="工序名称" />
                   <el-table-column prop="material" label="保持架材质" width="130" v-if="materialFlag == 1"></el-table-column>
-                  <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                   <el-table-column prop="materialsUsedQuantity" label="计划用量" />

@@ -93,7 +93,7 @@
               v-if="standardValueFlag == 1"></el-table-column>
             <el-table-column prop="material" label="材质" width="130" sortable="custom"
               v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+            <el-table-column prop="colour" :label="$store.getters.colour"  width="130" sortable="custom"
               v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">

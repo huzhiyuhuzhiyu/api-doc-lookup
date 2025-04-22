@@ -219,14 +219,14 @@
 
                         <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="pairingModeName" label="配对方式" width="100" />
-                        <el-table-column prop="colour" label="颜色" width="100" />
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="100" />
+                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" />
+                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                         <el-table-column prop="oil" label="油脂" width="160" />
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
-                        <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -551,14 +551,14 @@
                 <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="130" sortable="custom" />
                 <el-table-column prop="receiptQuantity" label="已入库数量" min-width="140" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="80" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"></el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="110" sortable="custom"></el-table-column>
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="110" sortable="custom"></el-table-column>
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -1343,6 +1343,7 @@ export default {
           // }
           if (filteredArray.length) {
             filteredArray.forEach(item => {
+              console.log(" this.dataForm", this.dataForm);
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity

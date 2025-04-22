@@ -197,14 +197,14 @@
                           v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_pick_out'" />
                         <el-table-column prop="aperture" label="孔径" width="100"
                           v-if="dataForm.businessType == 'outbound_pick_out'" />
-                        <el-table-column prop="colour" label="颜色" width="100"
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="100"
                           v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                         <el-table-column
                           v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
-                          prop="sealingCoverTyping" label="打字内容" width="100" />
+                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
                         <el-table-column
                           v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
-                          prop="accuracyLevel" label="精度等级" width="100" />
+                          prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="100" />
                         <el-table-column
                           v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
                           prop="vibrationLevel" label="振动等级" width="100" />
@@ -221,7 +221,7 @@
                           prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column
                           v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
-                          prop="specialRequire" label="特殊要求" width="100"></el-table-column>
+                          prop="specialRequire" :label="$store.getters.specialRequire"  width="100"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" placeholder="备注"></el-input>
@@ -453,14 +453,14 @@
 
                 <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
-                <el-table-column prop="colour" label="颜色" width="160" sortable="custom"
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                 <el-table-column
                   v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
-                  prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
+                  prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" sortable="custom" />
                 <el-table-column
                   v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
-                  prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
+                  prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom" />
                 <el-table-column
                   v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -477,7 +477,7 @@
                   prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                 <el-table-column
                   v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
-                  prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                  prop="specialRequire" :label="$store.getters.specialRequire"  width="120"></el-table-column>
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },

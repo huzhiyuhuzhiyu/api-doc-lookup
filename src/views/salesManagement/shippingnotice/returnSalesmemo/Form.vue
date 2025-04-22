@@ -165,7 +165,7 @@
                     <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
                     <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                     </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120"
+                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140"
                       v-if="sealingCoverTypingFlag == 1">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable allow-create
@@ -175,7 +175,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag == 1">
+                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" v-if="accuracyLevelFlag == 1">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
                         filterable allow-create :disabled="btnType == 'look' || noticeswitch === '1' ? true : false">
@@ -229,7 +229,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag == 1">
+                    <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag == 1">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create
                           :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
@@ -247,7 +247,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1">
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create
                           :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
@@ -678,9 +678,9 @@
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
                   v-if="sealingCoverTypingFlag === '1'" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
                   v-if="accuracyLevelFlag === '1'" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
                   v-if="vibrationLevelFlag === '1'" />
@@ -691,11 +691,11 @@
                   v-if="clearanceFlag === '1'" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
                   v-if="packagingMethodFlag === '1'" />
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
                   v-if="specialRequireFlag === '1'" />
                 <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
                   v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>

@@ -1290,7 +1290,9 @@ export default {
             item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
             item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
             item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-
+            this.$set(item, 'warehouseId', this.dataForm.warehouseId)
+              this.$set(item, 'warehouseName', this.dataForm.warehouseName)
+              this.$set(item, 'warehouseType', this.dataForm.warehouseType)
             if (this.mainUnitFlag == 1) {
               if (item.calculationDirection == 'multiplication') {
                 this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

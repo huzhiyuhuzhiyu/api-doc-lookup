@@ -212,7 +212,7 @@
                       </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                       <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
-                      <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
+                      <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                         :key="211" v-if="sealingCoverTypingFlag == 1"></el-table-column>
                       <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"width="120" :key="123"
                         v-if="accuracyLevelFlag == 1">
@@ -369,7 +369,7 @@
                         <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
                       </template>
                     </el-table-column> -->
-                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
+                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                       v-if="sealingCoverTypingFlag == 1" :key="211">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
@@ -696,7 +696,7 @@
                   </el-table-column>
                   <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                   <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
-                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
+                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                     :key="211" v-if="sealingCoverTypingFlag == 1"></el-table-column>
                   <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" :key="123" v-if="accuracyLevelFlag == 1">
                   </el-table-column>
@@ -840,7 +840,7 @@
                     <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
                   </template>
                 </el-table-column> -->
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="120"
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                   v-if="sealingCoverTypingFlag == 1" :key="211">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"

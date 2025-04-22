@@ -182,7 +182,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column  prop="sealingCoverTyping":label="$store.getters.sealingCoverTyping"  width="120" :key="212">
+                      <el-table-column  prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="212">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -191,7 +191,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column  prop="accuracyLevel":label="$store.getters.accuracyLevel"  width="120" :key="123">
+                      <el-table-column  prop="accuracyLevel"
+:label="$store.getters.accuracyLevel"  width="120" :key="123">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" disabled clearable>
                             <el-option v-for="(item, index) in bimProductAttributesObj.pa006" :key="index"

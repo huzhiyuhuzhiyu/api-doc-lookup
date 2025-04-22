@@ -191,7 +191,7 @@
                           </template>
                         </el-table-column> -->
 
-                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="12">
+                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="12">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="打字内容" clearable
                               :disabled="btnType == 'look'" style="width: 100%;">
@@ -599,7 +599,7 @@
                 <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="130" />
                 <el-table-column prop="aperture" label="孔径" width="80" />
                 <el-table-column prop="productionPlanNo" label="计划单号" width="160" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="110" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" />
                 <el-table-column prop="oil" label="油脂" width="80" />

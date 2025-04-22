@@ -188,7 +188,7 @@
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                       </el-table-column> -->
                       <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                      <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="211"
+                      <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="211"
                         v-if="accuracyLevelFlag == 1"></el-table-column>
                       <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123"
                         v-if="clearanceFlag == 1">
@@ -579,7 +579,7 @@
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="211"
+                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="211"
                     v-if="accuracyLevelFlag == 1"></el-table-column>
                   <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123" v-if="clearanceFlag == 1">
                   </el-table-column>

@@ -199,7 +199,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping" 
-                          width="120" key="2111">
+                          width="140" key="2111">
 
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" disabled clearable
@@ -496,7 +496,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping" 
-                      width="120" key="2111">
+                      width="140" key="2111">
 
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" disabled clearable

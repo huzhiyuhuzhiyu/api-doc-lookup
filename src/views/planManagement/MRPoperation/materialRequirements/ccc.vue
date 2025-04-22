@@ -83,7 +83,7 @@
                 <el-table-column prop="outputQuantity" label="需组装数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" sortable="custom" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
@@ -562,7 +562,7 @@
             <el-checkbox v-model="scope.row.urgentFlag"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120" v-if="activeName == 'assemble'" />
+        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="activeName == 'assemble'" />
         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="oil" label="油脂" min-width="100" v-if="activeName == 'assemble'" />

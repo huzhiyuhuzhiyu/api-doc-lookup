@@ -83,7 +83,7 @@
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
 
-            <el-table-column prop="sealingCoverTyping" min-width="120" :label="$store.getters.sealingCoverTyping"  sortable="custom"
+            <el-table-column prop="sealingCoverTyping" min-width="140" :label="$store.getters.sealingCoverTyping"  sortable="custom"
               v-if="sealingCoverTypingFlag === '1'" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" sortable="custom"
               v-if="accuracyLevelFlag === '1'" />

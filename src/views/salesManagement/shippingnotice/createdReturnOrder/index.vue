@@ -206,7 +206,7 @@
                         <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                         <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                         </el-table-column>
-                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120"
+                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140"
                           v-if="sealingCoverTypingFlag == 1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
@@ -472,7 +472,7 @@
                     </el-table-column>
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="211"
+                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="211"
                       v-if="sealingCoverTypingFlag == 1"></el-table-column>
                     <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123"
                       v-if="accuracyLevelFlag == 1">

@@ -270,7 +270,7 @@
                         </el-table-column>
 
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'"
-                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120">
+                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -279,7 +279,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel":label="$store.getters.accuracyLevel"  min-width="120">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
+:label="$store.getters.accuracyLevel"  min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"

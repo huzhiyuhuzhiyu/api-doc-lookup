@@ -197,7 +197,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="sealingCoverTyping":label="$store.getters.sealingCoverTyping"  width="120" :key="213">
+                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="sealingCoverTyping"
+                        :label="$store.getters.sealingCoverTyping"  width="140" :key="213">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                             :disabled="type == 'look' ? true : false" style="width: 100%;">
@@ -206,7 +207,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel":label="$store.getters.accuracyLevel"  width="120" :key="123">
+                      <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
+:label="$store.getters.accuracyLevel"  width="120" :key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
                             :disabled="type == 'look' ? true : false">

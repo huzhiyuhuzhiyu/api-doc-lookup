@@ -86,7 +86,7 @@
             </el-table-column>
             <el-table-column prop="effectiveTimeStart" label="有效时间起" width="150" sortable="custom" />
             <el-table-column prop="effectiveTimeEnd" label="有效时间止" width="150" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="110" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
             <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />

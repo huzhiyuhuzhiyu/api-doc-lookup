@@ -164,7 +164,7 @@
           <el-table-column prop="brand" label="品牌" width="120" />
           <el-table-column prop="model" label="型号" width="120" />
           <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" />
+          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
           <el-table-column prop="structureType" label="结构类型" width="120" />
           <el-table-column prop="clearance" label="游隙" width="120" />
           <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120" />

@@ -35,7 +35,7 @@
             <el-table-column prop="productionQuantity" label="生产数量" width="120" />
             <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
             <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" sortable="custom"
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
               v-if="accuracyLevelFlag == 1" />

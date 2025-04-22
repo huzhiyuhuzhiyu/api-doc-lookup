@@ -220,7 +220,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping" 
-                          width="120" key="2111">
+                          width="140" key="2111">
                           <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -714,7 +714,7 @@
                 <el-table-column prop="colour" :label="$store.getters.colour"  width="120" key="210">
 
                 </el-table-column>
-                <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping"  width="120"
+                <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping"  width="140"
                   key="2111">
 
                 </el-table-column>

@@ -67,7 +67,7 @@
                       :key="889"></el-table-column>
                     <el-table-column prop="standardValue" label="规值" width="120" :key="211"> </el-table-column>
                     <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="216"> </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="2111"></el-table-column>
+                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="2111"></el-table-column>
                     <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123"></el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>

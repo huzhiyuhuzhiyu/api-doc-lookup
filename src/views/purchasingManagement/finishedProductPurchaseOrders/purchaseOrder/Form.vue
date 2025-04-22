@@ -172,7 +172,7 @@
                       </el-table-column>
                       <el-table-column
                         v-if="dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
-                        prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="212">
+                        prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="212">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable disabled
                             style="width: 100%;">

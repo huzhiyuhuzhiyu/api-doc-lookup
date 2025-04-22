@@ -201,7 +201,7 @@
                           v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                         <el-table-column
                           v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
-                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="100" />
+                          prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
                         <el-table-column
                           v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
                           prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="100" />

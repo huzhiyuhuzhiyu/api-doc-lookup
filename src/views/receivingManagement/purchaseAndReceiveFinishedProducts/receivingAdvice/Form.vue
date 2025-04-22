@@ -233,7 +233,7 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="sealingCoverTyping" min-width="120" :label="$store.getters.sealingCoverTyping" 
+                    <el-table-column prop="sealingCoverTyping" min-width="140" :label="$store.getters.sealingCoverTyping" 
                       v-if="sealingCoverTypingFlag === '1'" />
                     <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120"
                       v-if="accuracyLevelFlag === '1'" />
@@ -665,7 +665,7 @@
                 <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" />
                 <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
 
-                <el-table-column prop="sealingCoverTyping" min-width="120" :label="$store.getters.sealingCoverTyping" 
+                <el-table-column prop="sealingCoverTyping" min-width="140" :label="$store.getters.sealingCoverTyping" 
                   v-if="sealingCoverTypingFlag === '1'" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag === '1'" />
                 <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag === '1'" />

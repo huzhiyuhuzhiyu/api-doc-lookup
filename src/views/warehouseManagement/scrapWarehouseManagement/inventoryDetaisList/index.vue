@@ -101,7 +101,7 @@
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="warehouseName" label="仓库" width="160" sortable="custom" />
           <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120"></el-table-column>
+          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140"></el-table-column>
           <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120"></el-table-column>
           <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"></el-table-column>
           <el-table-column prop="oil" label="油脂" min-width="120"></el-table-column>

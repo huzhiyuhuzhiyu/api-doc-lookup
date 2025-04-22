@@ -57,7 +57,7 @@
               <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
               <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
               <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120" v-if="sealingCoverTypingFlag == 1"
+              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
                 sortable="custom"></el-table-column>
               <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
                 sortable="custom"></el-table-column>

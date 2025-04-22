@@ -94,7 +94,7 @@
                       </el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" v-if="sealingCoverTypingFlag == 1"
+                  <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" v-if="sealingCoverTypingFlag == 1"
                     :key="211">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable

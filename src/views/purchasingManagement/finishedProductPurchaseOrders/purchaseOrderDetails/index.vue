@@ -129,7 +129,7 @@
                 <el-tag type="danger" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="sealingCoverTyping" width="120" :label="$store.getters.sealingCoverTyping"  sortable="custom"
+            <el-table-column prop="sealingCoverTyping" width="140" :label="$store.getters.sealingCoverTyping"  sortable="custom"
               v-if="sealingCoverTypingFlag === '1'" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
               v-if="accuracyLevelFlag === '1'" />

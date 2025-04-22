@@ -37,7 +37,7 @@
             <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom" min-width="120"/>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  sortable="custom" min-width="120"/>
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  sortable="custom" min-width="140"/>
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  sortable="custom" min-width="120"/>
             <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120"/>
             <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120"/>

@@ -225,7 +225,6 @@ export default {
         productDrawingNo: '',
         productsCode: '',
         superQuery: {},
-        lineFlag: 1
       },
       selectedNodeKey: '',
       superQueryJson: [
@@ -475,7 +474,6 @@ export default {
         productDrawingNo: '',
         productsCode: '',
         superQuery: {},
-        lineFlag: 1
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [

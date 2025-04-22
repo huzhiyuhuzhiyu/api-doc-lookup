@@ -220,7 +220,7 @@ export default {
         productDrawingNo: '',
         productsCode: '',
         superQuery: {},
-        lineFlag: 1
+        : 1
       },
       selectedNodeKey: '',
       superQueryJson: [
@@ -294,55 +294,56 @@ export default {
 
     this.$nextTick(function () {
   
-      this.getShelvesName()
+      this.search('basic', 'search')
+      // this.getShelvesName()
     })
   },
   methods: {
-    async getShelvesName(){
-      this.shelvesData = []
-      let obj = {
-        orderItems: [
-          {
-            asc: true,
-            column: 'name'
-          }
-        ],
-        pageNum: 1,
-        pageSize: -1,
-        warehouseId: '1858336092787359746'
-      }
-      const res = await getList(obj)
-      console.log(res, 'dd')
-      const newData = [];
-      res.data.records.forEach(item => {
-        const name = item.name;
-        let processedName;
-        // 检查首字符是否是中文
-        const firstChar = name.charAt(0);
-        const isChinese = /[\u4e00-\u9fa5]/.test(firstChar);
-        if (isChinese) {
-          processedName = name; // 中文不处理，保留完整 name
-        } else {
-          processedName = firstChar; // 非中文，直接取首字母（区分大小写）
-        }
+    // async getShelvesName(){
+    //   this.shelvesData = []
+    //   let obj = {
+    //     orderItems: [
+    //       {
+    //         asc: true,
+    //         column: 'name'
+    //       }
+    //     ],
+    //     pageNum: 1,
+    //     pageSize: -1,
+    //     warehouseId: '1858336092787359746'
+    //   }
+    //   const res = await getList(obj)
+    //   console.log(res, 'dd')
+    //   const newData = [];
+    //   res.data.records.forEach(item => {
+    //     const name = item.name;
+    //     let processedName;
+    //     // 检查首字符是否是中文
+    //     const firstChar = name.charAt(0);
+    //     const isChinese = /[\u4e00-\u9fa5]/.test(firstChar);
+    //     if (isChinese) {
+    //       processedName = name; // 中文不处理，保留完整 name
+    //     } else {
+    //       processedName = firstChar; // 非中文，直接取首字母（区分大小写）
+    //     }
       
-        // 去重
-        if (!newData.some(obj => obj.name === processedName)) {
-          newData.push({ name: processedName });
-        }
-      });
+    //     // 去重
+    //     if (!newData.some(obj => obj.name === processedName)) {
+    //       newData.push({ name: processedName });
+    //     }
+    //   });
 
-      this.shelvesData = newData
-      console.log(this.shelvesData,'this.shelvesData3333')
-      if (this.shelvesData.length) {
-        this.tableQuery.shelfSpaceName = this.shelvesData[0].name
-      } else {
-        this.tableQuery.shelfSpaceName = ''
-      }
-      this.search('basic', 'search')
-      console.log(this.shelvesData,'this.shelvesData')
+    //   this.shelvesData = newData
+    //   console.log(this.shelvesData,'this.shelvesData3333')
+    //   if (this.shelvesData.length) {
+    //     this.tableQuery.shelfSpaceName = this.shelvesData[0].name
+    //   } else {
+    //     this.tableQuery.shelfSpaceName = ''
+    //   }
+    //   this.search('basic', 'search')
+    //   console.log(this.shelvesData,'this.shelvesData')
     
-    },
+    // },
     // 点击高级查询
     advancedQueryFun() {
       this.superQueryVisible = true
@@ -465,7 +466,7 @@ export default {
         productDrawingNo: '',
         productsCode: '',
         superQuery: {},
-        lineFlag: 1
+        : 1
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
@@ -495,8 +496,9 @@ export default {
       this.searchList[0].fieldValue= this.jnpf.getToday('YYYY-MM')
 
       this.$nextTick(function () {
+        this.search('basic', 'search')
 
-        this.getShelvesName()
+        // this.getShelvesName()
       })
     },
 

@@ -995,7 +995,8 @@ export default {
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
-      let columnList = this.$refs[exportTableRef].columnList.filter((item) => !!item.label && !!item.prop)
+      let columnList = this.$refs[exportTableRef].columnList.filter((item) => !!item.label && !!item.prop&&item.prop!='documentStatus')
+      console.log("columnList",columnList);
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })

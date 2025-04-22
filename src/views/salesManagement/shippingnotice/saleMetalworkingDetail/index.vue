@@ -91,6 +91,7 @@
             </el-table-column>
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <el-table-column prop="outboundQuantity" label="已发出库数量" min-width="150" />
 
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />

@@ -307,7 +307,7 @@ export default {
       this.$refs.tabForm.showDrawer()
     },
     superQuerySearch(query) {
-      this.tableQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

@@ -78,6 +78,7 @@
               <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
               <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
               <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom" />
+              <el-table-column prop="packagingMethod" label="包装方式" min-width="160" sortable="custom" />
               <el-table-column prop="pricingType" label="计价类型" min-width="110" sortable="custom">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in pricingTypeList" :key="index">

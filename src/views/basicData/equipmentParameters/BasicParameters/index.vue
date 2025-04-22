@@ -532,22 +532,22 @@ export default {
       this.$refs['dataTable' + this.actionname].showDrawer()
     },
     superQuerySearch3(query) {
-      this.tableQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible3 = false
       this.search()
     },
     superQuerySearch2(query) {
-      this.tableQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible2 = false
       this.search()
     },
     superQuerySearch1(query) {
-      this.tableQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible1 = false
       this.search()
     },
     superQuerySearch(query) {
-      this.tableQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

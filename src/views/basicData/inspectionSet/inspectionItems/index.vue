@@ -326,7 +326,7 @@ export default {
       })
     },
     superQuerySearch(query) {
-      this.tableQuery.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

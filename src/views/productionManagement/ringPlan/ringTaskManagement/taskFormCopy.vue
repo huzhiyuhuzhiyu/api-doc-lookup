@@ -6,6 +6,7 @@
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" :content="'任务信息'" />
           <div class="options">
+            <el-button size="mini" :disabled="dataForm.orderStatus !== 'normal'" v-if="!noNeedOutFlag" type="primary" @click="handleProcessOut">创建外协订单</el-button>
             <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>

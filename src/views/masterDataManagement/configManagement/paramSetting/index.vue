@@ -15,7 +15,7 @@
           <el-radio-button label="warehouse">仓库设置</el-radio-button>
           <el-radio-button label="return">退货设置</el-radio-button>
           <el-radio-button label="attachment">附件开关</el-radio-button>
-          <el-radio-button label="system">项目管理</el-radio-button>
+          <el-radio-button label="system">系统设置</el-radio-button>
           <el-radio-button label="customersupplier">客户供应商管理</el-radio-button>
           <el-radio-button label="deputyUnit">副单位设置</el-radio-button>
           <el-radio-button label="maintenance">维修设置</el-radio-button>

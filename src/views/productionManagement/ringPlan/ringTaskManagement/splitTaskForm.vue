@@ -58,9 +58,9 @@
 
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                    <JNPF-table  hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
                       @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
-                      row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData">
+                      row-key="code"  @changeMove="changeMove" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
@@ -480,11 +480,11 @@ export default {
       this.creaFun()
     },
     changeMove(data) {
-      data.forEach((item) => {
-        console.log(item, 'ooooo')
-        item.sort = item.sortCode
+      // data.forEach((item) => {
+      //   console.log(item, 'ooooo')
+      //   item.sort = item.sortCode
 
-      })
+      // })
       this.dataFormTwo = this.dataFormTwo.map((item, index) => {
         console.log(index, 'in')
         // 复制当前的item

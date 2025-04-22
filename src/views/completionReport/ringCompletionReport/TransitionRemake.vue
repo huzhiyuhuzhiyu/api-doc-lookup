@@ -22,7 +22,9 @@
             </div>
           </div>
           <div class="main" v-loading="loading">
-            <el-collapse v-model="activeNames" style="margin-top: 5px;">
+            <el-tabs v-model="activeName" v-if="!approvalFlag">
+              <el-tab-pane label="基础信息" name="jcInfo">
+                <el-collapse v-model="activeNames" style="margin-top: 5px;">
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                     <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
                       :btnType="btnType"/>
@@ -38,6 +40,7 @@
                             <span class="process-name">
                               {{ item.processName }}
                               <el-tag v-if="item.processCode" size="mini">{{ item.processCode }}</el-tag>
+                              <el-tag class="ml-8" size="mini">不合格数量：{{ item.autoUnqualifiedQuantity }}</el-tag>
                             </span>
                           </el-card>
                         </div>
@@ -61,6 +64,7 @@
         <span class="process-name">
           {{ item.processName }}
           <el-tag v-if="item.processCode" size="mini">{{ item.processCode }}</el-tag>
+          <el-tag class="ml-8" size="mini">不合格数量：{{ item.autoUnqualifiedQuantity }}</el-tag>
         </span>
                             </el-radio>
                           </el-card>
@@ -69,6 +73,65 @@
                     </div>
                   </el-collapse-item>
                 </el-collapse>
+              </el-tab-pane>
+              <el-tab-pane label="流程信息" name="approvalFlow">
+                <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"
+                  style="margin-top: 5px;"/>
+              </el-tab-pane>
+              <el-tab-pane v-if="btnType === 'look' && dataForm.approvalFlag" label="流转记录"
+                name="transferList">
+                <recordList :list='flowTaskOperatorRecordList' :endTime='endTime'/>
+              </el-tab-pane>
+            </el-tabs>
+            <el-collapse v-model="activeNames" v-else>
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
+                  :btnType="btnType"/>
+                <div class="process-manager">
+                  <!-- 当前工序 -->
+                  <div class="process-column">
+                    <h4 class="section-title">当前工序</h4>
+                    <div class="process-list">
+                      <el-card
+                        v-for="item in currentList"
+                        :key="item.processId"
+                        class="process-item">
+                            <span class="process-name">
+                              {{ item.processName }}
+                              <el-tag v-if="item.processCode" size="mini">{{ item.processCode }}</el-tag>
+                              <el-tag class="ml-8" size="mini">不合格数量：{{ item.autoUnqualifiedQuantity }}</el-tag>
+                            </span>
+                      </el-card>
+                    </div>
+                  </div>
+
+                  <!-- 可重制工序 -->
+                  <div class="process-column">
+                    <h4 class="section-title">可重制工序</h4>
+                    <div class="process-list">
+                      <el-card
+                        v-for="(item,index) in processList"
+                        :key="item.processId"
+                        class="process-item">
+                        <el-radio
+                          v-model="selectedProcesses"
+                          :label="item.processId"
+                          class="selection-radio"
+                          :disabled="isFirstOrApprovalFlag(index)"
+                          @input="radioInput"
+                        >
+        <span class="process-name">
+          {{ item.processName }}
+          <el-tag v-if="item.processCode" size="mini">{{ item.processCode }}</el-tag>
+          <el-tag class="ml-8" size="mini">不合格数量：{{ item.autoUnqualifiedQuantity }}</el-tag>
+        </span>
+                        </el-radio>
+                      </el-card>
+                    </div>
+                  </div>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
           </div>
         </div>
       </div>
@@ -101,7 +164,11 @@ export default {
     workList: {
       type: Array,
       default: () => []
-    }
+    },
+    pickingWay: { // 领料方式
+      type: [String, Number],
+      default: null
+    },
   },
   mixins: [flowMixin, busFlow],
   components: {Process, recordList},
@@ -111,7 +178,7 @@ export default {
       btnType: '',
       loading: false,
       btnLoading: false,
-      unqualifiedQuantity: '', // 不合格数量
+      autoUnqualifiedQuantity: '', // 不合格数量
       dataForm: {
         remasteredQuantity: '',
         productionOrderId: this.productionOrderId, // 生产订单ID
@@ -190,15 +257,15 @@ export default {
       this.dataForm.approvalFlag && this.getFlowDetail(id)
     },
     radioInput(val) {
-      this.unqualifiedQuantity = ''
+      this.autoUnqualifiedQuantity = ''
       if (!val) return
       const selected = this.workList.filter(item => item.processId === val)[0]
-      this.unqualifiedQuantity = selected.unqualifiedQuantity
+      this.autoUnqualifiedQuantity = selected.autoUnqualifiedQuantity
       this.dataForm.remasteredProcessId = selected.processId
       this.dataForm.remasteredWorkOrderId = selected.id
     },
     isFirstOrApprovalFlag(index) {
-      if (this.btnType !== 'look') return index === 0
+      if (this.btnType !== 'look') return index === 0 && this.pickingWay !== 'none'
       else return true
     },
     async getDetail(id) {
@@ -221,7 +288,7 @@ export default {
       this.$refs.dataForm.$refs.main.validate(valid => {
         if (!valid) return
         if (!this.selectedProcesses.toString()) return this.$message.error('请选择需要重制的工序')
-        if (+this.dataForm.remasteredQuantity > +this.unqualifiedQuantity) return this.$message.error('当前需要重制的不合格数量不能大于当前工序的不合格数量')
+        if (+this.dataForm.remasteredQuantity > +this.autoUnqualifiedQuantity) return this.$message.error('当前需要重制的不合格数量不能大于当前工序的不合格数量')
         this.btnLoading = true
         this.dataForm.documentStatus = type
         const params = deepClone(this.dataForm)

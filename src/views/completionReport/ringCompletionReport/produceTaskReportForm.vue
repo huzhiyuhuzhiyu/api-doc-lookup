@@ -295,7 +295,7 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
-    <TransitionRemake ref="TransitionRemake" v-if="TransitionRemakeVisible" @close="()=>{TransitionRemakeVisible = false}" :productionOrderId="dataForm.id" :workList="workList" :currentProcessId="currentProcessId" :currentWorkOrderId="currentProcess.id"></TransitionRemake>
+    <TransitionRemake ref="TransitionRemake" v-if="TransitionRemakeVisible" @close="()=>{TransitionRemakeVisible = false}" :productionOrderId="dataForm.id" :workList="workList" :currentProcessId="currentProcessId" :currentWorkOrderId="currentProcess.id" :pickingWay="currentProcess.pickingWay" ></TransitionRemake>
     <TransitionRemakeRecord ref="TransitionRemakeRecord" v-if="TransitionRemakeRecordVisible" :productionOrderId="dataForm.id" @close="TransitionRemakeRecordVisible = false"></TransitionRemakeRecord>
   </div>
 
@@ -404,7 +404,7 @@ export default {
   },
   computed: {
         isRemakeRequest(){
-          // return this.workList.length > 0 && this.currentProcessId === this.workList[0].processId || !+this.currentProcess.unqualifiedQuantity
+          return this.workList.length > 0 && this.currentProcessId === this.workList[0].processId || !+this.remakeUnqualifiedQuantity
           return false
         },
   },
@@ -413,7 +413,7 @@ export default {
       handler: function (newVal, oldVal) {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : 0
           } else {
             this.currentProcess.qualifiedQuantity = 0
           }
@@ -482,6 +482,9 @@ export default {
       this.materialWasteDataList = data
       this.currentProcess.materialWasteQuantity=totalNums
         this.handleBlur2()
+      } else {
+        this.currentProcess.materialWasteQuantity= 0
+        this.handleBlur2()
       }
     },
     responsWasteData(data,totalNums){
@@ -489,6 +492,9 @@ export default {
       this.responsWasteDataList = data
       if(totalNums){
         this.currentProcess.responsibilityWasteQuantity=totalNums
+        this.handleBlur2()
+      }else {
+        this.currentProcess.responsibilityWasteQuantity= 0
         this.handleBlur2()
       }
     },
@@ -515,11 +521,11 @@ export default {
             productsId: this.dataForm.productsId
           }
           getProductsWeightQuantityList(obj).then(res=>{
-            this.weight = res.data.records[0].weight
-            this.quantity = res.data.records[0].quantity
+            this.weight = res.data.records.length ? res.data.records[0].weight : 0
+            this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
           })
         }
-        
+      
         if (Object.keys(this.copyCurrentProcess).length !== 0) {
           const matchingItem = res.data.workOrderList.find(item => item.processId === this.copyCurrentProcess.processId);
           if (matchingItem) {
@@ -553,6 +559,11 @@ export default {
       this.currentProcess = item
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
+      if (!item.autoUnqualifiedQuantity) {
+        this.$set(item, 'autoUnqualifiedQuantity', item.unqualifiedQuantity)
+      }
+      
+      this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
@@ -683,6 +694,7 @@ export default {
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null
+          console.log(this.totalReportNum)
           if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
             this.submitFlag = false
             this.$message.error("合格数量+不合格数量不能超过可报工数量")

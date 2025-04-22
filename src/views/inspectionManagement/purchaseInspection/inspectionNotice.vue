@@ -99,7 +99,7 @@
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
             <el-table-column prop="material" label="材质" width="130" sortable="custom"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"></el-table-column>
+            <el-table-column prop="colour" :label="$store.getters.colour"  width="130" sortable="custom"></el-table-column>
             <el-table-column prop="processName" label="工序" width="100" sortable="custom" />
             <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />

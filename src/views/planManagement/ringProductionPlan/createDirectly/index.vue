@@ -231,7 +231,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1" :key="110">
+                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1" :key="110">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false">

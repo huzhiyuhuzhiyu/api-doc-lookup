@@ -194,7 +194,7 @@
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
                         <el-table-column prop="material" label="保持架材质" width="130"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
                           :key="10201"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">

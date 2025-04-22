@@ -231,7 +231,7 @@
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
                         <el-table-column prop="material" label="材质" width="130" ></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -566,7 +566,7 @@
                 <el-table-column prop="waitReceiptNum" label="待收货数量" width="130" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="80" sortable="custom" />
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />

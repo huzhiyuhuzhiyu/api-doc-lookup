@@ -208,7 +208,7 @@
                         v-if="vibrationLevelFlag == 1"></el-table-column>
                       <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                         v-if="materialFlag == 1"></el-table-column>
-                      <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="1020"
                         v-if="colourFlag == 1"></el-table-column>
                       <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
@@ -598,7 +598,7 @@
                     v-if="vibrationLevelFlag == 1"></el-table-column>
                   <el-table-column prop="material" label="保持架材质" width="120" :key="1015"
                     v-if="materialFlag == 1"></el-table-column>
-                  <el-table-column prop="colour" label="颜色" width="120" :key="1020"
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="1020"
                     v-if="colourFlag == 1"></el-table-column>
                   <el-table-column prop="remark" label="备注" width="160" />
                   <el-table-column prop="createTime" label="创建时间" width="180" />

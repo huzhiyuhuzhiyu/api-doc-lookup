@@ -110,7 +110,7 @@
                   v-if="specialRequireFlag == 1" />
                 <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
                   v-if="materialFlag === '1'" />
-                <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag === '1'" />
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom" v-if="colourFlag === '1'" />
                 <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom" v-if="protrusionFlag == 1" />
                 <el-table-column prop="preload" label="预负荷" width="120" sortable="custom" v-if="preloadFlag == 1" />
                 <el-table-column prop="angle" label="角度" width="120" :key="104" v-if="angleFlag === '1'" />
@@ -247,7 +247,7 @@
                   v-if="specialRequireFlag == 1" />
                 <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
                   v-if="materialFlag === '1'" />
-                <el-table-column prop="colour" label="颜色" width="120" sortable="custom" v-if="colourFlag === '1'" />
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom" v-if="colourFlag === '1'" />
                 <!--                  <el-table-column prop="protrusion" label="凸出量" width="120" sortable="custom"  v-if="protrusionFlag==1"/>-->
                 <!--                  <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>-->
                 <el-table-column prop="remark" min-width="200" label="备注" />

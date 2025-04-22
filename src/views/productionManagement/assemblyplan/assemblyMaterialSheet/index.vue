@@ -116,7 +116,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="colour" label="颜色" width="120">
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.colour" placeholder="请选择"
                         :disabled="scope.row.classType !== 'sealing_cap'" clearable style="width: 100%;">

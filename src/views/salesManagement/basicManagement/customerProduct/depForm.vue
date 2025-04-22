@@ -198,7 +198,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" :key="105" v-if="colourFlag === '1'">
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="105" v-if="colourFlag === '1'">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
                           <el-option v-for="(item, index) in list10" :key="index" :label="item.name" :value="item.name"></el-option>

@@ -187,7 +187,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" label="颜色" width="120" :key="212"
+                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="212"
                         v-if="this.dataForm.classAttribute !== 'finish_product'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.colour" placeholder="请选择"

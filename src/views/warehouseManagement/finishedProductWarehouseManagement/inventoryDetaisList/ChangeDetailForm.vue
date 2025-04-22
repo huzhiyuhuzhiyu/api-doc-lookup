@@ -243,7 +243,7 @@
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="colour" label="颜色" width="160" sortable="custom"
+              <el-table-column prop="colour" :label="$store.getters.colour"  width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />

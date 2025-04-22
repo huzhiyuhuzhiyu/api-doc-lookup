@@ -248,7 +248,7 @@
                       v-if="specialRequireFlag === '1'" />
                     <el-table-column prop="material" label="材质" width="130"
                       v-if="materialFlag === '1'"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" v-if="colourFlag === '1'"></el-table-column>
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="130" v-if="colourFlag === '1'"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="160" />
                     <el-table-column prop="ordersNo" label="订单号" width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
@@ -676,7 +676,7 @@
                   v-if="packagingMethodFlag === '1'" />
                 <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="specialRequireFlag === '1'" />
                 <el-table-column prop="material" label="材质" width="130" v-if="materialFlag === '1'"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="130" v-if="colourFlag === '1'"></el-table-column>
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="130" v-if="colourFlag === '1'"></el-table-column>
                 <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" />

@@ -96,7 +96,7 @@
               v-if="specialRequireFlag == 1" />
             <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
               v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+            <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
               v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />

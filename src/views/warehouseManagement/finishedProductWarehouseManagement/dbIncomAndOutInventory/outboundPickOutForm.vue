@@ -207,7 +207,7 @@
                           <el-table-column prop="material" label="材质" width="120" key="2118">
 
                           </el-table-column>
-                          <el-table-column prop="colour" label="颜色" width="120" :key="2120"></el-table-column>
+                          <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="2120"></el-table-column>
                           <!-- <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="aperture" label="孔径" width="100" /> -->
 

@@ -188,7 +188,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" key="210">
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120" key="210">
 
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
@@ -486,7 +486,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色" v-if="colourFlag == 1" width="120" key="210">
+                    <el-table-column prop="colour" :label="$store.getters.colour"  v-if="colourFlag == 1" width="120" key="210">
 
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">

@@ -207,7 +207,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" key="210">
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120" key="210">
                           <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -711,7 +711,7 @@
                 <el-table-column prop="standardValue" label="规值" width="120" key="211">
 
                 </el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" key="210">
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" key="210">
 
                 </el-table-column>
                 <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容" width="120"

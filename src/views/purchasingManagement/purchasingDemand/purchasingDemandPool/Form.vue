@@ -392,7 +392,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" min-width="120" v-if="colourFlag === '1'">
+                        <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120" v-if="colourFlag === '1'">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;">

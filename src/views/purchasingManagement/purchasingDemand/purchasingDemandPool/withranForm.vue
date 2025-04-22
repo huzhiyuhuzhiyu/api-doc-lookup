@@ -246,7 +246,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" min-width="120"
+                        <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120"
                           v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
                             <el-form-item>

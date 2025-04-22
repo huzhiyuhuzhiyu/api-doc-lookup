@@ -66,7 +66,7 @@
                       :label="dataForm.businessType == 'inbound_transfer' ? '入库仓库' : '出库仓库'" width="160"
                       :key="889"></el-table-column>
                     <el-table-column prop="standardValue" label="规值" width="120" :key="211"> </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" :key="216"> </el-table-column>
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="216"> </el-table-column>
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="2111"></el-table-column>
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>

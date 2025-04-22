@@ -230,7 +230,7 @@
               <el-table-column prop="holder" label="保持架" width="100" sortable="custom" />
               <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
               <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-              <el-table-column prop="colour" label="颜色" width="100" sortable="custom" />
+              <el-table-column prop="colour" :label="$store.getters.colour"  width="100" sortable="custom" />
               <el-table-column prop="aperture" label="孔径" width="100" sortable="custom" />
               <el-table-column prop="remark" label="备注" width="120" />
               <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />

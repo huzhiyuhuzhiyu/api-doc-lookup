@@ -106,7 +106,7 @@
               v-if="specialRequireFlag === '1'" />
             <el-table-column prop="material" label="材质" width="130" sortable="custom"
               v-if="materialFlag === '1'"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="130"
+            <el-table-column prop="colour" :label="$store.getters.colour"  width="130"
               v-if="colourFlag === '1'"></el-table-column>
             <el-table-column prop="ordersNo" label="订单号" width="200" sortable="custom" v-if="$store.getters.configData.return.purchase_order" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">

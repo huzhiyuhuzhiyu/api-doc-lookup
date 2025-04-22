@@ -100,7 +100,7 @@
           <el-table-column prop="totalAmount" label="金额" sortable="custom" min-width="140" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="warehouseName" label="仓库" width="160" sortable="custom" />
-          <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
+          <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"></el-table-column>
           <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"></el-table-column>
           <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"></el-table-column>

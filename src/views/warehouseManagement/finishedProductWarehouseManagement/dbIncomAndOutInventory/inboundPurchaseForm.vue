@@ -219,7 +219,7 @@
 
                         <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="pairingModeName" label="配对方式" width="100" />
-                        <el-table-column prop="colour" label="颜色" width="100" />
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="100" />
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
@@ -551,7 +551,7 @@
                 <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="130" sortable="custom" />
                 <el-table-column prop="receiptQuantity" label="已入库数量" min-width="140" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="110" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />

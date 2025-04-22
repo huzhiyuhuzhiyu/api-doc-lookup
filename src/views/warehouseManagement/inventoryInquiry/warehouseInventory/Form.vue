@@ -60,7 +60,7 @@
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
               <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
                 v-if="standardValueFlag == 1" />
-              <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" v-if="colourFlag == 1" />
+              <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" v-if="colourFlag == 1" />
               <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="sealingCoverTypingFlag == 1"
                 sortable="custom"></el-table-column>
               <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="accuracyLevelFlag == 1"

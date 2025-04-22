@@ -286,7 +286,7 @@
                       v-if="specialRequireFlag === '1'" />
                     <el-table-column prop="material" label="材质" width="130" :key="1015"
                       v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="130" :key="1015"
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
                       v-if="colourFlag == 1"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
 

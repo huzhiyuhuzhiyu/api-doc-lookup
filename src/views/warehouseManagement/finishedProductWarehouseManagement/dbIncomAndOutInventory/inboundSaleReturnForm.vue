@@ -176,7 +176,7 @@
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
                         <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120" ></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -453,7 +453,7 @@
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="material" label="保持架材质" width="120"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" ></el-table-column>
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" ></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'" />

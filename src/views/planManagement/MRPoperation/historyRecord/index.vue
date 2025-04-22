@@ -109,7 +109,7 @@
                   v-if="specialRequireFlag == 1" />
                 <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
                   v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
                   v-if="colourFlag == 1"></el-table-column>
                 <el-table-column label="操作" width="120" fixed="right">
                   <template slot-scope="scope">
@@ -356,7 +356,7 @@
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
                 <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
                   v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" sortable="custom"
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
                   v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />

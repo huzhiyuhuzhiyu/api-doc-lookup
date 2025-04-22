@@ -247,7 +247,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1">
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create
                           :disabled="btnType == 'look' || noticeswitch === '1' ? true : false" style="width: 100%;">
@@ -695,7 +695,7 @@
                   v-if="specialRequireFlag === '1'" />
                 <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
                   v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" v-if="colourFlag == 1"></el-table-column>
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>

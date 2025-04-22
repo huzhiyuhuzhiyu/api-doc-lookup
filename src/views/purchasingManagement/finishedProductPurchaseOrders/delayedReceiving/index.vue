@@ -115,7 +115,7 @@
               v-if="specialRequireFlag === '1'" />
             <el-table-column prop="material" label="材质" width="130" sortable="custom"
               v-if="materialFlag === '1'"></el-table-column>
-            <el-table-column prop="colour" label="颜色" width="130" sortable="custom"
+            <el-table-column prop="colour" :label="$store.getters.colour"  width="130" sortable="custom"
               v-if="colourFlag === '1'"></el-table-column>
             <el-table-column prop="processName" label="工序" width="80" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="120" />

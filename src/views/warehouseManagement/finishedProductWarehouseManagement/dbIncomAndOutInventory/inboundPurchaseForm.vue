@@ -1343,6 +1343,7 @@ export default {
           // }
           if (filteredArray.length) {
             filteredArray.forEach(item => {
+              console.log(" this.dataForm", this.dataForm);
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity

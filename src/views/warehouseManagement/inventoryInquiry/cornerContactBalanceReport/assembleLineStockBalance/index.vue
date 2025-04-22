@@ -5,6 +5,38 @@
     <div class="JNPF-common-layout-center JNPF-flex-main" >
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
+          <template v-for="item in searchList">
+
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+
+              <el-form-item>
+
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+                  <el-date-picker v-else-if="item.searchType === 2" v-model="item.fieldValue" type="month"
+                                                value-format="yyyy-MM" style="width: 100%;" :clearable="false"
+                                                popper-class="date_form"
+                                                @change="search('basic')"
+                                />
+
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+
+                </el-select>
+
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+
+                </el-form-item>
+
+              </el-col>
+            </template>
           <!-- <el-col :span="5">
             <el-form-item>
               <el-select v-model="tableQuery.shelfSpaceName" placeholder="库位" @change="shelfSpaceChange">
@@ -13,12 +45,12 @@
               </el-select>
             </el-form-item>
           </el-col> -->
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="tableQuery.productsCode" placeholder="物料编号" clearable
                 @keyup.enter.native="search('basic', 'search')" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="tableQuery.productsCode" placeholder="产品编码" clearable @keyup.enter.native="search('basic')" />
@@ -68,7 +100,7 @@
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
           @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList">
-          <el-table-column prop="productsCategoryName" label="物料分类" min-width="130" sortable="custom" />
+          <el-table-column prop="productCategoryName" label="物料分类" min-width="130" sortable="custom" />
           <el-table-column prop="productsCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="initInventoryQuantity" label="期初" width="120" />
           <el-table-column prop="inboundReceiveMaterialQuantity" label="直接领料入库" width="120" />
@@ -119,8 +151,15 @@ export default {
       superQuery: {},
       basicQuery: {},
       searchList: [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+      {
+        fieldValue: '',
+        field: 'accountPeriod',
+        label: '账期',
+        prop: 'accountPeriod',
+        symbol: 'like',
+        searchType: 2
+      },
+      { field: 'productsCode', fieldValue: '', label: '物料编号', symbol: 'like', searchType: 1, width: 120 },
         // {
         //   field: 'excludeProcessFlag',
         //   fieldValue: '',
@@ -166,6 +205,7 @@ export default {
       leftFlag: false,
       tableQuery: {
         shelfSpaceName:'',
+        accountPeriod: this.jnpf.getToday('YYYY-MM'),
         excludeProcessFlag:'',
         totalInventoryFlag: '',
         orderItems: [
@@ -252,9 +292,9 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
-    this.isProjectSwitchFlag = true
+      this.searchList[0].fieldValue= this.jnpf.getToday('YYYY-MM')
+      this.isProjectSwitchFlag = true
     this.$nextTick(function () {
-  
       this.getShelvesName()
     })
   },
@@ -419,7 +459,8 @@ export default {
             column: ''
           }
         ],
-        excludeProcessFlag:'',
+                accountPeriod: this.jnpf.getToday('YYYY-MM'),
+                excludeProcessFlag:'',
         pageNum: 1,
         pageSize: 20,
         scrapFlag: false,
@@ -432,8 +473,15 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productsCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+      {
+                    fieldValue: '',
+                    field: 'accountPeriod',
+                    label: '账期',
+                    prop: 'accountPeriod',
+                    symbol: 'like',
+                    searchType: 2
+                },
+        { field: 'productsCode', fieldValue: '', label: '物料编号', symbol: 'like', searchType: 1, width: 120 },
         // {
         //   field: 'excludeProcessFlag',
         //   fieldValue: '',
@@ -448,6 +496,8 @@ export default {
         //   ]
         // }
       ]
+      this.searchList[0].fieldValue= this.jnpf.getToday('YYYY-MM')
+
       this.$nextTick(function () {
 
         this.getShelvesName()

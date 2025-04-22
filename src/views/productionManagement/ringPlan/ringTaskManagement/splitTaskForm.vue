@@ -29,12 +29,6 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="拆分第几道" prop="splitNo">
-                          <el-input v-model="dataForm.splitNo" placeholder="拆分第几道" @blur="splitNoBlur">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
                       <template v-if="$store.getters.configData.produce.steelBallTask">
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="生产桶数:" prop="productionBarrels" >
@@ -63,23 +57,23 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
-                  <el-form :model="dataFormTwo.data" v-bind="dataFormTwo.data" ref="productForm" class="data-form">
+                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
-                      @selection-change="handeleProductInfoData" :data="dataFormTwo.data" size="mini" id="table"
+                      @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
                       row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
-                      <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
+                      <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
                         </template>
                         <template slot-scope="scope">
-                          {{ scope.row.name }}
+                          {{ scope.row.processName }}
                         </template>
                       </el-table-column>
-                      <el-table-column prop="code" label="工序编码" min-width="140" />
-                     
+                      <el-table-column prop="processCode" label="工序编码" min-width="140" />
+                      <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" />
                       <el-table-column prop="processType" label="工序类型" width="120">
                         <template slot-scope="scope">
                           <template v-if="scope.row.processType == 'normal'">
@@ -313,9 +307,7 @@ export default {
         splitNo:null,
         splitQuantity:0,
       },
-      dataFormTwo: {
-        data: [],
-      },
+      dataFormTwo:[],
       oldWorkOrderList:[],
       listLoading: false,
       activeName: "orderInfo",
@@ -408,10 +400,10 @@ export default {
     }
   },
   methods: {
-      // 删除项
-      delequipment_process_relList(index) {
-      this.dataFormTwo.data.splice(index, 1)
-      this.dataFormTwo.data.forEach((item, i) => {
+    // 删除项
+    delequipment_process_relList(index) {
+      this.dataFormTwo.splice(index, 1)
+      this.dataFormTwo.forEach((item, i) => {
         if (i == 0) {
           item.firstFlag = true
         } else {
@@ -419,10 +411,10 @@ export default {
           item.stockFlag = false
           item.reportFlag = false
         }
-        if (i == this.dataFormTwo.data.length - 1) {
+        if (i == this.dataFormTwo.length - 1) {
           item.lastFlag = true
           item.stockFlag = true
-          if (this.dataFormTwo.data[i].processingType == 'external_production') {
+          if (this.dataFormTwo[i].processingType == 'external_production') {
             item.reportFlag = false
           } else {
             item.reportFlag = true
@@ -435,13 +427,13 @@ export default {
         if (item.processingType === 'external_production') {
           item.stockFlag = true
           item.defaultFlag = true
-          if (i != 0 && this.dataFormTwo.data[i - 1].processingType != 'external_production') {
-            this.dataFormTwo.data[i - 1].reportFlag = 1
-            this.dataFormTwo.data[i - 1].stockFlag = 1
+          if (i != 0 && this.dataFormTwo[i - 1].processingType != 'external_production') {
+            this.dataFormTwo[i - 1].reportFlag = 1
+            this.dataFormTwo[i - 1].stockFlag = 1
             // this.$set()
-            this.dataFormTwo.data[i - 1].defaultFlag = true
+            this.dataFormTwo[i - 1].defaultFlag = true
           }
-          this.dataFormTwo.data[i].defaultReport = true
+          this.dataFormTwo[i].defaultReport = true
         }
       })
       this.calcHeight()
@@ -450,16 +442,7 @@ export default {
       this.materialList[params.scope.$index].processId = data[0].id || ''
       this.materialList[params.scope.$index].processName = data[0].name || ''
     },
-    splitNoBlur(){
-      if (!this.dataForm.splitNo) this.dataForm.splitNo =1
-      const splitNo = Number(this.dataForm.splitNo)-1
-      if (splitNo === this.oldWorkOrderList.length -1) {
-        
-      } else {
-        this.dataFormTwo.data = this.oldWorkOrderList.slice(splitNo, this.oldWorkOrderList.length)
-      }
-      
-    },
+
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',
@@ -482,7 +465,7 @@ export default {
           this.dataForm.orderNo = ''
           this.$set(this.dataForm,'splitNo',1)
           this.oldWorkOrderList = res.data.workOrderList
-          this.dataFormTwo.data = res.data.workOrderList
+          this.dataFormTwo = res.data.workOrderList
           if (this.$store.getters.configData.produce.steelBallTask) {
           let obj = {
             productsId: this.dataForm.productsId
@@ -502,7 +485,7 @@ export default {
         item.sort = item.sortCode
 
       })
-      this.dataFormTwo.data = this.dataFormTwo.data.map((item, index) => {
+      this.dataFormTwo = this.dataFormTwo.map((item, index) => {
         console.log(index, 'in')
         // 复制当前的item
         let newItem = { ...item }
@@ -515,14 +498,14 @@ export default {
           newItem.reportFlag = false
           newItem.stockFlag = false
         }
-        if (index === this.dataFormTwo.data.length - 1) {
+        if (index === this.dataFormTwo.length - 1) {
 
           newItem.firstFlag = false
           newItem.lastFlag = true
           newItem.reportFlag = true
           newItem.stockFlag = true
         }
-        if (index < this.dataFormTwo.data.length - 1 && index !== 0) {
+        if (index < this.dataFormTwo.length - 1 && index !== 0) {
 
           newItem.firstFlag = false
           newItem.lastFlag = false
@@ -531,7 +514,7 @@ export default {
         }
 
         // 如果存在上一个元素，则添加 previousId
-        if (index > 0 && index !== this.dataFormTwo.data.length - 1) {
+        if (index > 0 && index !== this.dataFormTwo.length - 1) {
 
           newItem.firstFlag = false
           newItem.lastFlag = false
@@ -541,7 +524,7 @@ export default {
 
         return newItem // 返回修改后的对象
       })
-      console.log(this.dataFormTwo.data)
+      console.log(this.dataFormTwo)
     },
     creaFun() {
       this.linesFormItems_right = [
@@ -625,8 +608,8 @@ export default {
       console.log()
       if (this.dataForm.taskMethod == 'appoint') {
 
-        for (let index = 0; index < this.dataFormTwo.data.length; index++) {
-          const item = this.dataFormTwo.data[index];
+        for (let index = 0; index < this.dataFormTwo.length; index++) {
+          const item = this.dataFormTwo[index];
           if (item.reportFlag) {
 
             if (
@@ -653,7 +636,7 @@ export default {
           // }
         }
       } else {
-        this.dataFormTwo.data.forEach(item => {
+        this.dataFormTwo.forEach(item => {
           item.personId = ""
           item.equipmentId = ""
           item.workGroupId = ""
@@ -667,9 +650,9 @@ export default {
 
       }
       console.log("表单", this.dataForm);
-      console.log("工序", this.dataFormTwo.data);
+      console.log("工序", this.dataFormTwo);
 
-      // this.dataFormTwo.data.forEach(item => {
+      // this.dataFormTwo.forEach(item => {
       //   console.log(item)
       //   item.routingProResList.forEach(items => {
       //     items.processId = item.processId
@@ -700,13 +683,13 @@ export default {
       //   }
       // }
       if (submitFlag === false) return
-      this.dataFormTwo.data.forEach(item=>{
+      this.dataFormTwo.forEach(item=>{
         item.productionQuantity = this.dataForm.splitQuantity
         item.orderNo = ''
       })
       let obj = {
         prodOrder: this.dataForm,
-        workOrderList: this.dataFormTwo.data,
+        workOrderList: this.dataFormTwo,
         // collect: this.collectForm,
         // lineEdgeList: arr,
         // materialList: this.materialList

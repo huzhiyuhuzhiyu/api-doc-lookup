@@ -40,6 +40,7 @@ import ColumnSettings from './ColumnSettings'
 import Sortable from 'sortablejs'
 import {createUUID, deepClone, getPromise} from '@/utils';
 import {generateUuid} from '@/api/basicData/interfaceSettings';
+import { saveWebCache } from '@/api/system/system'
 export default {
   name: 'JNPF-table',
   components: { JnpfTableColumn, ColumnSettings },
@@ -123,6 +124,7 @@ export default {
       tableRealRef:null,
       tableRealRefPromise:null,
       tableRealRefResolve:null,
+            timeout: null,
     }
   },
   watch: {
@@ -258,7 +260,10 @@ export default {
 
     // 当列宽拖动结束时调用
     handleHeaderDragEnd(val, oldVal, initiator, column) {
-      this.$nextTick(() => { this.doLayout(false)})
+      this.$nextTick(() => { 
+        this.doLayout(false)
+                this.saveTableConfigToSever()
+      })
     },
     setShowOverflowTooltip() {
       const children = this.$slots.default || [];
@@ -385,6 +390,7 @@ export default {
       this.columnList = list
       this.$forceUpdate()
       this.refreshTable = true
+            this.saveTableConfigToSever()
     },
     // 表格拖动方法
     rowDrop() {
@@ -415,6 +421,22 @@ export default {
         }
       });
     },
+        // 保存表格配置到后端
+        saveTableConfigToSever() {
+            if (!this.$store.getters.configData.system.web_cache_way) return
+            clearTimeout(this.timeout)
+            this.timeout = setTimeout(() => {
+                // 获取本地localStorage中JNPF-table的配置
+                let tableColumn = {}
+                for (let i = 0; i < localStorage.length; i++) {
+                    let key = localStorage.key(i)
+                    if (/^jnpf_(\d{18}|[0-9a-fA-F]{32})/.test(key)) {
+                        tableColumn[key] = localStorage.getItem(key)
+                    }
+                }
+                saveWebCache({ tableColumn: JSON.stringify(tableColumn) })
+            }, 1000)
+        }
   }
 }
 </script>

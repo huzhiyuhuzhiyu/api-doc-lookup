@@ -96,3 +96,18 @@ export const getDocData = (data) => {
     data
   })
 }
+// 系统缓存-页面缓存-保存
+export function saveWebCache(data) {
+  return request({
+    url: '/api/system/System/web/cache/save',
+    method: 'POST',
+    data
+  })
+}
+// 系统缓存-页面缓存-查询
+export function getWebCache() {
+  return request({
+    url: '/api/system/System/web/cache/get',
+    method: 'GET'
+  })
+}

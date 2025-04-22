@@ -5,6 +5,7 @@ import { getRoleSelector } from '@/api/permission/role'
 import { getPrintDevSelector } from '@/api/system/printDev'
 import jnpf from '@/utils/jnpf';
 import { getBimBusinessDetail, getOrderFiledMap, getBimBusinessSwitchConfigList } from '@/api/basicData'
+import { getWebCache } from '@/api/system/system'
 
 const state = {
   dictionaryList: [],
@@ -302,6 +303,24 @@ const actions = {
       }).catch(error => {
         reject()
       })
+    })
+  },
+  // 刷新用户表格自定义配置
+  refreshTableColumnConfigData({ commit }) {
+    return new Promise((resolve, reject) => {
+      getWebCache().then(res => { // 获取表格配置
+        if (res.data.tableColumn) {
+          const tableColumn = JSON.parse(res.data.tableColumn)
+          for (const key in tableColumn) {
+            if (!key.includes('jnpf_')) return
+            const value = tableColumn[key]
+            localStorage.setItem(key, value)
+          }
+        }
+      })
+      resolve()
+    }).catch(error => {
+      reject(error)
     })
   },
   getParamSetConfig({ commit },params) {

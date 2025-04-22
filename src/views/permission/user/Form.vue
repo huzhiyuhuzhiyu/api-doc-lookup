@@ -159,7 +159,7 @@ export default {
       partnerRequestObj: {
         account: '',
         userFlag: 1,
-        employeeStatus: '',
+        employeeStatus: 'on_job',
         employeeType: '',
         orderItems: [
           {

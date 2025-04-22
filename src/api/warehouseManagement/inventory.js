@@ -176,3 +176,13 @@ export function stockBalanceMergePage(data) {
     data
   })
 }
+
+
+// 倍宁- 常规报表
+export function regularInnerOuterRingReport(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/routine/innerOuterRingReport`,
+    method: 'POST',
+    data
+  })
+}

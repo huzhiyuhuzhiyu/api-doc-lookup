@@ -40,4 +40,8 @@ export default {
         configKeyLabel: '生产关联客户',
         description: '开启后，计划管理安全库存创建、直接创建；生产管理编排和新建任务将显示客户名称选择，进行生产关联客户'
     },
+    split_sequence_modified: {
+        configKeyLabel: '拆分工序顺序可修改',
+        description: '开启后，生产管理拆分任务可以修改工序顺序'
+    },
 }

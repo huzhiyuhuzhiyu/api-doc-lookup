@@ -29,6 +29,12 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="!splitModifiedFlag">
+                        <el-form-item label="拆分第几道工序" prop="splitNo">
+                          <el-input v-model="dataForm.splitNo" placeholder="拆分第几道工序" @change="splitNoBlur">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
                       <template v-if="$store.getters.configData.produce.steelBallTask">
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="生产桶数:" prop="productionBarrels" >
@@ -47,7 +53,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.steelBallTask">
                         <el-form-item label="新生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"  />
                         </el-form-item>
@@ -57,7 +63,7 @@
                 </el-collapse-item>
 
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
-                  <div>
+                  <div v-if="splitModifiedFlag">
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-plus" :disabled="type == 'look' ? true : false"
                         @click="openSeleceProcessDialog(dataFormTwo.length, 'add')">
@@ -72,22 +78,17 @@
                       |
                     </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table hasC  hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                    <JNPF-table :hasC="splitModifiedFlag"  hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
                       @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
-                      row-key="processCode" hasMove @changeMove="changeMove" :height="customStyleData">
+                      row-key="processCode" :hasMove="splitModifiedFlag" @changeMove="changeMove" :height="customStyleData">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
-                        <template slot="header">
-                          <span class="required">*</span>
-                          工序名称
-                        </template>
-                        <template slot-scope="scope">
-                          {{ scope.row.processName }}
-                        </template>
                       </el-table-column>
                       <el-table-column prop="processCode" label="工序编码" min-width="140" />
-                      <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" />
+                      <el-table-column prop="waitReportNum" label="可拆分数量" min-width="140" />
+                      <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="140" />
+                      <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" />
                       <el-table-column prop="processType" label="工序类型" width="120">
                         <template slot-scope="scope">
                           <template v-if="scope.row.processType == 'normal'">
@@ -144,7 +145,7 @@
                           {{ scope.row.inspectionInformation }}
                         </template>
                       </el-table-column>
-                      <el-table-column prop="firstFlag" label="是否首道工序" width="120">
+                      <!-- <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                         <template slot-scope="scope">
                             <el-form-item prop="firstFlag" ref="firstFlag">
                               <el-checkbox :label="true" v-model="scope.row.firstFlag"  disabled>
@@ -216,8 +217,8 @@
                               </el-checkbox>
                             </el-form-item>
                         </template>
-                      </el-table-column>
-                      <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
+                      </el-table-column> -->
+                      <!-- <el-table-column prop="workOrderFlag" label="是否生成工单" width="130">
                         <template slot-scope="{ row }">
                             <el-form-item prop="workOrderFlag" ref="workOrderFlag">
                               <el-checkbox v-model="row.workOrderFlag"
@@ -226,10 +227,10 @@
                               </el-checkbox>
                             </el-form-item>
                         </template>
-                      </el-table-column>
-                      <el-table-column label="操作" width="180" fixed="right">
+                      </el-table-column> -->
+                      <el-table-column label="操作" width="180" fixed="right" v-if="splitModifiedFlag">
                         <template slot-scope="scope">
-                          <el-button type="text" class="JNPF-table-delBtn"
+                          <el-button type="text" class="JNPF-table-delBtn" 
                             @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
@@ -271,6 +272,7 @@ import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import SourceArea from '../../../basicData/processSettings/processSettingss/source.vue'
+import { deepClone } from '@/components/Generator/utils'
 export default {
   mixins: [],
   components: {
@@ -328,6 +330,7 @@ export default {
 
       },
       pickDataRule: {
+        
         orderNo: [
           { required: true, message: '领料单号单号不能为空', trigger: 'blur' }
         ],
@@ -378,6 +381,7 @@ export default {
       formLoading: false,
       dataRule: {
         orderNo: [{ required: true, message: '请输入生产单号', trigger: 'blur' }],
+        splitNo: [{ required: true, message: '请输入拆分第几道工序', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
@@ -440,6 +444,9 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
+    splitModifiedFlag(){
+      return this.$store.getters.configData.produce.split_sequence_modified
+    }
   },
 
   async created() {
@@ -497,7 +504,42 @@ export default {
           this.dataFormTwo[i].defaultReport = true
         }
       })
-      this.calcHeight()
+    },
+     // 拆分
+     split_process_relList(index) {
+      console.log(index)
+      this.dataFormTwo.splice(0, index)
+      this.dataFormTwo.forEach((item, i) => {
+        if (i == 0) {
+          item.firstFlag = true
+        } else {
+          item.firstFlag = false
+          item.stockFlag = false
+        }
+        if (i == this.dataFormTwo.length - 1) {
+          item.lastFlag = true
+          item.stockFlag = true
+          if (this.dataFormTwo[i].processingType == 'external_production') {
+            item.reportFlag = false
+          } else {
+            item.reportFlag = true
+          }
+        } else {
+          item.lastFlag = false
+          item.stockFlag = false
+        }
+        if (item.processingType === 'external_production') {
+          item.stockFlag = true
+          item.defaultFlag = true
+          if (i != 0 && this.dataFormTwo[i - 1].processingType != 'external_production') {
+            this.dataFormTwo[i - 1].reportFlag = true
+            this.dataFormTwo[i - 1].stockFlag = true
+            // this.$set()
+            this.dataFormTwo[i - 1].defaultFlag = true
+          }
+          this.dataFormTwo[i].defaultReport = true
+        }
+      })
     },
       // 工艺资源
       handlerOpenSource(index, type) {
@@ -603,7 +645,7 @@ export default {
       } else {
         const tempList = [
           ...this.dataFormTwo,
-          ...list
+          ...listimmediately_buy_flag
         ]
         this.dataFormTwo = tempList.map((item, index) => {
           item.firstFlag = index === 0;
@@ -618,7 +660,7 @@ export default {
       }
 
       this.responseLoading = false
-      this.calcHeight()
+   
     },
  
     init(id) {
@@ -630,8 +672,8 @@ export default {
           this.dataForm.productionWeight = 0
           this.dataForm.splitQuantity = 0
           this.dataForm.orderNo = ''
-          this.$set(this.dataForm,'splitNo',1)
-          this.oldWorkOrderList = res.data.workOrderList
+          this.oldWorkOrderList = deepClone(res.data.workOrderList) 
+      
           this.dataFormTwo = res.data.workOrderList
           
           if (this.$store.getters.configData.produce.steelBallTask) {
@@ -764,6 +806,25 @@ export default {
           ]
         },
       ]
+    },
+    splitNoBlur(){
+      console.log(this.oldWorkOrderList,'是')
+      
+      const splitNo = Number(this.dataForm.splitNo) -1
+      if (!this.dataForm.splitNo)return this.dataFormTwo = deepClone(this.oldWorkOrderList) 
+      if (splitNo === this.oldWorkOrderList.length) {
+        console.log(321)
+      } else{
+        console.log(123)
+        this.dataFormTwo = this.dataFormTwo.splice(splitNo,this.dataFormTwo.length)
+        this.dataFormTwo.forEach((item,index)=>{
+          if (index === 0) {
+             item.firstFlag = true
+          }
+         
+        })
+      }
+      console.log(this.oldWorkOrderList,'444')
     },
      // 可以多选工序
      openSeleceProcessDialog(e, type) {

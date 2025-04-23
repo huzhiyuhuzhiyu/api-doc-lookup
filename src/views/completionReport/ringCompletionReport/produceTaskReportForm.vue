@@ -133,7 +133,7 @@
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
-                  <template v-if="$store.getters.configData.produce.steelBallTask">
+                  <template v-if="$store.getters.configData.produce.steelBallTask && currentProcess.processType !== 'boxing'">
                     <el-col :sm="24" :xs="24">
                       <el-form-item label="生产桶数:" prop="productionBarrels" class="iptLabel"
                         :style="{ marginBottom: iptLabelMargin }">
@@ -155,9 +155,17 @@
                         @blur="handleBlur(item)" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
+                    <el-form-item label="是否强制完成:" class="iptLabel">
+                      <el-select v-model="currentProcess.forceCompleteFlag" placeholder="是否强制完成" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
 
-
-                  <el-col :sm="24" :xs="24">
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
                         @blur="handleBlur2" class="ipt materialWaste" />
@@ -165,7 +173,7 @@
                         style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24">
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"  
                         class="ipt materialWaste" />
@@ -229,15 +237,7 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
-                    <el-form-item label="是否强制完成:" class="iptLabel">
-                      <el-select v-model="currentProcess.forceCompleteFlag" placeholder="是否强制完成" style="width: 100%;"
-                        class="ipt">
-                        <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
+                 
                   <el-col :sm="24" :xs="24">
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">
@@ -295,7 +295,7 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
-    <TransitionRemake ref="TransitionRemake" v-if="TransitionRemakeVisible" @close="()=>{TransitionRemakeVisible = false}" :productionOrderId="dataForm.id" :workList="workList" :currentProcessId="currentProcessId" :currentWorkOrderId="currentProcess.id" :pickingWay="currentProcess.pickingWay" ></TransitionRemake>
+    <TransitionRemake ref="TransitionRemake" v-if="TransitionRemakeVisible" @close="closeRemakeRequest" :productionOrderId="dataForm.id" :workList="workList" :currentProcessId="currentProcessId" :currentWorkOrderId="currentProcess.id" :pickingWay="currentProcess.pickingWay" ></TransitionRemake>
     <TransitionRemakeRecord ref="TransitionRemakeRecord" v-if="TransitionRemakeRecordVisible" :productionOrderId="dataForm.id" @close="TransitionRemakeRecordVisible = false"></TransitionRemakeRecord>
   </div>
 
@@ -434,6 +434,11 @@ export default {
         console.log(this.$refs.TransitionRemake,'所属')
         this.$refs.TransitionRemake.init('',type)
       })
+    },
+    // 关闭工单顺序调换申请
+    closeRemakeRequest(){
+      this.TransitionRemakeVisible = false
+      this.init(this.id)
     },
     closePrint() {
       this.printVisible = false

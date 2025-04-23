@@ -478,7 +478,7 @@ export default {
       console.log(this.btnType)
       if (this.$store.getters.configData.produce.bom) {
         
-        if (this.btnType === 'add' || this.btnType === 'edit') {
+        if (this.btnType === 'add' || this.btnType === 'edit' || this.btnType === 'waitAdd') {
           this.dataFormItems.forEach((tc) => {
             if (tc.prop === 'pickingWay') {
               // this.dataForm.pickingWay = 'dispatch_list'

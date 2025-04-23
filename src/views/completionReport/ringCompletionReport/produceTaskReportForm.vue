@@ -135,13 +135,13 @@
                 <div style="padding: 0 20px;">
                   <template v-if="$store.getters.configData.produce.steelBallTask && currentProcess.processType !== 'boxing'">
                     <el-col :sm="24" :xs="24">
-                      <el-form-item label="生产桶数:" prop="productionBarrels" class="iptLabel"
+                      <el-form-item label="生产桶数" prop="productionBarrels" class="iptLabel"
                         :style="{ marginBottom: iptLabelMargin }">
                         <el-input v-model="currentProcess.productionBarrels" placeholder="生产桶数" class="ipt" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="24" :xs="24">
-                      <el-form-item label="生产重量:" prop="productionWeight" class="iptLabel"
+                      <el-form-item label="生产重量" prop="productionWeight" class="iptLabel"
                         :style="{ marginBottom: iptLabelMargin }">
                         <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt" />
                       </el-form-item>
@@ -414,9 +414,11 @@ export default {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
             this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : 0
+            
           } else {
             this.currentProcess.qualifiedQuantity = 0
           }
+          this.currentProcess.reportingQuantity = this.currentProcess.qualifiedQuantity
           
         }
       },

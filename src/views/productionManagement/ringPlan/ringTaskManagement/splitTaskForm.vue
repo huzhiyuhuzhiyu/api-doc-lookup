@@ -30,19 +30,19 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="!splitModifiedFlag">
-                        <el-form-item label="拆分第几道工序" prop="splitNo">
-                          <el-input v-model="dataForm.splitNo" placeholder="拆分第几道工序" @change="splitNoBlur">
+                        <el-form-item label="拆分工序序号" prop="splitNo">
+                          <el-input v-model="dataForm.splitNo" placeholder="拆分工序序号" @change="splitNoBlur">
                           </el-input>
                         </el-form-item>
                       </el-col>
                       <template v-if="$store.getters.configData.produce.steelBallTask">
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="生产桶数:" prop="productionBarrels" >
+                          <el-form-item label="生产桶数" prop="productionBarrels" >
                             <el-input v-model="dataForm.productionBarrels" placeholder="生产桶数" />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="生产重量:" prop="productionWeight">
+                          <el-form-item label="生产重量" prop="productionWeight">
                             <el-input v-model="dataForm.productionWeight" placeholder="生产重量"  />
                           </el-form-item>
                         </el-col>
@@ -382,7 +382,7 @@ export default {
       formLoading: false,
       dataRule: {
         orderNo: [{ required: true, message: '请输入生产单号', trigger: 'blur' }],
-        splitNo: [{ required: true, message: '请输入拆分第几道工序', trigger: 'blur' }],
+        splitNo: [{ required: true, message: '请输入拆分工序序号', trigger: 'blur' }],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
@@ -466,7 +466,11 @@ export default {
       handler: function (newVal, oldVal) {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            this.dataForm.splitQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+            if (this.weight && this.quantity) {
+              this.dataForm.splitQuantity = Number(newVal) / Number(this.weight) * Number(this.quantity)
+            } else {
+              this.dataForm.splitQuantity = 0
+            }
           } else {
             this.dataForm.splitQuantity = 0
           }
@@ -690,8 +694,8 @@ export default {
             productsId: this.dataForm.productsId
           }
           getProductsWeightQuantityList(obj).then(res=>{
-            this.weight = res.data.records[0].weight
-            this.quantity = res.data.records[0].quantity
+            this.weight = res.data.records.length ? res.data.records[0].weight : 0
+            this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
           })
         }
       })
@@ -952,17 +956,27 @@ export default {
     },
     async handleConfirm(value) {
       console.log(this.dataForm);
+      let falg = true
     
-        try {
-          await this.$refs['dataForm'].validate()
-          this.dataForm.documentStatus = value
-        } catch (e) {
-          console.log('基础信息');
-          console.log(e);
-          throw new Error('orderInfo')
+        if (!this.dataForm.splitNo) {
+          this.$message.error("拆分工序序号不能为空")
+          falg = false
         }
-        if (!this.allocationFlag) {
-          return this.checkFun()
+        if (!this.dataForm.splitQuantity) {
+          this.$message.error("拆分数量不能为空")
+          falg = false
+        }
+        if (this.dataForm.splitQuantity >= Number(this.dataFormTwo[0].waitReportNum)) {
+          this.$message.error("拆分数量不能超过首道可拆分数量")
+          falg = false
+        }
+        
+        if (this.$store.getters.configData.produce.steelBallTask && !this.dataForm.orderNo) {
+          this.$message.error("新生产任务单号不能为空")
+          falg = false
+        }
+        if (falg) {
+           this.checkFun()
         }
         
    

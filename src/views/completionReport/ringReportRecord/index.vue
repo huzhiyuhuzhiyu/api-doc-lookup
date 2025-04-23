@@ -111,12 +111,13 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column label="操作" width="120" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right" v-if="$store.getters.configData.inspect.work_report_inspect">
 
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
                 <el-button size="mini" type="text" @click="editHandle(scope.row)" :disabled="scope.row.lastFlag">修改</el-button> -->
-                <el-button size="mini" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'">查看检验记录</el-button>
+                <el-button size="mini" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'"
+                 >查看检验记录</el-button>
 
               </template>
             </el-table-column>

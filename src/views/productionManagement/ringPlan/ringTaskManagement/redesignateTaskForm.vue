@@ -265,7 +265,11 @@ export default {
       handler: function (newVal, oldVal) {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            this.dataForm.productionQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+            if (this.weight && this.quantity) {
+              this.dataForm.productionQuantity = Number(newVal) / Number(this.weight) * Number(this.quantity)
+            } else {
+              this.dataForm.productionQuantity = 0
+            }
           } else {
             this.dataForm.productionQuantity = 0
           }
@@ -441,8 +445,8 @@ export default {
             productsId: this.dataForm.productsId
           }
           getProductsWeightQuantityList(obj).then(res=>{
-            this.weight = res.data.records[0].weight
-            this.quantity = res.data.records[0].quantity
+            this.weight = res.data.records.length ? res.data.records[0].weight : 0
+            this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
           })
         }
       })

@@ -66,12 +66,12 @@
                       </el-col>
                       <template v-if="$store.getters.configData.produce.steelBallTask">
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="生产桶数:" prop="productionBarrels">
+                          <el-form-item label="生产桶数" prop="productionBarrels">
                             <el-input v-model="dataForm.productionBarrels" placeholder="生产桶数" />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="生产重量:" prop="productionWeight">
+                          <el-form-item label="生产重量" prop="productionWeight">
                             <el-input v-model="dataForm.productionWeight" placeholder="生产重量"  />
                           </el-form-item>
                         </el-col>
@@ -770,7 +770,11 @@ export default {
         if (!this.dataForm.productsDrawingNo) return this.$message.error('请先选择品名规格')
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            this.dataForm.productionQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+            if (this.weight && this.quantity) {
+              this.dataForm.productionQuantity = Number(newVal) / Number(this.weight) * Number(this.quantity)
+            } else {
+              this.dataForm.productionQuantity = 0
+            }
           } else {
             this.dataForm.productionQuantity = 0
           }
@@ -896,8 +900,8 @@ export default {
             productsId: this.dataForm.productsId
           }
           getProductsWeightQuantityList(obj).then(res=>{
-            this.weight = res.data.records[0].weight
-            this.quantity = res.data.records[0].quantity
+            this.weight = res.data.records.length ? res.data.records[0].weight : 0
+            this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
           })
       }
       this.getWarehouseListFun()

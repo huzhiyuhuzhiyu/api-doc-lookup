@@ -86,7 +86,7 @@
                       <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
                       </el-table-column>
                       <el-table-column prop="processCode" label="工序编码" min-width="140" />
-                      <el-table-column prop="waitReportNum" label="可拆分数量" min-width="140" />
+                      <el-table-column prop="productionQuantity" label="可拆分数量" min-width="140" />
                       <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" />
                       <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="140" />
                       <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" />
@@ -390,14 +390,14 @@ export default {
           { validator: this.formValidate({ type: 'noEmtry', params: ["拆分数量不能为空", (errMsg, index) => { this.$message.error(`拆分数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', '拆分数量必须大于0', (errMsg, index) => { this.$message.error(`拆分数量：${errMsg}`) }), trigger: 'blur' },
-          {
-              validator: (rule, value, callback) => {
-                if (!value) { callback() }
-                else if (Number(this.dataForm.splitQuantity) >= Number(this.dataFormTwo[0].waitReportNum)) { callback(new Error('拆分数量不能大于等于可拆分数量')); }
+          // {
+          //     validator: (rule, value, callback) => {
+          //       if (!value) { callback() }
+          //       else if (Number(this.dataForm.splitQuantity) >= Number(this.dataFormTwo[0].productionQuantity)) { callback(new Error('拆分数量不能大于等于可拆分数量')); }
                 
-              },
-              trigger: 'blur'
-            }
+          //     },
+          //     trigger: 'blur'
+          //   }
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
@@ -966,10 +966,10 @@ export default {
           this.$message.error("拆分数量不能为空")
           falg = false
         }
-        if (this.dataForm.splitQuantity >= Number(this.dataFormTwo[0].waitReportNum)) {
-          this.$message.error("拆分数量不能超过首道可拆分数量")
-          falg = false
-        }
+        // if (this.dataForm.splitQuantity >= Number(this.dataFormTwo[0].productionQuantity)) {
+        //   this.$message.error("拆分数量不能超过首道可拆分数量")
+        //   falg = false
+        // }
         
         if (this.$store.getters.configData.produce.steelBallTask && !this.dataForm.orderNo) {
           this.$message.error("新生产任务单号不能为空")

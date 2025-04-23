@@ -87,6 +87,7 @@
                       </el-table-column>
                       <el-table-column prop="processCode" label="工序编码" min-width="140" />
                       <el-table-column prop="waitReportNum" label="可拆分数量" min-width="140" />
+                      <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" />
                       <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="140" />
                       <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" />
                       <el-table-column prop="processType" label="工序类型" width="120">
@@ -388,7 +389,15 @@ export default {
         splitQuantity: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["拆分数量不能为空", (errMsg, index) => { this.$message.error(`拆分数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '拆分数量必须大于0', (errMsg, index) => { this.$message.error(`拆分数量：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '拆分数量必须大于0', (errMsg, index) => { this.$message.error(`拆分数量：${errMsg}`) }), trigger: 'blur' },
+          {
+              validator: (rule, value, callback) => {
+                if (!value) { callback() }
+                else if (Number(this.dataForm.splitQuantity) >= Number(this.dataFormTwo[0].waitReportNum)) { callback(new Error('拆分数量不能大于等于可拆分数量')); }
+                
+              },
+              trigger: 'blur'
+            }
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
@@ -684,7 +693,7 @@ export default {
             this.weight = res.data.records[0].weight
             this.quantity = res.data.records[0].quantity
           })
-      }
+        }
       })
       
       this.creaFun()
@@ -811,7 +820,10 @@ export default {
       console.log(this.oldWorkOrderList,'是')
       
       const splitNo = Number(this.dataForm.splitNo) -1
-      if (!this.dataForm.splitNo)return this.dataFormTwo = deepClone(this.oldWorkOrderList) 
+      if (!this.dataForm.splitNo || this.dataForm.splitNo > this.dataFormTwo.length) {
+        this.dataForm.splitNo = null
+        return this.dataFormTwo = deepClone(this.oldWorkOrderList) 
+      }
       if (splitNo === this.oldWorkOrderList.length) {
         console.log(321)
       } else{

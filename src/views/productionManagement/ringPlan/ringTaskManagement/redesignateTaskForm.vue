@@ -51,7 +51,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="规值" prop="standardValue">
+                        <el-form-item label="规值">
                           <el-select v-model="dataForm.standardValue" placeholder="请选择"
                             :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
@@ -60,8 +60,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="精度等级" prop="productionQuantity">
-                          <el-select v-model="dataForm.accuracyLevel" placeholder="请选择" clearable >
+                        <el-form-item label="精度等级">
+                          <el-select v-model="dataForm.accuracyLevel" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>
@@ -110,6 +110,7 @@ import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 export default {
   mixins: [getProjectList],
   components: {
@@ -184,21 +185,10 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataRule: {
-        lineEdgeId: [{ required: true, message: '请选择线边仓库', trigger: 'blur' }],
-        planDate: [
-          { required: true, message: '计划生产日期不能为空', trigger: 'change' }
+        productionQuantity: [{ required: true, message: '万粒数不能为空', trigger: 'blur' },
+        { validator: this.formValidate('positiveNumber', '万粒数必须大于0', (errMsg, index) => { this.$message.error(`万粒数：${errMsg}`) }), trigger: 'blur' },
         ],
-        productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["生产数量不能为空", (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '生产数量必须大于0', (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }), trigger: 'blur' }
-        ],
-        routingName: [
-          { required: true, message: '工艺路线不能为空', trigger: 'change' }
-        ],
-        productDrawingNo: [
-          { required: true, message: '品名规格不能为空', trigger: 'blur' }
-        ]
+    
       },
       selectArr: [],
 
@@ -239,7 +229,9 @@ export default {
       isCheckingSwitch: "",
       materialList: [],
       linesFormItems_right: [],
-      lineIndex: null
+      lineIndex: null,
+      weight:null,
+      quantity:null,
     }
   },
   computed: {
@@ -268,7 +260,21 @@ export default {
       return totalNums
     },
   },
-
+  watch: {
+    'dataForm.productionWeight': {
+      handler: function (newVal, oldVal) {
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          if (newVal) {
+            this.dataForm.productionQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity)
+          } else {
+            this.dataForm.productionQuantity = 0
+          }
+          
+        }
+      },
+      deep: true
+    }
+  },
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
@@ -430,6 +436,15 @@ export default {
           this.$set(this.dataForm,'splitNo',1)
           this.oldWorkOrderList = res.data.workOrderList
           this.dataFormTwo.data = res.data.workOrderList
+          if (this.$store.getters.configData.produce.steelBallTask) {
+          let obj = {
+            productsId: this.dataForm.productsId
+          }
+          getProductsWeightQuantityList(obj).then(res=>{
+            this.weight = res.data.records[0].weight
+            this.quantity = res.data.records[0].quantity
+          })
+        }
       })
   
       // this.fetchData("PROD")
@@ -528,18 +543,28 @@ export default {
       this.$emit('close', true)
     },
     async handleConfirm(value) {
-      console.log(this.dataForm);
-      this.btnLoading = true
-      reformOrderNum(this.dataForm).then(res => {
-        this.btnLoading = false
-        this.$message.success("改制成功")
-        setTimeout(() => {
-          this.$emit('close')
-        }, 1500);
-      }).catch(error => {
-        this.btnLoading = false
+        try {
+          await this.$refs['dataForm'].validate()
+          this.btnLoading = true
+          reformOrderNum(this.dataForm).then(res => {
+            this.btnLoading = false
+            this.$message.success("改制成功")
+            setTimeout(() => {
+              this.$emit('close')
+            }, 1500);
+          }).catch(error => {
+            this.btnLoading = false
 
       })
+        } catch (e) {
+          console.log('基础信息');
+          console.log(e);
+          throw new Error('orderInfo')
+        }
+        if (!this.allocationFlag) {
+          return this.checkFun()
+        }
+      
      
     
 

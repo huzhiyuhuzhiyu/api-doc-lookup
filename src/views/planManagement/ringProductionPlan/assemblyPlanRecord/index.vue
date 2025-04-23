@@ -68,6 +68,8 @@
                 }}</el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
+              v-if="$store.getters.configData.produce.production_related_customers" />
             <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

@@ -80,6 +80,8 @@
             @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList" hasC @selection-change="selectFun" >
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
+              v-if="$store.getters.configData.produce.production_related_customers" />
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

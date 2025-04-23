@@ -135,7 +135,7 @@
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                   <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                  <el-table-column prop="receivedQuantity" label="已领数量">
+                  <el-table-column prop="receivedQuantity" label="已领数量" v-if="dataForm.pickingWay !== 'none'">
                       <template slot-scope='scope'>
                         <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
                           scope.row.receivedQuantity
@@ -535,7 +535,7 @@ export default {
         // 报工
         let obj = {
           productionOrderNo: this.dataForm.orderNo,
-          classAttribute: "finish_product",
+          classAttribute: "semi_finished",
           reportingType:'normal',  // 报工类型 正常报工
           processId: "",
           "orderItems": [

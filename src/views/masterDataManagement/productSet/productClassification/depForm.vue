@@ -73,6 +73,7 @@ export default {
   data() {
     return {
       requestObjTwo: {
+        type: 'material',
         pageSize: -1,
         classAttribute: '',
         type: 'material',

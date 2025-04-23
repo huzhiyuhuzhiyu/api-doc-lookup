@@ -24,6 +24,11 @@
                           <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.production_related_customers">
+                        <el-form-item label="客户名称">
+                          <el-input v-model="dataForm.cooperativePartnerName" disabled />
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"

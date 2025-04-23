@@ -388,10 +388,10 @@ export default {
       this.listLoading = true
       getfinAccountList(this.listQuery).then(res => {
         console.log(res, '对账单列表');
-        res.data.records.forEach(item => {
-          item.excludingTaxAmount = this.jnpf.numberFormat(item.excludingTaxAmount - item.adjustExcludingTaxAmount)
-          item.taxAmount = this.jnpf.numberFormat(item.taxAmount - item.adjustTaxAmount)
-        });
+        // res.data.records.forEach(item => {
+        //   item.excludingTaxAmount = this.jnpf.numberFormat(item.excludingTaxAmount + item.adjustExcludingTaxAmount)
+        //   item.taxAmount = this.jnpf.numberFormat(item.taxAmount + item.adjustTaxAmount)
+        // });
         this.tableDataList = res.data.records
         this.total = res.data.total
         this.listLoading = false

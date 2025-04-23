@@ -91,6 +91,7 @@
                   <span class="left-title" v-if="processInfo.processType == 'grinding'">磨孔工序</span>
                   <span class="left-title" v-if="processInfo.processType == 'accuracy'">精度工序</span>
                   <span class="left-title" v-if="processInfo.processType == 'fatInjection'">注脂工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'boxing'">装盒工序</span>
                 </div>
               </el-col>
 

@@ -26,6 +26,16 @@
                             :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.production_related_customers">
+                        <el-form-item label="客户名称" prop="cooperativePartnerName">
+                          <ComSelect-page clearable :isdisabled="btnType === 'look'"
+                            v-model="codeConfig.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
+                            :placeholder="'请选择客户名称'" title="选择客户"
+                            treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                            :listRequestObj="PartnerListRequestObj" 
+                            :searchList="PartnerTableSearchList" />
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
                         <el-form-item label="产品名称" prop="productsName">
                           <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
@@ -54,7 +64,18 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-
+                      <template v-if="$store.getters.configData.produce.steelBallTask">
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="生产桶数" prop="productionBarrels">
+                            <el-input v-model="dataForm.productionBarrels" placeholder="生产桶数" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="生产重量" prop="productionWeight">
+                            <el-input v-model="dataForm.productionWeight" placeholder="生产重量"  />
+                          </el-form-item>
+                        </el-col>
+                      </template>
 
 
                       <el-col :sm="6" :xs="24">
@@ -545,7 +566,7 @@ import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
-import { getBimBusinessDetail } from '@/api/basicData/index'
+import { getBimBusinessDetail, getcategoryTree, getCooperativeData } from '@/api/basicData/index'
 import {
   BOMLineList
 } from "@/api/calculationList/MRPOperation"
@@ -553,6 +574,7 @@ import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 export default {
   mixins: [getProjectList],
   components: {
@@ -562,6 +584,33 @@ export default {
   },
   data() {
     return {
+      getCooperativeData,
+      getcategoryTree,
+      //  客户 树请求
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'customer' } },
+      // 客户 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '客户编码' },
+        { prop: 'name', label: '客户名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 客户搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '客户编码', type: 'input' },
+        { prop: 'name', label: '客户名称', type: 'input' }
+      ],
+      // 客户请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'customer'
+      },
+      oldData:[],
       productVisible: false,
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
@@ -596,7 +645,7 @@ export default {
         mainUnit: "",
         planProductionQuantity: "",
         availableArrangeQuantity: "",
-        productionQuantity: "",
+        productionQuantity: null,
         taskMethod: "appoint",
         planStartDate: "",
         planEndDate: "",
@@ -640,7 +689,10 @@ export default {
         ],
         productsDrawingNo: [
           { required: true, message: '品名规格不能为空', trigger: 'blur' }
-        ]
+        ],
+        cooperativePartnerName: [
+          { required: true, message: '客户名称不能为空', trigger: 'change' }
+        ],
       },
       selectArr: [],
 
@@ -681,7 +733,9 @@ export default {
       isCheckingSwitch: "",
       materialList: [],
       linesFormItems_right: [],
-      lineIndex: null
+      lineIndex: null,
+      weight:null,
+      quantity:null,
     }
   },
   computed: {
@@ -710,7 +764,26 @@ export default {
       return totalNums
     },
   },
-
+  watch: {
+    'dataForm.productionWeight': {
+      handler: function (newVal, oldVal) {
+        if (!this.dataForm.productsDrawingNo) return this.$message.error('请先选择品名规格')
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          if (newVal) {
+            if (this.weight && this.quantity) {
+              this.dataForm.productionQuantity = Number(newVal) / Number(this.weight) * Number(this.quantity)
+            } else {
+              this.dataForm.productionQuantity = 0
+            }
+          } else {
+            this.dataForm.productionQuantity = 0
+          }
+          
+        }
+      },
+      deep: true
+    }
+  },
   async created() {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
@@ -769,6 +842,25 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
+      })
+      if (data.length === 0) {
+        this.codeConfig.cooperativePartnerName = ''
+        this.codeConfig.cooperativePartnerCode = ''
+        this.codeConfig.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.codeConfig.cooperativePartnerName = data[0].all.name
+        this.codeConfig.cooperativePartnerCode = data[0].all.code
+        this.codeConfig.cooperativePartnerId = data[0].all.id   
+      }
+    },
     openSelectProductFun() {
       this.productVisible = true
       this.$nextTick(() => {
@@ -803,6 +895,15 @@ export default {
       this.dataForm.productsCode = data.code
       this.dataForm.productsName = data.name
       this.dataForm.productsId = data.id
+      if (this.$store.getters.configData.produce.steelBallTask) {
+          let obj = {
+            productsId: this.dataForm.productsId
+          }
+          getProductsWeightQuantityList(obj).then(res=>{
+            this.weight = res.data.records.length ? res.data.records[0].weight : 0
+            this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
+          })
+      }
       this.getWarehouseListFun()
       if (!this.dataForm.bomId) {
         this.$message.error("该产品没有BOM，请配置BOM后再试")

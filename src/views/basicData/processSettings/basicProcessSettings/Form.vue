@@ -363,6 +363,7 @@ export default {
     
         { label: '打字工序', value: 'typing' },
         { label: '注脂工序', value: 'fatInjection' },
+        { label: '装盒工序', value: 'boxing' },
       ], 
       trueFalseList: [
         { label: '是', value: true },

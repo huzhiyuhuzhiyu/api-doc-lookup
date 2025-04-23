@@ -139,6 +139,9 @@
                           <template v-if="scope.row.processType == 'fatInjection'">
                             注脂工序
                           </template>
+                          <template v-if="scope.row.processType == 'boxing'">
+                            装盒工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -387,6 +390,9 @@
                       <template v-if="scope.row.processType == 'fatInjection'">
                         注脂工序
                       </template>
+                      <template v-if="scope.row.processType == 'boxing'">
+                            装盒工序
+                      </template>
                     </template>
                   </el-table-column>
                   <el-table-column prop="processingType" label="加工类型" width="100">
@@ -414,7 +420,7 @@
                   <el-table-column prop="firstFlag" label="是否首道工序" width="120">
                     <template slot-scope="scope">
                         <el-form-item prop="firstFlag" ref="firstFlag">
-                          <el-checkbox :label="true" v-model="scope.row.firstFlag"  disabled>
+                          <el-checkbox :label="true" v-model="scope.row.firstFlag"  >
                             {{ scope.row.firstFlag ? '是' : '否' }}
                           </el-checkbox>
                         </el-form-item>
@@ -423,7 +429,7 @@
                   <el-table-column prop="pickingFlag" label="是否领料" width="90">
                     <template slot-scope="{ row }">
                         <el-form-item prop="pickingFlag" ref="pickingFlag">
-                          <el-checkbox v-model="row.pickingFlag" :disabled="type == 'look'"
+                          <el-checkbox v-model="row.pickingFlag" 
                             ></el-checkbox>
                         </el-form-item>
                     </template>
@@ -432,7 +438,7 @@
                     <template slot-scope="{ row }">
                         <el-form-item prop="firstInspection" ref="firstInspection">
                           <el-checkbox v-model="row.firstInspection"
-                            :disabled="type == 'look' || row.processingType === 'external_production'"
+                            :disabled="row.processingType === 'external_production'"
                             ></el-checkbox>
                         </el-form-item>
                     </template>
@@ -441,7 +447,7 @@
                     <template slot-scope="{ row }">
                         <el-form-item prop="checkFlag" ref="checkFlag">
                           <el-checkbox v-model="row.checkFlag"
-                            :disabled="type == 'look' || row.processingType === 'external_production'"
+                            :disabled="row.processingType === 'external_production'"
                             ></el-checkbox>
                         </el-form-item>
                     </template>
@@ -472,7 +478,7 @@
                   <el-table-column prop="lastFlag" label="是否末道工序" width="120">
                     <template slot-scope="scope">
                         <el-form-item prop="lastFlag" ref="lastFlag">
-                          <el-checkbox :label="true" v-model="scope.row.lastFlag" disabled>
+                          <el-checkbox :label="true" v-model="scope.row.lastFlag">
                             {{ scope.row.lastFlag ? '是' : '否' }}
                           </el-checkbox>
                         </el-form-item>
@@ -894,6 +900,8 @@ export default {
           item.processTypeName = '打字工序'
         } else if (item.processType == 'fatInjection') {
           item.processTypeName = '注脂工序'
+        } else if (item.processType == 'boxing') {
+          item.processTypeName = '装盒工序'
         }
 
         return item

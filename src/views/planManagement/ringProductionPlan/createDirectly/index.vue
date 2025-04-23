@@ -60,6 +60,16 @@
                             </el-date-picker>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.production_related_customers">
+                          <el-form-item label="客户名称" prop="cooperativePartnerName">
+                            <ComSelect-page clearable :isdisabled="btnType === 'look'"
+                              v-model="planForm.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
+                              :placeholder="'请选择客户名称'" title="选择客户"
+                              treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                              :listRequestObj="PartnerListRequestObj" 
+                              :searchList="PartnerTableSearchList" />
+                          </el-form-item>
+                        </el-col>
                         <el-col :sm="12" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="planForm.remark" placeholder="请输入备注"
@@ -348,7 +358,7 @@
 import { batchAddPlan } from '@/api/plan/index.js'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, } from '@/api/salesManagement/assemblyOrders'
-import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList, getOrderFiledMap, getProductionLineList } from '@/api/basicData/index'
+import { getCounryData, getCooperativeInfo,getcategoryTree, getCooperativeData, getscheduleList, getOrderFiledMap, getProductionLineList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
 import { mapGetters, mapState } from 'vuex'
 import { updatePlanList } from '@/api/calculationList/calculationList'
@@ -364,6 +374,33 @@ export default {
 
   data() {
     return {
+      getCooperativeData,
+      getcategoryTree,
+      //  客户 树请求
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'customer' } },
+      // 客户 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '客户编码' },
+        { prop: 'name', label: '客户名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 客户搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '客户编码', type: 'input' },
+        { prop: 'name', label: '客户名称', type: 'input' }
+      ],
+      // 客户请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'customer'
+      },
+      oldData:[],
       isattachmentswitch: "",
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
@@ -372,6 +409,7 @@ export default {
       ],
       planForm: {
         planType: "add_plan",
+        cooperativePartnerName:"",
         planDate: [],
         planStartDate: "",
         planEndDate: "",
@@ -440,6 +478,9 @@ export default {
         // ],
         projectId: [
           { required: true, message: '所属项目不能为空', trigger: 'change' }
+        ],
+        cooperativePartnerName: [
+          { required: true, message: '客户名称不能为空', trigger: 'change' }
         ],
       },
       customerData: {},
@@ -747,7 +788,32 @@ export default {
       this.productData.splice(data.$index, 1)
     },
 
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
+      })
+      if (data.length === 0) {
+        this.planForm.cooperativePartnerName = ''
+        this.planForm.cooperativePartnerCode = ''
+        this.planForm.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.planForm.cooperativePartnerName = data[0].all.name
+        this.planForm.cooperativePartnerCode = data[0].all.code
+        this.planForm.cooperativePartnerId = data[0].all.id
 
+        this.productData.forEach((item) => {
+          if (this.planForm.cooperativePartnerId) {
+           this.$set(item, 'cooperativePartnerId',this.planForm.cooperativePartnerId)
+          }
+        })
+       
+      }
+    },
 
 
 
@@ -824,6 +890,7 @@ export default {
         item.productsId = item.id
         item.bomId = item.bomId
         item.planType = 'add_plan'
+        this.$set(item, 'cooperativePartnerId',this.planForm.cooperativePartnerId)
         if (this.planForm.planDate.length) {
           this.$set(item, 'planStartDate', this.planForm.planDate[0])
           this.$set(item, 'planEndDate', this.planForm.planDate[1])

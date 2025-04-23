@@ -40,4 +40,16 @@ export default {
         configKeyLabel: '结存方式',
         description: '勾选，按出入库单日期结存；不勾选，按出入库单创建时间结存。'
     },
+    steelBallTask: {
+        configKeyLabel: '钢球任务',
+        description: '开启后，显示相关属性字段'
+    },
+    production_related_customers: {
+        configKeyLabel: '生产关联客户',
+        description: '开启后，计划管理安全库存创建、直接创建；生产管理编排和新建任务将显示客户名称选择，进行生产关联客户'
+    },
+    split_sequence_modified: {
+        configKeyLabel: '拆分工序顺序可修改',
+        description: '开启后，生产管理拆分任务可以修改工序顺序'
+    },
 }

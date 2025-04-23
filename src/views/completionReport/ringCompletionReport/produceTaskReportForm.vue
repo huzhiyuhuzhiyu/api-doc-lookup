@@ -1,11 +1,13 @@
 <template>
   <div class="JNPF-preview-main org-form">
-    <div v-if="!processOutFormVisible">
+    <div v-if="!processOutFormVisible && !TransitionRemakeVisible && !TransitionRemakeRecordVisible">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="'生产任务报工'" />
         <div class="options">
 
           <el-button @click="printBarCode">打印二维码</el-button>
+          <!-- <el-button type="primary" plain v-has="'remakeRecord'" @click="()=>{TransitionRemakeRecordVisible = true}">重制生产申请记录</el-button> -->
+          <el-button type="primary" plain v-has="'remake'" @click="orderRemakeRequest('add')" :disabled="isRemakeRequest">重制生产申请</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -131,7 +133,21 @@
                     }}]</span>
                 </div>
                 <div style="padding: 0 20px;">
-
+                  <template v-if="$store.getters.configData.produce.steelBallTask && currentProcess.processType !== 'boxing'">
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="生产桶数" prop="productionBarrels" class="iptLabel"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.productionBarrels" placeholder="生产桶数" class="ipt" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="生产重量" prop="productionWeight" class="iptLabel"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt" />
+                      </el-form-item>
+                    </el-col>
+                  </template>
+                  
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -139,9 +155,17 @@
                         @blur="handleBlur(item)" />
                     </el-form-item>
                   </el-col>
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
+                    <el-form-item label="是否强制完成:" class="iptLabel">
+                      <el-select v-model="currentProcess.forceCompleteFlag" placeholder="是否强制完成" style="width: 100%;"
+                        class="ipt">
+                        <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
 
-
-                  <el-col :sm="24" :xs="24">
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
                         @blur="handleBlur2" class="ipt materialWaste" />
@@ -149,7 +173,7 @@
                         style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24">
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"  
                         class="ipt materialWaste" />
@@ -213,6 +237,7 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
+                 
                   <el-col :sm="24" :xs="24">
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">
@@ -270,6 +295,8 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+    <TransitionRemake ref="TransitionRemake" v-if="TransitionRemakeVisible" @close="closeRemakeRequest" :productionOrderId="dataForm.id" :workList="workList" :currentProcessId="currentProcessId" :currentWorkOrderId="currentProcess.id" :pickingWay="currentProcess.pickingWay" ></TransitionRemake>
+    <TransitionRemakeRecord ref="TransitionRemakeRecord" v-if="TransitionRemakeRecordVisible" :productionOrderId="dataForm.id" @close="TransitionRemakeRecordVisible = false"></TransitionRemakeRecord>
   </div>
 
 </template>
@@ -290,16 +317,21 @@ import responsWaste from './responsWaste.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
+import TransitionRemake from "@/views/completionReport/ringCompletionReport/TransitionRemake";
+import TransitionRemakeRecord from "@/views/completionReport/ringCompletionReport/TransitionRemakeRecord.vue";
 export default {
 
   components: {
     recordForm, OutForm, MaterialWasteForm,responsWaste,PrintBrowse,
-    PrintDialog,
+    PrintDialog, TransitionRemake, TransitionRemakeRecord,
   },
   data() {
     return {
       printVisible: false,
       printBrowseVisible: false,
+      TransitionRemakeVisible:false,
+      TransitionRemakeRecordVisible:false,
       enCode: "p035",
       fullName: "打印工单码",
       formId: "",
@@ -350,6 +382,16 @@ export default {
           // { required: true, message: '合格数量不能为空', trigger: 'blur' },
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
           // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
+        ],
+        productionBarrels: [
+          { required: true, message: '生产桶数不能为空', trigger: 'blur' },
+          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
+        ],
+        productionWeight: [
+          { required: true, message: '生产重量不能为空', trigger: 'blur' },
+          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ]
       },
       iptLabelMargin: '30px',
@@ -357,14 +399,49 @@ export default {
       materialList: [],
       materialWasteDataList: [],
       responsWasteDataList:[],
-      copyCurrentProcess: {}
+      copyCurrentProcess: {},
+      remakeUnqualifiedQuantity:0,
     }
   },
-
+  computed: {
+    isRemakeRequest(){
+          return this.workList.length > 0 && !+this.remakeUnqualifiedQuantity
+    },
+  },
+  watch: {
+    'currentProcess.productionWeight': {
+      handler: function (newVal, oldVal) {
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          if (newVal) {
+            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : 0
+            
+          } else {
+            this.currentProcess.qualifiedQuantity = 0
+          }
+          this.currentProcess.reportingQuantity = this.currentProcess.qualifiedQuantity
+          this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
+        }
+      },
+      deep: true
+    },
+  },
   mounted() {
   },
 
   methods: {
+    // 工单顺序调换申请
+    orderRemakeRequest(type){
+      this.TransitionRemakeVisible = true
+      this.$nextTick(() => {
+        console.log(this.$refs.TransitionRemake,'所属')
+        this.$refs.TransitionRemake.init('',type)
+      })
+    },
+    // 关闭工单顺序调换申请
+    closeRemakeRequest(){
+      this.TransitionRemakeVisible = false
+      this.init(this.id)
+    },
     closePrint() {
       this.printVisible = false
     },
@@ -412,6 +489,9 @@ export default {
       this.materialWasteDataList = data
       this.currentProcess.materialWasteQuantity=totalNums
         this.handleBlur2()
+      } else {
+        this.currentProcess.materialWasteQuantity= 0
+        this.handleBlur2()
       }
     },
     responsWasteData(data,totalNums){
@@ -419,6 +499,9 @@ export default {
       this.responsWasteDataList = data
       if(totalNums){
         this.currentProcess.responsibilityWasteQuantity=totalNums
+        this.handleBlur2()
+      }else {
+        this.currentProcess.responsibilityWasteQuantity= 0
         this.handleBlur2()
       }
     },
@@ -438,10 +521,25 @@ export default {
       this.id = id
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
-        this.workList = res.data.workOrderList
+        this.workList = res.data.workOrderList.map(item=>{
+          return {
+            ...item,
+          autoUnqualifiedQuantity :item.unqualifiedQuantity
+          }
+          
+        })
+        this.remakeUnqualifiedQuantity = this.workList[0].autoUnqualifiedQuantity
         this.materialList = res.data.materialList
-  
-        
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          let obj = {
+            productsId: this.dataForm.productsId
+          }
+          getProductsWeightQuantityList(obj).then(res=>{
+            this.weight = res.data.records.length ? res.data.records[0].weight : 0
+            this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
+          })
+        }
+      
         if (Object.keys(this.copyCurrentProcess).length !== 0) {
           const matchingItem = res.data.workOrderList.find(item => item.processId === this.copyCurrentProcess.processId);
           if (matchingItem) {
@@ -475,6 +573,7 @@ export default {
       this.currentProcess = item
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
+      this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
@@ -605,17 +704,29 @@ export default {
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null
+          console.log(this.totalReportNum)
+          if (this.currentProcess.processType !== 'boxing') {
           if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
             this.submitFlag = false
             this.$message.error("合格数量+不合格数量不能超过可报工数量")
             return
           }
+          } else {
+            if (!this.totalReportNum) {
+              submitFlag = false
+              this.$message.error("合格数量必须大于0")
+              return
+            }
+          }
           let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
-          if (total <= 0 || !total) {
+          if (this.currentProcess.processType !== 'boxing') {
+            if (total <= 0 || !total) {
             submitFlag = false
             this.$message.error("请填写合格数量、料废数量、责废数量")
             return
           }
+          }
+          
           if (this.currentProcess.reportFlag && this.currentProcessType === 1) {
             if (!this.totalReportNum) {
               submitFlag = false
@@ -649,6 +760,13 @@ export default {
           obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
           obj.aperture = this.currentProcess.aperture
           obj.workOrderId = this.currentProcess.id
+          if (this.currentProcess.processType === 'boxing') {
+            obj.processType = this.currentProcess.processType
+            obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
+            obj.actualQualifiedQuantity = this.currentProcess.qualifiedQuantity
+            obj.mainUnit = '盒'
+          }
+          
           arr.push(obj)
       
           addWorkReport(arr).then(res => {

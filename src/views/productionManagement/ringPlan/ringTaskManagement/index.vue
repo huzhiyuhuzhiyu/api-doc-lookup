@@ -93,6 +93,11 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
+            <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" sortable="custom" v-has="'btn_split'" />
+            <template v-if="$store.getters.configData.product.enable_productName">
+              <el-table-column prop="productionWeight" label="生产重量" min-width="140" sortable="custom" />
+              <el-table-column prop="productionBarrels" label="生产桶数" min-width="140" sortable="custom" />
+            </template>
             <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
               <template slot-scope="scope">
                 <el-progress
@@ -154,6 +159,12 @@
                       v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
+                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
+                      拆分
+                    </el-dropdown-item>
+                    <el-dropdown-item v-has="'btn_redesignate'" v-if="scope.row.orderStatus==='normal'" @click.native="redesignateHander(scope.row.id)">
+                      改制
+                    </el-dropdown-item>
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >
                       生成二维码
                     </el-dropdown-item>
@@ -197,6 +208,46 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="拆分" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="splitVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="splitForm" :model="splitForm" :rules="splitDataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="生产任务单号">
+              <el-input v-model="splitForm.orderNo" placeholder="生产任务单号" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="品名规格">
+              <el-input v-model="splitForm.productDrawingNo" placeholder="品名规格" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="可拆分数量">
+              <el-input v-model="splitForm.canSplitQuantity" placeholder="原生产数" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="拆分数量" prop="splitQuantity">
+              <el-input v-model="splitForm.splitQuantity" placeholder="追加数量" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="工艺路线" prop="routingId">
+              <el-select v-model="splitForm.routingId" placeholder="工艺路线" @change="routingChange">
+                <el-option :key="item.id" :label="item.name" :value="item.id"
+                      v-for="item in routingOptions" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="splitVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="splitSubmitFun()">
           提交</el-button>
       </span>
     </el-dialog>
@@ -257,6 +308,10 @@
     <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
     <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData" @close="closeForm">
     </AddTaskForm>
+    <SplitTaskForm v-if="splitTaskFormVisible" ref="splitTaskForm" @refreshDataList="initData" @close="closeForm">
+    </SplitTaskForm>
+    <RedesignateTaskForm v-if="redesignateTaskFormVisible" ref="redesignateTaskForm" @refreshDataList="initData" @close="closeForm">
+    </RedesignateTaskForm>
     <el-dialog title="生产任务码" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="dialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" style="text-align: center;">
       <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
@@ -264,7 +319,7 @@
   </div>
 </template>
 <script>
-import { ordershengchanList, addOrderNum, detailordershengchan } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, detailordershengchan, splitOrderNum} from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
@@ -286,17 +341,22 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
+import SplitTaskForm from './splitTaskForm.vue'
+import RedesignateTaskForm from './redesignateTaskForm.vue'
+import { getProcessList,detailProcess } from '@/api/basicData/processSettingss'
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
       dialogVisible:false,
       qrCode:"",
       addTaskFormVisible: false,
+      splitTaskFormVisible:false,
+      redesignateTaskFormVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -323,6 +383,24 @@ export default {
       },
       reworkVisible: false,
       addOrderVisible: false,
+      // 拆分
+      splitVisible: false, 
+      splitForm: {
+        splitQuantity: "",
+        canSplitQuantity: "",
+        orderNo: "",
+        routingId:"",
+      },
+      routingOptions:[],
+      splitDataRule: {
+        splitQuantity: [
+          { required: true, message: '请输入拆分数量', trigger: 'blur' },
+          { validator: this.calcValidate(), trigger: 'blur' },
+        ],
+        routingId: [
+          { required: true, message: '请选择工艺路线', trigger: 'change' },
+        ],
+      },
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
       superQueryVisible: false,
       btnLoading: false,
@@ -495,6 +573,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductionLineListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
+    this.getProcessList()
     this.advancedQueryFuns()
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(3, 0, {
@@ -512,6 +591,38 @@ export default {
   mounted() {
   },
   methods: {
+     //数量验证
+    calcValidate() {
+      console.log(12332222)
+      return (rule, value, callback) => {
+        console.log(value, 'p')
+        if (!value || value == 0) {
+          callback('请输入拆分数量')
+        } else {
+          let flag = false
+          let num_1 = Number(this.splitForm.splitQuantity)
+          let num_2 = Number(this.splitForm.canSplitQuantity)
+
+          if (!(num_1 <= num_2)) {
+            flag = true
+          }
+          if (flag) {
+            callback(new Error('拆分数量超过可拆分数量'))
+          } else {
+            callback()
+          }
+        }
+      }
+    },
+    getProcessList(){
+      const obj = {
+        pageNum: 1,
+        pageSize: -1,
+      }
+      getProcessList(obj).then(res=>{
+        this.routingOptions = res.data.records
+      })
+    },
     // 生成二维码
     generateQRcode(row){
       if (!row.orderNo) {
@@ -791,6 +902,65 @@ export default {
       this.form = data
       this.addOrderVisible = true
     },
+    // 拆分
+    splitHander(id) {
+      this.splitTaskFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.splitTaskForm.init(id)
+      })
+      // this.splitForm = {...data}
+      // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
+      // this.splitVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.splitForm.resetFields();
+      // });
+    },
+     // 改制
+     redesignateHander(id) {
+      this.redesignateTaskFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.redesignateTaskForm.init(id)
+      })
+      // this.splitForm = {...data}
+      // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
+      // this.splitVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.splitForm.resetFields();
+      // });
+    },
+    routingChange(val){
+      detailProcess(val).then(res=>{
+        for (let index = 0; index < res.data.routingLineList.length; index++) {
+          const item = res.data.routingLineList[index];
+          if (!item.routingProResList.length) {
+            this.$message({
+              message: "工艺路线第" + (index + 1) + "行班组、人员、设备需要配置",
+              type: "error",
+            });
+            this.splitForm.routingId = ''
+            break;
+          }
+        }
+      })
+    },
+    // 拆分数量 提交
+    splitSubmitFun() {
+      this.$refs['splitForm'].validate((valid) => {
+        if (valid) {
+          console.log(this.splitForm);
+          this.btnLoading = true
+          splitOrderNum(this.splitForm).then(res => {
+            this.splitVisible = false
+            this.btnLoading = false
+            this.$message.success("拆分成功")
+            this.search('basic')
+          }).catch(error => {
+            this.splitVisible = false
+            this.btnLoading = false
+          })
+        }
+      })
+    },
     // 新建任务
     addTaskFun() {
       this.addTaskFormVisible = true
@@ -886,6 +1056,8 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.addTaskFormVisible = false
+      this.splitTaskFormVisible = false
+      this.redesignateTaskFormVisible = false
       this.formVisible = false
       this.reworkVisible = false
       this.BatchDispatchVisible = false

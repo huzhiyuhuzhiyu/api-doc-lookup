@@ -645,7 +645,7 @@ export default {
         mainUnit: "",
         planProductionQuantity: "",
         availableArrangeQuantity: "",
-        productionQuantity: null,
+        productionQuantity: 0,
         taskMethod: "appoint",
         planStartDate: "",
         planEndDate: "",

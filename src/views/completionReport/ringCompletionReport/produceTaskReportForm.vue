@@ -711,6 +711,12 @@ export default {
             this.$message.error("合格数量+不合格数量不能超过可报工数量")
             return
           }
+          } else {
+            if (!this.totalReportNum) {
+              submitFlag = false
+              this.$message.error("合格数量必须大于0")
+              return
+            }
           }
           let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
           if (this.currentProcess.processType !== 'boxing') {

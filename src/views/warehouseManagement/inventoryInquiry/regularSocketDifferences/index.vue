@@ -30,7 +30,7 @@ export default {
             columnList:[],
             searchList:[],
             superQueryJson:[],
-            exportType:'1246',
+            exportType:'1247',
             exportName:'常规差异',
             accountPeriod:'',
             indexFlag:false,

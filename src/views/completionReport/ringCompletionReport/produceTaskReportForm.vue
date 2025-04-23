@@ -7,7 +7,7 @@
 
           <el-button @click="printBarCode">打印二维码</el-button>
           <el-button type="primary" plain v-has="'remakeRecord'" @click="()=>{TransitionRemakeRecordVisible = true}">重制生产申请记录</el-button>
-          <el-button type="primary" plain v-has="'remake'" @click="orderRemakeRequest('add')">重制生产申请</el-button>
+          <el-button type="primary" plain v-has="'remake'" @click="orderRemakeRequest('add')" :disabled="isRemakeRequest">重制生产申请</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -399,14 +399,14 @@ export default {
       materialList: [],
       materialWasteDataList: [],
       responsWasteDataList:[],
-      copyCurrentProcess: {}
+      copyCurrentProcess: {},
+      remakeUnqualifiedQuantity:0,
     }
   },
   computed: {
-        isRemakeRequest(){
-          return  Number(this.remakeUnqualifiedQuantity) > 0 ? true : false
-         
-        },
+    isRemakeRequest(){
+          return this.workList.length > 0 && !+this.remakeUnqualifiedQuantity
+    },
   },
   watch: {
     'currentProcess.productionWeight': {
@@ -421,7 +421,7 @@ export default {
         }
       },
       deep: true
-    }
+    },
   },
   mounted() {
   },
@@ -521,6 +521,7 @@ export default {
           }
           
         })
+        this.remakeUnqualifiedQuantity = this.workList[0].autoUnqualifiedQuantity
         this.materialList = res.data.materialList
         if (this.$store.getters.configData.produce.steelBallTask) {
           let obj = {
@@ -565,10 +566,6 @@ export default {
       this.currentProcess = item
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
-      console.log(item.unqualifiedQuantity)
-    
-      console.log(item.autoUnqualifiedQuantity,'item.autoUnqualifiedQuantity')
-      console.log(this.remakeUnqualifiedQuantity,'kk')
       this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
       this.$set(this.currentProcess, 'reportingQuantity', 0)
       this.$set(this.currentProcess, 'qualifiedQuantity', "")

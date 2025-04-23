@@ -554,7 +554,7 @@ export default {
           // routingId:
           processId: item.id,
           // bimRoutingProcessResourceDTOList: [],
-          reportFlag: false, // 是否报工
+          reportFlag: true, // 是否报工
           checkFlag: false, // 是否检验
           processingType: item.processingType, // 加工类型
           cooperativePartnerId: null, // 合作伙伴id

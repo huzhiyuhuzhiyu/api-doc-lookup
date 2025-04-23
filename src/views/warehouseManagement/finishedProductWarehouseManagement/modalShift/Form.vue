@@ -30,7 +30,7 @@
                       <el-form-item label="仓库" prop="warehouseName">
                         <ComSelect-list :requestObj="{ type: 'normal', projectId: warehouseInfo.projectId }"
                           :dialogTitle="'选择仓库'" v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId"
-                          :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库"
+                          isdisabled :method="getWarehouseList" placeholder="请选择仓库"
                           @change="changeWarehouse" />
                       </el-form-item>
                     </el-col>
@@ -650,9 +650,10 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { InventorymodalShiftdata, updateInventorymodalShift, detaInventorymodalShiftData } from '@/api/warehouseManagement/modalShift'
 import { stockDisassemblykw } from '@/api/warehouseManagement/productlistChange'
 import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
-import { getWarehouseList } from '@/api/basicData/index'// 仓库树
+import { getWarehouseList,getWarehouseInfo } from '@/api/basicData/index'// 仓库树
 import { getProductionLotList, getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
 import { getBimProcessList } from '@/api/bimProcess'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 export default {
   mixins: [busFlow, flowMixin, getProjectList],
   components: { Process, recordList },
@@ -796,11 +797,13 @@ export default {
         sealingCoverTyping: "",
         shelfSpaceName: "",
         vibrationLevel: "",
-        warehouseId: ""
+        warehouseId: "",
+        classAttributeList:[],
       },
       productTableItems: [ // 明细
         { prop: 'productDrawingNo', label: '品名规格', minWidth: 120 },
         { prop: 'productCode', label: '产品编码', fixed: 'left', minWidth: 160 },
+        { prop: 'warehouseName', label: '仓库名称', minWidth: 120 },
         { prop: 'shelfSpaceName', label: '库位', minWidth: 120 },
         { prop: 'availableQuantity', label: '当前库存', minWidth: 120 },
         { prop: 'mainUnit', label: '单位', minWidth: 120 },
@@ -833,7 +836,7 @@ export default {
         { prop: "productCategoryName", label: "产品分类" },
         { prop: "mainUnit", label: "单位" },
       ],
-
+      classAttributeList:[],
       // 条码选择组件相关参数
       barCodeRequestObjList: [],
       barCodeTableItems: [
@@ -1010,41 +1013,8 @@ export default {
       } catch (error) {
       }
     },
-    // 选择原箱条码
-    addth(id, data, paramsObj) {
-      let index = paramsObj.scope.$index
-      let targetIndex = this.dataFormTwo.data.findIndex(line => line.originBoxBarcode === data[0].all.barCode)
-      if (targetIndex !== -1 && index !== targetIndex) return this.$message.error(`这个条码已经用在产品信息第${targetIndex + 1}行`)
-      this.$nextTick(() => { this.$refs.productForm.validateField('data.' + index + '.' + 'originBoxBarcode') })
-      if (!data || !data.length) {
-        this.dataFormTwo.data[index].originBoxBarcode = ""
-        this.dataFormTwo.data[index].originRealityTotalNum = ""
-      } else {
-        if (this.dataFormTwo.data[index].targetBoxBarcode == '整箱转换') {
-          this.dataFormTwo.data[index].originBoxBarcode = data[0].all.barCode
-          this.dataFormTwo.data[index].originRealityTotalNum = data[0].all.realityTotalNum
-          this.dataFormTwo.data[index].num = this.dataFormTwo.data[index].originRealityTotalNum
-        } else {
-          this.dataFormTwo.data[index].originBoxBarcode = data[0].all.barCode
-          this.dataFormTwo.data[index].originRealityTotalNum = data[0].all.realityTotalNum
-        }
-      }
-    },
-    // 选择目标箱条码
-    targetBox(id, data, paramsObj) {
-      this.$nextTick(() => { this.$refs.productForm.validateField('data.' + index + '.' + 'targetBoxBarcode') })
-      let index = paramsObj.scope.$index
-      if (!data || !data.length) {
-        this.dataFormTwo.data[index].targetBoxBarcode = ""
-        this.dataFormTwo.data[index].targetRealityTotalNum = ""
-      } else {
-        this.dataFormTwo.data[index].targetBoxBarcode = data[0].all.barCode
-        this.dataFormTwo.data[index].targetRealityTotalNum = data[0].all.realityTotalNum ? data[0].all.realityTotalNum : 0
-        if (this.dataFormTwo.data[index].originRealityTotalNum && data[0].all.barCode === '整箱转换') {
-          this.dataFormTwo.data[index].num = this.dataFormTwo.data[index].originRealityTotalNum
-        }
-      }
-    },
+   
+  
     listDataFormatting(res) {
       let data = { barCode: '整箱转换', realityTotalNum: '' }
       let treeData = res.data
@@ -1243,6 +1213,14 @@ export default {
         this.$message.error('请先选择仓库')
       }
     },
+    // 获取当前仓库类别属性
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseInfo.code }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+        this.productRequestObj.classAttributeList = this.classAttributeList
+      })
+    },
     // 添加产品
     submitAllProduct(val, data, paramsObj) {
       data = data.map(item => item.all)
@@ -1322,12 +1300,27 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
+       // 获取仓库id
+    // getWarehouseListFun() {
+    //   getWarehouseList({ code: this.warehouseInfo.warehouseCode }).then(res => {
+    //     this.dataForm.warehouseName = res.data[0].name
+    //     this.dataForm.warehouseId = res.data[0].id
+    //     // 获取仓库详情信息
+    //     getWarehouseInfo(res.data[0].id).then(response => {
+    //       this.warehouseInfo = response.data
+    //       this.dataForm.warehouseType = response.data.type
+          
+    //     })
+    //   })
+    // },
     init(id, btnType, approvalFlag, obj) {
-      this.approvalFlag = approvalFlag
+      console.log("obj",obj);
+      this.approvalFlag = approvalFlag 
       this.dataForm.id = id || ''
       this.btnType = btnType
+      console.log("obj.warehouseInfo",obj.warehouseInfo); 
       this.warehouseInfo = obj.warehouseInfo
-      this.formLoading = true
+      this.formLoading = true 
       if (this.btnType === 'add' || this.btnType === 'edit') {
         this.getBusInfo('b064')
         this.fetchData('MSDH')
@@ -1371,11 +1364,14 @@ export default {
           this.formLoading = false
         })
       } else {
+        // this.getWarehouseListFun()
+        this.getclassAttributeList()
         this.dataForm.warehouseId = this.warehouseInfo.id
         this.dataForm.warehouseName = this.warehouseInfo.name
         this.shelfSpaceRequestObj.warehouseId = this.warehouseInfo.id
         this.productRequestObj.warehouseId = this.warehouseInfo.id
         this.productRequestObj.projectId = this.warehouseInfo.projectId
+        this.allocationFlag = this.warehouseInfo.locationStatus == 'disabled' ? false : true
         this.formLoading = false
       }
     },

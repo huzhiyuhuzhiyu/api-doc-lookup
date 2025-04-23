@@ -295,7 +295,6 @@ export default {
       },
       createTimeArr: [],
       // deliveryDateArr: [],
-      orderDateArr: [],
       total: 0,
       diagramVisible: false,
       formVisible: false,

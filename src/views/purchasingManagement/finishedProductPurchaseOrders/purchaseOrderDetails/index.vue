@@ -232,6 +232,7 @@ export default {
 
   data() {
     return {
+      deliveryDateArr:[],
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,

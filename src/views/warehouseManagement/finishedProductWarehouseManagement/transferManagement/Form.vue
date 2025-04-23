@@ -457,7 +457,7 @@ export default {
       allProductTotal: 0,
       wareHouseVisible: false,
       ProductListRequestObj: {
-        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'],
+        classAttributeList: this.classAttributeList,
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -591,7 +591,7 @@ export default {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
-        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'], 
+        classAttributeList: this.classAttributeList, 
         orderItems: [
           {
             asc: false,
@@ -658,7 +658,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'], 
+        classAttributeList: this.classAttributeList, 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -683,7 +683,7 @@ export default {
     // 获取所有产品列表数据
     initData2() {
       this.listLoading = true
-      this.ProductListRequestObj.classAttributeList = ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB']
+      this.ProductListRequestObj.classAttributeList = this.classAttributeList
 
       this.ProductListRequestObj.warehouseId = this.wareHouseInfo.id
       console.log(this.wareHouseInfo);
@@ -708,7 +708,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttributeList: ['finish_product','semi_finished','raw_material','accessories','spare_parts','JCSB'], 
+        classAttributeList: this.classAttributeList, 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -841,7 +841,7 @@ export default {
       this.btnType = btnType
       console.log("btnty", btnType);
       if (btnType != 'look') {
-        // this.getclassAttributeList()
+        this.getclassAttributeList()
         this.getWarehouseListFun()
       }
       // this.refeshDataFormItems()
@@ -886,12 +886,12 @@ export default {
       }
 
     },
-    // getclassAttributeList() {
-    //   getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
-    //     console.log("类别属性", res);
-    //     this.classAttributeList = res.data
-    //   })
-    // },
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+      })
+    },
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);

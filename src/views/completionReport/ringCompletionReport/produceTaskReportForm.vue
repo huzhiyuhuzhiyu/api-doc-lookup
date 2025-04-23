@@ -6,7 +6,7 @@
         <div class="options">
 
           <el-button @click="printBarCode">打印二维码</el-button>
-          <el-button type="primary" plain v-has="'remakeRecord'" @click="()=>{TransitionRemakeRecordVisible = true}">重制生产申请记录</el-button>
+          <!-- <el-button type="primary" plain v-has="'remakeRecord'" @click="()=>{TransitionRemakeRecordVisible = true}">重制生产申请记录</el-button> -->
           <el-button type="primary" plain v-has="'remake'" @click="orderRemakeRequest('add')" :disabled="isRemakeRequest">重制生产申请</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -419,7 +419,7 @@ export default {
             this.currentProcess.qualifiedQuantity = 0
           }
           this.currentProcess.reportingQuantity = this.currentProcess.qualifiedQuantity
-          
+          this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
         }
       },
       deep: true
@@ -711,11 +711,14 @@ export default {
             return
           }
           let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
-          if (total <= 0 || !total) {
+          if (this.currentProcess.processType !== 'boxing') {
+            if (total <= 0 || !total) {
             submitFlag = false
             this.$message.error("请填写合格数量、料废数量、责废数量")
             return
           }
+          }
+          
           if (this.currentProcess.reportFlag && this.currentProcessType === 1) {
             if (!this.totalReportNum) {
               submitFlag = false

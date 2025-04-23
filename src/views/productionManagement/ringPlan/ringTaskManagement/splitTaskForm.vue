@@ -86,8 +86,8 @@
                       <el-table-column prop="processName" label="工序名称" width="180" show-overflow-tooltip>
                       </el-table-column>
                       <el-table-column prop="processCode" label="工序编码" min-width="140" />
-                      <el-table-column prop="productionQuantity" label="可拆分数量" min-width="140" />
-                      <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" />
+                      <!-- <el-table-column prop="productionQuantity" label="可拆分数量" min-width="140" />
+                      <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" /> -->
                       <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="140" />
                       <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" />
                       <el-table-column prop="processType" label="工序类型" width="120">
@@ -822,7 +822,8 @@ export default {
     },
     splitNoBlur(){
       console.log(this.oldWorkOrderList,'是')
-      
+      if (this.dataForm.splitNo ==0) this.dataForm.splitNo = ''
+      let newData = deepClone(this.oldWorkOrderList)
       const splitNo = Number(this.dataForm.splitNo) -1
       if (!this.dataForm.splitNo || this.dataForm.splitNo > this.dataFormTwo.length) {
         this.dataForm.splitNo = null
@@ -832,7 +833,7 @@ export default {
         console.log(321)
       } else{
         console.log(123)
-        this.dataFormTwo = this.dataFormTwo.splice(splitNo,this.dataFormTwo.length)
+        this.dataFormTwo = newData.splice(splitNo,newData.length)
         this.dataFormTwo.forEach((item,index)=>{
           if (index === 0) {
              item.firstFlag = true

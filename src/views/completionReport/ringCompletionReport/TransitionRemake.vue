@@ -74,10 +74,10 @@
                   </el-collapse-item>
                 </el-collapse>
               </el-tab-pane>
-              <el-tab-pane label="流程信息" name="approvalFlow">
+              <!-- <el-tab-pane label="流程信息" name="approvalFlow">
                 <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId"
                   style="margin-top: 5px;"/>
-              </el-tab-pane>
+              </el-tab-pane> -->
               <el-tab-pane v-if="btnType === 'look' && dataForm.approvalFlag" label="流转记录"
                 name="transferList">
                 <recordList :list='flowTaskOperatorRecordList' :endTime='endTime'/>

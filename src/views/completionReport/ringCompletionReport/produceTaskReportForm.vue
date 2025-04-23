@@ -705,10 +705,12 @@ export default {
         if (valid) {
           let submitFlag = null
           console.log(this.totalReportNum)
+          if (this.currentProcess.processType !== 'boxing') {
           if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
             this.submitFlag = false
             this.$message.error("合格数量+不合格数量不能超过可报工数量")
             return
+          }
           }
           let total = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity, this.currentProcess.qualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
           if (this.currentProcess.processType !== 'boxing') {

@@ -535,7 +535,7 @@ export default {
         // 报工
         let obj = {
           productionOrderNo: this.dataForm.orderNo,
-          classAttribute: "finish_product",
+          classAttribute: "semi_finished",
           reportingType:'normal',  // 报工类型 正常报工
           processId: "",
           "orderItems": [

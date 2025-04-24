@@ -365,7 +365,7 @@
                   :key="601"></el-table-column>
                 <el-table-column prop="logo" label="logo" width="120" sortable="custom" min-width="160"
                   :key="602"></el-table-column>
-                <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom" min-width="160"
+                <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" sortable="custom" min-width="160"
                   :key="603"></el-table-column>
                 <el-table-column prop="material" label="材质" width="120" sortable="custom" min-width="160"
                   :key="604"></el-table-column>

@@ -72,7 +72,7 @@
 
             <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
             <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
-            <el-table-column prop="divideEqually" label="开等分" width="120" sortable="custom"
+            <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" sortable="custom"
               :key="603"></el-table-column>
             <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="603"></el-table-column>
             <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom"></el-table-column>

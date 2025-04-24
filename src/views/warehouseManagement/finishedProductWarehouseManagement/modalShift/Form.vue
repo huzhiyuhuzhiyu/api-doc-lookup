@@ -88,10 +88,10 @@
                       key="originAperture" />
                     <!-- <el-table-column prop="originSpecSize" label="原规格/尺寸" width="140" show-overflow-tooltip key="originSpecSize" /> -->
                     <!-- <el-table-column prop="originLogo" label="原logo" width="160" show-overflow-tooltip key="originLogo" /> -->
-                    <!-- <el-table-column prop="originDivideEqually" label="原开等分" width="160" show-overflow-tooltip key="originDivideEqually" /> -->
+                    <!-- <el-table-column prop="originDivideEqually" label="原盖子" width="160" show-overflow-tooltip key="originDivideEqually" /> -->
                     <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip
                       key="originMaterial" />
-                    <!-- <el-table-column prop="originProtrusion" label="原凸出量" width="160" show-overflow-tooltip key="originProtrusion" /> -->
+                    <!-- <el-table-column prop="originProtrusion" label="原钢球名称" width="160" show-overflow-tooltip key="originProtrusion" /> -->
                     <!-- <el-table-column prop="originPreload" label="原预负荷" width="160" show-overflow-tooltip key="originPreload" /> -->
                     <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip
                       v-if="btnType !== 'look'" key="availableQuantity" />
@@ -315,7 +315,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column> -->
-                    <!-- <el-table-column prop="targetDivideEqually" label="目标开等分" width="160" key="targetDivideEqually">
+                    <!-- <el-table-column prop="targetDivideEqually" label="目标盖子" width="160" key="targetDivideEqually">
                       <template slot-scope="scope">
                         <el-form-item>
                           <el-input v-model="scope.row.targetDivideEqually" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetDivideEqually }}
@@ -332,7 +332,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <!-- <el-table-column prop="targetProtrusion" label="目标凸出量" width="160" key="targetProtrusion">
+                    <!-- <el-table-column prop="targetProtrusion" label="目标钢球名称" width="160" key="targetProtrusion">
                       <template slot-scope="scope">
                         <el-form-item>
                           <el-input v-model="scope.row.targetProtrusion" :disabled="btnType === 'look'" placeholder="请输入">{{ scope.row.targetProtrusion }}
@@ -455,10 +455,10 @@
                   key="originAperture" />
                 <!-- <el-table-column prop="originSpecSize" label="原规格/尺寸" width="140" show-overflow-tooltip key="originSpecSize" /> -->
                 <!-- <el-table-column prop="originLogo" label="原logo" width="160" show-overflow-tooltip key="originLogo" /> -->
-                <!-- <el-table-column prop="originDivideEqually" label="原开等分" width="160" show-overflow-tooltip key="originDivideEqually" /> -->
+                <!-- <el-table-column prop="originDivideEqually" label="原盖子" width="160" show-overflow-tooltip key="originDivideEqually" /> -->
                 <el-table-column prop="originMaterial" label="原材质" width="180" show-overflow-tooltip
                   key="originMaterial" />
-                <!-- <el-table-column prop="originProtrusion" label="原凸出量" width="160" show-overflow-tooltip key="originProtrusion" /> -->
+                <!-- <el-table-column prop="originProtrusion" label="原钢球名称" width="160" show-overflow-tooltip key="originProtrusion" /> -->
                 <!-- <el-table-column prop="originPreload" label="原预负荷" width="160" show-overflow-tooltip key="originPreload" /> -->
 
                 <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip

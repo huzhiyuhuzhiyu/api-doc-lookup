@@ -39,5 +39,7 @@ const getters = {
     specialRequire: state => state.base.specialRequire,  // 特殊要求
     colour: state => state.base.colour,  // 颜色
     accuracyLevel: state => state.base.accuracyLevel,  // 精度等级
+    divideEqually: state => state.base.divideEqually,  // 开等分
+    protrusion: state => state.base.protrusion,  // 凸出量
 }
 export default getters

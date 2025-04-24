@@ -205,7 +205,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="protrusion" label="凸出量" width="120" :key="103" v-if="protrusionFlag === '1'">
+                    <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" :key="103" v-if="protrusionFlag === '1'">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list11" :key="index" :label="item.name" :value="item.name"></el-option>
@@ -275,7 +275,7 @@
               <el-descriptions-item label="精度/振动" :span="2">
                 {{item.accuracyLevel}}/{{ item.vibrationLevel }}
               </el-descriptions-item>
-              <el-descriptions-item label="预负荷/凸出量" :span="2">
+              <el-descriptions-item label="预负荷/钢球名称" :span="2">
                 {{item.preload}}/{{ item.protrusion }}
               </el-descriptions-item>
               <el-descriptions-item label="球中心/倒角" :span="2">
@@ -516,7 +516,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="protrusion" label="凸出量" width="120" :key="103" v-if="protrusionFlag === '1'">
+                <el-table-column prop="protrusion" label="钢球名称" width="120" :key="103" v-if="protrusionFlag === '1'">
                   <template slot-scope="scope">
                     <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
                       <el-option v-for="(item, index) in list11" :key="index" :label="item.name" :value="item.name"></el-option>

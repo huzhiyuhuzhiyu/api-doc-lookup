@@ -378,7 +378,7 @@ export default {
                         {prop: 'specialRequire', label: "特殊要求",visible: specialRequireFlag},
                         {prop: 'material', label: "保持架材质",visible: materialFlag},
                         {prop: 'colour', label: "颜色",visible: colourFlag},
-                        {prop: 'protrusion', label: "凸出量",visible: protrusionFlag},
+                        {prop: 'protrusion', label:this.$store.getters.accuracyLevel,visible: protrusionFlag},
                         {prop: 'preload', label: "预负荷",visible: preloadFlag},
                         {prop: 'specialRequire', label: "特殊要求"},
                         {prop: 'remark', label: "备注"},

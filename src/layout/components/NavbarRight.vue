@@ -1,12 +1,10 @@
 <template>
     <div class="right-menu">
         <el-tooltip content="收藏" placement="bottom">
-            <i class="el-icon-star-off right-menu-item hover-effect" @click="openAddList()"
-                :class="{ 'twinkle': isTwinkle }"></i>
+            <i class="el-icon-star-off right-menu-item hover-effect" @click="openAddList()"></i>
         </el-tooltip>
         <el-tooltip content="收藏夹" placement="bottom">
-            <i class="el-icon-collection right-menu-item hover-effect" @click="openRouterList()"
-                :class="{ 'twinkle': isTwinkle }"></i>
+            <i class="el-icon-collection right-menu-item hover-effect" @click="openRouterList()"></i>
         </el-tooltip>
         <!-- <template v-if="device !== 'mobile'"> -->
         <template v-if="showSearch">

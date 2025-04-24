@@ -201,7 +201,7 @@
                           <el-table-column prop="logo" label="Logo" width="120" key="2116">
 
                           </el-table-column>
-                          <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                          <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" key="2117">
 
                           </el-table-column>
                           <el-table-column prop="material" label="材质" width="120" key="2118">
@@ -427,7 +427,7 @@
                           <el-table-column prop="logo" label="Logo" width="120" key="2116">
 
                           </el-table-column>
-                          <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                          <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" key="2117">
 
                           </el-table-column>
                           <el-table-column prop="material" label="材质" width="120" key="2118">

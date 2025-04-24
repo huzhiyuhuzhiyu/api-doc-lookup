@@ -161,6 +161,8 @@
           <el-table-column prop="gradeText" label="等级" width="100"></el-table-column>
           <el-table-column prop="reconciliationStartDate" label="对账开始日期" width="120"></el-table-column>
           <el-table-column prop="reconciliationEndDate" label="对账结束日期" width="130"></el-table-column>
+          <el-table-column prop="paymentMethodText" label="付款方式" width="120" />
+          <el-table-column prop="remark" label="备注" width="160" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -362,7 +364,16 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-
+        {
+          prop: 'paymentMethodText',
+          label: '付款方式',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
         {
           prop: 'createTime',
           label: '创建时间',
@@ -492,7 +503,9 @@ export default {
         'gradeText',
         'reconciliationStartDate',
         'reconciliationEndDate',
-        'createByName'
+        'createByName',
+        'paymentMethodText',
+        'remark'
       ]
     }
   },

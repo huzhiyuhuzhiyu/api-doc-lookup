@@ -13,6 +13,15 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <el-date-picker v-model="tableQuery.accountPeriod" type="month"
+                          value-format="yyyy-MM" style="width: 100%;" :clearable="false"
+                          popper-class="date_form"
+                          @change="search('basic', 'search')"
+          />
+            </el-form-item>
+          </el-col>
           <template v-for="item in searchList">
 
           <el-col :span="item.searchType === 3 ? 6 : 4">
@@ -156,14 +165,7 @@ export default {
       superQuery: {},
       basicQuery: {},
       searchList: [
-      {
-        fieldValue: '',
-        field: 'accountPeriod',
-        label: '账期',
-        prop: 'accountPeriod',
-        symbol: 'like',
-        searchType: 2
-      },
+  
       { field: 'productsCode', fieldValue: '', label: '物料编号', symbol: 'like', searchType: 1, width: 120 },
         // {
         //   field: 'excludeProcessFlag',
@@ -299,7 +301,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     this.isProjectSwitchFlag = true
-    this.searchList[0].fieldValue= this.jnpf.getToday('YYYY-MM')
+    
 
     this.$nextTick(function () {
   
@@ -484,14 +486,7 @@ export default {
       }
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-      {
-        fieldValue: '',
-        field: 'accountPeriod',
-        label: '账期',
-        prop: 'accountPeriod',
-        symbol: 'like',
-        searchType: 2
-      },
+ 
       { field: 'productsCode', fieldValue: '', label: '物料编号', symbol: 'like', searchType: 1, width: 120 },
         // {
         //   field: 'excludeProcessFlag',
@@ -507,7 +502,7 @@ export default {
         //   ]
         // }
       ]
-      this.searchList[0].fieldValue= this.jnpf.getToday('YYYY-MM')
+      
 
       this.$nextTick(function () {
 

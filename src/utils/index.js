@@ -18,7 +18,13 @@ export function getPromise(){
     }
 }
 
-
+export const elFullScreen = ((() => {
+    const  arr = ['requestFullscreen','mozRequestFullScreen','webkitRequestFullscreen','msRequestFullScreen']
+    const fullScreenFnName = arr.find(item=>document.documentElement[item]) || 'requestFullscreen'
+    return (el) => {
+        el[fullScreenFnName] && el[fullScreenFnName]()
+    };
+})());
 
 
 /**

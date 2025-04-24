@@ -352,9 +352,9 @@
                   </el-col>
 
                   <el-col :sm="24" :xs="24" class="iptLabel">
-                    <el-form-item label="生产人:" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'"
+                    <el-form-item label="生产人:" prop="producerId" v-if="currentProcess.taskMethod != 'not_appoint'"
                       :style="{ marginBottom: producerMargin }">
-                      <el-select v-model="currentProcess.producerName" placeholder="生产人" style="width: 100%;"
+                      <el-select v-model="currentProcess.producerId" placeholder="生产人" style="width: 100%;"
                         class="ipt">
                         <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
                           :value="item.id"></el-option>
@@ -593,7 +593,7 @@ export default {
         reportingTime: [
           { required: true, message: '报工时间不能为空', trigger: 'change' }
         ],
-        producerName: [
+        producerId: [
           { required: true, message: '生产人不能为空', trigger: 'change' }
         ],
         accuracyLevel: [

@@ -11,19 +11,27 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="6" v-if="abProjectSwitchVisible" >
+                    <el-form-item>
+                      <el-select v-model="listQuery.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable>
+                        <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
           <el-col :span="4" v-if="isProductNameSwitch === '1'">
             <el-form-item>
               <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
-          </el-col>
-
+          </el-col> -->
+      
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="deliveryDateArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
@@ -68,7 +76,7 @@
         <JNPF-table v-if="tableFlag" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
-          <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="abProjectSwitchVisible "></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="120"
             v-if="isProductNameSwitch === '1'"></el-table-column>
@@ -186,13 +194,13 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getclassAttributeList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
-Vue.prototype.$getLabel = getLabel
-import getProjectList from '@/mixins/generator/getProjectList'
+Vue.prototype.$getLabel = getLabel 
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 
 export default {
   name: 'purchasingDemandPool',
   components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
-  mixins: [getProjectList],
+  mixins: [AbProjectMixin],
 
   data() {
     return {
@@ -202,7 +210,14 @@ export default {
       isDeputyUnitSwitch: '',
       tableFlag: false,
       superQueryVisible: false,
+
       superQueryJson: [
+      {
+          prop: 'projectId',
+          label: '所属项目',
+          type: 'select',
+          options: []
+        },
         {
           prop: 'productCode',
           label: '产品编码',
@@ -321,6 +336,7 @@ export default {
             column: 'create_time'
           }
         ],
+        projectId:"",
         // orderDistribute:'order_distribute',
         createByName: '',
         createEndTime: '',
@@ -421,6 +437,7 @@ export default {
   },
   mounted() {
     this.getProductClassFun()
+
   },
   async created() {
     await this.getOrderFiledMap()
@@ -448,6 +465,20 @@ export default {
         type: 'input'
       })
     }
+    let arr=[]
+    console.log("this.abProjectList",this.abProjectList);
+    this.abProjectList.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.id
+          }
+          arr.push(obj)
+        })
+        let classAttributeObj = this.superQueryJson.find((item) => item.prop === 'projectId')
+
+if (classAttributeObj) {
+  classAttributeObj.options = arr
+}
     this.advancedQueryFuns()
     this.tableDataFlag = true
 
@@ -661,6 +692,7 @@ export default {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.deliveryDateArr = []
       this.listQuery = {
+        projectId:"",
         orderItems: [
           {
             asc: false,

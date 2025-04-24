@@ -477,6 +477,11 @@ export default {
     this.switchStyle()
   },
   methods: {
+    handleProcessOut() {
+      if (!this.dataForm.id) return this.$message.error("请等待加载完成！")
+      this.$emit('close')
+      this.$emit('handleProcessOut', this.dataForm.id)
+    },
     viewDetailFun(id){
       this.materFormVisible=true
       this.$nextTick(()=>{

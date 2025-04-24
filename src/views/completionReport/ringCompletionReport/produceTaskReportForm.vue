@@ -217,7 +217,7 @@
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">
                       <el-button type="primary" size="mini" @click='report()'>报 工</el-button>
-                      <!-- <el-button type="primary" size="mini" @click='transferOutFun()'>转外协</el-button> -->
+                      <el-button type="primary" size="mini" @click='transferOutFun()'>转外协</el-button>
                       <el-button type="primary" size="mini" @click="reportRecordsFun()">查看报工记录</el-button>
                     </div>
                   </el-col>

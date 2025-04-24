@@ -208,7 +208,8 @@
     <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData"
       @close="closeForm">
     </BatchDispatchForm>
-    <TaskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="initData" @close="closeForm"></TaskForm>
+    <ProcessOutForm v-if="processOutFormVisible" ref="ProcessOutForm" @close="closeForm" @toOutSouringForm="toOutSouringForm" />
+    <TaskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="initData" @close="closeForm" @handleProcessOut="handleProcessOut"></TaskForm>
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
       :fullName="fullName" ref="printForm" />
     <!-- 打印流转卡弹窗选择工单数据 -->
@@ -279,7 +280,7 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintBrowse2 from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import PrintDialog2 from '@/components/no_mount/printDialog'
-
+import ProcessOutForm from './ProcessOutForm.vue';
 import { getPrintList } from '@/api/system/printDev'
 import { excelExport, getOrderFiledMap,getProductionLineList } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -290,13 +291,16 @@ import AddTaskForm from './addTaskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2 },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2,
+    ProcessOutForm, },
   mixins: [getProjectList],
   data() {
     return {
       dialogVisible:false,
       qrCode:"",
       addTaskFormVisible: false,
+      processOutFormVisible:false,
+      outSouringFormVisible:false,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -890,7 +894,20 @@ export default {
       this.reworkVisible = false
       this.BatchDispatchVisible = false
       this.taskFormVisible = false
+      this.processOutFormVisible = false
       this.search()
+    },
+    handleProcessOut(id) {
+      // if (!this.selectArr.length) return this.$message.error("请选择您要工序转外协的任务")
+      // if (this.selectArr.length !== 1) return this.$message.error("单次只能选择一条任务进行工序转外协！")
+      this.processOutFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.ProcessOutForm.init(id)
+      })
+    },
+    toOutSouringForm() {
+      this.processOutFormVisible = false
+      this.outSouringFormVisible = true
     },
     initData() {
       this.listLoading = true

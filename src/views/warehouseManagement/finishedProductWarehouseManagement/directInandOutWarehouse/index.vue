@@ -149,7 +149,7 @@
 
                     <JNPF-table ref="products" :data="productData" custom-column :fixedNO="true"
                       :hasC="btnType != 'look'" v-if="tableDataFlag" @selection-change="handeleProductInfoData" border
-                        :height="customStyleData">
+                        :height="customStyleData" :setColumnDisplayList="columnList">
                       <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
                       <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"
@@ -298,44 +298,10 @@
                             placeholder="原批次号"></el-input>
                         </template>
                       </el-table-column> -->
-                      <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
-                      <!-- <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in scope.row.spaceSizeList" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="logo" label="Logo" width="120" key="2116">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in scope.row.logoList" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in scope.row.divideEquallyList" :key="index"
-                              :label="item.name" :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column> -->
-                      <!-- <el-table-column prop="material" label="材质" width="120" key="2118">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in scope.row.materialList" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column> -->
-                      <el-table-column prop="standardValue" v-if="dataForm.businessType == 'inbound_purchase'"
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                      
+                      <el-table-column prop="standardValue"
+                      v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)"
                         label="规值" width="120" key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
@@ -433,7 +399,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="material" label="保持架材质" width="120" key="2118">
+                      <!-- <el-table-column prop="material" label="保持架材质" width="120" key="2118">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -441,7 +407,7 @@
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="colour" :label="$store.getters.colour" width="120" key="210">
                         <!-- <template slot="header">
                             <span class="required">*</span>打字内容
@@ -460,6 +426,78 @@
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in processList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa017" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="logo" label="Logo" width="120" key="2116" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa019" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="divideEqually" label="开等分" min-width="120" key="2117" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa020" :key="index"
+                              :label="item.name" :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="material" label="材质" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="brand" label="品牌" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.brand" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa011" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="sealingCoverStructure" label="密封盖" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.sealingCoverStructure" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa012" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                       <el-table-column prop="structureType" label="结构类型" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.structureType" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa013" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="noise" label="噪音" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.noise" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa014" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -716,7 +754,8 @@ export default {
     return {
       seleBtnLoading:false,
       customStyleData:0,
-      columnList: [],
+      columnList:['specSize','logo','divideEqually','material','brand',
+      'sealingCoverStructure','structureType','noise',],
       datafilelist: [],
       isattachmentswitch: '',
       attachmentData: {},
@@ -1548,56 +1587,56 @@ export default {
           item.productName = item.name
           item.productsId = item.id
         }
-        // if (this.dataForm.businessType == 'inbound_purchase') {
-        //   console.log(555, item.productCategoryName);
-        //   if (item.productCategoryName == '保持架') {
-        //     let arr = ['pa017', 'pa021']
-        //     arr.forEach(items => {
-        //       let obj1 = {
-        //         pageNum: -1,
-        //         pageSize: -1,
-        //         typeCode: items,//保持架尺寸
-        //       };
-        //       getbimProductAttributesList(obj1).then(res => {
-        //         if (items == 'pa017') {
-        //           console.log(66666);
-        //           this.$set(item, 'spaceSizeList', res.data.records)
-        //           console.log("item", item);
-        //         } else {
-        //           this.$set(item, 'materialList', res.data.records)
+        if (this.dataForm.businessType == 'inbound_purchase') {
+          console.log(555, item.productCategoryName);
+          if (item.productCategoryName == '保持架') {
+            let arr = ['pa017', 'pa021']
+            arr.forEach(items => {
+              let obj1 = {
+                pageNum: -1,
+                pageSize: -1,
+                typeCode: items,//保持架尺寸
+              };
+              getbimProductAttributesList(obj1).then(res => {
+                if (items == 'pa017') {
+                  console.log(66666);
+                  this.$set(item, 'spaceSizeList', res.data.records)
+                  console.log("item", item);
+                } else {
+                  this.$set(item, 'materialList', res.data.records)
 
-        //         }
-        //       })
-        //     });
-        //   }
-        //   if (item.productCategoryName == '防尘盖') {
-        //     let arr = ['pa018', 'pa022']
-        //     arr.forEach(items => {
-        //       let obj1 = {
-        //         pageNum: -1,
-        //         pageSize: -1,
-        //         typeCode: items,//保持架尺寸
-        //       };
-        //       getbimProductAttributesList(obj1).then(res => {
-        //         let list = items == 'pa018' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
-        //         this.$set(item, list, res.data.records)
-        //       })
-        //     });
-        //   }
-        //   let arr = ['pa019', 'pa020']
-        //   arr.forEach(items => {
-        //     let obj1 = {
-        //       pageNum: -1,
-        //       pageSize: 20,
-        //       typeCode: items,
-        //     };
-        //     getbimProductAttributesList(obj1).then(res => {
-        //       let list = items == 'pa019' ? 'logoList' : 'divideEquallyList'
-        //       this.$set(item, list, res.data.records)
-        //     })
-        //   });
+                }
+              })
+            });
+          }
+          if (item.productCategoryName == '防尘盖') {
+            let arr = ['pa018', 'pa022']
+            arr.forEach(items => {
+              let obj1 = {
+                pageNum: -1,
+                pageSize: -1,
+                typeCode: items,//保持架尺寸
+              };
+              getbimProductAttributesList(obj1).then(res => {
+                let list = items == 'pa018' ? 'spaceSizeList' : items == 'pa019' ? 'logoList' : items == 'pa020' ? 'divideEquallyList' : 'materialList'
+                this.$set(item, list, res.data.records)
+              })
+            });
+          }
+          let arr = ['pa019', 'pa020']
+          arr.forEach(items => {
+            let obj1 = {
+              pageNum: -1,
+              pageSize: 20,
+              typeCode: items,
+            };
+            getbimProductAttributesList(obj1).then(res => {
+              let list = items == 'pa019' ? 'logoList' : 'divideEquallyList'
+              this.$set(item, list, res.data.records)
+            })
+          });
 
-        // }
+        }
         
       });
       this.productData=[...this.productData,...arr]

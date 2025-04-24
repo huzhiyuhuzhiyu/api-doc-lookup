@@ -115,7 +115,8 @@
                       </div>
                       </div>
                       <JNPF-table ref="product" :data="productData" custom-column :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'"
+                        :setColumnDisplayList="columnList">
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
@@ -184,8 +185,8 @@
                         <el-table-column prop="taxAmount" label="税额" width="140" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
 
-
-
+                        <el-table-column prop="standardValue" label="规值" width="120" >
+                        </el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
@@ -193,7 +194,25 @@
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="100"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="130"></el-table-column>
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" >
+                     
+                        </el-table-column>
+                        <el-table-column prop="logo" label="Logo" width="120" >
+                        
+                        </el-table-column>
+                        <el-table-column prop="divideEqually" label="开等分" width="120">
+                        
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120">
+                        </el-table-column>
+                        <el-table-column prop="brand" label="品牌" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="structureType" label="结构类型" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="noise" label="噪音" width="120" >
+                        </el-table-column>
                         <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
                           :key="10201"></el-table-column>
@@ -336,7 +355,8 @@
                       </div>
                       </div>
                       <JNPF-table ref="product" :data="productData" custom-column :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'"
+                        :setColumnDisplayList="columnList">
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
@@ -404,8 +424,6 @@
                         <el-table-column prop="taxAmount" label="税额" width="140" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
 
-
-
                         <el-table-column prop="sealingCoverTyping" label="打字内容" width="100" />
                         <el-table-column prop="accuracyLevel" label="精度等级" width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
@@ -413,7 +431,25 @@
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="100"></el-table-column>
-                        <el-table-column prop="material" label="保持架材质" width="130"></el-table-column>
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" >
+                     
+                        </el-table-column>
+                        <el-table-column prop="logo" label="Logo" width="120" >
+                        
+                        </el-table-column>
+                        <el-table-column prop="divideEqually" label="开等分" width="120">
+                        
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120">
+                        </el-table-column>
+                        <el-table-column prop="brand" label="品牌" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="structureType" label="结构类型" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="noise" label="噪音" width="120" >
+                        </el-table-column>
                         <el-table-column prop="colour" label="颜色" width="130"></el-table-column>
                         <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
                           :key="10201"></el-table-column>
@@ -702,6 +738,8 @@ export default {
       productVisible: false,
       selectSaleProductArr: [],
       productData: [],
+      columnList:['specSize','logo','divideEqually','material','brand',
+      'sealingCoverStructure','structureType','noise',],
       selectRows: [],
       listLoading: false,
       currentProductIndex: "",

@@ -227,6 +227,25 @@
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120"></el-table-column>
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" >
+                     
+                        </el-table-column>
+                        <el-table-column prop="logo" label="Logo" width="120" >
+                        
+                        </el-table-column>
+                        <el-table-column prop="divideEqually" label="开等分" width="120">
+                        
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120">
+                        </el-table-column>
+                        <el-table-column prop="brand" label="品牌" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="structureType" label="结构类型" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="noise" label="噪音" width="120" >
+                        </el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"
@@ -466,6 +485,25 @@
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" label="特殊要求" width="120"></el-table-column>
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" >
+                     
+                        </el-table-column>
+                        <el-table-column prop="logo" label="Logo" width="120" >
+                        
+                        </el-table-column>
+                        <el-table-column prop="divideEqually" label="开等分" width="120">
+                        
+                        </el-table-column>
+                        <el-table-column prop="material" label="材质" width="120">
+                        </el-table-column>
+                        <el-table-column prop="brand" label="品牌" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="structureType" label="结构类型" width="120" >
+                        </el-table-column>
+                        <el-table-column prop="noise" label="噪音" width="120" >
+                        </el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" :disabled="btnType == 'look'"

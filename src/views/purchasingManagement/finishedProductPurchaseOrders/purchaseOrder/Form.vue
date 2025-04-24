@@ -250,7 +250,23 @@
                           </el-select>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="specSize" label="规格/尺寸" width="120" >
+                     
+                      </el-table-column>
+                      <el-table-column prop="logo" label="Logo" width="120" >
+                      
+                      </el-table-column>
+                      <el-table-column prop="divideEqually" label="开等分" width="120">
+                      
+                      </el-table-column>
+                      <el-table-column prop="brand" label="品牌" width="120" >
+                      </el-table-column>
+                      <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" >
+                      </el-table-column>
+                      <el-table-column prop="structureType" label="结构类型" width="120" >
+                      </el-table-column>
+                      <el-table-column prop="noise" label="噪音" width="120" >
+                      </el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"
@@ -546,6 +562,23 @@
                       </el-select>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="specSize" label="规格/尺寸" width="120" >
+                     
+                    </el-table-column>
+                    <el-table-column prop="logo" label="Logo" width="120" >
+                    
+                    </el-table-column>
+                    <el-table-column prop="divideEqually" label="开等分" width="120">
+                    
+                    </el-table-column>
+                    <el-table-column prop="brand" label="品牌" width="120" >
+                    </el-table-column>
+                    <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" >
+                    </el-table-column>
+                    <el-table-column prop="structureType" label="结构类型" width="120" >
+                    </el-table-column>
+                    <el-table-column prop="noise" label="噪音" width="120" >
+                    </el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"

@@ -457,7 +457,7 @@ export default {
       allProductTotal: 0,
       wareHouseVisible: false,
       ProductListRequestObj: {
-        classAttributeList: "",
+        classAttributeList: [],
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -658,7 +658,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttributeList: "", 
+        classAttributeList: [], 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -708,7 +708,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttributeList: "", 
+        classAttributeList: [], 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",

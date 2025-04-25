@@ -69,6 +69,9 @@
           <el-table-column prop="state" label="资产状态" min-width="150" sortable="custom" >
             <template  slot-scope="scope">
               <div v-if="scope.row.state=='normal'">正常</div>
+              <div v-if="scope.row.state=='sale'">售出</div>
+              <div v-if="scope.row.state=='discard'">报废</div>
+              <div v-if="scope.row.state=='out'">调出</div>
             </template>
           </el-table-column>
           <el-table-column prop="purchaserName" label="采购人" min-width="150" sortable="custom" />

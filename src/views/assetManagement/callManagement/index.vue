@@ -1,4 +1,5 @@
 <template>
+  <!-- 资产调用管理 -->
   <div class="JNPF-common-layout">
     <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
         <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
@@ -24,12 +25,7 @@
               </el-form-item>
             </el-col>
           </template>
-          <el-col :span="8">
-            <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
-                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
-            </el-form-item>
-          </el-col>
+ 
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -58,7 +54,7 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
-          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
+          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
           <el-table-column prop="name" label="分类名称" width="250" sortable="custom" />
           <el-table-column prop="code" label="分类编码" min-width="150" sortable="custom" />
           <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
@@ -70,16 +66,7 @@
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-                <!-- <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
-                  @click="onHandle(scope.row, 'edit')">
-                  开启仓库
-                </el-button>
-                <el-button v-else type="text" size="mini" @click="offHandle(scope.row.id)">
-                  关闭仓库
-                </el-button> -->
-                <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
-                复制
-              </el-button> -->
+      
               </tableOpts>
             </template>
           </el-table-column>
@@ -95,21 +82,20 @@
   </div>
 </template>
 
-<script>
-import {
-  updataClassAttribute,
-  delClassAttribute,
-  getclassAttributeList,
-  disabledClassAttributeState
-} from '@/api/masterDataManagement/index'
+<script> 
+import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { updateSortBatch } from '@/api/masterDataManagement/index'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'requisitionManagement',
+  name: 'assetCategory',
   components: { Form, SuperQuery },
-  data() {
+  mixins: [AbProjectMixin],
+  data() {  
+
     return {
       searchList: [
         { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
@@ -129,6 +115,7 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
+      superForm:{},
       form: {
         code: '',
         name: '',
@@ -137,8 +124,8 @@ export default {
 
         orderItems: [
           {
-            asc: true,
-            column: 'sort'
+            asc: false,
+            column: 'create_time'
           }
         ]
       },
@@ -157,7 +144,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      columnList: ['remark', 'createTime', 'createByName'],
+      columnList: [],
       createTimeArr: [],
 
       superQueryJson: [
@@ -198,23 +185,20 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-
-  created() {
-    this.superForm = this.form
-    this.initData()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
+  computed: {
+    ...mapState('user', ['token']),
+    ...mapGetters(['userInfo'])
   },
+  async created() {
+    this.superForm = this.form
+    await this.awaitAbProject()
+      console.log("this.abProjectSwitchVisible",this.abProjectSwitchVisible);
+    await this.initData()
+  },
+
+ 
   methods: {
-    changeMove(data) {
-      console.log(data, 'iiiiii')
-      data.forEach(item => {
-        item.sort = item.sortCode
-      })
-      updateSortBatch(data).then(res => {
-        this.$message.success("排序修改成功")
-        this.initData()
-      })
-    },
+ 
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -222,8 +206,8 @@ export default {
     },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      this.form.orderItems[0].asc = order !== 'descending'
-      this.form.orderItems[0].column = newProp
+      this.superForm.orderItems[0].asc = order !== 'descending'
+      this.superForm.orderItems[0].column = newProp
       this.initData()
     },
     changeLeft() {
@@ -243,11 +227,8 @@ export default {
       }
     },
 
-    filterNode(value, data) {
-      if (!value) return true
-      return data.fullName.indexOf(value) !== -1
-    },
-    initData() {
+ 
+    async initData() {
       if (this.createTimeArr && this.createTimeArr.length > 0) {
         this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'
         this.superForm.endTime = this.createTimeArr[1] + ' 23:59:59'
@@ -256,8 +237,11 @@ export default {
         this.superForm.endTime = ''
       }
       this.listLoading = true
-      getclassAttributeList(this.superForm)
-        .then((res) => {
+      console.log("this.abProjectSwitchVisible",this.abProjectSwitchVisible);
+      if(this.abProjectSwitchVisible) this.superForm.projectId=this.userInfo.projectId
+
+
+      await getBimPropertyCategoryList(this.superForm).then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
@@ -303,13 +287,11 @@ export default {
         pageNum: 1,
         pageSize: 20,
         orderItems: [
+        
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
+            column: 'create_time'
+
           }
         ]
       }
@@ -321,11 +303,7 @@ export default {
 
       this.search('basic')
     },
-    handleNodeClick(data, node) {
-      this.form.typeCode = node.data.enCode
-      this.search('basic')
-    },
-
+ 
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
@@ -342,51 +320,14 @@ export default {
         // }, 600);
       }
     },
-    onHandle(row, btn) {
-      this.warehouseFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.warehouseForm.init(row, btn)
-      })
-
-
-    },
-    offHandle(id, btn) {
-      let obj = {
-        id: id,
-        state: 'disabled'
-      }
-      this.$confirm('是否确定禁用', {
-        type: 'warning'
-      })
-        .then(() => {
-          disabledClassAttributeState(obj).then((res) => {
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: '禁用成功',
-              duration: 1500
-            })
-            location.reload()
-          })
-        })
-        .catch(() => { })
-    },
-    copyHandle(id) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, 'copy')
-        })
-        // }, 600);
-      }
-    },
+ 
+   
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
-          delClassAttribute(id).then((res) => {
+          delBimPropertyCategoryList(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

@@ -15,131 +15,214 @@
             <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
-        <div class="main" ref="main" v-loading="formLoading" :element-loading-text="loadingText">
-          <el-tabs v-model="activeName" @tab-click="handleClick" >
-            <el-tab-pane label="基础信息" name="orderInfo">
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="资产分类" prop="categoryName">
-                          <el-input v-model="dataForm.categoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="资产编码" prop="code">
-                          <el-input v-model="dataForm.code" placeholder="请输入资产编码"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                   
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="资产名称" prop="code">
-                          <el-input v-model="dataForm.name" placeholder="请输入资产名称"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="资产规格" prop="drawingNo">
-                          <el-input v-model="dataForm.drawingNo" placeholder="请输入资产规格"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
+        <div class="main" ref="main">
 
-                      <el-col :span="6" v-if="abProjectSwitchVisible" >
-                        <el-form-item label="所属项目" prop="projectId">
-                          <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable :disabled="btnType=='look'">
-                            <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
-                              :value="item.id"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                  
-                      <el-col :span="6"  v-if="btnType=='look'||btnType=='edit'">
-                        <el-form-item prop="eqCode" label="请输入设备工具编码">
-                          <el-input v-model="dataForm.eqCode" placeholder="请输入设备工具编码" disabled />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="投入使用时间" prop="date">
-                          <el-date-picker v-model="dataForm.date" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择投入使用时间"
-                            :disabled="btnType == 'look' ? true : false">
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="资产常用位置" prop="position">
-                          <el-input v-model="dataForm.position" placeholder="请输入资产常用位置"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="资产原值" prop="cost">
-                          <el-input v-model="dataForm.cost" placeholder="请输入资产原值"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="年折旧率" prop="drawingNo">
-                          <el-input v-model="dataForm.drawingNo" placeholder="请输入年折旧率"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="资产净值" prop="drawingNo">
-                          <el-input v-model="dataForm.drawingNo" placeholder="请输入资产净值"
-                            :disabled="btnType == 'look' ? true : false" />
-                        </el-form-item>
-                      </el-col>
+          <div  v-loading="formLoading" :element-loading-text="loadingText">
+            <el-tabs v-model="activeName" @tab-click="handleClick" >
+              <el-tab-pane label="基础信息" name="orderInfo">
+                <el-collapse v-model="activeNames">
+                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                      <el-row :gutter="30" class="custom-row">
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="资产分类" prop="propertyCategoryName">
+                            <el-input v-model="dataForm.propertyCategoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产编码" prop="code">
+                            <el-input v-model="dataForm.code" placeholder="请输入资产编码"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
                
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="资产管理员" prop="assetAdmin">
-                          <user-select v-model="dataForm.assetAdmin" placeholder="请选择资产管理员" clearable
-                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                              </user-select>
-                        </el-form-item>
-                      </el-col>
-                  
-                      <el-col :sm="6" :xs="24" >
-                        <el-form-item label="采购人" prop="purchaseUser">
-                          <user-select v-model="dataForm.purchaseUser" placeholder="请选择采购人" clearable
-                                style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                              </user-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24" >
-                     
-                        <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <!-- 供应商选择弹窗  -->
-                          <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                            v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page"
-                            @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
-                            title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
-                            :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
-                            :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
-                     
-                        </el-form-item>
-                      </el-col> 
- 
-                      <el-col :sm="12" :xs="24">
-                        <el-form-item label="备注" prop="remark">
-                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
- 
-              </el-collapse>
-            </el-tab-pane>
-            <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
-              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
-            </el-tab-pane>
-          </el-tabs>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产名称" prop="name">
+                            <el-input v-model="dataForm.name" placeholder="请输入资产名称"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产规格" prop="spec">
+                            <el-input v-model="dataForm.spec" placeholder="请输入资产规格"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+  
+                        <el-col :span="6" v-if="abProjectSwitchVisible" >
+                          <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable :disabled="btnType=='look'">
+                              <el-option v-for="item in abProjectList" :key="item.id" :label="item.name"
+                                :value="item.id"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+                
+                        <el-col :span="6"  v-if="btnType=='look'||btnType=='edit'">
+                          <el-form-item prop="eqCode" label="设备工具编码">
+                            <el-input v-model="dataForm.eqCode" placeholder="请输入设备工具编码" disabled />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="投入使用日期" prop="userTime">
+                            <el-date-picker v-model="dataForm.userTime" type="date" value-format="yyyy-MM-dd"
+                              style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择投入使用日期"
+                              :disabled="btnType == 'look' ? true : false">
+                            </el-date-picker>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产常用位置" prop="position">
+                            <el-input v-model="dataForm.position" placeholder="请输入资产常用位置"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产原值" prop="costPrice">
+                            <el-input v-model="dataForm.costPrice" placeholder="请输入资产原值"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="年折旧率" prop="depreciationRate">
+                            <el-input v-model="dataForm.depreciationRate" placeholder="请输入年折旧率"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                   
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产净值" prop="netPrice">
+                            <el-input v-model="dataForm.netPrice" placeholder="请输入资产净值"
+                              :disabled="btnType == 'look' ? true : false" />
+                          </el-form-item>
+                        </el-col>
+                 
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="资产管理员" prop="ownerId">
+                            <user-select v-model="dataForm.ownerId" placeholder="请选择资产管理员" clearable
+                                  style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                                </user-select>
+                          </el-form-item>
+                        </el-col>
+                    
+                        <el-col :sm="6" :xs="24" >
+                          <el-form-item label="采购人" prop="purchaserId">
+                            <user-select v-model="dataForm.purchaserId" placeholder="请选择采购人" clearable
+                                  style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                                </user-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" >
+                       
+                          <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                            <!-- 供应商选择弹窗  -->
+                            <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
+                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page"
+                              @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
+                              title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
+                              :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
+                              :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                       
+                          </el-form-item>
+                        </el-col> 
+   
+                        <el-col :sm="12" :xs="24">
+                          <el-form-item label="备注" prop="remark">
+                            <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                          </el-form-item>
+                        </el-col>
+                      </el-row>
+                    </el-form>
+                  </el-collapse-item>
+                  <el-collapse-item title="关联信息" name="associationInfo" class="orderInfo" v-if="btnType=='look'">
+                    <el-radio-group v-model="categoryType"
+                      style="width:100%;border-bottom: 1px solid #dcdfe6 ;margin-top: 8px;">
+                      <el-radio-button v-for="item in categoryTypeList" :key="item.code" style="height: 100%;"
+                        :label="item.code">{{
+                          item.fullName
+                        }}</el-radio-button>
+                    </el-radio-group>
+            
+                    <!-- 采购 -->
+                    <div v-if="categoryType == 'purchase'">
+                  <JNPF-table ref="tableRef" :data="purchaseData" fixedNO v-loading="tableloading" :height="customStyleData"  :partent-or-child="'child'">
+                    <el-table-column prop="orderNo" label="采购单号" min-width="180" />
+                    <el-table-column prop="orderNo" label="供应商名称" min-width="180" />
+                    <el-table-column prop="orderNo" label="联系方式" min-width="180" />
+                    <el-table-column prop="orderNo" label="含税金额" min-width="180" />
+                    <el-table-column prop="orderNo" label="税率" min-width="180" />
+                    <el-table-column prop="orderNo" label="采购单号" min-width="180" />
+                    <el-table-column prop="super" label="申请人" min-width="180" />
+                    <el-table-column prop="deliveryDate" label="状态" width="110" />
+                    <el-table-column prop="excludingTaxTotalAmount" label="创建时间" width="160" />
+                    <el-table-column prop="taxAmount" label="更新时间" width="80" />
+                    <el-table-column prop="totalAmount" label="备注" width="140" />
+                    <el-table-column prop="receivingStatus" label="审批人" align="center" width="120">
+                    </el-table-column>
+                    <el-table-column prop="remark" min-width="180" label="审批说明" />
+                  </JNPF-table>
+                    </div>
+                    <!-- 报废 -->
+           
+                    <div v-if="categoryType == 'scrap'">
+                  <JNPF-table ref="tableRef" :height="customStyleData" :data="scrapData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
+                    <el-table-column prop="orderNo" label="报废单号" min-width="200"></el-table-column>
+                    <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
+                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
+                    <el-table-column prop="deliveryDate" label="创建时间" width="110" />
+                    <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
+                    <el-table-column prop="taxAmount" label="备注" width="80" />
+                    <el-table-column prop="totalAmount" label="审批人" width="140" />
+                    <el-table-column prop="createByName" label="审批说明" />
+                  </JNPF-table>
+                    </div>
+                    <!-- 出售 -->
+                    <div v-if="categoryType == 'sale'">
+                  <JNPF-table ref="tableRef" :height="customStyleData" :data="saleData" fixedNO  :partent-or-child="'child'"
+                    v-loading="tableloading">
+                    <el-table-column prop="orderNo" label="销售单号" min-width="200"></el-table-column>
+                    <el-table-column prop="orderNo" label="客户名称" min-width="200"></el-table-column>
+                    <el-table-column prop="orderNo" label="联系方式" min-width="200"></el-table-column>
+                    <el-table-column prop="orderNo" label="含税金额" min-width="200"></el-table-column>
+                    <el-table-column prop="orderNo" label="税率" min-width="200"></el-table-column>
+                    <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
+                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
+                    <el-table-column prop="deliveryDate" label="创建时间" width="110" />
+                    <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
+                    <el-table-column prop="taxAmount" label="备注" width="80" />
+                    <el-table-column prop="totalAmount" label="审批人" width="140" />
+                    <el-table-column prop="createByName" label="审批说明" />
+                  </JNPF-table>
+                    </div>
+                    <!-- 调出 -->
+                    <div v-if="categoryType == 'call'">
+                  <JNPF-table ref="tableRef" :height="customStyleData" :data="callData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
+                    <el-table-column prop="orderNo" label="调出单号" min-width="200">
+                      <template slot-scope="scope">
+                        <el-link type="primary" @click.native="viewFinishExtendFun(scope.row.id, 'look')">
+                          {{ scope.row.orderNo }}
+                        </el-link>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
+                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
+                    <el-table-column prop="deliveryDate" label="创建时间" width="110" />
+                    <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
+                    <el-table-column prop="taxAmount" label="备注" width="80" />
+                    <el-table-column prop="totalAmount" label="审批人" width="140" />
+                    <el-table-column prop="createByName" label="审批说明" />
+                  </JNPF-table>
+                    </div>
+                  </el-collapse-item>
+                </el-collapse>
+              </el-tab-pane>
+              <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
+                <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
         </div>
   
  
@@ -163,6 +246,14 @@
   </transition>
 </template>
 <script>
+import { addBimProperty,editBimProperty,bimPropertyDetail,checkBimPropertyCode} from '@/api/bimPropertyCategory/index'
+
+
+
+
+
+
+
 import assetCategoryForm from './assetCategoryForm.vue'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
@@ -185,9 +276,22 @@ export default {
   
   data() {
     return {
+      tipsvisible:false,
+      categoryType:"purchase",
+      categoryTypeList: [
+        { code: "purchase", fullName: "资产采购单", },
+        { code: "scrap", fullName: "资产报废单", },
+        { code: "sale", fullName: "资产出售单", },
+        { code: "call", fullName: "资产调用单", },
+
+      ],
+      purchaseData:[],
+      scrapData:[],
+      saleData:[],
+      callData:[],
       btnType:"",
       activeName:'orderInfo',
-      activeNames:['basicInfo'],
+      activeNames:['basicInfo','associationInfo'],
       assetCategoryFormVisible:false,
       getCooperativeData,
       getcategoryTree,
@@ -217,33 +321,26 @@ export default {
       },
       oldData:[],
       dataForm:{
-        categoryName:"",
-        categoryId:"",
+        propertyCategoryName:"",
+        propertyCategoryId:"",
         code:"",
         name:"",
-        assetId:"",
-        drawingNo:"",
+        spec:"",
         projectId:"",
-        date:"",
+        userTime:"",
         position:"",
-        cost:"",
-        rate:"",
-        netAssetValue:"",
-        assetAdmin:"",
-        assetAdminId:"",
-        purchaseUser:"",
-        purchaseUserId:"",
+        costPrice:"",
+        depreciationRate:"",
+        netPrice:"",
+        ownerId:"",
+        purchaserId:"",
         cooperativePartnerName:"",
         cooperativePartnerId:"",
         remark:"",
-        documentType:"",
       },
-
-
-     
       width1: 400,
-      width: 700,
-      height: 530,
+      width: 700, 
+      customStyleData: 0,
  
       activeNameDetail: 'productInfo',
   
@@ -251,7 +348,7 @@ export default {
    
   
       dataRule: {
-        categoryName: [
+        propertyCategoryName: [
           { required: true, message: '资产分类不能为空', trigger: 'change' }
         ],
         code: [
@@ -267,7 +364,7 @@ export default {
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
       },
-    
+      copyForm:{},
     
     }
   },
@@ -277,14 +374,71 @@ export default {
     ...mapState('user', ['token']),
   },
  
+  watch: {
+
+'categoryType': function (newVal) {
+  this.getTabdataList()
+},
+},
   async created() { 
  
   },
-  mounted() {
-     
+  mounted() { 
   },
 
   methods: {
+    continueEdit(){
+ this.tipsvisible=false
+      this.btnType='edit'
+      this.init(this.copyForm.id,'edit')
+    },
+    continueAdd(){
+      this.tipsvisible=false
+      this.btnType='add'
+      this.$refs.dataForm.resetFields();
+    },
+    getTabdataList() {
+  
+  if (this.categoryType == 'purchase') {
+  // 采购
+
+  purchaseOrderList(this.requestObj).then(res => {
+    console.log("采购", res);
+    this.purchaseData = res.data.records
+  })
+} else if (this.categoryType == 'scrap') {
+  // 报废
+  this.requestObj.source = 'mrp'
+  this.requestObj.ordersLineId = this.orderLinesId
+  this.requestObj.orderType = 'procure'
+  purchaseOrderList(this.requestObj).then(res => {
+    console.log("报废", res);
+
+    this.rawData = res.data.records
+  })
+} else if (this.categoryType == 'sale') {
+  // 出售
+  this.requestObj.source = 'plan'
+  this.requestObj.ordersLineId = this.orderLinesId
+  this.requestObj.orderType = 'external'
+  purchaseOrderList(this.requestObj).then(res => {
+    console.log("出售", res);
+
+    this.finishExtendData = res.data.records
+  })
+} else if (this.categoryType == 'call') {
+  // 调用
+  this.requestObj.source = 'mrp'
+  this.requestObj.ordersLineId = this.orderLinesId
+  this.requestObj.orderType = 'external'
+  purchaseOrderList(this.requestObj).then(res => {
+    console.log("调用", res);
+    this.processOutData = res.data.records
+  })
+}
+ 
+},
+
 
     openAssetCategoryDialog(){
       this.assetCategoryFormVisible=true
@@ -294,7 +448,9 @@ export default {
     },
     // 选择资产分类
     selectAssetFun(row){
-
+      console.log("所选择的分类",row);
+      this.dataForm.propertyCategoryName=row.name
+      this.dataForm.propertyCategoryId=row.id
     },
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
@@ -304,9 +460,7 @@ export default {
       return listQuery
     },
     supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
-      })
+     
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''
@@ -324,7 +478,36 @@ export default {
       }
     },
 
+    async switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
 
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight;
+      if (this.btnType == 'look') {
+         maxHeight = mainHeight1 - 580
+
+      } else {
+         maxHeight = mainHeight1 - 500
+      }
+
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = Number(maxHeight) > 0 ? maxHeight : 300
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
+    },
 
 
 
@@ -376,24 +559,24 @@ export default {
         if (valid) {
           let submitFlag = null;
           let f = {};
-          this.dataForm.documentStatus = value
+          // this.dataForm.documentStatus = value
    
-          if (this.datafilelist.length) {
-            this.datafilelist.map((item, index) => {
-              item.bimAttachments = {
-                businessType: "system_attachment",
-                categoryId: this.attachmentData.configValue2,
-                configKey: this.attachmentData.configKey,
-                documentId: item.id,
-                fileFlag: '',
-                sort: index
-              }
-            })
-          }
-          let obj = {
-            attachmentList: this.datafilelist,
-            order: this.dataForm,
-          }
+          // if (this.datafilelist.length) {
+          //   this.datafilelist.map((item, index) => {
+          //     item.bimAttachments = {
+          //       businessType: "system_attachment",
+          //       categoryId: this.attachmentData.configValue2,
+          //       configKey: this.attachmentData.configKey,
+          //       documentId: item.id,
+          //       fileFlag: '',
+          //       sort: index
+          //     }
+          //   })
+          // }
+          // let obj = {
+          //   attachmentList: this.datafilelist,
+          //   order: ,
+          // }
           let filteredArr = []
      
           setTimeout(() => {
@@ -401,14 +584,13 @@ export default {
             this.btnLoading = true
             let formMethod = null;
             if (this.btnType == 'edit') {
-              formMethod = editOrders
+              formMethod = editBimProperty
               this.btnText = "继续修改"
             } else if (this.btnType == 'add' || this.btnType == 'copy') {
-              formMethod = addOrders
+              formMethod = addBimProperty
               this.btnText = "继续新增"
             }
-            console.log("obj", obj);
-            formMethod(obj).then(res => {
+            formMethod(this.dataForm).then(res => {
               let msg = "";
               if (value == "draft") {
                 this.submitmethodsTitle = "保存成功"
@@ -417,27 +599,7 @@ export default {
               }
               this.tipsvisible = true
 
-              let newArray = obj.orderLineList.map(item => {
-                return {
-                  accuracyLevel: item.accuracyLevel,
-                  clearance: item.clearance,
-                  oil: item.oil,
-                  oilQuantity: item.oilQuantity,
-                  packagingMethod: item.packagingMethod,
-                  sealingCoverTyping: item.sealingCoverTyping,
-                  specialRequire: item.specialRequire,
-                  vibrationLevel: item.vibrationLevel,
-                  material: item.material,
-                  colour: item.colour
-                };
-              });
-              let filteredArray = newArray.filter(item => {
-                return Object.values(item).some(value => value !== "");
-              });
-              if (!filteredArray.length) return
-              addBimProductAttributesRecord(newArray).then(res => {
-
-              })
+             
 
             }).catch(() => {
               this.btnLoading = false
@@ -448,7 +610,13 @@ export default {
         }
       })
     },
-   
+    getBimPropertyDetailFun(id){
+      bimPropertyDetail(id).then(res=>{
+        console.log("详情",res);
+        this.dataForm=res.data
+        thiis.copyForm=JSON.parse(JSON.stringify(res.data))
+      })
+    },
    
 
    
@@ -461,6 +629,8 @@ export default {
       this.getBimBusinessDetail()
       console.log("btntype",btnType);
       this.btnType=btnType
+      this.switchStyleheight()
+       if(id)this.getBimPropertyDetailFun(id)
     },
     goBack() {
       this.$emit('close', true)
@@ -487,37 +657,7 @@ export default {
       }).catch(() => { })
     },
  
-    switchStyleheight() {
-      const mainRegion1 = this.$refs.main // 表单页面区域
-      console.log("this.$refs.main", this.$refs.main);
-      const mainHeight1 = mainRegion1.clientHeight
-      // 其他同级组件占用高度
-      let bortherHeight = 0
-      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
-      bortherItems.forEach((item) => {
-        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
-      })
-
-      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
-      let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight;
-      if (this.btnType == 'look') {
-         maxHeight = mainHeight1 - 580
-
-      } else {
-         maxHeight = mainHeight1 - 500
-      }
-
-      console.log(maxHeight, 'maxHeight')
-      this.customStyleData = Number(maxHeight) > 0 ? maxHeight : 300
-      // 附带防抖的监听适配模式屏幕缩放
-      window.onresize = () => {
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          this.switchStyleheight()
-        }, 100)
-      }
-    },
+   
   }
 }
 </script>

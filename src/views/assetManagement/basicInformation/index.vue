@@ -24,12 +24,7 @@
               </el-form-item>
             </el-col>
           </template>
-          <el-col :span="8">
-            <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
-                style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
-            </el-form-item>
-          </el-col>
+      
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -112,16 +107,10 @@
 </template>
 
 <script>
-import {
-  updataClassAttribute,
-  delClassAttribute,
-  getclassAttributeList,
-  disabledClassAttributeState
-} from '@/api/masterDataManagement/index'
+import { delBimProperty,bimPropertyList} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import { updateSortBatch } from '@/api/masterDataManagement/index'
+import SuperQuery from '@/components/SuperQuery/index.vue' 
 export default {
   name: 'basicInformation',
   components: { Form, SuperQuery },
@@ -129,7 +118,7 @@ export default {
     return {
       searchList: [
         { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '资产管理员', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'ownerName', fieldValue: '', label: '资产管理员', symbol: 'like', searchType: 1, width: 120 },
       ],
       superQueryVisible: false,
       title: '更多查询',
@@ -146,7 +135,7 @@ export default {
       userRelationListVisible: false,
       organizeIdTree: [],
       form: {
-        code: '',
+        ownerName: '',
         name: '',
         pageNum: 1,
         pageSize: 20,
@@ -159,11 +148,7 @@ export default {
         ]
       },
 
-      gradeList: [],
-      defaultProps: {
-        children: 'childrenList',
-        label: 'fullName'
-      },
+      
       rules: {
         code: [{}]
       },
@@ -242,9 +227,7 @@ export default {
       this.form.orderItems[0].column = newProp
       this.initData()
     },
-    changeLeft() {
-      this.leftFlag = !this.leftFlag
-    },
+  
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -259,20 +242,11 @@ export default {
       }
     },
 
-    filterNode(value, data) {
-      if (!value) return true
-      return data.fullName.indexOf(value) !== -1
-    },
+  
     initData() {
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.superForm.endTime = this.createTimeArr[1] + ' 23:59:59'
-      } else {
-        this.superForm.startTime = ''
-        this.superForm.endTime = ''
-      }
+     
       this.listLoading = true
-      getclassAttributeList(this.superForm)
+      bimPropertyList(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -331,16 +305,13 @@ export default {
       }
       this.searchList = [
       { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '资产管理员', symbol: 'like', searchType: 1, width: 120 },
+      { field: 'ownerName', fieldValue: '', label: '资产管理员', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')
     },
-    handleNodeClick(data, node) {
-      this.form.typeCode = node.data.enCode
-      this.search('basic')
-    },
+   
 
     addSupplier() {
       this.formVisible = true
@@ -358,58 +329,20 @@ export default {
         // }, 600);
       }
     },
-    onHandle(row, btn) {
-      this.warehouseFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.warehouseForm.init(row, btn)
-      })
-
-
-    },
-    offHandle(id, btn) {
-      let obj = {
-        id: id,
-        state: 'disabled'
-      }
-      this.$confirm('是否确定禁用', {
-        type: 'warning'
-      })
-        .then(() => {
-          disabledClassAttributeState(obj).then((res) => {
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: '禁用成功',
-              duration: 1500
-            })
-            location.reload()
-          })
-        })
-        .catch(() => { })
-    },
-    copyHandle(id) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, 'copy')
-        })
-        // }, 600);
-      }
-    },
+ 
+ 
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
-          delClassAttribute(id).then((res) => {
+          delBimProperty(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',
               message: '删除成功',
               duration: 1500
-            })
-            location.reload()
+            }) 
           })
         })
         .catch(() => { })

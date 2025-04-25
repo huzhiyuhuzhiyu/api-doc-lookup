@@ -38,7 +38,7 @@
               </template>
             </el-table-column>
             </JNPF-table>
-            <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+            <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
               @pagination="searchProductClassAttribute" />
           </div>
         </div>
@@ -49,7 +49,7 @@
 
 <script>
 
-import { getCounryData, getCooperativeData } from '@/api/basicData/index'
+import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index' 
 import { getProvinceList, } from '@/api/system/province'
 import formValidate from "@/utils/formValidate";
 import { addPartnerAddress, editaddress, getAddressInfo, deleteAddress,detailAddress } from '@/api/basicData/index'
@@ -58,6 +58,8 @@ export default {
     return {
       productClassAttribute:false,
       type: '',
+      productList:[],
+      total:0,
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -69,8 +71,8 @@ export default {
         pageSize:20,
         orderItems: [
           {
-            asc: true,
-            column: 'sort'
+            asc: false,
+            column: 'create_time'
           }
         ]
       },
@@ -83,7 +85,10 @@ export default {
   },
   methods: {
     getCateFun(){
-      
+      getBimPropertyCategoryList(this.orderForm).then(res=>{
+        this.productList=res.data.records
+        this.total=res.data.total
+      })
     },
 
     init() {
@@ -94,7 +99,21 @@ export default {
       this.productClassAttribute=false
       this.$emit("selectAssetFun",row)
     },
-    
+    resetProductClassAttribute(){
+        this.orderForm= {
+        name:"",
+        code:"",
+        pageNum:1,
+        pageSize:20,
+        orderItems: [
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
+      }
+      this.getCateFun()
+    }
   }
 }
 </script>

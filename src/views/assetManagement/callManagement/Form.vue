@@ -21,29 +21,7 @@
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" :disabled="dataForm.id" />
         </el-form-item>
-        <el-form-item label="类别图标" v-if="!dataForm.id">
-          <template slot="label">
-            类别图标<span class="required">*</span>
-          </template>
-          <el-row type="flex">
-            <div style="flex:1;">
-              <el-input v-model="dataForm.icon" placeholder="请选择类别图标" readonly :suffix-icon="dataForm.icon">
-                <el-button slot="append" @click="openIconBox">选择</el-button>
-              </el-input>
-            </div>
-            <!-- <el-color-picker v-model="dataForm.propertyJson.iconBackgroundColor" :predefine="[
-              '#188ae2',
-              '#35b8e0',
-              '#26bf8c',
-              '#f9c851',
-              '#ff5b5b',
-              '#5b69bc',
-              '#ff8acc',
-              '#3b3e47',
-              '#282828'
-            ]" /> -->
-          </el-row>
-        </el-form-item>
+   
         <!-- <el-form-item label="排序" prop="sortCode" v-if="!dataForm.id">
           <el-input-number style="width: 100%;" :min="0" :max="999999" v-model="dataForm.sortCode"
             controls-position="right" />
@@ -64,14 +42,8 @@
 </template>
 
 <script>
-import {
-  getClassAttributeInfo,
-  updataClassAttribute,
-  delBimProductAttributes,
-  addClassAttributes,
-  getbimProductAttributesList,
-  checkClassAttributeCode
-} from '@/api/masterDataManagement/index'
+import { addBimPropertyCategoryList,checkBimPropertyCategoryCode,editBimPropertyCategoryList,bimPropertyCategoryDetail} from '@/api/bimPropertyCategory/index'
+
 import iconBox from '@/components/JNPF-iconBox'
 export default {
   components: { iconBox },
@@ -85,11 +57,6 @@ export default {
         name: '',
         remark: '',
         code: '',
-        propertyJson: {
-          moduleId: '',
-          iconBackgroundColor: '',
-          isTree: 0
-        },
         icon: '',
         sortCode: 0
       },
@@ -109,7 +76,7 @@ export default {
                 callback()
               } else {
                 if (this.dataForm.id) {
-                  checkClassAttributeCode(value, this.dataForm.id)
+                  checkBimPropertyCategoryCode({id:this.dataForm.id,code:value})
                     .then((res) => {
                       if (!res.data) {
                         callback()
@@ -121,7 +88,7 @@ export default {
                       callback(new Error(' '))
                     })
                 } else {
-                  checkClassAttributeCode(value, '')
+                  checkBimPropertyCategoryCode({id:'',code:value})
                     .then((res) => {
                       if (!res.data) {
                         callback()
@@ -165,7 +132,7 @@ export default {
         }
         this.title = '新建类别属性'
       } else if (btntype == 'edit') {
-        getClassAttributeInfo(id).then((res) => {
+        bimPropertyCategoryDetail(id).then((res) => {
           this.dataForm.code = res.data.code
           this.autoCode = res.data.code
 
@@ -173,16 +140,6 @@ export default {
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
           this.title = '编辑类别属性'
-        })
-      } else if (btntype == 'copy') {
-        getClassAttributeInfo(id).then((res) => {
-          this.dataForm.code = res.data.code
-          this.autoCode = res.data.code
-
-          this.dataForm.name = res.data.name
-          this.dataForm.remark = res.data.remark
-          this.title = '新增类别属性'
-          // this.dataForm.id = res.data.id
         })
       }
       this.btntype = btntype
@@ -196,38 +153,14 @@ export default {
       })
     },
     dataFormSubmit() {
-      if (!this.dataForm.icon && !this.dataForm.id) return this.$message.error('仓库图标未选择')
       this.$refs['dataForm'].validate((valid) => {
-        let obj = {
-          classAttribute: this.dataForm,
-          menuList: [
-            {
-              category: 'Web',
-              description: '',
-              enCode: this.dataForm.code,
-              enabledMark: 1,
-              fullName: this.dataForm.name,
-              icon: this.dataForm.icon,
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '568432565338243269',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress: 'masterDataManagement/productManagement/${{' + this.dataForm.code + '}}'
-            }
-          ]
-        }
+     
         if (valid) {
           this.btnLoading = true
 
-          let formMethod = this.btntype == 'edit' ? updataClassAttribute : addClassAttributes
+          let formMethod = this.btntype == 'edit' ? editBimPropertyCategoryList : addBimPropertyCategoryList
 
-          if (formMethod == updataClassAttribute) {
+          if (formMethod == editBimPropertyCategoryList) {
             formMethod(this.dataForm)
               .then((response) => {
                 this.$message({
@@ -238,7 +171,6 @@ export default {
                     this.visible = false
                     this.btnLoading = false
                     this.$emit('close', true)
-                    location.reload()
                   }
                 })
               })
@@ -246,7 +178,7 @@ export default {
                 this.btnLoading = false
               })
           } else {
-            formMethod(obj)
+            formMethod(this.dataForm)
               .then((res) => {
                 this.$message({
                   message: '新建成功',
@@ -256,7 +188,6 @@ export default {
                     this.visible = false
                     this.btnLoading = false
                     this.$emit('close', true)
-                    location.reload()
                   }
                 })
               })

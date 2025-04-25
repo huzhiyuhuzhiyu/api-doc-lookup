@@ -1,4 +1,5 @@
 <template>
+  <!-- 资产报废 -->
   <div class="JNPF-common-layout">
     <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
         <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">

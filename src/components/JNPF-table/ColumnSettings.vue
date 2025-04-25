@@ -13,8 +13,8 @@
               @click.self="item.columnVisible = !item.columnVisible">
               <div class="column-item-left">
                 <i class="icon-ym icon-ym-darg column-item-icon"></i>
-                <el-checkbox class="check-box" v-model="item.columnVisible" />
-                <div class="column-item-label">
+                <el-checkbox class="check-box" v-model="item.columnVisible" :disabled="item.className === 'LineRequired'" />
+                <div class="column-item-label" @click="item.columnVisible = !item.columnVisible">
                   <span>{{ item.label }}</span>
                 </div>
               </div>
@@ -202,6 +202,14 @@ $lighterBlue: #1890ff;
         word-break: break-all;
         display: flex;
         align-items: center;
+        width: 160px;
+        span{
+          display: inline-block;
+          width: 160px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
       }
 
       .check-box {

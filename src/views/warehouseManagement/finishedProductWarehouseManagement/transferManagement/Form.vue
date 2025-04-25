@@ -246,10 +246,10 @@
                     <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
                     <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
                     <el-table-column prop="standardValue" label="规值" min-width="120" v-if="standardValueFlag == 1" />
-                    <el-table-column prop="colour" label="颜色" min-width="120" v-if="colourFlag == 1" />
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"
+                    <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120" v-if="colourFlag == 1" />
+                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120"
                       v-if="sealingCoverTypingFlag == 1"></el-table-column>
-                    <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"
+                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120"
                       v-if="accuracyLevelFlag == 1"></el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"
                       v-if="vibrationLevelFlag == 1"></el-table-column>
@@ -260,7 +260,7 @@
                       v-if="apertureFlag == 1"></el-table-column>
                     <el-table-column prop="packagingMethod" label="包装方式" min-width="120"
                       v-if="packagingMethodFlag == 1"></el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" min-width="120"
+                    <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120"
                       v-if="specialRequireFlag == 1"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
 

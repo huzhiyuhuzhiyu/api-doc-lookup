@@ -148,8 +148,8 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                    <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
+                    <!-- <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" sortable="custom" />
+                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom" />
                     <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
                     <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
                     <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />

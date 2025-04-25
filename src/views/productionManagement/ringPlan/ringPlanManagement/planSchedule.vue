@@ -33,14 +33,14 @@
                     }}{{
                       dataForm.mainUnit
                     }}</el-descriptions-item> -->
-                  <el-descriptions-item label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                  <el-descriptions-item label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                  <el-descriptions-item :label="$store.getters.sealingCoverTyping" >{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                  <el-descriptions-item :label="$store.getters.accuracyLevel" >{{ dataForm.accuracyLevel }}</el-descriptions-item>
                   <el-descriptions-item label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
                   <el-descriptions-item label="油脂">{{ dataForm.oil }}</el-descriptions-item>
                   <el-descriptions-item label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
                   <el-descriptions-item label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
                   <el-descriptions-item label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                  <el-descriptions-item label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item :label="$store.getters.specialRequire" >{{ dataForm.specialRequire }}</el-descriptions-item>
                   <el-descriptions-item label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
                     }}</el-descriptions-item>
                 </el-descriptions>

@@ -412,7 +412,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="specSize" label="规格/尺寸" width="120" >
+                        <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -421,7 +421,16 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="logo" label="Logo" width="120" >
+                      <el-table-column prop="aperture" label="孔径" width="120" v-if="$store.getters.configData.orderField.aperture">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa009" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -430,7 +439,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="divideEqually" label="开等分" width="120" >
+                      <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -439,7 +448,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="material" label="材质" width="120" >
+                      <el-table-column prop="material" label="材质" width="120" v-if="$store.getters.configData.orderField.material">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -448,7 +457,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="brand" label="品牌" width="120" >
+                      <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.brand" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -457,7 +466,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" >
+                      <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.sealingCoverStructure" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -466,7 +475,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                       <el-table-column prop="structureType" label="结构类型" width="120" >
+                       <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.structureType" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -475,7 +484,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="noise" label="噪音" width="120" >
+                      <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.noise" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">

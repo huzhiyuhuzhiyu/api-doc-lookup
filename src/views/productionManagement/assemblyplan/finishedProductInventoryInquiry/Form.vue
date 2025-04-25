@@ -124,7 +124,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
-                        <el-form-item label="打字内容" prop="sealingCoverTyping">
+                        <el-form-item :label="$store.getters.sealingCoverTyping"  prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                             style="width: 100%;">
                             <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
@@ -133,7 +133,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="accuracyLevelFlag == 1">
-                        <el-form-item label="精度等级" prop="accuracyLevel">
+                        <el-form-item :label="$store.getters.accuracyLevel"  prop="accuracyLevel">
                           <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                               :value="item.name"></el-option>
@@ -183,7 +183,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="特殊要求" v-if="specialRequireFlag == 1">
+                        <el-form-item :label="$store.getters.specialRequire"  v-if="specialRequireFlag == 1">
                           <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
                             style="width: 100%;">
                             <el-option v-for="(item, index) in list8" :key="index" :label="item.name"

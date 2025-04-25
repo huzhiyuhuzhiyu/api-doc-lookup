@@ -429,7 +429,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <template v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115" v-if="$store.getters.configData.orderField.specSize">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -438,7 +439,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="logo" label="Logo" width="120" key="2116" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <el-table-column prop="logo" label="Logo" width="120" key="2116" v-if="$store.getters.configData.orderField.logo">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -447,7 +448,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="divideEqually" label="开等分" min-width="120" key="2117" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  min-width="120" key="2117" v-if="$store.getters.configData.orderField.divideEqually">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -456,7 +457,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="material" label="材质" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <el-table-column prop="material" label="材质" min-width="120" key="2118" v-if="$store.getters.configData.orderField.material">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -465,7 +466,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="brand" label="品牌" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <el-table-column prop="brand" label="品牌" min-width="120" key="2118" v-if="$store.getters.configData.orderField.brand">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.brand" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -474,7 +475,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="sealingCoverStructure" label="密封盖" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <el-table-column prop="sealingCoverStructure" label="密封盖" min-width="120" key="2118" v-if="$store.getters.configData.orderField.sealingCoverStructure">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.sealingCoverStructure" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -483,7 +484,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                       <el-table-column prop="structureType" label="结构类型" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                       <el-table-column prop="structureType" label="结构类型" min-width="120" key="2118" v-if="$store.getters.configData.orderField.structureType">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.structureType" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -492,7 +493,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="noise" label="噪音" min-width="120" key="2118" v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <el-table-column prop="noise" label="噪音" min-width="120" key="2118" v-if="$store.getters.configData.orderField.noise">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.noise" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -501,6 +502,16 @@
                           </el-select>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="aperture" label="孔径" min-width="120" key="2118" v-if="$store.getters.configData.orderField.aperture">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa009" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      </template>
                       <el-table-column prop="remark" label="备注" width="200" key="128">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.remark"

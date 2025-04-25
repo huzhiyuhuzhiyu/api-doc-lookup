@@ -1,27 +1,12 @@
 export default {
     gobal_protrusion: {
         configKeyLabel: '启用凸出量',
-        description: '启用全局凸出量后，将会显示钢球名称输入字段。',
+        description: '启用全局凸出量后，将会显示凸出量输入字段。',
         mainModule: '全局'
     },
     gobal_preload: {
         configKeyLabel: '启用预负荷',
         description: '启用全局预负荷后，将会显示预负荷输入字段。',
-        mainModule: '全局'
-    },
-    gobal_angle: {
-        configKeyLabel: '启用角度',
-        description: '启用全局角度后，将会显示角度输入字段。',
-        mainModule: '全局'
-    },
-    gobal_logo: {
-        configKeyLabel: '启用logo',
-        description: '启用全局logo后，将会显示logo输入字段。',
-        mainModule: '全局'
-    },
-    gobal_angle: {
-        configKeyLabel: '启用开等分',
-        description: '启用全局开等分后，将会显示开等分输入字段。',
         mainModule: '全局'
     },
     gobal_angle: {
@@ -39,75 +24,54 @@ export default {
         description: '启用后，在销售订单、订单进度、订单变更、仓库管理会显示客户合同号；关闭则在销售订单详情中明细列表展示客户合同号。',
         mainModule: '全局'
     },
-    purchase_clearance: {
-        configKeyLabel: '启用游隙',
-        description: '启用采购订单游隙后，新建采购订单时，将会显示游隙输入字段，对应收货通知单也将显示游隙字段。',
-        mainModule: '采购订单'
+    gobal_specSize: {
+        configKeyLabel: '启用规格/尺寸',
+        description: '启用全局规格/尺寸后，将会显示规格/尺寸输入字段。',
+        mainModule: '全局'
     },
-    purchase_oil: {
-        configKeyLabel: '启用油脂',
-        description: '启用采购订单油脂后，新建采购订单时，将会显示油脂输入字段，对应收货通知单也将显示油脂字段。',
-        mainModule: '采购订单'
+    gobal_logo: {
+        configKeyLabel: '启用LOGO',
+        description: '启用全局LOGO后，将会显示LOGO输入字段。',
+        mainModule: '全局'
     },
-    purchase_oilQuantity: {
-        configKeyLabel: '启用油脂量',
-        description: '启用采购订单油脂量后，新建采购订单时，将会显示油脂量输入字段，对应收货通知单也将显示油脂量字段。',
-        mainModule: '采购订单'
+    gobal_divideEqually: {
+        configKeyLabel: '启用开等分',
+        description: '启用全局开等分后，将会显示开等分输入字段。',
+        mainModule: '全局'
     },
-    purchase_holder: {
-        configKeyLabel: '启用保持架',
-        description: '启用采购保持架后，新建采购订单时，将会显示保持架输入字段，对应收货也将显示保持架字段。',
-        mainModule: '采购订单'
+    gobal_brand: {
+        configKeyLabel: '启用品牌',
+        description: '启用全局品牌后，将会显示品牌输入字段。',
+        mainModule: '全局'
     },
-    purchase_vibrationLevel: {
-        configKeyLabel: '启用振动等级',
-        description: '启用采购订单振动等级后，新建采购订单时，将会显示振动等级输入字段，对应收货也将显示振动等级字段。',
-        mainModule: '采购订单'
+    gobal_sealingCoverStructure: {
+        configKeyLabel: '启用密封盖',
+        description: '启用全局密封盖后，将会显示密封盖输入字段。',
+        mainModule: '全局'
     },
-    purchase_accuracyLevel: {
-        configKeyLabel: '启用精度等级',
-        description: '启用采购订单精度等级后，新建采购订单时，将会显示精度等级输入字段，对应收货也将显示精度等级字段。',
-        mainModule: '采购订单'
+    gobal_structureType: {
+        configKeyLabel: '启用结构类型',
+        description: '启用全局结构类型后，将会显示结构类型输入字段。',
+        mainModule: '全局'
     },
-    purchase_sealingCoverTyping: {
-        configKeyLabel: '启用打字内容',
-        description: '启用采购订单打字内容后，新建采购订单时，将会显示打字内容输入字段，对应收货也将显示打字内容字段。',
-        mainModule: '采购订单'
+    gobal_noise: {
+        configKeyLabel: '启用噪音',
+        description: '启用全局噪音后，将会显示噪音输入字段。',
+        mainModule: '全局'
+    },
+    gobal_aperture: {
+        configKeyLabel: '启用孔径',
+        description: '启用全局孔径后，将会显示孔径输入字段。',
+        mainModule: '全局'
     },
     purchase_standardValue: {
         configKeyLabel: '启用规值',
         description: '启用采购订单规值后，新建采购订单时，将会显示规值输入字段，对应收货也将显示规值字段。',
         mainModule: '采购订单'
     },
-  
     purchase_colour: {
         configKeyLabel: '启用颜色',
         description: '启用采购订单颜色后，新建采购订单时，将会显示颜色输入字段，对应收货也将显示颜色字段。',
-        mainModule: '采购订单'
-    },
-    purchase_brand: {
-        configKeyLabel: '启用品牌',
-        description: '启用采购品牌后，新建采购订单时，将会显示品牌输入字段，对应收货也将显示品牌字段。',
-        mainModule: '采购订单'
-    },
-    purchase_sealingCoverStructure: {
-        configKeyLabel: '启用密封盖',
-        description: '启用采购规格/尺寸后，新建采购订单时，将会显示密封盖输入字段，对应收货也将显示密封盖字段。',
-        mainModule: '采购订单'
-    },
-    purchase_structureType: {
-        configKeyLabel: '启用结构内容',
-        description: '启用采购订单结构内容后，新建采购订单时，将会显示结构内容输入字段，对应收货也将显示结构内容字段。',
-        mainModule: '采购订单'
-    },
-    purchase_noise: {
-        configKeyLabel: '启用噪音',
-        description: '启用采购订单噪音后，新建采购订单时，将会显示噪音输入字段，对应收货也将显示噪音字段。',
-        mainModule: '采购订单'
-    },
-    purchase_specSize: {
-        configKeyLabel: '启用规格/尺寸',
-        description: '启用采购规格/尺寸后，新建采购订单时，将会显示规格/尺寸输入字段，对应收货也将显示规格/尺寸字段。',
         mainModule: '采购订单'
     },
     purchase_material: {
@@ -120,18 +84,36 @@ export default {
         description: '启用采购订单工序后，新建采购订单时，将会显示工序输入字段，对应收货也将显示工序字段。',
         mainModule: '采购订单'
     },
-  
-   
-  
-   
-
-   
-    purchase_specSize: {
-        configKeyLabel: '启用规格/尺寸',
-        description: '启用采购订单规格/尺寸后，新建采购订单时，将会显示规格/尺寸输入字段，对应收货也将显示规格/尺寸字段。',
+    purchase_sealingCoverTyping: {
+        configKeyLabel: '启用打字内容',
+        description: '启用采购订单打字内容后，新建采购订单时，将会显示打字内容输入字段，对应收货也将显示打字内容字段。',
         mainModule: '采购订单'
     },
-  
+    purchase_accuracyLevel: {
+        configKeyLabel: '启用精度等级',
+        description: '启用采购订单精度等级后，新建采购订单时，将会显示精度等级输入字段，对应收货也将显示精度等级字段。',
+        mainModule: '采购订单'
+    },
+    purchase_vibrationLevel: {
+        configKeyLabel: '启用振动等级',
+        description: '启用采购订单振动等级后，新建采购订单时，将会显示振动等级输入字段，对应收货也将显示振动等级字段。',
+        mainModule: '采购订单'
+    },
+    purchase_oil: {
+        configKeyLabel: '启用油脂',
+        description: '启用采购订单油脂后，新建采购订单时，将会显示油脂输入字段，对应收货也将显示油脂字段。',
+        mainModule: '采购订单'
+    },
+    purchase_oilQuantity: {
+        configKeyLabel: '启用油脂量',
+        description: '启用采购订单油脂量后，新建采购订单时，将会显示油脂量输入字段，对应收货也将显示油脂量字段。',
+        mainModule: '采购订单'
+    },
+    purchase_clearance: {
+        configKeyLabel: '启用游隙',
+        description: '启用采购订单游隙后，新建采购订单时，将会显示游隙输入字段，对应收货也将显示游隙字段。',
+        mainModule: '采购订单'
+    },
     purchase_packagingMethod: {
         configKeyLabel: '启用包装方式',
         description: '启用采购订单包装方式后，新建采购订单时，将会显示包装方式输入字段，对应收货也将显示包装方式字段。',
@@ -185,11 +167,6 @@ export default {
     sale_material: {
         configKeyLabel: '启用保持架材质',
         description: '启用销售管理保持架材质后，新建销售管理时，将会显示保持架材质输入字段，对应发货通知单、计划、需求、生产计划等也将显示保持架材质字段。',
-        mainModule: '销售管理'
-    },
-    sale_specSize: {
-        configKeyLabel: '启用规格/尺寸',
-        description: '启用销售管理规格/尺寸后，新建销售管理时，将会显示规格/尺寸输入字段，对应发货通知单、计划、需求、生产计划等也将显示规格/尺寸字段。',
         mainModule: '销售管理'
     },
     sale_colour: {

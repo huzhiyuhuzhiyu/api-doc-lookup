@@ -28,9 +28,9 @@
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
                 <el-descriptions-item label="领料方式">{{ dataForm.pickingWay == 'production_order' ? '生产订单领料' : "工单领料"
                 }}</el-descriptions-item>
-                <el-descriptions-item label="打字内容" v-if="sealingCoverTypingFlag === '1'">{{ dataForm.sealingCoverTyping
+                <el-descriptions-item :label="$store.getters.sealingCoverTyping"  v-if="sealingCoverTypingFlag === '1'">{{ dataForm.sealingCoverTyping
                 }}</el-descriptions-item>
-                <el-descriptions-item label="精度等级" v-if="accuracyLevelFlag === '1'">{{ dataForm.accuracyLevel
+                <el-descriptions-item :label="$store.getters.accuracyLevel"  v-if="accuracyLevelFlag === '1'">{{ dataForm.accuracyLevel
                 }}</el-descriptions-item>
                 <el-descriptions-item label="振动等级" v-if="vibrationLevelFlag === '1'">{{ dataForm.vibrationLevel
                 }}</el-descriptions-item>
@@ -41,11 +41,11 @@
                 }}</el-descriptions-item>
                 <el-descriptions-item label="包装方式" v-if="packagingMethodFlag === '1'">{{ dataForm.packagingMethod
                 }}</el-descriptions-item>
-                <el-descriptions-item label="特殊要求" v-if="specialRequireFlag === '1'">{{ dataForm.specialRequire
+                <el-descriptions-item :label="$store.getters.specialRequire"  v-if="specialRequireFlag === '1'">{{ dataForm.specialRequire
                 }}</el-descriptions-item>
                 <el-descriptions-item label="保持架材质" v-if="materialFlag === '1'">{{ dataForm.material
                 }}</el-descriptions-item>
-                <el-descriptions-item label="颜色" v-if="colourFlag === '1'">{{ dataForm.colour }}</el-descriptions-item>
+                <el-descriptions-item :label="$store.getters.colour" v-if="colourFlag === '1'">{{ dataForm.colour }}</el-descriptions-item>
               </el-descriptions>
             </div>
 

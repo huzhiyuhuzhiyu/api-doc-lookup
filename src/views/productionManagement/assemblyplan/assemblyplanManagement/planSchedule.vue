@@ -31,14 +31,14 @@
                     }}{{
                       dataForm.mainUnit
                     }}</el-descriptions-item> -->
-                  <el-descriptions-item v-if="sealingCoverTypingFlag==1" label="打字内容">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                  <el-descriptions-item v-if="accuracyLevelFlag==1" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                  <el-descriptions-item v-if="sealingCoverTypingFlag==1" :label="$store.getters.sealingCoverTyping" >{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                  <el-descriptions-item v-if="accuracyLevelFlag==1" :label="$store.getters.accuracyLevel" >{{ dataForm.accuracyLevel }}</el-descriptions-item>
                   <el-descriptions-item v-if="vibrationLevelFlag==1" label="振动等级">{{ dataForm.vibrationLevel }}</el-descriptions-item>
                   <el-descriptions-item v-if="oilFlag==1" label="油脂">{{ dataForm.oil }}</el-descriptions-item>
                   <el-descriptions-item v-if="oilQuantityFlag==1" label="油脂量">{{ dataForm.oilQuantity }}</el-descriptions-item>
                   <el-descriptions-item v-if="clearanceFlag==1" label="游隙">{{ dataForm.clearance }}</el-descriptions-item>
                   <el-descriptions-item v-if="packagingMethodFlag==1" label="包装方式">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                  <el-descriptions-item v-if="specialRequireFlag==1" label="特殊要求">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item v-if="specialRequireFlag==1" :label="$store.getters.specialRequire" >{{ dataForm.specialRequire }}</el-descriptions-item>
                   <el-descriptions-item   label="计划日期">{{ dataForm.planStartDate }}至{{ dataForm.planEndDate
                     }}</el-descriptions-item>
                 </el-descriptions>

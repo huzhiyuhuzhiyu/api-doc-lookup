@@ -83,12 +83,12 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="打字内容" prop="sealingCoverTyping">
+                        <el-form-item :label="$store.getters.sealingCoverTyping"  prop="sealingCoverTyping">
                           <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容" disabled></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="精度等级" prop="accuracyLevel">
+                        <el-form-item :label="$store.getters.accuracyLevel"  prop="accuracyLevel">
                           <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级" disabled></el-input>
                         </el-form-item>
                       </el-col>
@@ -125,7 +125,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="特殊要求" prop="specialRequire">
+                        <el-form-item :label="$store.getters.specialRequire"  prop="specialRequire">
                           <el-input v-model="dataForm.specialRequire" placeholder="特殊要求" disabled></el-input>
 
                         </el-form-item>

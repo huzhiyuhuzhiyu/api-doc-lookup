@@ -335,8 +335,8 @@
                         </el-table-column>
                         <el-table-column prop="standardValue" label="规值" width="120" :key="211"
                           v-if="this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase'"></el-table-column>
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="2121"></el-table-column>
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
+                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="2121"></el-table-column>
+                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123"></el-table-column>
                         <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                         <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
                         <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column> -->

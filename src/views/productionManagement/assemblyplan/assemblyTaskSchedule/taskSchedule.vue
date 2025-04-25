@@ -40,16 +40,16 @@
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="工艺路线名称">{{ dataForm.routingName }}</el-descriptions-item>
-                  <el-descriptions-item label="打字内容" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
-                  <el-descriptions-item label="精度等级" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                  <el-descriptions-item :label="$store.getters.sealingCoverTyping"  v-if="sealingCoverTypingFlag==='1'">{{ dataForm.sealingCoverTyping }}</el-descriptions-item>
+                  <el-descriptions-item :label="$store.getters.accuracyLevel"  v-if="sealingCoverTypingFlag==='1'">{{ dataForm.accuracyLevel }}</el-descriptions-item>
                   <el-descriptions-item label="振动等级" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.vibrationLevel }}</el-descriptions-item>
                   <el-descriptions-item label="油脂" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.oil }}</el-descriptions-item>
                   <el-descriptions-item label="油脂量" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.oilQuantity }}</el-descriptions-item>
                   <el-descriptions-item label="游隙" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.clearance }}</el-descriptions-item>
                   <el-descriptions-item label="包装方式" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.packagingMethod }}</el-descriptions-item>
-                  <el-descriptions-item label="特殊要求" v-if="sealingCoverTypingFlag==='1'">{{ dataForm.specialRequire }}</el-descriptions-item>
+                  <el-descriptions-item :label="$store.getters.specialRequire"  v-if="sealingCoverTypingFlag==='1'">{{ dataForm.specialRequire }}</el-descriptions-item>
                   <el-descriptions-item label="保持架材质" v-if="materialFlag==='1'">{{ dataForm.material }}</el-descriptions-item>
-                  <el-descriptions-item label="颜色" v-if="colourFlag==='1'">{{ dataForm.colour }}</el-descriptions-item>
+                  <el-descriptions-item :label="$store.getters.colour"  v-if="colourFlag==='1'">{{ dataForm.colour }}</el-descriptions-item>
                   <el-descriptions-item label="计划单号">{{ dataForm.productionPlanNo }}</el-descriptions-item>
                   <!-- <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'normal'">进行中</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'closed'">关闭</el-descriptions-item>

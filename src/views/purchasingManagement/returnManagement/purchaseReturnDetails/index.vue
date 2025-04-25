@@ -88,8 +88,8 @@
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="receivedQuantity" label="退货数量" width="120" sortable="custom" />
-            <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <!-- <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
             <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />

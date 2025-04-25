@@ -36,7 +36,14 @@
                                 "></el-input>
                             </el-form-item>
                           </el-col>
-                          <el-col :span="12">
+                          <el-col :sm="6" :xs="24" v-if="type=='add'">
+                            <el-form-item label="交货日期" prop="deliveryDate" >
+                              <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                                  style="width: 100%;" placeholder="请选择交货日期" @change="changDateFun"
+                                  ></el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                               <el-input type="textarea" :row="3" v-model="dataForm.applicationReason"
                                 placeholder="请输入申请理由" maxlength="200"
@@ -189,7 +196,14 @@
                             "></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="24">
+                      <el-col :sm="6" :xs="24" v-if="type=='add'">
+                            <el-form-item label="交货日期" prop="deliveryDate" >
+                              <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                                  style="width: 100%;" placeholder="请选择交货日期" @change="changDateFun"
+                                  ></el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                           <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
                             maxlength="200" :disabled="type == 'look' ? true : false"></el-input>
@@ -390,7 +404,8 @@ export default {
         orderNo: '', //申请单号
         reasonRejection: '', //驳回理由
         submitDate: '', //提交时间
-        approvalFlag: false
+        approvalFlag: false,
+        deliveryDate:"",
       },
 
       type: 'add',
@@ -542,6 +557,20 @@ export default {
     window.addEventListener('resize', this.clientResize)
   },
   methods: {
+        // 表单选择交货日期 表格批量覆盖
+    changDateFun() { 
+      let arr = JSON.parse(JSON.stringify(this.dataFormTwo.data))
+      if (this.dataFormTwo.data.length) {
+        arr.forEach((item, index) => {
+          // item.deliveryDate = this.dataForm.deliveryDate
+          if (!item.deliveryDate) {
+            this.$set(item, "deliveryDate", this.dataForm.deliveryDate)
+          }
+        });
+        this.dataFormTwo.data = arr
+        console.log("this.dataFormTwo.data", this.dataFormTwo.data);
+      }
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight
@@ -606,7 +635,7 @@ export default {
             planQuantity2: '', //计划数量副
             remark: item.remark,
             productCategoryName:item.productCategoryName,
-            deliveryDate: '' // 交期
+            deliveryDate: this.dataForm.deliveryDate?this.dataForm.deliveryDate:"" // 交期
           })
         })
         if (this.dataFormTwo.data.length) {

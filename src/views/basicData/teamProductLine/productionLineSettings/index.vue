@@ -72,7 +72,22 @@
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
-                <el-button type="text" size="mini" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+                <!-- <el-button type="text" size="mini" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button> -->
+                <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                        <el-button type="text" size="mini">
+                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                            查看详情
+                        </el-dropdown-item>
+                        <el-dropdown-item @click.native="copyFun(scope.row.id, 'copy')">
+                            复制
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
               </tableOpts>
 
               <!--     <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
@@ -408,7 +423,13 @@ export default {
       this.$nextTick(() => {
         this.$refs.depForm.init(id, type)
       })
-    }
+    },
+    copyFun(id, type) {
+      this.depFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.depForm.init(id, type)
+      })
+    },
   }
 }
 </script>

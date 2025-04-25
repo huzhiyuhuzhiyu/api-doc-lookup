@@ -6,6 +6,14 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" @change="classAttributeChange">
+                <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+            <el-col :span="4">
               <el-form-item>
                 <el-input v-model="listQuery.orderNo" placeholder="单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
@@ -21,12 +29,12 @@
                 <el-input v-model="listQuery.productName" placeholder="产品名称" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-form-item>
                 <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -44,7 +52,7 @@
             <div>
               <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
               <el-button size="mini" type="primary" @click="scanFun">
-                <i class="iconfont icon-saoma"></i>
+                <i class="iconfont-menu icon-saoma"></i>
                 扫码检验
               </el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -224,6 +232,16 @@ export default {
 
   data() {
     return {
+      classAttributeOptions: [
+        {
+          label: '成品',
+          value: 'finish_product'
+        },
+        {
+          label: '非成品',
+          value: 'other'
+        }
+      ],
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -378,7 +396,7 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
+      columnList: ['partnerCode', 'productCode',  'createByName'],
       visible: false,
       detailFormVisible: false,
       activeName: 'dataTable',
@@ -398,6 +416,7 @@ export default {
         pageSize: 20,
         receiptReturnType: 'receipt',
         // receivingStatus: 'finished', //收货状态
+        classAttribute: 'other',
         salesman: '', // 业务员
         orderItems: [
           {
@@ -880,5 +899,8 @@ export default {
 .scand .tip {
   margin-top: 10px;
   font-size: 18px;
+}
+.icon-saoma{
+  color: #fff;
 }
 </style>

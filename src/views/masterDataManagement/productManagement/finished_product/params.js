@@ -14,7 +14,7 @@ export default () => [
     tabName: "基本信息",
     tabContent: [
       { prop: "projectId", label: "所属项目", value: "", type: 'select', itemRules: [{ required: true, trigger: "blur" }],options: [], filterable: true, render: true, itemDisabled: false },
-      { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }], render: true, itemDisabled: false },
+      { prop: "code", label: "产品编码", value: "",maxlength: 100, type: 'input', itemRules: [{ required: true, trigger: "blur" }], render: true, itemDisabled: false },
       {
         prop: "drawingNo", label: "品名规格", value: "", type: "input", maxlength: "1000", itemDisabled: false, itemRules: [{ required: true, trigger: "blur" }]
       },

@@ -1,6 +1,5 @@
 <template>
   <transition name="el-zoom-in-center">
-    <div style="height:100%">
       <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main org-form">
@@ -301,7 +300,6 @@
           <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
         </span>
       </el-dialog>
-    </div>
   </transition>
 </template>
 <script>

@@ -909,8 +909,10 @@ export default {
       })
     },
     toOutSouringForm() {
+      console.log(123)
       this.processOutFormVisible = false
       this.outSouringFormVisible = true
+      console.log(this.$refs)
     },
     initData() {
       this.listLoading = true

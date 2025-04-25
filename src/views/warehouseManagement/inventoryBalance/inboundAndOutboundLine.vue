@@ -204,7 +204,7 @@ export default {
                 },
                 {
                     prop: 'productsDrawingNo',
-                    label: this.$store.getters.productDrawingNo,
+                    label: '品名规格',
                     type: 'input'
                 },
                 {

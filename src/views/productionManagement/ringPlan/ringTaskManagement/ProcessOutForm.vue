@@ -31,8 +31,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
-                    <el-form-item :label="$store.getters.productDrawingNo" prop="productsDrawingNo">
-                      <el-input v-model="dataForm.productsDrawingNo" :placeholder="$store.getters.productDrawingNo"
+                    <el-form-item label="品名规格" prop="productsDrawingNo">
+                      <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格"
                         readonly @focus="openSelectProductFun" disabled>
                       </el-input>
                     </el-form-item>
@@ -180,7 +180,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: this.$store.getters.productDrawingNo + '不能为空', trigger: 'change' }
+          { required: true, message: '品名规格' + '不能为空', trigger: 'change' }
         ]
       },
       selectArr: [],
@@ -354,10 +354,7 @@ export default {
       }))
       const preData = {
         productionOrderId: this.dataForm.id,
-        firstUseMaterialList: this.dataFormTwo.data[0].shipmentList.map(item=>({
-            ...item,
-            qty: item.demandQuantity,
-        })),
+        firstUseMaterialList: this.dataFormTwo.data[0].shipmentList,
         preProcessData: this.selectedData[0],
         processList
       }

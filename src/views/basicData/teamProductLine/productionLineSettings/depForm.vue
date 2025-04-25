@@ -241,6 +241,7 @@ export default {
   props: [],
   data() {
     return {
+      btnType:"",
       isProjectSwitch: '',
       tableDataFlag: false,
       activeName: 'jcInfo',
@@ -571,8 +572,8 @@ export default {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.visible = true
-      this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
-      this.type = type
+      this.dialogTitle = !this.dataForm.id||type=='copy' ? '新建' : type == 'edit' ? '编辑' : `查看`
+      this.btnType=this.type = type
       this.$nextTick(() => {
         // this.$refs['elForm'].resetFields()
 
@@ -591,7 +592,7 @@ export default {
               ...this.dataForm,
               ...res.data.prodLine
             }
-
+            this.dataForm.code=""
             res.data.workstationList.forEach((item) => {
               console.log(item, 'uiuiuiu')
               item.name = item.processName
@@ -762,7 +763,7 @@ export default {
               id: item.id,
 
               processId: item.processId,
-              productionLineId: item.productionLineId,
+              productionLineId: type=='copy'?"":item.productionLineId,
               remark: item.remark,
 
             },
@@ -818,6 +819,7 @@ export default {
               this.$message.error('请至少选择一条工序')
               this.btnLoading = false
             } else {
+              if(this.btnType=='copy')this.dataForm.id=""
               if (!this.dataForm.id) {
                 addProductionLineData(_data)
                   .then((res) => {

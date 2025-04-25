@@ -44,7 +44,7 @@
             <div>
               <el-button size="mini" type="primary" @click="handleBatch">批量检验</el-button>
               <el-button size="mini" type="primary" @click="scanFun">
-                <i class="iconfont icon-saoma"></i>
+                <i class="iconfont-menu icon-saoma"></i>
                 扫码检验
               </el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"

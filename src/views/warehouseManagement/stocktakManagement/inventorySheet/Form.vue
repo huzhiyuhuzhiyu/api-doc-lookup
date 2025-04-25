@@ -9,7 +9,7 @@
             @click="handleConfirm('draft')">保存草稿</el-button>
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">保存并提交</el-button>
-          <el-button v-if="btnType == 'look' && dataForm.approvalStatus == 'ok'" type="primary" :loading="btnLoading"
+          <el-button v-if="btnType == 'look' && dataForm.approvalStatus == 'ok'&&dataForm.takingState!='finish'" type="primary" :loading="btnLoading"
             @click="inventoryAdjustmentFun()">转库存调整单</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

@@ -54,27 +54,29 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData" :fixedNO="true"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="name" label="资产分类" width="250" sortable="custom" />
-          <el-table-column prop="code" label="资产编码" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="资产名称" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="资产规格" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="所属项目" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="关联设备工具编码" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="投入使用时间" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="资产常用位置" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="资产原值" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="年折旧率" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="资产净值" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="资产管理员" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="资产状态" min-width="150" sortable="custom" >
-
+          <el-table-column prop="categoryName" label="资产分类" width="150" sortable="custom" />
+          <el-table-column prop="code" label="资产编码" min-width="120" sortable="custom" />
+          <el-table-column prop="name" label="资产名称" min-width="120" sortable="custom" />
+          <el-table-column prop="spec" label="资产规格" min-width="150" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" />
+          <!-- <el-table-column prop="code" label="关联设备工具编码" min-width="150" sortable="custom" /> -->
+          <el-table-column prop="userTime" label="投入使用时间" min-width="130" sortable="custom" />
+          <el-table-column prop="position" label="资产常用位置" min-width="150" sortable="custom" />
+          <el-table-column prop="costPrice" label="资产原值" min-width="150" sortable="custom" />
+          <el-table-column prop="depreciationRate" label="年折旧率" min-width="150" sortable="custom" />
+          <el-table-column prop="netPrice" label="资产净值" min-width="150" sortable="custom" />
+          <el-table-column prop="ownerName" label="资产管理员" min-width="150" sortable="custom" />
+          <el-table-column prop="state" label="资产状态" min-width="150" sortable="custom" >
+            <template  slot-scope="scope">
+              <div v-if="scope.row.state=='normal'">正常</div>
+            </template>
           </el-table-column>
-          <el-table-column prop="code" label="采购人" min-width="150" sortable="custom" />
-          <el-table-column prop="code" label="供应商名称" min-width="150" sortable="custom" />
+          <el-table-column prop="purchaserName" label="采购人" min-width="150" sortable="custom" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="150" sortable="custom" />
           <el-table-column prop="remark" label="备注" width="250" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" />
-          <el-table-column prop="createByName" label="更新时间" width="100" />
+          <el-table-column prop="updateTime" label="更新时间" width="100" />
           <el-table-column label="操作" width="160" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
@@ -142,8 +144,8 @@ export default {
 
         orderItems: [
           {
-            asc: true,
-            column: 'sort'
+            asc: false,
+            column: 'create_time'
           }
         ]
       },
@@ -163,15 +165,41 @@ export default {
 
       superQueryJson: [
         {
-          prop: 'name',
-          label: '类别名称',
+          prop: 'categoryName',
+          label: '资产分类',
           type: 'input'
         },
         {
           prop: 'code',
-          label: '类别编码',
+          label: '资产编码',
           type: 'input'
         },
+        {
+          prop: 'name',
+          label: '资产名称',
+          type: 'input'
+        },
+        {
+          prop: 'spec',
+          label: '资产规格',
+          type: 'input'
+        },
+        {
+          prop: 'projectName',
+          label: '所属项目',
+          type: 'input'
+        },
+        {
+          prop: 'ownerName',
+          label: '资产管理员',
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: '供应商名称',
+          type: 'input'
+        },
+
         {
           prop: 'remark',
           label: '备注',
@@ -293,13 +321,10 @@ export default {
         pageNum: 1,
         pageSize: 20,
         orderItems: [
+          
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
+            column: 'create_time'
           }
         ]
       }

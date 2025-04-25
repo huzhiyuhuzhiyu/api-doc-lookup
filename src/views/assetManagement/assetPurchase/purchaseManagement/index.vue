@@ -1,4 +1,5 @@
 <template>
+  <!-- 资产调用管理 -->
   <div class="JNPF-common-layout">
     <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
         <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
@@ -54,21 +55,52 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="name" label="分类名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="分类编码" min-width="150" sortable="custom" />
-          <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
-            <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column> -->
-          <el-table-column prop="remark" label="备注" width="250" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
-          <el-table-column label="操作" width="110" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-      
-              </tableOpts>
+          <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="供应商名称" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="联系方式" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="金额" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="税率" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="所属项目" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="资产编码" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="资产名称" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="分类" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="所属项目" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="投入使用日期" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="资产管理员" min-width="180" sortable="custom" />
+          <el-table-column prop="供应商名称" label="资产常用位置" min-width="180" sortable="custom" />
+          <el-table-column prop="state" label="状态" min-width="120" >
+            <template  slot-scope="scope">
+              <div v-if="scope.row.state=='toBeAgreed'">待同意</div>
+              <div v-if="scope.row.state=='pendTransferOut'">待确认</div>
+              <div v-if="scope.row.state=='toBeRecalled'">已接收</div>
+              <div v-if="scope.row.state=='refuse'">已拒绝</div>
             </template>
           </el-table-column>
+          <el-table-column prop="code" label="申请人" min-width="150" sortable="custom" />
+          <el-table-column prop="createTime" label="审批人" min-width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="审批说明" min-width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="确认接受说明" min-width="180" sortable="custom" />
+    
+          <el-table-column prop="remark" label="备注" min-width="100" />
+          <el-table-column prop="createTime" label="创建时间" min-width="100" />
+          <el-table-column prop="createByName" label="更新时间" min-width="100" />
+          <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft'||scope.row.documentStatus=='back' ? false : true"
+                  @click="addOrUpdateHandle(scope.row.id, 'edit')">审批</el-button>
+
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.documentStatus == 'draft'||scope.row.documentStatus=='back' ? false : true"
+                  @click="handleDel(scope.row.id)">确认接收</el-button>
+                <!-- :disabled="scope.row.documentStatus == 'draft' ? false : true" -->
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                </el-dropdown>
+              </template>
+            </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
           @pagination="initData" />
@@ -97,8 +129,17 @@ export default {
 
     return {
       searchList: [
-        { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+            {label:"待同意",value:"toBeAgreed",},
+            {label:"待调出",value:"pendTransferOut",},
+            {label:"待调回",value:"toBeRecalled",},
+            {label:"已完成",value:"success",},
+            {label:"已拒绝",value:"refuse",},
+          ] 
+        },
       ],
       superQueryVisible: false,
       title: '更多查询',
@@ -294,10 +335,19 @@ export default {
           }
         ]
       }
-      this.searchList = [
-      { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
-      ]
+      this.searchList =[
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+            {label:"待同意",value:"toBeAgreed",},
+            {label:"待调出",value:"pendTransferOut",},
+            {label:"待调回",value:"toBeRecalled",},
+            {label:"已完成",value:"success",},
+            {label:"已拒绝",value:"refuse",},
+          ] 
+        },
+      ],
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')

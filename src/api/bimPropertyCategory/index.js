@@ -79,7 +79,7 @@ export function editBimProperty(data) {
   })
 }
 // 资产基础信息 删除
-export function delBimProperty(data) { 
+export function delBimProperty(id) { 
 
   return request({
     url: `/api/zgt/bimProperty/remove/${id}`,

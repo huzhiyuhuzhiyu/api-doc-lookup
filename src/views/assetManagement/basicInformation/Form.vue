@@ -25,8 +25,8 @@
                     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                       <el-row :gutter="30" class="custom-row">
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="资产分类" prop="propertyCategoryName">
-                            <el-input v-model="dataForm.propertyCategoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
+                          <el-form-item label="资产分类" prop="categoryName">
+                            <el-input v-model="dataForm.categoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
@@ -115,10 +115,10 @@
                         </el-col>
                         <el-col :sm="6" :xs="24" >
                        
-                          <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                          <el-form-item label="供应商名称" prop="partnerName" ref="partnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page"
+                              v-model="dataForm.partnerName"  ref="ComSelect-page"
                               @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                               title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                               :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -170,7 +170,7 @@
                   <JNPF-table ref="tableRef" :height="customStyleData" :data="scrapData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
                     <el-table-column prop="orderNo" label="报废单号" min-width="200"></el-table-column>
                     <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
+                    <el-table-column prop="partnerName" label="状态" min-width="180" />
                     <el-table-column prop="deliveryDate" label="创建时间" width="110" />
                     <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
                     <el-table-column prop="taxAmount" label="备注" width="80" />
@@ -188,7 +188,7 @@
                     <el-table-column prop="orderNo" label="含税金额" min-width="200"></el-table-column>
                     <el-table-column prop="orderNo" label="税率" min-width="200"></el-table-column>
                     <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
+                    <el-table-column prop="partnerName" label="状态" min-width="180" />
                     <el-table-column prop="deliveryDate" label="创建时间" width="110" />
                     <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
                     <el-table-column prop="taxAmount" label="备注" width="80" />
@@ -207,7 +207,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
+                    <el-table-column prop="partnerName" label="状态" min-width="180" />
                     <el-table-column prop="deliveryDate" label="创建时间" width="110" />
                     <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
                     <el-table-column prop="taxAmount" label="备注" width="80" />
@@ -321,7 +321,7 @@ export default {
       },
       oldData:[],
       dataForm:{
-        propertyCategoryName:"",
+        categoryName:"",
         propertyCategoryId:"",
         code:"",
         name:"",
@@ -334,25 +334,62 @@ export default {
         netPrice:"",
         ownerId:"",
         purchaserId:"",
-        cooperativePartnerName:"",
+        partnerName:"",
         cooperativePartnerId:"",
         remark:"",
+        state:"normal",
       },
       width1: 400,
       width: 700, 
       customStyleData: 0,
  
       activeNameDetail: 'productInfo',
-  
+      autoCode:"",
       
    
   
       dataRule: {
-        propertyCategoryName: [
+        categoryName: [
           { required: true, message: '资产分类不能为空', trigger: 'change' }
         ],
         code: [
-          { required: true, message: '资产编码不能为空', trigger: 'change' }
+          { required: true, message: '资产编码不能为空', trigger: 'change' },
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback()
+              } else if (this.dataForm.code === this.autoCode) {
+                callback()
+              } else {
+                if (this.dataForm.id) {
+                  checkBimPropertyCode({id:this.dataForm.id,code:value})
+                    .then((res) => {
+                      if (!res.data) {
+                        callback()
+                      } else {
+                        callback(new Error('此类型编码已存在'))
+                      }
+                    })
+                    .catch((err) => {
+                      callback(new Error(' '))
+                    })
+                } else {
+                  checkBimPropertyCode({id:'',code:value})
+                    .then((res) => {
+                      if (!res.data) {
+                        callback()
+                      } else {
+                        callback(new Error('此类型编码已存在'))
+                      }
+                    })
+                    .catch((err) => {
+                      callback(new Error(' '))
+                    })
+                }
+              }
+            },
+            trigger: 'blur'
+          }
         ],
         name: [
           { required: true, message: '资产名称为空', trigger: 'no' }
@@ -389,6 +426,7 @@ export default {
   methods: {
     continueEdit(){
  this.tipsvisible=false
+ this.btnLoading=false
       this.btnType='edit'
       this.init(this.copyForm.id,'edit')
     },
@@ -449,7 +487,7 @@ export default {
     // 选择资产分类
     selectAssetFun(row){
       console.log("所选择的分类",row);
-      this.dataForm.propertyCategoryName=row.name
+      this.dataForm.categoryName=row.name
       this.dataForm.propertyCategoryId=row.id
     },
     // 弹窗节点的点击
@@ -462,7 +500,7 @@ export default {
     supplierdata(id, data) {
      
       if (data.length === 0) {
-        this.dataForm.cooperativePartnerName = ''
+        this.dataForm.partnerName = ''
         this.dataForm.cooperativePartnerCode = ''
         this.dataForm.cooperativePartnerId = ''
       } else {
@@ -470,7 +508,7 @@ export default {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.cooperativePartnerName = data[0].all.name
+        this.dataForm.partnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
        
@@ -614,6 +652,7 @@ export default {
       bimPropertyDetail(id).then(res=>{
         console.log("详情",res);
         this.dataForm=res.data
+        this.autoCode=res.data.code
         thiis.copyForm=JSON.parse(JSON.stringify(res.data))
       })
     },

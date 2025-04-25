@@ -55,14 +55,24 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="name" label="分类名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="分类编码" min-width="150" sortable="custom" />
-          <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
-            <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column> -->
-          <el-table-column prop="remark" label="备注" width="250" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom" />
+          <el-table-column prop="code" label="申请人" min-width="150" sortable="custom" />
+    
+          <el-table-column prop="state" label="状态" min-width="120" >
+            <template  slot-scope="scope">
+              <div v-if="scope.row.state=='toBeAgreed'">待同意</div>
+              <div v-if="scope.row.state=='pendTransferOut'">待调出</div>
+              <div v-if="scope.row.state=='toBeRecalled'">待调回</div>
+              <div v-if="scope.row.state=='success'">已完成</div>
+              <div v-if="scope.row.state=='refuse'">已拒绝</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" label="资产编码" min-width="120" />
+          <el-table-column prop="remark" label="资产名称" min-width="120" />
+          <el-table-column prop="remark" label="使用人" min-width="120" />
+          <el-table-column prop="remark" label="投入使用日期" min-width="160" />
+          <el-table-column prop="createTime" label="审批人" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="更新时间" min-width="100" />
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
@@ -98,8 +108,17 @@ export default {
 
     return {
       searchList: [
-        { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+            {label:"待同意",value:"toBeAgreed",},
+            {label:"待调出",value:"pendTransferOut",},
+            {label:"待调回",value:"toBeRecalled",},
+            {label:"已完成",value:"success",},
+            {label:"已拒绝",value:"refuse",},
+          ] 
+        },
       ],
       superQueryVisible: false,
       title: '更多查询',
@@ -295,10 +314,19 @@ export default {
           }
         ]
       }
-      this.searchList = [
-      { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
-      ]
+      this.searchList =[
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+            {label:"待同意",value:"toBeAgreed",},
+            {label:"待调出",value:"pendTransferOut",},
+            {label:"待调回",value:"toBeRecalled",},
+            {label:"已完成",value:"success",},
+            {label:"已拒绝",value:"refuse",},
+          ] 
+        },
+      ],
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')

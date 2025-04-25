@@ -457,7 +457,7 @@ export default {
       allProductTotal: 0,
       wareHouseVisible: false,
       ProductListRequestObj: {
-        classAttributeList: this.classAttributeList,
+        classAttributeList: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -658,7 +658,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttributeList: this.classAttributeList, 
+        classAttributeList: "", 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -683,9 +683,9 @@ export default {
     // 获取所有产品列表数据
     initData2() {
       this.listLoading = true
-      this.ProductListRequestObj.classAttributeList = this.classAttributeList
+      // this.ProductListRequestObj.classAttributeList = this.classAttributeList
 
-      this.ProductListRequestObj.warehouseId = this.wareHouseInfo.id
+      // this.ProductListRequestObj.warehouseId = this.wareHouseInfo.id
       console.log(this.wareHouseInfo);
       this.ProductListRequestObj.projectId = this.isProjectSwitch === '1' ? this.wareHouseInfo.projectId || '' : ''
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
@@ -708,7 +708,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttributeList: this.classAttributeList, 
+        classAttributeList: "", 
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",

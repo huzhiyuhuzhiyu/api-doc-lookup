@@ -390,15 +390,14 @@ export default {
   },
   methods: {
     async backFn() {
-      await getQueryConfirm(this, '是否确认撤回')
-      const arr = this.$refs.tableForm.getCurrentSelection()
-
-      if (arr.length === 0) {
+      if (this.selectData.length === 0) {
         this.$message.error('请选择要撤回的数据')
         return
       }
-      console.log(arr);
-      const res = await batchRevokeOrder(arr.map(item => item.id))
+      await getQueryConfirm(this, '是否确认撤回')
+
+     
+      const res = await batchRevokeOrder(this.selectData.map(item => item.id))
       if (res.code === 200) {
         this.$message.success('撤回成功')
         this.initData()

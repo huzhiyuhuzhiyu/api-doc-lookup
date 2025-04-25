@@ -507,7 +507,7 @@ export default {
                     }
                 }
                 saveWebCache({ tableColumn: JSON.stringify(tableColumn) })
-            }, 1000)
+            }, 0)
         }
     },
 };

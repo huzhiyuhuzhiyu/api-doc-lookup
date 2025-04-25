@@ -41,6 +41,8 @@
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
+              <el-button :disabled="tableDataList.length <= 0" size="mini" type="primary"   icon="iconfont-menu  icon-chehui"
+              @click="backFn">撤回</el-button>
             </div>
 
             <div class="JNPF-common-head-right">
@@ -163,7 +165,8 @@ import {
   purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  batchRevokeOrder
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from './Form.vue'
 import moment from 'moment'
@@ -179,6 +182,7 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
+import { getQueryConfirm } from '@/utils';
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
@@ -373,6 +377,23 @@ export default {
     }
   },
   methods: {
+    async backFn() {
+
+      if (this.selectData.length === 0) {
+        this.$message.error('请选择要撤回的数据')
+        return
+      }
+      await getQueryConfirm(this, '是否确认撤回')
+
+      const res = await batchRevokeOrder(this.selectData.map(item => item.id))
+      if (res.code === 200) {
+        this.$message.success('撤回成功')
+        this.initData()
+      } else {
+        this.$message.error(res.msg)
+      }
+
+    },
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef

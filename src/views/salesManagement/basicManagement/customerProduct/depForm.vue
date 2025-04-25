@@ -205,7 +205,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="protrusion" label="凸出量" width="120" :key="103" v-if="protrusionFlag === '1'">
+                    <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" :key="103" v-if="protrusionFlag === '1'">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list11" :key="index" :label="item.name" :value="item.name"></el-option>
@@ -275,7 +275,7 @@
               <el-descriptions-item label="精度/振动" :span="2">
                 {{item.accuracyLevel}}/{{ item.vibrationLevel }}
               </el-descriptions-item>
-              <el-descriptions-item label="预负荷/凸出量" :span="2">
+              <el-descriptions-item label="预负荷/钢球名称" :span="2">
                 {{item.preload}}/{{ item.protrusion }}
               </el-descriptions-item>
               <el-descriptions-item label="球中心/倒角" :span="2">
@@ -446,14 +446,14 @@
                   </el-table-column>
                   <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
                   </el-table-column> -->
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" v-if="sealingCoverTypingFlag === '1'" :key="211">
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" v-if="sealingCoverTypingFlag === '1'" :key="211">
                   <template slot-scope="scope">
                     <el-select :disabled="btnType === 'look'" v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
                       <el-option v-for="(item, index) in list1" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" v-if="accuracyLevelFlag === '1'" :key="123">
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" v-if="accuracyLevelFlag === '1'" :key="123">
                   <template slot-scope="scope">
                     <el-select :disabled="btnType === 'look'" v-model="scope.row.accuracyLevel" placeholder="请选择" clearable filterable allow-create>
                       <el-option v-for="(item, index) in list2" :key="index" :label="item.name" :value="item.name"></el-option>
@@ -495,7 +495,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" v-if="specialRequireFlag === '1'" :key="101">
+                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag === '1'" :key="101">
                   <template slot-scope="scope">
                     <el-select :disabled="btnType === 'look'" v-model="scope.row.specialRequire" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
                       <el-option v-for="(item, index) in list8" :key="index" :label="item.name" :value="item.name"></el-option>
@@ -509,14 +509,14 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" :key="105" v-if="colourFlag === '1'">
+                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="105" v-if="colourFlag === '1'">
                   <template slot-scope="scope">
                     <el-select :disabled="btnType === 'look'" v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
                       <el-option v-for="(item, index) in list10" :key="index" :label="item.name" :value="item.name"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="protrusion" label="凸出量" width="120" :key="103" v-if="protrusionFlag === '1'">
+                <el-table-column prop="protrusion" label="钢球名称" width="120" :key="103" v-if="protrusionFlag === '1'">
                   <template slot-scope="scope">
                     <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" clearable filterable allow-create style="width: 100%;">
                       <el-option v-for="(item, index) in list11" :key="index" :label="item.name" :value="item.name"></el-option>

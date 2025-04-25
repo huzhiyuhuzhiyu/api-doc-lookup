@@ -234,6 +234,24 @@
                         v-if="materialFlag == 1"></el-table-column>
                       <el-table-column prop="colour" :label="$store.getters.colour" width="120" :key="1020"
                         v-if="colourFlag == 1"></el-table-column>
+                       <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
+                       </el-table-column>
+                       <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
+                       
+                       </el-table-column>
+                       <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
+                      </el-table-column>
+                       <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
+                       
+                       </el-table-column>
+                       <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
+                       </el-table-column>
+                       <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
+                       </el-table-column>
+                       <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
+                       </el-table-column>
+                       <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
+                       </el-table-column>
                       <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
 
                       <el-table-column prop="remark2" label="客户产品备注" width="200" :key="1228"> </el-table-column>
@@ -464,6 +482,24 @@
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
+                    </el-table-column>
+                    <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
+                    </el-table-column>
+                    <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
+                    
+                    </el-table-column>
+                    <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
+                    
+                    </el-table-column>
+                    <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
+                      </el-table-column>
+                    <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
+                    </el-table-column>
+                    <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
+                    </el-table-column>
+                    <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
+                    </el-table-column>
+                    <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                     </el-table-column>
                     <el-table-column prop="receivingAddress" label="收货地址" width="200" :key="1288">
                       <template slot-scope="scope">

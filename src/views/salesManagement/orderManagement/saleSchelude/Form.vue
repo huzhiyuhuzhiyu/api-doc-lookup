@@ -162,14 +162,14 @@
                     <el-descriptions-item label="外协数量">{{ planData.outsourcingQuantity }}{{ planData.mainUnit
                       }}</el-descriptions-item>
 
-                    <el-descriptions-item label="打字内容">{{ planData.sealingCoverTyping }}</el-descriptions-item>
-                    <el-descriptions-item label="精度等级">{{ planData.accuracyLevel }}</el-descriptions-item>
+                    <el-descriptions-item :label="$store.getters.sealingCoverTyping" >{{ planData.sealingCoverTyping }}</el-descriptions-item>
+                    <el-descriptions-item :label="$store.getters.accuracyLevel" >{{ planData.accuracyLevel }}</el-descriptions-item>
                     <el-descriptions-item label="振动等级">{{ planData.vibrationLevel }}</el-descriptions-item>
                     <el-descriptions-item label="油脂">{{ planData.oil }}</el-descriptions-item>
                     <el-descriptions-item label="油脂量">{{ planData.oilQuantity }}</el-descriptions-item>
                     <el-descriptions-item label="游隙">{{ planData.clearance }}</el-descriptions-item>
                     <el-descriptions-item label="包装方式">{{ planData.packagingMethod }}</el-descriptions-item>
-                    <el-descriptions-item label="特殊要求">{{ planData.specialRequire }}</el-descriptions-item>
+                    <el-descriptions-item :label="$store.getters.specialRequire" >{{ planData.specialRequire }}</el-descriptions-item>
                     <el-descriptions-item label="计划日期">{{ planData.planStartDate }}至{{ planData.planEndDate
                       }}</el-descriptions-item>
                   </el-descriptions>

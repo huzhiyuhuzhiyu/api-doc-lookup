@@ -34,9 +34,9 @@
                   <el-descriptions-item label="已完成数量">{{ dataForm.completedQuantity }}{{ dataForm.mainUnit
                     }}</el-descriptions-item>
                   <el-descriptions-item label="工艺路线名称">{{ dataForm.routingName }}</el-descriptions-item>
-                  <el-descriptions-item v-if="sealingCoverTypingFlag == 1" label="打字内容">{{ dataForm.sealingCoverTyping
+                  <el-descriptions-item v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping" >{{ dataForm.sealingCoverTyping
                     }}</el-descriptions-item>
-                  <el-descriptions-item v-if="accuracyLevelFlag == 1" label="精度等级">{{ dataForm.accuracyLevel
+                  <el-descriptions-item v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel" >{{ dataForm.accuracyLevel
                     }}</el-descriptions-item>
                   <el-descriptions-item v-if="vibrationLevelFlag == 1" label="振动等级">{{ dataForm.vibrationLevel
                     }}</el-descriptions-item>
@@ -47,11 +47,11 @@
                     }}</el-descriptions-item>
                   <el-descriptions-item v-if="packagingMethodFlag == 1" label="包装方式">{{ dataForm.packagingMethod
                     }}</el-descriptions-item>
-                  <el-descriptions-item v-if="specialRequireFlag == 1" label="特殊要求">{{ dataForm.specialRequire
+                  <el-descriptions-item v-if="specialRequireFlag == 1" :label="$store.getters.specialRequire" >{{ dataForm.specialRequire
                     }}</el-descriptions-item>
                   <el-descriptions-item label="保持架材质" v-if="materialFlag === '1'">{{ dataForm.material
                     }}</el-descriptions-item>
-                  <el-descriptions-item label="颜色" v-if="colourFlag === '1'">{{ dataForm.colour
+                  <el-descriptions-item :label="$store.getters.colour"  v-if="colourFlag === '1'">{{ dataForm.colour
                     }}</el-descriptions-item>
                   <!-- <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'normal'">进行中</el-descriptions-item>
                   <el-descriptions-item label="状态" v-if="dataForm.orderStatus == 'closed'">关闭</el-descriptions-item>

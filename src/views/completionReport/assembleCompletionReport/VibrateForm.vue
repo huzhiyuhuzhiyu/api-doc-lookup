@@ -32,12 +32,12 @@
 
 
           <el-col :sm="8" :xs="24">
-            <el-form-item label="打字内容">
+            <el-form-item :label="$store.getters.sealingCoverTyping" >
               <el-input v-model="form.sealingCoverTyping" placeholder="打字内容" disabled />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
-            <el-form-item label="精度等级">
+            <el-form-item :label="$store.getters.accuracyLevel" >
               <el-input v-model="form.accuracyLevel" placeholder="精度等级" disabled />
             </el-form-item>
           </el-col>
@@ -67,7 +67,7 @@
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
-            <el-form-item label="特殊要求">
+            <el-form-item :label="$store.getters.specialRequire" >
               <el-input v-model="form.specialRequire" placeholder="特殊要求" disabled />
             </el-form-item>
           </el-col>

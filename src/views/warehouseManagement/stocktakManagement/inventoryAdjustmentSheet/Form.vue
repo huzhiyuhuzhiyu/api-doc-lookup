@@ -161,7 +161,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" key="2117">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.divideEqually" placeholder="请选择" disabled clearable
                               style="width: 100%;">
@@ -458,7 +458,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                    <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" key="2117">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.divideEqually" placeholder="请选择" disabled clearable
                           style="width: 100%;">

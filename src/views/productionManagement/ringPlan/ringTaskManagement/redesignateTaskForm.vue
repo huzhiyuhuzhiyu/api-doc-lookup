@@ -60,7 +60,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="精度等级">
+                        <el-form-item :label="$store.getters.accuracyLevel" >
                           <el-select v-model="dataForm.accuracyLevel" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
                                 :label="item.name" :value="item.name"></el-option>

@@ -180,7 +180,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" key="2117">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable
                               style="width: 100%;" :disabled="btnType == 'look'">
@@ -485,7 +485,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                    <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" key="2117">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
                           :disabled="btnType == 'look'">
@@ -512,7 +512,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="colour" label="颜色" width="120" key="210">
+                    <el-table-column prop="colour" :label="$store.getters.colour"  width="120" key="210">
                       <!-- <template slot="header">
                             <span class="required">*</span>打字内容
                           </template> -->
@@ -524,7 +524,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" label="打字内容"
+                    <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1" :label="$store.getters.sealingCoverTyping" 
                       width="120" key="2111">
                       <!-- <template slot="header">
                             <span class="required">*</span>打字内容
@@ -537,7 +537,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" label="精度等级" width="120"
+                    <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel"  width="120"
                       key="123">
                       <!-- <template slot="header">
                             <span class="required">*</span>精度等级
@@ -601,7 +601,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="specialRequire" label="特殊要求" v-if="specialRequireFlag == 1" width="160"
+                    <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  v-if="specialRequireFlag == 1" width="160"
                       key="202">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
@@ -702,7 +702,7 @@
                 <el-table-column prop="logo" label="Logo" width="120" key="2116">
 
                 </el-table-column>
-                <el-table-column prop="divideEqually" label="开等分" width="120" key="2117">
+                <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" key="2117">
 
                 </el-table-column>
                 <el-table-column prop="material" label="材质" width="120" key="2118">

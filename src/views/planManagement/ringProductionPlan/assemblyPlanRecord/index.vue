@@ -86,8 +86,8 @@
             <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="150" sortable="custom" />
             <el-table-column prop="relaxQuantity" label="宽放需求数量" min-width="150" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
-            <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+            <!-- <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />

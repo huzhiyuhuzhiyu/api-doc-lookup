@@ -109,6 +109,10 @@
                 <div v-else-if="scope.row.dealStatus=='1'"><el-tag type="success">成交</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="reconciliationStartDate" label="对账开始日期" width="120"></el-table-column>
+            <el-table-column prop="reconciliationEndDate" label="对账结束日期" width="130"></el-table-column>
+            <el-table-column prop="paymentMethodText" label="付款方式" width="120" />
+            <el-table-column prop="remark" label="备注" width="160" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
@@ -301,6 +305,34 @@ export default {
         //   endPlaceholder: '结束日期',
         //   pickerOptions: this.global.timePickerOptions
         // },
+        {
+          prop: 'reconciliationStartDate',
+          label: '对账开始日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'reconciliationEndDate',
+          label: '对账结束日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'paymentMethodText',
+          label: '付款方式',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
       ],
       expands: true,
       refreshTree: true,

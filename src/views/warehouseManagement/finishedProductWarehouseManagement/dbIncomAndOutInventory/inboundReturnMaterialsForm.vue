@@ -360,7 +360,7 @@
                         <el-table-column prop="deputyNum" label="退料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="material" label="材质" width="120" key="2118">
                         </el-table-column>
-                        <el-table-column prop="colour" label="颜色" width="120" :key="2120"></el-table-column>
+                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="2120"></el-table-column>
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">

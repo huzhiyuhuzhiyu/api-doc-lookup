@@ -250,7 +250,24 @@
                           </el-select>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
+                      </el-table-column>
+                      <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
+                      
+                      </el-table-column>
+                      <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
+                      </el-table-column>
+                      <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
+                      
+                      </el-table-column>
+                      <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
+                      </el-table-column>
+                      <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
+                      </el-table-column>
+                      <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
+                      </el-table-column>
+                      <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
+                      </el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"
@@ -442,7 +459,7 @@
                   </el-table-column>
 
                   <el-table-column v-if="dataForm.classAttribute == 'finish_product' && sealingCoverTypingFlag === '1'"
-                    prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
+                    prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="212">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable disabled
                         style="width: 100%;">
@@ -452,7 +469,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column v-if="dataForm.classAttribute == 'finish_product' && accuracyLevelFlag === '1'"
-                    prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                    prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable disabled>
                         <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
@@ -510,7 +527,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"
+                  <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" :key="102"
                     v-if="this.dataForm.classAttribute == 'finish_product' && specialRequireFlag === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable
@@ -528,7 +545,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="colour" label="颜色" width="120" :key="211" v-if="colourFlag === '1'">
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="colourFlag === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
                         <el-option v-for="(item, index) in bimProductAttributesObj" :key="index" :label="item.name"
@@ -546,6 +563,24 @@
                       </el-select>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
+                    </el-table-column>
+                    <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
+                    
+                    </el-table-column>
+                    <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
+                      </el-table-column>
+                    <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
+                    
+                    </el-table-column>
+                    <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
+                    </el-table-column>
+                    <el-table-column prop="sealingCoverStructure" label="密封盖" width="120" v-if="$store.getters.configData.orderField.sealingCoverStructure">
+                    </el-table-column>
+                    <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
+                    </el-table-column>
+                    <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
+                    </el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"

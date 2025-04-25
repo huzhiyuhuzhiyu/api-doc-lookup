@@ -65,7 +65,11 @@ const mutations = {
     const accuracyLevelIndex = FieldNameJson.findIndex(obj => obj.enCode === 'accuracyLevel')
     state.accuracyLevel = accuracyLevelIndex !== -1 ?  FieldNameJson[accuracyLevelIndex].fullName : '精度等级'
 
+    const divideEquallyIndex = FieldNameJson.findIndex(obj => obj.enCode === 'divideEqually')
+    state.divideEqually = divideEquallyIndex !== -1 ?  FieldNameJson[divideEquallyIndex].fullName : '开等分'
     
+    const protrusionIndex = FieldNameJson.findIndex(obj => obj.enCode === 'protrusion')
+    state.protrusion = protrusionIndex !== -1 ?  FieldNameJson[protrusionIndex].fullName : '凸出量'
   
   },
   SET_CONFIG_GLOBAL: (state, configGlobal) => {

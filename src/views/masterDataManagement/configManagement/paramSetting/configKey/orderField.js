@@ -24,6 +24,46 @@ export default {
         description: '启用后，在销售订单、订单进度、订单变更、仓库管理会显示客户合同号；关闭则在销售订单详情中明细列表展示客户合同号。',
         mainModule: '全局'
     },
+    gobal_specSize: {
+        configKeyLabel: '启用规格/尺寸',
+        description: '启用全局规格/尺寸后，将会显示规格/尺寸输入字段。',
+        mainModule: '全局'
+    },
+    gobal_logo: {
+        configKeyLabel: '启用LOGO',
+        description: '启用全局LOGO后，将会显示LOGO输入字段。',
+        mainModule: '全局'
+    },
+    gobal_divideEqually: {
+        configKeyLabel: '启用开等分',
+        description: '启用全局开等分后，将会显示开等分输入字段。',
+        mainModule: '全局'
+    },
+    gobal_brand: {
+        configKeyLabel: '启用品牌',
+        description: '启用全局品牌后，将会显示品牌输入字段。',
+        mainModule: '全局'
+    },
+    gobal_sealingCoverStructure: {
+        configKeyLabel: '启用密封盖',
+        description: '启用全局密封盖后，将会显示密封盖输入字段。',
+        mainModule: '全局'
+    },
+    gobal_structureType: {
+        configKeyLabel: '启用结构类型',
+        description: '启用全局结构类型后，将会显示结构类型输入字段。',
+        mainModule: '全局'
+    },
+    gobal_noise: {
+        configKeyLabel: '启用噪音',
+        description: '启用全局噪音后，将会显示噪音输入字段。',
+        mainModule: '全局'
+    },
+    gobal_aperture: {
+        configKeyLabel: '启用孔径',
+        description: '启用全局孔径后，将会显示孔径输入字段。',
+        mainModule: '全局'
+    },
     purchase_standardValue: {
         configKeyLabel: '启用规值',
         description: '启用采购订单规值后，新建采购订单时，将会显示规值输入字段，对应收货也将显示规值字段。',

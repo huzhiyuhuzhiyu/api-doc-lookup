@@ -467,7 +467,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="colour" label="颜色" width="120" :key="211" v-if="colourFlag === '1'">
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="colourFlag === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
                         <el-option v-for="(item, index) in bimProductAttributesObj.pa010" :key="index"
@@ -486,7 +486,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column  prop="sealingCoverTyping"
-                    label="打字内容" width="120" :key="212">
+                    :label="$store.getters.sealingCoverTyping"  width="120" :key="212">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable disabled
                         style="width: 100%;">
@@ -496,7 +496,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column  prop="accuracyLevel"
-                    label="精度等级" width="120" :key="123">
+                    :label="$store.getters.accuracyLevel"  width="120" :key="123">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                       <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable disabled>
                         <el-option v-for="(item, index) in bimProductAttributesObj.pa006" :key="index"
@@ -554,7 +554,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"
+                  <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" :key="102"
                     >
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.specialRequire" placeholder="请选择" disabled clearable

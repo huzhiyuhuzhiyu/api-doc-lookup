@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-preview-main org-form">
-    <div v-if="!processOutFormVisible">
+    <div v-if="!outSouringFormVisible">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="'生产任务报工'" />
         <div class="options">
@@ -217,7 +217,7 @@
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">
                       <el-button type="primary" size="mini" @click='report()'>报 工</el-button>
-                      <el-button type="primary" size="mini" @click='transferOutFun()'>转外协</el-button>
+                      <el-button type="primary" size="mini" @click='transferOutFun()' v-if="currentProcess.processingType == 'self_produced'">转外协</el-button>
                       <el-button type="primary" size="mini" @click="reportRecordsFun()">查看报工记录</el-button>
                     </div>
                   </el-col>
@@ -270,6 +270,7 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+    <OutSouringForm v-if="outSouringFormVisible" ref="OutSouringForm"  @close="closeForm" />
   </div>
 
 </template>
@@ -290,11 +291,13 @@ import responsWaste from './responsWaste.vue'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo ,getPrintDeliveryNote} from '@/api/system/printDev'
+import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderCreation/index.vue';
+import { detailProductionToOutSouring } from '@/api/productOrdes/index.js'
 export default {
 
   components: {
     recordForm, OutForm, MaterialWasteForm,responsWaste,PrintBrowse,
-    PrintDialog,
+    PrintDialog,OutSouringForm
   },
   data() {
     return {
@@ -313,6 +316,7 @@ export default {
       recordFormVisible: false,
       normalFormVisible: false,
       vibrateFormVisible: false,
+      outSouringFormVisible:false,
       activeName: 'orderInfo',
       activeNames: ['basicInfo', 'productInfo'],
       orderTypeList: [
@@ -422,16 +426,70 @@ export default {
         this.handleBlur2()
       }
     },
-    // 转外协
-    transferOutFun() {
-      this.processOutFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.outForm.init(this.currentProcess, 'add')
-      })
+   // 转外协
+   async transferOutFun() {
+      const productOutData = await detailProductionToOutSouring(this.dataForm.id)
+      const workOrderList = productOutData.data && productOutData.data.workOrderList
+      if (workOrderList.length){
+          // 单条转外协 过滤出所需工单
+        const workOrderProcess = workOrderList.filter(item => item.id === this.currentProcess.id)
+          // 临时存储传递数据到会话
+          const processList = workOrderProcess.map((item,index) => ({
+              projectName: item.projectName,
+              projectId: item.projectId,
+              productSource: item.productSource, // 产品来源
+              processType: item.processType, // 工序类型
+              classAttribute: item.classAttribute,
+              productsId: item.productsId, // 产品id
+              productName: item.productName, // 产品名称
+              productCode: item.productCode, // 产品编码
+              productDrawingNo: item.productDrawingNo, // 品名规格
+              model: item.model, // 品名规格
+              spec: item.spec, // 品名规格
+              drawingSheetNo: item.drawingSheetNo, // 品名规格
+              ratio: item.ratio, // 转换系数
+              calculationDirection: item.calculationDirection, // 计算方向
+              mainUnit: item.mainUnit, // 单位
+              purchaseQuantity: workOrderProcess[0].waitOutsourcingQuantity, // 数量
+              price: '', // 含税单价
+              totalAmount: '', // 金额(含税)
+              taxRate: '', // 税率
+              excludingTaxPrice: '', // 不含税单价
+              taxAmount: '', // 税额
+              excludingTaxAmount: '', // 金额(不含税)
+              deputyUnit: item.deputyUnit, // 副单位
+              planQuantity: '', //计划数量
+              planQuantity2: '', //计划数量副
+              remark: item.remark,
+              //   增加首选 末选标记
+              firstSwitchFlag: item.firstFlag ? true : index === 0,
+              lastSwitchFlag :item.lastFlag ? true : index === workOrderProcess.length - 1,
+              //   增加首道 末道标记
+              firstFlag:!!item.firstFlag,
+              lastFlag:!!item.lastFlag,
+              receiveFlag:item.lastFlag ? true : index === workOrderProcess.length - 1,
+              deliveryDate: '', // 交期
+              processId: item.processId,
+              processName: item.processName,
+              qty: item.qty,
+              waitOutsourcingQuantity: workOrderProcess[0].waitOutsourcingQuantity,
+              workOrderId: item.id,
+          }))
+          const preData = {
+              productionOrderId: this.dataForm.id,
+              firstUseMaterialList: workOrderProcess[0].shipmentList,
+              preProcessData: workOrderProcess[0],
+              processList
+          }
+          sessionStorage.setItem('preData', JSON.stringify(preData))
+          this.outSouringFormVisible = true
+      }
+
 
     },
     closeForm(flag) {
       this.processOutFormVisible = false
+      this.outSouringFormVisible = false
       this.getProcessFun(this.currentProcess)
     },
     init(id) {

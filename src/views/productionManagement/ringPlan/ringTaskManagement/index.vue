@@ -258,6 +258,7 @@
     <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
     <AddTaskForm v-if="addTaskFormVisible" ref="addTaskForm" @refreshDataList="initData" @close="closeForm">
     </AddTaskForm>
+    <OutSouringForm v-if="outSouringFormVisible" ref="OutSouringForm" @refreshDataList="initData" @close="closeForm" />
     <el-dialog title="生产任务码" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="dialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" style="text-align: center;">
       <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
@@ -287,12 +288,13 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TaskForm from './taskFormCopy.vue'
 import AddTaskForm from './addTaskForm.vue'
+import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderCreation/index.vue'
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'assemblyTaskManagement',
   components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2,
-    ProcessOutForm, },
+    ProcessOutForm,OutSouringForm },
   mixins: [getProjectList],
   data() {
     return {
@@ -895,6 +897,7 @@ export default {
       this.BatchDispatchVisible = false
       this.taskFormVisible = false
       this.processOutFormVisible = false
+      this.outSouringFormVisible = false
       this.search()
     },
     handleProcessOut(id) {

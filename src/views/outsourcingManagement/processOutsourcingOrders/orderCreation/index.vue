@@ -53,6 +53,14 @@
                                 @change="deliveryDateChange"></el-date-picker>
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="发料状态" prop="shipmentStatus">
+                              <el-select v-model="dataForm.shipmentStatus" placeholder="请选择发料状态" style="width: 100%;" >
+                                <el-option v-for="(item, index) in shipmentStatusList" :key="index" :label="item.label"
+                                 :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
                           <el-col :span="12">
                             <el-form-item label="备注" prop="remark" ref="remark">
                               <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
@@ -240,8 +248,11 @@
 
                           <el-table-column label="操作" width="170" fixed="right">
                             <template slot-scope="scope">
-                              <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
+                              <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')" v-if="!preData">
                                 配置发料清单
+                              </el-button>
+                              <el-button size="mini" type="text" @click="handlerOpenSourcePreData(scope.$index)" :disabled="scope.$index !== 0" v-else>
+                                查看发料清单
                               </el-button>
                               <el-button size="mini" type="text" class="JNPF-table-delBtn"
                                 :disabled="dataFormTwo.data.length < 2"
@@ -271,7 +282,7 @@
               treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
               :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false"
               multiple />
-            <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
+            <source-area v-if="sourceVisibled" :transferOutFlag="transferOutFlag" ref="sourceRef" @confirm="handlerConfirm"></source-area>
           </div>
         </div>
       </div>
@@ -401,6 +412,7 @@ export default {
         approvalCompletionDate: '', // 审批完成时间
         // approvalStatus: "",               // 审批状态
         documentStatus: '', // 单据状态
+           shipmentStatus: 'not_finish',
         id: '',
         orderNo: '', //申请单号
         reasonRejection: '', //驳回理由
@@ -408,6 +420,7 @@ export default {
         approvalFlag: false
       },
       sourceVisibled: false,
+      transferOutFlag: false,
       type: 'add',
       dataFormArr: [],
       productArr: [],
@@ -462,7 +475,8 @@ export default {
       oldProcessData: [],
       rules: {
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }],
+        shipmentStatus: [{ required: true, message: '请选择发料状态', trigger: ['change'] }],
       },
       productRules: {
         productDrawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
@@ -603,6 +617,12 @@ export default {
       tipsvisible: false,
       btnText: '继续新建',
       customStyleData:0,
+      shipmentStatusList: [
+        { label: '已发料', value: 'finish' },
+        { label: '未发料', value: 'not_finish' },
+        // { label: '已取消', value: 'canceled' }
+      ],
+      preData:[]
     }
   },
   computed: {
@@ -692,6 +712,22 @@ export default {
       this.dialogTitle = '新建'
     }
 
+     // 处理通过生产任务传递过来的明细数据
+     const preData = sessionStorage.getItem('preData')
+    if (preData) {
+      this.preData = JSON.parse(preData)
+      console.log(this.preData,'this.preData')
+      sessionStorage.removeItem('preData')
+      this.dataFormTwo.data = this.preData.processList
+      // this.dataForm.moldId = this.preData.preProcessData?.moldId
+      this.transferOutFlag = true
+      this.dialogTitle = '新建'
+      // 写入发料清单
+      this.refreshOutShipmentList(false)
+      // 获取外协供应商 (qihe)
+      // if (this.isQH) await this.outOrderPurPurchaseOrderLine()
+    }
+
     this.fetchData('EPDH')
     this.getBusInfo()
     this.switchStyleheight()
@@ -711,7 +747,12 @@ export default {
       let maxHeight2 = mainHeight1 - bortherHeight - 112
       let maxHeight = mainHeight1 - 340
       console.log(maxHeight, 'maxHeight')
-      this.customStyleData = maxHeight
+      if (this.preData) {
+        this.customStyleData = maxHeight - 90
+      } else {
+        this.customStyleData = maxHeight
+      }
+      
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -719,6 +760,66 @@ export default {
           this.switchStyleheight()
         }, 100)
       }
+    },
+    /**刷新发料清单 */
+    refreshOutShipmentList(flag) {
+      this.dataFormTwo.data.forEach((item, index) => {
+        const preProcessData = this.preData.preProcessData
+        if (preProcessData) {
+          item.purchaseQuantity = preProcessData.purchaseQuantity || item.purchaseQuantity
+            if (preProcessData.firstFlag){
+                item.outShipmentList = this.preData.firstUseMaterialList.map(material=>{
+                  console.log(material,'material')
+                    return {
+                        ...material,
+                        id:'',
+                        demandQuantity:flag ? this.OutShipmentQuantity(material.qty,item.purchaseQuantity,material.lossRate,material.fixedLoss) : material.demandQuantity,
+                        processId:'',
+                        processCode:'',
+                        processName:'',
+                    }
+                })
+            }else{
+                item.outShipmentList = preProcessData.shipmentList.map(ship=>{
+                    return {
+                        ...ship,
+                        demandQuantity:item.purchaseQuantity,
+                        id: "",
+                    }
+                })
+            }
+        }
+        if (item.calculationDirection === 'multiplication') {
+          item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+        } else {
+          item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity / item.ratio)
+        }
+        if (index > 0) item.outShipmentList = []
+      })
+      // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+      //   this.sourceData = res.data
+      //   if (this.dataFormTwo.data[this.index].outShipmentList && this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
+      //     this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
+      //   } else {
+      //     this.sourceData.forEach((item, index) => {
+      //       this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
+      //     })
+      //   }
+      //   if (this.sourceData.length === 0) {
+      //     this.sourceDisabled = true
+      //   } else {
+      //     this.sourceDisabled = false
+      //   }
+      //   this.$nextTick(() => {
+      //     this.$refs['sourceRef'].init(
+      //       this.sourceData,
+      //       '',
+      //       this.dataFormTwo.data[this.index].productsId,
+      //       this.dataFormTwo.data[this.index].purchaseQuantity
+      //     )
+      //   })
+      // })
     },
     async getProductNameSwitch(code, type) {
       try {
@@ -940,7 +1041,28 @@ export default {
         )
       })
     },
-
+    // 查看发料清单
+    handlerOpenSourcePreData(index) {
+      this.index = index
+      if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
+      console.log(this.dataFormTwo.data[index],'this.dataFormTwo.data[index]')
+      this.sourceData = this.dataFormTwo.data[index].outShipmentList
+      console.log(this.sourceData)
+      if (this.sourceData.length === 0) {
+        this.sourceDisabled = true
+      } else {
+        this.sourceDisabled = false
+      }
+      this.sourceVisibled = true
+      this.$nextTick(() => {
+        this.$refs['sourceRef'].init(
+          this.sourceData,
+          '',
+          this.dataFormTwo.data[index].productsId,
+          this.dataFormTwo.data[index].purchaseQuantity
+        )
+      })
+    },
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
@@ -1145,7 +1267,7 @@ export default {
       this.dataFormTwo.data = []
     },
     goBack() {
-      this.$router.go(-1)
+      if (!this.preData) this.$router.go(-1)
       this.$emit('close', true)
     },
     init(id, type, data) {

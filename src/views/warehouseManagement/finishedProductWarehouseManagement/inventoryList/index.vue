@@ -64,6 +64,8 @@
               icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">导出</el-button>
+            <el-button v-has="'btn_print_merge'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="printMergeForm">合并打印</el-button>
           </div>
 
           <div class="JNPF-common-head-right">
@@ -709,6 +711,17 @@ export default {
 
         // })
       }
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    // 合并打印
+    printMergeForm() {
+      console.log(this.selectArr, '看');
+      
+      this.formId = this.selectArr.map(item => item.id).join(',')
+      this.enCode = 'p031'
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)

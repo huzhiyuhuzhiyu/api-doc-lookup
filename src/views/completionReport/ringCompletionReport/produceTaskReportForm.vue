@@ -564,7 +564,9 @@ export default {
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
         this.$set(this.currentProcess, 'reworkQuantity', 0)
         this.$set(this.currentProcess, 'utilizeQuantity', 0)
-
+        if (this.$store.getters.configData.produce.reporting_auto_recode) {
+          this.currentProcess.qualifiedQuantity = this.currentProcess.waitReportNum
+        }
         this.commonFun()
         // this.getRoutingDetailFun(this.dataForm.routingId)
       })

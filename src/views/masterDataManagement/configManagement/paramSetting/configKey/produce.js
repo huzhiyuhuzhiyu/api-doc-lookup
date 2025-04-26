@@ -52,4 +52,8 @@ export default {
         configKeyLabel: '拆分工序顺序可修改',
         description: '开启后，生产管理拆分任务可以修改工序顺序'
     },
+    reporting_auto_recode: {
+        configKeyLabel: '可报工数量自动带出',
+        description: '开启后，完工汇报报工时，合格数量默认带出可报工数量'
+    },
 }

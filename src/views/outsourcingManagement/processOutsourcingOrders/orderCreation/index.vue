@@ -116,7 +116,7 @@
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRules.processName">
                                 <!-- 工序选择弹窗  -->
-                                <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                                <ComSelect-page :clearable="!preData" :isdisabled="type === 'look' || !!preData" :treeNodeClick="treeNodeClick"
                                   v-model="scope.row.processName" @change="onOrganizeChangeTwo"
                                   :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
                                   :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
@@ -152,7 +152,8 @@
                                 :rules="productRules.purchaseQuantity">
                                 <el-input v-model="scope.row.purchaseQuantity"
                                   @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                  maxlength="20" :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"></el-input>
+                                  maxlength="20" :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                                  :disabled="scope.$index !== 0"></el-input>
                               </el-form-item>
                             </template>
                           </el-table-column>
@@ -777,6 +778,13 @@ export default {
         }, 100)
       }
     },
+    // 发料数量计算公式
+    OutShipmentQuantity(a, b, c, d) {
+      const _a = !a ? 1 : a
+      const result = +_a * +b * (1 + +c) + +d;
+      if (isNaN(result)) return
+     return Math.floor(result.toFixed(4));
+    },
     /**刷新发料清单 */
     refreshOutShipmentList(flag) {
       this.dataFormTwo.data.forEach((item, index) => {
@@ -786,6 +794,7 @@ export default {
             if (preProcessData.firstFlag){
                 item.outShipmentList = this.preData.firstUseMaterialList.map(material=>{
                   console.log(material,'material')
+                  console.log(this.OutShipmentQuantity(material.qty,item.purchaseQuantity,material.lossRate,material.fixedLoss),'33')
                     return {
                         ...material,
                         id:'',
@@ -1416,6 +1425,8 @@ export default {
         count += item.taxAmount * 1
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
+      console.log(this.dataFormTwo.data,'k')
+      return
       if (this.type == 'add') {
         _data = {
           ...this.dataForm,

@@ -188,6 +188,7 @@ export default {
         approvalStatus: 'ok',
         documentStatus: 'submit',
         orderState: 'not_finish',
+        receiveFlag:true,
         externalFlag: 1,
         receiptQueryFlag: 1,
         deliveryEndDate: '',

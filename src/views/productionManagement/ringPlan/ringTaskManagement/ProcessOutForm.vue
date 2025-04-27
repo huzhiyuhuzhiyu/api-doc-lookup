@@ -396,6 +396,7 @@ export default {
       return row.processingType !== "self_produced"
     },
     handleSelectionChange(val){
+      console.log(val)
         this.selectedData = val
     },
       isSelectionInOrderAndContinuous(originalArray, selectedArray) {

@@ -260,10 +260,10 @@
 
 
                     <el-dropdown-item type="text"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') || (scope.row.businessType == 'outbound_pick_out' && isMS) && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
                     <el-dropdown-item type="text" v-if="isPrintNBWSwitch === '1'"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') || scope.row.businessType == 'outbound_pick_out' && scope.row.documentStatus == 'submit')"
                       @click.native="nbwPrintFun(scope.row)">能博旺打印</el-dropdown-item>
                   </el-dropdown-menu>
 
@@ -357,6 +357,7 @@ import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+// import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   name: 'finishedProductWarehouseManagement',
   components: {
@@ -384,7 +385,7 @@ export default {
     PrintDialog,
     TakingAdjustForm
   },
-  mixins: [getProjectList],
+  mixins: [getProjectList,],
 
   props: {
     warehouseCode: "",
@@ -620,6 +621,11 @@ export default {
         code: "p031",
         fullName: "销售退库单"
       },
+      {
+        businessType: 'outbound_pick_out',
+        code: "p062",
+        fullName: "生产领料单"
+      },
       ],
       enCode: "",
       isProjectSwitch: '',
@@ -705,6 +711,13 @@ export default {
       this.fullName = this.arr.find(item => item.businessType === row.businessType).fullName // 筛选出 businessType 等于 type 的项  
       if (row.businessType == 'outbound_sale_send' && row.sourceType == 'notice') {
         this.enCode = 'p003'
+        // detailWarehouseData(row.id).then(res => {
+        //   console.log("详情", res);
+        //   this.formId = res.data.spaceLines[0].noticeId
+
+        // })
+      } else if (row.businessType == 'outbound_pick_out' && row.sourceType == 'notice') {
+        this.enCode = 'p062'
         // detailWarehouseData(row.id).then(res => {
         //   console.log("详情", res);
         //   this.formId = res.data.spaceLines[0].noticeId

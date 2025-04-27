@@ -357,7 +357,7 @@ import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
-// import tenantMinix from "@/mixins/generator/TenantMinix";
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   name: 'finishedProductWarehouseManagement',
   components: {
@@ -385,7 +385,7 @@ export default {
     PrintDialog,
     TakingAdjustForm
   },
-  mixins: [getProjectList,],
+  mixins: [getProjectList,tenantMinix],
 
   props: {
     warehouseCode: "",

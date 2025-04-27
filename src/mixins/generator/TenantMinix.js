@@ -1,5 +1,7 @@
-import { tenant as TenantObj } from '@/directive/permission/tenant'
 
+export const tenant = {
+  mosheng: ['mosheng'], // 示例：配置别名到实际租户标识
+}
 const tenantSymbol = Symbol('tenant')
 
 export default {
@@ -13,22 +15,8 @@ export default {
   },
   computed:{
     isMS(){
-      return TenantObj['mosheng'].includes(this[tenantSymbol])
+      return tenant['mosheng'].includes(this[tenantSymbol])
     },
-    isZP(){
-      return TenantObj['zp'].includes(this[tenantSymbol])
-    },
-    isGD(){
-      return TenantObj['gede'].includes(this[tenantSymbol])
-    },
-    notGD(){
-      return !this.isGD
-    },
-    notZP(){
-      return !this.isZP
-    },
-    notQH(){
-      return !this.isQH
-    }
+
   }
 }

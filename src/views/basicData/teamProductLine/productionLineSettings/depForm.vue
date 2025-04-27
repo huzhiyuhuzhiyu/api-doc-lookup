@@ -44,6 +44,15 @@
                       </el-form-item>
                     </el-col>
                     <el-col :span="12">
+                      <el-form-item label="所属类型" prop="type" ref="type">
+                        <el-select v-model="dataForm.type" placeholder="请选择类型" 
+                          :disabled="btnType=='look'" style="width:100%">
+                          <el-option v-for="item in typeList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
                       <el-form-item label="产线名称" prop="name" ref="name">
                         <el-input v-model="dataForm.name" placeholder="请输入产线名称" clearable :style="{ width: '100%' }"
                           maxlength="20" :disabled="type == 'look'"></el-input>
@@ -240,6 +249,10 @@ export default {
   props: [],
   data() {
     return {
+      typeList:[
+        {label:"套圈",value:"produce",},
+        {label:"装配",value:"assemble",},
+      ],
       btnType:"",
       isProjectSwitch: '',
       tableDataFlag: false,
@@ -318,7 +331,8 @@ export default {
         reasonRejection: '', //  驳回原因
         personName: '', // 人员试验
         remark: '',
-        approvalFlag: false
+        approvalFlag: false,
+        type:"",
       },
       requestObj2: {
         orderItems: [
@@ -341,6 +355,13 @@ export default {
             required: true,
             message: '请输入产线名称',
             trigger: ['blur']
+          }
+        ],
+        type: [
+          {
+            required: true,
+            message: '请选择类型',
+            trigger: ['change']
           }
         ],
         code: [
@@ -591,7 +612,7 @@ export default {
               ...this.dataForm,
               ...res.data.prodLine
             }
-            this.dataForm.code=""
+            if(type=='copy')this.dataForm.code=""
             res.data.workstationList.forEach((item) => {
               console.log(item, 'uiuiuiu')
               item.name = item.processName
@@ -611,11 +632,7 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
-            if (this.type === 'edit') {
-
-            } else {
-
-            }
+           
             this.loading = false
             // if (res.data.attachmentList) {
             //   res.data.attachmentList.forEach((item) => {

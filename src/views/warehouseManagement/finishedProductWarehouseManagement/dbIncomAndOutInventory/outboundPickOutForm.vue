@@ -148,7 +148,7 @@
                             :key="10112"  v-if="dataForm.pickingWay !== 'dispatch_list'"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
-
+                            
 
                           <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
                             v-if="btnType != 'look'">
@@ -821,7 +821,7 @@ export default {
       this.$set(this.productData[index], 'divideEqually', data.divideEqually)
       this.$set(this.productData[index], 'partnerName', data.partnerName)
       this.$set(this.productData[index], 'cooperativePartnerId', data.cooperativePartnerId)
-
+       
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'processName', data.processName)
@@ -842,7 +842,13 @@ export default {
       this.$set(this.productData[index], 'angle', data.angle)
       this.$set(this.productData[index], 'pairingModeNames', data.pairingModeName)
       this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
-
+   // 如果批次数量小于待出库数量，则把出库数量设为批次数量，反之则为待出库数量
+   const newNum = Math.min(this.productData[index].batchAvailableQuantity, this.productData[index].unReceiveQuantity)
+      if (newNum !== Number(this.productData[index].num)) {
+        this.$message.success(`产品信息第${index + 1}行：自动更新领料数量成功`)
+        this.$set(this.productData[index], 'num', newNum)
+        console.log(this.productData,'this.productData')
+      }
 
 
 

@@ -61,15 +61,15 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="qty" label="发料数量" width="120">
+              <el-table-column prop="demandQuantity" label="发料数量" width="120">
                 <template slot="header">
                   <span class="required">*</span>
                   发料数量
                 </template>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'qty'" :rules="productRule.demandQuantity1">
-                    <el-input v-model="scope.row.qty" :disabled="type === 'look' || transferOutFlag"" maxlength="20"
+                  <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity'" :rules="productRule.demandQuantity1">
+                    <el-input v-model="scope.row.demandQuantity" :disabled="type === 'look' || transferOutFlag" maxlength="20"
                       placeholder="发料数量"></el-input>
                   </el-form-item>
                 </template>

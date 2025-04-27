@@ -156,6 +156,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
+                          <el-table-column prop="waitOutsourcingQuantity" label="可外协数量" width="120" />
                           <el-table-column prop="deputyUnit" label="单位(副)" width="85"
                             v-if="isDeputyUnitSwitch === '1'" />
                           <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100"
@@ -512,6 +513,23 @@ export default {
             }),
             trigger: 'blur'
           },
+          {
+            validator: this.formValidate({
+              type: 'calc',
+              params: [
+                (index, value) => {
+                  if (!this.preData) return true
+                  if (index === 0) return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity)
+                  return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity) && Number(value) <= Number(this.dataFormTwo.data[index - 1].purchaseQuantity)
+                },
+                '不能超过可外协数量和前道工序外协数量',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
           { required: true, trigger: ['blur'] }
         ],
         processName: [
@@ -794,6 +812,7 @@ export default {
         }
         if (index > 0) item.outShipmentList = []
       })
+      console.log(this.dataFormTwo.data,'this.dataFormTwo.data')
       // 通过需求池id 获取明细的数据
       // getShipmentList(obj).then((res) => {
       //   this.sourceData = res.data
@@ -1045,7 +1064,7 @@ export default {
       if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
       console.log(this.dataFormTwo.data[index],'this.dataFormTwo.data[index]')
       this.sourceData = this.dataFormTwo.data[index].outShipmentList
-      console.log(this.sourceData)
+      console.log(this.sourceData,'123')
       if (this.sourceData.length === 0) {
         this.sourceDisabled = true
       } else {
@@ -1250,6 +1269,12 @@ export default {
       this.$set(this.dataFormTwo.data[index], 'outShipmentList', [])
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index]')
 
+      if (this.preData){
+          this.dataFormTwo.data.forEach(item=>{
+              item.purchaseQuantity = val
+          })
+      }
+
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
@@ -1259,6 +1284,8 @@ export default {
           this.dataFormTwo.data[index].purchaseQuantity / this.dataFormTwo.data[index].ratio
         )
       }
+      
+      if (this.preData) this.refreshOutShipmentList(true)
     },
     clearData() {
       this.dataForm.id = ''
@@ -1429,14 +1456,14 @@ export default {
                 this.btnLoading = false
                 for (let i = 0; i < this.dataFormTwo.data.length; i++) {
                   const item = this.dataFormTwo.data[i]
-                  if (!item.planQuantity) {
-                    this.$message({
-                      type: 'error',
-                      message: '请输入第' + (i + 1) + '行的数量',
-                      duration: 1500
-                    })
-                    break
-                  }
+                  // if (!item.planQuantity) {
+                  //   this.$message({
+                  //     type: 'error',
+                  //     message: '请输入第' + (i + 1) + '行的数量',
+                  //     duration: 1500
+                  //   })
+                  //   break
+                  // }
                   if (!item.deliveryDate) {
                     this.$message({
                       type: 'error',

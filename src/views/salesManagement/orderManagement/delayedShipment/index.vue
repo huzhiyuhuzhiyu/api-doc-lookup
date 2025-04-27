@@ -153,7 +153,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters, mapState } from 'vuex'
-import getProjectList from '@/mixins/generator/getProjectList'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import {
   getbimProductAttributesList,
   getbimProductAttributes, getbimProductAttributesListMap
@@ -161,7 +161,7 @@ import {
 export default {
   name: 'delayedShipment',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
-  mixins: [getProjectList],
+  mixins: [AbProjectMixin],
   data() {
     return {
       superQuery: {},
@@ -224,6 +224,12 @@ export default {
         label: "订单号",
         type: 'input'
       },
+      {
+          prop: 'projectId',
+          label: '所属项目',
+          type: 'select',
+          options: []
+        },
       {
         prop: 'cooperativePartnerCode',
         label: "客户编码",
@@ -342,7 +348,20 @@ export default {
     this.deliveryDateArr = ["", end];
     this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+    let arr=[]
+    console.log("this.abProjectList",this.abProjectList);
+    this.abProjectList.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.id
+          }
+          arr.push(obj)
+        })
+        let classAttributeObj = this.superQueryJson.find((item) => item.prop === 'projectId')
 
+if (classAttributeObj) {
+  classAttributeObj.options = arr
+}
     this.superForm = this.orderForm
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(7, 0, {

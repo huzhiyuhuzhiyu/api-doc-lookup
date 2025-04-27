@@ -287,6 +287,12 @@ export default {
           type: 'input'
         },
         {
+          prop: 'projectId',
+          label: '所属项目',
+          type: 'select',
+          options: []
+        },
+        {
           prop: 'cooperativePartnerCode',
           label: "客户编码",
           type: 'input'
@@ -402,6 +408,7 @@ export default {
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
+  
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -424,12 +431,23 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getpairingModeListFun()
+    await this.getProjectSwitch()
     this.advancedQueryFun()
     this.tableDataFlag = true
-    // if (this.abProjectSwitchVisible){
-    //       this.searchList.unshift({ prop: "projectId", label: "所属项目", type: 'select',options:this.abProjectList });
-    //       this.orderForm.projectId = this.userInfo.projectId
-    //     }
+    let arr=[]
+    console.log("this.abProjectList",this.abProjectList);
+    this.abProjectList.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.id
+          }
+          arr.push(obj)
+        })
+        let classAttributeObj = this.superQueryJson.find((item) => item.prop === 'projectId')
+
+if (classAttributeObj) {
+  classAttributeObj.options = arr
+}
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(7, 0, {
         prop: 'productName',

@@ -1426,7 +1426,6 @@ export default {
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
       console.log(this.dataFormTwo.data,'k')
-      return
       if (this.type == 'add') {
         _data = {
           ...this.dataForm,

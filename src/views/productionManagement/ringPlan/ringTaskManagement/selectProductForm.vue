@@ -131,7 +131,7 @@ export default {
     },
     reset() {
       this.form = {
-        productDrawingNo:"",
+        classAttribute: "semi_finished",
         productCode:"",
         pageNum: 1,
         pageSize: 20, 

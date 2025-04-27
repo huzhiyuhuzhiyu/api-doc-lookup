@@ -116,7 +116,7 @@
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRules.processName">
                                 <!-- 工序选择弹窗  -->
-                                <ComSelect-page :clearable="!preData" :isdisabled="type === 'look' || !!preData" :treeNodeClick="treeNodeClick"
+                                <ComSelect-page :clearable="!preData" :isdisabled="type === 'look' || preData" :treeNodeClick="treeNodeClick"
                                   v-model="scope.row.processName" @change="onOrganizeChangeTwo"
                                   :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
                                   :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
@@ -157,7 +157,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="waitOutsourcingQuantity" label="可外协数量" width="120" />
+                          <el-table-column v-if="preData" prop="waitOutsourcingQuantity" label="可外协数量" width="120" />
                           <el-table-column prop="deputyUnit" label="单位(副)" width="85"
                             v-if="isDeputyUnitSwitch === '1'" />
                           <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100"
@@ -256,7 +256,7 @@
                                 查看发料清单
                               </el-button>
                               <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                :disabled="dataFormTwo.data.length < 2"
+                                :disabled="dataFormTwo.data.length < 2 || preData"
                                 @click="delequipment_process_relList(scope.$index)">
                                 删除
                               </el-button>
@@ -514,23 +514,7 @@ export default {
             }),
             trigger: 'blur'
           },
-          {
-            validator: this.formValidate({
-              type: 'calc',
-              params: [
-                (index, value) => {
-                  if (!this.preData) return true
-                  if (index === 0) return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity)
-                  return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity) && Number(value) <= Number(this.dataFormTwo.data[index - 1].purchaseQuantity)
-                },
-                '不能超过可外协数量和前道工序外协数量',
-                (errMsg, index) => {
-                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
-                }
-              ]
-            }),
-            trigger: ['blur']
-          },
+          
           { required: true, trigger: ['blur'] }
         ],
         processName: [
@@ -639,7 +623,7 @@ export default {
         { label: '未发料', value: 'not_finish' },
         // { label: '已取消', value: 'canceled' }
       ],
-      preData:[]
+      preData:null,
     }
   },
   computed: {
@@ -731,9 +715,27 @@ export default {
 
      // 处理通过生产任务传递过来的明细数据
      const preData = sessionStorage.getItem('preData')
+     console.log(this.preData,'k')
     if (preData) {
       this.preData = JSON.parse(preData)
       console.log(this.preData,'this.preData')
+      this.productRules.purchaseQuantity.push({
+            validator: this.formValidate({
+              type: 'calc',
+              params: [
+                (index, value) => {
+                  if (!this.preData) return true
+                  if (index === 0) return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity)
+                  return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity) && Number(value) <= Number(this.dataFormTwo.data[index - 1].purchaseQuantity)
+                },
+                '不能超过可外协数量和前道工序外协数量',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          })
       sessionStorage.removeItem('preData')
       this.dataFormTwo.data = this.preData.processList
       // this.dataForm.moldId = this.preData.preProcessData?.moldId
@@ -763,7 +765,7 @@ export default {
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
       let maxHeight = mainHeight1 - 340
-      console.log(maxHeight, 'maxHeight')
+
       if (this.preData) {
         this.customStyleData = maxHeight - 90
       } else {
@@ -1491,6 +1493,7 @@ export default {
                 this.btnLoading = true
 
                 if (this.type === 'add') {
+               
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
@@ -1500,6 +1503,19 @@ export default {
                         this.submitmethodsTitle = '提交成功'
                       }
                       this.tipsvisible = true
+                      if (this.preData) {
+                        this.$message({
+                          message: '新建成功',
+                          type: 'success',
+                          duration: 1000,
+                          onClose: () => {
+                            this.btnLoading = false
+                            this.$emit('close', true)
+                          }
+                        })
+                      }
+                      
+                      this.btnLoading = false
                     })
                     .catch(() => {
                       this.btnLoading = false

@@ -799,6 +799,7 @@ export default {
         { label: '未发料', value: 'not_finish' },
         // { label: '已取消', value: 'canceled' }
       ],
+      sourceData:[],
     }
   },
   computed: {
@@ -1299,7 +1300,7 @@ export default {
           submitFlag = false
           this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
         } else {
-          if (ele.outShipmentList.length == 0) {
+          if (!ele.outShipmentList) {
             submitFlag = false
             return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
           }
@@ -1319,7 +1320,7 @@ export default {
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
 
-      this.sourceData = this.dataFormTwo.data[index].outShipmentList
+      this.sourceData = this.dataFormTwo.data[index].outShipmentList ? this.dataFormTwo.data[index].outShipmentList :[]
       console.log(this.sourceData, '1111')
 
       if (this.sourceData.length === 0) {

@@ -292,7 +292,7 @@
                         </el-table-column>
                         <el-table-column
                           v-if=" sealingCoverTypingFlag === '1'"
-                          prop="pairingModeName" label="陪对方式" min-width="120">
+                          prop="pairingModeName" label="配对方式" min-width="120">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择" clearable
                               style="width: 100%;">

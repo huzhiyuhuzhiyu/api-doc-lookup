@@ -9,7 +9,7 @@
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('draft')">
               保存草稿</el-button>
-            <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+            <el-button type="primary" v-if="btnType != 'look'||operateType" size="mini" :loading="btnLoading"
               @click="handleConfirm('submit')">
               保存并提交</el-button>
             <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -25,8 +25,8 @@
                     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                       <el-row :gutter="30" class="custom-row">
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="资产分类" prop="categoryName">
-                            <el-input v-model="dataForm.categoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
+                          <el-form-item label="资产分类" prop="propertyCategoryName">
+                            <el-input v-model="dataForm.propertyCategoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
@@ -59,11 +59,7 @@
                           </el-form-item>
                         </el-col>
                 
-                        <el-col :span="6"  v-if="btnType=='look'||btnType=='edit'">
-                          <el-form-item prop="eqCode" label="设备工具编码">
-                            <el-input v-model="dataForm.eqCode" placeholder="请输入设备工具编码" disabled />
-                          </el-form-item>
-                        </el-col>
+                 
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="投入使用日期" prop="userTime">
                             <el-date-picker v-model="dataForm.userTime" type="date" value-format="yyyy-MM-dd"
@@ -72,31 +68,8 @@
                             </el-date-picker>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产常用位置" prop="position">
-                            <el-input v-model="dataForm.position" placeholder="请输入资产常用位置"
-                              :disabled="btnType == 'look' ? true : false" />
-                          </el-form-item>
-                        </el-col>
-                        <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产原值" prop="costPrice">
-                            <el-input v-model="dataForm.costPrice" placeholder="请输入资产原值"
-                              :disabled="btnType == 'look' ? true : false" />
-                          </el-form-item>
-                        </el-col>
-                        <el-col :sm="6" :xs="24" >
-                          <el-form-item label="年折旧率" prop="depreciationRate">
-                            <el-input v-model="dataForm.depreciationRate" placeholder="请输入年折旧率"
-                              :disabled="btnType == 'look' ? true : false" />
-                          </el-form-item>
-                        </el-col>
                    
-                        <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产净值" prop="netPrice">
-                            <el-input v-model="dataForm.netPrice" placeholder="请输入资产净值"
-                              :disabled="btnType == 'look' ? true : false" />
-                          </el-form-item>
-                        </el-col>
+                      
                  
                         <el-col :sm="6" :xs="24" >
                           <el-form-item label="资产管理员" prop="ownerId">
@@ -106,13 +79,7 @@
                           </el-form-item>
                         </el-col>
                     
-                        <el-col :sm="6" :xs="24" >
-                          <el-form-item label="采购人" prop="purchaserId">
-                            <user-select v-model="dataForm.purchaserId" placeholder="请选择采购人" clearable
-                                  style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
-                                </user-select>
-                          </el-form-item>
-                        </el-col>
+                      
                         <el-col :sm="6" :xs="24" >
                        
                           <el-form-item label="供应商名称" prop="partnerName" ref="partnerName">
@@ -126,8 +93,42 @@
                        
                           </el-form-item>
                         </el-col> 
-   
-                        <el-col :sm="12" :xs="24">
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="金额(含税)" prop="totalAmount">
+                            <el-input v-model="dataForm.totalAmount" placeholder="请输入备注"
+                              :disabled="btnType == 'look' ? true : false" type="text"  />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
+                          <el-form-item label="税率(%)" prop="tax">
+                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" 
+                                :value="item.taxRate"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" v-if="operateType=='approve'">
+                          <el-form-item label="状态" prop="state">
+                            <el-select v-model="dataForm.state" placeholder="请选择" style="width: 100%;" >
+                              <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" 
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
+                          <el-form-item label="审批说明" prop="approvalInstructions">
+                            <el-input v-model="dataForm.approvalInstructions" placeholder="请输入审批说明"
+                               type="textarea" :rows="2" maxlength="200" />
+                          </el-form-item>
+                        </el-col>
+
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='receive'">
+                          <el-form-item label="确认接收说明" prop="confirmReceiptInstructions">
+                            <el-input v-model="dataForm.confirmReceiptInstructions" placeholder="请输入确认接收说明"
+                               type="textarea" :rows="2" maxlength="200" />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注"
                               :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
@@ -136,86 +137,7 @@
                       </el-row>
                     </el-form>
                   </el-collapse-item>
-                  <el-collapse-item title="关联信息" name="associationInfo" class="orderInfo" v-if="btnType=='look'">
-                    <el-radio-group v-model="categoryType"
-                      style="width:100%;border-bottom: 1px solid #dcdfe6 ;margin-top: 8px;">
-                      <el-radio-button v-for="item in categoryTypeList" :key="item.code" style="height: 100%;"
-                        :label="item.code">{{
-                          item.fullName
-                        }}</el-radio-button>
-                    </el-radio-group>
-            
-                    <!-- 采购 -->
-                    <div v-if="categoryType == 'purchase'">
-                  <JNPF-table ref="tableRef" :data="purchaseData" fixedNO v-loading="tableloading" :height="customStyleData"  :partent-or-child="'child'">
-                    <el-table-column prop="orderNo" label="采购单号" min-width="180" />
-                    <el-table-column prop="orderNo" label="供应商名称" min-width="180" />
-                    <el-table-column prop="orderNo" label="联系方式" min-width="180" />
-                    <el-table-column prop="orderNo" label="含税金额" min-width="180" />
-                    <el-table-column prop="orderNo" label="税率" min-width="180" />
-                    <el-table-column prop="orderNo" label="采购单号" min-width="180" />
-                    <el-table-column prop="super" label="申请人" min-width="180" />
-                    <el-table-column prop="deliveryDate" label="状态" width="110" />
-                    <el-table-column prop="excludingTaxTotalAmount" label="创建时间" width="160" />
-                    <el-table-column prop="taxAmount" label="更新时间" width="80" />
-                    <el-table-column prop="totalAmount" label="备注" width="140" />
-                    <el-table-column prop="receivingStatus" label="审批人" align="center" width="120">
-                    </el-table-column>
-                    <el-table-column prop="remark" min-width="180" label="审批说明" />
-                  </JNPF-table>
-                    </div>
-                    <!-- 报废 -->
-           
-                    <div v-if="categoryType == 'scrap'">
-                  <JNPF-table ref="tableRef" :height="customStyleData" :data="scrapData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
-                    <el-table-column prop="orderNo" label="报废单号" min-width="200"></el-table-column>
-                    <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="partnerName" label="状态" min-width="180" />
-                    <el-table-column prop="deliveryDate" label="创建时间" width="110" />
-                    <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
-                    <el-table-column prop="taxAmount" label="备注" width="80" />
-                    <el-table-column prop="totalAmount" label="审批人" width="140" />
-                    <el-table-column prop="createByName" label="审批说明" />
-                  </JNPF-table>
-                    </div>
-                    <!-- 出售 -->
-                    <div v-if="categoryType == 'sale'">
-                  <JNPF-table ref="tableRef" :height="customStyleData" :data="saleData" fixedNO  :partent-or-child="'child'"
-                    v-loading="tableloading">
-                    <el-table-column prop="orderNo" label="销售单号" min-width="200"></el-table-column>
-                    <el-table-column prop="orderNo" label="客户名称" min-width="200"></el-table-column>
-                    <el-table-column prop="orderNo" label="联系方式" min-width="200"></el-table-column>
-                    <el-table-column prop="orderNo" label="含税金额" min-width="200"></el-table-column>
-                    <el-table-column prop="orderNo" label="税率" min-width="200"></el-table-column>
-                    <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="partnerName" label="状态" min-width="180" />
-                    <el-table-column prop="deliveryDate" label="创建时间" width="110" />
-                    <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
-                    <el-table-column prop="taxAmount" label="备注" width="80" />
-                    <el-table-column prop="totalAmount" label="审批人" width="140" />
-                    <el-table-column prop="createByName" label="审批说明" />
-                  </JNPF-table>
-                    </div>
-                    <!-- 调出 -->
-                    <div v-if="categoryType == 'call'">
-                  <JNPF-table ref="tableRef" :height="customStyleData" :data="callData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
-                    <el-table-column prop="orderNo" label="调出单号" min-width="200">
-                      <template slot-scope="scope">
-                        <el-link type="primary" @click.native="viewFinishExtendFun(scope.row.id, 'look')">
-                          {{ scope.row.orderNo }}
-                        </el-link>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="partnerName" label="状态" min-width="180" />
-                    <el-table-column prop="deliveryDate" label="创建时间" width="110" />
-                    <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
-                    <el-table-column prop="taxAmount" label="备注" width="80" />
-                    <el-table-column prop="totalAmount" label="审批人" width="140" />
-                    <el-table-column prop="createByName" label="审批说明" />
-                  </JNPF-table>
-                    </div>
-                  </el-collapse-item>
+ 
                 </el-collapse>
               </el-tab-pane>
               <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
@@ -239,45 +161,35 @@
         </el-dialog>
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
-      <Form v-if="formVisible" ref="Form"></Form>
       <assetCategoryForm v-if="assetCategoryFormVisible" ref="assetCategoryForm" @selectAssetFun="selectAssetFun"></assetCategoryForm>
       
     </div>
   </transition>
 </template>
 <script>
-import { addBimProperty,editBimProperty,bimPropertyDetail,checkBimPropertyCode} from '@/api/bimPropertyCategory/index'
-
-
-
-
-
-
-
+import { addPropertyPurchaseOrder,editPropertyPurchaseOrder,propertyPurchaseOrderDetail,checkBimPropertyCode} from '@/api/bimPropertyCategory/index'
 import assetCategoryForm from '../../basicInformation/assetCategoryForm.vue'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
-
-
-
-
-
+import {getbimProductAttributes} from "@/api/masterDataManagement/index";
  
 import { mapGetters, mapState } from 'vuex' 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
-import recordList from '@/views/workFlow/components/RecordList.vue'
-import {  getOrderFiledMap } from '@/api/basicData/index'
-import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 export default {
   mixins: [AbProjectMixin],
 
-  components: {  recordList, Form,assetCategoryForm
+  components: {   assetCategoryForm
   },
   
   data() {
     return {
+      taxRateList:[],
       tipsvisible:false,
       categoryType:"purchase",
+      stateList:[
+        {label:"同意",value:true,},
+        {label:"拒绝",value:false,},
+      ],
       categoryTypeList: [
         { code: "purchase", fullName: "资产采购单", },
         { code: "scrap", fullName: "资产报废单", },
@@ -285,10 +197,7 @@ export default {
         { code: "call", fullName: "资产调用单", },
 
       ],
-      purchaseData:[],
-      scrapData:[],
-      saleData:[],
-      callData:[],
+
       btnType:"",
       activeName:'orderInfo',
       activeNames:['basicInfo','associationInfo'],
@@ -321,7 +230,7 @@ export default {
       },
       oldData:[],
       dataForm:{
-        categoryName:"",
+        propertyCategoryName:"",
         propertyCategoryId:"",
         code:"",
         name:"",
@@ -333,11 +242,12 @@ export default {
         depreciationRate:"",
         netPrice:"",
         ownerId:"",
-        purchaserId:"",
         partnerName:"",
         cooperativePartnerId:"",
         remark:"",
-        state:"normal",
+        orderStatus:"toBeAgreed",
+        tax:"",
+        state:"",
       },
       width1: 400,
       width: 700, 
@@ -345,11 +255,11 @@ export default {
  
       activeNameDetail: 'productInfo',
       autoCode:"",
-      
+      operateType:"",
    
   
       dataRule: {
-        categoryName: [
+        propertyCategoryName: [
           { required: true, message: '资产分类不能为空', trigger: 'change' }
         ],
         code: [
@@ -397,7 +307,10 @@ export default {
         projectId: [
           { required: true, message: '所属项目不能为空', trigger: 'change' }
         ],
-
+        
+        ownerId: [
+          { required: true, message: '资产管理员不能为空', trigger: 'change' }
+        ],
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
       },
@@ -413,20 +326,28 @@ export default {
  
   watch: {
 
-'categoryType': function (newVal) {
-  this.getTabdataList()
-},
+
 },
   async created() { 
- 
+    this.getProductClassFun()
   },
   mounted() { 
   },
 
   methods: {
+    getProductClassFun() {
+    
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list 
+      })
+    },
     continueEdit(){
- this.tipsvisible=false
- this.btnLoading=false
+      this.tipsvisible=false
+      this.btnLoading=false
       this.btnType='edit'
       this.init(this.copyForm.id,'edit')
     },
@@ -435,47 +356,7 @@ export default {
       this.btnType='add'
       this.$refs.dataForm.resetFields();
     },
-    getTabdataList() {
-  
-  if (this.categoryType == 'purchase') {
-  // 采购
 
-  purchaseOrderList(this.requestObj).then(res => {
-    console.log("采购", res);
-    this.purchaseData = res.data.records
-  })
-} else if (this.categoryType == 'scrap') {
-  // 报废
-  this.requestObj.source = 'mrp'
-  this.requestObj.ordersLineId = this.orderLinesId
-  this.requestObj.orderType = 'procure'
-  purchaseOrderList(this.requestObj).then(res => {
-    console.log("报废", res);
-
-    this.rawData = res.data.records
-  })
-} else if (this.categoryType == 'sale') {
-  // 出售
-  this.requestObj.source = 'plan'
-  this.requestObj.ordersLineId = this.orderLinesId
-  this.requestObj.orderType = 'external'
-  purchaseOrderList(this.requestObj).then(res => {
-    console.log("出售", res);
-
-    this.finishExtendData = res.data.records
-  })
-} else if (this.categoryType == 'call') {
-  // 调用
-  this.requestObj.source = 'mrp'
-  this.requestObj.ordersLineId = this.orderLinesId
-  this.requestObj.orderType = 'external'
-  purchaseOrderList(this.requestObj).then(res => {
-    console.log("调用", res);
-    this.processOutData = res.data.records
-  })
-}
- 
-},
 
 
     openAssetCategoryDialog(){
@@ -487,7 +368,7 @@ export default {
     // 选择资产分类
     selectAssetFun(row){
       console.log("所选择的分类",row);
-      this.dataForm.categoryName=row.name
+      this.dataForm.propertyCategoryName=row.name
       this.dataForm.propertyCategoryId=row.id
     },
     // 弹窗节点的点击
@@ -621,11 +502,15 @@ export default {
             if (submitFlag === false) return
             this.btnLoading = true
             let formMethod = null;
-            if (this.btnType == 'edit') {
-              formMethod = editBimProperty
+            if (this.btnType == 'edit'||this.operateType) {
+              formMethod = editPropertyPurchaseOrder
+              if(this.dataForm.state===true)this.dataForm.orderStatus='toBeConfirmed'
+              if(this.dataForm.state===false)this.dataForm.orderStatus='rejected'
+              if(this.operateType==='approve')this.$set(this.dataForm,'approvalUserId',this.userInfo.userId)
+              if(this.operateType==='receive')this.dataForm.orderStatus='received'
               this.btnText = "继续修改"
             } else if (this.btnType == 'add' || this.btnType == 'copy') {
-              formMethod = addBimProperty
+              formMethod = addPropertyPurchaseOrder
               this.btnText = "继续新增"
             }
             formMethod(this.dataForm).then(res => {
@@ -648,10 +533,11 @@ export default {
         }
       })
     },
-    getBimPropertyDetailFun(id){
-      bimPropertyDetail(id).then(res=>{
+    getPropertyPurchaseOrderDetail(id){
+      propertyPurchaseOrderDetail(id).then(res=>{
         console.log("详情",res);
         this.dataForm=res.data
+        if(this.operateType=='approve') this.$set(this.dataForm,'state',true)
         this.autoCode=res.data.code
         thiis.copyForm=JSON.parse(JSON.stringify(res.data))
       })
@@ -667,9 +553,17 @@ export default {
     init(id, btnType) {
       this.getBimBusinessDetail()
       console.log("btntype",btnType);
+      if(btnType=='receive'){
+        btnType='look'
+        this.operateType='receive'
+      }
+      if(btnType=='approve'){
+        btnType='look'
+        this.operateType='approve'
+      }
       this.btnType=btnType
       this.switchStyleheight()
-       if(id)this.getBimPropertyDetailFun(id)
+       if(id)this.getPropertyPurchaseOrderDetail(id)
     },
     goBack() {
       this.$emit('close', true)

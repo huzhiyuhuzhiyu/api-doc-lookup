@@ -55,50 +55,43 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="供应商名称" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="联系方式" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="金额" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="税率" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="所属项目" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="资产编码" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="资产名称" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="分类" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="所属项目" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="投入使用日期" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="资产管理员" min-width="180" sortable="custom" />
-          <el-table-column prop="供应商名称" label="资产常用位置" min-width="180" sortable="custom" />
-          <el-table-column prop="state" label="状态" min-width="120" >
+          <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom"  >
+            <template slot-scope="scope">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                  scope.row.orderNo
+                }}</el-link>
+              </template>
+          </el-table-column>
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+          <el-table-column prop="partnerPhone" label="联系方式" min-width="180" sortable="custom" />
+          <el-table-column prop="totalAmount" label="金额" min-width="180" sortable="custom" />
+          <el-table-column prop="tax" label="税率" min-width="180" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" min-width="180" sortable="custom" />
+          <el-table-column prop="code" label="资产编码" min-width="180" sortable="custom" />
+          <el-table-column prop="name" label="资产名称" min-width="180" sortable="custom" />
+          <el-table-column prop="propertyCategoryName" label="分类" min-width="180" sortable="custom" />
+          <el-table-column prop="userTime" label="投入使用日期" min-width="180" sortable="custom" />
+          <el-table-column prop="ownerName" label="资产管理员" min-width="180" sortable="custom" />
+          <el-table-column prop="orderStatus" label="状态" min-width="120" >
             <template  slot-scope="scope">
-              <div v-if="scope.row.state=='toBeAgreed'">待同意</div>
-              <div v-if="scope.row.state=='pendTransferOut'">待确认</div>
-              <div v-if="scope.row.state=='toBeRecalled'">已接收</div>
-              <div v-if="scope.row.state=='refuse'">已拒绝</div>
+              <div v-if="scope.row.orderStatus=='toBeAgreed'">待同意</div>
+              <div v-if="scope.row.orderStatus=='toBeConfirmed'">待确认</div>
+              <div v-if="scope.row.orderStatus=='received'">已接收</div>
+              <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
             </template>
           </el-table-column>
-          <el-table-column prop="code" label="申请人" min-width="150" sortable="custom" />
-          <el-table-column prop="createTime" label="审批人" min-width="180" sortable="custom" />
-          <el-table-column prop="createTime" label="审批说明" min-width="180" sortable="custom" />
-          <el-table-column prop="createTime" label="确认接受说明" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="申请人" min-width="150" sortable="custom" />
+          <el-table-column prop="approvalUserName" label="审批人" min-width="180" sortable="custom" />
+          <el-table-column prop="approvalInstructions" label="审批说明" min-width="180" sortable="custom" />
+          <el-table-column prop="confirmReceiptInstructions" label="确认接受说明" min-width="180" sortable="custom" />
     
-          <el-table-column prop="remark" label="备注" min-width="100" />
-          <el-table-column prop="createTime" label="创建时间" min-width="100" />
-          <el-table-column prop="createByName" label="更新时间" min-width="100" />
+          <el-table-column prop="remark" label="备注" min-width="180" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" />
+          <el-table-column prop="updateTime" label="更新时间" min-width="180" />
           <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft'||scope.row.documentStatus=='back' ? false : true"
-                  @click="addOrUpdateHandle(scope.row.id, 'edit')">审批</el-button>
-
-                <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.documentStatus == 'draft'||scope.row.documentStatus=='back' ? false : true"
-                  @click="handleDel(scope.row.id)">确认接收</el-button>
-                <!-- :disabled="scope.row.documentStatus == 'draft' ? false : true" -->
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                </el-dropdown>
+                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
+                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'receive')" v-if="scope.row.orderStatus=='toBeConfirmed'">确认接收</el-button>
               </template>
             </el-table-column>
         </JNPF-table>
@@ -114,7 +107,7 @@
 </template>
 
 <script> 
-import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index'
+import {propertyPurchaseOrderList,delPropertyPurchaseOrder} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -131,13 +124,12 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
-            {label:"待调出",value:"pendTransferOut",},
-            {label:"待调回",value:"toBeRecalled",},
-            {label:"已完成",value:"success",},
-            {label:"已拒绝",value:"refuse",},
+            {label:"待确认",value:"toBeConfirmed",},
+            {label:"已接收",value:"received",},
+            {label:"已拒绝",value:"rejected",},
           ] 
         },
       ],
@@ -159,6 +151,8 @@ export default {
       form: {
         code: '',
         name: '',
+        orderStatus:"",
+        orderNo:"",
         pageNum: 1,
         pageSize: 20,
 
@@ -269,19 +263,13 @@ export default {
 
  
     async initData() {
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.superForm.endTime = this.createTimeArr[1] + ' 23:59:59'
-      } else {
-        this.superForm.startTime = ''
-        this.superForm.endTime = ''
-      }
+
       this.listLoading = true
       console.log("this.abProjectSwitchVisible",this.abProjectSwitchVisible);
       if(this.abProjectSwitchVisible) this.superForm.projectId=this.userInfo.projectId
 
 
-      await getBimPropertyCategoryList(this.superForm).then((res) => {
+      await propertyPurchaseOrderList(this.superForm).then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
@@ -323,7 +311,8 @@ export default {
       this.form = {
         code: '',
         name: '',
-
+        orderStatus:"",
+        orderNo:"",
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -338,7 +327,7 @@ export default {
       this.searchList =[
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
             {label:"待调出",value:"pendTransferOut",},
@@ -359,12 +348,12 @@ export default {
         this.$refs.Form.init('', 'add')
       })
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,type) {
       this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
+          this.$refs.Form.init(id, type)
         })
         // }, 600);
       }
@@ -388,10 +377,10 @@ export default {
         })
         .catch(() => { })
     },
-    handleUserRelation(id, parentId, btnType) {
+    handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType)
+        this.$refs.Form.init(id, btnType)
       })
     },
 

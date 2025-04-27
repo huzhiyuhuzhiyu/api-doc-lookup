@@ -56,28 +56,39 @@
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
           <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom" />
-          <el-table-column prop="code" label="申请人" min-width="150" sortable="custom" />
+          <el-table-column prop="name" label="资产编码" min-width="120" />
+          <el-table-column prop="code" label="资产名称" min-width="120" />
+          <el-table-column prop="spec" label="资产规格" min-width="120" />
+          <el-table-column prop="propertyCategoryName" label="分类" min-width="120" />
+          <el-table-column prop="projectName" label="所属项目" min-width="120" />
+          <el-table-column prop="userTime" label="投入使用日期" min-width="160" />
+          <el-table-column prop="ownerName" label="资产管理员" min-width="160" />
+          <el-table-column prop="remark" label="常用位置" min-width="160" />
     
-          <el-table-column prop="state" label="状态" min-width="120" >
+          <el-table-column prop="orderStatus" label="状态" min-width="120" >
             <template  slot-scope="scope">
-              <div v-if="scope.row.state=='toBeAgreed'">待同意</div>
-              <div v-if="scope.row.state=='pendTransferOut'">待调出</div>
-              <div v-if="scope.row.state=='toBeRecalled'">待调回</div>
-              <div v-if="scope.row.state=='success'">已完成</div>
-              <div v-if="scope.row.state=='refuse'">已拒绝</div>
+              <div v-if="scope.row.orderStatus=='toBeAgreed'">待同意</div>
+              <div v-if="scope.row.orderStatus=='toBeOut'">待调出</div>
+              <div v-if="scope.row.orderStatus=='toBeRecall'">待调回</div>
+              <div v-if="scope.row.orderStatus=='finished'">已完成</div>
+              <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="资产编码" min-width="120" />
-          <el-table-column prop="remark" label="资产名称" min-width="120" />
-          <el-table-column prop="remark" label="使用人" min-width="120" />
-          <el-table-column prop="remark" label="投入使用日期" min-width="160" />
-          <el-table-column prop="createTime" label="审批人" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="更新时间" min-width="100" />
+        
+          <el-table-column prop="createByName" label="申请人" min-width="150" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" min-width="150" sortable="custom" />
+          <el-table-column prop="updateTime" label="更新时间" min-width="100" />
+          <el-table-column prop="remark" label="备注" min-width="150" sortable="custom" />
+          <el-table-column prop="approvalUserName" label="审批人" min-width="180" sortable="custom" />
+          <el-table-column prop="approvalInstructions" label="审批说明" min-width="180" sortable="custom" />
+          <el-table-column prop="outInstructions" label="调出说明" min-width="180" sortable="custom" />
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-      
-              </tableOpts>
+              <template slot-scope="scope">
+                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
+                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'out')" v-if="scope.row.orderStatus=='toBeOut'">确认调出</el-button>
+                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'back')" v-if="scope.row.orderStatus=='toBeRecall'">确认调回</el-button>
+              </template>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -93,7 +104,7 @@
 </template>
 
 <script> 
-import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index'
+import { propertyOutList,delPropertyOut} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -101,7 +112,7 @@ import { updateSortBatch } from '@/api/masterDataManagement/index'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'assetCategory',
+  name: 'callManagement',
   components: { Form, SuperQuery },
   mixins: [AbProjectMixin],
   data() {  
@@ -110,7 +121,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
             {label:"待调出",value:"pendTransferOut",},
@@ -260,7 +271,7 @@ export default {
       if(this.abProjectSwitchVisible) this.superForm.projectId=this.userInfo.projectId
 
 
-      await getBimPropertyCategoryList(this.superForm).then((res) => {
+      await propertyOutList(this.superForm).then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
@@ -317,7 +328,7 @@ export default {
       this.searchList =[
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'state', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
             {label:"待调出",value:"pendTransferOut",},
@@ -355,7 +366,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          delBimPropertyCategoryList(id).then((res) => {
+          delPropertyOut(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

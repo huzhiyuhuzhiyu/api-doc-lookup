@@ -105,3 +105,109 @@ export function checkBimPropertyCode(data) {
   })
 }
 
+
+
+
+
+
+// 资产采购 列表
+
+export function propertyPurchaseOrderList(data) {
+  return request({
+    url: `/api/zgt/propertyPurchaseOrder/list/condition`,
+    method: 'POST',
+    data
+  })
+}
+// 资产采购  新增
+
+export function addPropertyPurchaseOrder(data) {
+  return request({
+    url: `/api/zgt/propertyPurchaseOrder/insertPurchaseOrder`,
+    method: 'POST',
+    data
+  })
+}
+
+// 资产采购  删除
+
+export function delPropertyPurchaseOrder(id) {
+  return request({
+    url: `/api/zgt/propertyPurchaseOrder/remove/${id}`,
+    method: 'delete',
+     
+  })
+}
+
+// 资产采购  编辑
+
+export function editPropertyPurchaseOrder(data) {
+  return request({
+    url: `/api/zgt/propertyPurchaseOrder/modifyPurchaseOrder`,
+    method: 'put',
+     data
+  })
+}
+
+// 资产采购  详情
+
+export function propertyPurchaseOrderDetail(id) {
+  return request({
+    url: `/api/zgt/propertyPurchaseOrder/detail/${id}`,
+    method: 'get',
+  })
+}
+// 资产采购  编码唯一性
+
+export function checkPropertyPurchaseOrderCode(data) {
+  return request({
+    url: `/api/zgt/propertyPurchaseOrder/check/code/exist?id=${data.id}&code=${data.code}`,
+    method: 'get',
+  })
+}
+
+
+
+
+
+// 资产调出 列表
+export function propertyOutList(data) {
+  return request({
+    url: `/api/zgt/propertyOut/list/condition`,
+    method: 'POST',
+    data
+  })
+}
+
+// 资产调出 新增
+
+export function addPropertyOut(data) {
+  return request({
+    url: `/api/zgt/propertyOut/insertPurchaseOrder`,
+    method: 'POST',
+    data
+  })
+}
+// 资产调出  删除
+export function delPropertyOut(id) {
+  return request({
+    url: `/api/zgt/propertyOut/remove/${id}`,
+    method: 'delete', 
+  })
+}
+
+// 资产调出 编辑
+export function editPropertyOut(data) {
+  return request({
+    url: `/api/zgt/propertyOut/modifyPurchaseOrder`,
+    method: 'put',
+    data
+  })
+}
+// 资产调出  详情
+export function propertyOutDetail(id) {
+  return request({
+    url: `/api/zgt/propertyOut/detail/${id}`,
+    method: 'get', 
+  })
+}

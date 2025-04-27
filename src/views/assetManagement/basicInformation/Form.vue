@@ -397,7 +397,9 @@ export default {
         projectId: [
           { required: true, message: '所属项目不能为空', trigger: 'change' }
         ],
-
+        ownerId: [
+          { required: true, message: '资产管理员不能为空', trigger: 'change' }
+        ],
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
       },

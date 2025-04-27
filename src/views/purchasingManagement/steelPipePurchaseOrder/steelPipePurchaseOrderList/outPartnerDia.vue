@@ -20,7 +20,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="form.outPartnerName" placeholder="请输入供应商名称" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.outPartnerName" placeholder="请输入外协供应商名称" clearable />
               </el-form-item>
             </el-col>
    
@@ -49,7 +49,8 @@
             <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableDataList"  
             :fixedNO="true"  
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="outPartnerName" label="供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="purchasePartnerName" label="采购供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="outPartnerName" label="外协供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="outProductName" label="产品名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductCode" label="产品编码" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductDrawingNo" label="品名规格" min-width="120" sortable="custom"> </el-table-column>
@@ -81,6 +82,7 @@ export default {
       customerVisible: false,
  
       form: {
+        purchasePartnerId:"",
         outProductName:"",
         outProductCode:"",
         outPartnerName:"",
@@ -128,8 +130,8 @@ export default {
       this.search()
     },
  
-    init() {
-
+    init(id) {
+      this.form.purchasePartnerId=id
       this.customerVisible = true
       this.getbatchNumList()
     },
@@ -155,6 +157,7 @@ export default {
     },
     reset() {
       this.form = {
+        purchasePartnerId:this.form.purchasePartnerId,
         outProductName:"",
         outProductCode:"",
         outPartnerName:"",

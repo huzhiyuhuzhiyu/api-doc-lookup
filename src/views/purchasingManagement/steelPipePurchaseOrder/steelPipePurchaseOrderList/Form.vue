@@ -10,8 +10,8 @@
             <el-button type="primary" v-if="btnType !== 'look'" :loading="btnLoading" @click="dataFormSubmit('submit')">
               {{ $t('common.submitButton') }}
             </el-button>
-            <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
-              @click="dataFormSubmit('submit', 'print')">提交并打印</el-button>
+            <!-- <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
+              @click="dataFormSubmit('submit', 'print')">提交并打印</el-button> -->
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
@@ -82,7 +82,11 @@
                       </el-col>
                       <el-col  :span="6" >
                         <el-form-item label="回购税率" prop="buyBackRate" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                          <!-- <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率"  :disabled="btnType === 'look'?true:false"  /> -->
+                          <el-select v-model="dataForm.buyBackRate" placeholder="请选择" style="width: 100%;" :disabled="btnType === 'look'">
+                            <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
+                              :value="item.taxRate"></el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
@@ -685,7 +689,8 @@ export default {
         // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择采购供应商', trigger: ['change'] }],
         outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }],
+        buyBackRate:[{ required: true, message: '请选择回购税率', trigger: ['change'] }],
       },
       productRules: {
         productDrawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
@@ -929,8 +934,7 @@ export default {
        this.dataForm.outProductCode=data.outProductCode
        this.dataForm.outProductName=data.outProductName
        this.dataForm.productDrawingNo=data.productDrawingNo
-       this.dataForm.buyBackPrice=data.buyBackPrice
-       this.dataForm.buyBackRate=data.buyBackRate
+       this.dataForm.buyBackPrice=data.buyBackPrice 
        this.dataForm.warehouseName=data.warehouseName
        this.dataForm.warehouseId=data.warehouseId
        this.dataForm.outProductId=data.outProductId
@@ -941,9 +945,10 @@ export default {
       this.outVisible=false
     },
     openSelectOutPartner(){
+      if(!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择采购供应商")
       this.outVisible=true
       this.$nextTick(()=>{
-        this.$refs.outForm.init()
+        this.$refs.outForm.init(this.dataForm.cooperativePartnerId)
       })
     },
 
@@ -1556,6 +1561,8 @@ export default {
                 duration: 1000,
                 onClose: () => {
                   this.btnLoading = false
+                  this.$emit('close',true)
+
                 }
               })
             if (printType) {

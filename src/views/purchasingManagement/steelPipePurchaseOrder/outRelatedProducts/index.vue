@@ -53,14 +53,15 @@
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"  
             :fixedNO="true"  
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="outPartnerName" label="供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="purchasePartnerName" label="采购供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="outPartnerName" label="外协供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="outProductName" label="产品名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductCode" label="产品编码" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductDrawingNo" label="品名规格" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="yieldRate" label="成材率" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="buyBackPrice" label="回购单价" min-width="120" sortable="custom"> </el-table-column>
-            <el-table-column prop="buyBackRate" label="回购税率(%)" min-width="120" sortable="custom"> </el-table-column>
+            <!-- <el-table-column prop="buyBackRate" label="回购税率(%)" min-width="120" sortable="custom"> </el-table-column> -->
             <el-table-column prop="remark" label="备注" min-width="200" sortable="custom"> </el-table-column>
             <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
@@ -79,6 +80,16 @@
       :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
       <el-row :gutter="20">
         <el-form ref="diaForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="采购供应商" prop="purchasePartnerName">
+              <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClickPurchase"
+                            v-model="dataForm.purchasePartnerName" :beforeSubmit="beforeSubmitPurchase" ref="ComSelect-page"
+                            @change="selectPurchasePartner" :tableItems="PartnerTableItems" :placeholder="'请选择采购供应商'"
+                            title="选择采购供应商" treeTitle="采购供应商分类" :methodArr="purchasePartnerMethodArr"
+                            :listMethod="getCooperativeData" :listRequestObj="purcashePartnerListRequestObj"
+                            :paramsObj="{ oldDataPurchase }" :searchList="PartnerTableSearchList" />
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
             <el-form-item label="外协供应商" prop="outPartnerName">
               <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
@@ -106,14 +117,14 @@
               <el-input v-model="dataForm.buyBackPrice" placeholder="回购单价" clearable :disabled="btnType === 'look'"/>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <!-- <el-col :span="24">
             <el-form-item label="回购税率" prop="buyBackRate">
               <el-select v-model="dataForm.buyBackRate" placeholder="请选择" style="width: 100%;" :disabled="btnType === 'look'">
                       <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
                         :value="item.taxRate"></el-option>
                     </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="24">
             <el-form-item label="仓库名称" prop="warehouseName">
               <ComSelect-list v-model="dataForm.warehouseName" :disabled="btnType === 'look'" :requestObj="{ type: 'normal', state: 'enable',  }" :dialogTitle="'选择仓库'"  :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
@@ -286,6 +297,7 @@ export default {
       ],
       //  外协供应商 树请求
       outPartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'outsourcing_suppliers' } },
+      purchasePartnerMethodArr:{ method: getcategoryTree, requestObj: { type: 'supplier' } },
       getCooperativeData,
       getcategoryTree,
       // 供应商请求参数
@@ -298,13 +310,26 @@ export default {
         partnerCategoryId: '',
         type: 'outsourcing_suppliers'
       },
+      purcashePartnerListRequestObj:{
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'supplier'
+      },
       // 供应商搜索条件
       PartnerTableSearchList: [
         { prop: 'code', label: '供应商编码', type: 'input' },
         { prop: 'name', label: '供应商名称', type: 'input' }
       ],
       oldData:[],
+      oldDataPurchase:[],
       dataForm:{
+        purchasePartnerName:"",
+        purchasePartnerId:"",
+        purchasePartnerCode:"",
         outPartnerName:"",
         outPartnerId:"",
         outProductName:"",
@@ -423,9 +448,10 @@ export default {
       ],
 
       dataRule: {
-        outPartnerName: [{ required: true, message: '请选择采购供应商', trigger: ['change'] }],
-        productName: [{ required: true, message: '请选择产品', trigger: ['change'] }],
-        buyBackRate: [{ required: true, message: '请选择回购税率', trigger: ['change'] }],
+        outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
+        purchasePartnerName: [{ required: true, message: '请选择采购供应商', trigger: ['change'] }],
+        outProductName: [{ required: true, message: '请选择产品', trigger: ['change'] }],
+        // buyBackRate: [{ required: true, message: '请选择回购税率', trigger: ['change'] }],
         warehouseName: [{ required: true, message: '请选择仓库', trigger: ['change'] }],
         yieldRate: [{ required: true, message: '请输入成材率', trigger: ['blur'] }],
         buyBackPrice: [
@@ -673,7 +699,12 @@ export default {
       listQuery.classAttribute = data.classAttribute
       return listQuery
     },
- 
+    treeNodeClickPurchase(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
     // 打开选择供应商弹窗
     // 切换供应商后给的提示
     async beforeSubmit(data, paramsObj) {
@@ -703,6 +734,54 @@ export default {
       }
       return flag
     },
+    async beforeSubmitPurchase(data, paramsObj) {
+      // if (!this.dataForm.transferOutWarehouseName) return true
+      let flag = true
+      if (paramsObj.oldDataPurchase.length) {
+        flag = await this.$confirm('切换供应商将更新产品信息的含税单价和税率，是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$message({
+              type: 'success',
+              message: '更换成功!'
+            })
+            // this.$refs['productForm'].resetFields()
+            return true
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+            return false
+          })
+      }
+      return flag
+    },
+    selectPurchasePartner(id,data){
+      console.log("id,",id,data);
+      this.$nextTick(() => {
+        this.$refs['diaForm'].validateField('purchasePartnerName')
+      })
+      if (data.length === 0) {
+        this.dataForm.purchasePartnerName = ''
+        this.dataForm.purchasePartnerCode = ''
+        this.dataForm.purchasePartnerId = ''
+        this.oldDataPurchase = []
+      } else {
+        if (this.oldDataPurchase.length) {
+        } else {
+          this.oldDataPurchase.push(data)
+        }
+        this.dataForm.purchasePartnerName = data[0].all.name
+        this.dataForm.purchasePartnerCode = data[0].all.code
+        this.dataForm.purchasePartnerId = data[0].all.id
+     
+      }
+    },
     selectOutPartner(id,data){
       console.log("id,",id,data);
       this.$nextTick(() => {
@@ -721,41 +800,9 @@ export default {
         this.dataForm.outPartnerName = data[0].all.name
         this.dataForm.outPartnerCode = data[0].all.code
         this.dataForm.outPartnerId = data[0].all.id
-    
-        // let _data = {
-        //   outPartnerId: this.dataForm.outPartnerId,
-        //   productIdList
-        // }
-        // partnerProductPrice(_data).then((res) => {
-        //   console.log(res, 'df')
-        //   if (res.data.length === 0) {
-        //     this.dataFormTwo.data.forEach((item) => {
-        //       console.log(item, 'p[[[]]]')
-        //       item.price = item.purchasePrice
-        //       item.fixedPrice = item.purchasePrice
-        //       this.$set(item, 'taxRate', Number(item.purchaseTaxRate))
-        //     })
-        //   } else {
-        //     res.data.forEach((item) => {
-        //       const targetList = this.dataFormTwo.data.filter((line) => line.productsId === item.productId)
-        //       targetList.forEach((line) => {
-        //         this.$set(line, 'fixedPrice', item.price)
-        //         this.$set(line, 'price', item.price)
-        //         this.$set(line, 'excludingTaxPrice', item.excludingTaxPrice)
-        //         this.$set(line, 'taxRate', Number(item.taxRate))
-        //       })
-        //     })
-        //     const targetList = this.dataFormTwo.data.filter((line) => line.price == '')
-        //     targetList.forEach((line) => {
-        //       this.$set(line, 'price', '')
-        //     })
-        //     // 重置子表校验状态
-        //     this.$refs.productForm.clearValidate()
-        //   }
-        // })
+     
       }
     },
- 
     //  提交
     submitFun() {
       console.log(555555555);

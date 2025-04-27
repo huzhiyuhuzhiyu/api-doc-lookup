@@ -141,7 +141,12 @@
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData">
-      
+          <div class="text">
+            <span>合计：</span>
+            <span style="margin-left: 10px">入库数量：{{ InTotalNum }}</span>
+            <span style="margin-left: 10px">出库数量：{{ outTotalNum }}</span>
+            <span style="margin-left: 10px">金额：{{ totalTotalAmount }}</span>
+          </div>
         </pagination>
       </div>
     </div>
@@ -576,9 +581,16 @@ export default {
           return sum;  // 默认情况，无需改变 sum  
         }, 0);
       }
-
+      function calculateSum(data, type) {
+        return data.reduce((sum, item) => {
+          return item.businessType === type ? sum + Number(item.num) : sum;
+        }, 0);
+      }
       this.totalNum = this.selectData.reduce((sum, e) => sum + Number(e.num || 0), 0)
       this.totalTotalAmount = calculateTotalValue(this.selectData)
+      this.InTotalNum = calculateSum(this.selectData, 'outbound_sale_send')
+      this.outTotalNum = calculateSum(this.selectData, 'inbound_sale_return')
+
     },
     moreQueries() {
       this.visible = true

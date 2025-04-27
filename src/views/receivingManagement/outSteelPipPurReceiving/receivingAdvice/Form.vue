@@ -52,7 +52,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                      <el-form-item label="供应商名称" prop="partnerName">
+                      <el-form-item label="采购供应商" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                           :disabled="btnType == 'look'"></el-input>
                       </el-form-item>
@@ -88,8 +88,12 @@
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
-                        <el-form-item label="回购税率" prop="buyBackRate" >
-                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                        <el-form-item label="回购税率" prop="buyBackRate">
+                          <!-- <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率"  :disabled="btnType === 'look'?true:false"  /> -->
+                          <el-select v-model="dataForm.buyBackRate" placeholder="请选择" style="width: 100%;" :disabled="btnType === 'look'">
+                            <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
+                              :value="item.taxRate"></el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
@@ -348,7 +352,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
-                  <el-form-item label="供应商名称" prop="partnerName">
+                  <el-form-item label="采购供应商" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                       :disabled="btnType == 'look'"></el-input>
                   </el-form-item>
@@ -385,7 +389,11 @@
                       </el-col>
                       <el-col  :span="6" >
                         <el-form-item label="回购税率" prop="buyBackRate" >
-                          <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率" disabled  />
+                          <!-- <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率"  :disabled="btnType === 'look'?true:false"  /> -->
+                          <el-select v-model="dataForm.buyBackRate" placeholder="请选择" style="width: 100%;" :disabled="btnType === 'look'">
+                            <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
+                              :value="item.taxRate"></el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
@@ -804,6 +812,7 @@
 </template>
 
 <script>
+import {  getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getProvinceList } from '@/api/system/province'
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
@@ -836,6 +845,7 @@ export default {
   mixins: [busFlow, getProjectList],
   data() {
     return {
+      taxRateList: [],
       outVisible:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
@@ -1122,7 +1132,8 @@ export default {
         outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
-        deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }]
+        deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }],
+        buyBackRate:[{ required: true, message: '请选择回购税率', trigger: ['change'] }],
       },
       customerData: {},
       treeLoading: false,
@@ -1215,7 +1226,18 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getProductClassFun() {
+    
 
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log(this.taxRateList, 'LOOO')
+      })
+    },
         // 选择外协供应商及关联产品
         changeOutPartner(data){
       console.log("data",data);
@@ -1226,8 +1248,7 @@ export default {
        this.dataForm.outProductCode=data.outProductCode
        this.dataForm.outProductName=data.outProductName
        this.dataForm.productDrawingNo=data.productDrawingNo
-       this.dataForm.buyBackPrice=data.buyBackPrice
-       this.dataForm.buyBackRate=data.buyBackRate
+       this.dataForm.buyBackPrice=data.buyBackPrice 
        this.dataForm.warehouseName=data.warehouseName
        this.dataForm.warehouseId=data.warehouseId
        this.dataForm.outProductId=data.outProductId
@@ -1238,9 +1259,10 @@ export default {
       this.outVisible=false
     },
     openSelectOutPartner(){
+      if(!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择采购供应商")
       this.outVisible=true
       this.$nextTick(()=>{
-        this.$refs.outForm.init()
+        this.$refs.outForm.init(this.dataForm.cooperativePartnerId)
       })
     },
     switchStyleheight() {

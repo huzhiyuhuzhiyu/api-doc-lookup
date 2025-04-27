@@ -64,6 +64,12 @@
           <el-table-column prop="code" label="产线编码" sortable="custom">
           </el-table-column>
           <el-table-column prop="name" label="产线名称" sortable="custom" />
+          <el-table-column prop="type" label="所属类型" sortable="custom" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.type=='produce'">套圈  </div>
+              <div v-if="scope.row.type=='assemble'">装配  </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="workshopName" label="加工车间" sortable="custom"></el-table-column>
           <el-table-column prop="remark" label="备注"></el-table-column>

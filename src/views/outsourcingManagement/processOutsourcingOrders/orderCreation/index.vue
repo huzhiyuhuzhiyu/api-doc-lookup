@@ -52,14 +52,14 @@
                                 @change="deliveryDateChange"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24">
+                          <!-- <el-col :sm="6" :xs="24">
                             <el-form-item label="发料状态" prop="shipmentStatus">
                               <el-select v-model="dataForm.shipmentStatus" placeholder="请选择发料状态" style="width: 100%;" >
                                 <el-option v-for="(item, index) in shipmentStatusList" :key="index" :label="item.label"
                                  :value="item.value"></el-option>
                               </el-select>
                             </el-form-item>
-                          </el-col>
+                          </el-col> -->
                           <el-col :span="12">
                             <el-form-item label="备注" prop="remark" ref="remark">
                               <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
@@ -1380,10 +1380,13 @@ export default {
           submitFlag = false
           this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
         } else {
-          if (ele.outShipmentList.length == 0) {
-            submitFlag = false
-            return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+          if (!this.preData) {
+            if (ele.outShipmentList.length == 0) {
+              submitFlag = false
+              return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+            }
           }
+          
         }
       })
       if (submitFlag) {

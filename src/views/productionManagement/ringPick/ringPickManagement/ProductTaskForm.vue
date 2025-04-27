@@ -110,7 +110,7 @@ export default {
           column: "create_time"
         }],
         classAttribute: "semi_finished",
-        pickingStatus: "not_finished",
+        // pickingStatus: "not_finished",
         orderStatus: "normal",
         materialFlag: 1,
 
@@ -138,9 +138,12 @@ export default {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
-    init(id) {
+    init(id,receiveType) {
       this.customerVisible = true
       this.id = id
+      if (receiveType === 'order') {
+        this.orderForm.pickingStatus = "not_finished"
+      }
       this.getbatchNumList(id)
     },
     // 选择批次

@@ -191,6 +191,8 @@
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
                         <el-table-column prop="oil" label="油脂" width="100" />
+                        <el-table-column prop="oilQuantity" label="油脂量" width="100" />
+                        <el-table-column prop="holder" label="保持架" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="100"></el-table-column>
@@ -213,6 +215,15 @@
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                        </el-table-column>
                         <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
+                        <el-table-column prop="material" label="材质" width="120" v-if="$store.getters.configData.orderField.material">
+                       </el-table-column>
+                        <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                          v-if="$store.getters.configData.orderField.protrusion">
+                       </el-table-column>
+                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                       </el-table-column>
+                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
+                       </el-table-column>
                         <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
                           :key="10201"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
@@ -422,11 +433,14 @@
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="140" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-
+                        <el-table-column prop="standardValue" label="规值" width="120" >
+                        </el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="100" />
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
                         <el-table-column prop="oil" label="油脂" width="100" />
+                        <el-table-column prop="oilQuantity" label="油脂量" width="100" />
+                        <el-table-column prop="holder" label="保持架" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="100" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="100"></el-table-column>
@@ -446,7 +460,14 @@
                        </el-table-column>
                        <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
                        </el-table-column>
-                       <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
+                       <el-table-column prop="material" label="材质" width="120" v-if="$store.getters.configData.orderField.material">
+                       </el-table-column>
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                          v-if="$store.getters.configData.orderField.protrusion">
+                       </el-table-column>
+                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                       </el-table-column>
+                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
                        </el-table-column>
                         <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
@@ -560,6 +581,8 @@
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="waitDeliverNum" label="待发货数量" width="130" sortable="custom" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="130" sortable="custom" />
+                <el-table-column prop="standardValue" label="规值" width="120" >
+                        </el-table-column>
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
@@ -736,8 +759,7 @@ export default {
       productVisible: false,
       selectSaleProductArr: [],
       productData: [],
-      columnList:['specSize','logo','divideEqually','material','brand',
-      'sealingCoverStructure','structureType','noise',],
+      columnList:[],
       selectRows: [],
       listLoading: false,
       currentProductIndex: "",

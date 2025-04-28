@@ -910,6 +910,11 @@ export default {
       }
       this.creaFun()
       if (!data.routingId) return
+      if (!this.$store.getters.configData.produce.task_process_selection) {
+        this.dataForm.routingId = ''
+        this.dataForm.routingName = ''
+        return
+      }
       this.getRoutingDetail(this.dataForm.routingId)
 
     },

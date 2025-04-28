@@ -49,15 +49,16 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
-          <div class="JNPF-common-head">
-            <div >
+          <div class="JNPF-common-head"> 
+            <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
+
               <el-button type="primary" size="mini" icon="el-icon-plus" @click="mergeOrdrFun('dataTable')">
                 合并待收货订单
               </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
-              </el-button>
-            </div>
+              </el-button> 
+              </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"

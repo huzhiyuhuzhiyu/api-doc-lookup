@@ -200,6 +200,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
 
       ],
 
@@ -353,7 +354,7 @@ export default {
           component: 'com-select',
         },
         {
-          prop: 'salesName',
+          prop: 'salesId',
           label: "所属销售",
           type: 'custom',
           component: 'user-select',
@@ -639,6 +640,7 @@ export default {
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
 
       ]
       this.$refs.SuperQuery.conditionList = []

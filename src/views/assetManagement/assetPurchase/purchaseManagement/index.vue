@@ -89,11 +89,11 @@
           <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <el-table-column prop="updateTime" label="更新时间" min-width="180" />
           <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="scope">
-                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
-                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'receive')" v-if="scope.row.orderStatus=='toBeConfirmed'">确认接收</el-button>
-              </template>
-            </el-table-column>
+            <template slot-scope="scope">
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'receive')" v-if="scope.row.orderStatus=='toBeConfirmed'">确认接收</el-button>
+            </template>
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
           @pagination="initData" />

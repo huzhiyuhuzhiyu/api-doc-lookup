@@ -211,3 +211,50 @@ export function propertyOutDetail(id) {
     method: 'get', 
   })
 }
+
+
+// 资产报废 列表
+
+export function propertyScrapList(data) {
+  return request({
+    url: `/api/zgt/propertyScrap/list/condition`,
+    method: 'POST',
+    data
+  })
+}
+// 资产报废 删除
+
+export function delPropertyScrap(id) {
+  return request({
+    url: `/api/zgt/propertyScrap/remove/${id}`,
+    method: 'delete', 
+  })
+}
+// 资产报废 新增
+
+export function addPropertyScrapList(data) {
+  return request({
+    url: `/api/zgt/propertyScrap/insertPurchaseOrder`,
+    method: 'post',
+    data 
+  })
+}
+// 资产报废 修改
+
+export function editPropertyScrapList(data) {
+  return request({
+    url: `/api/zgt/propertyScrap/modifyPurchaseOrder`,
+    method: 'put',
+    data 
+  })
+}
+// 资产报废 详情
+
+export function propertyScrapDetail(id) {
+  return request({
+    url: `/api/zgt/propertyScrap/detail/${id}`,
+    method: 'get', 
+  })
+}
+
+ 

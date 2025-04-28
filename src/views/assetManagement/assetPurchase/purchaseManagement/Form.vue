@@ -167,7 +167,7 @@
   </transition>
 </template>
 <script>
-import { addPropertyPurchaseOrder,editPropertyPurchaseOrder,propertyPurchaseOrderDetail,checkBimPropertyCode} from '@/api/bimPropertyCategory/index'
+import { addPropertyPurchaseOrder,editPropertyPurchaseOrder,propertyPurchaseOrderDetail,checkPropertyPurchaseOrderCode} from '@/api/bimPropertyCategory/index'
 import assetCategoryForm from '../../basicInformation/assetCategoryForm.vue'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
@@ -272,7 +272,7 @@ export default {
                 callback()
               } else {
                 if (this.dataForm.id) {
-                  checkBimPropertyCode({id:this.dataForm.id,code:value})
+                  checkPropertyPurchaseOrderCode({id:this.dataForm.id,code:value})
                     .then((res) => {
                       if (!res.data) {
                         callback()
@@ -284,7 +284,7 @@ export default {
                       callback(new Error(' '))
                     })
                 } else {
-                  checkBimPropertyCode({id:'',code:value})
+                  checkPropertyPurchaseOrderCode({id:'',code:value})
                     .then((res) => {
                       if (!res.data) {
                         callback()
@@ -310,6 +310,9 @@ export default {
         
         ownerId: [
           { required: true, message: '资产管理员不能为空', trigger: 'change' }
+        ],
+        state: [
+          { required: true, message: '请选择状态', trigger: 'change' }
         ],
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],

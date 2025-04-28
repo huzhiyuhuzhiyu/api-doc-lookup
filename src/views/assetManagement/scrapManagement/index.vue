@@ -55,19 +55,35 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="name" label="分类名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="分类编码" min-width="150" sortable="custom" />
-          <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
-            <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column> -->
+          <el-table-column prop="orderNo" label="报废单号" width="250" sortable="custom" />
+          <el-table-column prop="name" label="资产名称" width="250" sortable="custom" />
+          <el-table-column prop="code" label="资产编码" width="250" sortable="custom" />
+          <el-table-column prop="spec" label="资产规格" width="250" sortable="custom" />
+          <el-table-column prop="propertyCategoryName" label="分类" width="250" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" width="250" sortable="custom" />
+          <el-table-column prop="createByName" label="申请人" width="250" sortable="custom" />
+          <el-table-column prop="orderStatus" label="状态" width="250" sortable="custom">
+            <template slot-scope="scope">
+              <div v-if="scope.row.orderStatus=='toBeAgreed'">待同意</div>
+              <div v-if="scope.row.orderStatus=='toBeScrapped'">待报废</div>
+              <div v-if="scope.row.orderStatus=='scrapped'">已报废</div>
+              <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ownerName" label="资产管理员" width="250" sortable="custom" />
+          <el-table-column prop="userTime" label="投入使用日期" width="250" sortable="custom" />
+          <el-table-column prop="position" label="常用位置" width="250" sortable="custom" />
+          <el-table-column prop="approvalUserName" label="审批人" width="250" sortable="custom" />
+          <el-table-column prop="approvalInstructions" label="审批说明" width="250" sortable="custom" />
+          <el-table-column prop="scrapInstructions" label="报废说明" width="250" sortable="custom" />
+          
           <el-table-column prop="remark" label="备注" width="250" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
-          <el-table-column label="操作" width="110" fixed="right">
+          <el-table-column prop="updateTime" label="更新时间" width="180" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-      
-              </tableOpts>
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'scrap')" v-if="scope.row.orderStatus=='confirmscrap'">确认报废</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -83,7 +99,7 @@
 </template>
 
 <script> 
-import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index'
+import { propertyScrapList,delPropertyScrap} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -98,8 +114,16 @@ export default {
 
     return {
       searchList: [
-        { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+            {label:"待同意",value:"toBeAgreed",},
+            {label:"待报废",value:"toBeScrapped",},
+            {label:"已报废",value:"scrapped",},
+            {label:"已拒绝",value:"rejected",},
+          ] 
+        },
       ],
       superQueryVisible: false,
       title: '更多查询',
@@ -241,7 +265,7 @@ export default {
       if(this.abProjectSwitchVisible) this.superForm.projectId=this.userInfo.projectId
 
 
-      await getBimPropertyCategoryList(this.superForm).then((res) => {
+      await propertyScrapList(this.superForm).then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
@@ -296,8 +320,16 @@ export default {
         ]
       }
       this.searchList = [
-      { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+      { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+            {label:"待同意",value:"toBeAgreed",},
+            {label:"待报废",value:"toBeScrapped",},
+            {label:"已报废",value:"scrapped",},
+            {label:"已拒绝",value:"rejected",},
+          ] 
+        },
       ]
       this.$refs.SuperQuery.conditionList = []
 
@@ -327,7 +359,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          delBimPropertyCategoryList(id).then((res) => {
+          delPropertyScrap(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

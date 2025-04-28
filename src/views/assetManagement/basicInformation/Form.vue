@@ -25,8 +25,8 @@
                     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                       <el-row :gutter="30" class="custom-row">
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="资产分类" prop="categoryName">
-                            <el-input v-model="dataForm.categoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
+                          <el-form-item label="资产分类" prop="propertyCategoryName">
+                            <el-input v-model="dataForm.propertyCategoryName" placeholder="请选择资产分类" readonly @focus="openAssetCategoryDialog"
                               :disabled="btnType == 'look' ? true : false" />
                           </el-form-item>
                         </el-col>
@@ -321,7 +321,7 @@ export default {
       },
       oldData:[],
       dataForm:{
-        categoryName:"",
+        propertyCategoryName:"",
         propertyCategoryId:"",
         code:"",
         name:"",
@@ -349,7 +349,7 @@ export default {
    
   
       dataRule: {
-        categoryName: [
+        propertyCategoryName: [
           { required: true, message: '资产分类不能为空', trigger: 'change' }
         ],
         code: [
@@ -489,7 +489,7 @@ export default {
     // 选择资产分类
     selectAssetFun(row){
       console.log("所选择的分类",row);
-      this.dataForm.categoryName=row.name
+      this.dataForm.propertyCategoryName=row.name
       this.dataForm.propertyCategoryId=row.id
     },
     // 弹窗节点的点击
@@ -655,7 +655,7 @@ export default {
         console.log("详情",res);
         this.dataForm=res.data
         this.autoCode=res.data.code
-        thiis.copyForm=JSON.parse(JSON.stringify(res.data))
+        this.copyForm=JSON.parse(JSON.stringify(res.data))
       })
     },
    

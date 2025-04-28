@@ -83,12 +83,10 @@
           <el-table-column prop="approvalInstructions" label="审批说明" min-width="180" sortable="custom" />
           <el-table-column prop="outInstructions" label="调出说明" min-width="180" sortable="custom" />
           <el-table-column label="操作" width="110" fixed="right">
-            <template slot-scope="scope">
-              <template slot-scope="scope">
+            <template slot-scope="scope"> 
                 <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
                 <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'out')" v-if="scope.row.orderStatus=='toBeOut'">确认调出</el-button>
                 <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'back')" v-if="scope.row.orderStatus=='toBeRecall'">确认调回</el-button>
-              </template>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -124,10 +122,10 @@ export default {
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
-            {label:"待调出",value:"pendTransferOut",},
-            {label:"待调回",value:"toBeRecalled",},
-            {label:"已完成",value:"success",},
-            {label:"已拒绝",value:"refuse",},
+            {label:"待调出",value:"toBeOut",},
+            {label:"待调回",value:"toBeRecall",},
+            {label:"已完成",value:"finished",},
+            {label:"已拒绝",value:"rejected",},
           ] 
         },
       ],
@@ -331,10 +329,10 @@ export default {
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
-            {label:"待调出",value:"pendTransferOut",},
-            {label:"待调回",value:"toBeRecalled",},
-            {label:"已完成",value:"success",},
-            {label:"已拒绝",value:"refuse",},
+            {label:"待调出",value:"toBeOut",},
+            {label:"待调回",value:"toBeRecall",},
+            {label:"已完成",value:"finished",},
+            {label:"已拒绝",value:"rejected",},
           ] 
         },
       ],
@@ -349,12 +347,12 @@ export default {
         this.$refs.Form.init('', 'add')
       })
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,type) {
       this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
+          this.$refs.Form.init(id, type)
         })
         // }, 600);
       }

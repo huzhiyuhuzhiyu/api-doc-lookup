@@ -395,7 +395,7 @@ export default {
     end.setDate(end.getDate() + 3)
     this.deliveryDateArr = ['', end]
     this.orderForm.deliveryStartDate = ''
-    this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
+    // this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -586,7 +586,7 @@ export default {
         documentStatus: 'submit',
         orderState: 'not_finish',
         externalFlag: 1,
-        deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
+        // deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',
         deliverQueryFlag: 1,
         receiptQueryFlag: 1,

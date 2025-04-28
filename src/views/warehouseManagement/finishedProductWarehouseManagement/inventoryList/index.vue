@@ -64,6 +64,8 @@
               icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">导出</el-button>
+            <el-button v-has="'btn_print_merge'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="printMergeForm">合并打印</el-button>
           </div>
 
           <div class="JNPF-common-head-right">
@@ -258,10 +260,10 @@
 
 
                     <el-dropdown-item type="text"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') || (scope.row.businessType == 'outbound_pick_out' && isMS) && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
                     <el-dropdown-item type="text" v-if="isPrintNBWSwitch === '1'"
-                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') && scope.row.documentStatus == 'submit')"
+                      :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') || scope.row.businessType == 'outbound_pick_out' && scope.row.documentStatus == 'submit')"
                       @click.native="nbwPrintFun(scope.row)">能博旺打印</el-dropdown-item>
                   </el-dropdown-menu>
 
@@ -355,6 +357,7 @@ import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   name: 'finishedProductWarehouseManagement',
   components: {
@@ -382,7 +385,7 @@ export default {
     PrintDialog,
     TakingAdjustForm
   },
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
 
   props: {
     warehouseCode: "",
@@ -618,6 +621,11 @@ export default {
         code: "p031",
         fullName: "销售退库单"
       },
+      {
+        businessType: 'outbound_pick_out',
+        code: "p062",
+        fullName: "生产领料单"
+      },
       ],
       enCode: "",
       isProjectSwitch: '',
@@ -708,7 +716,25 @@ export default {
         //   this.formId = res.data.spaceLines[0].noticeId
 
         // })
+      } else if (row.businessType == 'outbound_pick_out' && row.sourceType == 'notice') {
+        this.enCode = 'p062'
+        // detailWarehouseData(row.id).then(res => {
+        //   console.log("详情", res);
+        //   this.formId = res.data.spaceLines[0].noticeId
+
+        // })
       }
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    // 合并打印
+    printMergeForm() {
+      console.log(this.selectArr, '看');
+      
+      this.formId = this.selectArr.map(item => item.id).join(',')
+      this.enCode = 'p031'
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)

@@ -908,6 +908,10 @@ export default {
         }
         if (this.currentProcess.processType == 'pairs') this.$set(this.currentProcess, 'pairsReportFlag', true)
         this.setProcessType()
+        if (this.$store.getters.configData.produce.reporting_auto_recode) {
+          this.currentProcess.qualifiedQuantity = this.currentProcess.waitReportNum
+          this.currentProcess.reportingQuantity = this.currentProcess.waitReportNum
+        }
 
         this.commonFun()
         // this.getRoutingDetailFun(this.dataForm.routingId)

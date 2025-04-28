@@ -960,7 +960,7 @@ export default {
       this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
       this.creaFun()
-
+      
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
           console.log("bom详情", res);
@@ -984,6 +984,11 @@ export default {
       }
       this.getWarehouseListFun()
       if (!data.routingId) return
+      if (!this.$store.getters.configData.produce.task_process_selection) {
+        this.dataForm.routingId = ''
+        this.dataForm.routingName = ''
+        return
+      }
       this.getRoutingDetail(this.dataForm.routingId)
     },
     getWarehouseListFun() {

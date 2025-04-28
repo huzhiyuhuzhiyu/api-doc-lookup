@@ -1503,6 +1503,7 @@ export default {
                         this.submitmethodsTitle = '提交成功'
                       }
                       this.tipsvisible = true
+                      console.log(this.preData)
                       if (this.preData) {
                         this.$message({
                           message: '新建成功',

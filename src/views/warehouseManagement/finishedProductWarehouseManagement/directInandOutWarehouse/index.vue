@@ -361,6 +361,26 @@
                           </el-select>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="oilQuantity" label="油脂量" v-if="oilQuantityFlag == 1" width="120" key="61">
+
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in list13" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="holder" label="保持架" v-if="$store.getters.configData.orderField.holder" width="120" key="61">
+
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.holder" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa004" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
@@ -512,6 +532,32 @@
                         </template>
                       </el-table-column>
                       </template>
+                      <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" :key="103" 
+                        v-if="$store.getters.configData.orderField.protrusion">
+                      <template slot-scope="scope">
+                        <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa023" :key="index" :label="item.name" :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                      <el-table-column prop="preload" label="预负荷" min-width="120" key="2118" v-if="$store.getters.configData.orderField.preload">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.preload" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa024" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="angle" label="角度" min-width="120" key="2118" v-if="$store.getters.configData.orderField.angle">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.angle" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa025" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" key="128">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.remark"
@@ -765,8 +811,7 @@ export default {
     return {
       seleBtnLoading:false,
       customStyleData:0,
-      columnList:['specSize','logo','divideEqually','material','brand',
-      'sealingCoverStructure','structureType','noise',],
+      columnList:[],
       datafilelist: [],
       isattachmentswitch: '',
       attachmentData: {},
@@ -1248,6 +1293,14 @@ export default {
 
       if (this.oilFlag === '1') {
         this.list4 = this.bimProductAttributesList.pa002.map((item) => {
+          return {
+            label: item.name,
+            name: item.name
+          }
+        })
+      }
+      if (this.oilQuantityFlag === '1') {
+        this.list13 = this.bimProductAttributesList.pa003.map((item) => {
           return {
             label: item.name,
             name: item.name

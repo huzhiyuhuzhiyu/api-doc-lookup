@@ -141,7 +141,8 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <el-table-column prop="standardValue" label="规值" width="100" />
+                      <el-table-column prop="holder" label="保持架" width="100" />
                       <el-table-column prop="material" label="材质" width="120" :key="211" v-if="materialFlag === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable
@@ -268,6 +269,13 @@
                       </el-table-column>
                       <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                       </el-table-column>
+                      <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                          v-if="$store.getters.configData.orderField.protrusion">
+                       </el-table-column>
+                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                       </el-table-column>
+                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
+                       </el-table-column>
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"
@@ -507,6 +515,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
+                  <el-table-column prop="holder" label="保持架" width="100" />
                   <el-table-column v-if="dataForm.classAttribute == 'finish_product' && clearanceFlag === '1'"
                     prop="clearance" label="游隙" width="120" :key="100">
                     <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
@@ -581,6 +590,13 @@
                     </el-table-column>
                     <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                     </el-table-column>
+                    <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                          v-if="$store.getters.configData.orderField.protrusion">
+                       </el-table-column>
+                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                       </el-table-column>
+                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
+                       </el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"

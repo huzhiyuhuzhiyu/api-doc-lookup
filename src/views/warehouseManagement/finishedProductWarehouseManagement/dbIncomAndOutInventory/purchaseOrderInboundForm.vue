@@ -227,6 +227,8 @@
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                         <el-table-column prop="oil" label="油脂" width="160" />
+                        <el-table-column prop="oilQuantity" label="油脂量" width="100" />
+                        <el-table-column prop="holder" label="保持架" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120"></el-table-column>
@@ -247,6 +249,13 @@
                        <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
                        </el-table-column>
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
+                       </el-table-column>
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                          v-if="$store.getters.configData.orderField.protrusion">
+                       </el-table-column>
+                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                       </el-table-column>
+                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
                        </el-table-column>
                         <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
@@ -487,6 +496,8 @@
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                         <el-table-column prop="oil" label="油脂" width="160" />
+                        <el-table-column prop="oilQuantity" label="油脂量" width="100" />
+                        <el-table-column prop="holder" label="保持架" width="100" />
                         <el-table-column prop="clearance" label="游隙" width="160" />
                         <el-table-column prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                         <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120"></el-table-column>
@@ -509,6 +520,13 @@
                        <el-table-column prop="structureType" label="结构类型" width="120" v-if="$store.getters.configData.orderField.structureType">
                        </el-table-column>
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
+                       </el-table-column>
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                          v-if="$store.getters.configData.orderField.protrusion">
+                       </el-table-column>
+                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                       </el-table-column>
+                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
                        </el-table-column>
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
@@ -607,9 +625,18 @@
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="100" />
+                <el-table-column prop="holder" label="保持架" width="100" />
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
                 <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="110" sortable="custom" />
+                <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                          v-if="$store.getters.configData.orderField.protrusion">
+                       </el-table-column>
+                       <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                       </el-table-column>
+                       <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
+                       </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"

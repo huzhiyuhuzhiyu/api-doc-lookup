@@ -354,6 +354,16 @@
                           </template>
                         </el-table-column>
                         <el-table-column
+                          v-if="$store.getters.configData.orderField.holder"
+                          prop="holder" label="保持架" min-width="160">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.holder" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa004" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
                           v-if=" clearanceFlag === '1'"
                           prop="clearance" label="游隙" min-width="120">
                           <template slot-scope="scope">
@@ -489,6 +499,33 @@
                           <el-select v-model="scope.row.noise" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in bimProductAttributesList.pa014" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="protrusion" :label="$store.getters.protrusion" width="120" v-if="$store.getters.configData.orderField.protrusion">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.protrusion" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa023" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.preload" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa024" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.angle" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa025" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
                         </template>

@@ -311,6 +311,16 @@ export function splitOrderNum(data) {
   return request({
     url: `/api/mrp/prod/order/split`,
     method: 'POST',
+  })
+}
+
+
+
+// 修改生产订单信息
+export function editProductOrder(data) {
+  return request({
+    url: `/api/mrp/prod/order/updateRemark`,
+    method: 'put',
     data
   })
 }

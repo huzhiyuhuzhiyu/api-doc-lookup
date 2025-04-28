@@ -63,8 +63,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" :data="tableData" border :setColumnDisplayList="columnList" :fixedNO="true"
-          @sort-change="sortChange" custom-column v-if="tableDataFlag">
+        <JNPF-table ref="dataTable" :data="tableData" border :setColumnDisplayList="columnList" :fixedNO="true" 
+          @sort-change="sortChange" custom-column v-if="tableDataFlag"  @selection-change="handeleProductInfoData" hasC>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look', scope.row)">{{
@@ -138,6 +138,7 @@
               <div>{{ scope.row.taxRate + '%' }}</div>
             </template>
           </el-table-column>
+          
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
           <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
@@ -218,11 +219,15 @@
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="search('basic')">
-          <div class="text">
+          <div class="text" v-if="!selectData.length">
             <span style="margin-left: 10px">数量:{{ num }}</span>
             <span style="margin-left: 10px">税额:{{ taxAmount }}</span>
             <span style="margin-left: 10px">总金额(含税):{{ totalAmount }}</span>
             <span style="margin-left: 10px">总金额(不含税):{{ excludingTaxTotalAmount }}</span>
+          </div>
+          <div class="text" v-else>
+            <span style="margin-left: 10px">入库数量:{{ InTotalNum }}</span>
+            <span style="margin-left: 10px">出库数量:{{ outTotalNum }}</span>
           </div>
         </pagination>
       </div>
@@ -560,6 +565,8 @@ export default {
       colourFlag: "",
       processFlag: "",
       processList: [],
+      outTotalNum:0,
+      InTotalNum:0,
     }
   },
   async created() {
@@ -578,6 +585,18 @@ export default {
     await this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
   methods: {
+      // 选中列表的数据 将其带到生成订单下面表单表格中
+      handeleProductInfoData(val) {
+      this.selectData = val
+      function calculateSum(data, type) {
+        return data.reduce((sum, item) => {
+          return item.documentType === type ? sum + Number(item.num) : sum;
+        }, 0);
+      }
+      this.InTotalNum = calculateSum(this.selectData, 'inbound')
+      this.outTotalNum = calculateSum(this.selectData, 'outbound')
+
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -1072,9 +1091,7 @@ export default {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
     },
-    handeleInfoData(val) {
-      this.selectData = val
-    },
+  
     initData() {
       this.getInventorySummaryDataFun()
     },

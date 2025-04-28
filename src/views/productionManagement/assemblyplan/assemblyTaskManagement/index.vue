@@ -157,6 +157,9 @@
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >
                       生成二维码
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="editPlanDate(scope.row)" >
+                      修改计划日期
+                    </el-dropdown-item>
                     <!-- <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
                       查看详情
                     </el-dropdown-item> -->
@@ -197,6 +200,38 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="修改计划日期" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="dateVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="dateForm" :model="dateForm" :rules="dateRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="生产任务单号" prop="orderNo">
+              <el-input v-model="dateForm.orderNo" placeholder="生产任务单号" disabled />
+            </el-form-item>
+          </el-col>
+ 
+          <el-col :span="24">
+            <el-form-item label="计划开始日期" prop="planStartDate"> 
+              <el-date-picker v-model="dateForm.planStartDate" placeholder="计划开始日期" type="date" 
+                            value-format="yyyy-MM-dd" style="width: 100%;">
+                          </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="计划结束日期" prop="planEndDate"> 
+              <el-date-picker v-model="dateForm.planEndDate" placeholder="计划结束日期" type="date" 
+                            value-format="yyyy-MM-dd" style="width: 100%;">
+                          </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dateVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitEditDateFun()">
           提交</el-button>
       </span>
     </el-dialog>
@@ -264,7 +299,7 @@
   </div>
 </template>
 <script>
-import { ordershengchanList, addOrderNum, detailordershengchan } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, detailordershengchan,editProductOrder } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
@@ -294,6 +329,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      dateVisible:false,
       dialogVisible:false,
       qrCode:"",
       addTaskFormVisible: false,
@@ -454,6 +490,10 @@ export default {
           { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
         ],
       },
+      dateRule:{
+        planStartDate: [{ required: true, message: '请选择计划开始日期', trigger: 'change' }],
+        planEndDate: [{ required: true, message: '请选择计划结束日期', trigger: 'change' }]
+      },
       workOrderData: [],
       selectWorkOrder: [],
       flowCardCode: '',
@@ -486,7 +526,8 @@ export default {
       enCode2: "",
       printVisible2: false,
       printBrowseVisible2: false,
-      productionLineList:[]
+      productionLineList:[],
+      dateForm:{},
     }
   },
   async created() {
@@ -512,6 +553,35 @@ export default {
   mounted() {
   },
   methods: {
+    editPlanDate(row){
+      detailordershengchan(row.id).then(res=>{
+        this.dateVisible=true
+        this.dateForm=res.data.prodOrder
+      })
+    },
+    submitEditDateFun(){
+      this.$refs['dateForm'].validate((valid) => {
+        if (valid) {
+          let endDate = new Date(this.dateForm.planEndDate);
+          let startDate = new Date(this.dateForm.planStartDate);
+ 
+          if (endDate < startDate) {
+              this.$message.error("计划开始日期必须在计划结束日期之前")
+              return
+          } 
+          console.log(this.dateForm);
+          this.btnLoading = true
+          editProductOrder(this.dateForm).then(res => {
+            this.dateVisible = false
+            this.btnLoading = false
+            this.$message.success("修改计划日期成功")
+            this.search('basic')
+          }).catch(error => {
+            this.btnLoading = false
+          })
+        }
+      })
+    },
     // 生成二维码
     generateQRcode(row){
       if (!row.orderNo) {

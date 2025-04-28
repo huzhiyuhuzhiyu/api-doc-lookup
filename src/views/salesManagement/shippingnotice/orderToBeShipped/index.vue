@@ -267,8 +267,7 @@ export default {
         {
           prop: 'salesName',
           label: "所属销售",
-          type: 'custom',
-          component: 'user-select',
+          type: 'input',
         },
         {
           prop: 'customerProductNo',

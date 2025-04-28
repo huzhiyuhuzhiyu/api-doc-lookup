@@ -72,6 +72,7 @@
                 </el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="收货日期" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="productName" label="产品名称" width="120"
@@ -89,7 +90,14 @@
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
+            <el-table-column prop="receiptQuantity" label="入库数量" width="120" sortable="custom"  >
+              <template slot-scope="scope">
+                <el-link type="primary"
+                  @click.native="viewReceiptFun(scope.row, 'inventoryFlag', scope.row.warehouseId, scope.row.projectId)">
+                  {{ scope.row.receiptQuantity }}
+                </el-link>
+              </template>
+            </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
@@ -147,6 +155,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <FormS v-if="receiptFormVisible" ref="FormS" @refreshDataList="initData" />
+
   </div>
 </template>
 
@@ -163,6 +173,7 @@ import Form from '../receivingAdvice/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import FormS from './Form.vue'
 import {
   getpurPurchaseReceiptReturnGoodsdetail,
   addpurPurchaseReceiptReturnGoods,
@@ -175,11 +186,12 @@ import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   name: 'outsourceReceivingDetails',
-  components: { Form, ExportForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery,FormS },
   mixins: [getProjectList],
 
   data() {
     return {
+      receiptFormVisible:false,
       isProductNameSwitch: '',
       isProjectSwitch: '',
       isProportionSwitch: '',
@@ -393,6 +405,13 @@ export default {
     this.search('basic')
   },
   methods: {
+      // 查看已入库数量
+      viewReceiptFun(row, type, warehouseId, projectId) {
+      this.receiptFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.FormS.init(row, type, warehouseId, projectId)
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

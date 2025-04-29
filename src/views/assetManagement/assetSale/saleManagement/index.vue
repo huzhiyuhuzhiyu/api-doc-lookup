@@ -1,4 +1,5 @@
 <template>
+  <!-- 资产报废 -->
   <div class="JNPF-common-layout">
     <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
         <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
@@ -54,19 +55,38 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="name" label="分类名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="分类编码" min-width="150" sortable="custom" />
-          <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
-            <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column> -->
+          <el-table-column prop="orderNo" label="出售单号" width="250" sortable="custom" />
+          <el-table-column prop="propertyName" label="资产名称" width="250" sortable="custom" />
+          <el-table-column prop="propertyCode" label="资产编码" width="250" sortable="custom" />
+          <el-table-column prop="propertySpec" label="资产规格" width="250" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="客户名称" width="250" sortable="custom" />
+          <el-table-column prop="totalMount" label="金额" width="250" sortable="custom" />
+          <el-table-column prop="tax" label="税率" width="250" sortable="custom" />
+          <el-table-column prop="propertyCategoryName" label="分类" width="250" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" width="250" sortable="custom" />
+          <el-table-column prop="createByName" label="申请人" width="250" sortable="custom" />
+          <el-table-column prop="orderStatus" label="状态" width="250" sortable="custom">
+            <template slot-scope="scope">
+              <div v-if="scope.row.orderStatus=='toBeAgreed'">待确认</div>
+              <div v-if="scope.row.orderStatus=='toBeSold'">待售出</div>
+              <div v-if="scope.row.orderStatus=='sold'">已售出</div>
+              <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ownerName" label="资产管理员" width="250" sortable="custom" />
+          <el-table-column prop="userTime" label="投入使用日期" width="250" sortable="custom" />
+          <el-table-column prop="position" label="常用位置" width="250" sortable="custom" />
+          <el-table-column prop="approvalUserName" label="确认人" width="250" sortable="custom" />
+          <el-table-column prop="approvalInstructions" label="确认说明" width="250" sortable="custom" />
+          <el-table-column prop="saleInstructions" label="售出说明" width="250" sortable="custom" />
+          
           <el-table-column prop="remark" label="备注" width="250" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
-          <el-table-column label="操作" width="110" fixed="right">
+          <el-table-column prop="updateTime" label="更新时间" width="180" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-      
-              </tableOpts>
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">确认</el-button>
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'scrap')" v-if="scope.row.orderStatus=='toBeSold'">确认售出</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -82,7 +102,7 @@
 </template>
 
 <script> 
-import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index'
+import { propertySaleOrderList,delPropertySaleOrder} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -97,9 +117,18 @@ export default {
 
     return {
       searchList: [
-        { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '出售', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+            {label:"待确认",value:"toBeAgreed",},
+            {label:"待售出",value:"toBeSold",},
+            {label:"已售出",value:"sold",},
+            {label:"已拒绝",value:"rejected",},
+          ] 
+        },
       ],
+ 
       superQueryVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -120,7 +149,7 @@ export default {
         name: '',
         pageNum: 1,
         pageSize: 20,
-
+        orderNo:"",
         orderItems: [
           {
             asc: false,
@@ -240,7 +269,7 @@ export default {
       if(this.abProjectSwitchVisible) this.superForm.projectId=this.userInfo.projectId
 
 
-      await getBimPropertyCategoryList(this.superForm).then((res) => {
+      await propertySaleOrderList(this.superForm).then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
@@ -282,6 +311,7 @@ export default {
       this.form = {
         code: '',
         name: '',
+        orderNo:"",
 
         pageNum: 1,
         pageSize: 20,
@@ -295,8 +325,16 @@ export default {
         ]
       }
       this.searchList = [
-      { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+      { field: 'orderNo', fieldValue: '', label: '报废单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
+          options:[
+          {label:"待确认",value:"toBeAgreed",},
+            {label:"待售出",value:"toBeSold",},
+            {label:"已售出",value:"sold",},
+            {label:"已拒绝",value:"rejected",},
+          ] 
+        },
       ]
       this.$refs.SuperQuery.conditionList = []
 
@@ -326,7 +364,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          delBimPropertyCategoryList(id).then((res) => {
+          delPropertySaleOrder(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

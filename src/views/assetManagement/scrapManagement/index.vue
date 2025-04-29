@@ -55,10 +55,16 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="orderNo" label="报废单号" width="250" sortable="custom" />
-          <el-table-column prop="name" label="资产名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="资产编码" width="250" sortable="custom" />
-          <el-table-column prop="spec" label="资产规格" width="250" sortable="custom" />
+          <el-table-column prop="orderNo" label="报废单号" width="250" sortable="custom" >
+            <template slot-scope="scope">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                  scope.row.orderNo
+                }}</el-link>
+              </template>
+          </el-table-column>
+          <el-table-column prop="propertyName" label="资产名称" width="250" sortable="custom" />
+          <el-table-column prop="propertyCode" label="资产编码" width="250" sortable="custom" />
+          <el-table-column prop="propertySpec" label="资产规格" width="250" sortable="custom" />
           <el-table-column prop="propertyCategoryName" label="分类" width="250" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="250" sortable="custom" />
           <el-table-column prop="createByName" label="申请人" width="250" sortable="custom" />
@@ -83,7 +89,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
-              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'scrap')" v-if="scope.row.orderStatus=='confirmscrap'">确认报废</el-button>
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'scrap')" v-if="scope.row.orderStatus=='toBeScrapped'">确认报废</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -114,8 +120,8 @@ export default {
 
     return {
       searchList: [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '报废单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'propertyName', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
@@ -141,11 +147,14 @@ export default {
       organizeIdTree: [],
       superForm:{},
       form: {
-        code: '',
-        name: '',
+        // propertyCode: '',
+        // propertyName: '',
+        name:"",
+        code:"",
         pageNum: 1,
         pageSize: 20,
-
+        orderNo:"",
+        orderStatus:"",
         orderItems: [
           {
             asc: false,
@@ -305,11 +314,14 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.form = {
-        code: '',
-        name: '',
-
+        // propertyCode: '',
+        // propertyName: '',
+        name:"",
+        code:"",
+        orderNo:"",
         pageNum: 1,
         pageSize: 20,
+        orderStatus:"",
         orderItems: [
         
           {
@@ -320,8 +332,8 @@ export default {
         ]
       }
       this.searchList = [
-      { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+      { field: 'orderNo', fieldValue: '', label: '报废单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'propertyName', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
@@ -342,12 +354,12 @@ export default {
         this.$refs.Form.init('', 'add')
       })
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,type) {
       this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
+          this.$refs.Form.init(id, type)
         })
         // }, 600);
       }
@@ -371,10 +383,10 @@ export default {
         })
         .catch(() => { })
     },
-    handleUserRelation(id, parentId, btnType) {
+    handleUserRelation(id,  btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType)
+        this.$refs.Form.init(id,  btnType)
       })
     },
 

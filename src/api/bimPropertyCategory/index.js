@@ -257,4 +257,48 @@ export function propertyScrapDetail(id) {
   })
 }
 
- 
+//  资产出售  列表
+export function propertySaleOrderList(data) {
+  return request({
+    url: `/api/zgt/propertySaleOrder/list/condition`,
+    method: 'post',
+    data 
+  })
+}
+
+//  资产出售  新增
+export function addPropertySaleOrder(data) {
+  return request({
+    url: `/api/zgt/propertySaleOrder/insertPurchaseOrder`,
+    method: 'post',
+    data 
+  })
+}
+
+
+// 资产出售 删除
+
+export function delPropertySaleOrder(id) {
+  return request({
+    url: `/api/zgt/propertySaleOrder/remove/${id}`,
+    method: 'delete', 
+  })
+}
+
+// 资产出售 修改
+
+export function editPropertySaleOrder(data) {
+  return request({
+    url: `/api/zgt/propertySaleOrder/modifyPurchaseOrder`,
+    method: 'put',
+    data 
+  })
+}
+// 资产出售 详情
+
+export function propertySaleOrderDeatil(id) {
+  return request({
+    url: `/api/zgt/propertySaleOrder/detail/${id}`,
+    method: 'get', 
+  })
+}

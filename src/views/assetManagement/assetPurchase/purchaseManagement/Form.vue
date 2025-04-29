@@ -82,10 +82,10 @@
                       
                         <el-col :sm="6" :xs="24" >
                        
-                          <el-form-item label="供应商名称" prop="partnerName" ref="partnerName">
+                          <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.partnerName"  ref="ComSelect-page"
+                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page"
                               @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                               title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                               :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -242,7 +242,7 @@ export default {
         depreciationRate:"",
         netPrice:"",
         ownerId:"",
-        partnerName:"",
+        cooperativePartnerName:"",
         cooperativePartnerId:"",
         remark:"",
         orderStatus:"toBeAgreed",
@@ -384,7 +384,7 @@ export default {
     supplierdata(id, data) {
      
       if (data.length === 0) {
-        this.dataForm.partnerName = ''
+        this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''
         this.dataForm.cooperativePartnerId = ''
       } else {
@@ -392,7 +392,7 @@ export default {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.partnerName = data[0].all.name
+        this.dataForm.cooperativePartnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
        

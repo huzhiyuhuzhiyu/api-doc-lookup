@@ -55,15 +55,21 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom" />
-          <el-table-column prop="name" label="资产编码" min-width="120" />
-          <el-table-column prop="code" label="资产名称" min-width="120" />
-          <el-table-column prop="spec" label="资产规格" min-width="120" />
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom"  >
+            <template slot-scope="scope">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                  scope.row.orderNo
+                }}</el-link>
+              </template>
+          </el-table-column>
+          <el-table-column prop="propertyName" label="资产编码" min-width="120" />
+          <el-table-column prop="propertyCode" label="资产名称" min-width="120" />
+          <el-table-column prop="propertySpec" label="资产规格" min-width="120" />
           <el-table-column prop="propertyCategoryName" label="分类" min-width="120" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" />
           <el-table-column prop="userTime" label="投入使用日期" min-width="160" />
           <el-table-column prop="ownerName" label="资产管理员" min-width="160" />
-          <el-table-column prop="remark" label="常用位置" min-width="160" />
+          <el-table-column prop="position" label="常用位置" min-width="160" />
     
           <el-table-column prop="orderStatus" label="状态" min-width="120" >
             <template  slot-scope="scope">
@@ -118,7 +124,7 @@ export default {
     return {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'propertyName', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
@@ -145,8 +151,8 @@ export default {
       organizeIdTree: [],
       superForm:{},
       form: {
-        code: '',
-        name: '',
+        propertyCode: '',
+        propertyName: '',
         pageNum: 1,
         pageSize: 20,
 
@@ -309,8 +315,8 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.form = {
-        code: '',
-        name: '',
+        propertyCode: '',
+        propertyName: '',
 
         pageNum: 1,
         pageSize: 20,
@@ -325,7 +331,7 @@ export default {
       }
       this.searchList =[
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'propertyName', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待同意",value:"toBeAgreed",},
@@ -376,10 +382,10 @@ export default {
         })
         .catch(() => { })
     },
-    handleUserRelation(id, parentId, btnType) {
+    handleUserRelation(id,  btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType)
+        this.$refs.Form.init(id,  btnType)
       })
     },
 

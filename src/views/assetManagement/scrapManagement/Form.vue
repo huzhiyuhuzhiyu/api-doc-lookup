@@ -31,21 +31,21 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产编码" prop="code">
-                            <el-input v-model="dataForm.code" placeholder="请输入资产编码"
+                          <el-form-item label="资产编码" prop="propertyCode">
+                            <el-input v-model="dataForm.propertyCode" placeholder="请输入资产编码"
                               disabled />
                           </el-form-item>
                         </el-col>
                
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产名称" prop="name">
-                            <el-input v-model="dataForm.name" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="btnType!='add'"
+                          <el-form-item label="资产名称" prop="propertyName">
+                            <el-input v-model="dataForm.propertyName" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="btnType!='add'"
                                />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产规格" prop="spec">
-                            <el-input v-model="dataForm.spec" placeholder="请输入资产规格"
+                          <el-form-item label="资产规格" prop="propertySpec">
+                            <el-input v-model="dataForm.propertySpec" placeholder="请输入资产规格"
                               disabled />
                           </el-form-item>
                         </el-col>
@@ -115,10 +115,10 @@
                         </el-col>
                         <el-col :sm="6" :xs="24" >
                        
-                          <el-form-item label="供应商名称" prop="partnerName" ref="partnerName">
+                          <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.partnerName"  ref="ComSelect-page" isdisabled
+                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page" isdisabled
                               @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                               title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                               :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -127,13 +127,8 @@
                           </el-form-item>
                         </el-col> 
    
-                        <el-col :sm="12" :xs="24">
-                          <el-form-item label="备注" prop="remark">
-                            <el-input v-model="dataForm.remark" placeholder="请输入备注" :diasbled="btnType!=='add'"
-                               type="textarea" :rows="2" maxlength="200" />
-                          </el-form-item>
-                        </el-col>
-                        <el-col :sm="6" :xs="24" v-if="btnType=='approve'">
+                    
+                        <el-col :sm="6" :xs="24" v-if="operateType=='approve'">
                           <el-form-item label="状态" prop="state">
                             <el-select v-model="dataForm.state" placeholder="请选择" style="width: 100%;" >
                               <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" 
@@ -141,14 +136,14 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24"  v-if="btnType=='approve'">
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
                           <el-form-item label="审批说明" prop="approvalInstructions">
                             <el-input v-model="dataForm.approvalInstructions" placeholder="请输入审批说明"
                                type="textarea" :rows="2" maxlength="200" />
                           </el-form-item>
                         </el-col>
 
-                        <el-col :sm="6" :xs="24"  v-if="btnType=='scrap'">
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='scrap'">
                           <el-form-item label="报废说明" prop="scrapInstructions">
                             <el-input v-model="dataForm.scrapInstructions" placeholder="请输入报废说明"
                                type="textarea" :rows="2" maxlength="200" />
@@ -157,7 +152,7 @@
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" disabled/>
                           </el-form-item>
                         </el-col>
                       </el-row>
@@ -219,7 +214,10 @@ export default {
         { code: "call", fullName: "资产调用单", },
 
       ],
-
+      stateList:[
+        {label:"同意",value:true,},
+        {label:"拒绝",value:false,},
+      ],
       btnType:"",
       activeName:'orderInfo',
       activeNames:['basicInfo','associationInfo'],
@@ -266,7 +264,7 @@ export default {
         netPrice:"",
         ownerId:"",
         purchaserId:"",
-        partnerName:"",
+        cooperativePartnerName:"",
         cooperativePartnerId:"",
         remark:"",
         orderStatus:"toBeAgreed",
@@ -286,7 +284,7 @@ export default {
           { required: true, message: '资产分类不能为空', trigger: 'change' }
         ],
         
-        name: [
+        propertyName: [
           { required: true, message: '资产名称为空', trigger: 'no' }
         ],
         projectId: [
@@ -328,6 +326,11 @@ export default {
     changeAsset(data){
       console.log("资产数据",data);
       this.dataForm=data
+      this.$set(this.dataForm,'propertyId',data.id)
+      this.$set(this.dataForm,'propertyName',data.name)
+      this.$set(this.dataForm,'propertyCode',data.code)
+      this.$set(this.dataForm,'propertySpec',data.spec)
+      this.dataForm.id=""
     },
     continueEdit(){
       this.tipsvisible=false
@@ -365,7 +368,7 @@ export default {
     supplierdata(id, data) {
      
       if (data.length === 0) {
-        this.dataForm.partnerName = ''
+        this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''
         this.dataForm.cooperativePartnerId = ''
       } else {
@@ -373,7 +376,7 @@ export default {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.partnerName = data[0].all.name
+        this.dataForm.cooperativePartnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
        
@@ -486,7 +489,7 @@ export default {
             if (submitFlag === false) return
             this.btnLoading = true
             let formMethod = null;
-            if (this.btnType == 'edit') {
+            if (this.btnType == 'edit'||this.operateType) {
               formMethod = editPropertyScrapList
               if(this.dataForm.state===true)this.dataForm.orderStatus='toBeScrapped'
               if(this.dataForm.state===false)this.dataForm.orderStatus='rejected'

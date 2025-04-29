@@ -31,21 +31,21 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产编码" prop="code">
-                            <el-input v-model="dataForm.code" placeholder="请输入资产编码"
+                          <el-form-item label="资产编码" prop="propertyCode">
+                            <el-input v-model="dataForm.propertyCode" placeholder="请输入资产编码"
                               disabled />
                           </el-form-item>
                         </el-col>
                
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产名称" prop="name">
-                            <el-input v-model="dataForm.name" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="btnType!='add'"
+                          <el-form-item label="资产名称" prop="propertyName">
+                            <el-input v-model="dataForm.propertyName" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="btnType!='add'"
                                />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产规格" prop="spec">
-                            <el-input v-model="dataForm.spec" placeholder="请输入资产规格"
+                          <el-form-item label="资产规格" prop="propertySpec">
+                            <el-input v-model="dataForm.propertySpec" placeholder="请输入资产规格"
                               disabled />
                           </el-form-item>
                         </el-col>
@@ -115,10 +115,10 @@
                         </el-col>
                         <el-col :sm="6" :xs="24" >
                        
-                          <el-form-item label="供应商名称" prop="partnerName" ref="partnerName">
+                          <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.partnerName"  ref="ComSelect-page" isdisabled
+                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page" isdisabled
                               @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                               title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                               :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -260,7 +260,7 @@ export default {
         netPrice:"",
         ownerId:"",
         purchaserId:"",
-        partnerName:"",
+        cooperativePartnerName:"",
         cooperativePartnerId:"",
         remark:"",
         orderStatus:"toBeAgreed",
@@ -272,7 +272,10 @@ export default {
       activeNameDetail: 'productInfo',
       autoCode:"",
       operateType:"",
-   
+      stateList:[
+        {label:"同意",value:true,},
+        {label:"拒绝",value:false,},
+      ],
   
       dataRule: {
         propertyCategoryName: [
@@ -321,6 +324,11 @@ export default {
     changeAsset(data){
       console.log("资产数据",data);
       this.dataForm=data
+      this.$set(this.dataForm,'propertyId',data.id)
+      this.$set(this.dataForm,'propertyName',data.name)
+      this.$set(this.dataForm,'propertyCode',data.code)
+      this.$set(this.dataForm,'propertySpec',data.spec)
+      this.dataForm.id=""
     },
     continueEdit(){
       this.tipsvisible=false
@@ -358,7 +366,7 @@ export default {
     supplierdata(id, data) {
      
       if (data.length === 0) {
-        this.dataForm.partnerName = ''
+        this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''
         this.dataForm.cooperativePartnerId = ''
       } else {
@@ -366,7 +374,7 @@ export default {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.partnerName = data[0].all.name
+        this.dataForm.cooperativePartnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
        
@@ -483,8 +491,9 @@ export default {
               formMethod = editPropertyOut
               if(this.dataForm.state===true)this.dataForm.orderStatus='toBeOut'
               if(this.dataForm.state===false)this.dataForm.orderStatus='rejected'
+              console.log("this.operateType",this.operateType,this.userInfo.userId);
               if(this.operateType==='approve')this.$set(this.dataForm,'approvalUserId',this.userInfo.userId)
-              if(this.operateType==='out')this.dataForm.orderStatus='toBeRecalled'
+              if(this.operateType==='out')this.dataForm.orderStatus='toBeRecall'
               if(this.operateType==='back')this.dataForm.orderStatus='finished'
             
               this.btnText = "继续修改"
@@ -514,7 +523,7 @@ export default {
       })
     },
     getPropertyPurchaseOrderDetail(id){
-      propertyPurchaseOrderDetail(id).then(res=>{
+      propertyOutDetail(id).then(res=>{
         console.log("详情",res);
         this.dataForm=res.data
         this.autoCode=res.data.code

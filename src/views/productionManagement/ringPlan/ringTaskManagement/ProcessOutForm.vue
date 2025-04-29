@@ -310,7 +310,8 @@ export default {
               return this.$message.error('最后一道工单为自制工序且不报工，不可外协！')
           }
       }
-      this.selectedData.sort((a,b)=> a - b)
+      this.selectedData.sort((a,b)=> a.sort - b.sort)
+      console.log(this.selectedData,'data')
       // 临时存储传递数据到会话
       const processList = this.selectedData.map((item,index) => ({
         projectName: item.projectName,

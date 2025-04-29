@@ -569,7 +569,7 @@ export default {
       if (this.selectArr.some(item => item.productionOrderId !== this.selectArr[0].productionOrderId)) return this.$message.error('选择的工序必须是来自同一生产任务！')
       if (!this.isSortedCorrectly(this.selectArr)) return this.$message.error('选择的工序必须连贯！')
 
-
+      this.selectArr.sort((a,b)=> a.sort - b.sort)
       // 临时存储传递数据到会话
       const processList = this.selectArr.map((item,index) => ({
         projectName: item.projectName,

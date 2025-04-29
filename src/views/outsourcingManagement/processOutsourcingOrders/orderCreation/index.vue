@@ -780,12 +780,16 @@ export default {
         }, 100)
       }
     },
-    // 发料数量计算公式
-    OutShipmentQuantity(a, b, c, d) {
+     // 发料数量计算公式
+     OutShipmentQuantity(a, b, c, d) {
+      console.log(a,b,c,d,'123')
       const _a = !a ? 1 : a
-      const result = +_a * +b * (1 + +c) + +d;
+      const result = +_a * +b * (1 + +(c/100)) + +d;
+      console.log(result,'res')
+      console.log(Math.floor(result.toFixed(4)),'jj')
       if (isNaN(result)) return
-     return Math.floor(result.toFixed(4));
+      return Number(result.toFixed(2)) 
+    //  return Math.floor(result.toFixed(4));
     },
     /**刷新发料清单 */
     refreshOutShipmentList(flag) {

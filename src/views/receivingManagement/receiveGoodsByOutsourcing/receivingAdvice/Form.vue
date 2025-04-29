@@ -579,29 +579,30 @@ export default {
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        cooperativePartnerCode: '',
-        cooperativePartnerId: '',
-        partnerName: '',
-        createByName: '',
+        approvalStatus: 'ok',
+        documentStatus: 'submit',
+        orderState: 'not_finish',
+        receiveFlag:true,
+        externalFlag: 1,
+        receiptQueryFlag: 1,
         deliveryEndDate: '',
         deliveryStartDate: '',
-        endTime: '',
-        orderNo: '',
-        orderType: 'external',
-        receiptQueryFlag: 1,
+        deliverQueryFlag: 1,
+        shipmentStatus: 'finish',
+        pageNum: 1,
+        pageSize: 20,
         orderItems: [
           {
             asc: false,
-            column: 'createTime'
+            column: ''
+          },
+          {
+            asc: false,
+            column: 't1.create_time'
           }
         ],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: '',
-        productCode: '',
-        productName: '',
-        classAttribute: '',
-        receivingStatus: 'receiving'
+
+        superQuery: {}
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom', minWidth: 180 },

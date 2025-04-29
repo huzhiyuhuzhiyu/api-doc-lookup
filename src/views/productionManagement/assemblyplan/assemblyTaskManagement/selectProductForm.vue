@@ -131,6 +131,7 @@ export default {
     },
     reset() {
       this.form = {
+        classAttribute: "finish_product",
         productDrawingNo:"",
         productCode:"",
         pageNum: 1,

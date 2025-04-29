@@ -84,7 +84,7 @@ export default {
                       if (!res.data) {
                         callback()
                       } else {
-                        callback(new Error('此类型编码已存在'))
+                        callback(new Error('此类型名称已存在'))
                       }
                     })
                     .catch((err) => {
@@ -96,7 +96,7 @@ export default {
                       if (!res.data) {
                         callback()
                       } else {
-                        callback(new Error('此类型编码已存在'))
+                        callback(new Error('此类型名称已存在'))
                       }
                     })
                     .catch((err) => {

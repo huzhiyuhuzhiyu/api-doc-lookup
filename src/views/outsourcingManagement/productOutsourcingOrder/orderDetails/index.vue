@@ -56,7 +56,7 @@
                   @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="detailData()" />
               </el-tooltip>
             </div>
           </div>
@@ -493,7 +493,7 @@ export default {
                     duration: 1000,
                     onClose: () => {
                       this.btnLoading = false
-                      this.initData()
+                      this.detailData()
                     }
                   })
                 }
@@ -545,17 +545,7 @@ export default {
           })
       }
     },
-    // 点击切换明细
-    handleClick(e) {
-      console.log(e)
-      if (e.index == '0') {
-        this.initData()
-      } else {
-        this.detailData()
-      }
-      this.selectData = []
-    },
-
+   
     columnSetFun() {
       this.$refs.detailTableData.showDrawer()
     },
@@ -584,7 +574,7 @@ export default {
       this.formVisible = false
       this.withdrawnVisible = false
       if (isRefresh) {
-        this.initData()
+        this.detailData()
       }
     },
     refresh() {

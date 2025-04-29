@@ -691,7 +691,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="6">
+                <el-col :span="6" v-if="isProjectSwitch == 1">
                   <el-form-item>
                     <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
                >

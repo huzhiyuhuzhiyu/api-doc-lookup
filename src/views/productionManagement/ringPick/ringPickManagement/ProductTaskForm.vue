@@ -143,6 +143,8 @@ export default {
       this.id = id
       if (receiveType === 'order') {
         this.orderForm.pickingStatus = "not_finished"
+      } else {
+        delete this.orderForm.pickingStatus
       }
       this.getbatchNumList(id)
     },

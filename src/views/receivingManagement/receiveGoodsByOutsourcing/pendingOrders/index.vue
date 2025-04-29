@@ -586,6 +586,7 @@ export default {
         approvalStatus: 'ok',
         documentStatus: 'submit',
         orderState: 'not_finish',
+        receiveFlag:true,
         externalFlag: 1,
         deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartDate: '',

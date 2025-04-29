@@ -97,7 +97,7 @@
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
+          <pagination v-if="!requestFlag" :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
             @pagination="getbatchNumList" />
         </div>
       </div>
@@ -241,6 +241,7 @@ export default {
       this.form.standardValue = ""
       this.form.excludeProcessFlag=this.excludeProcessFlag
       this.dataForm = data
+      console.log(requestFlag,'requestFlag')
       if (!requestFlag) {
 
         this.getbatchNumList()

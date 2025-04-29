@@ -378,6 +378,12 @@ import MaterForm from '../../assemblyplan/assemblyTaskManagement/materForm.vue';
 export default {
   components: { RelatedTasksForm,Guidebook,Inspec, MaterForm},
   mixins: [getProjectList],
+  props:{
+      noNeedOutFlag:{
+          type: Boolean,
+          default: false
+      }
+  },
   data() {
     return {
       materFormVisible:false,

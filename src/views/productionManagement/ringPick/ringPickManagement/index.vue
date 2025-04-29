@@ -426,7 +426,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: "1094",
-        exportName: '装配领料',
+        exportName: '套圈领料',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

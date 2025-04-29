@@ -420,7 +420,7 @@
     </div>
 
 
-    <taskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="searchProductData" @close="closeForm"></taskForm>
+    <taskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="searchProductData" @close="closeForm" :noNeedOutFlag="true"></taskForm>
     <produceTaskReportForm v-if="produceTaskReportVisible" ref="produceTaskReportForm"
       @refreshDataList="searchProductData" @close="closeForm"></produceTaskReportForm>
     <ProcessReportForm v-if="ProcessReportVisible" ref="ProcessReportForm" @refreshDataList="searchProcessData"

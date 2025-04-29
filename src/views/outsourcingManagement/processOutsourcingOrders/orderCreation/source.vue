@@ -42,7 +42,7 @@
                 <template slot-scope="scope">
                   <el-form-item>
                     <!-- 工序选择弹窗  -->
-                    <ComSelect-page clearable :isdisabled="type === 'look' || transferOutFlag"" :treeNodeClick="treeNodeProcessClick"
+                    <ComSelect-page clearable :isdisabled="type === 'look' || transferOutFlag" :treeNodeClick="treeNodeProcessClick"
                       v-model="scope.row.processName" @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems"
                       :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
                       :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
@@ -89,7 +89,7 @@
         </el-scrollbar>
         <div class="footer">
           <el-button @click="drawer = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" @click="submitForm('dataForm')" v-if="type != 'look' ? true : false">
+          <el-button type="primary" @click="submitForm('dataForm')" v-if="type != 'look' ? !transferOutFlag : false">
             {{ $t('common.confirmButton') }}
           </el-button>
         </div>

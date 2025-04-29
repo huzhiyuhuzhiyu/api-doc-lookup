@@ -18,7 +18,7 @@
             </el-col>
             <el-col :span="4" v-if="isProductNameSwitch === '1'">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
+                <el-input v-model.trim="listsQuery.productName" placeholder="产品名称" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>

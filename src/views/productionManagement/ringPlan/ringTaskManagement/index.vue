@@ -522,6 +522,7 @@ export default {
       printVisible2: false,
       printBrowseVisible2: false,
       productionLineList:[],
+      dateVisible:false,
       dateForm:{},
       dateRule:{
         planStartDate: [{ required: true, message: '请选择计划开始日期', trigger: 'change' }],

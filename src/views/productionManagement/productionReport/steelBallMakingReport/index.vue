@@ -178,7 +178,7 @@
   </div>
 </template>
 <script>
-import { getRingList, ringReport } from '@/api/productionManagement/report'
+import { xyAssembleList, xyAssembleReport } from '@/api/productionManagement/report'
 import Form from '../../../warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import TaskForm from '../sleeveMakingReport/taskForm.vue'
 export default {
@@ -234,7 +234,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getRingList(this.listQuery)
+      xyAssembleList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.page.records
           this.total = res.data.page.total
@@ -286,7 +286,7 @@ export default {
     },
     exportForm() {
       if (!this.tableData.length) return this.$message.error('没有可导出的数据')
-      ringReport(this.listQuery).then((res) => {
+      xyAssembleReport(this.listQuery).then((res) => {
         this.jnpf.downloadFile(res.data.url)
       })
     }

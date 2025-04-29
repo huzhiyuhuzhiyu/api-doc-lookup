@@ -944,16 +944,18 @@ export default {
         // materialList: this.materialList
       }
       this.btnLoading = true
-      splitOrderNum(obj).then(res => {
-        this.btnLoading = false
-        this.$message.success("拆分任务成功")
-        setTimeout(() => {
-          this.$emit('close')
-        }, 1500);
-      }).catch(error => {
-        this.btnLoading = false
+      setTimeout(async () => {
+        splitOrderNum(obj).then(res => {
+          this.btnLoading = false
+          this.$message.success("拆分任务成功")
+          setTimeout(() => {
+            this.$emit('close')
+          }, 1500);
+        }).catch(error => {
+          this.btnLoading = false
 
-      })
+        })
+      }, 100)
     },
     async handleConfirm(value) {
       console.log(this.dataForm);

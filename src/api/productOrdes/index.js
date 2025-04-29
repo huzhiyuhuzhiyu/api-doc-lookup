@@ -311,6 +311,7 @@ export function splitOrderNum(data) {
   return request({
     url: `/api/mrp/prod/order/split`,
     method: 'POST',
+    data
   })
 }
 

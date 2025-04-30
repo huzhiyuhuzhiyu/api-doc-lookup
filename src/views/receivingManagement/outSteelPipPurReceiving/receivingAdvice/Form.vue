@@ -1219,6 +1219,7 @@ export default {
     // this.getProvinceList()
     this.getAttributeline()
     this.getWarehouseList()
+    this.getProductClassFun()
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]

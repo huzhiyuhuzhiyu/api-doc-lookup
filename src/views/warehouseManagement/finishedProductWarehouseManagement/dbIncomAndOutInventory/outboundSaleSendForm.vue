@@ -52,7 +52,8 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')">
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                            && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled
                                 @focus="openDialog">
@@ -269,7 +270,8 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')">
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled
                                 @focus="openDialog">

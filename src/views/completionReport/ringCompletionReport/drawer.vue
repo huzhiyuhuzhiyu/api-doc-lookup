@@ -120,7 +120,7 @@
 
         </el-row>
       </el-col>
-      <el-col :span="12" class="rightInfo" ref="mycol">
+      <el-col :span="12" class="rightInfo" ref="mycol" :style="{ height: targetHeight + 'px!important' }">
         <el-form ref="reportRef" :model="form" :rules="dataRule" label-width="160px" label-position="left">
           <el-row>
             <div style="margin-bottom: 10px; background: #f2f2f2; padding: 20px 16px;">
@@ -401,7 +401,7 @@ export default {
       this.$nextTick(() => {
         const height = this.$refs.mycol.$el.clientHeight
         console.log('el-col的高度是1：', height);
-        this.targetHeight = height;
+        this.targetHeight = height + 23;
       });
     },
     handleBlur2() {

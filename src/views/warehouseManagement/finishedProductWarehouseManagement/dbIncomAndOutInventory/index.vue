@@ -681,8 +681,8 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
-          <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
+          <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')&& userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
+          <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')"  />
           <el-table-column prop="contractNo" label="客户合同号" min-width="160" sortable="custom"></el-table-column>
           <el-table-column prop="deliverDate" label="发货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="recipient" label="收件人" min-width="120" sortable="custom" />
@@ -809,8 +809,8 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
-          <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
+          <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
+          <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
           <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="exchangeGoodsFlag" label="退货标识" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -850,8 +850,8 @@
 
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
-          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
+          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
           <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
           <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom"></el-table-column>
 
@@ -883,8 +883,8 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
-          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
+          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
           <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
           <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
@@ -970,8 +970,8 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
-          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
+          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
           <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
           <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
@@ -1046,8 +1046,8 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
-          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"/>
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')" />
+          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')"/>
           <el-table-column prop="deliverDate" label="发料日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="recipient" label="收件人" min-width="120" sortable="custom" />
           <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />

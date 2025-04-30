@@ -20,7 +20,8 @@
                             placeholder="采购单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data') 
+                        && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
                             @focus="openDialog"></el-input>
@@ -304,7 +305,8 @@
                         placeholder="采购单号"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
+                  <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data')
+                  && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                       <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
                         @focus="openDialog"></el-input>

@@ -136,6 +136,7 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
+          this.dataForm.sortCode = res.data.sortCode
           this.title = '编辑产品属性'
         })
       } else if (btntype == 'copy') {

@@ -44,7 +44,8 @@
                           </el-form-item>
                         </el-col>
 
-                        <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                        <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_external_data') 
+                          && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                           <el-form-item label="供应商名称" prop="partnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"

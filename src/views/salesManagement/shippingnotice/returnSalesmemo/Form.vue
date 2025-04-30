@@ -37,7 +37,8 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
+                    <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data')
+                      && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                       <el-form-item label="客户名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择客户" readonly @focus="openDialog"
                           :disabled="btnType == 'look'">
@@ -309,7 +310,8 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :sm="6" :xs="24">
+                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data') 
+                        && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                   <el-form-item label="客户名称" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择客户" readonly @focus="openDialog"
                       :disabled="btnType == 'look'">

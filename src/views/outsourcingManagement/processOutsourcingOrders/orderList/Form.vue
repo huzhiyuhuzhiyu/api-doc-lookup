@@ -30,7 +30,8 @@
                             placeholder="外协单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
+                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_external_data')
+                        && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <ComSelect-page :clearable="type !== 'look'" :isdisabled="type === 'look'"
                             :treeNodeClick="treeNodeClick" v-model="dataForm.cooperativePartnerName"

@@ -105,9 +105,9 @@
               <div v-if="scope.row.businessType == 'outbound_shift'">形态转换出库</div>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')">
+          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
           </el-table-column>
-          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')">
+          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
           </el-table-column>
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"

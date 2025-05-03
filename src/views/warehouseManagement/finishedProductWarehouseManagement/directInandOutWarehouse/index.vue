@@ -17,7 +17,7 @@
     <div class="contain">
       <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
-          <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main" 
+          <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
             :element-loading-text="loadingText">
             <el-tabs v-model="activeName">
               <el-tab-pane label="基本信息" name="orderInfo" class="orderInfo">
@@ -299,9 +299,9 @@
                         </template>
                       </el-table-column> -->
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                      
+
                       <el-table-column prop="standardValue"
-                      v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)"
+                      v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','outbound_pick_out'].includes(dataForm.businessType)"
                         label="规值" width="120" key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
@@ -532,7 +532,7 @@
                         </template>
                       </el-table-column>
                       </template>
-                      <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" :key="103" 
+                      <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" :key="103"
                         v-if="$store.getters.configData.orderField.protrusion">
                       <template slot-scope="scope">
                         <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
@@ -1612,9 +1612,9 @@ export default {
     // 选完产品后  渲染在产品信息列表
     submitAllProduct() {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
-       
+
       this.productVisible = false
-      let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr)) 
+      let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
       arr.forEach(item => {
         if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external_send' || this.dataForm.businessType == 'inbound_external') {
           this.$set(item, 'discount', '')
@@ -1701,11 +1701,11 @@ export default {
           });
 
         }
-        
+
       });
       this.productData=[...this.productData,...arr]
       this.seleBtnLoading=true
-      if (this.seleBtnLoading) return  ; 
+      if (this.seleBtnLoading) return  ;
     },
     columnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
@@ -2094,7 +2094,7 @@ export default {
             { label: "调拨入库", value: "inbound_transfer", },
             { label: "直接领料入库", value: "inbound_receive_material", },
             { label: "直接领料出库", value: "outbound_receive_material", },
-            
+
           ]
           this.list = [...this.list, ...arr]
         }).catch(() => { this.formLoading = false })
@@ -2199,7 +2199,7 @@ export default {
                 this.dataForm.tenant = localStorage.getItem('loginTenant')
               }
             }
-            
+
             let dataObj = {
               attachmentList: this.datafilelist,
               stockMove: this.dataForm,

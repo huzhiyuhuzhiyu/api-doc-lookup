@@ -143,12 +143,12 @@
                             :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
                           <el-table-column prop="outShelfSpaceName" label="原库位" width="120"
                             :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
-             
+
                           <el-table-column prop="shelfSpaceName" label="库位" width="120"
                             :key="10112"  v-if="dataForm.pickingWay !== 'dispatch_list'"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
-                            
+
 
                           <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
                             v-if="btnType != 'look'">
@@ -194,6 +194,7 @@
                           <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
                           <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                          <el-table-column prop="standardValue" label="规值" width="140" key="standardValue" />
                           <el-table-column prop="pairingModeName" label="配对方式" width="160" />
                           <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
@@ -369,7 +370,7 @@
                             :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
                           <el-table-column prop="outShelfSpaceName" label="原库位" width="120"
                             :key="10112"  v-if="dataForm.pickingWay == 'dispatch_list'"></el-table-column>
-             
+
                           <el-table-column prop="shelfSpaceName" label="库位" width="120"
                             :key="10112"  v-if="dataForm.pickingWay !== 'dispatch_list'"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
@@ -420,6 +421,7 @@
                           <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
                           <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                          <el-table-column prop="standardValue" label="规值" width="140" key="standardValue" />
                           <el-table-column prop="pairingModeName" label="配对方式" width="160" />
                           <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115">
 
@@ -809,7 +811,7 @@ export default {
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      
+
       this.$set(this.productData[index], 'outWarehouseId', data.warehouseId)
       this.$set(this.productData[index], 'outWarehouseName', data.warehouseName)
       this.$set(this.productData[index], 'outShelfSpaceId', data.shelfSpaceId)
@@ -821,7 +823,7 @@ export default {
       this.$set(this.productData[index], 'divideEqually', data.divideEqually)
       this.$set(this.productData[index], 'partnerName', data.partnerName)
       this.$set(this.productData[index], 'cooperativePartnerId', data.cooperativePartnerId)
-       
+
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'processName', data.processName)
@@ -878,7 +880,7 @@ export default {
 
     },
 
-    // 点击选择产品 销售发货 
+    // 点击选择产品 销售发货
     openSeleceProductDialog() {
       if (this.dataForm.businessType != 'inbound_return_materials' && this.dataForm.businessType != 'outbound_pick_out') {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
@@ -901,7 +903,7 @@ export default {
         //   { label: "外协发料", value: "outbound_external_send" },
         //   { label: "外协退料", value: "inbound_external_return" },
         //   { label: "外协收货", value: "inbound_external" },
-        //   { label: "外协退货", value: "outbound_external" },  
+        //   { label: "外协退货", value: "outbound_external" },
 
         this.orderForm.pickingFlag = true
 

@@ -47,6 +47,7 @@
             <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
             <div>
               <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
+                  <el-button type="primary" size="mini" v-has="'add_purchaseOrder'" icon="el-icon-plus" @click="addPurchase" >新建</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
@@ -161,6 +162,7 @@
     <!-- 选择打印模版弹窗 -->
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+      <addForm v-if="addFormVisible" ref="addFormRef" @close="closeForm"></addForm>
   </div>
 </template>
 
@@ -189,11 +191,13 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getQueryConfirm } from '@/utils';
 import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
+import addForm from './addForm.vue'
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog },
+  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog,addForm},
   data() {
     return {
+      addFormVisible:false,
       printBrowseVisible: false,
       prindId: '',
       formId: '',
@@ -389,6 +393,12 @@ export default {
     }
   },
   methods: {
+    addPurchase(){
+      this.addFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.addFormRef.init('','other','pool')
+      })
+    },
     async backFn() {
       if (this.selectData.length === 0) {
         this.$message.error('请选择要撤回的数据')
@@ -564,6 +574,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.withdrawnVisible = false
+      this.addFormVisible=false
       if (isRefresh) {
         this.initData()
       }

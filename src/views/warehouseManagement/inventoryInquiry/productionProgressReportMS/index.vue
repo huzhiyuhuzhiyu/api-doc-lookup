@@ -117,7 +117,7 @@
                   {{ scope.row.transitRubHole }}
                 </el-link>
               </template>
-            </el-table-column>
+        </el-table-column>
           </el-table-column>
           <el-table-column label="待131" align="center">
             <el-table-column prop="waitInnerRubChannel" label="131-领料的可报工数量" width="120" align="center">
@@ -187,7 +187,7 @@
               </template>
             </el-table-column>
           </el-table-column>
-
+       
 
           <el-table-column label="待精研外沟" align="center">
             <el-table-column prop="waitFineGrind" label="精研外沟-领料的可报工数量" width="120" align="center">
@@ -232,7 +232,7 @@
               </template>
             </el-table-column>
           </el-table-column>
-
+    
 
           <el-table-column label="待入库" align="center">
             <el-table-column prop="waitStock" label="仓库的待入库数量" width="120" align="center">
@@ -298,7 +298,7 @@ import TaskForm from './taskForm.vue'
 import MaterForm from './materForm.vue'
 import ProductForm from "./productForm.vue";
 export default {
-  name: 'productionProgressReport',
+  name: 'productionProgressReportMS',
   components: { Form, TaskForm, MaterForm, ProductForm },
   data() {
     return {
@@ -402,20 +402,22 @@ export default {
       sums[1] = '合计'
       sums[2] = this.allTotal.waitHeat
       sums[3] = this.allTotal.transitHeat
-      sums[4] = this.allTotal.waitSurface
-      sums[5] = this.allTotal.transitSurface
+      sums[4] = this.allTotal.waitGrinding
       sums[6] = this.allTotal.waitCenterLess
-      sums[7] = this.allTotal.transitCenterLess
+      sums[5] = this.allTotal.waitOuterSuperfine
+      sums[7] = this.allTotal.transitOuterSuperfine
       sums[8] = this.allTotal.waitRubHole
       sums[9] = this.allTotal.transitRubHole
-      sums[10] = this.allTotal.waitTestHole
-      sums[11] = this.allTotal.transitTestHole
-      sums[12] = this.allTotal.waitRubChannel
-      sums[13] = this.allTotal.transitRubChannel
-      sums[14] = this.allTotal.waitSuperfine
-      sums[15] = this.allTotal.transitSuperfine
-      sums[16] = this.allTotal.waitRollingResearch
-      sums[17] = this.allTotal.transitRollingResearch
+      sums[10] = this.allTotal.waitInnerRubChannel
+      sums[11] = this.allTotal.transitInnerRubChannel
+      sums[12] = this.allTotal.waitSuperfine
+      sums[13] = this.allTotal.waitOuterRubChannel
+      sums[14] = this.allTotal.transitOuterRubChannel
+      sums[15] = this.allTotal.waitFineGrind
+      sums[16] = this.allTotal.transitFineGrind
+      sums[15] = this.allTotal.waitStock
+      sums[16] = this.allTotal.existingStock
+      sums[17] = this.allTotal.totalStock
 
       return sums
     },

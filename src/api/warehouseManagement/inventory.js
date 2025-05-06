@@ -153,7 +153,38 @@ export function inventoryWarehouseExportMS(data) {
     data
   })
 }
-
+// 项源生产在制库存报表-列表
+export function inventoryWarehouseReportXY(data) {
+  return request({
+    url: `/api/report/data/xy/transit/list`,
+    method: 'POST',
+    data
+  })
+}
+// 项源生产在制库存报表-导出
+export function inventoryWarehouseExportXY(data) {
+  return request({
+    url: `/api/report/data/xy/transit/export`,
+    method: 'POST',
+    data
+  })
+}
+//精瑞生产在制库存报表-列表
+export function inventoryWarehouseReportJR(data) {
+  return request({
+    url: `/api/report/data/jr/transit/list`,
+    method: 'POST',
+    data
+  })
+}
+// 精瑞生产在制库存报表-导出
+export function inventoryWarehouseExportJR(data) {
+  return request({
+    url: `/api/report/data/jr/transit/export`,
+    method: 'POST',
+    data
+  })
+}
 // 倍宁- 常规报表
 export function inventoryWarehouseTotalRoutineReport(data) {
   return request({

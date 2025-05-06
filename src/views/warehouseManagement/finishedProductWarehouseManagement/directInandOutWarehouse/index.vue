@@ -335,7 +335,7 @@
                           </el-select>
                         </template>
                       </el-table-column> -->
-                      <el-table-column prop="standardValue" v-if="dataForm.businessType == 'inbound_purchase'"
+                      <el-table-column prop="standardValue"  
                         label="规值" width="120" key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"

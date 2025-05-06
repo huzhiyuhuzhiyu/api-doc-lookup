@@ -496,7 +496,7 @@ export default {
 
       this.listQuery.orderNo = this.scanResult
       this.listLoading = true
-
+      this.listQuery.produceInspection=1
       getWorkList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
@@ -568,6 +568,7 @@ export default {
       if (this.isProjectSwitch === '1') {
         this.listQuery.projectId = this.userInfo.projectId
       }
+      this.listQuery.produceInspection=1
       getWorkList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

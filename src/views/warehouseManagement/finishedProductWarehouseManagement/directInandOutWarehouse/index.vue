@@ -517,8 +517,8 @@
             <el-form @submit.native.prevent>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
-                    @keyup.enter.native="searchProductFun" clearable />
+                  <el-input v-model="orderForm.partnerName" placeholder="请输入供应商"
+                  @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
@@ -529,14 +529,15 @@
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.batchNumber" placeholder="请输入批次号" @keyup.enter.native="searchProductFun"
-                    clearable />
+                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
+                    @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
+
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
-                    @keyup.enter.native="searchProductFun" clearable />
+                  <el-input v-model="listQuery.partnerName" placeholder="请输入供应商"
+                  @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
@@ -547,8 +548,8 @@
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" @keyup.enter.native="searchProductFun"
-                    clearable />
+                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
+                  @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -831,6 +832,7 @@ export default {
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
+        partnerName:"",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -882,6 +884,7 @@ export default {
         productName: '',
         productCode: '',
         productDrawingNo: '', // 图号
+        partnerName:"",
         orderItems: [
           {
             asc: false,

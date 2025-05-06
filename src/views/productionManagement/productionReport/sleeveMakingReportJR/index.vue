@@ -42,7 +42,7 @@
                   {{ scope.row.lightBallOne }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '光球一的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '光球一')">
                   {{ scope.row.lightBallOne }}
                 </el-link>
               </template>
@@ -55,7 +55,7 @@
                   {{ scope.row.lightBallTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '光球二的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '光球二')">
                   {{ scope.row.lightBallTwo }}
                 </el-link>
               </template>
@@ -69,7 +69,7 @@
                   {{ scope.row.quench }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '淬火的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '淬火')">
                   {{ scope.row.quench }}
                 </el-link>
               </template>
@@ -82,7 +82,7 @@
                   {{ scope.row.temper }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '回火的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '回火')">
                   {{ scope.row.temper }}
                 </el-link>
               </template>
@@ -95,7 +95,7 @@
                   {{ scope.row.hardGrindOne }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '硬磨一的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '硬磨一')">
                   {{ scope.row.hardGrindOne }}
                 </el-link>
               </template>
@@ -108,7 +108,7 @@
                   {{ scope.row.intensify }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '强化的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '强化')">
                   {{ scope.row.intensify }}
                 </el-link>
               </template>
@@ -121,7 +121,7 @@
                   {{ scope.row.temperTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '二次回火的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '二次回火')">
                   {{ scope.row.temperTwo }}
                 </el-link>
               </template>
@@ -134,7 +134,7 @@
                   {{ scope.row.hardGrindTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '硬磨二的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '硬磨二')">
                   {{ scope.row.hardGrindTwo }}
                 </el-link>
               </template>
@@ -147,7 +147,7 @@
                   {{ scope.row.initialGrindOne }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '初研一的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '初研一')">
                   {{ scope.row.initialGrindOne }}
                 </el-link>
               </template>
@@ -199,7 +199,7 @@
                   {{ scope.row.appearanceSelection }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外观选别的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '初研二')">
                   {{ scope.row.appearanceSelection }}
                 </el-link>
               </template>
@@ -212,7 +212,7 @@
                   {{ scope.row.clean }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '清洗的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '清洗')">
                   {{ scope.row.clean }}
                 </el-link>
               </template>
@@ -225,7 +225,7 @@
                   {{ scope.row.optoelectronicAppearance }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '光电外观的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '光电外观')">
                   {{ scope.row.optoelectronicAppearance }}
                 </el-link>
               </template>
@@ -238,7 +238,7 @@
                   {{ scope.row.pack }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '成品包装的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '成品包装')">
                   {{ scope.row.pack }}
                 </el-link>
               </template>

@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div class="JNPF-common-page-header">
-          <el-page-header @back="goBack" content="生成采购订单" />
+          <el-page-header @back="goBack" content="新建采购订单" />
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -66,17 +66,27 @@
                 <el-collapse-item title="产品信息" name="productInfo">
                   <div>
                     <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">
+                      <div class="JNPF-common-head">
+                   <div>
+                    <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">
                         选择产品
                       </el-button>
                       |
                       <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">
                         批量删除
                       </el-button>
-                      |
+                   </div>
+                  <div class="JNPF-common-head-right">
+                
+                    <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                      <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                        @click="columnSetFun()" />
+                    </el-tooltip>
+                  </div>
+                  </div>
                       <JNPF-table :fixedNO="true" hasC ref="multipleTable" @selection-change="handeleProductInfoData"
                         hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" border
-                        :height="customStyleData">
+                        :height="customStyleData"  custom-column >
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                           key="1"></el-table-column>
                           <el-table-column prop="projectName" label="成本核算归属" width="140" v-if="abProjectSwitchVisible"
@@ -421,13 +431,13 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column label="操作" width="80" fixed="right" v-if="dataFormTwo.data.length > 1">
+                        
+                        <el-table-column label="操作" width="140" fixed="right">
                           <template slot-scope="scope">
-                            <el-button type="text" class="JNPF-table-delBtn"
-                              @click="delequipment_process_relList(scope.$index)">
-                              删除
-                            </el-button>
+                            <el-button type="text" class="JNPF-table-delBtn" @click="delequipment_process_relList(scope.$index)"> 删除 </el-button>
+                            <el-button type="text"  @click="copyFun(scope.row)"> 复制 </el-button>
                           </template>
+                     
                         </el-table-column>
                       </JNPF-table>
                     </el-form>
@@ -835,6 +845,7 @@ export default {
     this.formLoading = false
 
     this.getBimBusinessDetail()
+    this.$nextTick(() => { this.$refs.multipleTable.doLayout() })
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -899,6 +910,12 @@ export default {
     }
   },
   methods: {
+    columnSetFun() {
+      this.$refs.multipleTable.showDrawer()
+    },
+    copyFun(row){
+      this.dataFormTwo.data.push(row)
+    },
        // 配对方式显示隐藏
        async getPairingModeSwitch(code, type) {
       try {
@@ -1042,13 +1059,14 @@ export default {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           }
         } else {
-          this.$set(item, 'purchaseQuantity', Number(item.maxInventory) - Number(item.availableQuantity))
+          // this.$set(item, 'purchaseQuantity', Number(item.maxInventory) - Number(item.availableQuantity))
           item.productDrawingNo = item.drawingNo
-          if (item.calculationDirection === 'multiplication') {
-            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
-          } else {
-            item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
-          }
+          item.productName = item.name
+          // if (item.calculationDirection === 'multiplication') {
+          //   item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          // } else {
+          //   item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+          // }
         }
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + Number(item.taxRate) / 100), 6)
@@ -1087,6 +1105,7 @@ export default {
           this.olddeliveryDateArr.push(this.dataFormTwo.data[i].deliveryDate)
         }
       })
+      console.log(555,this.dataFormTwo.data);
     },
 
     // 产品列表选中

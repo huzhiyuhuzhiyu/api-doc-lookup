@@ -45,7 +45,7 @@
           <el-table-column label="热处理在制" align="center">
             <el-table-column prop="transitHeat" label="领料过的数量和批次" width="170" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '热处理-领料')">
+                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '热处理在制')">
                   {{ scope.row.transitHeat }}
                 </el-link>
               </template>
@@ -54,7 +54,7 @@
           <el-table-column label="待双端面磨削" align="center">
             <el-table-column prop="waitGrinding" label="双端面磨削-领料的可报工数量" width="120" align="center">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '双端面磨削-领料的可报工数量')">
+                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待双端面磨削')">
                   {{ scope.row.waitGrinding }}
                 </el-link>
               </template>
@@ -68,6 +68,9 @@
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '无心磨-领料的可报工数量')">
                   {{ scope.row.waitCenterLess }}
                 </el-link>
+                <template v-else>
+                  {{ scope.row.waitCenterLess }}
+                </template>
               </template>
             </el-table-column>
              
@@ -76,7 +79,7 @@
             <el-table-column prop="waitOuterSuperfine" label="外圆超-领料的可报工数量" width="120" align="center">
               <template slot-scope="scope">
                 <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圆超-领料的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待外圆超')">
                   {{ scope.row.waitOuterSuperfine }}
                 </el-link>
                 <template v-else>
@@ -89,7 +92,7 @@
             <el-table-column prop="transitOuterSuperfine" label="外圆超-入库的可报工数量" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圆超-入库的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圆超在制')">
                   {{ scope.row.transitOuterSuperfine }}
                 </el-link>
               </template>
@@ -100,7 +103,7 @@
             <el-table-column prop="waitRubHole" label="201-领料的可报工数量" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '201-领料的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待201')">
                   {{ scope.row.waitRubHole }}
                 </el-link>
               </template>
@@ -113,7 +116,7 @@
                   {{ scope.row.transitRubHole }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '201-入库的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '201在制')">
                   {{ scope.row.transitRubHole }}
                 </el-link>
               </template>
@@ -126,7 +129,7 @@
                   {{ scope.row.waitInnerRubChannel }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '131-领料的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待131')">
                   {{ scope.row.waitInnerRubChannel }}
                 </el-link>
               </template>
@@ -139,7 +142,7 @@
                   {{ scope.row.transitInnerRubChannel }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '131-入库的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '131在制')">
                   {{ scope.row.transitInnerRubChannel }}
                 </el-link>
               </template>
@@ -152,7 +155,7 @@
                   {{ scope.row.waitSuperfine }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '超精-领料的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待超精')">
                   {{ scope.row.waitSuperfine }}
                 </el-link>
               </template>
@@ -166,7 +169,7 @@
                   {{ scope.row.waitOuterRubChannel }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '143-领料的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待143')">
                   {{ scope.row.waitOuterRubChannel }}
                 </el-link>
               </template>
@@ -181,7 +184,7 @@
                   {{ scope.row.transitOuterRubChannel }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '143-入库的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '143在制')">
                   {{ scope.row.transitOuterRubChannel }}
                 </el-link>
               </template>
@@ -196,7 +199,7 @@
                   {{ scope.row.waitFineGrind }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '精研外沟-领料的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待精研外沟')">
                   {{ scope.row.waitFineGrind }}
                 </el-link>
               </template>
@@ -211,7 +214,7 @@
                   {{ scope.row.transitFineGrind }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '精研外沟-入库的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '精研外沟在制')">
                   {{ scope.row.transitFineGrind }}
                 </el-link>
               </template>
@@ -226,7 +229,7 @@
                   {{ scope.row.waitRollingResearch }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圈修磨-领料的可报工数量')">
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '待外圈修磨')">
                   {{ scope.row.waitRollingResearch }}
                 </el-link>
               </template>
@@ -237,46 +240,23 @@
           <el-table-column label="待入库" align="center">
             <el-table-column prop="waitStock" label="仓库的待入库数量" width="120" align="center">
               <template slot-scope="scope">
-                <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.waitStock }}
-                </template>
-                <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '仓库的待入库数量')">
-                  {{ scope.row.waitStock }}
-                </el-link>
+                
               </template>
             </el-table-column>
           </el-table-column> 
           <el-table-column prop="existingStock" label="套圈现有库存" width="120" align="center">
               <template slot-scope="scope">
-                <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.existingStock }}
-                </template>
-                <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '套圈现有库存')">
-                  {{ scope.row.existingStock }}
-                </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="totalStock" label="预计总库存（现有库存+在制库存+毛坯库存）" width="120" align="center">
               <template slot-scope="scope">
-                <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.totalStock }}
-                </template>
-                <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '预计总库存（现有库存+在制库存+毛坯库存')">
-                  {{ scope.row.totalStock }}
-                </el-link>
+                {{ scope.row.totalStock }}
               </template>
             </el-table-column><el-table-column prop="safetyStock" label="安全库存" width="120" align="center">
               <template slot-scope="scope">
-                <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.safetyStock }}
-                </template>
-                <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '安全库存')">
-                  {{ scope.row.totalStock }}
-                </el-link>
+                {{ scope.row.safetyStock }}
               </template>
             </el-table-column>
           <el-table-column prop="total" label="合计" align="center"></el-table-column>

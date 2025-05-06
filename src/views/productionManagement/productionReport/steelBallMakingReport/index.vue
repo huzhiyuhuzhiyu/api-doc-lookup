@@ -180,7 +180,7 @@
 <script>
 import { xyAssembleList, xyAssembleReport } from '@/api/productionManagement/report'
 import Form from '../../../warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
-import TaskForm from '../sleeveMakingReport/taskForm.vue'
+import TaskForm from '../sleeveMakingReportXY/taskForm.vue'
 export default {
   name: 'produceInProcessReport',// 钢球在制报表
   components: { Form, TaskForm },

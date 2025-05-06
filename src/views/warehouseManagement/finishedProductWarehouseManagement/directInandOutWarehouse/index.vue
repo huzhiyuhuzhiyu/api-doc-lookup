@@ -301,7 +301,7 @@
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
 
                       <el-table-column prop="standardValue"
-                      v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','outbound_pick_out'].includes(dataForm.businessType)"
+                      v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','outbound_pick_out','outbound_other','inbound_other'].includes(dataForm.businessType)"
                         label="规值" width="120" key="211">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
@@ -612,8 +612,8 @@
             <el-form @submit.native.prevent>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
-                    @keyup.enter.native="searchProductFun" clearable />
+                  <el-input v-model="orderForm.partnerName" placeholder="请输入供应商"
+                  @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
@@ -624,14 +624,15 @@
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.batchNumber" placeholder="请输入批次号" @keyup.enter.native="searchProductFun"
-                    clearable />
+                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
+                    @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
+
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
-                    @keyup.enter.native="searchProductFun" clearable />
+                  <el-input v-model="listQuery.partnerName" placeholder="请输入供应商"
+                  @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
@@ -642,8 +643,8 @@
               </el-col>
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" @keyup.enter.native="searchProductFun"
-                    clearable />
+                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
+                  @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -926,6 +927,7 @@ export default {
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
+        partnerName:"",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -977,6 +979,7 @@ export default {
         productName: '',
         productCode: '',
         productDrawingNo: '', // 图号
+        partnerName:"",
         orderItems: [
           {
             asc: false,

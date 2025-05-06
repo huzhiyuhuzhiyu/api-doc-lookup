@@ -84,7 +84,7 @@
                         </el-tooltip>
                       </div>
                       </div>
-                      <JNPF-table :fixedNO="true"   hasC ref="multipleTable" @selection-change="handeleProductInfoData"
+                      <JNPF-table :fixedNO="true"   :partent-or-child="'child'"  hasC ref="multipleTable" @selection-change="handeleProductInfoData"
                         hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" border
                         :height="customStyleData" custom-column  >
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
@@ -921,7 +921,8 @@ export default {
       this.$refs.multipleTable.showDrawer()
     },
     copyFun(row){
-      this.dataFormTwo.data.push(row)
+      let data=JSON.parse(JSON.stringify(row))
+      this.dataFormTwo.data.push(data)
     },
        // 配对方式显示隐藏
        async getPairingModeSwitch(code, type) {

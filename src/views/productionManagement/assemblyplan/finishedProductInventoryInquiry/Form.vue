@@ -1148,7 +1148,7 @@ export default {
       this.$set(this.dataForm, 'productsId', data.id)
       this.$refs.dataForm.clearValidate('productsDrawingNo');
       this.$set(this.dataForm, 'bomId', data.bomId)
-if(!this.dataForm.bomId) this.$message.error("该产品没有BOM，请配置BOM后再试")
+// if(!this.dataForm.bomId) this.$message.error("该产品没有BOM，请配置BOM后再试")
       this.creaFun()
       this.getWarehouseListFun()
       if (!data.routingId) return

@@ -431,7 +431,7 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column label="操作" width="140" fixed="right" v-if="dataFormTwo.data.length">
+                        <el-table-column label="操作" width="140" fixed="right" >
                           <template slot-scope="scope">
                             <el-button type="text" class="JNPF-table-delBtn"
                               @click="delequipment_process_relList(scope.$index)">

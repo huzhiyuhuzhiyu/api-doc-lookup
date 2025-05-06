@@ -482,7 +482,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column label="操作" fixed="right" width="100"
-                        v-if="productData.length && btnType != 'look'">
+                        v-if=" btnType != 'look'">
                         <template slot-scope="scope">
                           <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
                         </template>
@@ -2194,7 +2194,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 320
+      let maxHeight = mainHeight1 - 520
       console.log(maxHeight, 'maxHeight')
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放

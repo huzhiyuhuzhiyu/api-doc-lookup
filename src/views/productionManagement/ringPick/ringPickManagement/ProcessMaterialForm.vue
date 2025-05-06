@@ -92,7 +92,7 @@ export default {
           column: "create_time"
         }],
         pickingProductFlag: 1,
-
+        availableQuantity: true,
       },
       listLoading: false,
       total: 0,

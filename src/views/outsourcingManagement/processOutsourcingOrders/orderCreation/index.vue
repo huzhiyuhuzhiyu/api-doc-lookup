@@ -1,6 +1,5 @@
 <template>
   <transition name="el-zoom-in-center">
-    <div style="height:100%">
       <div class="JNPF-common-layout">
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <div class="JNPF-preview-main org-form">
@@ -54,6 +53,14 @@
                                 @change="deliveryDateChange"></el-date-picker>
                             </el-form-item>
                           </el-col>
+                          <!-- <el-col :sm="6" :xs="24">
+                            <el-form-item label="发料状态" prop="shipmentStatus">
+                              <el-select v-model="dataForm.shipmentStatus" placeholder="请选择发料状态" style="width: 100%;" >
+                                <el-option v-for="(item, index) in shipmentStatusList" :key="index" :label="item.label"
+                                 :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col> -->
                           <el-col :span="12">
                             <el-form-item label="备注" prop="remark" ref="remark">
                               <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
@@ -110,7 +117,7 @@
                             <template slot-scope="scope">
                               <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRules.processName">
                                 <!-- 工序选择弹窗  -->
-                                <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                                <ComSelect-page :clearable="!preData" :isdisabled="type === 'look' || preData" :treeNodeClick="treeNodeClick"
                                   v-model="scope.row.processName" @change="onOrganizeChangeTwo"
                                   :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
                                   :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
@@ -146,10 +153,12 @@
                                 :rules="productRules.purchaseQuantity">
                                 <el-input v-model="scope.row.purchaseQuantity"
                                   @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                  maxlength="20" :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"></el-input>
+                                  maxlength="20" :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
+                                  :disabled="scope.$index !== 0"></el-input>
                               </el-form-item>
                             </template>
                           </el-table-column>
+                          <el-table-column v-if="preData" prop="waitOutsourcingQuantity" label="可外协数量" width="120" />
                           <el-table-column prop="deputyUnit" label="单位(副)" width="85"
                             v-if="isDeputyUnitSwitch === '1'" />
                           <el-table-column prop="purchaseQuantity2" label="数量(副)" width="100"
@@ -241,11 +250,14 @@
 
                           <el-table-column label="操作" width="170" fixed="right">
                             <template slot-scope="scope">
-                              <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
+                              <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')" v-if="!preData">
                                 配置发料清单
                               </el-button>
+                              <el-button size="mini" type="text" @click="handlerOpenSourcePreData(scope.$index)" :disabled="scope.$index !== 0" v-else>
+                                查看发料清单
+                              </el-button>
                               <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                :disabled="dataFormTwo.data.length < 2"
+                                :disabled="dataFormTwo.data.length < 2 || preData"
                                 @click="delequipment_process_relList(scope.$index)">
                                 删除
                               </el-button>
@@ -272,7 +284,7 @@
               treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
               :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false"
               multiple />
-            <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
+            <source-area v-if="sourceVisibled" :transferOutFlag="transferOutFlag" ref="sourceRef" @confirm="handlerConfirm"></source-area>
           </div>
         </div>
       </div>
@@ -291,7 +303,6 @@
           <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
         </span>
       </el-dialog>
-    </div>
   </transition>
 </template>
 <script>
@@ -402,6 +413,7 @@ export default {
         approvalCompletionDate: '', // 审批完成时间
         // approvalStatus: "",               // 审批状态
         documentStatus: '', // 单据状态
+           shipmentStatus: 'not_finish',
         id: '',
         orderNo: '', //申请单号
         reasonRejection: '', //驳回理由
@@ -409,6 +421,7 @@ export default {
         approvalFlag: false
       },
       sourceVisibled: false,
+      transferOutFlag: false,
       type: 'add',
       dataFormArr: [],
       productArr: [],
@@ -463,7 +476,8 @@ export default {
       oldProcessData: [],
       rules: {
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }],
+        shipmentStatus: [{ required: true, message: '请选择发料状态', trigger: ['change'] }],
       },
       productRules: {
         productDrawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
@@ -501,6 +515,7 @@ export default {
             }),
             trigger: 'blur'
           },
+          
           { required: true, trigger: ['blur'] }
         ],
         processName: [
@@ -604,6 +619,12 @@ export default {
       tipsvisible: false,
       btnText: '继续新建',
       customStyleData:0,
+      shipmentStatusList: [
+        { label: '已发料', value: 'finish' },
+        { label: '未发料', value: 'not_finish' },
+        // { label: '已取消', value: 'canceled' }
+      ],
+      preData:null,
     }
   },
   computed: {
@@ -693,6 +714,40 @@ export default {
       this.dialogTitle = '新建'
     }
 
+     // 处理通过生产任务传递过来的明细数据
+     const preData = sessionStorage.getItem('preData')
+     console.log(this.preData,'k')
+    if (preData) {
+      this.preData = JSON.parse(preData)
+      console.log(this.preData,'this.preData')
+      this.productRules.purchaseQuantity.push({
+            validator: this.formValidate({
+              type: 'calc',
+              params: [
+                (index, value) => {
+                  if (!this.preData) return true
+                  if (index === 0) return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity)
+                  return Number(value) <= Number(this.dataFormTwo.data[index].waitOutsourcingQuantity) && Number(value) <= Number(this.dataFormTwo.data[index - 1].purchaseQuantity)
+                },
+                '不能超过可外协数量和前道工序外协数量',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          })
+      sessionStorage.removeItem('preData')
+      this.dataFormTwo.data = this.preData.processList
+      // this.dataForm.moldId = this.preData.preProcessData?.moldId
+      this.transferOutFlag = true
+      this.dialogTitle = '新建'
+      // 写入发料清单
+      this.refreshOutShipmentList(false)
+      // 获取外协供应商 (qihe)
+      // if (this.isQH) await this.outOrderPurPurchaseOrderLine()
+    }
+
     this.fetchData('EPDH')
     this.getBusInfo()
     this.switchStyleheight()
@@ -711,8 +766,13 @@ export default {
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
       let maxHeight = mainHeight1 - 340
-      console.log(maxHeight, 'maxHeight')
-      this.customStyleData = maxHeight
+
+      if (this.preData) {
+        this.customStyleData = maxHeight - 90
+      } else {
+        this.customStyleData = maxHeight
+      }
+      
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)
@@ -720,6 +780,79 @@ export default {
           this.switchStyleheight()
         }, 100)
       }
+    },
+     // 发料数量计算公式
+     OutShipmentQuantity(a, b, c, d) {
+      console.log(a,b,c,d,'123')
+      const _a = !a ? 1 : a
+      const result = +_a * +b * (1 + +(c/100)) + +d;
+      console.log(result,'res')
+      console.log(Math.floor(result.toFixed(4)),'jj')
+      if (isNaN(result)) return
+      return Number(result.toFixed(2)) 
+    //  return Math.floor(result.toFixed(4));
+    },
+    /**刷新发料清单 */
+    refreshOutShipmentList(flag) {
+      this.dataFormTwo.data.forEach((item, index) => {
+        const preProcessData = this.preData.preProcessData
+        if (preProcessData) {
+          item.purchaseQuantity = preProcessData.purchaseQuantity || item.purchaseQuantity
+            if (preProcessData.firstFlag){
+                item.outShipmentList = this.preData.firstUseMaterialList.map(material=>{
+                  console.log(material,'material')
+                  console.log(this.OutShipmentQuantity(material.qty,item.purchaseQuantity,material.lossRate,material.fixedLoss),'33')
+                    return {
+                        ...material,
+                        id:'',
+                        demandQuantity:flag ? this.OutShipmentQuantity(material.qty,item.purchaseQuantity,material.lossRate,material.fixedLoss) : material.demandQuantity,
+                        processId:'',
+                        processCode:'',
+                        processName:'',
+                    }
+                })
+            }else{
+                item.outShipmentList = preProcessData.shipmentList.map(ship=>{
+                    return {
+                        ...ship,
+                        demandQuantity:item.purchaseQuantity,
+                        id: "",
+                    }
+                })
+            }
+        }
+        if (item.calculationDirection === 'multiplication') {
+          item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
+        } else {
+          item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity / item.ratio)
+        }
+        if (index > 0) item.outShipmentList = []
+      })
+      console.log(this.dataFormTwo.data,'this.dataFormTwo.data')
+      // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+      //   this.sourceData = res.data
+      //   if (this.dataFormTwo.data[this.index].outShipmentList && this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
+      //     this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
+      //   } else {
+      //     this.sourceData.forEach((item, index) => {
+      //       this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
+      //     })
+      //   }
+      //   if (this.sourceData.length === 0) {
+      //     this.sourceDisabled = true
+      //   } else {
+      //     this.sourceDisabled = false
+      //   }
+      //   this.$nextTick(() => {
+      //     this.$refs['sourceRef'].init(
+      //       this.sourceData,
+      //       '',
+      //       this.dataFormTwo.data[this.index].productsId,
+      //       this.dataFormTwo.data[this.index].purchaseQuantity
+      //     )
+      //   })
+      // })
     },
     async getProductNameSwitch(code, type) {
       try {
@@ -941,7 +1074,28 @@ export default {
         )
       })
     },
-
+    // 查看发料清单
+    handlerOpenSourcePreData(index) {
+      this.index = index
+      if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
+      console.log(this.dataFormTwo.data[index],'this.dataFormTwo.data[index]')
+      this.sourceData = this.dataFormTwo.data[index].outShipmentList
+      console.log(this.sourceData,'123')
+      if (this.sourceData.length === 0) {
+        this.sourceDisabled = true
+      } else {
+        this.sourceDisabled = false
+      }
+      this.sourceVisibled = true
+      this.$nextTick(() => {
+        this.$refs['sourceRef'].init(
+          this.sourceData,
+          '',
+          this.dataFormTwo.data[index].productsId,
+          this.dataFormTwo.data[index].purchaseQuantity
+        )
+      })
+    },
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
@@ -1131,6 +1285,12 @@ export default {
       this.$set(this.dataFormTwo.data[index], 'outShipmentList', [])
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index]')
 
+      if (this.preData){
+          this.dataFormTwo.data.forEach(item=>{
+              item.purchaseQuantity = val
+          })
+      }
+
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
@@ -1140,13 +1300,15 @@ export default {
           this.dataFormTwo.data[index].purchaseQuantity / this.dataFormTwo.data[index].ratio
         )
       }
+      
+      if (this.preData) this.refreshOutShipmentList(true)
     },
     clearData() {
       this.dataForm.id = ''
       this.dataFormTwo.data = []
     },
     goBack() {
-      this.$router.go(-1)
+      if (!this.preData) this.$router.go(-1)
       this.$emit('close', true)
     },
     init(id, type, data) {
@@ -1234,10 +1396,13 @@ export default {
           submitFlag = false
           this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
         } else {
-          if (ele.outShipmentList.length == 0) {
-            submitFlag = false
-            return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+          if (!this.preData) {
+            if (ele.outShipmentList.length == 0) {
+              submitFlag = false
+              return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
+            }
           }
+          
         }
       })
       if (submitFlag) {
@@ -1267,6 +1432,7 @@ export default {
         count += item.taxAmount * 1
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
+      console.log(this.dataFormTwo.data,'k')
       if (this.type == 'add') {
         _data = {
           ...this.dataForm,
@@ -1310,14 +1476,14 @@ export default {
                 this.btnLoading = false
                 for (let i = 0; i < this.dataFormTwo.data.length; i++) {
                   const item = this.dataFormTwo.data[i]
-                  if (!item.planQuantity) {
-                    this.$message({
-                      type: 'error',
-                      message: '请输入第' + (i + 1) + '行的数量',
-                      duration: 1500
-                    })
-                    break
-                  }
+                  // if (!item.planQuantity) {
+                  //   this.$message({
+                  //     type: 'error',
+                  //     message: '请输入第' + (i + 1) + '行的数量',
+                  //     duration: 1500
+                  //   })
+                  //   break
+                  // }
                   if (!item.deliveryDate) {
                     this.$message({
                       type: 'error',
@@ -1332,6 +1498,7 @@ export default {
                 this.btnLoading = true
 
                 if (this.type === 'add') {
+               
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
@@ -1341,6 +1508,20 @@ export default {
                         this.submitmethodsTitle = '提交成功'
                       }
                       this.tipsvisible = true
+                      console.log(this.preData)
+                      if (this.preData) {
+                        this.$message({
+                          message: '新建成功',
+                          type: 'success',
+                          duration: 1000,
+                          onClose: () => {
+                            this.btnLoading = false
+                            this.$emit('close', true)
+                          }
+                        })
+                      }
+                      
+                      this.btnLoading = false
                     })
                     .catch(() => {
                       this.btnLoading = false

@@ -135,7 +135,7 @@
           <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
           <el-table-column prop="taxRate" label="税率" sortable="custom" min-width="140">
             <template slot-scope="scope">
-              <div>{{ scope.row.taxRate + '%' }}</div>
+              <div>{{ scope.row.taxRate ? scope.row.taxRate : 0 + '%' }}</div>
             </template>
           </el-table-column>
           

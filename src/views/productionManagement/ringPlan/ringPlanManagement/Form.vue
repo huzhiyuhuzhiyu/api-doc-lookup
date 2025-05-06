@@ -1574,23 +1574,26 @@ export default {
           })
         })
       }
-      let obj = {
-        prodOrder: this.dataForm,
-        workOrderList: this.dataFormTwo.data,
-        collect: this.collectForm,
-        lineEdgeList: arr,
-        materialList:this.materialList
-      }
-      addProdPlanArrange(obj).then(res => {
-        this.btnLoading = false
-        this.$message.success("生成编排成功")
-        setTimeout(() => {
-          this.$emit('close')
-        }, 1500);
-      }).catch(error => {
-        this.btnLoading = false
+      this.btnLoading = true
+      setTimeout(async () => {
+        let obj = {
+          prodOrder: this.dataForm,
+          workOrderList: this.dataFormTwo.data,
+          collect: this.collectForm,
+          lineEdgeList: arr,
+          materialList:this.materialList
+        }
+        addProdPlanArrange(obj).then(res => {
+          this.btnLoading = false
+          this.$message.success("生成编排成功")
+          setTimeout(() => {
+            this.$emit('close')
+          }, 1500);
+        }).catch(error => {
+          this.btnLoading = false
 
-      })
+        })
+      }, 100)
     },
     async handleConfirm(value) {
       console.log(this.dataForm);

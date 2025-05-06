@@ -848,6 +848,7 @@ export default {
           }
           selectedData.push(item)
         }
+        console.log(selectedData,'selectedData')
         if (selectedData.length === 0) {
           let submitFlag = true
           if (this.beforeSubmit) { submitFlag = await this.beforeSubmit(undefined, this.paramsObj) }
@@ -855,7 +856,7 @@ export default {
           // this.innerValue = ''
           // this.tagsList = ""
           this.$emit('input', "")
-          this.$emit('change', [], [], this.paramsObj, index)
+          this.$emit('change', [], [], this.paramsObj, this.index)
         } else if (this.multiple) {
           // this.innerValue = ''
           this.tagsList = JSON.parse(JSON.stringify(this.selectedData))

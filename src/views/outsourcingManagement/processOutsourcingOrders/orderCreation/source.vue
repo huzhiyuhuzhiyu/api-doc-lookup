@@ -4,7 +4,7 @@
       :before-close="handleClose" size="45%" columnSettings-drawer class="JNPF-common-drawer">
       <div ref="main">
         <el-scrollbar style="height: 100%;">
-          <div v-if="types !== 'look'">
+          <div v-if="!transferOutFlag">
             <el-button type="text" class="topButton" icon="el-icon-plus" @click="openProductDialog('product')">
               选择产品
             </el-button>
@@ -14,7 +14,7 @@
           </div>
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-            <JNPF-table hasNO fixedNO hasC v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
+            <JNPF-table hasNO fixedNO :hasC="!transferOutFlag" v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
               :style="{ height: height + 'px' }" ref="sourceTable" @selection-change="handeleProductInfoData">
               <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
               <el-table-column prop="projectName" label="所属项目" width="120"
@@ -42,7 +42,7 @@
                 <template slot-scope="scope">
                   <el-form-item>
                     <!-- 工序选择弹窗  -->
-                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeProcessClick"
+                    <ComSelect-page clearable :isdisabled="type === 'look' || transferOutFlag" :treeNodeClick="treeNodeProcessClick"
                       v-model="scope.row.processName" @change="onOrganizeChangeTwo" :tableItems="ProcessTableItems"
                       :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
                       :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
@@ -61,22 +61,22 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="qty" label="发料数量" width="120">
+              <el-table-column prop="demandQuantity" label="发料数量" width="120">
                 <template slot="header">
                   <span class="required">*</span>
                   发料数量
                 </template>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'qty'" :rules="productRule.demandQuantity1">
-                    <el-input v-model="scope.row.qty" :disabled="type === 'look'" maxlength="20"
+                  <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity'" :rules="productRule.demandQuantity1">
+                    <el-input v-model="scope.row.demandQuantity" :disabled="type === 'look' || transferOutFlag" maxlength="20"
                       placeholder="发料数量"></el-input>
                   </el-form-item>
                 </template>
               </el-table-column>
 
               <!-- 操作 -->
-              <el-table-column label="操作" width="60" fixed="right">
+              <el-table-column label="操作" width="60" fixed="right" v-if="!transferOutFlag">
                 <template slot-scope="scope">
                   <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'"
                     style="color:rgb(245,108,108)" @click="handlerDelete(scope.$index, 'personnel')">
@@ -89,13 +89,13 @@
         </el-scrollbar>
         <div class="footer">
           <el-button @click="drawer = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" @click="submitForm('dataForm')" v-if="type != 'look' ? true : false">
+          <el-button type="primary" @click="submitForm('dataForm')" v-if="type != 'look' ? !transferOutFlag : false">
             {{ $t('common.confirmButton') }}
           </el-button>
         </div>
       </div>
     </el-drawer>
-    <ComSelect-page :treeNodeClick="treeNodeClick" ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems"
+    <ComSelect-page v-if="sourceComSelectPageFlag" :treeNodeClick="treeNodeClick" ref="sourceComSelectPage" @change="addth" :tableItems="ProductTableItems"
       :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
       :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList"
       :listDataFormatting="listDataFormatting" multiple />
@@ -115,9 +115,15 @@ import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   components: {},
   mixins: [getProjectList],
-
+   props:{
+      transferOutFlag:{
+          type: Boolean,
+          default: false
+      }
+  },
   data() {
     return {
+      sourceComSelectPageFlag: false,
       isProjectSwitch: '',
       tableDataFlag: false,
       height: 700,
@@ -328,7 +334,8 @@ export default {
     openProductDialog() {
       this.ProductListRequestObj.routingId = ''
       this.ProductListRequestObj.queryType = ''
-      this.$refs['ComSelect-page'].openDialog()
+      this.sourceComSelectPageFlag = true
+      this.$refs['sourceComSelectPage'].openDialog()
     },
     // 批量删除
     batchDelete() {
@@ -464,7 +471,7 @@ export default {
               processId: item.processId,
               processName: item.processName,
               calculationDirection: item.calculationDirection,
-              demandQuantity: item.qty,
+              demandQuantity: item.demandQuantity,
               demandQuantity1: item.demandQuantity1,
               deputyUnit: item.deputyUnit,
               mainUnit: item.mainUnit,
@@ -476,6 +483,7 @@ export default {
             })
           })
           console.log('sourceData', sourceData)
+          this.sourceComSelectPageFlag = false
           this.$emit('confirm', sourceData)
           this.$message.success('配置成功')
           this.drawer = false

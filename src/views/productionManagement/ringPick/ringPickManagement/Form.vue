@@ -383,10 +383,10 @@ export default {
       this.productTaskVisible = true
       this.$nextTick(() => {
         if (this.isProjectSwitch == 1) {
-          this.$refs.ProductTaskForm.init(this.userInfo.projectId || '')
+          this.$refs.ProductTaskForm.init(this.userInfo.projectId || '',this.dataForm.receiveType)
 
         } else {
-          this.$refs.ProductTaskForm.init('')
+          this.$refs.ProductTaskForm.init('',this.dataForm.receiveType)
 
         }
       })

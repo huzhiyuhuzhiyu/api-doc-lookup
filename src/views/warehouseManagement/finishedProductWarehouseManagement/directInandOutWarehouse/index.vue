@@ -266,7 +266,7 @@
                         </template>
                       </el-table-column> -->
                       <el-table-column prop="costPrice" label="单价(含税)" width="120" key="110">
-                        <template slot="header">
+                        <template slot="header" v-if="$store.getters.configData.warehouse.unitPriceSetting">
                           <span class="required">*</span>单价(含税)
                         </template>
                         <template slot-scope="scope">

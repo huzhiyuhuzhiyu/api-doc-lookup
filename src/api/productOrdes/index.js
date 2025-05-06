@@ -335,3 +335,18 @@ export function reformOrderNum(data) {
     data
   })
 }
+/**工单管理-工单转外协详情 */
+export function detailProductionToOutSouring(id) {
+  return request({
+    url: `/api/mrp/work/detail/out/souring/${id}`,
+    method: 'GET'
+  })
+}
+/**工单管理-工单转外协列表 */
+export function workTodoOutSouringList(data) {
+  return request({
+    url: `/api/mrp/work/todo/out/souring/list`,
+    method: 'POST',
+    data
+  })
+}

@@ -59,6 +59,14 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <!-- <el-col :sm="6" :xs="24">
+                        <el-form-item label="发料状态" prop="shipmentStatus">
+                          <el-select v-model="dataForm.shipmentStatus" placeholder="请选择发料状态" style="width: 100%;" >
+                            <el-option v-for="(item, index) in shipmentStatusList" :key="index" :label="item.label"
+                             :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col> -->
                       <el-col :span="12">
                         <el-form-item label="备注" prop="remark" ref="remark">
                           <el-input type="textarea" :row="3" v-model="dataForm.remark" placeholder="请输入备注"
@@ -731,6 +739,7 @@ export default {
         deliveryDate: '', //交货日期.
         orderNo: '',
         orderType: 'external_process',
+        shipmentStatus: 'not_finish',
         purchaseOrderLines: [],
         excludingTaxTotalAmount: '', //订单 不含税总金额
         totalAmount: '', //   含税总金额
@@ -765,7 +774,8 @@ export default {
       dataFormArr: [],
       rules: {
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }],
+        shipmentStatus: [{ required: true, message: '请选择发料状态', trigger: ['change'] }],
       },
       productRules: {},
       productArr: [],
@@ -785,6 +795,12 @@ export default {
       isattachmentswitch: '',
       categoryId: '',
       customStyleData:0,
+      shipmentStatusList: [
+        { label: '已发料', value: 'finish' },
+        { label: '未发料', value: 'not_finish' },
+        // { label: '已取消', value: 'canceled' }
+      ],
+      sourceData:[],
     }
   },
   computed: {
@@ -1285,7 +1301,7 @@ export default {
           submitFlag = false
           this.$message.error(`产品信息第${i + 1}行：数量不能为空`)
         } else {
-          if (ele.outShipmentList.length == 0) {
+          if (!ele.outShipmentList) {
             submitFlag = false
             return this.$message.error(`产品信息第${i + 1}行：发料清单为空`)
           }
@@ -1305,7 +1321,7 @@ export default {
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
 
-      this.sourceData = this.dataFormTwo.data[index].outShipmentList
+      this.sourceData = this.dataFormTwo.data[index].outShipmentList ? this.dataFormTwo.data[index].outShipmentList :[]
       console.log(this.sourceData, '1111')
 
       if (this.sourceData.length === 0) {

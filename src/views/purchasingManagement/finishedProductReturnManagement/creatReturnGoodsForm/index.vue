@@ -1279,7 +1279,7 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
+        // this.dataForm.orderNo = data.number
         this.$set(this.dataForm, 'orderNo', data.number)
         console.log('dataForm', this.dataForm)
       } catch (error) { }

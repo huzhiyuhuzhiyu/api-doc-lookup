@@ -6,6 +6,7 @@
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" :content="'任务信息'" />
           <div class="options">
+            <el-button size="mini" :disabled="dataForm.orderStatus !== 'normal'" v-if="!noNeedOutFlag" type="primary" @click="handleProcessOut">创建外协订单</el-button>
             <el-button type="primary" size="mini" @click="associationTaskFun">查看关联任务</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
@@ -377,6 +378,12 @@ import MaterForm from '../../assemblyplan/assemblyTaskManagement/materForm.vue';
 export default {
   components: { RelatedTasksForm,Guidebook,Inspec, MaterForm},
   mixins: [getProjectList],
+  props:{
+      noNeedOutFlag:{
+          type: Boolean,
+          default: false
+      }
+  },
   data() {
     return {
       materFormVisible:false,
@@ -476,6 +483,11 @@ export default {
     this.switchStyle()
   },
   methods: {
+    handleProcessOut() {
+      if (!this.dataForm.id) return this.$message.error("请等待加载完成！")
+      this.$emit('close')
+      this.$emit('handleProcessOut', this.dataForm.id)
+    },
     viewDetailFun(id){
       this.materFormVisible=true
       this.$nextTick(()=>{

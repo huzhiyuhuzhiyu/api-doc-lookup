@@ -6,19 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.orderNo" placeholder="请输入外协单号" clearable
+                <el-input v-model.trim="listsQuery.orderNo" placeholder="外协单号" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
             <el-col :span="4" v-if="isProductNameSwitch === '1'">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
+                <el-input v-model.trim="listsQuery.productName" placeholder="产品名称" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
@@ -56,7 +56,7 @@
                   @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="detailData()" />
               </el-tooltip>
             </div>
           </div>
@@ -429,7 +429,7 @@ export default {
       })
     }
 
-    this.initData()
+   
     this.detailData()
   },
   methods: {
@@ -489,7 +489,7 @@ export default {
                     duration: 1000,
                     onClose: () => {
                       this.btnLoading = false
-                      this.initData()
+                      this.detailData()
                     }
                   })
                 }
@@ -541,38 +541,10 @@ export default {
           })
       }
     },
-    // 点击切换明细
-    handleClick(e) {
-      console.log(e)
-      if (e.index == '0') {
-        this.initData()
-      } else {
-        this.detailData()
-      }
-      this.selectData = []
-    },
-
     columnSetFun() {
       this.$refs.detailTableData.showDrawer()
     },
-    sortChange({ prop, order }) {
-      let newProp
-      if (
-        prop === 'processName' ||
-        prop === 'productCode' ||
-        prop === 'productDrawingNo' ||
-        prop === 'cooperativePartnerCode' ||
-        prop == 'cooperativePartnerName' ||
-        prop === 'createByName'
-      ) {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      }
-      this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
+   
     sortChangeDetail({ prop, order }) {
       let newProp
       if (
@@ -597,7 +569,7 @@ export default {
       this.formVisible = false
       this.withdrawnVisible = false
       if (isRefresh) {
-        this.initData()
+        this.detailData()
       }
     },
     refresh() {
@@ -605,40 +577,6 @@ export default {
       this.withdrawnVisible = false
       this.reset()
     },
-
-    initData() {
-      this.listLoading = true
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listQuery.deliveryStartDate = this.deliveryDate[0]
-        this.listQuery.deliveryEndDate = this.deliveryDate[1]
-      } else {
-        this.listQuery.deliveryStartDate = ''
-        this.listQuery.deliveryEndDate = ''
-      }
-      purchaseOrderList(this.listQuery)
-        .then((res) => {
-          console.log(res, '外协订单列表')
-          this.tableDataList = res.data.records
-
-          this.tableDataList.forEach((item) => {
-            item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
-          })
-          this.total = res.data.total
-          this.listLoading = false
-          this.visible = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-
     detailData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
@@ -672,14 +610,6 @@ export default {
         .catch(() => {
           this.listLoading = false
         })
-    },
-    search() {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.initData()
     },
     // 搜索明细
     searchDetail() {
@@ -783,7 +713,7 @@ export default {
               message: '撤回成功',
               duration: 1500,
               onClose: () => {
-                this.initData()
+                this.detailData()
               }
             })
           })

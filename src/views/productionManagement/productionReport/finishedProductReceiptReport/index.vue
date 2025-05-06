@@ -92,11 +92,11 @@ export default {
         { prop: 'salePurchaseOrderNo', label: '采购订单号', minWidth: 180, sortable: 'custom' },
         { prop: 'drawingNo', label: '产品品名规格', minWidth: 160, sortable: 'custom' },
         { prop: 'orderNum', label: '订单数量', minWidth: 140, sortable: 'custom' },
-        { prop: 'num', label: '发货数量', minWidth: 140, sortable: 'custom' },
-        { prop: 'remainingQuantity', label: '未发货数量', minWidth: 140, sortable: 'custom' },
+        { prop: 'num', label: '数量', minWidth: 140, sortable: 'custom' },
+        { prop: 'remainingQuantity', label: '待收货数量', minWidth: 140, sortable: 'custom' },
         { prop: 'costPrice', label: '产品价格', minWidth: 140, sortable: 'custom' },
         { prop: 'salePurchaseDate', label: '订单日期', minWidth: 120, sortable: 'custom' },
-        { prop: 'orderDate', label: '发货日期', minWidth: 120, sortable: 'custom' }
+        { prop: 'orderDate', label: '出入库单据日期', minWidth: 160, sortable: 'custom' }
       ]
     },
     setSuperQueryJson() {

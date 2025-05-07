@@ -48,10 +48,10 @@
                 <div v-if="scope.row.processType == 'grinding'">磨孔工序</div>
                 <div v-if="scope.row.processType == 'accuracy'">精度工序</div>
                 <div v-if="scope.row.processType == 'boxing'">装盒工序</div>
-                
+
               </template>
             </el-table-column>
- 
+
 
             <el-table-column prop="processingType" label="加工类型" width="180">
               <template slot-scope="scope">
@@ -274,10 +274,7 @@ export default {
       this.customerVisible = false
     },
     handleRowClick(row) {
-      // 判断当前行是否已经选中
-      if (!row.selectFlag) return
-      const isSelected = this.$refs.processRef.$refs.JNPFTable.toggleRowSelection(row);
-      // 如果当前行未选中，则调用toggleRowSelection方法选中该行
+      this.$refs.processRef.$refs.JNPFTable.toggleRowSelection(row);
     },
 
     getProcessList(id) {

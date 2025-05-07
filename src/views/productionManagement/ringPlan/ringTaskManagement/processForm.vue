@@ -275,10 +275,7 @@ export default {
       this.customerVisible = false
     },
     handleRowClick(row) {
-      // 判断当前行是否已经选中
-      if (!row.selectFlag) return
-      const isSelected = this.$refs.processRef.$refs.JNPFTable.toggleRowSelection(row);
-      // 如果当前行未选中，则调用toggleRowSelection方法选中该行
+      this.$refs.processRef.$refs.JNPFTable.toggleRowSelection(row);
     },
 
     getProcessList(id) {

@@ -1,8 +1,8 @@
 export default {
     arrange_auto_picking:
         {
-            configKeyLabel: '启用自动生成领料单',
-            description: '启用后，在编辑任务后，将会自动生成领料单。'
+            configKeyLabel: '启用任务显示领料单',
+            description: '启用后，在新建任务页面，显示领料单信息。'
         },
     work_exceed_report: {
         configKeyLabel: '允许生产报工超报',
@@ -56,4 +56,9 @@ export default {
         configKeyLabel: '可报工数量自动带出',
         description: '开启后，完工汇报报工时，合格数量默认带出可报工数量'
     },
+    enable_rework_arrange_auto_picking:{
+        configKeyLabel: '启用返工显示领料单',
+        description: '启用后，在新建返工页面，显示领料单信息',
+        mainModule: '生产设置'
+    }
 }

@@ -59,7 +59,7 @@
                       |
                       <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                        id="table" border :height="customStyleData">
+                        id="table" border>
                         <el-table-column prop="projectName" label="所属项目" width="120"
                           v-if="abProjectSwitchVisible"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120"
@@ -661,7 +661,7 @@ export default {
     }
   },
   methods: {
-    
+
     switchStyleheight() {
       console.log(123)
       const mainRegion1 = this.$refs.main // 表单页面区域
@@ -978,7 +978,7 @@ export default {
             this.$refs.productForm.clearValidate()
           }
         })
-       
+
       }
     },
 
@@ -1179,30 +1179,6 @@ export default {
         })
         .catch(() => { })
     },
-    switchStyleheight() {
-      const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
-      const mainRegion1 = this.$refs.main // 表单页面区域
-      const mainHeight = mainRegion.clientHeight
-      const mainHeight1 = mainRegion1.clientHeight
-      // 其他同级组件占用高度
-      let bortherHeight = 0
-      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
-      bortherItems.forEach((item) => {
-        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
-      })
-
-      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
-      let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 280
-      this.customStyleData = maxHeight
-      // 附带防抖的监听适配模式屏幕缩放
-      window.onresize = () => {
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          this.switchStyleheight()
-        }, 100)
-      }
-    }
   },
   mounted() {
     this.switchStyleheight()

@@ -35,9 +35,9 @@
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
-              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
+              <el-button v-has="'reworkTask'" size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
                 新建返工任务
-              </el-button> -->
+              </el-button>
               <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
                 @click="batchPrint">批量打印</el-button>
               <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button> -->
@@ -313,17 +313,17 @@
               <el-input v-model="dateForm.orderNo" placeholder="生产任务单号" disabled />
             </el-form-item>
           </el-col>
- 
+
           <el-col :span="24">
-            <el-form-item label="计划开始日期" prop="planStartDate"> 
-              <el-date-picker v-model="dateForm.planStartDate" placeholder="计划开始日期" type="date" 
+            <el-form-item label="计划开始日期" prop="planStartDate">
+              <el-date-picker v-model="dateForm.planStartDate" placeholder="计划开始日期" type="date"
                             value-format="yyyy-MM-dd" style="width: 100%;">
                           </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="计划结束日期" prop="planEndDate"> 
-              <el-date-picker v-model="dateForm.planEndDate" placeholder="计划结束日期" type="date" 
+            <el-form-item label="计划结束日期" prop="planEndDate">
+              <el-date-picker v-model="dateForm.planEndDate" placeholder="计划结束日期" type="date"
                             value-format="yyyy-MM-dd" style="width: 100%;">
                           </el-date-picker>
             </el-form-item>
@@ -424,7 +424,7 @@ export default {
       reworkVisible: false,
       addOrderVisible: false,
       // 拆分
-      splitVisible: false, 
+      splitVisible: false,
       splitForm: {
         splitQuantity: "",
         canSplitQuantity: "",
@@ -491,7 +491,7 @@ export default {
             { label: "在制任务", value: "transit" },
           ]
         },
-        
+
         {
           prop: 'productCode',
           label: "产品编码",
@@ -522,7 +522,7 @@ export default {
           label: "产线",
           type: 'select',
           options: [
-           
+
           ]
         },
         {
@@ -535,7 +535,7 @@ export default {
           label: "工艺路线编码",
           type: 'input'
         },
-        
+
         {
           prop: 'productionPlanNo',
           label: "生产计划单号",
@@ -681,11 +681,11 @@ export default {
           console.log(this.dateForm);
           let endDate = new Date(this.dateForm.planEndDate);
           let startDate = new Date(this.dateForm.planStartDate);
- 
+
           if (endDate < startDate) {
               this.$message.error("计划开始日期必须在计划结束日期之前")
               return
-          } 
+          }
           this.btnLoading = true
           editProductOrder(this.dateForm).then(res => {
             this.dateVisible = false
@@ -718,7 +718,7 @@ export default {
     })
       console.log(this.qrcode);
     },
-     
+
     // 产线
     getProductionLineListFun() {
       let objs = {
@@ -769,9 +769,9 @@ export default {
     },
     batchPrint() {
       if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
-      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项  
+      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项
 
-      this.fullName2 = "任务排产单" // 筛选出 businessType 等于 type 的项  
+      this.fullName2 = "任务排产单" // 筛选出 businessType 等于 type 的项
       this.printVisible2 = true
       this.$nextTick(() => {
         console.log(345345);
@@ -806,7 +806,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       //     material // 保持架材质
       //     colour  //  颜色

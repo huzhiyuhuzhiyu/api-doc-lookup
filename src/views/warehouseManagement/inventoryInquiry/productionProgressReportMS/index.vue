@@ -32,51 +32,56 @@
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
           @sort-change="sortChange" show-summary :summary-method="getSummaries">
           <el-table-column prop="drawingNo" label="产品型号及特殊要求" width="190" fixed="left" sortable="custom"></el-table-column>
-          <el-table-column label="待热处理" align="center">
-            <el-table-column prop="waitHeat" label="毛坯的仓库库存" width="120" align="center">
+            <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewFun(scope.row.blankProductsId, 'availableFlag', scope.row.warehouseId, projectId)">
                   {{ scope.row.waitHeat }}
                 </el-link>
               </template>
-            </el-table-column>
           </el-table-column>
-          <el-table-column label="热处理在制" align="center">
-            <el-table-column prop="transitHeat" label="领料过的数量和批次" width="170" align="center">
+            <el-table-column prop="transitHeat" label="热处理在制" width="170" align="center">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '热处理-入库')">
                   {{ scope.row.transitHeat }}
                 </el-link>
               </template>
             </el-table-column>
-          </el-table-column>
-          <el-table-column label="待双端面磨削" align="center">
-            <el-table-column prop="waitGrinding" label="双端面磨削-领料的可报工数量" width="120" align="center">
+            <el-table-column prop="waitGrinding" label="待双端面磨削" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '双端面磨削-领料')">
                   {{ scope.row.waitGrinding }}
                 </el-link>
               </template>
             </el-table-column>
-      
-          </el-table-column>
-          <el-table-column label="待无心磨" align="center">
-            <el-table-column prop="waitCenterLess" label="无心磨-领料的可报工数量" width="120" align="center">
+            <el-table-column prop="transitGrinding" label="双端面磨削在制" width="120" align="center">
+              <template slot-scope="scope">
+                <el-link type="primary" @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '双端面磨削-入库')">
+                  {{ scope.row.transitGrinding }}
+                </el-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="waitCenterLess" label="待无心磨" width="120" align="center">
               <template slot-scope="scope">
                 <el-link  type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '无心磨-领料')">
                   {{ scope.row.waitCenterLess }}
                 </el-link>
-                <!-- <template v-else>
-                  {{ scope.row.waitCenterLess }}
-                </template> -->
+               
               </template>
-            </el-table-column>
              
           </el-table-column>
-          <el-table-column label="待外圆超精" align="center">
-            <el-table-column prop="waitOuterSuperfine" label="外圆超精-领料的可报工数量" width="120" align="center">
+          <el-table-column prop="transitCenterLess" label=" 无心磨在制" width="120" align="center">
+              <template slot-scope="scope">
+                <el-link  type="primary"
+                  @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '无心磨-入库')">
+                  {{ scope.row.transitCenterLess }}
+                </el-link>
+               
+              </template>
+             
+          </el-table-column>
+            <el-table-column prop="waitOuterSuperfine" label="待外圆超精" width="120" align="center">
               <template slot-scope="scope">
                 <el-link  type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圆超精-领料')">
@@ -84,21 +89,17 @@
                 </el-link>
                
               </template>
-            </el-table-column>
           </el-table-column>
-          <el-table-column label="外圆超精在制" align="center">
-            <el-table-column prop="transitOuterSuperfine" label="外圆超精-入库的可报工数量" width="120" align="center">
+            <el-table-column prop="transitOuterSuperfine" label="外圆超精在制" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '外圆超精-入库')">
                   {{ scope.row.transitOuterSuperfine }}
                 </el-link>
               </template>
-            </el-table-column>
         
           </el-table-column>
-          <el-table-column label="待201" align="center">
-            <el-table-column prop="waitRubHole" label="201-领料的可报工数量" width="120" align="center">
+          <el-table-column label="待201" align="center" prop="waitRubHole"  width="120"> 
               <template slot-scope="scope">
                 <el-link type="primary" v-if="scope.row.classType === 'inner_ring'"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈内孔精磨(201)-领料')">
@@ -109,10 +110,8 @@
                 </template>
                
               </template>
-            </el-table-column>
           </el-table-column>
-          <el-table-column label="201在制" align="center">
-            <el-table-column prop="transitRubHole" label="201-入库的可报工数量" width="120" align="center">
+          <el-table-column label="201在制" align="center"  prop="transitRubHole" width="120">
               <template slot-scope="scope">
                 <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈内孔精磨(201)-入库')">
@@ -122,10 +121,8 @@
                   {{ scope.row.transitRubHole }}
                 </template>
               </template>
-        </el-table-column>
           </el-table-column>
-          <el-table-column label="待131" align="center">
-            <el-table-column prop="waitInnerRubChannel" label="131-领料的可报工数量" width="120" align="center">
+          <el-table-column label="待131" align="center" width="120" prop="waitInnerRubChannel">
               <template slot-scope="scope">
                 <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
                   @click.native="viewTask(scope.row.drawingNo, 'inventoryFlag', '内圈内沟精磨(131)-领料')">
@@ -135,10 +132,8 @@
                   {{ scope.row.waitInnerRubChannel }}
                 </template>
               </template>
-            </el-table-column>
           </el-table-column>
-          <el-table-column label="131在制" align="center">
-            <el-table-column prop="transitInnerRubChannel" label="131-入库的可报工数量" width="120" align="center">
+          <el-table-column label="131在制" align="center" prop="transitInnerRubChannel" width="120">
               <template slot-scope="scope">
 
                 <el-link v-if="scope.row.classType === 'inner_ring'" type="primary"
@@ -150,10 +145,8 @@
                 </template>
                 
               </template>
-            </el-table-column>
           </el-table-column>
-          <el-table-column label="待超精" align="center">
-            <el-table-column prop="waitSuperfine" label="超精-领料的可报工数量" width="120" align="center">
+          <el-table-column label="待超精" align="center"  prop="waitSuperfine" width="120" >
               <template slot-scope="scope">
 
                 <el-link v-if="scope.row.classType === 'inner_ring'"  type="primary"
@@ -165,11 +158,9 @@
                 </template>
                 
               </template>
-            </el-table-column>
           </el-table-column>
 
-          <el-table-column label="待143" align="center">
-            <el-table-column prop="waitOuterRubChannel" label="143-领料的可报工数量" width="120" align="center">
+          <el-table-column label="待143" align="center" prop="waitOuterRubChannel" width="120" >
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.waitOuterRubChannel }}
@@ -179,12 +170,10 @@
                   {{ scope.row.waitOuterRubChannel }}
                 </el-link>
               </template>
-            </el-table-column>
           </el-table-column>
 
 
-          <el-table-column label="143在制" align="center">
-            <el-table-column prop="transitOuterRubChannel" label="143-入库的可报工数量" width="120" align="center">
+          <el-table-column label="143在制" align="center" prop="transitOuterRubChannel" width="120">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.transitOuterRubChannel }}
@@ -194,12 +183,10 @@
                   {{ scope.row.transitOuterRubChannel }}
                 </el-link>
               </template>
-            </el-table-column>
           </el-table-column>
        
 
-          <el-table-column label="待精研外沟" align="center">
-            <el-table-column prop="waitFineGrind" label="精研外沟-领料的可报工数量" width="120" align="center">
+          <el-table-column label="待精研外沟" align="center" prop="waitFineGrind"  width="120" >
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.waitFineGrind }}
@@ -209,12 +196,10 @@
                   {{ scope.row.waitFineGrind }}
                 </el-link>
               </template>
-            </el-table-column>
           </el-table-column>
 
 
-          <el-table-column label="精研外沟在制" align="center">
-            <el-table-column prop="transitFineGrind" label="精研外沟-入库的可报工数量" width="120" align="center">
+          <el-table-column label="精研外沟在制" align="center" prop="transitFineGrind" width="120">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.transitFineGrind }}
@@ -224,12 +209,10 @@
                   {{ scope.row.transitFineGrind }}
                 </el-link>
               </template>
-            </el-table-column>
           </el-table-column>
 
 
-          <el-table-column label="待外圈修磨" align="center">
-            <el-table-column prop="waitRollingResearch" label="外圈修磨-领料的可报工数量" width="120" align="center">
+          <el-table-column label="待外圈修磨" align="center"  width="120" prop="waitRollingResearch">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.waitRollingResearch }}
@@ -239,7 +222,6 @@
                   {{ scope.row.waitRollingResearch }}
                 </el-link>
               </template>
-            </el-table-column>
           </el-table-column>
     
 

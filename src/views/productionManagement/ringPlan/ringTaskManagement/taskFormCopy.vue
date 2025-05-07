@@ -470,7 +470,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
-   
+
   },
   watch: {
 
@@ -657,7 +657,7 @@ export default {
           console.log("指导书", res);
           this.customerProductData = res.data.records
         })
-      } 
+      }
     },
     goBack() {
       this.$emit('close')
@@ -733,7 +733,7 @@ export default {
 
 
 
- 
+
 </style>
 
 <style scoped>
@@ -1118,5 +1118,5 @@ $footerPadding: '10px';
 ::v-deep .el-collapse-item {
   border-bottom: 1px solid rgb(220, 223, 230)
 }
- 
+
 </style>

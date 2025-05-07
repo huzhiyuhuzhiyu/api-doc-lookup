@@ -1418,7 +1418,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
 
               <div class="JNPF-common-head">
-                <div> 
+                <div>
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
@@ -1441,7 +1441,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
-                <div> 
+                <div>
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
@@ -2300,15 +2300,15 @@ export default {
       this.$refs['diaForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
-          this.batchForm.bizIdList = this.selectPurchaseNoticeList.map(item => item.id); 
-          
+          this.batchForm.bizIdList = this.selectPurchaseNoticeList.map(item => item.id);
+
           batchInboundList(this.batchForm).then(res => {
             this.$message.success("批量入库成功")
             this.getTabdataList('basic')
           this.btnLoading = false
           this.batchInboundVisible=false
           })
-          
+
         }
       })
 
@@ -2373,7 +2373,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === prop)
 
@@ -2530,7 +2530,7 @@ export default {
         this.batchForm.warehouseType = res.data[0].type
         this.warehouseInfo = res.data[0]
         this.allocationFlag = res.data[0].locationStatus == 'disabled' ? false : true
-        // 获取仓库详情信息 
+        // 获取仓库详情信息
         this.getPickingConfig()
 
       })
@@ -2568,7 +2568,7 @@ export default {
         codes.add(item.productsId);
       }
 
-      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
+      return codes.size > 1; // 如果有多个不同的代码，则返回 true
     },
     // 外协发料 订单
     getexterMaterFUN(type) {
@@ -2719,9 +2719,9 @@ export default {
     batchPrint() {
 
       if (!this.selectSaleList.length) return this.$message.error("请选择您要打印的数据")
-      this.enCode = 'p031' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p031' // 筛选出 businessType 等于 type 的项
 
-      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
@@ -2749,7 +2749,7 @@ export default {
         codes.add(item.cooperativePartnerId);
       }
 
-      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
+      return codes.size > 1; // 如果有多个不同的代码，则返回 true
     },
     // 获取是按销售通知单还是发货通知单
     getPickingConfig() {
@@ -2778,6 +2778,7 @@ export default {
         classAttributeList: this.classAttributeList,
         projectId: this.isProjectSwitch === '1' ? this.projectId || '' : '',
       }
+        console.log(localStorage.getItem('loginTenant'),'localStorage.getItem(\'loginTenant\')')
       if (localStorage.getItem('loginTenant')) {
         getStockMoveTenantlist(obj.classAttributeList, obj.projectId, this.warehouseCode,localStorage.getItem('loginTenant')).then(res => {
           if (res.data.length) {
@@ -2915,7 +2916,7 @@ export default {
 
         })
       }
-      
+
     },
     // 点击出库/入库按钮
     incomAndOutInventFun(data, btnType, ref) {
@@ -3623,7 +3624,7 @@ export default {
       if (this.categoryType == 'inbound_flip') {
         this.searchFilpData(type)
       }
-      // 资产领用 
+      // 资产领用
       if (this.categoryType == 'outbound_use') {
         if (this.useDateArr.length) {
           this.outboundUseForm.collStartTime = this.useDateArr[0]
@@ -4427,7 +4428,7 @@ export default {
           })
         }
       }
-      // 外协发料通知单    
+      // 外协发料通知单
       if (this.categoryType == 'outbound_external_send' && !this.outboundExternalSendFlag) {
         this.superQueryJson = [
           {
@@ -4532,7 +4533,7 @@ export default {
         ]
       }
 
-      // 外协发料订单   
+      // 外协发料订单
       if (this.categoryType == 'outbound_external_send' && this.outboundExternalSendFlag) {
         this.superQueryJson = [
           {
@@ -4590,7 +4591,7 @@ export default {
           })
         }
       }
-      // 生产领料   
+      // 生产领料
       if (this.categoryType == 'outbound_pick_out') {
         this.superQueryJson = [
           {
@@ -4637,7 +4638,7 @@ export default {
 
         ]
       }
-      // 生产退料   
+      // 生产退料
       if (this.categoryType == 'inbound_return_materials') {
         this.superQueryJson = [
           {
@@ -4684,7 +4685,7 @@ export default {
 
         ]
       }
-      // 资产领用   
+      // 资产领用
       if (this.categoryType == 'outbound_use') {
         this.superQueryJson = [
           {
@@ -4739,7 +4740,7 @@ export default {
 
         ]
       }
-      // 资产归还  
+      // 资产归还
       if (this.categoryType == 'inbound_return') {
         this.superQueryJson = [
           {
@@ -4785,7 +4786,7 @@ export default {
         ]
       }
 
-      // 生产产品入库  
+      // 生产产品入库
       if (this.categoryType == 'inbound_order_production') {
         this.superQueryJson = [
           {

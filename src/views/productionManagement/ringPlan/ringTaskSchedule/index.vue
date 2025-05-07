@@ -91,7 +91,7 @@
 
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom"
               v-if="$store.getters.configData.produce.production_related_customers" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -111,7 +111,7 @@
             </el-table-column>
 
 
-          
+
 
 
             <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -135,7 +135,7 @@
             <el-table-column label="操作" width="180" fixed="right">
 
               <template slot-scope="scope">
- 
+
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">任务详情</el-button>
                 <el-button size="mini" type="text" @click="viewTaskSchedule(scope.row.id)">进度详情</el-button>
               </template>
@@ -147,7 +147,7 @@
       </div>
 
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <Form v-if="formVisible" :noNeedOutFlag="true" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <TaskSchedule v-if="taskScheduleVisible" ref="taskScheduleForm" @refreshDataList="initData" @close="closeForm" />
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -159,7 +159,7 @@
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from '../ringTaskManagement/taskFormCopy.vue' 
+import Form from '../ringTaskManagement/taskFormCopy.vue'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
@@ -201,7 +201,7 @@ export default {
       btnLoading: false,
       title: "更多查询",
       tableData: [],
-      listLoading: true, 
+      listLoading: true,
       detailFlag: false,
       orderForm: {},
       orderFormlist: {
@@ -244,7 +244,7 @@ export default {
 
           ]
         },
-  
+
         {
           prop: 'productDrawingNo',
           label: "品名规格",
@@ -410,14 +410,14 @@ export default {
     await this.getProjectSwitch('system', 'project')
     this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   mounted() {
     this.getProductClassFun()
   },
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     viewTaskSchedule(id) {
@@ -426,7 +426,7 @@ export default {
         this.$refs.taskScheduleForm.init(id)
       })
     },
- 
+
     addition1(data) {
       this.form = data
       this.addOrderVisible = true
@@ -534,7 +534,7 @@ export default {
           });
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
-            // 将options赋值为5  
+            // 将options赋值为5
             oilObj.options = JSON.parse(JSON.stringify(arr));
           }
         })
@@ -578,28 +578,28 @@ export default {
       this.listLoading = true
       this.showFlag = false
 
-   
+
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
         this.showFlag = true
         res.data.records.forEach(item => {
-          // 初始化 processInfoList 为一个空数组  
+          // 初始化 processInfoList 为一个空数组
           item.processInfoList = [];
 
-          // 检查 processSchedule 字段是否有值  
+          // 检查 processSchedule 字段是否有值
           if (item.processSchedule) {
-            // 判断是否包含逗号  
+            // 判断是否包含逗号
             if (item.processSchedule.includes(',')) {
-              // 以逗号分割为数组  
+              // 以逗号分割为数组
               const processes = item.processSchedule.split(',');
 
-              // 遍历每一项并处理  
+              // 遍历每一项并处理
               processes.forEach(process => {
                 const [name, value] = process.split(':');
                 item.processInfoList.push({ name, value: parseInt(value, 10) });
               });
             } else {
-              // 直接以冒号分割  
+              // 直接以冒号分割
               const [name, value] = item.processSchedule.split(':');
               item.processInfoList.push({ name, value: parseInt(value, 10) });
             }
@@ -653,10 +653,10 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
     this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
- 
-  
+
+
       this.$refs.SuperQuery.conditionList = []
-     
+
       this.searchList= [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },

@@ -134,6 +134,39 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24"  v-if="isXY||isJR">
+                        <el-form-item label="规值">
+                          <el-select v-model="dataForm.standardValue" placeholder="请选择"
+                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  v-if="isXY||isJR">
+                        <el-form-item :label="$store.getters.accuracyLevel" >
+                          <el-select v-model="dataForm.accuracyLevel" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="isXY">
+                        <el-form-item  label="钢丝炉号" >
+                          <el-select v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  v-if="isXY">
+                        <el-form-item  label="原材料厂家" >
+                          <el-select v-model="dataForm.rawStockMill" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -570,13 +603,15 @@ import { getBimBusinessDetail, getcategoryTree, getCooperativeData } from '@/api
 import {
   BOMLineList
 } from "@/api/calculationList/MRPOperation"
+import { getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { mapGetters, mapState } from 'vuex'
 import getProjectList from '@/mixins/generator/getProjectList'
 import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
 import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
   components: {
     TableFormProduct,
     RoutingForm,
@@ -584,6 +619,8 @@ export default {
   },
   data() {
     return {
+      bimProductAttributesList:{},
+
       getCooperativeData,
       getcategoryTree,
       //  客户 树请求
@@ -791,9 +828,16 @@ export default {
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
+    this.getProductClassFun()
   },
 
   methods: {
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    },
     delethHandle(scope) {
       this.$confirm(this.$t('此操作将删除当前数据，确认删除？'), this.$t('common.tipTitle'), {
         type: 'warning'

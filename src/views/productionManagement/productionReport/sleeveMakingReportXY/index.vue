@@ -32,9 +32,9 @@
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
           @sort-change="sortChange" show-summary :summary-method="getSummaries" customKey="JNPFTableKey_675884">
           <el-table-column prop="drawingNo" label="型号" width="180" sortable="custom" fixed="left"></el-table-column>
-          <el-table-column prop="standardValue" label="规值" width="130" sortable="custom" fixed="left"></el-table-column>
-          <el-table-column prop="accuracyLevel" label="等级" width="130" sortable="custom" fixed="left"></el-table-column>
-          <el-table-column prop="coldHeading" label="冷镦" width="130" sortable="custom" fixed="left">
+          <el-table-column prop="standardValue" label="规值" width="130" sortable="custom"></el-table-column>
+          <el-table-column prop="accuracyLevel" label="等级" width="130" sortable="custom" ></el-table-column>
+          <el-table-column prop="coldHeading" label="冷镦" width="130" sortable="custom" >
             <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.coldHeading }}
@@ -189,7 +189,7 @@
                 </el-link>
               </template>
           </el-table-column>
-            <el-table-column prop="optoelectronicAppearance" label="光电外光电外观观的可报工数量" width="120" align="center">
+            <el-table-column prop="optoelectronicAppearance" label="光电外观" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.optoelectronicAppearance }}

@@ -110,6 +110,7 @@
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
           <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+          <el-table-column prop="demandDate" label="需求日期" width="120" sortable="custom" />
           <el-table-column prop="source" label="来源" width="100" sortable="custom">
             <template slot-scope="scope">
               <!-- <div v-if="scope.row.source == 'procure'">请购单</div>
@@ -264,6 +265,15 @@ export default {
         {
           prop: 'deliveryDate',
           label: '交货日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'demandDate',
+          label: '需求日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',

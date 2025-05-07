@@ -35,12 +35,16 @@
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
-              <el-button v-has="'reworkTask'" size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
+              <el-button v-has="'reworkTask'" size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')"></el-button>
+              <el-button size="mini" v-has="'btn_split'" type="primary"  @click="splitHander()">拆分</el-button>
+              <el-button size="mini" v-has="'btn_redesignate'" type="primary"  @click="redesignateHander()">改制</el-button>
+              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button> -->
+              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
                 新建返工任务
               </el-button>
               <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
                 @click="batchPrint">批量打印</el-button>
-              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button> -->
+               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button> -->
               <!-- <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p035')">打印装配单</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer"
@@ -114,6 +118,9 @@
             <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
+              
+              <el-table-column prop="standardValue" label="规值"  width="140" sortable="custom"
+              v-if="standardValueFlag == 1" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
               v-if="accuracyLevelFlag == 1" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
@@ -159,12 +166,12 @@
                       v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
-                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
+                    <!-- <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
                       拆分
                     </el-dropdown-item>
                     <el-dropdown-item v-has="'btn_redesignate'" v-if="scope.row.orderStatus==='normal'" @click.native="redesignateHander(scope.row.id)">
                       改制
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >
                       生成二维码
                     </el-dropdown-item>
@@ -588,6 +595,7 @@ export default {
       isProjectSwitchFlag: false,
       isProductNameSwitch: "",
       // 属性字段  控制属性字段显示隐藏
+      standardValueFlag:"",
       accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
@@ -791,6 +799,9 @@ export default {
         this.materialFlag = res.data.material
         this.colourFlag = res.data.colour
       })
+      await getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
+      })
     },
     async getProductClassFun() {
       // 产品属性
@@ -978,10 +989,13 @@ export default {
       this.addOrderVisible = true
     },
     // 拆分
-    splitHander(id) {
+    splitHander() {
+      if(!this.selectArr.length) return this.$message.error("请选择要拆分的数据")
+      if(this.selectArr.length.length>1) return this.$message.error("只支持单条数据进行拆分")
+      if(this.selectArr[0].orderStatus!=='normal') return this.$message.error("只支持对正常任务进行拆分")
       this.splitTaskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.splitTaskForm.init(id)
+        this.$refs.splitTaskForm.init(this.selectArr[0].id)
       })
       // this.splitForm = {...data}
       // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
@@ -992,10 +1006,19 @@ export default {
     },
      // 改制
      redesignateHander(id) {
+      if(!this.selectArr.length) return this.$message.error("请选择要改制的数据")
+      if(this.selectArr.length.length>1) return this.$message.error("只支持单条数据进行改制")
+      if(this.selectArr[0].orderStatus!=='normal') return this.$message.error("只支持对正常任务进行改制")
       this.redesignateTaskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.redesignateTaskForm.init(id)
+        this.$refs.redesignateTaskForm.init(this.selectArr[0].id)
       })
+
+
+      // this.redesignateTaskFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.redesignateTaskForm.init(id)
+      // })
       // this.splitForm = {...data}
       // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
       // this.splitVisible = true

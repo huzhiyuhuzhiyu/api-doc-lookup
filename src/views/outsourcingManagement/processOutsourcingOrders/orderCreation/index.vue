@@ -154,7 +154,7 @@
                                 <el-input v-model="scope.row.purchaseQuantity"
                                   @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
                                   maxlength="20" :placeholder="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                                  :disabled="scope.$index !== 0"></el-input>
+                                  ></el-input>
                               </el-form-item>
                             </template>
                           </el-table-column>

@@ -32,6 +32,24 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24"  >
+                        <el-form-item label="原生产桶数" prop="oldProductionBarrels">
+                          <el-input v-model="dataForm.oldProductionBarrels" placeholder="原生产桶数" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  >
+                        <el-form-item label="原生产重量" prop="oldProductionWeight">
+                          <el-input v-model="dataForm.oldProductionWeight" placeholder="原生产重量" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  >
+                        <el-form-item label="生产总数" prop="productionQuantity">
+                          <el-input v-model="dataForm.productionQuantity" placeholder="原生产总数" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="生产重量" prop="productionWeight">
                           <el-input v-model="dataForm.productionWeight" placeholder="生产重量">
@@ -67,7 +85,22 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      
+                      <el-col :sm="6" :xs="24" v-if="isXY">
+                        <el-form-item  label="钢丝炉号" >
+                          <el-select v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  v-if="isXY">
+                        <el-form-item  label="原材料厂家" >
+                          <el-select v-model="dataForm.rawStockMill" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -111,8 +144,9 @@ import { getBimProcessList } from '@/api/bimProcess'
 import { detailordershengchan } from '@/api/productOrdes/index.js'
 import { getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
   components: {
     TableFormProduct,
     RoutingForm,
@@ -437,6 +471,8 @@ export default {
       detailordershengchan(id).then(res => {
           console.log("生产任务详情", res);
           this.dataForm = res.data.prodOrder
+          this.$set(this.dataForm,'oldProductionBarrels',this.dataForm.productionBarrels)
+          this.$set(this.dataForm,'oldProductionWeight',this.dataForm.productionWeight)
           this.$set(this.dataForm,'splitNo',1)
           this.oldWorkOrderList = res.data.workOrderList
           this.dataFormTwo.data = res.data.workOrderList

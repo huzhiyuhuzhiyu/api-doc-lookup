@@ -247,13 +247,23 @@
                       v-if="materialFlag == 1"></el-table-column>
                     <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
                       v-if="colourFlag == 1"></el-table-column>
+                    <el-table-column prop="standardValue" label="规值"  width="130" :key="1015"
+                      v-if="standardValueFlag == 1">
+                      <template slot-scope="scope">
+                          <el-select v-model="scope.row.standardValue" placeholder="请选择"
+                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="processName" label="工序" width="110" />
-                    <el-table-column prop="batchNumber" label="批次号" width="110" >
-                  <template slot-scope="scope">
-                    <el-input :disabled="btnType == 'look'" 
-                    v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
-                  </template>
-                </el-table-column>
+                    <el-table-column prop="batchNumber" label="批次号" width="200" v-if="isMS">
+                      <template slot-scope="scope">
+                        <el-input :disabled="btnType == 'look'" 
+                        v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="ordersNo" label="订单号" width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -514,8 +524,18 @@
                   v-if="materialFlag == 1"></el-table-column>
                 <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
                   v-if="colourFlag == 1"></el-table-column>
+                  <el-table-column prop="standardValue" label="规值"  width="130" :key="1015"
+                      v-if="standardValueFlag == 1">
+                      <template slot-scope="scope">
+                          <el-select v-model="scope.row.standardValue" placeholder="请选择"
+                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                    </el-table-column>
                 <el-table-column prop="processName" label="工序" width="110" />
-                <el-table-column prop="batchNumber" label="批次号" width="110" >
+                <el-table-column prop="batchNumber" label="批次号" width="200" >
                   <template slot-scope="scope">
                     <el-input :disabled="btnType == 'look'" 
                     v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
@@ -738,6 +758,7 @@ import {
 } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
@@ -1048,7 +1069,9 @@ export default {
       formId: '',
       enCode: '',
       printBrowseVisible: false,
-      printVisible: false
+      printVisible: false,
+      standardValueFlag:"",
+      bimProductAttributesList:[]
     }
   },
   computed: {
@@ -1104,6 +1127,7 @@ export default {
   },
   async created() {
     await this.getOrderFiledMap()
+    await this.getProductClassFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getProportionSwitch('warehouse', 'proportion')
@@ -1149,8 +1173,15 @@ export default {
         }, 100)
       }
     },
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      }) 
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
         this.materialFlag = res.data.material
         this.colourFlag = res.data.colour
         this.processFlag = res.data.process

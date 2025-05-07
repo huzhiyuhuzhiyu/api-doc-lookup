@@ -1303,7 +1303,7 @@ export default {
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
-          if (this.currentProcess.reportFlag && this.currentProcessType === 1) {
+          if (this.currentProcess.reportFlag) {
             if (!this.totalReportNum) {
               submitFlag = false
               this.$message.error("合格数量加上不合格数量必须大于0")

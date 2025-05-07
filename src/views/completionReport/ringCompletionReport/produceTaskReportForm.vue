@@ -27,6 +27,10 @@
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="产品分类">{{ dataForm.productCategoryName }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="生产桶数">{{ dataForm.productionBarrels }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="生产重量">{{ dataForm.productionWeight }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="规值">{{ dataForm.standardValue }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
                 <el-descriptions-item label="领料方式">{{ dataForm.pickingWay == 'production_order' ? '生产订单领料' : "工单领料"
                   }}</el-descriptions-item>
@@ -148,6 +152,24 @@
                     </el-col>
                   </template>
                   
+                  <el-col :sm="24" :xs="24" v-if="isXY||isJR">
+                    <el-form-item label="规值:" prop="standardValue" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-select v-model="currentProcess.standardValue" placeholder="请选择" clearable style="width: 100%;" class="ipt">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" v-if="isXY||isJR">
+                    <el-form-item label="精度等级:" prop="accuracyLevel" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-select v-model="currentProcess.accuracyLevel" placeholder="请选择" clearable style="width: 100%;" class="ipt">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -155,7 +177,7 @@
                         @blur="handleBlur(item)" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
+                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
                     <el-form-item label="是否强制完成:" class="iptLabel">
                       <el-select v-model="currentProcess.forceCompleteFlag" placeholder="是否强制完成" style="width: 100%;"
                         class="ipt">
@@ -163,7 +185,7 @@
                           :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
 
                   <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="责废数量:" class="iptLabel">
@@ -305,7 +327,7 @@
 <script> 
 
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import { detailProcess, } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
@@ -323,7 +345,10 @@ import TransitionRemake from "@/views/completionReport/ringCompletionReport/Tran
 import TransitionRemakeRecord from "@/views/completionReport/ringCompletionReport/TransitionRemakeRecord.vue";
 import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderCreation/index.vue';
 import { detailProductionToOutSouring } from '@/api/productOrdes/index.js'
+import tenantMinix from "@/mixins/generator/TenantMinix";
+
 export default {
+  mixins: [tenantMinix],
 
   components: {
     recordForm, OutForm, MaterialWasteForm,responsWaste,PrintBrowse,
@@ -332,6 +357,7 @@ export default {
   },
   data() {
     return {
+      bimProductAttributesList:{},
       printVisible: false,
       printBrowseVisible: false,
       TransitionRemakeVisible:false,
@@ -384,7 +410,7 @@ export default {
           { required: true, message: '生产人不能为空', trigger: 'change' }
         ],
         qualifiedQuantity: [
-          // { required: true, message: '合格数量不能为空', trigger: 'blur' },
+          { required: true, message: '合格数量不能为空', trigger: 'blur' },
           { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
           // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ],
@@ -418,10 +444,10 @@ export default {
       handler: function (newVal, oldVal) {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : 0
+            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : this.currentProcess.waitReportNum
             
           } else {
-            this.currentProcess.qualifiedQuantity = 0
+            // this.currentProcess.qualifiedQuantity = 0
           }
           this.currentProcess.reportingQuantity = this.currentProcess.qualifiedQuantity
           this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
@@ -431,9 +457,18 @@ export default {
     },
   },
   mounted() {
+    this.getProductClassFun()
+
   },
 
   methods: {
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    },
+    
     // 工单顺序调换申请
     orderRemakeRequest(type){
       this.TransitionRemakeVisible = true
@@ -604,12 +639,17 @@ export default {
           if (matchingItem) {
             this.currentProcessId = matchingItem.processId
             this.currentProcess = matchingItem
+            this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
+            this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
+            this.$set(this.currentProcess,'qualifiedQuantity',this.dataForm.productionQuantity) 
             this.processInfo = JSON.parse(JSON.stringify(matchingItem))
           } else {
           }
         } else {
           this.currentProcessId = res.data.workOrderList[0].processId
           this.currentProcess = res.data.workOrderList[0]
+          this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
+          this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)    
           this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
         }
         if(this.currentProcess.workOrderResMap && this.currentProcess.workOrderResMap.device){
@@ -633,11 +673,14 @@ export default {
     },
     getProcessFun(item) {
       this.currentProcess = item
+      this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
+      this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
+
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
       this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
       this.$set(this.currentProcess, 'reportingQuantity', 0)
-      this.$set(this.currentProcess, 'qualifiedQuantity', "")
+          this.currentProcess.qualifiedQuantity = this.currentProcess.waitReportNum
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
@@ -815,6 +858,8 @@ export default {
           obj.pricingType = this.currentProcess.pricingType
           obj.processId = this.currentProcess.processId
           obj.producerId = this.currentProcess.producerId
+          obj.accuracyLevel = this.currentProcess.accuracyLevel
+          obj.standardValue = this.currentProcess.standardValue
           obj.productionOrderId = this.currentProcess.productionOrderId
           obj.qualifiedQuantity = this.currentProcess.qualifiedQuantity
           obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity,this.utilizeQuantity]), 6)
@@ -824,9 +869,9 @@ export default {
           obj.workOrderId = this.currentProcess.id
           if (this.currentProcess.processType === 'boxing') {
             obj.processType = this.currentProcess.processType
-            obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
+            // obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
             obj.actualQualifiedQuantity = this.currentProcess.qualifiedQuantity
-            obj.mainUnit = '盒'
+            // obj.mainUnit = '盒'
           }
           
           arr.push(obj)

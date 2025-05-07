@@ -117,6 +117,9 @@
             <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
+              
+              <el-table-column prop="standardValue" label="规值"  width="140" sortable="custom"
+              v-if="standardValueFlag == 1" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
               v-if="accuracyLevelFlag == 1" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
@@ -591,6 +594,7 @@ export default {
       isProjectSwitchFlag: false,
       isProductNameSwitch: "",
       // 属性字段  控制属性字段显示隐藏
+      standardValueFlag:"",
       accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
@@ -793,6 +797,9 @@ export default {
         this.specialRequireFlag = res.data.specialRequire
         this.materialFlag = res.data.material
         this.colourFlag = res.data.colour
+      })
+      await getOrderFiledMap('purchase').then((res) => {
+        this.standardValueFlag = res.data.standardValue
       })
     },
     async getProductClassFun() {

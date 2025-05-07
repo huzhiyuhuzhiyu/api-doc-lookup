@@ -35,6 +35,25 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24"  >
+                        <el-form-item label="原生产桶数" prop="oldProductionBarrels">
+                          <el-input v-model="dataForm.oldProductionBarrels" placeholder="原生产桶数" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  >
+                        <el-form-item label="原生产重量" prop="oldProductionWeight">
+                          <el-input v-model="dataForm.oldProductionWeight" placeholder="原生产重量" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  >
+                        <el-form-item label="生产总数" prop="productionQuantity">
+                          <el-input v-model="dataForm.productionQuantity" placeholder="原生产总数" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      
                       <template v-if="$store.getters.configData.produce.steelBallTask">
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="生产桶数" prop="productionBarrels" >
@@ -51,6 +70,39 @@
                         <el-form-item label="拆分数量" prop="splitQuantity">
                           <el-input v-model="dataForm.splitQuantity" placeholder="拆分数量">
                           </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="规值">
+                          <el-select v-model="dataForm.standardValue" placeholder="请选择"
+                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item :label="$store.getters.accuracyLevel" >
+                          <el-select v-model="dataForm.accuracyLevel" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="isXY">
+                        <el-form-item  label="钢丝炉号" >
+                          <el-select v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24"  v-if="isXY">
+                        <el-form-item  label="原材料厂家" >
+                          <el-select v-model="dataForm.rawStockMill" placeholder="请选择" clearable style="width: 100%;">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.steelBallTask">
@@ -274,13 +326,16 @@ import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQua
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import SourceArea from '../../../basicData/processSettings/processSettingss/source.vue'
 import { deepClone } from '@/components/Generator/utils'
+import { getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
-  mixins: [],
+  mixins: [tenantMinix],
   components: {
     SourceArea
   },
   data() {
     return {
+      bimProductAttributesList:{},
       sourceVisibled:false,
       productVisible: false,
       isattachmentswitch: "",
@@ -459,7 +514,7 @@ export default {
   },
 
   async created() {
- 
+    this.getProductClassFun()
   },
   watch: {
     'dataForm.productionWeight': {
@@ -481,6 +536,12 @@ export default {
     }
   },
   methods: {
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    },
     // 删除项
     delequipment_process_relList(index) {
       this.dataFormTwo.splice(index, 1)
@@ -681,6 +742,8 @@ export default {
           console.log("生产任务详情", res);
           this.dataForm = res.data.prodOrder
           this.dataForm.oldOrderNo = res.data.prodOrder.orderNo
+          this.$set(this.dataForm,'oldProductionBarrels',this.dataForm.productionBarrels)
+          this.$set(this.dataForm,'oldProductionWeight',this.dataForm.productionWeight)
           this.dataForm.productionBarrels = 0
           this.dataForm.productionWeight = 0
           this.dataForm.splitQuantity = 0

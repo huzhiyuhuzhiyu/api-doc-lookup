@@ -200,6 +200,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
+
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable
@@ -460,6 +461,15 @@
                             </el-select>
                           </template>
                         </el-table-column>
+                        <el-table-column prop="standardValue" label="规值" width="120" key="211">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="精度等级" clearable
@@ -469,7 +479,26 @@
                             </el-select>
                           </template>
                         </el-table-column>
-
+                        <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
+                        key="123"> 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
+                        key="123"> 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa027" key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                         <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable
@@ -600,7 +629,10 @@
                 <el-table-column prop="aperture" label="孔径" width="80" />
                 <el-table-column prop="productionPlanNo" label="计划单号" width="160" />
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
+                <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"  key="standardValue" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" />
+                <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
+                <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" />
                 <el-table-column prop="oil" label="油脂" width="80" />
                 <el-table-column prop="clearance" label="游隙" width="80" />
@@ -633,7 +665,8 @@
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves, getBimBusinessDetail } from '@/api/basicData/index'
-import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
+
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import { ordershengchanList, getWorkPage } from '@/api/productOrdes/index.js'
 
@@ -650,9 +683,10 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import busFlow from '@/mixins/generator/busFlow';
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm, Process, recordList },
-  mixins: [flowMixin, busFlow, getProjectList],
+  mixins: [flowMixin, busFlow, getProjectList,tenantMinix],
   data() {
     return {
       datafilelist: [],
@@ -888,7 +922,9 @@ export default {
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
       let obj1 = {
         pageNum: -1,
         pageSize: 20,

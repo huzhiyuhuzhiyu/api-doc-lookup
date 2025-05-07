@@ -332,7 +332,30 @@
                             </el-select>
                           </template>
                         </el-table-column>
-
+                        <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
+                          v-if="isXY">
+                          <template slot-scope="scope">
+                            <el-form-item>
+                              <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
+                                  :label="item.name" :value="item.name"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="rawStockMill" label="原材料厂家" width="120"
+                          v-if="isXY">
+                          <template slot-scope="scope">
+                            <el-form-item>
+                              <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
+                                  :label="item.name" :value="item.name"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </template>
+                        </el-table-column>
                         <el-table-column
                           v-if=" vibrationLevelFlag === '1'"
                           prop="vibrationLevel" label="振动等级" min-width="120">
@@ -511,6 +534,8 @@ import { getOrderFiledMap } from '@/api/basicData/index'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import tenantMinix from "@/mixins/generator/TenantMinix";
+
 export default {
   components: {
     sourceForm,
@@ -518,7 +543,7 @@ export default {
     PrintBrowse,
     PrintDialog
   },
-  mixins: [AbProjectMixin],
+  mixins: [AbProjectMixin,tenantMinix],
 
   data() {
     return {

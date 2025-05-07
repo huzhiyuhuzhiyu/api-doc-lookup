@@ -71,7 +71,7 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">
-                          <el-form-item label="生产重量" prop="productionWeight">
+                          <el-form-item label="生产重量（kg）" prop="productionWeight">
                             <el-input v-model="dataForm.productionWeight" placeholder="生产重量"  />
                           </el-form-item>
                         </el-col>
@@ -79,7 +79,7 @@
 
 
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="生产数量" prop="productionQuantity">
+                        <el-form-item :label="isXY||isJR?'生产数量（万粒）':'生产数量'" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="生产数量" @blur="compount">
                           </el-input>
                         </el-form-item>

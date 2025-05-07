@@ -326,14 +326,31 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel" width="120"
-                        key="123">
-                        <!-- <template slot="header">
-                            <span class="required">*</span>精度等级
-                          </template> -->
+                        key="123"> 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in list2" key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
+                        key="123"> 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
+                        key="123"> 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa027" key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
@@ -708,14 +725,17 @@
               <el-table-column prop="shelfSpaceName" label="库位名称" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="shelfSpaceName" />
               <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && standardValueFlag == 1" key="standardValue" />
+                v-if="standardValueFlag == 1" key="standardValue" />
               <el-table-column prop="colour" :label="$store.getters.colour" width="80" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && colourFlag == 1" key="colour" />
               <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                 sortable="custom" v-if="dataForm.documentType == 'outbound' && sealingCoverTypingFlag == 1"
                 key="sealingCoverTyping" />
               <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && accuracyLevelFlag == 1" key="accuracyLevel" />
+                v-if=" accuracyLevelFlag == 1" key="accuracyLevel" />
+                <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
+                <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
+
               <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && vibrationLevelFlag == 1" key="vibrationLevel" />
               <el-table-column prop="oil" label="油脂" width="80" sortable="custom"
@@ -801,9 +821,11 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import tenantMinix from "@/mixins/generator/TenantMinix";
+
 export default {
   components: { WareHouseForm, BatchNumberForm, CustomerForm, Process, PrintBrowse, PrintDialog },
-  mixins: [flowMixin, getProjectList],
+  mixins: [flowMixin, getProjectList,tenantMinix],
   props: {
     warehouseCode: "",
   },

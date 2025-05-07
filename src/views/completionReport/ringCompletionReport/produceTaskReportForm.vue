@@ -31,6 +31,8 @@
                 <el-descriptions-item v-if="isXY||isJR" label="生产重量">{{ dataForm.productionWeight }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="规值">{{ dataForm.standardValue }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY" label="钢丝炉号">{{ dataForm.wireHeatNumber }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY" label="原材料厂家">{{ dataForm.rawStockMill }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
                 <el-descriptions-item label="领料方式">{{ dataForm.pickingWay == 'production_order' ? '生产订单领料' : "工单领料"
                   }}</el-descriptions-item>

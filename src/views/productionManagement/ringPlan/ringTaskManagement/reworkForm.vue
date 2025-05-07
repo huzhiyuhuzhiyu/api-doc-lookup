@@ -246,9 +246,9 @@
                                             </el-table-column>
                                             <el-table-column prop="mainUnit" label="单位"></el-table-column>
                                             <el-table-column prop="materialsUsedQuantity" label="投料数量">
-                                                <!-- <template slot="header">
-                                                  <span class="required">*</span>投料数量
-                                                </template> -->
+                                                <template slot="header">
+                                                    <span class="required">*</span>投料数量
+                                                </template>
                                                 <template slot-scope="scope">
                                                     <el-form-item :prop="'collectData.' + scope.$index + '.' + 'materialsUsedQuantity'"
                                                                   :rules="productRules.materialsUsedQuantity">
@@ -505,10 +505,7 @@ export default {
     },
     data() {
         return {
-            taskMethodList: [{ label: "指定加工对象", value: "appoint" }, {
-                label: "不指定加工对象",
-                value: "not_appoint"
-            },],
+            taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
             reduceTypeList: [
                 { label: "生成领料单", value: "picking" },
                 { label: "自动扣减料", value: "auto" },
@@ -554,15 +551,16 @@ export default {
             ],
             collectVisible: false,
             productRules: {
-                // materialsUsedQuantity: [
-                //   { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }] }), trigger: ['blur'] },
-                //   { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }] }), trigger: ['blur'] },
-                //   { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }), trigger: 'blur' },
-                //   { required: true, trigger: ['blur'] }
-                // ],
+                materialsUsedQuantity: [
+                    { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }] }), trigger: ['blur'] },
+                    { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }] }), trigger: ['blur'] },
+                    { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }), trigger: 'blur' },
+                    { required: true, trigger: ['blur'] }
+                ],
                 // processName: [{ validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：工序${errMsg}`) }] }), trigger: ['blur'] },]
             },
-            collectConfig: {},
+            collectConfig: {
+            },
             pickDataRule: {
                 orderNo: [
                     { required: true, message: '领料单号不能为空', trigger: 'blur' }
@@ -609,7 +607,7 @@ export default {
                 bomId: "",
                 drawingNo: "",
                 productionLineId: "",
-                orderType: 'rework'
+                orderType:'rework'
             },
             dataFormTwo: {
                 data: [],
@@ -634,19 +632,11 @@ export default {
                     { required: true, message: '计划生产日期不能为空', trigger: 'change' }
                 ],
                 productionQuantity: [
-                    {
-                        validator: this.formValidate({
-                            type: 'noEmtry', params: ["返工生产数量不能为空", (errMsg) => {
-                                this.$message.error(`${errMsg}`)
-                            }]
-                        }), trigger: 'blur'
-                    },
+                    { validator: this.formValidate({ type: 'noEmtry', params: ["返工生产数量不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
+                    { validator: this.formValidate({type: 'decimal', params: [20,4,'', (errMsg,index) => { this.$message.error(`返工生产数量：` + errMsg) }]}),
+                        trigger: 'blur'},
                     { required: true, trigger: 'blur' },
-                    {
-                        validator: this.formValidate('positiveNumber', false, (errMsg) => {
-                            this.$message.error(`返工生产数量${errMsg}`)
-                        }), trigger: 'blur'
-                    },
+                    { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`返工生产数量${errMsg}`) }), trigger: 'blur' },
                 ],
                 // routingName: [
                 //   { required: true, message: '工艺路线不能为空', trigger: 'change' }
@@ -683,29 +673,29 @@ export default {
             detailDiaFlag: false,
             naturalResourcesFlag: true,
             isProjectSwitch: "",
-            isProductNameSwitch: "",
+            isProductNameSwitch:"",
             preData: null, // 从上一个页面传过来的数据
-            customStyleData: 0,
-            timeout: null
+            customStyleData:0,
+            timeout:null
         }
     },
     computed: {
         ...mapGetters(['userInfo']),
-        totalProductionQuantity: function() {
+        totalProductionQuantity: function () {
             var totalNums = 0;
             for (var i = 0; i < this.detailDataList.length; i++) {
                 totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].productionQuantity])
             }
             return totalNums
         },
-        totalQualifiedQuantity: function() {
+        totalQualifiedQuantity: function () {
             var totalNums = 0;
             for (var i = 0; i < this.detailDataList.length; i++) {
                 totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].qualifiedQuantity])
             }
             return totalNums
         },
-        totalUnqualifiedQuantity: function() {
+        totalUnqualifiedQuantity: function () {
             var totalNums = 0;
             for (var i = 0; i < this.detailDataList.length; i++) {
                 totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].unqualifiedQuantity])
@@ -719,9 +709,7 @@ export default {
         this.getPickingConfig()
     },
     mounted() {
-        this.$nextTick(() => {
-            this.switchStyleheight()
-        })
+        this.$nextTick(() => { this.switchStyleheight() })
     },
     methods: {
         switchStyleheight() {
@@ -737,7 +725,7 @@ export default {
             // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
             let maxHeight = mainHeight1 - 390
             console.log(maxHeight, 'maxHeight')
-            this.customStyleData = maxHeight < 300 ? 300 : maxHeight
+            this.customStyleData = maxHeight<300?300:maxHeight
             // 附带防抖的监听适配模式屏幕缩放
             window.onresize = () => {
                 clearTimeout(this.timeout)
@@ -746,10 +734,10 @@ export default {
                 }, 100)
             }
         },
-        clear() {
-            this.dataForm.routingId = ''
-            this.dataForm.routingName = ''
-            this.dataFormTwo.data = []
+        clear(){
+            this.dataForm.routingId=''
+            this.dataForm.routingName=''
+            this.dataFormTwo.data=[]
         },
         columnSetFun() {
             this.$refs.products.showDrawer()
@@ -757,8 +745,7 @@ export default {
         async getProductNameSwitch(code, type) {
             try {
                 this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-            } catch (error) {
-            }
+            } catch (error) { }
         },
         selectTaskMethod() {
             if (this.dataForm.taskMethod == 'not_appoint') {
@@ -766,9 +753,7 @@ export default {
             } else {
                 this.naturalResourcesFlag = true
             }
-            this.$nextTick(() => {
-                this.$refs.products.doLayout()
-            })
+            this.$nextTick(() => { this.$refs.products.doLayout()})
         },
         handeleProductInfoData(val) {
             this.selectRows = val
@@ -876,8 +861,8 @@ export default {
         selectProcessFun(data) {
             console.log("所选返工工序", data);
             this.dataFormTwo.data = data
-            this.dataForm.routingId = ''
-            this.dataForm.routingName = ''
+            this.dataForm.routingId=''
+            this.dataForm.routingName=''
         },
         delProcessFun(val) {
             this.selectProcessArr = val
@@ -921,6 +906,8 @@ export default {
                     data[data.length - 1].reportFlag = true;
                 }
             }
+            this.dataForm.routingId = ''
+            this.dataForm.routingName = ''
         },
         // 打开选择返工产品弹框
         openSelectProductFun() {
@@ -938,11 +925,9 @@ export default {
             console.log("所选返工产品", data);
             this.dataForm = data
             this.$set(this.dataForm, 'taskMethod', 'not_appoint')
-            this.$set(this.dataForm, 'planDate', [])
+            this.$set(this.dataForm, 'planDate', [moment(new Date()).format('YYYY-MM-DD'),moment(new Date()).format('YYYY-MM-DD')])
             this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
-            this.$nextTick(() => {
-                this.$refs.products.doLayout()
-            })
+            this.$nextTick(() => { this.$refs.products.doLayout()})
         },
         // 通过查询条件查询未完成的派工单
         dataFormSubmit() {
@@ -1047,7 +1032,7 @@ export default {
                     } else {
                     }
                 })
-                this.dataFormTwo.data = linesData
+                this.dataFormTwo.data=linesData
             })
         },
         // 选择班组
@@ -1320,7 +1305,7 @@ export default {
             console.log("传递数据", id, btnType);
             this.dataForm.id = id || ''
             this.btnType = btnType
-            this.$set(this.dataForm, 'planDate', [moment(new Date()).format('YYYY-MM-DD'), moment(new Date()).format('YYYY-MM-DD')])
+            this.$set(this.dataForm, 'planDate', [moment(new Date()).format('YYYY-MM-DD'),moment(new Date()).format('YYYY-MM-DD')])
             this.$refs.dataForm.clearValidate('planDate');
             if (btnType == 'edit') {
                 this.fetchData("PROD", false)
@@ -1330,9 +1315,9 @@ export default {
                 this.fetchData("PROD", true)
                 this.fetchData("PODH", true)
             }
-            if (this.$store.getters.configData.produce.enable_rework_arrange_auto_picking) {
-                this.collect.operationDate = this.jnpf.getToday()
-                this.collect.personId = this.userInfo.userName
+            if(this.$store.getters.configData.produce.enable_rework_arrange_auto_picking){
+                this.collect.operationDate=this.jnpf.getToday()
+                this.collect.personId=this.userInfo.userName
             }
         },
         async fetchData(code, flag) {
@@ -1353,13 +1338,12 @@ export default {
             this.$emit('close', true)
         },
         handleConfirm(value) {
-            this.btnLoading = true
             this.$refs['dataForm'].validate((valid) => {
                 this.dataForm.documentStatus = value
                 if (valid) {
                     this.selectTaskMethod()
-                    this.dataForm.routingId = this.dataForm.routingName ? this.dataForm.routingId : ''
-                    this.dataForm.orderType = 'rework'
+                    this.dataForm.routingId=this.dataForm.routingName?this.dataForm.routingId:''
+                    this.dataForm.orderType= 'rework'
                     this.dataForm.productsId = this.dataForm.id
                     this.dataForm.planStartDate = this.dataForm.planDate[0]
                     this.dataForm.planEndDate = this.dataForm.planDate[1]
@@ -1433,14 +1417,12 @@ export default {
                     console.log("coll", this.collect);
                     console.log("dataFormOne.collectData", this.dataFormOne.collectData);
                     addProdOrder(obj).then(res => {
-                        this.btnLoading = false
                         this.$message.success("新建返工任务成功")
+                        this.btnLoading = false
                         this.$emit('close',true)
                     }).catch(error => {
                         this.btnLoading = false
                     })
-                }else{
-                    this.btnLoading = false
                 }
             })
         }
@@ -1456,21 +1438,17 @@ export default {
         margin-bottom: 0 !important;
     }
 }
-
 ::v-deep .JNPF-common-page-header.noButtons {
     padding: 11px 10px;
 }
-
 .required {
     color: red;
     margin-right: 4px;
 }
-
 ::v-deep .el-tabs__header {
     padding: 0 !important;
     padding-bottom: 10px !important;
 }
-
 ::v-deep .el-tabs__header {
     padding-left: 0 !important;
 }
@@ -1480,7 +1458,6 @@ export default {
     height: auto !important;
     padding: 0;
 }
-
 ::v-deep .JNPF-common-page-header {
     padding: 5px 10px;
 }
@@ -1490,23 +1467,18 @@ export default {
     color: red;
     margin-right: 4px;
 }
-
 .el-dialog .el-dialog__body {
     padding: 20px 0px 2px !important;
 }
-
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
     padding: 0 5px 0 10px !important;
 }
-
 .el-button span {
     font-size: 14px !important;
 }
-
 .pagination-container {
     background-color: #f5f7fa;
 }
-
 ::v-deep .el-input-group__append {
     background-color: #48a2ff;
     color: #fff;
@@ -1517,63 +1489,49 @@ $footerPadding: '10px';
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
     padding: 0;
 }
-
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
     padding: 0 10px !important;
 }
-
 ::v-deep .el-dialog__body {
     margin-bottom: 10px;
 }
-
 ::v-deep .el-dialog__footer {
     padding: 0 20px 10px;
 }
-
 ::v-deep .even-row,
 ::v-deep .odd-row {
     cursor: pointer;
 }
-
 .killPadding {
     padding: 0;
 }
-
 .killPaddingLeft {
     padding-left: 0 !important;
 }
-
 .pagination-container {
     background-color: #f5f7fa;
     margin-top: 0px;
     padding: 2px 10px 2px 0;
 }
-
 ::v-deep .JNPF-common-search-box.noSearchList {
     padding: 3px 0;
 }
-
 ::v-deep .has-gutter .el-table__cell.gutter {
     border-bottom: 1px solid #ebeef5;
     background-color: #f5f7fa;
 }
-
 .JNPF-common-search-box {
     padding: 8px 0px 0;
 }
-
 .JNPF-preview-main .main {
     padding-top: 0;
 }
-
 ::v-deep .el-tabs__item {
     padding: 0 10px !important
 }
-
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
     padding-left: 0px !important
 }
-
 ::v-deep .el-collapse-item__header {
     line-height: 33px;
     font-size: 18px;
@@ -1586,7 +1544,6 @@ $footerPadding: '10px';
     border-right: 1px solid #dcdfe6;
     border-left: 1px solid #dcdfe6;
 }
-
 ::v-deep .el-collapse-item__wrap {
     border: 1px solid #dcdfe6 !important;
     border-top: none;
@@ -1594,15 +1551,12 @@ $footerPadding: '10px';
     padding: 0px;
     border-top: none !important;
 }
-
 .orderInfo ::v-deep.el-collapse-item__wrap {
     padding: 0 10px;
 }
-
 ::v-deep .el-collapse-item__content {
     padding-bottom: 0px
 }
-
 .import_t {
     font-size: 22px;
     color: rgb(103, 194, 58);
@@ -1611,7 +1565,6 @@ $footerPadding: '10px';
     display: inline-block;
     margin-left: 20px;
 }
-
 .import_b {
     font-size: 18px;
     /* color: #67c23a; */
@@ -1619,40 +1572,31 @@ $footerPadding: '10px';
     margin-top: 43px;
     display: inline-block;
 }
-
 .orderInfo {
     margin-top: 5px;
     border-top: 0;
 }
-
 .orderInfo ::v-deep .el-collapse-item__wrap {
     border-bottom: none !important
 }
-
 ::v-deep.routingProRes .el-dialog__body {
     height: 500px;
 }
-
 ::v-deep .applySelect .el-icon-arrow-up:before {
     content: "";
 }
-
 .underline-button {
     text-decoration: underline;
 }
-
 .personBox p {
     text-align: center;
 }
-
 .personBox:nth-child(n + 6) {
     margin-top: 12px;
 }
-
 ::v-deep .elbutton span {
     font-size: 14px !important;
 }
-
 .personBox {
     border: 1px solid #dcdfe6;
     background-color: #f5f7fa;
@@ -1661,16 +1605,13 @@ $footerPadding: '10px';
     height: 150px;
     border-radius: 5px;
 }
-
 .active {
     background-color: #5d9bd5;
     color: #fff;
 }
-
 ::v-deep .el-range-editor {
     height: 34px !important;
 }
-
 ::v-deep .el-range-editor {
     height: 34px !important;
 }

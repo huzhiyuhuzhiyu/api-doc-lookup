@@ -12,7 +12,7 @@
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="openSeleceProductDialog()">刷新数据</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
               </el-dropdown-menu>
@@ -91,7 +91,7 @@
 <script>
 import { detailProcess, getProcessList } from '@/api/basicData/processSettingss.js'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表 
+import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   mixins: [getProjectList],
@@ -138,12 +138,12 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-   
+
   },
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     filterNodeAllProduct(value, data) {
@@ -178,7 +178,7 @@ export default {
     init(id) {
       this.allProVisible = true
       this.id=id
-      this.openSeleceProductDialog(id)
+      this.openSeleceProductDialog()
     },
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
@@ -190,7 +190,7 @@ export default {
         productDrawingNo: "",
         queryType: 2,
         productStatus: 'enable',
-
+        projectId:this.id || '',
         productCategoryId: "",
         code: "",
         name: "",
@@ -226,7 +226,7 @@ export default {
           }
           if ((++successTotal) === this.ProductMethodArr.length) {
             this.ProductTreeData = tempTreeData
-            this.initData2(this.id)
+            this.initData2()
           }
         })
       });
@@ -234,9 +234,8 @@ export default {
 
     },
     // 获取所有产品列表数据
-    initData2(id) {
+    initData2() {
       this.listLoading = true
-      this.ProductListRequestObj.projectId = id
 
       getProducts(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
@@ -253,7 +252,7 @@ export default {
     // 搜索所有产品 列表
     searchAllProduct() {
       this.ProductListRequestObj.pageNum = 1
-      this.initData2(this.id)
+      this.initData2()
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
@@ -283,6 +282,9 @@ export default {
       this.selectArr = val
 
 
+    },
+    handleRowClick(row){
+        this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
     },
     submitAllProduct() {
       this.allProVisible = false

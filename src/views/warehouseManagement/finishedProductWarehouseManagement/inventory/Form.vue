@@ -145,6 +145,8 @@
                 sortable="custom"></el-table-column>
               <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
                 sortable="custom"></el-table-column>
+                <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
+                <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
               <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
                 sortable="custom"></el-table-column>
               <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
@@ -190,8 +192,10 @@ import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import tenantMinix from "@/mixins/generator/TenantMinix";
+
 export default {
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
 
   components: { ExportForm },
   data() {

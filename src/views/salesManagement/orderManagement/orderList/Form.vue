@@ -220,7 +220,15 @@
                       </el-table-column>
                       <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
                         v-if="vibrationLevelFlag == 1"></el-table-column>
-                        <el-table-column prop="standardValue" label="规值" width="100" />
+                        <el-table-column prop="standardValue" label="规值" width="120">
+                          <template slot-scope="scope">
+                              <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
+                                  :label="item.name" :value="item.name"></el-option>
+                              </el-select>
+                          </template>
+                        </el-table-column>
                       <el-table-column prop="oil" label="油脂" width="120" :key="61"
                         v-if="oilFlag == 1"></el-table-column>
                       <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
@@ -430,13 +438,11 @@
                     </el-table-column>
                     <el-table-column prop="standardValue" label="规值" width="120">
                           <template slot-scope="scope">
-                            <el-form-item>
                               <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
                                 style="width: 100%;">
                                 <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
-                            </el-form-item>
                           </template>
                         </el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
@@ -778,7 +784,15 @@
                   </el-table-column>
                   <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
                     v-if="vibrationLevelFlag == 1"></el-table-column>
-                    <el-table-column prop="standardValue" label="规值" width="100" />
+                    <el-table-column prop="standardValue" label="规值" width="120">
+                          <template slot-scope="scope">
+                              <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
+                                  :label="item.name" :value="item.name"></el-option>
+                              </el-select>
+                          </template>
+                        </el-table-column>
                   <el-table-column prop="oil" label="油脂" width="120" :key="61"
                     v-if="oilFlag == 1"></el-table-column>
                   <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"
@@ -948,13 +962,11 @@
                 </el-table-column>
                 <el-table-column prop="standardValue" label="规值" width="120">
                           <template slot-scope="scope">
-                            <el-form-item>
                               <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
                                 style="width: 100%;">
                                 <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
-                            </el-form-item>
                           </template>
                         </el-table-column>
                 <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">

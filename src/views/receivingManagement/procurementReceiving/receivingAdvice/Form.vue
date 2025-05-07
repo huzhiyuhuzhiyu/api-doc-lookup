@@ -535,7 +535,7 @@
                         </template>
                     </el-table-column>
                 <el-table-column prop="processName" label="工序" width="110" />
-                <el-table-column prop="batchNumber" label="批次号" width="200" >
+                <el-table-column prop="batchNumber" label="批次号" width="200" v-if="isMS">
                   <template slot-scope="scope">
                     <el-input :disabled="btnType == 'look'" 
                     v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
@@ -774,9 +774,10 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   components: { Process, recordList, PrintBrowse, PrintDialog },
-  mixins: [busFlow, getProjectList],
+  mixins: [busFlow, getProjectList,tenantMinix],
   data() {
     return {
       isProjectSwitch: '',

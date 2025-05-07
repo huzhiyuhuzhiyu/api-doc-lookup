@@ -444,7 +444,7 @@ export default {
       handler: function (newVal, oldVal) {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : this.currentProcess.waitReportNum
+            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : this.currentProcess.qualifiedQuantity?this.currentProcess.qualifiedQuantity:this.currentProcess.waitReportNum
             
           } else {
             // this.currentProcess.qualifiedQuantity = 0

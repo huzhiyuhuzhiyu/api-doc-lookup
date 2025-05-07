@@ -38,6 +38,8 @@
               <span class="left-title" v-if="form.processType == 'fatInjection'">注脂工序</span>
               <span class="left-title" v-if="form.processType == 'typing'">打字工序</span>
               <span class="left-title" v-if="form.processType == 'boxing'">装盒工序</span>
+              <span class="left-title" v-if="form.processType == 'regrinding'">修磨工序</span>
+              <span class="left-title" v-if="form.processType == 'clean'">清洗工序</span>
             </div>
           </el-col>
 

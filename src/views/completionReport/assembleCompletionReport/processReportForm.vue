@@ -80,6 +80,8 @@
                       <div v-if="scope.row.processType == 'fatInjection'">注脂工序</div>
                       <div v-if="scope.row.processType == 'typing'">打字工序</div>
                       <div v-if="scope.row.processType == 'boxing'">装盒工序</div>
+                      <span class="left-title" v-if="scope.row.processType == 'regrinding'">修磨工序</span>
+                      <span class="left-title" v-if="scope.row.processType == 'clean'">清洗工序</span>
 
                     </template>
                   </el-table-column>

@@ -350,3 +350,12 @@ export function workTodoOutSouringList(data) {
     data
   })
 }
+
+// 修磨
+export function addRegrinding(data) {
+  return request({
+    url: `/api/mrp/work/report/regrinding/add`,
+    method: 'POST',
+    data
+  })
+}

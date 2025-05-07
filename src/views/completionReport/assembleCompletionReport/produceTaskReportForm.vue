@@ -92,6 +92,8 @@
                   <span class="left-title" v-if="processInfo.processType == 'accuracy'">精度工序</span>
                   <span class="left-title" v-if="processInfo.processType == 'fatInjection'">注脂工序</span>
                   <span class="left-title" v-if="processInfo.processType == 'boxing'">装盒工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'regrinding'">修磨工序</span>
+                  <span class="left-title" v-if="processInfo.processType == 'clean'">清洗工序</span>
                 </div>
               </el-col>
 
@@ -380,6 +382,16 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
+             
+                  <el-col :sm="24" :xs="24">
+                    <el-form-item label="是否修磨" class="iptLabel">
+                      <el-select v-model="isregrindingFlag" placeholder="是否修磨" style="width: 100%;" class="ipt">
+                        <el-option v-for="(item, index) in isregrindingFlagList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                      <!-- equipmentId -->
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24" class="iptLabel"
                     v-if="currentProcessType == 6 && currentProcess.accuracyReportFlag">
                     <div style="width: 100%;">
@@ -461,7 +473,8 @@
                   <el-col :sm="24" :xs="24">
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">
-                      <el-button type="primary" size="mini" @click='report()'>报 工</el-button>
+                      <el-button v-if="!isregrindingFlag" type="primary" size="mini" @click='report()'>报 工</el-button>
+                      <el-button v-if="isregrindingFlag" type="primary" size="mini" @click='regrindingFun()'>修磨</el-button>
                       <el-button type="primary" size="mini" @click="reportRecordsFun()">查看报工记录</el-button>
                     </div>
                   </el-col>
@@ -527,7 +540,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { detailProcess, getvibrationList, getPairingModelList, getaccuracyList } from '@/api/basicData/processSettingss.js'
-import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
+import { detailordershengchan, getWorkList, addWorkReport,addRegrinding } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
@@ -549,6 +562,11 @@ export default {
   },
   data() {
     return {
+      isregrindingFlagList:[
+        {label:"是",value:true},
+        {label:"否",value:false},
+      ],
+      isregrindingFlag:false,
       printVisible: false,
       printBrowseVisible: false,
       enCode: "p035",
@@ -657,6 +675,42 @@ export default {
     this.getsealingcoverTypingList()
   },
   methods: {
+    regrindingFun(){
+      let obj = {
+              "classAttribute": this.currentProcess.classAttribute,
+              orderType: this.currentProcess.orderType,
+              productDrawingNo: this.currentProcess.productDrawingNo,
+              processName: this.currentProcess.processName,
+              productionQuantity: this.currentProcess.productionQuantity,
+              equipmentId: this.currentProcess.equipmentId,
+              remark: this.currentProcess.remark,
+              reportingTime: this.currentProcess.reportingTime,
+              reworkQuantity: this.currentProcess.reworkQuantity,
+              responsibilityWasteQuantity: this.currentProcess.responsibilityWasteQuantity,
+              "materialWasteQuantity": this.currentProcess.materialWasteQuantity,
+              "pricingType": this.currentProcess.pricingType,
+              "processId": this.currentProcess.processId,
+              "producerId": this.currentProcess.producerId,
+              "productionOrderId": this.currentProcess.productionOrderId,
+              "qualifiedQuantity": this.currentProcess.qualifiedQuantity,
+              "reportingQuantity": this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity,]), 6),
+              "reportingType": "normal ",
+              "unqualifiedQuantity": this.currentProcess.unqualifiedQuantity,
+              "vibrationLevel": this.currentProcess.vibrationLevel,
+              "vibrationType": this.currentProcess.vibrationType,
+              "oil": this.currentProcess.oil,
+              "sealingCoverTyping": this.currentProcess.sealingCoverTyping,
+              "workOrderId": this.currentProcess.id,
+              causesList: [...this.materialWasteDataList, ...this.responsWasteDataList],
+              packagingMethod: this.currentProcess.packagingMethod
+
+            }
+            addRegrinding(obj).then(res=>{
+                this.init(this.id)
+
+            })
+
+    },
     closePrint() {
       this.printVisible = false
     },
@@ -1007,6 +1061,7 @@ export default {
       })
     },
     async getProcessFun(item) {
+      this.isregrindingFlag=false
       this.$set(item,'matchedQuantity','')
       this.currentProcess = item
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))

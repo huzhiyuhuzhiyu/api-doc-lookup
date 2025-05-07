@@ -142,6 +142,12 @@
                           <template v-if="scope.row.processType == 'boxing'">
                             装盒工序
                           </template>
+                          <template v-if="scope.row.processType == 'regrinding'">
+                            修磨工序
+                          </template>
+                          <template v-if="scope.row.processType == 'clean'">
+                            清洗工序
+                          </template>
                         </template>
                       </el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -393,6 +399,12 @@
                       <template v-if="scope.row.processType == 'boxing'">
                             装盒工序
                       </template>
+                      <template v-if="scope.row.processType == 'regrinding'">
+                            修磨工序
+                          </template>
+                          <template v-if="scope.row.processType == 'clean'">
+                            清洗工序
+                          </template>
                     </template>
                   </el-table-column>
                   <el-table-column prop="processingType" label="加工类型" width="100">
@@ -593,7 +605,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '工序编码', fixed: 'left' },
         { prop: 'name', label: '工序名称', fixed: 'left' },
-        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
+        { prop: 'processTyepeName', label: '工序类型', fixed: 'left' },
         { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
@@ -902,6 +914,10 @@ export default {
           item.processTypeName = '注脂工序'
         } else if (item.processType == 'boxing') {
           item.processTypeName = '装盒工序'
+        }else if (item.processType == 'regrinding') {
+          item.processTypeName = '修磨工序'
+        }else if (item.processType == 'clean') {
+          item.processTypeName = '清洗工序'
         }
 
         return item

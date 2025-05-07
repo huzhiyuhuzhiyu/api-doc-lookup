@@ -79,6 +79,7 @@
                 <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
                 <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
                 <div v-if="scope.row.orderType == 'transit'">在制任务</div>
+                <div v-if="scope.row.orderType == 'regrinding'">修磨任务</div>
               </template>
             </el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
@@ -407,6 +408,7 @@ export default {
             { label: "手动新建任务", value: "manually" },
             { label: "翻库任务", value: "flipping" },
             { label: "在制任务", value: "transit" },
+            { label: "修磨任务", value: "regrinding" },
           ]
         },
         

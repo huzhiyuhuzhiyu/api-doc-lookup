@@ -35,6 +35,9 @@
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
+              <el-button size="mini" v-has="'btn_split'" type="primary"  @click="splitHander()">拆分</el-button>
+              <el-button size="mini" v-has="'btn_redesignate'" type="primary"  @click="redesignateHander()">改制</el-button>
+              <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button> -->
               <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">
                 新建返工任务
               </el-button> -->
@@ -159,12 +162,12 @@
                       v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
-                    <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
+                    <!-- <el-dropdown-item v-has="'btn_split'" v-if="scope.row.orderStatus==='normal'" @click.native="splitHander(scope.row.id)">
                       拆分
                     </el-dropdown-item>
                     <el-dropdown-item v-has="'btn_redesignate'" v-if="scope.row.orderStatus==='normal'" @click.native="redesignateHander(scope.row.id)">
                       改制
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                     <el-dropdown-item @click.native="generateQRcode(scope.row)" >
                       生成二维码
                     </el-dropdown-item>
@@ -978,10 +981,13 @@ export default {
       this.addOrderVisible = true
     },
     // 拆分
-    splitHander(id) {
+    splitHander() {
+      if(!this.selectArr.length) return this.$message.error("请选择要拆分的数据")
+      if(this.selectArr.length.length>1) return this.$message.error("只支持单条数据进行拆分")
+      if(this.selectArr[0].orderStatus!=='normal') return this.$message.error("只支持对正常任务进行拆分")
       this.splitTaskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.splitTaskForm.init(id)
+        this.$refs.splitTaskForm.init(this.selectArr[0].id)
       })
       // this.splitForm = {...data}
       // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
@@ -992,10 +998,19 @@ export default {
     },
      // 改制
      redesignateHander(id) {
+      if(!this.selectArr.length) return this.$message.error("请选择要改制的数据")
+      if(this.selectArr.length.length>1) return this.$message.error("只支持单条数据进行改制")
+      if(this.selectArr[0].orderStatus!=='normal') return this.$message.error("只支持对正常任务进行改制")
       this.redesignateTaskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.redesignateTaskForm.init(id)
+        this.$refs.redesignateTaskForm.init(this.selectArr[0].id)
       })
+
+
+      // this.redesignateTaskFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.redesignateTaskForm.init(id)
+      // })
       // this.splitForm = {...data}
       // this.splitForm.canSplitQuantity = Number(this.splitForm.productionQuantity) - Number(this.splitForm.completedQuantity) - Number(this.splitForm.splitQuantity)
       // this.splitVisible = true

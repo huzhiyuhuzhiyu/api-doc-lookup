@@ -41,6 +41,12 @@
                             style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
+                      <el-col :span="6">
+                        <el-form-item label="需求日期" prop="demandDate">
+                          <el-date-picker v-model="dataForm.demandDate" type="date" value-format="yyyy-MM-dd"
+                            style="width: 100%;" placeholder="请选择需求日期" @change="demandDateChange"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="是否生成免检通知单" prop="stockFlag">
                           <el-select v-model="dataForm.noticeFlag" placeholder="请选择是否生成免检通知单" style="width: 100%;"
@@ -124,7 +130,13 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-
+                        <el-table-column prop="demandDate" label="需求日期" min-width="175" key="7">
+                         
+                          <template slot-scope="scope">
+                            <el-date-picker v-model="scope.row.demandDate" type="date" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择需求日期"></el-date-picker>
+                          </template>
+                        </el-table-column>
 
                         <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
                           v-if="this.purchasingType === 'safe'" key="9">
@@ -747,6 +759,7 @@ export default {
         noticeFlag:false,
         outConsigneeFlag:false,
         approvalFlag: false, //
+        demandDate:"",
       },
       dataPickerOptions2: {
         // 日期区间选择器通用选项
@@ -1052,6 +1065,13 @@ export default {
       this.dataFormTwo.data.forEach((item) => {
         if (!item.deliveryDate) {
           this.$set(item, 'deliveryDate', val) // 总金额(不含税)
+        }
+      })
+    },
+    demandDateChange(val) {
+      this.dataFormTwo.data.forEach((item) => {
+        if (!item.demandDate) {
+          this.$set(item, 'demandDate', val) // 总金额(不含税)
         }
       })
     },

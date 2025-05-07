@@ -113,6 +113,7 @@
             <el-table-column prop="taxAmount" label="税额" min-width="80" />
             <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
+            <el-table-column prop="demandDate" label="需求日期" width="110" sortable="custom" />
             <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'not_finished' || scope.row.receivingStatus == 'returning'">
@@ -280,6 +281,16 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
+        {
+          prop: 'demandDate',
+          label: '需求日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        
         {
           prop: 'receivingStatus',
           label: '订单状态',

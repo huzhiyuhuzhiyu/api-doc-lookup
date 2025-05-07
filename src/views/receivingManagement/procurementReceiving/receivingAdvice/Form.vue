@@ -248,6 +248,12 @@
                     <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
                       v-if="colourFlag == 1"></el-table-column>
                     <el-table-column prop="processName" label="工序" width="110" />
+                    <el-table-column prop="batchNumber" label="批次号" width="110" >
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" 
+                    v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
+                  </template>
+                </el-table-column>
                     <el-table-column prop="ordersNo" label="订单号" width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -509,6 +515,12 @@
                 <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
                   v-if="colourFlag == 1"></el-table-column>
                 <el-table-column prop="processName" label="工序" width="110" />
+                <el-table-column prop="batchNumber" label="批次号" width="110" >
+                  <template slot-scope="scope">
+                    <el-input :disabled="btnType == 'look'" 
+                    v-model="scope.row.batchNumber" placeholder="批次号"></el-input>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="ordersNo" label="订单号" width="180" />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">

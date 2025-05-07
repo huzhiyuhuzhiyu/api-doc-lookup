@@ -76,7 +76,7 @@
                       |
                       <JNPF-table :fixedNO="true" hasC ref="multipleTable" @selection-change="handeleProductInfoData"
                         hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" border
-                        :height="customStyleData">
+                        :height="customStyleData" customKey="JNPFTableKey_504327">
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                           key="1"></el-table-column>
                           <el-table-column prop="projectName" label="成本核算归属" width="140" v-if="abProjectSwitchVisible"

@@ -130,7 +130,7 @@
                     <div>
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                         <JNPF-table style="border: 1px solid #e3e7ee;" :hasC="type != 'look'" hasNO fixedNO
-                          v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
+                          v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table" customKey="JNPFTableKey_431005">
                           <!-- <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
@@ -310,7 +310,7 @@
             </el-tab-pane>
             <el-tab-pane :label="showLabel + '款信息'" name="payInfo">
               <div class="JNPF-common-layout-main JNPF-flex-main" :style="{ height: height + 'px' }">
-                <JNPF-table v-loading="listLoading" :fixedNO="true" ref="collectiontableForm" :data="collectList">
+                <JNPF-table v-loading="listLoading" :fixedNO="true" ref="collectiontableForm" :data="collectList" customKey="JNPFTableKey_242258">
                   <el-table-column prop="totalReconciliationAmount" :label="'应' + showLabel + '金额'" min-width="120">
                   </el-table-column>
                   <el-table-column prop="paymentAmount" :label="'已' + showLabel + '款金额'" min-width="120" />

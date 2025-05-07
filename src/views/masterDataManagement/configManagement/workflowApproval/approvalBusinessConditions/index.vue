@@ -45,7 +45,7 @@
         </div>
         <div class="tableBox">
           <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
-            @current-change="handleCurrentChange" class="dataTable" border ref="listTable">
+            @current-change="handleCurrentChange" class="dataTable" border ref="listTable" customKey="JNPFTableKey_603126">
             <el-table-column prop="code" label="业务编码" align="left" sortable="custom" min-width="180" />
             <el-table-column prop="name" label="业务名称" align="left" sortable="custom" min-width="180" />
             <el-table-column prop="callbackMethod" label="回调方法" align="left" min-width="180" />
@@ -67,7 +67,7 @@
               </template>
             </el-table-column>
           </JNPF-table>
-          <JNPF-table v-loading="detailLoading" :data="dataDetail" class="dataTable" border custom-column>
+          <JNPF-table v-loading="detailLoading" :data="dataDetail" class="dataTable" border custom-column customKey="JNPFTableKey_563489">
             <!-- <el-table-column prop="id" label="业务id" align="left" /> -->
             <el-table-column prop="code" label="条件编码" align="left" min-width="120" />
             <el-table-column prop="name" label="条件名称" align="left" min-width="120" />

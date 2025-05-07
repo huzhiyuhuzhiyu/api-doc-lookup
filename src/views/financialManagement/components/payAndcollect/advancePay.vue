@@ -51,7 +51,7 @@
                 </div>
 
                 <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO show-summary
-                    :summary-method="getSummaries" @sort-change="sortChange" custom-column>
+                    :summary-method="getSummaries" @sort-change="sortChange" custom-column customKey="JNPFTableKey_846246">
                     <template v-for="item in tableItems">
                         <el-table-column v-if="item.prop === 'paymentMethod'" :key="item.prop" :prop="item.prop"
                             :label="item.label" :fixed="item.fixed || false" :min-width="item.minWidth || 120">

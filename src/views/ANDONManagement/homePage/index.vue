@@ -24,7 +24,7 @@
       </div>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" class="dataTable" border
-          ref="listTable" custom-column>
+          ref="listTable" custom-column customKey="JNPFTableKey_964836">
           <el-table-column prop="orderNo" label="申请单号" min-width="200" sortable="custom" />
           <el-table-column prop="type" label="申请类型" min-width="120" sortable="custom">
             <template slot-scope="scope">

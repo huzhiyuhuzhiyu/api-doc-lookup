@@ -101,7 +101,7 @@
           </div>
         </div>
         <JNPF-table ref="tabForm" :data="tableData" custom-column row-key="id" :fixedNo="true"
-          v-if="isProjectSwitchFlag" @sort-change="sortChange">
+          v-if="isProjectSwitchFlag" @sort-change="sortChange" customKey="JNPFTableKey_908857">
 
 
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />

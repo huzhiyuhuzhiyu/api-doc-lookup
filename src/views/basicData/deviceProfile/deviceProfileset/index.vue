@@ -95,7 +95,7 @@
           </div>
         </div>
         <JNPF-table v-if="istable" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC
-          @selection-change="handleSelectionChange">
+          @selection-change="handleSelectionChange" customKey="JNPFTableKey_512508">
           <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'"

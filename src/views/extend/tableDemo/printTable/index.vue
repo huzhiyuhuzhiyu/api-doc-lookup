@@ -31,7 +31,7 @@
           </div>
         </div>
         <div class="tableList">
-          <JNPF-table v-loading="listLoading" :data="list" id="myTable" ref="configurationTable">
+          <JNPF-table v-loading="listLoading" :data="list" id="myTable" ref="configurationTable" customKey="JNPFTableKey_843359">
             <el-table-column prop="projectName" label="项目名称" sortable width="200" />
             <el-table-column prop="projectCode" label="项目编码" sortable width="160" />
             <el-table-column prop="projectType" label="项目类型" sortable width="160">

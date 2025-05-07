@@ -54,7 +54,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-if="istable" hasC @selection-change="handeleInfoData" :data="tableData" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" hasC @selection-change="handeleInfoData" :data="tableData" @sort-change="sortChange" custom-column customKey="JNPFTableKey_651346">
           <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

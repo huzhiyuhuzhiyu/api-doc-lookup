@@ -55,7 +55,7 @@
                     </div>
                 </div> -->
                 <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-                    custom-column>
+                    custom-column customKey="JNPFTableKey_113711">
                     <el-table-column prop="businessCode" label="业务编码" sortable="custom">
                     </el-table-column>
                     <el-table-column prop="businessName" label="业务名称" sortable="custom" />

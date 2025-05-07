@@ -117,7 +117,7 @@
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData"
                     :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData"
-                    :height="customStyleData">
+                    :height="customStyleData" customKey="JNPFTableKey_407011">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip />
@@ -599,7 +599,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
+              <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer" customKey="JNPFTableKey_311231">
                 <el-table-column prop="code" label="供应商编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="name" label="供应商名称" />
                 <el-table-column prop="taxId" label="税号" />
@@ -656,7 +656,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC
-                @selection-change="handleSelectionChangeAllPruduct">
+                @selection-change="handleSelectionChangeAllPruduct" customKey="JNPFTableKey_250381">
                 <el-table-column prop="orderNo" label="订单号" min-width="220" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" width="120"
                   v-if="isProjectSwitch === '1'"></el-table-column>

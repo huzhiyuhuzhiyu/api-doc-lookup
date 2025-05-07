@@ -60,7 +60,7 @@
         </div>
 
         <JNPF-table v-loading="listLoading" highlight-current-row ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_380788">
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

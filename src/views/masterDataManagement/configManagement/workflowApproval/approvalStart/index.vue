@@ -39,7 +39,7 @@
         </el-row>
 
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" custom-column>
+          <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" custom-column customKey="JNPFTableKey_550374">
             <el-table-column prop="orderNo" label="审批单号" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look', 'disabled', scope.row.approvalBusinessCode)">{{

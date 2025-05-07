@@ -34,7 +34,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
   
           <JNPF-table ref="tabForm" v-loading="listLoading" v-if="flag" :data="tableDataList"  :fixedNO="true" :appendToBody="'child'"
-            @sort-change="sortChange"   style="width: 100%;">
+            @sort-change="sortChange"   style="width: 100%;" customKey="JNPFTableKey_315633">
             <el-table-column prop="name" label="库位名称" min-width="180">
             </el-table-column>
             <el-table-column prop="code" label="库位编码" width="180" sortable="custom">

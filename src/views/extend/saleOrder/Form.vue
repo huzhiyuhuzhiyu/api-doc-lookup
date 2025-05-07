@@ -132,7 +132,7 @@
             </el-form>
           </el-col>
         </el-row>
-        <JNPF-table :data="dataForm.productEntryList" size='small'>
+        <JNPF-table :data="dataForm.productEntryList" size='small' customKey="JNPFTableKey_280185">
           <el-table-column label="操作" width="80">
             <template slot-scope="scope">
               <el-button size="mini" type="text" icon="el-icon-plus" @click="addItem(scope.$index)">

@@ -30,7 +30,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" @expand-change="expandChange"
-          :hasNO="false">
+          :hasNO="false" customKey="JNPFTableKey_954868">
           <el-table-column type="expand" width="40">
             <template slot-scope="scope">
               <el-table v-loading="scope.row.childLoading" :data="scope.row.childTable" size='mini'>

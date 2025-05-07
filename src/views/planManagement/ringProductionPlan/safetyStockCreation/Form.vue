@@ -73,7 +73,7 @@
                 </div>
 
                 <JNPF-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" v-if="isProjectSwitchFlag"
-                  border height="660" :key="165" style="width: 100%;" hasC>
+                  border height="660" :key="165" style="width: 100%;" hasC customKey="JNPFTableKey_168788">
 
                   <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
                     v-if="codeConfig.codeWay != 'auto'">
@@ -233,7 +233,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
-                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_849218">
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
                 <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>

@@ -24,7 +24,7 @@
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
           </div>
           <div style="height: 400px;">
-            <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+            <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_365484">
               <el-table-column prop="realName" label="姓名" min-width="120" />
               <el-table-column prop="deptName" label="部门" min-width="120" />
               <el-table-column prop="receiveNum" label="公海池领取客户数" min-width="160" />

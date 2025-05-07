@@ -49,7 +49,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
-          :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column>
+          :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column customKey="JNPFTableKey_267965">
           <el-table-column prop="code" label="编码" />
           <el-table-column prop="name" label="名称">
             <template slot-scope="scope">

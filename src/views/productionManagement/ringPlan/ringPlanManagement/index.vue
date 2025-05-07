@@ -78,7 +78,7 @@
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             @sort-change="sortChange" custom-column
-            :setColumnDisplayList="columnList" hasC @selection-change="selectFun" >
+            :setColumnDisplayList="columnList" hasC @selection-change="selectFun"  customKey="JNPFTableKey_274404">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
               v-if="$store.getters.configData.produce.production_related_customers" />

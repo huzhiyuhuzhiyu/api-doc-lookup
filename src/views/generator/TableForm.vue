@@ -27,7 +27,7 @@
       </div>
     </el-row>
     <JNPF-table v-loading="listLoading" :data="list" hasC @selection-change="handleSelectionChange"
-      :border="false">
+      :border="false" customKey="JNPFTableKey_764164">
       <el-table-column prop="table" label="表名" width="300" />
       <el-table-column prop="tableName" label="说明" show-overflow-tooltip />
       <el-table-column prop="sum" label="总数" width="90" />

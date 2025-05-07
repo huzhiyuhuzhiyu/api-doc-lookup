@@ -46,7 +46,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
+        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;" customKey="JNPFTableKey_392631">
           <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
           <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
           <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />

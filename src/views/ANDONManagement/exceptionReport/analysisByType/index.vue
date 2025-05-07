@@ -21,7 +21,7 @@
             <el-button type="primary" v-has="'btn_export'" size="mini" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
           </div>
           <div style="height: 400px;">
-            <JNPF-table v-if="tableList.length > 0" ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+            <JNPF-table v-if="tableList.length > 0" ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_879476">
               <el-table-column prop="日期" label="日期" min-width="120" />
               <el-table-column v-for="item in tableColumns" :prop="item" :key="item" :label="item" width="135"></el-table-column>
             </JNPF-table>

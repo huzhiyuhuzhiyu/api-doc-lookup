@@ -42,7 +42,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" :setColumnDisplayList="columnList">
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" :setColumnDisplayList="columnList" customKey="JNPFTableKey_909161">
             <el-table-column prop="fullName" label="名称" show-overflow-tooltip min-width="200" />
             <el-table-column prop="enCode" label="编码" min-width="140" />
             <el-table-column prop="creatorUser" label="创建人" width="160" />

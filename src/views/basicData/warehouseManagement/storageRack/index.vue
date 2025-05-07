@@ -107,7 +107,7 @@
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
           @sort-change="sortChange" custom-column :default-expand-all="expands"
           :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
-          @selection-change="handleSelectionChange">
+          @selection-change="handleSelectionChange" customKey="JNPFTableKey_703578">
           <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
           <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="state" label="启用状态" width="90">

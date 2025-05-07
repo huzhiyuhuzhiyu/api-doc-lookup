@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
-                    custom-column>
+                    custom-column customKey="JNPFTableKey_211244">
                     <el-table-column prop="code" label="编码"></el-table-column>
                     <el-table-column prop="name" label="名称" />
                     <el-table-column prop="price" label="单价" />

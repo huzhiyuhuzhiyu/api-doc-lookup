@@ -108,7 +108,7 @@ clearable>
         </div>
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
-          @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList">
+          @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList" customKey="JNPFTableKey_384231">
           <el-table-column prop="productCategoryName" label="物料分类" min-width="130" sortable="custom" />
           <el-table-column prop="productsCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="initInventoryQuantity" label="期初" width="120" />

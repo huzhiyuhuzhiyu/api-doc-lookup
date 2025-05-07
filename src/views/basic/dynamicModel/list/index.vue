@@ -43,7 +43,7 @@
                 <JNPF-table v-loading="listLoading" :data="list" row-key="id" default-expand-al :key="1"
                     :tree-props="{children: 'children', hasChildren: ''}" @sort-change="sortChange" :has-c="hasBatchBtn"
                     @selection-change="handleSelectionChange" v-if="refreshTable" custom-column
-                    :span-method="arraySpanMethod" ref="tableRef">
+                    :span-method="arraySpanMethod" ref="tableRef" customKey="JNPFTableKey_706232">
                     <template v-if="columnData.type === 4">
                         <template v-for="(item, i) in columnList">
                             <el-table-column :prop="item.prop" :label="item.label" :align="item.align"

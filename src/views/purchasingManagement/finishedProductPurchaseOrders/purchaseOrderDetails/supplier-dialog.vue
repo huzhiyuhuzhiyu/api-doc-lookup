@@ -55,7 +55,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataCustomer">
+          <JNPF-table v-loading="listLoading" :data="tableDataCustomer" customKey="JNPFTableKey_924053">
             <el-table-column prop="code" label="供应商编码" show-overflow-tooltip></el-table-column>
             <el-table-column prop="name" label="供应商名称" />
             <el-table-column label="操作" width="100">

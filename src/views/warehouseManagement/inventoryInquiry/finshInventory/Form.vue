@@ -39,7 +39,7 @@
                 @click="exportForm('dataTables')">导出</el-button>
             </div>
             <JNPF-table v-loading="listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange"
-              ref="dataTables">
+              ref="dataTables" customKey="JNPFTableKey_592783">
 
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
               <el-table-column prop="productCode" label="产品编码" width="160" />

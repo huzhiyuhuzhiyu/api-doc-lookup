@@ -49,7 +49,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_392262">
             <el-table-column prop="no" label="合同编号" min-width="160" />
             <el-table-column prop="contractName" label="合同名称" min-width="180" />
             <el-table-column prop="customerName" label="客户名称" min-width="180" />

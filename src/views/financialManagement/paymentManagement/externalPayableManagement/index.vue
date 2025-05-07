@@ -37,7 +37,7 @@
         </div> -->
 
         <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" @row-dblclick="addOrUpdateHandles">
+          @sort-change="sortChange" @row-dblclick="addOrUpdateHandles" customKey="JNPFTableKey_557340">
           <!-- <el-table-column prop="orderNo" label="请购单号" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{

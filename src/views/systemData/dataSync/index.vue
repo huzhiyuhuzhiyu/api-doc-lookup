@@ -29,7 +29,7 @@
       <el-button size="primary" type="text" @click="batch">批量同步</el-button>
     </div>
     <JNPF-table v-loading="listLoading" ref="multipleTable" :data="list"
-      @selection-change="handleSelectionChange" :hasNO="false" custom-column>
+      @selection-change="handleSelectionChange" :hasNO="false" custom-column customKey="JNPFTableKey_574463">
       <el-table-column type="selection" width="70" align="center" />
       <el-table-column type="index" width="70" label="序号" align="center" />
       <el-table-column prop="table" label="表名" show-overflow-tooltip />

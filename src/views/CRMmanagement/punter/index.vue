@@ -83,7 +83,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_495505">
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id,'look')">{{

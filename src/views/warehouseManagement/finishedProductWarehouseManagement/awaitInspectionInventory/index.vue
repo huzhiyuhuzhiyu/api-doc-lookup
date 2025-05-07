@@ -56,7 +56,7 @@
           </div>
         </div>
         <JNPF-table ref="tabForm" v-if="tableDataFlag" :data="tableData" custom-column row-key="id" :fixedNO="true"
-          @sort-change="sortChange" :setColumnDisplayList="columnList" hasC @selection-change="handeleselectFun">
+          @sort-change="sortChange" :setColumnDisplayList="columnList" hasC @selection-change="handeleselectFun" customKey="JNPFTableKey_879088">
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

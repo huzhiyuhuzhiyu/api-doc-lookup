@@ -44,7 +44,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" hasC custom-column fixedNO row-key="id" :setColumnDisplayList="columnList">
+          <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" hasC custom-column fixedNO row-key="id" :setColumnDisplayList="columnList" customKey="JNPFTableKey_331049">
             <!-- <el-table-column align="center" label="拖动" width="60">
             <template>
               <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />

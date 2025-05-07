@@ -49,7 +49,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" @selection-change="handleSelectionChange" hasC v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+          <JNPF-table ref="dataTable" @selection-change="handleSelectionChange" hasC v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column customKey="JNPFTableKey_801185">
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="contractNo" label="合同编号" min-width="180" />
             <el-table-column prop="num" label="期数" min-width="100" />

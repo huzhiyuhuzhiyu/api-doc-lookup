@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" :data="list" @sort-change='sortChange'
-                    :span-method="arraySpanMethod">
+                    :span-method="arraySpanMethod" customKey="JNPFTableKey_819378">
                     <el-table-column prop="name_name" label="名称" align="left" />
                     <el-table-column prop="content_name" label="字段" align="left" />
                     <el-table-column label="描述" prop="description" algin="left">

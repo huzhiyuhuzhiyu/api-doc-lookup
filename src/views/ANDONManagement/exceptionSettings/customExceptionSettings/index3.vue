@@ -43,7 +43,7 @@
         </div>
         <div class="tableBox">
           <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
-            @current-change="handleCurrentChange" class="dataTable" border ref="listTable" custom-column>
+            @current-change="handleCurrentChange" class="dataTable" border ref="listTable" custom-column customKey="JNPFTableKey_786422">
             <el-table-column prop="code" label="类型编码" min-width="120" sortable="custom" />
             <el-table-column prop="name" label="类型名称" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="150" fixed="right">

@@ -168,7 +168,7 @@
               :highlight-current-row="false" @row-dblclick="rowDblclickFun" @selection-change="currentChange"
               :row-class-name="getRowClassName" :checkSelectable="checkSelectable" ref="dataTable"
               @row-click="handleRowClick" :tree-props="{ children: 'childrenList', hasChildren: '' }" row-key="_index"
-              :default-expand-all="expandsTable" @sort-change="sortChange">
+              :default-expand-all="expandsTable" @sort-change="sortChange" customKey="JNPFTableKey_806548">
 
               <!-- 普通结构 -->
               <template v-if="!listDataTreeFlag">

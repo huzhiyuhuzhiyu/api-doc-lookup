@@ -36,7 +36,7 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table v-loading="listLoading" :data="tableDataList" @sort-change="sortChange" custom-column>
+                <JNPF-table v-loading="listLoading" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_923513">
                     <el-table-column prop="code" label="材质编码">
                     </el-table-column>
                     <el-table-column prop="description" label="材质描述"></el-table-column>

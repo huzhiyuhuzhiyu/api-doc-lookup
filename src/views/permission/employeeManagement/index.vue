@@ -75,7 +75,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableFlag" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList" row-key="id">
+        <JNPF-table v-if="tableFlag" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList" row-key="id" customKey="JNPFTableKey_992416">
           <el-table-column prop="jobNumber" label="工号" min-width="140" sortable="custom" />
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="name" label="姓名" width="120" sortable="custom">

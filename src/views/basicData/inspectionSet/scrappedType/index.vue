@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <JNPF-table v-if="tableDataFlag" v-loading="listLoading" :data="tableDataList" ref="dataTable"
-                    @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+                    @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_368745">
                     <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
                     <el-table-column prop="name" label="不良名称" sortable="custom" />

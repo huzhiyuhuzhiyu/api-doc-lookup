@@ -47,7 +47,7 @@
         <div class="tableBox">
           <JNPF-table class="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" ref="dataTable" custom-column v-if="tableItems.length"
-            @current-change="handleCurrentChange">
+            @current-change="handleCurrentChange" customKey="JNPFTableKey_713903">
             <template v-if="tableItems">
               <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
                 :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
@@ -77,7 +77,7 @@
             </el-table-column>
           </JNPF-table>
           <JNPF-table class="dataTable" v-loading="detailLoading" :data="tableLineData" :fixedNO="true"
-            @sort-change="sortChange" ref="dataLineTable" custom-column v-if="tableLineItems.length">
+            @sort-change="sortChange" ref="dataLineTable" custom-column v-if="tableLineItems.length" customKey="JNPFTableKey_714280">
             <template v-if="tableLineItems">
               <el-table-column v-for="item in tableLineItems" :key="item.prop" :prop="item.prop" :label="item.label"
                 :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"

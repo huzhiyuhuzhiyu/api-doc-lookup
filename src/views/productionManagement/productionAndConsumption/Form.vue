@@ -20,7 +20,7 @@
                   :rules="productRules">
                 <JNPF-table hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
                   @selection-change="handeleProductInfoData" :data="dataFormTwo.data" size="mini" id="table" row-key="code"
-                  :height="customStyleData">
+                  :height="customStyleData" customKey="JNPFTableKey_230166">
                   <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip>
                     <template slot="header">
                       <span class="required">*</span>

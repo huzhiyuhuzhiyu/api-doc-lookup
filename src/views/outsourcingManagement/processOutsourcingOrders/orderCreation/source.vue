@@ -15,7 +15,7 @@
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
             <JNPF-table hasNO fixedNO :hasC="!transferOutFlag" v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
-              :style="{ height: height + 'px' }" ref="sourceTable" @selection-change="handeleProductInfoData">
+              :style="{ height: height + 'px' }" ref="sourceTable" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_713710">
               <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
               <el-table-column prop="projectName" label="所属项目" width="120"
                 v-if="isProjectSwitch === '1'"></el-table-column>

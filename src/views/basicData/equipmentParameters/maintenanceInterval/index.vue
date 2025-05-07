@@ -47,7 +47,7 @@
                 </div>
 
                 <JNPF-table ref="tableForm" v-loading="listLoading" :data="tableDataList" :fixedNO="true"
-                    @sort-change="sortChange" custom-column>
+                    @sort-change="sortChange" custom-column customKey="JNPFTableKey_915437">
                     <el-table-column prop="code" label="编码" width="200"></el-table-column>
                     <el-table-column prop="name" label="名称" width="200" sortable="custom" />
                     <el-table-column prop="cycle" label="周期" width="100" />

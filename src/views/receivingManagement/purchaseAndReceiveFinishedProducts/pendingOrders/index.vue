@@ -71,7 +71,7 @@
           </div>
           <JNPF-table v-if="tableFlag" ref="dataTable" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column hasC
-            @selection-change="selectCustomerFun">
+            @selection-change="selectCustomerFun" customKey="JNPFTableKey_458819">
             <el-table-column prop="orderNo" label="订单号" width="220" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">

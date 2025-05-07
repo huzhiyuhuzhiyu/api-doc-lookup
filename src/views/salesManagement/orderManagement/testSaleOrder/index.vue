@@ -50,7 +50,7 @@
           </div>
         </div>
         <JNPF-table class="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-          ref="dataTable" custom-column v-if="tableItems.length">
+          ref="dataTable" custom-column v-if="tableItems.length" customKey="JNPFTableKey_732946">
           <template v-if="tableItems">
             <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
               :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"

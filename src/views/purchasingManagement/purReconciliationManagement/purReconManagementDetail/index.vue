@@ -54,7 +54,7 @@
         </div>
 
         <JNPF-table v-if="tableFlag" highlight-current-row ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_862275">
           <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">

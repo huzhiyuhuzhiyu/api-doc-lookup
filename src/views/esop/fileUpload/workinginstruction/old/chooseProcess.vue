@@ -68,7 +68,7 @@
                     @row-click="rowClick"
                     :row-class-name="'pointer'"
                     v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-                            :hasNO="true" ref="listTable" :setColumnDisplayList="columnList">
+                            :hasNO="true" ref="listTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_456260">
                     <el-table-column prop="code" label="工序编码" width="180" sortable="custom">
                         <template slot-scope="scope">
                             <el-radio class="square-radio" @input="currentChange(scope.row,scope.row.id)" :label="scope.row.id" v-model="radio" >

@@ -137,7 +137,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableFlag" :data="tableData" custom-column fixedNO @sort-change="sortChange"
-          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
+          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_556108">
           <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom">
             <template slot-scope="scope">

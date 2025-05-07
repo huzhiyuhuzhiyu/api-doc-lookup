@@ -103,7 +103,7 @@
         </div>
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
-          @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList">
+          @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList" customKey="JNPFTableKey_996557">
           <el-table-column prop="productCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="pairingMode" label="配对方式" width="130" sortable="custom" />

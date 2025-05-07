@@ -25,7 +25,7 @@
               </div>
             </div>
             <JNPF-table v-loading="listLoading" :data="dataAuthorizeSchemeList" row-key="id"
-              default-expand-all :tree-props="{ children: 'children', hasChildren: '' }">
+              default-expand-all :tree-props="{ children: 'children', hasChildren: '' }" customKey="JNPFTableKey_309402">
               <el-table-column prop="enCode" label="方案编码" width="160" />
               <el-table-column prop="fullName" label="方案名称" width="160" />
               <el-table-column prop="conditionText" label="过滤条件" />
@@ -53,7 +53,7 @@
               </div>
             </div>
             <JNPF-table v-loading="dataListLoading" :data="dataAuthorizeList" row-key="id"
-              default-expand-all :tree-props="{ children: 'children', hasChildren: '' }">
+              default-expand-all :tree-props="{ children: 'children', hasChildren: '' }" customKey="JNPFTableKey_196079">
               <el-table-column prop="bindTable" label="数据库表" width="120" />
               <el-table-column prop="enCode" label="字段名称" />
               <el-table-column prop="fullName" label="字段说明" show-overflow-tooltip />

@@ -55,7 +55,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable" customKey="JNPFTableKey_370736">
             <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
             <el-table-column prop="thisStepApprover" label="当前审核人" min-width="150" />
             <el-table-column prop="startTime" label="发起/结束时间" min-width="180">

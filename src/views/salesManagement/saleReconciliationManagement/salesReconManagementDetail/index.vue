@@ -54,7 +54,7 @@
         </div>
 
         <JNPF-table  highlight-current-row ref="tableForm" :data="tableDataList" v-if="isProjectSwitchFlag==true"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_856815">
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.accountsReceivableId, 'look')">

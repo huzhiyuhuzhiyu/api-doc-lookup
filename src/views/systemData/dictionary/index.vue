@@ -84,7 +84,7 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" row-key="id" :hasNO="false"
           :default-expand-all="expands" custom-column
-          :tree-props="{ children: 'children', hasChildren: '' }">
+          :tree-props="{ children: 'children', hasChildren: '' }" customKey="JNPFTableKey_357862">
           <el-table-column align="center" label="拖动" width="60">
             <template>
               <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled title='点击拖动' />

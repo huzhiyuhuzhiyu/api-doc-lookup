@@ -35,7 +35,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableDataList" has-c ref="tabForm"
-          @selection-change="handleSelectionChange" custom-column>
+          @selection-change="handleSelectionChange" custom-column customKey="JNPFTableKey_350037">
           <el-table-column prop="userName" label="在线用户" width="120" />
           <el-table-column prop="loginIPAddress" label="登录IP" width="120" />
           <el-table-column prop="loginTime" label="登录时间" width="150" />

@@ -85,7 +85,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_267317">
           <el-table-column prop="name" label="名称" />
           <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
           <el-table-column prop="sortCode" label="排序" />

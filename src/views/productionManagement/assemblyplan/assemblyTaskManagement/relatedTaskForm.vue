@@ -38,7 +38,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
 
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
-            @sort-change="sortChange" custom-column>
+            @sort-change="sortChange" custom-column customKey="JNPFTableKey_824626">
             <el-table-column prop="productionPlanNo" label="计划单号" min-width="180">
             </el-table-column>
             <el-table-column prop="orderNo" label="任务单号" min-width="180" >

@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="import-main" v-show="active==2">
-      <JNPF-table v-loading="listLoading" :data="list">
+      <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_985299">
         <el-table-column prop="enCode" label="工号" width="150">
           <template slot-scope="scope">
             <el-input v-model="scope.row.enCode" />
@@ -136,7 +136,7 @@
           </div>
         </div>
         <p class="contips">以下文件数据为导入异常数据</p>
-        <JNPF-table :data="resultList" height="280px">
+        <JNPF-table :data="resultList" height="280px" customKey="JNPFTableKey_919074">
           <el-table-column prop="enCode" label="工号" width="100" />
           <el-table-column prop="fullName" label="姓名" width="100" />
           <el-table-column prop="gender" label="性别" width="80" />

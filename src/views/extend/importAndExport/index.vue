@@ -41,7 +41,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" :hasNO="false">
+        <JNPF-table v-loading="listLoading" :data="list" :hasNO="false" customKey="JNPFTableKey_142994">
           <el-table-column type="index" width="60" label="序号" fixed="left" align="center" />
           <el-table-column prop="enCode" label="工号" width="100" sortable fixed="left" />
           <el-table-column prop="fullName" label="姓名" width="100" sortable fixed="left" />

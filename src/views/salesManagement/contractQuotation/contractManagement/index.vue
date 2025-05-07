@@ -50,7 +50,7 @@
 
 
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableData"
-                @sort-change="sortChange" custom-column>
+                @sort-change="sortChange" custom-column customKey="JNPFTableKey_785656">
                 <el-table-column prop="contractNo" label="合同号" min-width="200" sortable="custom" fixed="left">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -135,7 +135,7 @@
                 </div>
               </div>
               <JNPF-table ref="linesTableData" v-loading="listLoading" :data="linesTableData" :fixedNO="true"
-                custom-column @sort-change="sortChange">
+                custom-column @sort-change="sortChange" customKey="JNPFTableKey_720165">
                 <el-table-column prop="contractNo" label="合同号" width="200" sortable="custom" fixed="left">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.contractsId, 'look')">

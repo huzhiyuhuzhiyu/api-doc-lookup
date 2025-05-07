@@ -172,7 +172,7 @@ export default {
             @sort-change="sortChange"
             custom-column
             enabled-checkbox-plus
-            ref="dataTable" :setColumnDisplayList="columnList">
+            ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_530266">
             <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
             <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
             <el-table-column prop="productsCode" label="产品编码" min-width="120" />

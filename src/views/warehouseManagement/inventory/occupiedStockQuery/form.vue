@@ -46,7 +46,7 @@
         </div>
         <!-- show-summary :summary-method="getSummaries"  合计行处理 后续需要 放入 -->
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column
-          @sort-change="sortChange">
+          @sort-change="sortChange" customKey="JNPFTableKey_568948">
           <template v-for="item in tableItems">
 
             <el-table-column sortable="custom" v-if="item.prop === 'occupyType'" :key="item.prop" :prop="item.prop"

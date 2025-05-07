@@ -44,7 +44,7 @@
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
             <JNPF-table v-loading="listLoading" :data="list" :border="false" highlight-current-row
-              @row-click="rowClick" :hasNO="false">
+              @row-click="rowClick" :hasNO="false" customKey="JNPFTableKey_321988">
               <el-table-column width="35">
                 <template slot-scope="scope">
                   <el-radio :label="scope.row.field" v-model="checked">&nbsp;</el-radio>

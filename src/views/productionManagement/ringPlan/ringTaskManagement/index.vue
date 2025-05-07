@@ -287,7 +287,7 @@
         </el-form>
       </el-row>
       <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo
-        v-loading="tableloading" border :checkSelectable="row => !row.selectFlag">
+        v-loading="tableloading" border :checkSelectable="row => !row.selectFlag" customKey="JNPFTableKey_232750">
         <el-table-column prop="orderNo" label="工单号" min-width="160" />
         <el-table-column prop="processName" label="工序名称" min-width="120" />
         <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>

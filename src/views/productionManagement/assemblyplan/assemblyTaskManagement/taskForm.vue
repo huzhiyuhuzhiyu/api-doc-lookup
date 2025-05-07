@@ -52,7 +52,7 @@
                 item.fullName
               }}</el-radio-button>
           </el-radio-group>
-          <JNPF-table ref="work" v-if="categoryType == 'workOrder'" :data="workOrderData" fixedNO v-loading="tableloading">
+          <JNPF-table ref="work" v-if="categoryType == 'workOrder'" :data="workOrderData" fixedNO v-loading="tableloading" customKey="JNPFTableKey_512920">
             <el-table-column prop="processName" label="工序名称" min-width="120" />
             <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
             <el-table-column prop="processingType" label="加工类型" min-width="120">
@@ -102,7 +102,7 @@
             </el-table-column>
           </JNPF-table>
           <JNPF-table ref="feed" v-if="categoryType == 'feed'" :data="feedData" fixedNO v-loading="tableloading"
-            :key="Math.random()">
+            :key="Math.random()" customKey="JNPFTableKey_541595">
             <el-table-column prop="productDrawingNo" show-overflow-tooltip label="用料规格"></el-table-column>
             <el-table-column prop="productCode" label="用料编码" />
             <el-table-column prop="processName" label="工序名称" />
@@ -117,7 +117,7 @@
             </el-table-column>
           </JNPF-table>
           <JNPF-table ref="feed" v-if="categoryType == 'report'" :data="recoredsData" fixedNO v-loading="tableloading"
-            :key="Math.random()">
+            :key="Math.random()" customKey="JNPFTableKey_370295">
             <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>

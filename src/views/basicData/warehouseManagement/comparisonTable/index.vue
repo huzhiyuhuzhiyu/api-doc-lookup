@@ -50,7 +50,7 @@
           </div>
   
           <JNPF-table ref="tableForm" v-loading="listLoading" :data="tableDataList" :fixedNO="true"
-                  @sort-change="sortChange" custom-column>
+                  @sort-change="sortChange" custom-column customKey="JNPFTableKey_271159">
             <el-table-column prop="wcode" label="仓库编码" width="200" />
             <el-table-column prop="wname" label="仓库名称" width="200" sortable="custom" />
             <el-table-column prop="scode" label="货架编码" width="200" />

@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
-                    custom-column :setColumnDisplayList="columnList">
+                    custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_486362">
                     
                     <el-table-column prop="productCode" label="产品编码" sortable="custom"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" sortable="custom" v-if="$store.getters.configData.product.enable_productName" />

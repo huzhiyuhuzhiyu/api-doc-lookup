@@ -330,7 +330,7 @@
             <el-tab-pane :label="showLabel2 + '票信息'" name="collectionInfo">
               <div class="JNPF-common-layout-main JNPF-flex-main" :style="{ height: height + 'px' }">
                 <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="makeoutForm"
-                  :data="makeoutList">
+                  :data="makeoutList" customKey="JNPFTableKey_344959">
                   <el-table-column prop="totalReconciliationAmount" :label="'应' + showLabel + '金额'" min-width="120">
                   </el-table-column>
                   <el-table-column prop="totalPaymentAmount" :label="'已' + showLabel + '金额'" min-width="120">

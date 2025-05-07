@@ -14,7 +14,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column >
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column  customKey="JNPFTableKey_734380">
           <el-table-column prop="orderNo" label="同步单号" />
           <el-table-column prop="syncState" label="状态">
             <template slot-scope="scope">

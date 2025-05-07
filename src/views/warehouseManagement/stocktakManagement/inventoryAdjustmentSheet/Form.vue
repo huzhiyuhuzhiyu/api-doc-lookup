@@ -75,7 +75,7 @@
                       </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_578857">
 
                         <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                         <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />
@@ -341,7 +341,7 @@
                 <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
 
 
-                  <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165" style="width: 100%;">
+                  <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165" style="width: 100%;" customKey="JNPFTableKey_746269">
 
                     <el-table-column prop="productName" label="产品名称" v-show="productNameFlag" min-width="160" />
                     <el-table-column prop="productCode" label="产品编码" width="160" :key="4" show-overflow-tooltip />

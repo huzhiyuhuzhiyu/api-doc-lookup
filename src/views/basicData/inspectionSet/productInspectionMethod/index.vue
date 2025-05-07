@@ -88,7 +88,7 @@
         </div>
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" hasC @selection-change="currentChange" :checkSelectable="checkSelectable"
-          :setColumnDisplayList="columnList">
+          :setColumnDisplayList="columnList" customKey="JNPFTableKey_468843">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom">
             <template slot-scope="scope">

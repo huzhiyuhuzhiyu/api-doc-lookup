@@ -47,7 +47,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTablefaultType" :data="tableDataList" v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTablefaultType" :data="tableDataList" v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" @sort-change="sortChange" custom-column customKey="JNPFTableKey_813894">
           <el-table-column prop="code" label="编码" min-width="200">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, actionname, 'look')">{{
@@ -127,7 +127,7 @@
         </div>
         <!-- <JNPF-table v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable" :fixedNO="true"
                     @sort-change="sortChange" custom-column> -->
-        <JNPF-table ref="dataTablefaultLocation" :data="tableDataList" v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTablefaultLocation" :data="tableDataList" v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" @sort-change="sortChange" custom-column customKey="JNPFTableKey_987134">
           <el-table-column prop="code" label="编码" min-width="200" show-overflow-tooltip>
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, actionname, 'look')">{{
@@ -208,7 +208,7 @@
         </div>
         <!-- <JNPF-table v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable" :fixedNO="true"
                     @sort-change="sortChange" custom-column> -->
-        <JNPF-table ref="dataTablemaintenanceItem" :data="tableDataList" custom-column v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" @sort-change="sortChange">
+        <JNPF-table ref="dataTablemaintenanceItem" :data="tableDataList" custom-column v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" @sort-change="sortChange" customKey="JNPFTableKey_908189">
           <el-table-column prop="code" label="编码" min-width="200" show-overflow-tooltip>
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, actionname, 'look')">{{
@@ -289,7 +289,7 @@
         </div>
         <!-- <JNPF-table v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable" :fixedNO="true"
                     @sort-change="sortChange" custom-column> -->
-        <JNPF-table ref="dataTableinspectionItem" :data="tableDataList" v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" custom-column @sort-change="sortChange">
+        <JNPF-table ref="dataTableinspectionItem" :data="tableDataList" v-bind="tableDataList" hasNO fixedNO v-loading="listLoading" custom-column @sort-change="sortChange" customKey="JNPFTableKey_147666">
           <el-table-column prop="code" label="编码" min-width="200">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, actionname, 'look')">{{

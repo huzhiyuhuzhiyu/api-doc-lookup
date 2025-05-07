@@ -11,7 +11,7 @@
         <div class="main">
           <el-collapse v-model="activeNames" class="orderInfo">
             <el-collapse-item title="异常数据明细" name="basicInfo" class="workOrderInfoForm">
-              <JNPF-table ref="work" :data="sourceListData" fixedNo>
+              <JNPF-table ref="work" :data="sourceListData" fixedNo customKey="JNPFTableKey_941002">
                 <el-table-column min-width="160" v-for="item in tableItems" :prop="item" :label="item"
                   :key="item"></el-table-column>
               </JNPF-table>

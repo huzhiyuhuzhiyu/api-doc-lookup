@@ -69,7 +69,7 @@
 
         <JNPF-table @selection-change="handeleProductInfoData" hasC highlight-current-row v-if="isProjectSwitchFlag"
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-          :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
+          :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" customKey="JNPFTableKey_843476">
           <el-table-column prop="orderNo" label="出入库单号" min-width="200" sortable="custom" />
           <el-table-column prop="saleOrderNo" label="销售订单号" min-width="200" sortable="custom" />
           <el-table-column prop="saleNoticeNo" label="销售通知单号" min-width="200" sortable="custom" />

@@ -34,7 +34,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <JNPF-table v-loading="listLoading" :data="list" @cell-dblclick="cellDblclick">
+      <JNPF-table v-loading="listLoading" :data="list" @cell-dblclick="cellDblclick" customKey="JNPFTableKey_151047">
         <el-table-column :prop="item.field.toLowerCase()" :label="item.field" show-overflow-tooltip
           v-for="item in options" :key="item.field" min-width="150" />
       </JNPF-table>

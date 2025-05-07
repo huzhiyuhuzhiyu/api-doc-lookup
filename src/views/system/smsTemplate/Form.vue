@@ -66,7 +66,7 @@
       <el-dialog title="测试" :visible.sync="testVisible" :close-on-click-modal="false"
         class="JNPF-dialog JNPF-dialog_center" lock-scroll append-to-body width="600px">
         <el-form :model="testForm" :rules="testRule" ref="testForm" label-width="80px">
-          <JNPF-table :data="testList">
+          <JNPF-table :data="testList" customKey="JNPFTableKey_535394">
             <el-table-column prop="field" label="参数名称" width="100" />
             <el-table-column prop="value" label="参数赋值">
               <template slot-scope="scope">

@@ -81,7 +81,7 @@
                 </div>
                 <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" custom-column fixedNO
                             @sort-change="sortChange" :setColumnDisplayList="columnList"
-                >
+                 customKey="JNPFTableKey_430759">
                     <el-table-column prop="accountPeriod" label="账期" min-width="160"/>
                     <el-table-column prop="balanceState" label="结存状态" min-width="160">
                         <template slot-scope="scope">

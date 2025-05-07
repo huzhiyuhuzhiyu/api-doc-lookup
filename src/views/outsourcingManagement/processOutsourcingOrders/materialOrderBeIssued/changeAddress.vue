@@ -15,7 +15,7 @@
               </div>
             </div>
 
-            <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+            <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column customKey="JNPFTableKey_566918">
               <!-- <el-table-column prop="orderNo" label="发货单号" width="190" fixed="left" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

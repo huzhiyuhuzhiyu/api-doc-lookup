@@ -213,7 +213,7 @@
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
             <JNPF-table v-loading="listLoading" :data="productList" hasC
-              @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
+              @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange" customKey="JNPFTableKey_328454">
 
               <!-- <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" /> -->

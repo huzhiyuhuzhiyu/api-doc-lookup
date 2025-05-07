@@ -17,7 +17,7 @@
         <el-tab-pane label="人员" name="personnel">
           <!-- 人员配置 -->
           <JNPF-table :hasC="type != 'look'" @selection-change="handelepersonInfoData" :data="personData"
-            style="width: 100%">
+            style="width: 100%" customKey="JNPFTableKey_938151">
             <el-table-column prop="resourceId" label="人员名称">
               <template slot-scope="scope">
                 <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
@@ -48,7 +48,7 @@
 
         <el-tab-pane label="班组" name="work_group">
           <JNPF-table :hasC="type != 'look'" @selection-change="handeleworkgroupInfoData" :data="classData"
-            style="width: 100%">
+            style="width: 100%" customKey="JNPFTableKey_190588">
             <el-table-column prop="resourceId" label="班组名称" ref="workGroup">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.resourceName" placeholder="请输入班组名称" disabled />
@@ -70,7 +70,7 @@
 
         <el-tab-pane label="设备" name="device">
           <JNPF-table :hasC="type != 'look'" @selection-change="handeledeviceInfoData" :data="equipData"
-            style="width: 100%">
+            style="width: 100%" customKey="JNPFTableKey_674539">
             <el-table-column prop="resourceId" label="设备名称">
               <template slot-scope="scope">
 
@@ -95,7 +95,7 @@
         </el-tab-pane>
         <el-tab-pane label="工具" name="tool">
           <JNPF-table :hasC="type != 'look'" @selection-change="handeletoolInfoData" :data="toolData"
-            style="width: 100%">
+            style="width: 100%" customKey="JNPFTableKey_776360">
             <el-table-column prop="resourceId" label="工具名称">
               <template slot-scope="scope">
                 <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
@@ -125,7 +125,7 @@
           <el-tab-pane label="检验人员" name="inspect_personnel">
               <!-- 人员配置 -->
               <JNPF-table :hasC="type != 'look'" @selection-change="handelInspectPersonnelInfoData" :data="inspectPersonnel"
-                          style="width: 100%">
+                          style="width: 100%" customKey="JNPFTableKey_137039">
                   <el-table-column prop="resourceId" label="人员名称">
                       <template slot-scope="scope">
                           <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">

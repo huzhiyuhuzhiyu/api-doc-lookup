@@ -22,7 +22,7 @@
         </div>
       </div>
       <JNPF-table v-loading="listLoading" :data="tableData" row-key="id" :default-expand-all="expands"
-        v-if="refreshTable" :tree-props="{ children: 'children', hasChildren: '' }">
+        v-if="refreshTable" :tree-props="{ children: 'children', hasChildren: '' }" customKey="JNPFTableKey_219044">
 
         <el-table-column prop="fullName" label="名称" />
         <el-table-column prop="enCode" label="编码" width="160" />

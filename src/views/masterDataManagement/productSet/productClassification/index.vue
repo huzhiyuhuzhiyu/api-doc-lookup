@@ -60,7 +60,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" :row-key="'id'" v-if="refreshTable" fixedNO
           :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable"
-          custom-column :setColumnDisplayList="columnList">
+          custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_250656">
           <el-table-column prop="name" label="分类名称" min-width="200">
             <template slot-scope="scope">
               <i :class="[

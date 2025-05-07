@@ -59,7 +59,7 @@
                     </el-row>
                   </div>
                   <div style="height: 714px;" class="JNPF-flex-main" v-loading="listLoading">
-                    <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column>
+                    <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column customKey="JNPFTableKey_682589">
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
                       <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
@@ -181,7 +181,7 @@
                     <div class="container-header">
                       <div class="header-title">委外维修单明细</div>
                     </div>
-                    <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column>
+                    <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column customKey="JNPFTableKey_859508">
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
                       <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />

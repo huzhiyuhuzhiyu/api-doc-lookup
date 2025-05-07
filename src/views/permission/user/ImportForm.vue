@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="import-main" v-show="active==2">
-      <JNPF-table v-loading="listLoading" :data="list">
+      <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_729066">
         <el-table-column prop="account" label="账户" width="150">
           <template slot-scope="scope">
             <el-input v-model="scope.row.account" />
@@ -100,7 +100,7 @@
           <el-button type="text" icon="el-icon-upload2" @click="exportExceptionData">导出异常数据
           </el-button>
         </div>
-        <JNPF-table :data="resultList" height="280px">
+        <JNPF-table :data="resultList" height="280px" customKey="JNPFTableKey_494194">
           <el-table-column prop="account" label="账户" width="150" />
           <el-table-column prop="realName" label="姓名" width="150" />
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />

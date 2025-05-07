@@ -164,7 +164,7 @@
                 <el-tab-pane label="人员" name="personnel" :key="Math.random()">
                   <!-- 人员配置 -->
                   <JNPF-table :hasC="type != 'look'" @selection-change="handelepersonInfoData" :data="personData"
-                    style="width: 100%">
+                    style="width: 100%" customKey="JNPFTableKey_851718">
                     <el-table-column prop="resourceId" label="人员名称">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" :disabled="type === 'look'"
@@ -190,7 +190,7 @@
 
                 <el-tab-pane label="班组" name="work_group">
                   <JNPF-table :hasC="type != 'look'" @selection-change="handeleworkgroupInfoData" :data="classData"
-                    style="width: 100%" :key="Math.random()">
+                    style="width: 100%" :key="Math.random()" customKey="JNPFTableKey_389856">
                     <el-table-column prop="resourceId" label="班组名称" ref="workGroup">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.resourceName" placeholder="请输入班组名称" :disabled="type === 'look'"
@@ -216,7 +216,7 @@
 
                 <el-tab-pane label="设备" name="device" :key="Math.random()">
                   <JNPF-table :hasC="type != 'look'" @selection-change="handeledeviceInfoData" :data="equipData"
-                    style="width: 100%">
+                    style="width: 100%" customKey="JNPFTableKey_397448">
                     <el-table-column prop="resourceId" label="设备名称">
                       <template slot-scope="scope">
                         <el-input :disabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请输入设备名称"
@@ -241,7 +241,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="工具" name="tool" :key="Math.random()">
                   <JNPF-table :hasC="type != 'look'" @selection-change="handeletoolInfoData" :data="toolData"
-                    style="width: 100%">
+                    style="width: 100%" customKey="JNPFTableKey_145381">
                     <el-table-column prop="resourceId" label="工具名称">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.resourceName" placeholder="请输入工具名称" :disabled="type === 'look'"
@@ -267,7 +267,7 @@
                 <el-tab-pane label="检验人员" name="inspect_personnel" :key="Math.random()">
                       <!-- 人员配置 -->
                       <JNPF-table :hasC="type != 'look'" @selection-change="handelInspectPersonInfoData" :data="inspectPersonnel"
-                                  style="width: 100%">
+                                  style="width: 100%" customKey="JNPFTableKey_311317">
                           <el-table-column prop="resourceId" label="人员名称">
                               <template slot-scope="scope">
                                   <el-input v-model="scope.row.resourceName" placeholder="请输入人员名称" :disabled="type === 'look'"

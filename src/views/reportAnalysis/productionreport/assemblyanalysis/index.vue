@@ -35,7 +35,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <JNPF-table ref="dataTable" show-summary :summary-method="getSummaries" v-loading="listLoading" :data="tableData" custom-column :fixedNO="true">
+        <JNPF-table ref="dataTable" show-summary :summary-method="getSummaries" v-loading="listLoading" :data="tableData" custom-column :fixedNO="true" customKey="JNPFTableKey_741714">
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" />
           <el-table-column prop="partnerName" label="客户" min-width="180">
           </el-table-column>

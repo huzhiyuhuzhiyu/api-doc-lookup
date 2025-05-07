@@ -104,7 +104,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          :hasNO="true" hasC @selection-change="currentChange" ref="listTable" :setColumnDisplayList="columnList">
+          :hasNO="true" hasC @selection-change="currentChange" ref="listTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_722642">
           <el-table-column prop="code" label="工序编码" width="120" sortable="custom">
           </el-table-column>
           <el-table-column prop="name" label="工序名称" width="140" sortable="custom" />

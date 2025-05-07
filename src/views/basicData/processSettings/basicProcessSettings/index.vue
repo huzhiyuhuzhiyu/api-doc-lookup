@@ -110,7 +110,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          :hasNO="true" ref="listTable" :setColumnDisplayList="columnList">
+          :hasNO="true" ref="listTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_222041">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="工序编码" width="120" sortable="custom">
             <template slot-scope="scope">

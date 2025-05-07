@@ -27,7 +27,7 @@
     </el-row>
 
     <JNPF-table @selection-change="handleSelectionChange" ref="multipleTable" :data="displayedData" hasC
-      tooltip-effect="dark" style="width: 100%;height:600px" v-loading="listLoading" title="人员列表">
+      tooltip-effect="dark" style="width: 100%;height:600px" v-loading="listLoading" title="人员列表" customKey="JNPFTableKey_921212">
       <!-- <el-table-column type="selection" width="55"> -->
       <!-- </el-table-column> -->
       <el-table-column prop="realName" label="人员名称">

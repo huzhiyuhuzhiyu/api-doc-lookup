@@ -60,7 +60,7 @@
                     @sort-change="sortChange"
                     custom-column
                     :hasC="false"
-                    ref="dataTable" :setColumnDisplayList="columnList">
+                    ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_953430">
                     <el-table-column sortable="custom" prop="processName" label="工序名称" width="120"/>
                     <el-table-column sortable="custom" prop="processCode" label="工序编码" min-width="120"/>
                     <el-table-column sortable="custom" prop="planStartDate" label="计划开始日期" min-width="160"/>

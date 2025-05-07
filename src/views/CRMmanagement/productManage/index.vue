@@ -76,7 +76,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column customKey="JNPFTableKey_978649">
             <el-table-column prop="name" label="产品名称" min-width="180" />
             <el-table-column prop="code" label="产品编码" min-width="180" />
             <el-table-column prop="type" label="产品类型" min-width="160" />

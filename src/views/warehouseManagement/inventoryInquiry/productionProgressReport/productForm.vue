@@ -16,7 +16,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table custom-column ref="dataTable" :data="tableDataList" :fixedNO="true">
+          <JNPF-table custom-column ref="dataTable" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_304904">
             <el-table-column prop="orderNo" label="任务单号" width="180" />
             <el-table-column prop="orderType" label="任务类型" width="120">
               <template slot-scope="scope">

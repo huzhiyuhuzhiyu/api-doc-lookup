@@ -47,7 +47,7 @@
             :fixedNO="true"
          
             custom-column
-          >
+           customKey="JNPFTableKey_321401">
             <el-table-column prop="producerJobNumber" label="生产人工号" />
             <el-table-column prop="producerName" label="生产人">
               <template slot-scope="scope">

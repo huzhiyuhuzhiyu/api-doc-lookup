@@ -76,7 +76,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="istable" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
+        <JNPF-table v-if="istable" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange" customKey="JNPFTableKey_549060">
           <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />

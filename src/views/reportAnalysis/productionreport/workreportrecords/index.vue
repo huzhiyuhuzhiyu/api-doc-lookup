@@ -35,7 +35,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <JNPF-table ref="dataTable" show-summary :summary-method="getSummaries" v-loading="listLoading" :data="tableData" custom-column :fixedNO="true">
+        <JNPF-table ref="dataTable" show-summary :summary-method="getSummaries" v-loading="listLoading" :data="tableData" custom-column :fixedNO="true" customKey="JNPFTableKey_548019">
           <el-table-column prop="workNo" label="报工单号" min-width="180">
           </el-table-column>
           <el-table-column prop="reportingDate" label="报工日期" min-width="160" />

@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column customKey="JNPFTableKey_347176">
           <!-- <el-table-column prop="equipmentIdCode" label="设备编码" width="200" /> -->
           <el-table-column prop="verificationAgency" label="检定机构" width="200" sortable="custom" />
           <el-table-column prop="departmentIdText" label="计划执行部门" width="150" />

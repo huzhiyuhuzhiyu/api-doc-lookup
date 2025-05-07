@@ -24,7 +24,7 @@
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
           </div>
           <div style="height: 400px;">
-            <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+            <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_457950">
               <el-table-column prop="realName" label="员工姓名" min-width="120" />
               <el-table-column prop="travelNum" label="行程数量" min-width="120" />
               <el-table-column prop="mileage" label="里程数" min-width="120" />

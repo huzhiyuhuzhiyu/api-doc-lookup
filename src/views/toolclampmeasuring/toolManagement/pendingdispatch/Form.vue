@@ -284,7 +284,7 @@
       </div>
       <!-- 本工具维修记录 -->
       <el-dialog title="本工具维修记录" :visible.sync="dialogTableVisible" :append-to-body="true" :close-on-click-modal="false">
-        <JNPF-table v-loading="TablelistLoading" :data="tableDatalist" custom-column>
+        <JNPF-table v-loading="TablelistLoading" :data="tableDatalist" custom-column customKey="JNPFTableKey_280758">
           <el-table-column prop="maintenanceNo" label="维修单号" min-width="200">
           </el-table-column>
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
@@ -370,7 +370,7 @@
           <el-checkbox v-model="dataFormline.knowledgeFlag" :disabled="btnType == 'look'">保存为知识库</el-checkbox>
         </el-form>
         <el-dialog width="60%" title="历史解决措施" :visible.sync="innerVisible" append-to-body>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" custom-column :height=500>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" custom-column :height=500 customKey="JNPFTableKey_487009">
             <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
             <el-table-column prop="equipmentIdName" label="工具名称" min-width="200"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />

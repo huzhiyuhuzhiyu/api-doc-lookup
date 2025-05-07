@@ -30,7 +30,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
   
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
-            @sort-change="sortChange" custom-column >
+            @sort-change="sortChange" custom-column  customKey="JNPFTableKey_349605">
             <el-table-column prop="name" label="货位名称" min-width="180">
             </el-table-column>
             <el-table-column prop="code" label="货位编码" width="180" sortable="custom">

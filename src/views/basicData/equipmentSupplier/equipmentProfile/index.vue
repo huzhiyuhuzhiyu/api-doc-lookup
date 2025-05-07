@@ -87,7 +87,7 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
-          @sort-change="sortChange" custom-column>
+          @sort-change="sortChange" custom-column customKey="JNPFTableKey_282841">
           <el-table-column prop="code" label="设备商编码" width="130" fixed="left" sortable="custom">
             <template slot-scope="scope">
 

@@ -67,7 +67,7 @@
               </div>
               <JNPF-table ref="assembleRef" :data="assembleData" :fixedNO="true" v-if="isProjectSwitchFlag"
                 @sort-change="sortChange" custom-column :setColumnDisplayList="columnList1"
-                :checkSelectable="disproduceData" :key="1">
+                :checkSelectable="disproduceData" :key="1" customKey="JNPFTableKey_587408">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -194,7 +194,7 @@
               </div>
               <JNPF-table ref="produceRef" :data="produceData" :fixedNO="true" v-if="isProjectSwitchFlag"
                 :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column :key="2"
-                :checkSelectable="disproduceData">
+                :checkSelectable="disproduceData" customKey="JNPFTableKey_578483">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -348,7 +348,7 @@
 
               <JNPF-table ref="purchaseRef" :data="purchaseData" :fixedNO="true" :key="3" v-if="isProjectSwitchFlag"
                 :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column
-                :checkSelectable="dispurchaseData">
+                :checkSelectable="dispurchaseData" customKey="JNPFTableKey_347222">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -485,7 +485,7 @@
 
               <JNPF-table ref="outRef" :data="outData" :fixedNO="true" @sort-change="sortChange"
                 v-if="isProjectSwitchFlag" :key="4" :setColumnDisplayList="columnList4" custom-column
-                :checkSelectable="disOutData">
+                :checkSelectable="disOutData" customKey="JNPFTableKey_762514">
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

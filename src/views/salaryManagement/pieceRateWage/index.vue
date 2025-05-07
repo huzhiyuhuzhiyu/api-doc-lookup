@@ -53,7 +53,7 @@
                 </div>
               </div>
               <JNPF-table ref="dataTable" v-loading="listLoading" hasC :data="tableData" :fixedNO="true" :checkSelectable="(row) => row.state != '0'"
-                @sort-change="sortChange"   @selection-change="handeleProductInfoData"  custom-column>
+                @sort-change="sortChange"   @selection-change="handeleProductInfoData"  custom-column customKey="JNPFTableKey_976881">
                 <el-table-column prop="producerJobNumber" label="生产人工号" sortable="custom" />
                 <el-table-column prop="producerName" label="生产人名称"  sortable="custom">
                   <template slot-scope="scope">

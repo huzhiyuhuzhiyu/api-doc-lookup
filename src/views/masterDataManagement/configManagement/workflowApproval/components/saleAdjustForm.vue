@@ -276,7 +276,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
+              <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer" customKey="JNPFTableKey_316499">
                 <el-table-column prop="code" label="客户编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="name" label="客户名称" />
                 <el-table-column prop="taxId" label="税号" />
@@ -328,7 +328,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @selection-change="handleSelectionChange"
-                @row-click="rowaction" ref="dataTable">
+                @row-click="rowaction" ref="dataTable" customKey="JNPFTableKey_243899">
                 <el-table-column prop="drawingNo" label="产品图号" />
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编号" /> -->
                 <el-table-column prop="productCode" label="产品编码" show-overflow-tooltip></el-table-column>

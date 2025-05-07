@@ -41,7 +41,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
-          class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
+          class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_454446">
           <el-table-column prop="lineCode" label="产线编码" align="left" sortable="custom" min-width="120">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">

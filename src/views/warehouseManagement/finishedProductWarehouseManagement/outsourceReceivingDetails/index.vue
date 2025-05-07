@@ -69,7 +69,7 @@
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange" >
+            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange"  customKey="JNPFTableKey_904853">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary"

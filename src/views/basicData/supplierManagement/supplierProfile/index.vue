@@ -123,7 +123,7 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"
-          :element-loading-text="loadingText">
+          :element-loading-text="loadingText" customKey="JNPFTableKey_849109">
           <el-table-column prop="code" label="编码" width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"

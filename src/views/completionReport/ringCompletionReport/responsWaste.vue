@@ -13,7 +13,7 @@
             <el-button type="text" icon="el-icon-plus" @click="addLinFun"
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
           </div>
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_491034">
             <el-table-column prop="scrapCategoryName" label="责废原因" min-width="180" sortable="custom">
               <template slot="header">
                 <span class="required">*</span>责废原因

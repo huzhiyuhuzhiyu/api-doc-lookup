@@ -514,7 +514,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
-                @selection-change="handleSelectionChangeAllPruduct" ref="form">
+                @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_838151">
                 <el-table-column prop="orderNo" label="发货单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="deliverDate" label="发货日期" width="160" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />

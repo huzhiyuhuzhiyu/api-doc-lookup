@@ -59,7 +59,7 @@
                       |
                       <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true" hasC
                         @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                        id="table" border>
+                        id="table" border customKey="JNPFTableKey_101214">
                         <el-table-column prop="projectName" label="所属项目" width="120"
                           v-if="abProjectSwitchVisible"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120"

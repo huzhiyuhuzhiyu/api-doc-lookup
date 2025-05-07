@@ -49,7 +49,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column >
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column  customKey="JNPFTableKey_415058">
           <el-table-column prop="customerMaterialCode" label="客户图号" sortable="custom" />
           <el-table-column prop="customerName" label="客户名称" sortable="custom" />
           <el-table-column prop="dataType" label="数据类型" sortable="custom">

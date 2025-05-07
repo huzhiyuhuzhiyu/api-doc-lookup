@@ -53,7 +53,7 @@
           </div>
         </div>
         <JNPF-table ref="tabForm"  :data="tableData" custom-column row-key="id" :fixedNo="true" v-if="isProjectSwitchFlag"
-          @sort-change="sortChange">
+          @sort-change="sortChange" customKey="JNPFTableKey_562547">
 
           <el-table-column prop="productDrawingNo" label="品名规格" width="330" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />

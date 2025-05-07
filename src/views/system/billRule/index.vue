@@ -79,7 +79,7 @@
             </div>
           </div>
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" custom-column row-key="id"
-            :setColumnDisplayList="columnList" hasMove @changeMove="changeMove" :fixedNO="true">
+            :setColumnDisplayList="columnList" hasMove @changeMove="changeMove" :fixedNO="true" customKey="JNPFTableKey_417023">
             <el-table-column prop="fullName" label="业务名称" min-width="200" />
             <el-table-column prop="enCode" label="业务编码" min-width="200" />
             <el-table-column prop="codeWay" label="编码生成方式" width="150">

@@ -37,7 +37,7 @@
                     </div>
                 </div>
                     <JNPF-table v-loading="listLoading" :data="list" @sort-change='sortChange' :span-method="arraySpanMethod" 
->
+ customKey="JNPFTableKey_470331">
                                                 <el-table-column prop="content_name" label="模板内容（JSON）"  align="left"
 />
                             <el-table-column label="操作" fixed="right"

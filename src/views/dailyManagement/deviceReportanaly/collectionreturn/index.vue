@@ -42,7 +42,7 @@
                     </el-row>
                   </div>
                   <div style="height: 672px;" class="JNPF-flex-main">
-                    <JNPF-table ref="dataTableInspection" v-loading="listLoadingInspection" :data="tableInspectionresults" fixedNO custom-column>
+                    <JNPF-table ref="dataTableInspection" v-loading="listLoadingInspection" :data="tableInspectionresults" fixedNO custom-column customKey="JNPFTableKey_988900">
                       <el-table-column prop="requisitionType" label="状态" width="120" align="center">
                         <template slot-scope="scope">
                           <div v-if="scope.row.requisitionType == 'requisition'"><el-tag>领用</el-tag>

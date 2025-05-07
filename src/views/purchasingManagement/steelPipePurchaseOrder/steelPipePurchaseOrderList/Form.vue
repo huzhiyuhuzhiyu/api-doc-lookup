@@ -118,7 +118,7 @@
                       </div>
                       <JNPF-table :fixedNO="true" :hasC="btnType!='look'" ref="multipleTable" @selection-change="handeleProductInfoData"
                         hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" border
-                        :height="customStyleData">
+                        :height="customStyleData" customKey="JNPFTableKey_137025">
                         <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
                           key="1"></el-table-column>
                         <el-table-column prop="productName" label="产品名称" width="120" v-if="$store.getters.configData.product.enable_productName"

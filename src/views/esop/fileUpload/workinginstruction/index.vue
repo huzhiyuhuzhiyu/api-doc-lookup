@@ -62,7 +62,7 @@
                     custom-column
                     enabled-checkbox-plus
                     :hasC="hasTableTopOpts"
-                    ref="dataTable" :setColumnDisplayList="columnList">
+                    ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_790093">
                     <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
                     <el-table-column prop="cooperativePartnerName" label="客户名称" width="120"  v-if="isCustomerProductPage" />
                     <template v-if="!isNoProductPage || isImage">

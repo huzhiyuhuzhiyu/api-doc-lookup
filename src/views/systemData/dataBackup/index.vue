@@ -29,7 +29,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableList">
+        <JNPF-table v-loading="listLoading" :data="tableList" customKey="JNPFTableKey_799200">
           <el-table-column prop="fileName" label="文件名" sortable show-overflow-tooltip />
           <el-table-column prop="fileSize" label="文件大小" sortable width="120" />
           <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" sortable

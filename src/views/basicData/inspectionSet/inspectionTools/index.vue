@@ -79,7 +79,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" ref="dataTable" :fixedNO="true" :customColumn="true"
-          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_745385">
           <el-table-column prop="code" label="检验工具编码" min-width="200" sortable />
 
           <el-table-column prop="name" label="检验工具名称" min-width="200" sortable />

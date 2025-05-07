@@ -53,7 +53,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
+          ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList" customKey="JNPFTableKey_441014">
           <template v-for="item in tableItems">
             <el-table-column v-if="item.prop == 'effectiveDate'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center" :sortable="item.sortable"

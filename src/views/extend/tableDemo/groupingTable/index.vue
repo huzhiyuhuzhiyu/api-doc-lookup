@@ -41,7 +41,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" row-key="id" v-if="refreshTable"
-          :tree-props="{children: 'children', hasChildren: ''}" :default-expand-all="expands">
+          :tree-props="{children: 'children', hasChildren: ''}" :default-expand-all="expands" customKey="JNPFTableKey_318021">
           <el-table-column prop="projectName" label="项目名称" width="200">
             <template slot-scope="scope">
               <span v-if="scope.row.fullName"

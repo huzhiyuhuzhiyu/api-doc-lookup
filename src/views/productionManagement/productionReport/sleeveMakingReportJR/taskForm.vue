@@ -17,7 +17,7 @@
               </div>
             </div>
             <JNPF-table v-loading="listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange" custom-column
-              ref="dataTable">
+              ref="dataTable" customKey="JNPFTableKey_762015">
               <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="160"
                 sortable="custom"></el-table-column>
               <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>

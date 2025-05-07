@@ -66,7 +66,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :hasC="false" :data="tableData" :fixedNO="true"
             :checkSelectable="(row) => row.state != '0'" @sort-change="sortChange"
             @selection-change="handeleProductInfoData" custom-column :show-summary="false"
-            :summary-method="getSummaries" :setColumnDisplayList="setColumnDisplayList">
+            :summary-method="getSummaries" :setColumnDisplayList="setColumnDisplayList" customKey="JNPFTableKey_804192">
 
             <el-table-column prop="producerJobNumber" label="生产人工号" min-width="180" />
             <el-table-column prop="producerName" label="生产人名称" min-width="120" />

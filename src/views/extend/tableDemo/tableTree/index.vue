@@ -1,7 +1,7 @@
 <template>
   <div class="app-container TableTree-container">
     <JNPF-table v-loading="listLoading" :data="industryTypeList" row-key="id"
-      :tree-props="{children: 'children', hasChildren: ''}" default-expand-all>
+      :tree-props="{children: 'children', hasChildren: ''}" default-expand-all customKey="JNPFTableKey_409340">
       <el-table-column prop="fullName" label="名称" />
       <el-table-column prop="id" label="编码" />
     </JNPF-table>

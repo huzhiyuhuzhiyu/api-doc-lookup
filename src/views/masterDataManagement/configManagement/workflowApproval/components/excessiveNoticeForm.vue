@@ -288,7 +288,7 @@
                 @row-click="handleRowClick"
                 hasC
                 :checkSelectable="disproduceData"
-              >
+               customKey="JNPFTableKey_204005">
                 <el-table-column prop="productCode" label="产品编码" :key="3" min-width="200"/>
                 <el-table-column prop="productName" label="产品名称" :key="4" min-width="200">
                 </el-table-column>

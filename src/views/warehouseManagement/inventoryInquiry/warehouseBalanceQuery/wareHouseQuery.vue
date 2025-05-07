@@ -100,7 +100,7 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table  v-if="tableData.length" @sort-change="sortChange"  ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList">
+                <JNPF-table  v-if="tableData.length" @sort-change="sortChange"  ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_738242">
                     <template v-for="item in tableItems">
                         <el-table-column :formatter="item.formatter || toFormatter" v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop" :label="item.label"
                                          :fixed="item.fixed || false" :min-width="item.minWidth || 120" :sortable="item.sortable ? 'custom' : false"

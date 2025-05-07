@@ -67,7 +67,7 @@
           </div>
           <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
-            :setColumnDisplayList="columnList">
+            :setColumnDisplayList="columnList" customKey="JNPFTableKey_620215">
             <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="220" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="220" sortable="custom"></el-table-column>

@@ -635,7 +635,7 @@
               <div class="JNPF-common-head">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
               </div>
-              <JNPF-table :data="historyPriceData" ref="dataTable" custom-column>
+              <JNPF-table :data="historyPriceData" ref="dataTable" custom-column customKey="JNPFTableKey_359630">
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
                 <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
@@ -730,7 +730,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="allproductData" hasC @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+              <JNPF-table v-loading="listLoading" :data="allproductData" hasC @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_145309">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" />

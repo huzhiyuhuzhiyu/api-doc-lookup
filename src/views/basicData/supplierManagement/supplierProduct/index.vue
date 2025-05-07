@@ -62,7 +62,7 @@
                 </div>
               </div>
               <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="tableForm"
-                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList">
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="lastColumnList" customKey="JNPFTableKey_995482">
                 <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
                 <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"

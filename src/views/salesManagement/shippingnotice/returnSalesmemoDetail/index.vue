@@ -62,7 +62,7 @@
           </div>
 
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="false" v-if="tableDataFlag" @sort-change="sortChange"
-            custom-column :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
+            custom-column :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC customKey="JNPFTableKey_601801">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">{{

@@ -60,7 +60,7 @@
             </el-collapse-item>
             <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
             <el-collapse-item title="订单产品" name="product">
-              <JNPF-table ref="work" :data="productData" fixedNO  v-loading="tableloading" class="productTable">
+              <JNPF-table ref="work" :data="productData" fixedNO  v-loading="tableloading" class="productTable" customKey="JNPFTableKey_206091">
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                 </el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
@@ -139,7 +139,7 @@
                   }}</el-radio-button>
               </el-radio-group>
               <JNPF-table ref="report" v-if="categoryType == 'plan'" height="450" :data="planData" fixedNO
-                v-loading="tableloading" :key="Math.random()">
+                v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_807777">
                 <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180"  />
                 <el-table-column prop="productsDrawingNo" label="品名规格" min-width="300" show-overflow-tooltip ></el-table-column>
                 <el-table-column prop="productsCode" label="产品编码" min-width="140"  />

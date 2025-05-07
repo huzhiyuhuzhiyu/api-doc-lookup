@@ -51,7 +51,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
 
-          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable" customKey="JNPFTableKey_995901">
             <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
             <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
             <el-table-column prop="userName" label="发起人员" min-width="130" />

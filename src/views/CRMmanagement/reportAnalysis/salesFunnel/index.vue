@@ -24,7 +24,7 @@
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
           </div> -->
           <div style="height: 400px;">
-            <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+            <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_381136">
               <el-table-column prop="settingName" label="阶段" min-width="120" />
               <el-table-column prop="businessMoney" label="金额(元)" min-width="120" />
               <el-table-column prop="businessNum" label="商机数" min-width="120" />

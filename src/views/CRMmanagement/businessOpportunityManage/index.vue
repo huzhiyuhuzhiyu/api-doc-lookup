@@ -46,7 +46,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_207650">
             <el-table-column prop="businessName" label="商机名称" min-width="180" />
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="customerCode" label="客户编码" min-width="160" />

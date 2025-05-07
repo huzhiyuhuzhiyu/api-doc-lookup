@@ -49,7 +49,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="dataTable" :data="tableData" @sort-change="sortChange" custom-column
-          fixedNO>
+          fixedNO customKey="JNPFTableKey_852683">
           <el-table-column prop="orderNo" label="异常单号" min-width="220" />
           <el-table-column prop="abnormalTypeName" label="异常类型" min-width="120" />
           <el-table-column prop="abnormalContentName" label="异常内容" min-width="120" />

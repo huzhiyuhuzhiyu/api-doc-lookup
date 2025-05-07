@@ -55,7 +55,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_617980">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">

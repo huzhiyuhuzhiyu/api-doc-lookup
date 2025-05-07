@@ -95,7 +95,7 @@
                       </div> -->
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
-                        style="width: 100%;">
+                        style="width: 100%;" customKey="JNPFTableKey_284580">
 
 
 
@@ -368,7 +368,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
-                @selection-change="handleSelectionChangeAllPruduct" ref="form">
+                @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_654050">
                 <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="180" />
                 <el-table-column prop="productName" label="产品编码" width="160" />

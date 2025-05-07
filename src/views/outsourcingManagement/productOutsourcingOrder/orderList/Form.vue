@@ -86,7 +86,7 @@
                     <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true"  :hasC="type !== 'look'"
                       ref="multipleTable" @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
                       :data="dataFormTwo.data" id="table" border  @row-click="openDetails" v-if="tableDataFlag"
-                      :row-style="rowStyle" :height="customStyleData">
+                      :row-style="rowStyle" :height="customStyleData" customKey="JNPFTableKey_889252">
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>

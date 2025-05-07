@@ -62,7 +62,7 @@
           </div>
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_215979">
             <el-table-column prop="orderNo" label="采购单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">

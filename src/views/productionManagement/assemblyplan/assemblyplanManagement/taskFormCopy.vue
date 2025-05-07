@@ -73,7 +73,7 @@
                     }}</el-radio-button>
                 </el-radio-group>
                 <JNPF-table ref="guidebook" v-if="categoryType == 'guidebook'" :data="guidebookData" fixedNO
-                  :height="height" v-loading="tableloading" :key="Math.random()">
+                  :height="height" v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_520312">
 
                   <el-table-column prop="orderNo" label="上传单编码" min-width="180" />
                   <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
@@ -107,7 +107,7 @@
                   </el-table-column>
                 </JNPF-table>
                 <JNPF-table ref="inspectionManual" v-if="categoryType == 'inspectionManual'"
-                  :data="inspectionManualData" fixedNO :height="height" v-loading="tableloading" :key="Math.random()">
+                  :data="inspectionManualData" fixedNO :height="height" v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_556182">
 
                   <!-- <el-table-column prop="orderNo" label="上传单编码" min-width="180" /> -->
                   <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
@@ -135,7 +135,7 @@
                   </el-table-column>
                 </JNPF-table>
                 <JNPF-table ref="drawing" v-if="categoryType == 'drawing'" :data="drawingData" fixedNO :height="height"
-                  v-loading="tableloading" :key="Math.random()">
+                  v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_725593">
 
                   <!-- <el-table-column prop="orderNo" label="上传单编码" min-width="180" /> -->
                   <el-table-column prop="drawingNo" label="品名规格" min-width="300" show-overflow-tooltip />
@@ -164,7 +164,7 @@
                   </el-table-column>
                 </JNPF-table>
                 <JNPF-table ref="customerProduct" v-if="categoryType == 'customerProduct'" :data="customerProductData"
-                  fixedNO :height="height" v-loading="tableloading" :key="Math.random()">
+                  fixedNO :height="height" v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_711378">
                   <!--                    <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />-->
                   <el-table-column prop="drawingNo" label="品名规格" min-width="305" />
                   <el-table-column prop="productsCode" label="产品编码" min-width="160" />

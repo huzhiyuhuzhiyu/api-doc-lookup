@@ -32,7 +32,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
+        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" customKey="JNPFTableKey_249604">
           <el-table-column prop="fullName" label="模板名称" min-width="120" show-overflow-tooltip />
           <el-table-column prop="enCode" label="模板编码" min-width="120" />
           <el-table-column prop="company" label="短信厂家" min-width="200" align="center" />

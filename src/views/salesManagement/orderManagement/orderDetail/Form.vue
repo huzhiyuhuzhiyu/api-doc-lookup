@@ -463,7 +463,7 @@
                 </el-form>
               </el-row>
               <JNPF-table v-loading="formLoading" :data="scheduleData" custom-column ref="scheduleRef"
-                :style="{ height: customStyleData + 'px' }">
+                :style="{ height: customStyleData + 'px' }" customKey="JNPFTableKey_210189">
                 <el-table-column prop="customerProductNo" label="客户物料号" min-width="160" />
                 <el-table-column prop="customerProductDrawingNo" label="客户图号" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" />
@@ -684,7 +684,7 @@
                 </el-form>
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
-                <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
+                <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer" customKey="JNPFTableKey_734691">
                   <el-table-column prop="code" label="客户编码" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="name" label="客户名称" />
                   <el-table-column prop="taxId" label="税号" />
@@ -768,7 +768,7 @@
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
                 <JNPF-table v-loading="listLoading" :data="allproductData" hasC
-                  @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                  @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_231365">
                   <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="name" label="产品名称" />
                   <el-table-column prop="drawingNo" label="图号" />

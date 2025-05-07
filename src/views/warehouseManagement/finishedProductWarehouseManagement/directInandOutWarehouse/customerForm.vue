@@ -62,7 +62,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
+          <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer" customKey="JNPFTableKey_787856">
             <el-table-column prop="code" label="客户编码" show-overflow-tooltip></el-table-column>
             <el-table-column prop="name" label="客户名称" />
             <el-table-column prop="taxId" label="税号" />

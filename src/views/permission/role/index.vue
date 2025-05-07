@@ -71,7 +71,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="list" custom-column>
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="list" custom-column customKey="JNPFTableKey_306943">
           <el-table-column prop="fullName" label="角色名称" width="200" />
           <el-table-column prop="enCode" label="角色编码" width="150" />
           <el-table-column prop="type" label="角色类型" width="90" align="center" />

@@ -57,7 +57,7 @@
           </div>
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="tableFlag" highlight-current-row :fixedNO="true"
             ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+            :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_372820">
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="orderNo" label="订单号" width="160" sortable="custom" />

@@ -41,7 +41,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id" customKey="JNPFTableKey_347429">
 
           <el-table-column prop="tableName" label="表名" >
             <template slot-scope="scope">

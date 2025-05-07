@@ -66,7 +66,7 @@
                 <div class="status"  style="margin-left:10px;background:#00b050;right:120px">已完成</div>
                 <div class="status"  >进行中</div>
               </template>
-                <JNPF-table :highlight-current-row="false" v-if="titleFlag==1" :cell-style="tableCellStyle" ref="dataTable" v-loading="listLoading" :data="orderDataFormLine" :fixedNO="true" >
+                <JNPF-table :highlight-current-row="false" v-if="titleFlag==1" :cell-style="tableCellStyle" ref="dataTable" v-loading="listLoading" :data="orderDataFormLine" :fixedNO="true"  customKey="JNPFTableKey_169295">
                     <el-table-column prop="customerProductNo" label="客户物料号" min-width="200"   />
                     <el-table-column prop="customerProductDrawingNo" label="客户产品图号" min-width="200" >
                     </el-table-column>
@@ -95,7 +95,7 @@
                     </el-table-column>
               </JNPF-table>
               <JNPF-table :highlight-current-row="false" v-if="titleFlag==2" :cell-style="tableCellStyle" ref="dataTables" v-loading="listLoading" :data="orderDataFormLine" :fixedNO="true" :row-class-name="tableRowClassName"  :row-style="selectedHighlight"
-                @row-click="rowClick">
+                @row-click="rowClick" customKey="JNPFTableKey_593201">
                     <el-table-column prop="customerProductNo" label="客户物料号" min-width="200"   />
                     <el-table-column prop="customerProductDrawingNo" label="客户产品图号" min-width="200" >
                     </el-table-column>
@@ -127,7 +127,7 @@
             <el-collapse-item title="阶段信息" name="stageOnfo">
                 <el-tabs v-model="activeName"  @tab-click="handleClick" class="stafeOnfo">
                   <el-tab-pane label="分配" name="distribution">
-                    <JNPF-table ref="distributionREF" v-loading="listLoading" :data="distributionData" :fixedNO="true">
+                    <JNPF-table ref="distributionREF" v-loading="listLoading" :data="distributionData" :fixedNO="true" customKey="JNPFTableKey_198955">
                         <el-table-column prop="customerProductNo" label="客户物料号"    />
                         <el-table-column prop="customerProductDrawingNo" label="客户产品图号" >
                           
@@ -147,7 +147,7 @@
                               @pagination="getsaleOrderLineListFun"  />
                   </el-tab-pane>
                   <el-tab-pane label="计划" name="plan">
-                    <JNPF-table ref="planREF" v-loading="listLoading" :data="planData" :fixedNO="true">
+                    <JNPF-table ref="planREF" v-loading="listLoading" :data="planData" :fixedNO="true" customKey="JNPFTableKey_662688">
                         <el-table-column prop="planNo" label="计划单号"   />
                         <el-table-column prop="originNo" label="来源单号"  >
                             
@@ -180,7 +180,7 @@
                     <el-tabs v-model="mrpactiveName" @tab-click="handleMRPClick">
                         <el-tab-pane label="生产需求" name="mrpproduce">
                             <JNPF-table  :data="produceData" highlight-current-row
-                              class="dataTables" border ref="MRPlistTable">
+                              class="dataTables" border ref="MRPlistTable" customKey="JNPFTableKey_631705">
                               <el-table-column prop="productCode" label="产品编码"   width="140"/>
                               <el-table-column prop="productName" label="产品名称"    width="180"/>
                               <el-table-column prop="productDrawingNo" label="产品图号"  min-width="470"  />
@@ -239,7 +239,7 @@
                         </el-tab-pane>
                         <el-tab-pane label="采购需求" name="mrppurchase">
                             <JNPF-table v-loading="listLoading"  :data="purchaseDataMRP" highlight-current-row
-                              class="dataTabless" border ref="MRPlistTables">
+                              class="dataTabless" border ref="MRPlistTables" customKey="JNPFTableKey_768655">
                               <el-table-column prop="productCode" label="产品编码"   width="140"/>
                               <el-table-column prop="productName" label="产品名称"    width="180"/>
                               <el-table-column prop="productDrawingNo" label="产品图号"  min-width="470"  />
@@ -313,7 +313,7 @@
                         </el-tab-pane>
                         <el-tab-pane label="外协需求" name="mrpout">
                             <JNPF-table v-loading="listLoading"   :data="outData" highlight-current-row
-                              class="dataTablesss" border ref="listTabless">
+                              class="dataTablesss" border ref="listTabless" customKey="JNPFTableKey_365984">
                               <el-table-column prop="productCode" label="产品编码"  width="140"/>
                               <el-table-column prop="productName" label="产品名称"   width="180"/>
                               <el-table-column prop="productDrawingNo" label="产品图号"  min-width="470"   />
@@ -394,7 +394,7 @@
                     </el-tabs>
                   </el-tab-pane>
                   <el-tab-pane label="采购" name="purchase">
-                    <JNPF-table ref="purchaseREF" v-loading="listLoading" :data="purchaseData" :fixedNO="true">
+                    <JNPF-table ref="purchaseREF" v-loading="listLoading" :data="purchaseData" :fixedNO="true" customKey="JNPFTableKey_725179">
                         <el-table-column prop="orderNo" label="采购单号"    />
                         <el-table-column prop="cooperativePartnerCode" label="供应商编码" >
                            
@@ -423,7 +423,7 @@
                               @pagination="purchaseOrderListFun" /> 
                   </el-tab-pane>
                   <el-tab-pane label="领料" name="picking">
-                    <JNPF-table ref="pickingREF" v-loading="listLoading" :data="pickingData" :fixedNO="true">
+                    <JNPF-table ref="pickingREF" v-loading="listLoading" :data="pickingData" :fixedNO="true" customKey="JNPFTableKey_319356">
                         <el-table-column prop="orderNo" label="领料单号"   />
                         <el-table-column prop="receiveType" label="领料类型" >
                           <template slot-scope="scope">
@@ -451,7 +451,7 @@
                               @pagination="getWithdrawalListFun"  /> 
                   </el-tab-pane>
                   <el-tab-pane label="产品外协" name="productOut">
-                    <JNPF-table ref="productOutREF" v-loading="listLoading" :data="productOutData" :fixedNO="true">
+                    <JNPF-table ref="productOutREF" v-loading="listLoading" :data="productOutData" :fixedNO="true" customKey="JNPFTableKey_912673">
                         <el-table-column prop="orderNo" label="外协单号"    />
                         <el-table-column prop="cooperativePartnerCode" label="外协供应商编码" >
                           
@@ -479,7 +479,7 @@
                               @pagination="getProductOrderListFun"  /> 
                   </el-tab-pane>
                   <el-tab-pane label="生产" name="production">
-                    <JNPF-table ref="productionREF" v-loading="listLoading" :data="productionData" :fixedNO="true">
+                    <JNPF-table ref="productionREF" v-loading="listLoading" :data="productionData" :fixedNO="true" customKey="JNPFTableKey_899321">
                         <el-table-column prop="orderNo" label="订单号" width="180">
                             
                         </el-table-column>
@@ -541,7 +541,7 @@
                               @pagination="getsaleOrderLineListFun"  /> 
                   </el-tab-pane>
                   <el-tab-pane label="工序外协" name="productionOut">
-                    <JNPF-table ref="productionOutREF" v-loading="listLoading" :data="productionOutData" :fixedNO="true">
+                    <JNPF-table ref="productionOutREF" v-loading="listLoading" :data="productionOutData" :fixedNO="true" customKey="JNPFTableKey_150733">
                         <el-table-column prop="orderNo" label="外协单号"    />
                         <el-table-column prop="cooperativePartnerCode" label="外协供应商编码" >
                             
@@ -571,7 +571,7 @@
                   <el-tab-pane label="入库" name="warehousing">
                
                     
-                    <JNPF-table ref="warehousingREF" v-loading="listLoading" :data="warehousingData" :fixedNO="true">
+                    <JNPF-table ref="warehousingREF" v-loading="listLoading" :data="warehousingData" :fixedNO="true" customKey="JNPFTableKey_259018">
                         <el-table-column prop="orderNo" label="入库单号"    />
                         <el-table-column prop="sourceType" label="来源类型" >
                           
@@ -594,7 +594,7 @@
                               @pagination="getWarehouseListFun"  /> 
                   </el-tab-pane>
                   <el-tab-pane label="发货" name="delivery">
-                    <JNPF-table ref="deliveryREF" v-loading="listLoading" :data="deliveryData" :fixedNO="true">
+                    <JNPF-table ref="deliveryREF" v-loading="listLoading" :data="deliveryData" :fixedNO="true" customKey="JNPFTableKey_749224">
                         <el-table-column prop="orderNo" label="发货通知单号"   width="180" />
                         <el-table-column prop="partnerCode" label="客户编码" width="120">
                          
@@ -656,7 +656,7 @@
                   </el-tab-pane>
                          
                   <el-tab-pane label="对账收款" name="reconciliation">
-                    <JNPF-table ref="reconciliationREF" v-loading="listLoading" :data="reconciliationData" :fixedNO="true">
+                    <JNPF-table ref="reconciliationREF" v-loading="listLoading" :data="reconciliationData" :fixedNO="true" customKey="JNPFTableKey_583502">
                         <el-table-column prop="orderNo" label="对账单号"    width="160"/>
                         <el-table-column prop="reconciliationDate" label="对账日期" width="120">
                           
@@ -772,7 +772,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="allOrderList" :fixedNO="true">
+              <JNPF-table v-loading="listLoading" :data="allOrderList" :fixedNO="true" customKey="JNPFTableKey_343151">
 
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" />
                 <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" />

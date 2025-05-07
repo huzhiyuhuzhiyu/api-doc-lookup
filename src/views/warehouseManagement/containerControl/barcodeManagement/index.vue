@@ -49,7 +49,7 @@
                 </div>
               </div>
               <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"
-                hasC @selection-change="currentChange" custom-column>
+                hasC @selection-change="currentChange" custom-column customKey="JNPFTableKey_952505">
                 <el-table-column prop="barCode" label="条码" fixed="left" min-width="200" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click="addOrUpdateHandle(scope.row.barCode, 'look')">

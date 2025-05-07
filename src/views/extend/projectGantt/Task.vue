@@ -31,7 +31,7 @@
           </div>
         </el-row>
         <JNPF-table v-loading="listLoading" :data="list" row-key="id" :hasNO="false"
-          :tree-props="{children: 'children', hasChildren: ''}" default-expand-all>
+          :tree-props="{children: 'children', hasChildren: ''}" default-expand-all customKey="JNPFTableKey_769069">
           <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
           <el-table-column prop="fullName" label="任务名称" show-overflow-tooltip width="200"
             fixed="left" />

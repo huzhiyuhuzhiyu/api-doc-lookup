@@ -28,7 +28,7 @@
                   <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
                 </div>
                 <div style="height: 400px;">
-                  <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+                  <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_868737">
                     <el-table-column prop="realName" label="姓名" min-width="120" />
                     <el-table-column prop="cycle" label="平均成交周期(天)" min-width="150" />
                     <el-table-column prop="customerNum" label="成交客户数" min-width="150" />
@@ -62,7 +62,7 @@
                   <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm2" :disabled="!tableList2.length">导出</el-button>
                 </div>
                 <div style="height: 400px;">
-                  <JNPF-table ref="tabForm2" show-summary :summary-method="getSummaries" :data="tableList2" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+                  <JNPF-table ref="tabForm2" show-summary :summary-method="getSummaries" :data="tableList2" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_237139">
                     <el-table-column prop="type" label="地区" min-width="120" />
                     <el-table-column prop="cycle" label="平均成交周期(天)" min-width="150" />
                     <el-table-column prop="customerNum" label="成交客户数" min-width="150" />
@@ -96,7 +96,7 @@
                   <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm3" :disabled="!tableList3.length">导出</el-button>
                 </div>
                 <div style="height: 400px;">
-                  <JNPF-table show-summary :summary-method="getSummaries" :data="tableList3" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+                  <JNPF-table show-summary :summary-method="getSummaries" :data="tableList3" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_446056">
                     <el-table-column prop="productName" label="产品名称" min-width="120" />
                     <el-table-column prop="cycle" label="平均成交周期(天)" min-width="150" />
                     <el-table-column prop="customerNum" label="成交客户数" min-width="150" />

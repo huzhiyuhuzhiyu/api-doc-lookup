@@ -32,7 +32,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
+        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" customKey="JNPFTableKey_364142">
           <el-table-column prop="fullName" label="任务标题" show-overflow-tooltip min-width="150" />
           <el-table-column prop="enCode" label="任务编码" width="200" />
           <el-table-column prop="runCount" label="执行次数" width="100" />

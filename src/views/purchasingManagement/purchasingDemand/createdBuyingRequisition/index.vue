@@ -72,7 +72,7 @@
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                         <JNPF-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC
                           hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table"
-                          ref="multipleTable" :height="customStyleData">
+                          ref="multipleTable" :height="customStyleData" customKey="JNPFTableKey_962982">
 
                           <el-table-column prop="projectName" label="所属项目" width="120"
                             v-if="abProjectSwitchVisible"></el-table-column>

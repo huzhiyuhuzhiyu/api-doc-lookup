@@ -54,7 +54,7 @@
           </div>
         </div>
         <JNPF-table ref="tabForm" v-if="tableDataFlag == true" :data="tableData" custom-column row-key="id"
-          :fixedNo="true" @sort-change="sortChange">
+          :fixedNo="true" @sort-change="sortChange" customKey="JNPFTableKey_539622">
 
 
           <el-table-column prop="partnerName" label="供应商名称" min-width="200" sortable="custom" />

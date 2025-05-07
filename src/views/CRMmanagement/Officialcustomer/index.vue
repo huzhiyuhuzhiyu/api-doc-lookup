@@ -88,7 +88,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column hasC>
+            @sort-change="sortChange" custom-column hasC customKey="JNPFTableKey_982427">
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">{{

@@ -63,7 +63,7 @@
           </div>
         </div>
         <!-- show-summary :summary-method="getSummaries"  合计行处理 后续需要 放入 -->
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO custom-column customKey="JNPFTableKey_627007">
           <template v-for="item in tableItems">
             <el-table-column v-if="item.prop == 'balanceState'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 130" align="center" :sortable="item.sortable">

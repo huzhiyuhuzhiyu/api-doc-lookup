@@ -64,7 +64,7 @@
           </div>
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="tableFlag" highlight-current-row :fixedNO="true"
             ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+            :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_391128">
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="120"

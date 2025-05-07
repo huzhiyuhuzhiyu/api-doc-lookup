@@ -69,7 +69,7 @@
           </div>
           <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
            :data="tableData" :fixedNO="true" @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList">
+            custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_839492">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom"></el-table-column>
             <el-table-column prop="receiveType" label="退料类型" min-width="110" sortable="custom">
               <template slot-scope="scope">

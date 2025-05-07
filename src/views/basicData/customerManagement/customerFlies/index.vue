@@ -71,7 +71,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_422712">
           <el-table-column prop="code" label="客户编码" width="200" fixed="left" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"

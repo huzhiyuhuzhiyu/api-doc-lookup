@@ -86,7 +86,7 @@
             <el-tab-pane :label="'预' + showLabel2 + '款信息'" name="receiverInfo">
               <div style="display: flex;flex-direction: column;height: 100%;">
                 <JNPF-table @selection-change="handeleProductInfoData" hasC fixedNO v-loading="formLoading"
-                  :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
+                  :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable" customKey="JNPFTableKey_446591">
                   <el-table-column prop="remainingAmount" :label="showLabel2 + '款剩余金额'" min-width="160" />
                   <el-table-column prop="paymentDate" :label="showLabel2 + '款日期'" min-width="180" />
                   <el-table-column prop="paymentMethod" :label="showLabel2 + '款方式'" min-width="160">

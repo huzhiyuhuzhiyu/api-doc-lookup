@@ -43,7 +43,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"  custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"  custom-column customKey="JNPFTableKey_737037">
           <template v-for="item in tableItems">
             <el-table-column v-if="item.prop == 'type'" :prop="item.prop" :key="item.prop" :label="item.label"
               :fixed="item.fixed || false" :min-width="item.minWidth || 120">

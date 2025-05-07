@@ -67,7 +67,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          hasC @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList">
+          hasC @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_657988">
           <el-table-column prop="model" label="型号" sortable="custom" min-width="110" />
           <el-table-column prop="innerCircle" label="内圈" min-width="150" />
           <el-table-column prop="outerCircle" label="外圈" min-width="150" />

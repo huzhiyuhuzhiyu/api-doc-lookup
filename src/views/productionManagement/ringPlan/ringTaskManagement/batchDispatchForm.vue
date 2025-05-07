@@ -188,7 +188,7 @@
             <el-tab-pane label="工单信息" name="workOrderInfo" v-if="btnType == 'all' || btnType == 'work'">
               <el-collapse v-model="activeNames2">
                 <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
-                  <JNPF-table ref="work" :data="workOrderData" fixedNO v-loading="tableloading" class="data-form">
+                  <JNPF-table ref="work" :data="workOrderData" fixedNO v-loading="tableloading" class="data-form" customKey="JNPFTableKey_929855">
                     <el-table-column prop="processName" label="工序名称" min-width="120" />
                     <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
                     <el-table-column prop="processingType" label="加工类型" min-width="120">
@@ -294,7 +294,7 @@
             <el-tab-pane label="投料信息" name="feedInfo" v-if="btnType == 'all' || btnType == 'feed'">
               <el-collapse v-model="activeNames3">
                 <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
-                  <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
+                  <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_397111">
                     <el-table-column prop="productDrawingNo" label="用料规格"></el-table-column>
                     <el-table-column prop="productCode" label="用料编码" />
                     <el-table-column prop="processName" label="工序名称" />
@@ -314,7 +314,7 @@
             <el-tab-pane label="报工信息" name="reportRecords" v-if="btnType == 'report'">
               <el-collapse v-model="activeNames4">
                 <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
-                  <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
+                  <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()" customKey="JNPFTableKey_166304">
                     <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
                     <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>

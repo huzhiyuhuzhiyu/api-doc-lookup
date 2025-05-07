@@ -37,7 +37,7 @@
               </div>
             </div>
             <JNPF-table v-loading="listLoading" :data="list" hasC
-              @selection-change="handleSelectionChange">
+              @selection-change="handleSelectionChange" customKey="JNPFTableKey_875718">
               <el-table-column prop="title" label="消息标题" min-width="180">
                 <template slot-scope="scope">
                   <el-link @click="readInfo(scope.row,1)" style="font-size:12px">{{ scope.row.title }}

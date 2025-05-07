@@ -35,7 +35,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <JNPF-table v-loading="listLoading" :data="list">
+        <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_173921">
           <el-table-column prop="runTime" label="执行时间" :formatter="jnpf.tableDateFormat"
             width="130" />
           <el-table-column prop="runResult" label="执行结果" width="100" align="center">

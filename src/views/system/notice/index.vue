@@ -30,7 +30,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" max-height="100%" custom-column ref="tabForm">
+        <JNPF-table v-loading="listLoading" :data="list" max-height="100%" custom-column ref="tabForm" customKey="JNPFTableKey_752083">
           <el-table-column prop="title" label="标题" show-overflow-tooltip />
           <el-table-column prop="creatorTime" label="创建时间"  width="180" />
           <el-table-column prop="creatorUser" label="发布人员" width="120" />

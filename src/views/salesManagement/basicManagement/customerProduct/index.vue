@@ -65,7 +65,7 @@
                 </div>
               </div>
               <JNPF-table highlight-current-row :fixedNO="true" ref="tableForm" v-if="isProjectSwitchFlag"
-                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists" customKey="JNPFTableKey_535297">
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{
@@ -204,7 +204,7 @@
                 </div>
               </div>
               <JNPF-table highlight-current-row :fixedNO="true" ref="tableFormss" v-if="isProjectSwitchFlag"
-                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists" customKey="JNPFTableKey_266260">
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" min-width="260" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewPartner(scope.row.cooperativePartnerId, 'look')">{{

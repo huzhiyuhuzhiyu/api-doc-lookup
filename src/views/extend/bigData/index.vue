@@ -30,7 +30,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list">
+        <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_105352">
           <el-table-column prop="enCode" label="编码" sortable />
           <el-table-column prop="fullName" label="名称" sortable />
           <el-table-column prop="creatorTime" label="创建时间" sortable

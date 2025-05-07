@@ -27,7 +27,7 @@
     </el-row>
 
     <JNPF-table @selection-change="handleSelectionChange" ref="multipleTable" :data="tableData" hasC tooltip-effect="dark"
-      style="width: 100%;height:600px" v-loading="listLoading" title="班组列表">
+      style="width: 100%;height:600px" v-loading="listLoading" title="班组列表" customKey="JNPFTableKey_371305">
       <!-- <el-table-column type="selection" width="55"> -->
       <!-- </el-table-column> -->
       <el-table-column prop="code" label="班组编码">

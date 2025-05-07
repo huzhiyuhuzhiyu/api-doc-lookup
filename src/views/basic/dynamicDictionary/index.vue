@@ -30,7 +30,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" row-key="id" default-expand-all
-          :tree-props="{children: 'children', hasChildren: ''}">
+          :tree-props="{children: 'children', hasChildren: ''}" customKey="JNPFTableKey_491601">
           <el-table-column prop="fullName" label="名称" />
           <el-table-column prop="enCode" label="编码" />
           <el-table-column prop="sortCode" label="排序" width="70" align="center" />

@@ -35,7 +35,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="dataTable" :data="tableData" @sort-change="sortChange" custom-column
-          fixedNO>
+          fixedNO customKey="JNPFTableKey_433539">
           <el-table-column prop="code" label="内容编码" min-width="120" />
           <el-table-column prop="name" label="内容名称" min-width="120" />
           <el-table-column prop="parentName" label="所属类型" min-width="120" />

@@ -117,7 +117,7 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData" :hasC="btnType !== 'look'" 
-                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData">
+                    hasNO fixedNO @selection-change="handeleProductInfoData" :height="customStyleData" customKey="JNPFTableKey_460722">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <template v-if="$store.getters.configData.warehouse.proportion">

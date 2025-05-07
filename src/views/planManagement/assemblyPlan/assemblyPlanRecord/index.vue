@@ -59,7 +59,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_904806">
             <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{

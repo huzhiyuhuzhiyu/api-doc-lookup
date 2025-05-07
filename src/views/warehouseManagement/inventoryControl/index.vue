@@ -93,7 +93,7 @@
           </div>
         </div>
         <JNPF-table :data="tableData" custom-column fixedNO @sort-change="sortChange" v-if="isProjectSwitchFlag"
-          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
+          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_913633">
           <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom">
           </el-table-column>
           <el-table-column prop="name" label="产品名称" sortable="custom" width="160"

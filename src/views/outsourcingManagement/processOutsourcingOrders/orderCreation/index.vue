@@ -88,7 +88,7 @@
                       <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" :rules="productRules">
                         <JNPF-table style="border: 1px solid #e3e7ee;" hasC :fixedNO="true" ref="multipleTable" 
                           @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
-                          id="table" border :height="customStyleData">
+                          id="table" border :height="customStyleData" customKey="JNPFTableKey_888913">
                           <el-table-column prop="projectName" label="所属项目" width="120"
                             v-if="abProjectSwitchVisible"></el-table-column>
                           <el-table-column prop="productCode" label="产品编码" width="160"

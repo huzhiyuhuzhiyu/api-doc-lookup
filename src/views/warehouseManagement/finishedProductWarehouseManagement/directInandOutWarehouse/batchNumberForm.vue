@@ -47,7 +47,7 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" v-if="showflag" :setColumnDisplayList="columnList" :data="tableDataList"
-            custom-column ref="dataTable" :fixedNO="true">
+            custom-column ref="dataTable" :fixedNO="true" customKey="JNPFTableKey_626076">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180"></el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180"></el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />

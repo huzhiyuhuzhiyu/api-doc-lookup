@@ -28,7 +28,7 @@
     </el-row>
     <el-tabs v-model="activeName" @tab-click="handleTabClick" class="JNPF-el_tabs">
       <el-tab-pane label="登录日志" name="1" style="overflow:hidden;">
-        <JNPF-table v-loading="listLoading" :data="loginLogData" tooltip-effect="dark">
+        <JNPF-table v-loading="listLoading" :data="loginLogData" tooltip-effect="dark" customKey="JNPFTableKey_116686">
           <el-table-column prop="creatorTime" label="登录时间" :formatter="jnpf.tableDateFormat"
             width="180" />
           <el-table-column prop="userName" label="登录用户" width="120" />
@@ -37,7 +37,7 @@
         </JNPF-table>
       </el-tab-pane>
       <el-tab-pane label="请求日志" name="5" style="overflow:hidden;">
-        <JNPF-table v-loading="listLoading" :data="requestLogData" tooltip-effect="dark">
+        <JNPF-table v-loading="listLoading" :data="requestLogData" tooltip-effect="dark" customKey="JNPFTableKey_853559">
           <el-table-column prop="creatorTime" label="请求时间" :formatter="jnpf.tableDateFormat"
             width="180" />
           <el-table-column prop="userName" label="请求用户" width="120" />

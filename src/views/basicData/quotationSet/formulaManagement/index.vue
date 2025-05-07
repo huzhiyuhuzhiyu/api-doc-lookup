@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-                    custom-column >
+                    custom-column  customKey="JNPFTableKey_943704">
                     <el-table-column prop="formulaNumber" label="公式编码" sortable="custom">
                         <template slot-scope="scope">
 

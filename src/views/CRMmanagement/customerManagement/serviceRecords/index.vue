@@ -50,7 +50,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column customKey="JNPFTableKey_420545">
             <el-table-column prop="serviceDescription" label="跟进内容" min-width="180" />
             <el-table-column prop="nextTime" label="下次联系时间" min-width="180" />
             <el-table-column prop="visitForm" label="跟进方式" min-width="180">

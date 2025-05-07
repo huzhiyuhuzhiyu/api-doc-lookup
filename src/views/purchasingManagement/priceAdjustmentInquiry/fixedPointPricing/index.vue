@@ -53,7 +53,7 @@
               </div>
 
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable"
-                :data="tableDataList" @sort-change="sortChange" custom-column>
+                :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_528682">
                 <el-table-column prop="orderNo" label="定点定价单号" min-width="180">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{

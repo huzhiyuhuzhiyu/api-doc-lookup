@@ -4,7 +4,7 @@
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true"> 
+          <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" customKey="JNPFTableKey_934407"> 
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  sortable="custom" min-width="140" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  sortable="custom" min-width="120" />
             <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120" />

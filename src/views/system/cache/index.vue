@@ -33,7 +33,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
+        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" customKey="JNPFTableKey_531053">
           <el-table-column prop="name" label="名称" sortable>
             <template slot-scope="scope">
               <el-link @click="addOrUpdateHandle(scope.row.name)" style="font-size:12px">

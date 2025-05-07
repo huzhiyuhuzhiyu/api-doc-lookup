@@ -36,7 +36,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
 
         <JNPF-table show-summary :summary-method="getSummaries" v-loading="listLoading" highlight-current-row
-          :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column>
+          :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_555226">
           <el-table-column prop="orderNo" label="出库单号" min-width="180">
           </el-table-column>
           <el-table-column prop="workOrderNo" label="工作令号" min-width="180" />

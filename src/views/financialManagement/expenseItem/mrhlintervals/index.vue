@@ -16,7 +16,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" custom-column>
+        <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" custom-column customKey="JNPFTableKey_824956">
           <el-table-column prop="hoseLengthRange" label="区间规则" min-width="230">
             <template slot-scope="scope">
               <div>{{ hoseLengthRangefun(scope.row) }}</div>

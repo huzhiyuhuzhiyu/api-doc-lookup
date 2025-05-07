@@ -30,7 +30,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
-          @sort-change="sortChange" show-summary :summary-method="getSummaries">
+          @sort-change="sortChange" show-summary :summary-method="getSummaries" customKey="JNPFTableKey_291794">
           <el-table-column prop="drawingNo" label="物料号" width="150" fixed="left" sortable="custom"></el-table-column>
           <el-table-column label="热处理" align="center">
             <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">

@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <JNPF-table ref="dataTable" v-loading="listLoading" :data="list" @sort-change='sortChange' highlight-current-row
-                    :fixedNO="true" custom-column>
+                    :fixedNO="true" custom-column customKey="JNPFTableKey_603742">
                     <el-table-column prop="name" label="意向客户名称" min-width="160" fixed="left" sortable="custom" />
                     <el-table-column prop="taxId" label="税号" width="200" />
                     <el-table-column prop="nameEn" label="英文名称" width="200" />

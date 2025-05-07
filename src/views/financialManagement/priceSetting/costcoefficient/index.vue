@@ -31,7 +31,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" custom-column>
+        <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" custom-column customKey="JNPFTableKey_408080">
           <el-table-column prop="layerCount" label="胶管层数" width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.layerCount == '1-2'">1-2层</div>

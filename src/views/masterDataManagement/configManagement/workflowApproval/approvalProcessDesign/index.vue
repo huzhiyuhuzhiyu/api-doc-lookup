@@ -43,7 +43,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" @sort-change='sortChange' ref="dataTable"
-          highlight-current-row :fixedNO="true" custom-column>
+          highlight-current-row :fixedNO="true" custom-column customKey="JNPFTableKey_315617">
           <el-table-column prop="code" label="审批模板编码" min-width="160" sortable="custom" />
           <el-table-column prop="name" label="审批模板名称" min-width="160" sortable="custom" />
           <el-table-column prop="adminName" label="审批管理员" min-width="160" />

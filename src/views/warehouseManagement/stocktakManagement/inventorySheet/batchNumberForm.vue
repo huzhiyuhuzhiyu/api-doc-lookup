@@ -45,7 +45,7 @@
             </el-tooltip>
           </div>
         </div>
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"  v-if="showflag"  :setColumnDisplayList="columnList"  custom-column ref="dataTable">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"  v-if="showflag"  :setColumnDisplayList="columnList"  custom-column ref="dataTable" customKey="JNPFTableKey_650465">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180"></el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120"/>

@@ -54,7 +54,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main ccc">
 
-              <JNPF-table v-loading="listLoading" :data="pcList" v-if="!switchlist">
+              <JNPF-table v-loading="listLoading" :data="pcList" v-if="!switchlist" customKey="JNPFTableKey_806964">
                 <el-table-column prop="fullName" label="应用名称" min-width="120" key="fullName" />
                 <el-table-column prop="enCode" label="应用编码" min-width="120" key="enCode" />
 
@@ -168,7 +168,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main ccc">
 
-              <JNPF-table v-loading="listLoading" :data="appList" v-if="!switchlist">
+              <JNPF-table v-loading="listLoading" :data="appList" v-if="!switchlist" customKey="JNPFTableKey_338328">
                 <el-table-column prop="fullName" label="应用名称" min-width="120" key="fullName" />
                 <el-table-column prop="enCode" label="应用编码" min-width="120" key="enCode" />
 
@@ -282,7 +282,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main ccc">
 
-              <JNPF-table v-loading="listLoading" :data="gwzdList" v-if="!switchlist">
+              <JNPF-table v-loading="listLoading" :data="gwzdList" v-if="!switchlist" customKey="JNPFTableKey_966924">
                 <el-table-column prop="fullName" label="应用名称" min-width="120" key="fullName" />
                 <el-table-column prop="enCode" label="应用编码" min-width="120" key="enCode" />
 

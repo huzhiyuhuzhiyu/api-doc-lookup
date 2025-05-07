@@ -56,7 +56,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-          custom-column :setColumnDisplayList="columnList">
+          custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_520394">
           <el-table-column prop="code" label="检验类型编码" sortable="custom" min-width="200">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

@@ -47,7 +47,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column customKey="JNPFTableKey_213099">
           <el-table-column prop="orderNo" label="报废单号" width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

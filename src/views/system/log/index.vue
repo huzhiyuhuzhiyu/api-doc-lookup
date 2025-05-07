@@ -45,7 +45,7 @@
           </div>
           <el-tab-pane label="登录日志" name="1">
             <JNPF-table v-loading="listLoading" :data="loginLogData" has-c 
-              @selection-change="handleSelectionChange" custom-column>
+              @selection-change="handleSelectionChange" custom-column customKey="JNPFTableKey_431156">
               <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="登录时间"
                 width="160" />
               <el-table-column prop="userName" label="登录用户" width="160" />
@@ -57,7 +57,7 @@
           </el-tab-pane>
           <el-tab-pane label="请求日志" name="5">
             <JNPF-table v-loading="listLoading" :data="requestLogData" has-c 
-              @selection-change="handleSelectionChange" custom-column>
+              @selection-change="handleSelectionChange" custom-column customKey="JNPFTableKey_541734">
               <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="请求时间"
                 width="160" />
               <el-table-column prop="userName" label="请求用户" width="160" />
@@ -73,7 +73,7 @@
           </el-tab-pane>
           <el-tab-pane label="操作日志" name="3">
             <JNPF-table v-loading="listLoading" :data="operationLogData" has-c 
-              @selection-change="handleSelectionChange">
+              @selection-change="handleSelectionChange" customKey="JNPFTableKey_655957">
               <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="操作时间"
                 width="160" />
               <el-table-column prop="userName" label="操作用户" width="160" />
@@ -94,7 +94,7 @@
           </el-tab-pane>
           <el-tab-pane label="异常日志" name="4">
             <JNPF-table v-loading="listLoading" :data="errorLogData" has-c
-              @selection-change="handleSelectionChange">
+              @selection-change="handleSelectionChange" customKey="JNPFTableKey_847109">
               <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="创建时间"
                 width="160" />
               <el-table-column prop="userName" label="创建用户" width="160" />

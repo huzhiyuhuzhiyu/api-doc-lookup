@@ -48,7 +48,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
-          @sort-change="sortChange" show-summary :summary-method="getSummaries">
+          @sort-change="sortChange" show-summary :summary-method="getSummaries" customKey="JNPFTableKey_677172">
 
           <el-table-column prop="partnerName" label="客户名称" min-width="300" showOverflowTooltip />
 

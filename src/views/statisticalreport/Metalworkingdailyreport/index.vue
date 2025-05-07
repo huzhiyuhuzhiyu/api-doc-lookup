@@ -36,7 +36,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column>
+        <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_392062">
           <el-table-column prop="reportingDate" label="日期" min-width="130" />
           <el-table-column prop="equipmentCode" label="设备编码" min-width="150" sortable="custom" />
           <el-table-column prop="producerName" label="操作员" min-width="110" />

@@ -47,7 +47,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
+              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_411925">
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户物料号" min-width="180" />
@@ -115,7 +115,7 @@
                     </el-tooltip>
                   </div>
                 </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
+              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_965062">
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户物料号" min-width="180" />

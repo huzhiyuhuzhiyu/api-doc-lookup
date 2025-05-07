@@ -42,7 +42,7 @@
                     </div>
                 </div>
                     <JNPF-table v-loading="listLoading" :data="list" @sort-change='sortChange' :span-method="arraySpanMethod" 
->
+ customKey="JNPFTableKey_417579">
                                                 <el-table-column prop="type_name" label="类型ID"  align="left"
 />
                                                 <el-table-column prop="temId_name" label="模板ID"  align="left"

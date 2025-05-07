@@ -50,7 +50,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_862286">
             <el-table-column prop="type" label="类型" width="160">
               <template slot-scope="scope">
                 <div v-if="scope.row.type=='workshop'"><el-tag effect="dark">车间</el-tag></div>

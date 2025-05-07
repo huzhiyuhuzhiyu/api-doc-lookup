@@ -3,7 +3,7 @@
     class="JNPF-dialog JNPF-dialog_center field-dialog" lock-scroll append-to-body
     :visible.sync="visible">
     <div class="main">
-      <JNPF-table v-loading="listLoading" :data="list">
+      <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_659349">
         <el-table-column prop="field" label="列名">
           <template slot-scope="scope">
             <span class="table-cell" v-if="scope.row.disabled">{{scope.row.field}}</span>

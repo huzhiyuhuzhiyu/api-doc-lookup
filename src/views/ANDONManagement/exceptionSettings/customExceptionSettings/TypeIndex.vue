@@ -12,7 +12,7 @@
           </el-tooltip>
         </div>
       </div>
-      <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" row-key="id" hasMove @changeMove="changeMove">
+      <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" row-key="id" hasMove @changeMove="changeMove" customKey="JNPFTableKey_910056">
 
         <el-table-column prop="code" label="类型编码" min-width="120" sortable="custom" />
         <el-table-column prop="name" label="类型名称" min-width="120" sortable="custom" />

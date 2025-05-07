@@ -56,7 +56,7 @@
           </el-form-item>
         </el-form>
         <JNPF-table v-loading="listLoading" :data="list" :border="false" highlight-current-row
-          @row-click="rowClick" :hasNO="false" height="300">
+          @row-click="rowClick" :hasNO="false" height="300" customKey="JNPFTableKey_194646">
           <el-table-column width="35" v-if="multiple">
             <template slot-scope="scope">
               <el-checkbox :value="selectedIds.includes(scope.row[propsValue])" disabled

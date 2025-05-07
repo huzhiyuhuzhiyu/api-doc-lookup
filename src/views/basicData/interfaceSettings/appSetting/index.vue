@@ -43,7 +43,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="dataTable" :data="tableData" @sort-change="sortChange" custom-column
-          fixedNO >
+          fixedNO  customKey="JNPFTableKey_482351">
           <el-table-column prop="companyName" label="公司名称" sortable="custom" min-width="120" />
           <el-table-column prop="appid" label="appId" min-width="120" />
           <el-table-column prop="appSecret" label="appSecret" min-width="120" />

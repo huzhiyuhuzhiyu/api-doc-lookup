@@ -42,7 +42,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
 
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column>
+          @sort-change="sortChange" custom-column customKey="JNPFTableKey_993977">
           <el-table-column prop="orderNo" label="定点定价单号" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandles(scope.row.id, 'look')">{{

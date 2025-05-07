@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
-                    custom-column>
+                    custom-column customKey="JNPFTableKey_300777">
                     <el-table-column prop="productType" label="产品类型" sortable="custom" width="120" >
                         <template slot-scope="scope">
                             <div>{{ scope.row.productType=='pt008'?'接头':'套筒' }}</div>

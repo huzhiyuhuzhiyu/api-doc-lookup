@@ -44,7 +44,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="list" hasC
-            @selection-change="handleSelectionChange" :border="false">
+            @selection-change="handleSelectionChange" :border="false" customKey="JNPFTableKey_905826">
             <el-table-column prop="code" label="产品编码" />
             <el-table-column prop="fullName" label="产品名称" />
             <el-table-column prop="qty" label="库存" />

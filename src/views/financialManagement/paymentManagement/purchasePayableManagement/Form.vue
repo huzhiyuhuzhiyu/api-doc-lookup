@@ -73,7 +73,7 @@
                     </el-row>
                     <div class="JNPF-common-layout-main JNPF-flex-main">
                       <JNPF-table show-summary :summary-method="getSummaries" v-loading="listLoading"
-                        highlight-current-row :fixedNO="true" ref="tableForm" :data="reconList" @sort-change="sortChange">
+                        highlight-current-row :fixedNO="true" ref="tableForm" :data="reconList" @sort-change="sortChange" customKey="JNPFTableKey_350850">
 
                         <el-table-column prop="orderNo" label="对账流水号" min-width="180" sortable="custom" />
                         <el-table-column prop="reconciliationDate" label="对账日期" min-width="160" sortable="custom" />
@@ -163,7 +163,7 @@
                     </el-row>
                     <div class="JNPF-common-layout-main JNPF-flex-main">
                       <JNPF-table show-summary :summary-method="getSummaries" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="collectiontableForm"
-                        :data="collectList" @sort-change="collectionSortChange">
+                        :data="collectList" @sort-change="collectionSortChange" customKey="JNPFTableKey_172785">
 
                         <el-table-column prop="orderNo" label="对账流水号" min-width="180" sortable="custom" />
                         <el-table-column prop="reconciliationDate" label="对账日期" min-width="160" sortable="custom" />
@@ -244,7 +244,7 @@
                     </el-row>
                     <div class="JNPF-common-layout-main JNPF-flex-main">
                       <JNPF-table show-summary :summary-method="getSummaries" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="makeoutForm"
-                        :data="makeoutList" @sort-change="makeoutSortChange">
+                        :data="makeoutList" @sort-change="makeoutSortChange" customKey="JNPFTableKey_363878">
 
                         <el-table-column prop="orderNo" label="对账流水号" min-width="180" sortable="custom" />
                         <el-table-column prop="reconciliationDate" label="对账日期" min-width="160" sortable="custom" />

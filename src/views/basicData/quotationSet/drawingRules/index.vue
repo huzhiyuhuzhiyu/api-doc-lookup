@@ -71,7 +71,7 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableDataList" hasC @sort-change="sortChange" ref="tableForm"
                     custom-column @selection-change="handleSelectionChange" :fixedSelect="true" :fixedNO="true"
-                    :checkSelectable="disOutData" >
+                    :checkSelectable="disOutData"  customKey="JNPFTableKey_898824">
 
                     <el-table-column prop="customerProductNo" label="客户物料号" min-width="160" fixed="left" />
                     <el-table-column prop="customerDrawingNumber" label="客户图号" sortable="custom" min-width="160"

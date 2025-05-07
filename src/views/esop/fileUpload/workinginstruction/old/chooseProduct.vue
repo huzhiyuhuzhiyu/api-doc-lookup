@@ -56,7 +56,7 @@
                             custom-column
                             @row-click="rowClick"
                             :row-class-name="'pointer'"
-                            ref="dataTable" :setColumnDisplayList="columnList">
+                            ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_455817">
                     <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
                         <template slot-scope="scope">
 <!--                            <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">-->

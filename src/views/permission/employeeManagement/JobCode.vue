@@ -10,7 +10,7 @@
       <div v-loading="formLoading" class="main">
         <el-tabs v-model="activeName">
           <div class="JNPF-flex-main" style="height: 100%;">
-            <JNPF-table :data="contactsList" style="width: 100%;flex:1;" custom-column>
+            <JNPF-table :data="contactsList" style="width: 100%;flex:1;" custom-column customKey="JNPFTableKey_405504">
               <el-table-column prop="realName" label="姓名" min-width="200">
               </el-table-column>
               <el-table-column prop="departmentName" label="原部门" min-width="230">

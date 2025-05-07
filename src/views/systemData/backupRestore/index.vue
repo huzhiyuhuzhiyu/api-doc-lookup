@@ -22,7 +22,7 @@
           </div>
 
           <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
-            @sort-change="sortChange" custom-column>
+            @sort-change="sortChange" custom-column customKey="JNPFTableKey_111784">
             <el-table-column prop="fileName" label="文件名称" min-width="140" />
             <el-table-column prop="filePath" label="文件路径" min-width="140" />
             <el-table-column prop="lastRestoreTime" label="上次还原时间" min-width="180" />
@@ -50,7 +50,7 @@
     <!-- 数据操作记录-->
     <el-dialog title="数据操作记录" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="recordDialog"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <JNPF-table ref="workerDialog" v-loading="recordLoading" :data="recordListData" border height="400">
+      <JNPF-table ref="workerDialog" v-loading="recordLoading" :data="recordListData" border height="400" customKey="JNPFTableKey_342235">
         <el-table-column prop="operatingInstructions" label="操作说明" min-width="240" />
         <el-table-column prop="createByName" label="操作人" min-width="100" />
         <el-table-column prop="createTime" label="操作时间" min-width="180"></el-table-column>
@@ -66,7 +66,7 @@
         <el-button type="danger" icon="el-icon-delete" @click="handleDelTableData()">删除</el-button>
       </div>
       <JNPF-table @selection-change="handeleTableInfoData" hasC ref="delDialog" v-loading="recordLoading"
-        :data="delDataListData" border height="400">
+        :data="delDataListData" border height="400" customKey="JNPFTableKey_946873">
         <el-table-column prop="enName" label="表英文名称" />
         <el-table-column prop="cnName" label="表中文名称" />
       </JNPF-table>

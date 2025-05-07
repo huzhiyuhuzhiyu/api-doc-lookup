@@ -19,7 +19,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" custom-column>
+          <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" custom-column customKey="JNPFTableKey_537473">
             <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
             <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
             <el-table-column prop="userName" label="发起人员" min-width="130" />

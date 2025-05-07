@@ -33,7 +33,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column customKey="JNPFTableKey_413898">
           <el-table-column prop="orderNo" label="领用单号" min-width="180"></el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="领用人" width="120"></el-table-column>

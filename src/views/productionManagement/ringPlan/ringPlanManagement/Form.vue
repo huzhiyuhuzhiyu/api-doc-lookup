@@ -160,7 +160,7 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <el-button type="text"   icon="el-icon-delete" style="margin-left: 8px;"
                       @click="batchDelete">批量删除</el-button>
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading" @selection-change="handeleProductInfoData" hasC>
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading" @selection-change="handeleProductInfoData" hasC customKey="JNPFTableKey_187839">
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processingType" label="加工类型" width="100">

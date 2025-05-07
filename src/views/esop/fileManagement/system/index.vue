@@ -114,7 +114,7 @@
 <!--                </div>-->
                 <div style="height: calc(100% - 35px)" v-loading="listLoading">
 
-                    <JNPF-table  v-if="allSwitchList"   class="table-style" :data="fileList" empty-text="暂无文件" size="mini">
+                    <JNPF-table  v-if="allSwitchList"   class="table-style" :data="fileList" empty-text="暂无文件" size="mini" customKey="JNPFTableKey_731928">
                             <el-table-column prop="filename" label="文件名" custom-column min-width="150">
                                 <template slot-scope="scope">
                                     <el-link :underline="false" type="primary" @click="listItemClick(scope.row)" >

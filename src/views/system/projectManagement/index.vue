@@ -47,7 +47,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" :setColumnDisplayList="columnList"
-          @sort-change="sortChange" ref="dataTable" custom-column hasMove @changeMove="changeMove">
+          @sort-change="sortChange" ref="dataTable" custom-column hasMove @changeMove="changeMove" customKey="JNPFTableKey_558066">
           <el-table-column prop="name" label="项目名称" min-width="120" sortable="custom"></el-table-column>
           <el-table-column prop="code" label="项目编码" min-width="120" sortable="custom" />
           <el-table-column prop="remark" label="项目描述" min-width="200" />

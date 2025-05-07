@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-                    custom-column :setColumnDisplayList="columnList">
+                    custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_221547">
                     <el-table-column prop="code" label="班组编码" sortable="custom" min-width="160">
                         <template slot-scope="scope">
                             <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">

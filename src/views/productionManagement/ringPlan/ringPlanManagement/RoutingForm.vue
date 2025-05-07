@@ -31,7 +31,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" > 
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange" customKey="JNPFTableKey_442031">
             <el-table-column prop="code" label="工艺路线编码" sortable="custom" ></el-table-column>
             <el-table-column prop="name" label="工艺路线名称" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" sortable="custom" v-if="isProjectSwitch == 1" />

@@ -32,7 +32,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
+        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" customKey="JNPFTableKey_722256">
           <el-table-column prop="fullName" label="模板名称"  min-width="120" />
           <el-table-column prop="enCode" label="模板编码" min-width="120" />
           <el-table-column prop="noticeMethod" label="通知方式" min-width="120" />

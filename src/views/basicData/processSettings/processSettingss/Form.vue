@@ -95,7 +95,7 @@
                     <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table :hasC="type !== 'look'" hasNO style="border: 1px solid #e3e7ee;" ref="processRef"
                       @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini" id="table"
-                      row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData">
+                      row-key="code" :hasMove="type !== 'look'" @changeMove="changeMove" :height="customStyleData" customKey="JNPFTableKey_800344">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
                       <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>

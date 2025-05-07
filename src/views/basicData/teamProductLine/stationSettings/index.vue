@@ -62,7 +62,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-          custom-column :setColumnDisplayList="columnList">
+          custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_661132">
           <el-table-column prop="code" label="工位编码" min-width="180" sortable="custom" />
           <el-table-column prop="name" label="工位名称" min-width="180" sortable="custom" />
           <el-table-column prop="state" label="状态" sortable="custom" max-width="80">

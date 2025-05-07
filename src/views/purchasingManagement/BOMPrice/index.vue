@@ -39,7 +39,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="BOMList" :fixedNO="true" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="BOMList" :fixedNO="true" custom-column customKey="JNPFTableKey_498796">
             <!-- <el-table-column prop="code" label="BOM编码" min-width="240"></el-table-column>
             <el-table-column prop="name" label="BOM名称" min-width="240"></el-table-column> -->
             <el-table-column prop="customerProductNo" label="客户物料号" min-width="240" />

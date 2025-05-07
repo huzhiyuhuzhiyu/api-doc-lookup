@@ -296,7 +296,7 @@
                   <div style="width: 49%;display: inline-block;">
                     <p class="accTitle">02精度</p>
                     <JNPF-table v-loading="listLoading" ref="dataTable" custom-column :data="tableDataList"
-                      :fixedNO="true">
+                      :fixedNO="true" customKey="JNPFTableKey_615493">
                       <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" >
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"
@@ -324,7 +324,7 @@
                   <div style="width: 49%;display: inline-block;margin-left: 2%;vertical-align: top;">
                     <p class="accTitle">01精度</p>
                     <JNPF-table v-loading="listLoading" ref="dataTables" custom-column :data="tableDataList2"
-                      :fixedNO="true">
+                      :fixedNO="true" customKey="JNPFTableKey_425560">
                       <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" >
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择精度等级" style="width: 100%;"

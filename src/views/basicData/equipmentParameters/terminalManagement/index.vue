@@ -55,7 +55,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="tableForm" v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="tableForm" v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_282399">
           <el-table-column prop="code" label="终端编码" width="220"></el-table-column>
           <el-table-column prop="name" label="终端名称" width="220" sortable="custom" />
           <el-table-column prop="state" label="状态" sortable="custom" width="120" fixed="right" align="center">

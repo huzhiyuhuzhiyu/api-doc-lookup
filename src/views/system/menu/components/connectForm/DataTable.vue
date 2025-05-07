@@ -61,7 +61,7 @@
       </el-row>
       <JNPF-table v-loading="listLoading" :data="list" :border="false" highlight-current-row
         row-key="table" ref="multipleTable" @selection-change="handleSelectionChange" :hasNO="false"
-        has-c>
+        has-c customKey="JNPFTableKey_273645">
         <el-table-column type="index" width="60" label="序号" align="center" />
         <el-table-column prop="table" label="表名" width="300" />
         <el-table-column prop="tableName" label="说明" show-overflow-tooltip />

@@ -59,7 +59,7 @@
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            @selection-change="handleSelectionChange" hasC>
+            @selection-change="handleSelectionChange" hasC customKey="JNPFTableKey_720246">
             <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="name" label="产品名称" sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
               show-overflow-tooltip></el-table-column>

@@ -197,7 +197,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable" @selection-change="handleSelectionChange">
+              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable" @selection-change="handleSelectionChange" customKey="JNPFTableKey_183968">
                 <el-table-column prop="name" label="项目名称" />
                 <el-table-column prop="code" label="项目编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="itemRequirements" label="保养要求" />

@@ -46,7 +46,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable" customKey="JNPFTableKey_781936">
             <el-table-column prop="toUserName" label="被委托人" min-width="100" />
             <el-table-column prop="flowName" label="委托流程" min-width="140" />
             <el-table-column prop="flowCategory" label="流程分类" min-width="100">

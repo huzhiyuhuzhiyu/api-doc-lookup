@@ -60,7 +60,7 @@
         </div>
 
         <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-          :setColumnDisplayList="columnList">
+          :setColumnDisplayList="columnList" customKey="JNPFTableKey_939659">
           <el-table-column prop="code" label="产线编码" sortable="custom">
           </el-table-column>
           <el-table-column prop="name" label="产线名称" sortable="custom" />

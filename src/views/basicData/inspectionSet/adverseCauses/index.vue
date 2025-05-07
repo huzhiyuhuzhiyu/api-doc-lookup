@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" :data="tableDataList" ref="dataTable" @sort-change="sortChange"
-                    custom-column :setColumnDisplayList="columnList">
+                    custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_862519">
                     <el-table-column prop="name" label="不良名称" sortable="custom" />
                     <el-table-column prop="code" label="不良编码" sortable="custom"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />

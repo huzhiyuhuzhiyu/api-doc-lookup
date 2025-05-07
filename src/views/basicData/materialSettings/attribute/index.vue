@@ -40,7 +40,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column ref="dataTable">
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column ref="dataTable" customKey="JNPFTableKey_310947">
           <el-table-column prop="code" label="属性编码" width="220" fixed="left" sortable="custom" />
           <el-table-column prop="name" label="属性名称" width="220" fixed="left" sortable="custom" />
           <el-table-column prop="typeName" label="属性类型" width="220" />

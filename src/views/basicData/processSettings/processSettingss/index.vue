@@ -64,7 +64,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" :data="list" @sort-change="sortChange" highlight-current-row :fixedNO="true"
-          class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
+          class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_548188">
           <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">

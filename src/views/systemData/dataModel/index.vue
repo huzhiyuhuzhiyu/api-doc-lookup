@@ -80,7 +80,7 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" :data="list" @expand-change="expandChange" hasC
-            @selection-change="handleSelectionChange" custom-column>
+            @selection-change="handleSelectionChange" custom-column customKey="JNPFTableKey_221664">
             <!-- <el-table-column type="expand" width="40">
             <template slot-scope="props">
               <el-table v-loading="props.row.childTableLoading" :data="props.row.childTable" stripe

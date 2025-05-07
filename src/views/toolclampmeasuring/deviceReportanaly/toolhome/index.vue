@@ -64,7 +64,7 @@
                   </el-form>
                 </el-row>
                 <div style="height: 835px;" class="JNPF-flex-main">
-                  <JNPF-table ref="dataTable" v-if="istable" :data="tableDatasbtz" @sort-change="sortChangesbtz" fixedNO custom-column>
+                  <JNPF-table ref="dataTable" v-if="istable" :data="tableDatasbtz" @sort-change="sortChangesbtz" fixedNO custom-column customKey="JNPFTableKey_224514">
                     <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
                     <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
@@ -189,7 +189,7 @@
                 </el-row>
               </div>
               <div style="height: 500px;" class="JNPF-flex-main">
-                <JNPF-table ref="dataTabledjfb" v-loading="listLoadingdjfb" :data="tableDatadjfb" @sort-change="sortChangedjfb" fixedNO custom-column>
+                <JNPF-table ref="dataTabledjfb" v-loading="listLoadingdjfb" :data="tableDatadjfb" @sort-change="sortChangedjfb" fixedNO custom-column customKey="JNPFTableKey_501384">
                   <el-table-column prop="verificationAgency" label="检定机构" width="200" sortable="custom" />
                   <el-table-column prop="departmentIdText" label="计划执行部门" width="150" />
                   <el-table-column prop="maintainerIdText" label="计划执行人" width="120"></el-table-column>
@@ -224,7 +224,7 @@
                     <div class="header-title">处理中工单明细</div>
                   </div>
                   <div style="height: 320px;padding: 0 10px 10px 10px;" class="JNPF-flex-main">
-                    <JNPF-table v-if="istable" :data="tableDatawxfbcl" @sort-change="sortChangewxfbcl" fixedNO custom-column>
+                    <JNPF-table v-if="istable" :data="tableDatawxfbcl" @sort-change="sortChangewxfbcl" fixedNO custom-column customKey="JNPFTableKey_290341">
                       <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                       </el-table-column>
                       <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
@@ -332,7 +332,7 @@
                 </el-row>
               </div>
               <div style="height: 500px;" class="JNPF-flex-main" v-loading="listLoadingwxfb">
-                <JNPF-table ref="dataTablewxfb" v-if="istable" :data="tableDatawxfb" @sort-change="sortChangewxfb" fixedNO custom-column>
+                <JNPF-table ref="dataTablewxfb" v-if="istable" :data="tableDatawxfb" @sort-change="sortChangewxfb" fixedNO custom-column customKey="JNPFTableKey_868829">
                   <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
@@ -453,7 +453,7 @@
                 </el-row>
               </div>
               <div style="height: 652px;" class="JNPF-flex-main" v-loading="listLoadingbyfb">
-                <JNPF-table ref="dataTablebyfb" v-if="istable" :data="tableDatabyfb" @sort-change="sortChangebyfb" fixedNO custom-column>
+                <JNPF-table ref="dataTablebyfb" v-if="istable" :data="tableDatabyfb" @sort-change="sortChangebyfb" fixedNO custom-column customKey="JNPFTableKey_351273">
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
                   <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" />
                   <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />

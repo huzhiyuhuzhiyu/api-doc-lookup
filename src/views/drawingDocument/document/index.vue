@@ -32,7 +32,7 @@
              </div>
           </el-row>
           <div :style="{height: this.listHeight}" class="height-full">
-            <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
+            <JNPF-table  class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" customKey="JNPFTableKey_658106">
               <el-table-column prop="fullName" label="文件名" custom-column>
                 <template slot-scope="scope">
                           <span v-if="scope.row.type" class="pointer" @click="listItemClick(scope.row)" >
@@ -108,7 +108,7 @@
               ></SearchPlane>
           </el-row>
           <div :style="{height: this.listHeight}" class="height-full">
-            <JNPF-table   class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
+            <JNPF-table   class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" customKey="JNPFTableKey_247113">
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
                     <span class="pointer" @click="listItemClick(scope.row)">
@@ -160,7 +160,7 @@
                 ></SearchPlane>
             </el-row>
           <div :style="{height: this.listHeight}" class="height-full">
-            <JNPF-table  class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
+            <JNPF-table  class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini"  customKey="JNPFTableKey_876052">
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
                     <span class="pointer" @click="listItemClick(scope.row)">
@@ -208,7 +208,7 @@
                 ></SearchPlane>
             </el-row>
           <div :style="{height: this.listHeight}" class="height-full">
-            <JNPF-table  class="table-style" v-if="trashSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
+            <JNPF-table  class="table-style" v-if="trashSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini"  customKey="JNPFTableKey_150717">
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
                   <span v-if="scope.row.type"  class="pointer" @click="listItemClick(scope.row)">

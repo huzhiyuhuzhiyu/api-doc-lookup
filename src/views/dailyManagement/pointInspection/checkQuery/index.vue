@@ -53,7 +53,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-if="istable" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
+              <JNPF-table v-if="istable" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_676336">
                 <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" min-width="120" fixed="right" align="center" sortable="custom">
@@ -142,7 +142,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-if="istable" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
+              <JNPF-table v-if="istable" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column customKey="JNPFTableKey_841500">
                 <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
                 </el-table-column>
                 <el-table-column prop="overdueTime" label="超期时间" min-width="160">

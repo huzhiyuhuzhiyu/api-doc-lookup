@@ -43,7 +43,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
 
         <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
-          custom-column>
+          custom-column customKey="JNPFTableKey_258658">
           <el-table-column prop="inspectionDate" label="检验日期" min-width="180"> </el-table-column>
           <el-table-column prop="weekIndex" label="周" min-width="180"> </el-table-column>
           <el-table-column prop="partnerCode" label="客户编码" min-width="180"> </el-table-column>

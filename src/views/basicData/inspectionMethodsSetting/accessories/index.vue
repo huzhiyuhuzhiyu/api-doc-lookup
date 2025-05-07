@@ -66,7 +66,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable" hasC @selection-change="currentChange" :checkSelectable="checkSelectable" >
+          ref="dataTable" hasC @selection-change="currentChange" :checkSelectable="checkSelectable"  customKey="JNPFTableKey_623350">
           <el-table-column prop="code" label="产品编码" min-width="140" fixed="left" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, true)">

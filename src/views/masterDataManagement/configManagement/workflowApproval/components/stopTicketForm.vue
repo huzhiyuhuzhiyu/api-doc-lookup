@@ -221,7 +221,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="orderData" :fixedNO="true">
+              <JNPF-table v-loading="listLoading" :data="orderData" :fixedNO="true" customKey="JNPFTableKey_895507">
                 <el-table-column prop="orderNo" label="订单号" width="180" fixed="left"></el-table-column>
 
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" />

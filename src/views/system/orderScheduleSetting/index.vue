@@ -28,7 +28,7 @@
             </div>
           </div>
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" custom-column row-key="id"
-            :setColumnDisplayList="columnList" :fixedNO="true">
+            :setColumnDisplayList="columnList" :fixedNO="true" customKey="JNPFTableKey_885918">
             <el-table-column prop="name" label="名称" min-width="200">
               <template v-slot:default="{ row }">
                 <el-input v-model="row.name" placeholder="请输入名称"></el-input>

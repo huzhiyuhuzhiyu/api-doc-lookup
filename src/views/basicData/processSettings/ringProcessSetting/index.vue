@@ -108,7 +108,7 @@
 
         <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
           border @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" hasC
-          @selection-change="currentChange">
+          @selection-change="currentChange" customKey="JNPFTableKey_427702">
           <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />

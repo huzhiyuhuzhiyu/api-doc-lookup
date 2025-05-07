@@ -40,7 +40,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true"  ref="product">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true"  ref="product" customKey="JNPFTableKey_822258">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom"> </el-table-column>
             <el-table-column prop="orderType" label="生产任务类型" min-width="160" sortable="custom">
               <template slot-scope="scope">

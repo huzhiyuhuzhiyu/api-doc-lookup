@@ -51,7 +51,7 @@
               :loading="receiveing">收邮件</el-button>
           </div>
         </el-row>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
+        <JNPF-table v-loading="listLoading" :data="list" custom-column customKey="JNPFTableKey_356806">
           <el-table-column prop="isRead" label="" width="40">
             <template slot-scope="scope">
               <template v-if="activeTab==='inBox'|| activeTab==='star'">

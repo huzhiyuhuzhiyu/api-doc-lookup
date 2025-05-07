@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column customKey="JNPFTableKey_391013">
           <el-table-column prop="name" label="任务名称" min-width="200" sortable="custom">
           </el-table-column>
           <el-table-column prop="level" label="保养等级" min-width="140"></el-table-column>

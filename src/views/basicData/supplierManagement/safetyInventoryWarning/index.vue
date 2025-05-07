@@ -99,7 +99,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableFlag" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange" custom-column
-          ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
+          ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_195052">
           <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="code" label="产品编码" width="140" sortable="custom"></el-table-column>
           <el-table-column prop="name" label="产品名称" width="120" v-if="isProductNameSwitch === '1'"></el-table-column>

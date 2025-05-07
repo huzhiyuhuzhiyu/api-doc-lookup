@@ -42,7 +42,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="treeLoading || listLoading" :data="tableData" hasNO fixedNO @sort-change="sortChange"
-            show-summary :summary-method="getSummaries" ref="dataTable">
+            show-summary :summary-method="getSummaries" ref="dataTable" customKey="JNPFTableKey_550231">
 
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" fixed="left" />
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" fixed="left" />

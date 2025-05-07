@@ -133,7 +133,7 @@
                 <div class="axis-content">
                   <div class="content-title">领用归还记录：<span>{{lyghdataTable.length}}</span>条</div>
                 </div>
-                <JNPF-table ref="lyghdataTable" v-loading="lyghlistLoading" :data="lyghdataTable" @sort-change="lyghsortChange" fixedNO custom-column :height=height>
+                <JNPF-table ref="lyghdataTable" v-loading="lyghlistLoading" :data="lyghdataTable" @sort-change="lyghsortChange" fixedNO custom-column :height=height customKey="JNPFTableKey_179383">
                   <el-table-column prop="orderNo" label="领用单号" width="200" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="requisitionType" label="类型" width="120" fixed="right" align="center">
@@ -177,7 +177,7 @@
                 <div class="axis-content">
                   <div class="content-title">维修记录：<span>{{wxjldataTable.length}}</span>条</div>
                 </div>
-                <JNPF-table ref="wxjldataTable" v-loading="wxjllistLoading" @sort-change="wxjlsortChange" :data="wxjldataTable" fixedNO custom-column :height=height>
+                <JNPF-table ref="wxjldataTable" v-loading="wxjllistLoading" @sort-change="wxjlsortChange" :data="wxjldataTable" fixedNO custom-column :height=height customKey="JNPFTableKey_990919">
                   <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
@@ -262,7 +262,7 @@
                 <div class="axis-content">
                   <div class="content-title">保养任务：<span>{{byrwdataTable.length}}</span>条</div>
                 </div>
-                <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column :height=height>
+                <JNPF-table ref="byrwdataTable" v-loading="byrwlistLoading" :data="byrwdataTable" @sort-change="byrwsortChange" fixedNO custom-column :height=height customKey="JNPFTableKey_415404">
                   <el-table-column prop="name" label="任务名称" min-width="200" fixed="left" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" fixed="left" sortable="custom" />
@@ -302,7 +302,7 @@
                 <div class="axis-content">
                   <div class="content-title">保养记录：<span>{{byjldataTable.length}}</span>条</div>
                 </div>
-                <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column :height=height>
+                <JNPF-table ref="byjldataTable" v-loading="byjllistLoading" :data="byjldataTable" @sort-change="byjlsortChange" fixedNO custom-column :height=height customKey="JNPFTableKey_979361">
                   <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" sortable="custom" />
                   <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom" />
@@ -345,7 +345,7 @@
                 <div class="axis-content">
                   <div class="content-title">检定任务：<span>{{djrwdataTable.length}}</span>条</div>
                 </div>
-                <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column :height=height>
+                <JNPF-table ref="djrwdataTable" v-loading="djrwlistLoading" :data="djrwdataTable" @sort-change="djrwsortChange" fixedNO custom-column :height=height customKey="JNPFTableKey_252593">
                   <el-table-column prop="name" label="任务名称" width="200" fixed="left" sortable="custom">
                   </el-table-column>
                   <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
@@ -386,7 +386,7 @@
                 <div class="axis-content">
                   <div class="content-title">检定记录：<span>{{djjldataTable.length}}</span>条</div>
                 </div>
-                <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column :height=height>
+                <JNPF-table ref="djjldataTable" v-loading="djjllistLoading" :data="djjldataTable" @sort-change="djjlsortChange" fixedNO custom-column :height=height customKey="JNPFTableKey_203995">
                   <el-table-column prop="verificationAgency" label="检定机构" width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
                   <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>

@@ -402,7 +402,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
-                @selection-change="handleSelectionChangeAllPruduct" ref="form">
+                @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_543880">
                 <el-table-column prop="orderNo" label="发货单号" width="180" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send'"></el-table-column>
                 <el-table-column prop="orderNo" label="收货单号" width="180" sortable="custom"

@@ -38,7 +38,7 @@
                 </el-row>
                 <div class="JNPF-common-layout-main JNPF-flex-main">
 
-                    <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+                    <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable" customKey="JNPFTableKey_953143">
                         <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
                         <el-table-column prop="orderNo" label="上传单编码" sortable="custom" min-width="150" />
                         <el-table-column v-if="isCustomerProductPage" prop="cooperativePartnerName" label="客户名称" sortable="custom" min-width="150" />

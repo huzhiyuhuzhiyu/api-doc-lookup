@@ -54,7 +54,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true" @sort-change="sortChange" custom-column>
+              <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_267320">
                 <el-table-column prop="transferNo" label="组装单号" width="200" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

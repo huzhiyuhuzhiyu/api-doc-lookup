@@ -29,7 +29,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
           :setColumnDisplayList="columnList" :default-expand-all="expands" ref="tableForm"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }" custom-column>
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" custom-column customKey="JNPFTableKey_399626">
           <el-table-column prop="name" label="分类名称" min-width="160">
             <template slot-scope="scope">
               <i

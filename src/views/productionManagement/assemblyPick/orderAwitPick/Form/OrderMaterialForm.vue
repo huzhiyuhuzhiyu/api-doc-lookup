@@ -41,7 +41,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectmaterial"
-            @row-click="handleRowClick" hasC>
+            @row-click="handleRowClick" hasC customKey="JNPFTableKey_384256">
             <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

@@ -42,7 +42,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column>
+        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column customKey="JNPFTableKey_825852">
           <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
               <i :class="[scope.row.childrenList.length>=1?'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{scope.row.name}}

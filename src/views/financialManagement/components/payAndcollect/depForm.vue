@@ -311,7 +311,7 @@
             </el-tab-pane>
             <el-tab-pane :label="showLabel + '款信息'" name="payInfo">
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="collectiontableForm"
-                :data="collectList">
+                :data="collectList" customKey="JNPFTableKey_772137">
                 <el-table-column prop="totalReconciliationAmount" :label="'应' + showLabel + '金额'" min-width="120">
                 </el-table-column>
                 <el-table-column prop="paymentAmount" :label="'已' + showLabel + '款金额'" min-width="120" />

@@ -30,7 +30,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" :hasNO="false">
+        <JNPF-table v-loading="listLoading" :data="list" :hasNO="false" customKey="JNPFTableKey_573167">
           <el-table-column type="index" width="60" label="序号" fixed="left" align="center" />
           <el-table-column prop="projectName" label="项目名称" sortable width="200" fixed="left" />
           <el-table-column prop="projectCode" label="项目编码" sortable width="160" fixed="left" />

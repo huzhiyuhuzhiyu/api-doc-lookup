@@ -11,7 +11,7 @@
           </el-tooltip>
         </div>
       </div>
-      <JNPF-table v-loading="listLoading" :data="list">
+      <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_463796">
         <el-table-column prop="field" label="列名" />
         <el-table-column prop="fieldName" label="说明" width="110px" />
         <el-table-column prop="dataType" label="类型" width="80px">

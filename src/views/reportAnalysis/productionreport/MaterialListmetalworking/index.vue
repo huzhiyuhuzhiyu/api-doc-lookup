@@ -33,7 +33,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <JNPF-table ref="dataTable" show-summary :summary-method="getSummaries" v-loading="listLoading" :data="tableData" custom-column :fixedNO="true">
+        <JNPF-table ref="dataTable" show-summary :summary-method="getSummaries" v-loading="listLoading" :data="tableData" custom-column :fixedNO="true" customKey="JNPFTableKey_550438">
           <el-table-column prop="productCode" label="产品编码" min-width="180">
           </el-table-column>
           <el-table-column prop="productName" label="产品名称" min-width="180" />

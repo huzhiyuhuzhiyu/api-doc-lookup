@@ -33,7 +33,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectProcess" v-if="showFlag"
-            :checkSelectable="dispurchaseData" @row-click="handleRowClick" hasC ref="processRef">
+            :checkSelectable="dispurchaseData" @row-click="handleRowClick" hasC ref="processRef" customKey="JNPFTableKey_497350">
             <el-table-column prop="processName" label="工序名称"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" />
             <el-table-column prop="processType" label="工序类型">

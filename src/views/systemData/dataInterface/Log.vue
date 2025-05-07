@@ -26,7 +26,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <JNPF-table v-loading="listLoading" :data="list">
+        <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_857201">
           <el-table-column prop="invokTime" label="请求时间" :formatter="jnpf.tableDateFormat"
             width="120" />
           <el-table-column prop="userId" label="请求用户" width="120" />

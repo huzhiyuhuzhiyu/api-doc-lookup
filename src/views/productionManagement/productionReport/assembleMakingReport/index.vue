@@ -30,7 +30,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
-          @sort-change="sortChange">
+          @sort-change="sortChange" customKey="JNPFTableKey_360390">
           <el-table-column prop="orderNo" label="生产任务单号" width="180" sortable="custom" fixed="left"></el-table-column>
           <el-table-column prop="drawingNo" label="产品品名规格" min-width="160" align="center">
           </el-table-column>

@@ -65,7 +65,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column border @selection-change="handleSelectionChange" hasC>
+          @sort-change="sortChange" custom-column border @selection-change="handleSelectionChange" hasC customKey="JNPFTableKey_227740">
 
           <el-table-column prop="productsCode" label="产品编码" min-width="120" show-overflow-tooltip sortable="custom" />
           <el-table-column prop="productsName" label="产品名称" min-width="120" show-overflow-tooltip sortable="custom" />

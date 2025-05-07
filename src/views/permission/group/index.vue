@@ -32,7 +32,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="list" custom-column>
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="list" custom-column customKey="JNPFTableKey_702127">
           <el-table-column prop="fullName" label="分组名称" width="200" />
           <el-table-column prop="enCode" label="分组编码" width="150" />
           <el-table-column prop="type" label="分组类型" width="150" />

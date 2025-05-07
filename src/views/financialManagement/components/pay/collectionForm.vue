@@ -92,7 +92,7 @@
           <el-collapse-item title="预收款信息" name="productInfo" v-if="Number(dataForm.totalReconciliationAmount) >= 0">
             <div style="display: flex;flex-direction: column;" :style="{ height: height + 'px' }">
               <JNPF-table @selection-change="handeleProductInfoData" :hasC="type != 'look'" fixedNO
-                v-loading="formLoading" :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable">
+                v-loading="formLoading" :data="payData" custom-column ref="payRef" :checkSelectable="checkSelectable" customKey="JNPFTableKey_128563">
 
                 <el-table-column prop="remainingAmount" :label="showLabel + '款剩余金额'" min-width="160" />
                 <el-table-column prop="paymentDate" :label="showLabel + '款日期'" min-width="180" />

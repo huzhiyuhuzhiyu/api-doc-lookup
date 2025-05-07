@@ -48,7 +48,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" v-if="refreshTable" fixedNO
           :setColumnDisplayList="columnList" :default-expand-all="expands" @sort-change="sortChange" ref="dataTable"
-          custom-column>
+          custom-column customKey="JNPFTableKey_619371">
           <el-table-column prop="name" label="分类名称" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="code" label="分类编码" min-width="120" sortable="custom" />
 

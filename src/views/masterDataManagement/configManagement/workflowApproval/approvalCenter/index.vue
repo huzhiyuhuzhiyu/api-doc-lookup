@@ -39,7 +39,7 @@
             </el-row>
 
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable">
+              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" customKey="JNPFTableKey_694272">
                 <el-table-column prop="orderNo" label="审批单号" min-width="180"/>
                 <el-table-column prop="businessName" label="流程标题" min-width="160">
                   <template slot-scope="scope">
@@ -127,7 +127,7 @@
             </el-row>
 
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable">
+              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" customKey="JNPFTableKey_701586">
                 <el-table-column prop="orderNo" label="审批单号" min-width="180"/>
                 <el-table-column prop="businessName" label="流程标题" min-width="160">
                   <template slot-scope="scope">
@@ -215,7 +215,7 @@
             </el-row>
 
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable">
+              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" customKey="JNPFTableKey_693220">
                 <el-table-column prop="orderNo" label="审批单号" min-width="180"/>
                 <el-table-column prop="businessName" label="流程标题" min-width="160">
                   <template slot-scope="scope">
@@ -303,7 +303,7 @@
             </el-row>
 
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable">
+              <JNPF-table v-loading="listLoading" :data="tableData" @sort-change="sortChange" ref="dataTable" customKey="JNPFTableKey_805243">
                 <el-table-column prop="orderNo" label="审批单号" min-width="180"/>
                 <el-table-column prop="businessName" label="流程标题" min-width="160">
                   <template slot-scope="scope">

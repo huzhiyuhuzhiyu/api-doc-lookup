@@ -30,7 +30,7 @@
             </el-col>
           </el-form>
         </el-row>
-        <JNPF-table v-loading="listLoading" :data="list">
+        <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_820896">
           <el-table-column prop="fullName" label="接口名称" width="150" show-overflow-tooltip />
           <el-table-column prop="enCode" label="接口编码" width="150" show-overflow-tooltip />
           <el-table-column prop="url" label="请求地址" width="300" show-overflow-tooltip />

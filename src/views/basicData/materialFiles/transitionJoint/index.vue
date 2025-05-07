@@ -74,7 +74,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable" >
+          ref="dataTable"  customKey="JNPFTableKey_359637">
           <el-table-column prop="code" label="产品编码" min-width="140" fixed="left" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, true)">
@@ -246,7 +246,7 @@
     <!-- 查看BOM引用 -->
     <el-dialog title="查看BOM引用" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="bomVisibled"
       lock-scroll class="JNPF-dialog JNPF-dialog_center bomDialog" width="1000px">
-        <JNPF-table ref="bomTableData" v-loading="bomListLoading" :data="bomTableData" border height="600">
+        <JNPF-table ref="bomTableData" v-loading="bomListLoading" :data="bomTableData" border height="600" customKey="JNPFTableKey_748083">
           <el-table-column prop="productCode" label="产品编码" /> 
           <el-table-column prop="productName" label="产品名称" />
           <el-table-column prop="drawNo" label="产品图号" min-width="180"/>

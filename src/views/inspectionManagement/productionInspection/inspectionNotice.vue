@@ -67,7 +67,7 @@
         </div>
         <JNPF-table v-if="tableDataFlag" ref="dataTable" hasC @selection-change="handleSelectionChange" 
          :data="tableData" :fixedNO="true" @sort-change="sortChange"
-          custom-column :setColumnDisplayList="columnList">
+          custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_971998">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
             <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true)">

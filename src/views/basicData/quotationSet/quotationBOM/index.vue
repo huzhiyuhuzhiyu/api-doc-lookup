@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-                    custom-column fixedNO hasC @selection-change="currentChange" >
+                    custom-column fixedNO hasC @selection-change="currentChange"  customKey="JNPFTableKey_595883">
                     <el-table-column prop="customerProductNo" label="客户物料号" sortable="custom" min-width="140">
                         <template slot-scope="scope">
                             <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">

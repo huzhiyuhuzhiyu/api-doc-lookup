@@ -31,7 +31,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
-          fixedNO >
+          fixedNO  customKey="JNPFTableKey_330250">
           <el-table-column prop="outsideDiameter" label="钢管外径" sortable="custom" min-width="180" />
           <el-table-column prop="nutName" label="螺母" sortable="custom" min-width="180" />
           <el-table-column prop="ferruleName" label="卡套" sortable="custom" min-width="180" />

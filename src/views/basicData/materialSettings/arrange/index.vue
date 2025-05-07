@@ -63,7 +63,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable">
+          ref="dataTable" customKey="JNPFTableKey_498427">
           <el-table-column prop="code" label="编排编码" fixed="left" min-width="180" sortable="custom" />
           <el-table-column prop="name" label="编排名称" fixed="left" min-width="180" sortable="custom" />
           <el-table-column prop="classAttributeText" label="类型" min-width="220" sortable="custom" />

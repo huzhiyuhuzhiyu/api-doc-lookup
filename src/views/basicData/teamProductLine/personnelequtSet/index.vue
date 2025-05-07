@@ -53,7 +53,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_720233">
 
           <el-table-column prop="account" label="账号" sortable="custom"></el-table-column>
           <el-table-column prop="realName" label="姓名" sortable="custom"></el-table-column>

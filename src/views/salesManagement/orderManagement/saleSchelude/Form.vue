@@ -65,7 +65,7 @@
             <!-- <el-collapse-item title="" name="info" class="info" :disabled="true"> -->
             <el-collapse-item title="订单产品" name="product">
               <JNPF-table :data="productData" fixedNO v-loading="tableloading" class="productTable"
-                @row-click="handleRowClick">
+                @row-click="handleRowClick" customKey="JNPFTableKey_861930">
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                 </el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
@@ -185,7 +185,7 @@
               </div>
               <!-- 成品采购 -->
               <div v-if="categoryType == 'finishpurchase'">
-                <JNPF-table ref="finishpurchase" :data="purchaseData" fixedNO v-loading="tableloading" :height="height">
+                <JNPF-table ref="finishpurchase" :data="purchaseData" fixedNO v-loading="tableloading" :height="height" customKey="JNPFTableKey_229699">
                   <el-table-column prop="orderNo" label="采购单号" min-width="200">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewPurchaseFun(scope.row.id, 'look')">
@@ -221,7 +221,7 @@
               </div>
               <!-- 原材料采购 -->
               <div v-if="categoryType == 'rawpurchase'">
-                <JNPF-table ref="rawpurchase" :height="height" :data="rawData" fixedNO v-loading="tableloading">
+                <JNPF-table ref="rawpurchase" :height="height" :data="rawData" fixedNO v-loading="tableloading" customKey="JNPFTableKey_624981">
                   <el-table-column prop="orderNo" label="采购单号" min-width="200">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewPurchaseFun(scope.row.id, 'look')">
@@ -258,7 +258,7 @@
               <!-- 成品外协 -->
               <div v-if="categoryType == 'finishedOut'">
                 <JNPF-table ref="finishedOut" :height="height" :data="finishExtendData" fixedNO
-                  v-loading="tableloading">
+                  v-loading="tableloading" customKey="JNPFTableKey_843650">
                   <el-table-column prop="orderNo" label="外协单号" min-width="200">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewFinishExtendFun(scope.row.id, 'look')">
@@ -296,7 +296,7 @@
               </div>
               <!-- 工序外协 -->
               <div v-if="categoryType == 'processOut'">
-                <JNPF-table ref="processOut" :height="height" :data="processOutData" fixedNO v-loading="tableloading">
+                <JNPF-table ref="processOut" :height="height" :data="processOutData" fixedNO v-loading="tableloading" customKey="JNPFTableKey_537734">
                   <el-table-column prop="orderNo" label="外协单号" min-width="200">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewFinishExtendFun(scope.row.id, 'look')">
@@ -340,7 +340,7 @@
               <!-- 出入库记录 -->
               <div v-if="categoryType == 'outinboundwarehouse'">
                 <JNPF-table ref="outinboundwarehouse" :height="height" :data="outInboundData" fixedNO
-                  v-loading="tableloading">
+                  v-loading="tableloading" customKey="JNPFTableKey_219682">
                   <el-table-column prop="orderNo" label="单号" min-width="180">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewOutInbound(scope.row, 'look')">{{
@@ -389,7 +389,7 @@
               <!-- 发货记录 -->
               <div v-if="categoryType == 'shipmentRecord'">
                 <JNPF-table ref="shipmentRecord" :height="height" :data="shipmentData" fixedNO v-loading="tableloading"
-                  @row-click="handleRowClick">
+                  @row-click="handleRowClick" customKey="JNPFTableKey_891946">
                   <<el-table-column prop="orderNo" label="单号" min-width="200">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewShipmentFun(scope.row.id, 'look')">{{
@@ -453,7 +453,7 @@
               </div>
               <!-- 退货记录 -->
               <div v-if="categoryType == 'returnRecord'">
-                <JNPF-table ref="returnRecord" :height="height" :data="returnData" fixedNO v-loading="tableloading">
+                <JNPF-table ref="returnRecord" :height="height" :data="returnData" fixedNO v-loading="tableloading" customKey="JNPFTableKey_260071">
                   <el-table-column prop="orderNo" label="单号" min-width="180" key="orderNo">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewReturnFun(scope.row.id, 'look')">{{
@@ -506,7 +506,7 @@
               <!-- 对账记录 -->
               <div v-if="categoryType == 'reconciliation'">
                 <JNPF-table ref="reconciliation" :height="height" :data="reconciliationData" fixedNO
-                  v-loading="tableloading">
+                  v-loading="tableloading" customKey="JNPFTableKey_318921">
                   <el-table-column prop="orderNo" label="对账单号" min-width="180">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewReconciliationFun(scope.row.id, 'look')">{{
@@ -590,7 +590,7 @@
               <!-- 收退款记录 -->
               <div v-if="categoryType == 'receivePayRefund'">
                 <JNPF-table ref="receivePayRefund" :height="height" :data="receivePayRefundData" fixedNO
-                  v-loading="tableloading">
+                  v-loading="tableloading" customKey="JNPFTableKey_284447">
                   <el-table-column prop="orderNo" label="对账单号" min-width="180">
                     <template slot-scope="scope">
                       <el-link type="primary"
@@ -635,7 +635,7 @@
 
               <!-- 开票记录 -->
               <div v-if="categoryType == 'invoice'">
-                <JNPF-table ref="invoice" :height="height" :data="invoiceData" fixedNO v-loading="tableloading">
+                <JNPF-table ref="invoice" :height="height" :data="invoiceData" fixedNO v-loading="tableloading" customKey="JNPFTableKey_448991">
                   <el-table-column prop="orderNo" label="对账流水号" min- width="160" :key="1212">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewInvoiceFun(scope.row.id, 'look', scope.row.orderNo)">{{

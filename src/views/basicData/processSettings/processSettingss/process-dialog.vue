@@ -26,7 +26,7 @@
       </el-form>
     </el-row>
     <JNPF-table  @selection-change="handleSelectionChange" ref="multipleTable" :data="tableData" hasC tooltip-effect="dark" style="width: 100%;height:600px"
-      v-loading="listLoading" title="工序列表">
+      v-loading="listLoading" title="工序列表" customKey="JNPFTableKey_810461">
       <!-- <el-table-column type="selection" width="55"> -->
       <!-- </el-table-column> -->
       <el-table-column prop="code" label="工序编码">

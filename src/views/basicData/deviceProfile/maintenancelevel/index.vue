@@ -38,7 +38,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_963734">
             <el-table-column prop="level" label="保养等级" min-width="140">
               <template slot-scope="scope">
                 <div><el-tag type="success" :color="colorfun(scope.row.level)" effect="dark">{{levelfunction(scope.row.level)}}</el-tag></div>

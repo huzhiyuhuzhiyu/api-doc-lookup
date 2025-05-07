@@ -52,7 +52,7 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="false"
-            @sort-change="sortChange" custom-column>
+            @sort-change="sortChange" custom-column customKey="JNPFTableKey_133269">
             <el-table-column prop="quotationNo" label="报价单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

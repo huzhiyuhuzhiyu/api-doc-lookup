@@ -101,7 +101,7 @@
             </div>
 
             <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" @selection-change="handleSelectionChange" hasC
-              style="height: auto;" class="planBox" v-if="isProjectSwitchFlag">
+              style="height: auto;" class="planBox" v-if="isProjectSwitchFlag" customKey="JNPFTableKey_222449">
               <el-table-column prop="planNo" label="计划单号" min-width="180">
                 <template slot-scope="scope">
                   <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
@@ -945,7 +945,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table :data="planTableData" hasC @sort-change="sortChange" @selection-change="selectPlanFun"
-                ref="dataTableRef" @row-click="handleRowClick">
+                ref="dataTableRef" @row-click="handleRowClick" customKey="JNPFTableKey_414904">
                 <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"

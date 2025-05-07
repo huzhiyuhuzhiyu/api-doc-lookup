@@ -94,7 +94,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column customKey="JNPFTableKey_137749">
           <el-table-column prop="code" label="编码" width="140" sortable="custom">
             <template slot-scope="scope">
 

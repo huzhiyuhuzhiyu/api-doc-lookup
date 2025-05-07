@@ -149,7 +149,7 @@
 
                     <JNPF-table ref="products" :data="productData" custom-column :fixedNO="true"
                       :hasC="btnType != 'look'" v-if="tableDataFlag" @selection-change="handeleProductInfoData" border
-                        :height="customStyleData" :setColumnDisplayList="columnList">
+                        :height="customStyleData" :setColumnDisplayList="columnList" customKey="JNPFTableKey_628407">
                       <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" />
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
                       <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"

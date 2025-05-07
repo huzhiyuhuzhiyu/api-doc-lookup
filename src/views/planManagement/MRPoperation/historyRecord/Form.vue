@@ -7,7 +7,7 @@
       </div>
       <div class="main">
         <JNPF-table ref="popupTitleData" v-loading="listLoading" border :data="popupList" show-summary
-          :summary-method="getSummaries">
+          :summary-method="getSummaries" customKey="JNPFTableKey_922785">
           <el-table-column prop="productCode" label="来源产品编码" min-width="130"></el-table-column>
           <el-table-column prop="productDrawingNo" label="来源品名规格" min-width="180" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"

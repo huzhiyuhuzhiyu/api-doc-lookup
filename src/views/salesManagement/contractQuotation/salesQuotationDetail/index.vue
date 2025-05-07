@@ -58,7 +58,7 @@
           </div>
         </div>
         <JNPF-table ref="tableForm" :data="tableDataList" :fixedNO="true" v-if="isProjectSwitchFlag"
-          :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
+          :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_294015">
           <el-table-column prop="quotationNo" label="单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.salesQuotationId, 'look')">{{

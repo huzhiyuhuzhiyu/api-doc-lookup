@@ -76,7 +76,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" has-c @selection-change="handleChange"
-          highlight-current-row @row-click="rowClick" ref="mainTable">
+          highlight-current-row @row-click="rowClick" ref="mainTable" customKey="JNPFTableKey_635002">
           <el-table-column prop="code" label="订单编号" width="150" />
           <!-- <el-table-column prop="orderCode" label="客户类别" width="150" /> -->
           <el-table-column prop="customerName" label="客户名称" width="150" />
@@ -111,14 +111,14 @@
         <pagination :total="total" :page.sync="listQuery.currentPage"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
         <div class="sale-order-footer">
-          <JNPF-table :data="productEntryList" highlight-current-row @row-click="rowClick1">
+          <JNPF-table :data="productEntryList" highlight-current-row @row-click="rowClick1" customKey="JNPFTableKey_978227">
             <el-table-column prop="productCode" label="产品编号" />
             <el-table-column prop="productName" label="产品名称" />
             <el-table-column prop="qty" label="发货通知数" />
             <el-table-column prop="type" label="订货类型" />
             <el-table-column prop="activity" label="活动" />
           </JNPF-table>
-          <JNPF-table :data="childrenList" class="ml-10">
+          <JNPF-table :data="childrenList" class="ml-10" customKey="JNPFTableKey_357991">
             <el-table-column prop="productSpecification" label="产品规格" />
             <el-table-column prop="qty" label="数量" />
             <el-table-column prop="price" label="单价" />

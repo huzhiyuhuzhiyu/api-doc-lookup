@@ -30,7 +30,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" @cell-click="tabClick">
+        <JNPF-table v-loading="listLoading" :data="list" @cell-click="tabClick" customKey="JNPFTableKey_489417">
           <el-table-column prop="projectName" label="项目名称" width="200">
             <template slot-scope="scope">
               <el-input v-model="scope.row.projectName" v-if="tabClickId==scope.row.id"></el-input>

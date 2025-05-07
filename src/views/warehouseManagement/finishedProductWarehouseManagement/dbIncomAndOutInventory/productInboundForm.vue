@@ -110,7 +110,7 @@
                       </div> -->
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
-                        class="inboundProduct" style="width: 100%;height: auto">
+                        class="inboundProduct" style="width: 100%;height: auto" customKey="JNPFTableKey_158423">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
@@ -584,7 +584,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
-                @selection-change="handleSelectionChangeAllPruduct" ref="form">
+                @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_785670">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="productCode" label="产品编码" width="140" />
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"

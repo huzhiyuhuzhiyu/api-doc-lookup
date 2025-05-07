@@ -35,7 +35,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column>
+          @sort-change="sortChange" custom-column customKey="JNPFTableKey_552659">
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
           <el-table-column prop="productDrawingNo" label="产品图号" min-width="400" sortable="custom" />

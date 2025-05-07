@@ -43,7 +43,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
 
         <JNPF-table show-summary :summary-method="getSummaries" v-loading="listLoading" highlight-current-row
-          :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column>
+          :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_844017">
           <el-table-column prop="orderNo" label="订单号" min-width="180">
           </el-table-column>
           <el-table-column prop="orderDate" label="订单日期" min-width="180" />

@@ -159,7 +159,7 @@ export default {
                         ref="dataTable"
                           @row-click="rowClick"
                           custom-column
-                        :setColumnDisplayList="columnList">
+                        :setColumnDisplayList="columnList" customKey="JNPFTableKey_310340">
 
                 <el-table-column prop="name" label="分类名称" min-width="200">
                     <template slot-scope="scope">

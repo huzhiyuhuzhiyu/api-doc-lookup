@@ -25,7 +25,7 @@
           <!-- <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
           </div> -->
-          <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+          <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;" customKey="JNPFTableKey_130542">
             <el-table-column prop="type" label="日期" min-width="160" />
             <el-table-column prop="contractNum" label="签约合同数(个)" min-width="140" />
             <el-table-column prop="contractMoney" label="签约合同金额(元)" min-width="140" />

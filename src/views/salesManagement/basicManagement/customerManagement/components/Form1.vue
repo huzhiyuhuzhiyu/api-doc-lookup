@@ -476,7 +476,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
-            <JNPF-table ref="dataTable" :data="tableData" custom-column>
+            <JNPF-table ref="dataTable" :data="tableData" custom-column customKey="JNPFTableKey_372728">
               <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
               <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
               <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />

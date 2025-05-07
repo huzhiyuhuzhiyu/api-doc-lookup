@@ -31,7 +31,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_120075">
             <el-table-column prop="productCode" label="产品编码" sortable="custom" ></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom" ></el-table-column>
             <el-table-column prop="orderNo" label="领料单号" sortable="custom" ></el-table-column>

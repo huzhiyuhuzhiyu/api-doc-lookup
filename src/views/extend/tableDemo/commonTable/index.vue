@@ -30,7 +30,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
+        <JNPF-table v-loading="listLoading" :data="list" custom-column customKey="JNPFTableKey_994447">
           <template v-for="(item,index) in defaultColumnOptions">
             <template>
               <template v-if="item.prop==='projectType'">

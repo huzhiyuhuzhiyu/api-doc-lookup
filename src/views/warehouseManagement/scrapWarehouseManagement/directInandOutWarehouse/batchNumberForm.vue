@@ -30,7 +30,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_524523">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120"/>
             <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="120"/>

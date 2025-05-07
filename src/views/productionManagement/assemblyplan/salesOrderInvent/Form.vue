@@ -206,7 +206,7 @@
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading">
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNO v-loading="tableloading" customKey="JNPFTableKey_380406">
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processingType" label="加工类型" width="100">
@@ -356,7 +356,7 @@
                 <el-collapse-item title="领料清单" name="productInfo" class="productInfo"
                   :style="!allocationFlag ? 'margin-top:5px' : ''">
 
-                  <JNPF-table ref="product" :data="materialList" fixedNO v-loading="tableloading">
+                  <JNPF-table ref="product" :data="materialList" fixedNO v-loading="tableloading" customKey="JNPFTableKey_374717">
                     <el-table-column prop="productCode" label="产品编码"></el-table-column>
                     <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                       v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

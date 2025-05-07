@@ -37,7 +37,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" ref="tabForm">
+        <JNPF-table v-loading="listLoading" :data="list" ref="tabForm" customKey="JNPFTableKey_327384">
           <el-table-column prop="updateContent" label="更新内容" show-overflow-tooltip min-width="150" />
           <el-table-column prop="updateDate" label="更新时间" width="200" />
           <el-table-column prop="createBy" label="创建人" width="100" />

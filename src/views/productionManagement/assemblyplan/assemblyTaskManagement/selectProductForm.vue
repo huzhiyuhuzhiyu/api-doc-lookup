@@ -31,7 +31,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList"   >
+          <JNPF-table v-loading="listLoading" :data="tableDataList"    customKey="JNPFTableKey_327472">
             <el-table-column prop="code" label="产品编码" sortable="custom" min-width="150"/>
             <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

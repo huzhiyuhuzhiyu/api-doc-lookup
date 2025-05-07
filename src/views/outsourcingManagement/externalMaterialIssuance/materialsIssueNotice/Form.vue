@@ -139,7 +139,7 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table :hasC="btnType !== 'look'" hasNO fixedNO ref="product" :data="dataFormTwo.data"
                       @selection-change="handeleProductInfoData" v-loading="tableloading" @row-click="openDetails"
-                      :row-style="rowStyle">
+                      :row-style="rowStyle" customKey="JNPFTableKey_273889">
                       <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                         key="1"></el-table-column>
                       <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="160" key="3"

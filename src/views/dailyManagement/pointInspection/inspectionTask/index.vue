@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column>
+        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column customKey="JNPFTableKey_187364">
           <el-table-column prop="name" label="任务名称" width="200" sortable="custom">
             <!-- <template slot-scope="scope">
                           <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{

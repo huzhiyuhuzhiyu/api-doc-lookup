@@ -114,7 +114,7 @@
           </div>
           <template v-if="tableFlag">
             <JNPF-table v-show="dataTableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-              ref="dataTable" :setColumnDisplayList="columnList">
+              ref="dataTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_547744">
               <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom"
                 v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
@@ -237,7 +237,7 @@
               <el-table-column prop="createByName" label="创建人" />
             </JNPF-table>
             <JNPF-table v-show="!dataTableFlag" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-              custom-column ref="otherTable" :setColumnDisplayList="columnList">
+              custom-column ref="otherTable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_970309">
               <el-table-column prop="projectName" label="所属项目" width="140" sortable="custom"
                 v-if="isProjectSwitch === '1'"></el-table-column>
               <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">

@@ -61,7 +61,7 @@
                       </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_885992">
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                         <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                           show-overflow-tooltip></el-table-column>
@@ -327,7 +327,7 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange" :fixedNO="true"
-                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
+                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_890088">
                 <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
                 <el-table-column prop="partnerCode" label="供应商编码" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />

@@ -42,7 +42,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" class="dataTable" border
-          ref="listTable" custom-column>
+          ref="listTable" custom-column customKey="JNPFTableKey_157654">
           <el-table-column prop="code" label="异常编码" min-width="120" sortable="custom" />
           <el-table-column prop="name" label="异常名称" min-width="120" sortable="custom" />
           <el-table-column prop="cron" label="执行周期" min-width="120" sortable="custom" />

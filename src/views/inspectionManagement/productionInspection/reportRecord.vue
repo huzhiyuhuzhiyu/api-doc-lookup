@@ -57,7 +57,7 @@
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
-            :setColumnDisplayList="columnList">
+            :setColumnDisplayList="columnList" customKey="JNPFTableKey_972635">
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="inspectionOrderNo" label="检验单号" min-width="220" sortable="custom" />

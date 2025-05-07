@@ -48,7 +48,7 @@
                     </el-row>
                   </div>
                   <div style="height: 672px;" class="JNPF-flex-main">
-                    <JNPF-table ref="dataTableInspection" v-loading="listLoadingInspection" :data="tableInspectionresults" fixedNO custom-column>
+                    <JNPF-table ref="dataTableInspection" v-loading="listLoadingInspection" :data="tableInspectionresults" fixedNO custom-column customKey="JNPFTableKey_481944">
                       <el-table-column prop="verificationAgency" label="检定机构" width="200" sortable="custom" />
                       <el-table-column prop="departmentIdText" label="计划执行部门" width="150" />
                       <el-table-column prop="maintainerIdText" label="计划执行人" width="120"></el-table-column>

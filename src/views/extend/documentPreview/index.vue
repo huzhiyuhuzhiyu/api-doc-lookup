@@ -30,7 +30,7 @@
               <!-- <el-alert title="免责声明：永中文档预览组件不属于JNPF产品，只用于介绍第三方组件如何在《JNPF快速开发平台》中使用。" type="warning"
                 :closable="false" show-icon v-else /> -->
             </div>
-            <JNPF-table v-loading="listLoading" :data="list">
+            <JNPF-table v-loading="listLoading" :data="list" customKey="JNPFTableKey_169329">
               <el-table-column prop="fileName" label="文件名称">
                 <template slot-scope="scope">
                   <el-link @click="readInfo(scope.row.fileId,scope.row.fileName)"

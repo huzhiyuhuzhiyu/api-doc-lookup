@@ -27,7 +27,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" lazy v-if="refreshTable"
-          :load="loadExpandData" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" custom-column>
+          :load="loadExpandData" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" custom-column customKey="JNPFTableKey_110954">
           <el-table-column prop="fullName" label="区域名称" />
           <el-table-column prop="enCode" label="区域编码" />
           <el-table-column prop="sortCode" label="排序" width="70" align="center" />

@@ -57,7 +57,7 @@
                 </div>
                 <JNPF-table v-loading="listLoading" :data="treeList" row-key="id"
                   v-if="refreshTable" :default-expand-all="expands"
-                  :tree-props="{children: 'children', hasChildren: ''}">
+                  :tree-props="{children: 'children', hasChildren: ''}" customKey="JNPFTableKey_299253">
                   <el-table-column prop="fullName" label="菜单名称" width="260" />
                   <el-table-column prop="urlAddress" label="菜单地址" show-overflow-tooltip />
                   <el-table-column prop="icon" label="图标" width="60" align="center">

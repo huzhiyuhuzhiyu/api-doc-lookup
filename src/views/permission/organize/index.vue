@@ -89,7 +89,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" hasC  ref="dataTable" :data="treeList" row-key="id" v-if="refreshTable&&isTableFlag"
-          :default-expand-all="expands" :tree-props="{children: 'children', hasChildren: ''}" custom-column>
+          :default-expand-all="expands" :tree-props="{children: 'children', hasChildren: ''}" custom-column customKey="JNPFTableKey_400351">
           <el-table-column prop="fullName" label="名称">
             <template slot-scope="scope">
               <i :class="'table-icon icon-my '+scope.row.icon"></i>{{scope.row.fullName}}

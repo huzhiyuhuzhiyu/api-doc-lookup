@@ -40,7 +40,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" @expand-change="expandChange"
-          :hasNO="false" @sort-change="sortChange">
+          :hasNO="false" @sort-change="sortChange" customKey="JNPFTableKey_172636">
           <el-table-column type="expand" width="40">
             <template slot-scope="props">
               <el-tabs v-model="props.row.activeName">

@@ -41,7 +41,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
+        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" customKey="JNPFTableKey_551698">
           <el-table-column prop="fullName" label="连接名称" min-width="200" />
           <el-table-column prop="dbType" label="连接驱动" width="150" />
           <el-table-column prop="host" label="主机地址" width="200" />

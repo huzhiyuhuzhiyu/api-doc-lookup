@@ -49,7 +49,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="allorderData" @row-dblclick="seleceCustomerdd" @selection-change="seleceCustomerdd">
+          <JNPF-table v-loading="listLoading" :data="allorderData" @row-dblclick="seleceCustomerdd" @selection-change="seleceCustomerdd" customKey="JNPFTableKey_354260">
             <el-table-column prop="orderNo" label="采购单号" show-overflow-tooltip></el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" show-overflow-tooltip></el-table-column>
             <el-table-column prop="cooperativePartnerName" label="供应商名称" show-overflow-tooltip></el-table-column>

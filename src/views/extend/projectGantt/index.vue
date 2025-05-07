@@ -31,7 +31,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" sortable='custom' size="mini"
-          @sort-change='sortChange'>
+          @sort-change='sortChange' customKey="JNPFTableKey_632710">
           <el-table-column prop="fullName" label="项目名称/项目编码" sortable show-overflow-tooltip
             width="180">
             <template slot-scope="scope">

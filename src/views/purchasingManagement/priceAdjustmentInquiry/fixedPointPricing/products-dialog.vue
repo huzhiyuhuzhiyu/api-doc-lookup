@@ -65,7 +65,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="allproductData" hasC
-            @selection-change="handleSelectionChangeAllPruduct">
+            @selection-change="handleSelectionChangeAllPruduct" customKey="JNPFTableKey_265801">
             <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
             <el-table-column prop="name" label="产品名称" />
             <el-table-column prop="drawingNo" label="产品图号" />

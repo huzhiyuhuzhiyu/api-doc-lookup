@@ -38,7 +38,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="istable" ref="dataTable" :data="tableData" @sort-change="sortChange" custom-column>
+        <JNPF-table v-if="istable" ref="dataTable" :data="tableData" @sort-change="sortChange" custom-column customKey="JNPFTableKey_195984">
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="equipmentIdName" label="工具名称" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />

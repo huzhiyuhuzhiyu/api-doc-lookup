@@ -58,7 +58,7 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
-          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
+          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove" customKey="JNPFTableKey_496179">
           <el-table-column prop="name" label="类别名称" width="250" sortable="custom" />
           <el-table-column prop="code" label="类别编码" min-width="150" sortable="custom" />
           <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">

@@ -52,7 +52,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                             && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled
@@ -172,7 +172,7 @@
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="120" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-                        
+
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="150" />
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="100" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="100" />
@@ -183,12 +183,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -270,7 +270,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                           && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled
@@ -329,7 +329,7 @@
                         </el-tooltip>
                       </div>
                       </div>
-                      <JNPF-table ref="product" :data="productData" :partent-or-child="'child'" custom-column :fixedNO="true" 
+                      <JNPF-table ref="product" :data="productData" :partent-or-child="'child'" custom-column :fixedNO="true"
                         :hasC="btnType != 'look'" @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;"
                         :setColumnDisplayList="columnList">
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
@@ -410,12 +410,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -427,7 +427,7 @@
                        </el-table-column>
                        <el-table-column prop="material" label="材质" width="120" v-if="$store.getters.configData.orderField.material">
                        </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -548,12 +548,12 @@
                 <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                  </el-table-column>
                  <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                 
+
                  </el-table-column>
                  <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                  <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                 
+
                  </el-table-column>
                  <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                  </el-table-column>
@@ -591,7 +591,7 @@
       <!-- 选客户 -->
       <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
       <!-- 选批次号 -->
-      <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
+      <BatchNumberForm :cooperativePartnerId="dataForm.cooperativePartnerId" v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
       <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
         :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
@@ -867,7 +867,7 @@ export default {
       this.$set(this.productData[index], 'angle', data.angle)
       this.$set(this.productData[index], 'pairingModeNames', data.pairingModeName)
       this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
-      
+
 
 
     },
@@ -876,7 +876,7 @@ export default {
       let data = JSON.parse(JSON.stringify(row))
       this.productData.splice(index + 1, 0, data);
     },
-    // 点击选择产品 销售发货 
+    // 点击选择产品 销售发货
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.productVisible = true
@@ -1185,7 +1185,7 @@ export default {
             })
           }
           this.dataForm = res.data.stockMove
-          
+
           this.productData = res.data.spaceLines
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
@@ -1328,7 +1328,7 @@ export default {
               //   this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
               //   break
               // }
-              if (Number(item.num) > Number(item.undeliveredQuantity)) {
+              if ((Number(item.num) > Number(item.undeliveredQuantity)) && !this.$store.getters.configData.sale.allow_exceed_shipment) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待发货数量")
                 break

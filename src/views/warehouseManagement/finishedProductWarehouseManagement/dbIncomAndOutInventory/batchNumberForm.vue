@@ -15,7 +15,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="form.partnerName" placeholder="请输入供应商名称" clearable />
+                <el-input @keyup.native.enter="search()"  v-model="form.partnerName" placeholder="请输入客户/供应商名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -48,7 +48,7 @@
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @sort-change="sortChange"   :setColumnDisplayList="columnList"  custom-column ref="dataTable">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"  key="batchNumber"></el-table-column>
-            <el-table-column prop="partnerName" label="供应商名称" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')"></el-table-column>
+            <el-table-column prop="partnerName" label="客户/供应商名称" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_procure_data') && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')"></el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
@@ -72,24 +72,24 @@
             <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
             <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" sortable="custom"
               :key="603"></el-table-column>
-            <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column> 
+            <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
             <el-table-column prop="standardValue" label="规值" min-width="120" v-if="sealingCoverTypingFlag == 1"
               sortable="custom"></el-table-column>
               <el-table-column prop="colour" :label="$store.getters.colour"  min-width="120" v-if="sealingCoverTypingFlag == 1"
               sortable="custom"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" 
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140"
               sortable="custom"></el-table-column>
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" 
+            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120"
               sortable="custom"></el-table-column>
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"
               sortable="custom"></el-table-column>
             <el-table-column prop="oil" label="油脂" min-width="120"
               sortable="custom"></el-table-column>
-            <el-table-column prop="clearance" label="游隙" min-width="120" 
+            <el-table-column prop="clearance" label="游隙" min-width="120"
               sortable="custom"></el-table-column>
             <el-table-column prop="aperture" label="孔径" min-width="120"  sortable="custom"></el-table-column>
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120"  />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" 
+            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120"
               sortable="custom"></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
@@ -109,7 +109,15 @@
 import { getlistOutBatchStock } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getBatchNumber, getOrderFiledMap } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
+import TenantMinix from '@/mixins/generator/TenantMinix'
 export default {
+  mixins: [TenantMinix],
+  props:{
+      cooperativePartnerId:{
+          type:String,
+          default:''
+      }
+  },
   data() {
     return {
       columnList:[],
@@ -144,6 +152,7 @@ export default {
         processId: "",
         pairingModeId:"",
         excludeProcessFlag:false,
+        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : ''
       },
       refreshTree: true,
       listLoading: false,
@@ -240,6 +249,7 @@ export default {
       this.form.material = ""
       this.form.standardValue = ""
       this.form.excludeProcessFlag=this.excludeProcessFlag
+      this.form.cooperativePartnerId = this.isYS ? this.cooperativePartnerId : ''
       this.dataForm = data
       console.log(requestFlag,'requestFlag')
       if (!requestFlag) {
@@ -305,6 +315,7 @@ export default {
         standardValue:this.dataForm.standardValue,
         colour:this.dataForm.colour,
         excludeProcessFlag:this.excludeProcessFlag,
+        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : ''
       }
       if (this.requestFlag) {
         this.getlistOutBatchStockFun()

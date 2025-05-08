@@ -7,7 +7,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="5">
             <el-form-item>
-              <el-select v-model="tableQuery.shelfSpaceName" placeholder="库位" @change="shelfSpaceChange">
+              <el-select v-model="tableQuery.shelfSpaceName" placeholder="库位" @change="shelfSpaceChange" clearable>
                 <el-option v-for="item in shelvesData" :key="item.name" :label="item.name"
                   :value="item.name"></el-option>
               </el-select>
@@ -382,8 +382,8 @@ export default {
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1244',
-        exportName: '角接触库存',
+        exportType: '1248',
+        exportName: '常规成品库结存报表',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

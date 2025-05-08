@@ -509,7 +509,7 @@ export default {
           }
         ],
         productStatus: 'enable',
-        productSource: 'purchase',
+        productSource: '',
         pageNum: 1,
         pageSize: 20
         // queryType: 3

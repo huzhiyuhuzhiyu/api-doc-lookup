@@ -24,9 +24,10 @@
           </template>
           <el-col :span="5">
             <el-form-item>
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="创建开始时间"
-                end-placeholder="创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
+          
+
+                <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd"
+                style="width: 100%;" start-placeholder="单据开始日期" end-placeholder="单据结束日期"></el-date-picker>
             </el-form-item>
           </el-col>
 
@@ -110,6 +111,7 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="stockMoveOrderDate" label="单据日期" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
         </JNPF-table>
@@ -260,6 +262,16 @@ export default {
           prop: 'excludingTaxAmount',
           label: '金额',
           type: 'input'
+        },
+        
+        {
+          prop: 'stockMoveOrderDate',
+          label: '单据日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
         },
         {
           prop: 'createTime',
@@ -450,8 +462,8 @@ export default {
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
+        this.listQuery.startTime = this.createRequirementDate[0] 
+        this.listQuery.endTime = this.createRequirementDate[1]
       } else {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''

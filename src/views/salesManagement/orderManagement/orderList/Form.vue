@@ -18,8 +18,8 @@
         <div class="main" ref="main" v-loading="formLoading" :element-loading-text="loadingText">
           <el-tabs v-model="activeName" @tab-click="handleClick" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="orderInfo">
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+              <el-collapse v-model="activeNames"  @change="changeDoLayOut">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo"  ref="orderInfo">
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
@@ -38,7 +38,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data') 
+                      <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data')
                         && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                         <el-form-item label="所属客户" prop="cooperativePartnerId">
                           <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择所属客户" readonly
@@ -149,8 +149,8 @@
                   </div>
                   </div>
                   <div ref="boxresiz" v-if="btnType == 'look'">
-                    <JNPF-table ref="product" :partent-or-child="'child'" :data="productData" custom-column :fixedNO="false" border height="100%" key="191"
-                      style="width: 100%;height:100%" :height="customStyleData">
+                    <JNPF-table ref="product" :partent-or-child="'child'" :data="productData" custom-column :fixedNO="false" border key="191"
+                       :height="customStyleData">
                       <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       </el-table-column>
@@ -248,12 +248,12 @@
                        <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -263,14 +263,14 @@
                        </el-table-column>
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                        </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
                        </el-table-column>
                        <el-table-column prop="angle" label="角度" width="120" v-if="$store.getters.configData.orderField.angle">
                        </el-table-column>
-                       
+
                       <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
 
                       <el-table-column prop="remark2" label="客户产品备注" width="200" :key="1228"> </el-table-column>
@@ -280,7 +280,7 @@
                   <JNPF-table ref="product" :partent-or-child="'child'"
                     v-else-if="(btnType == 'edit' || btnType == 'add' || btnType == 'copy') && isProjectSwitchFlag == true"
                     :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" border custom-column
-                    @row-click="rowclick" key="165" style="width: 100%;" hasC :height="customStyleData">
+                    @row-click="rowclick" key="165"  hasC :height="customStyleData">
                     <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
@@ -411,7 +411,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable filterable :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false"
                           allow-create style="width: 100%;">
-                          <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index" :label="item.name" 
+                          <el-option v-for="(item, index) in bimProductAttributesList.pa007" :key="index" :label="item.name"
                             :value="item.name"></el-option>
                         </el-select>
                       </template>
@@ -524,10 +524,10 @@
                     <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                     </el-table-column>
                     <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                    
+
                     </el-table-column>
                     <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                    
+
                     </el-table-column>
                     <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
@@ -539,7 +539,7 @@
                     </el-table-column>
                     <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                     </el-table-column>
-                    <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                    <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -608,7 +608,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data') 
+                  <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data')
                         && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                     <el-form-item label="所属客户" prop="cooperativePartnerId">
                       <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择所属客户" readonly
@@ -1038,7 +1038,7 @@
                 <el-table-column prop="colour" :label="$store.getters.colour" width="120" v-if="colourFlag == 1"
                   :key="110">
                   <template slot-scope="scope">
-                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create 
+                    <el-select v-model="scope.row.colour" placeholder="请选择" clearable filterable allow-create
                       style="width: 100%;">
                       <el-option v-for="(item, index) in bimProductAttributesList.pa010" :key="index" :label="item.name"
                         :value="item.name"></el-option>
@@ -1602,7 +1602,7 @@ export default {
       createcontractId: "",
       createcontractName: "",
       customStyleData: 0,
- 
+
       taxRateList: [],
       // productFormVisible: false
       flowTemplateJson: {},
@@ -1682,7 +1682,6 @@ export default {
     this.isProjectSwitchFlag = true
     if (this.isProjectSwitch === '1') this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
-    await this.switchStyleheight()
     this.$nextTick(() => { this.$refs.product.doLayout() })
     this.formLoading = false
   },
@@ -1710,7 +1709,17 @@ export default {
       console.log(res.data);
       this.salesList = res.data
     })
+      this.$nextTick(()=>this.switchStyleheight())
+      // 页面发生缩放，触发明细表格表单的resize
+      this.clientResize = () => {
+          if (!this.$refs.product) return
+          this.$nextTick(() => { this.$refs.product.doLayout() })
+      }
+      window.addEventListener('resize', this.clientResize)
   },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.clientResize)
+    },
 
   methods: {
     columnSetFun() {
@@ -1772,27 +1781,27 @@ export default {
 
 
         this.accuracyLevelFlag = res.data.accuracyLevel //list1
-        
+
         this.clearanceFlag = res.data.clearance
-    
+
         this.oilFlag = res.data.oil
-       
+
         this.oilQuantityFlag = res.data.oilQuantity
-  
+
         this.packagingMethodFlag = res.data.packagingMethod
-  
+
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-       
+
         this.specialRequireFlag = res.data.specialRequire
-       
+
         // 保持架材质
         this.materialFlag = res.data.material
-       
+
         // 颜色
         this.colourFlag = res.data.colour
-        
+
         this.vibrationLevelFlag = res.data.vibrationLevel
-        
+
 
 
         if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
@@ -2036,22 +2045,6 @@ export default {
     handleRowClick(row) {
       this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
     },
-    // switchStyleheight() {
-    //   const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
-    //   const mainHeight = mainRegion.clientHeight;
-    //   const TableFormTitle = mainRegion.querySelector('.TableForm_title') // 获取TableForm头部操作栏
-    //   const TableFormTitleHeight = TableFormTitle ? TableFormTitle.clientHeight : 0
-    //   let maxHeight = mainHeight - TableFormTitleHeight - 65 - 154
-    //   maxHeight = maxHeight > 500 ? maxHeight : 500
-    //   this.customStyleData = maxHeight
-    //   // 附带防抖的监听适配模式屏幕缩放
-    //   window.onresize = () => {
-    //     clearTimeout(this.timeout)
-    //     this.timeout = setTimeout(() => {
-    //       this.switchStyleheight()
-    //     }, 100);
-    //   };
-    // },
     // 表格选择交货日期
     selectDeliveryDate(row, index) {
       console.log(row);
@@ -2486,7 +2479,7 @@ export default {
         if (this.isProjectSwitch === '1'){
           this.ProductTableSearchList.unshift({ prop: "projectId", label: "所属项目", type: 'select',options:this.projectIdData });
           this.ProductListRequestObjs.projectId = this.userInfo.projectId
-        } 
+        }
         this.$refs["comSelect-page"].openDialog()
       } else {
         this.$message({
@@ -2878,6 +2871,9 @@ export default {
         this.$nextTick(() => {
         })
       }
+    },
+    changeDoLayOut(){
+        this.$nextTick(()=>this.switchStyleheight())
     },
     async fetchData(code, flag) {
       try {
@@ -3383,28 +3379,20 @@ export default {
       }).catch(() => { })
     },
     switchStyleheight() {
-      const mainRegion1 = this.$refs.main // 表单页面区域
-      console.log("this.$refs.main", this.$refs.main);
-      const mainHeight1 = mainRegion1.clientHeight
-      // 其他同级组件占用高度
-      let bortherHeight = 0
-      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
-      bortherItems.forEach((item) => {
-        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
-      })
-
-      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
-      let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight;
-      if (this.btnType == 'look') {
-         maxHeight = mainHeight1 - 580
-
-      } else {
-         maxHeight = mainHeight1 - 500
-      }
-
-      console.log(maxHeight, 'maxHeight')
-      this.customStyleData = Number(maxHeight) > 0 ? maxHeight : 300
+        const mainRegion = this.$refs.main // 表单页面区域
+        const orderInfoRegion = this.$refs.orderInfo // 表单页面区域
+        const mainHeight = mainRegion && mainRegion.clientHeight;
+        this.$nextTick(()=>{
+            if(orderInfoRegion.$el){
+                orderInfoRegion.$el.ontransitionend =(e)=>{
+                    const orderInfoHeight = orderInfoRegion.$el.offsetHeight
+                    let maxHeight = mainHeight - orderInfoHeight
+                    maxHeight = maxHeight > 500 ? maxHeight : 500
+                    this.customStyleData = maxHeight - 220
+                    orderInfoRegion.$el.ontransitionend = null
+                }
+            }
+        })
       // 附带防抖的监听适配模式屏幕缩放
       window.onresize = () => {
         clearTimeout(this.timeout)

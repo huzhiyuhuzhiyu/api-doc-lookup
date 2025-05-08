@@ -247,11 +247,11 @@
                       v-if="materialFlag == 1"></el-table-column>
                     <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
                       v-if="colourFlag == 1"></el-table-column>
-                    <el-table-column prop="standardValue" label="规值"  width="130" :key="1015"
+                    <el-table-column prop="standardValue" label="规值"  min-width="130" key="standardValue"
                       v-if="standardValueFlag == 1">
                       <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择"
-                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
+                          <el-select v-model="scope.row.standardValue" placeholder="请选择" style="width: 100%;"
+                            :disabled="type == 'look' ? true : false" clearable >
                             <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -524,11 +524,11 @@
                   v-if="materialFlag == 1"></el-table-column>
                 <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
                   v-if="colourFlag == 1"></el-table-column>
-                  <el-table-column prop="standardValue" label="规值"  width="130" :key="1015"
+                  <el-table-column prop="standardValue" label="规值"  min-width="130" key="standardValue"
                       v-if="standardValueFlag == 1">
                       <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择"
-                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
+                          <el-select v-model="scope.row.standardValue" placeholder="请选择" style="width: 100%;"
+                            :disabled="type == 'look' ? true : false" clearable>
                             <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
@@ -2128,6 +2128,7 @@ export default {
             taxAmount: item.taxAmount ? item.taxAmount : '',
             excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
             inspectionStatus:item.inspectionStatus,
+            batchNumber:item.batchNumber,
           }
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
@@ -2168,6 +2169,7 @@ export default {
             inspectionResults:item.inspectionResults,
             receivingStatus:item.receivingStatus,
             notificationType:item.notificationType,
+            batchNumber:item.batchNumber,
           }
           if (this.btnType == 'add' || this.btnType == 'copy') {
             obj.lines.push(dep)

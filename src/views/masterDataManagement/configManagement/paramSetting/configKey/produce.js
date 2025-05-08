@@ -61,4 +61,10 @@ export default {
         description: '启用后，在新建返工页面，显示领料单信息',
         mainModule: '生产设置'
     }
+    task_process_selection: {
+      configKeyLabel: '任务工艺选择',
+      description: '如果开启按工艺列表，新建任务时工艺路线来源为工艺列表；如果开启按工艺设置，新建任务时工艺路线来源为工艺设置'
+  },
+
+
 }

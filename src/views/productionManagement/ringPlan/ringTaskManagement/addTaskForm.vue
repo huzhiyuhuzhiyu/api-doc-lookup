@@ -934,9 +934,10 @@ export default {
         orderNo: this.codeConfig.number
       }
       this.$refs.dataForm.clearValidate('productsDrawingNo');
-
+      this.$refs.dataForm.resetFields('routingName');
+console.log("this.$refs.dataForm",this.$refs.dataForm);
       this.dataForm.productsDrawingNo = data.drawingNo
-      this.dataForm.productsCode = data.code
+      this.dataForm.productsCode = data.code 
       this.dataForm.productsName = data.name
       this.dataForm.productsId = data.id
       if (this.$store.getters.configData.produce.steelBallTask) {
@@ -953,10 +954,13 @@ export default {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
       }
       this.creaFun()
-      if (!data.routingId) return
+      console.log("this.$store.getters.configData.produce.task_process_selection",this.$store.getters.configData.produce.task_process_selection);
+      if (!data.routingId) return this.dataFormTwo.data=[]
+      console.log(666666);
       if (!this.$store.getters.configData.produce.task_process_selection) {
         this.dataForm.routingId = ''
         this.dataForm.routingName = ''
+      this.dataFormTwo.data=[]
         return
       }
       this.getRoutingDetail(this.dataForm.routingId)

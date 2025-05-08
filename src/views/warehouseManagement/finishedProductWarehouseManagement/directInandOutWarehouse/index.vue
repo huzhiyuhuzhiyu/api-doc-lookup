@@ -326,7 +326,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel" width="120"
-                        key="123"> 
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -336,7 +336,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
-                        key="123"> 
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -346,7 +346,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
-                        key="123"> 
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -466,7 +466,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <template v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase'].includes(dataForm.businessType)">
+                      <template v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','inbound_other','outbound_other','inbound_order_production'].includes(dataForm.businessType)">
                       <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115" v-if="$store.getters.configData.orderField.specSize">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"

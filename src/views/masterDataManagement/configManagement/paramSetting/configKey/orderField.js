@@ -174,7 +174,7 @@ export default {
         description: '启用销售管理颜色后，新建销售管理时，将会显示颜色输入字段，对应发货通知单、计划、需求、生产计划等也将显示颜色字段。',
         mainModule: '销售管理'
     },
-    holder: {
+    gobal_holder: {
         configKeyLabel: '启用保持架',
         description: '启用销售管理保持架后，新建销售管理时，将会显示保持架字段。',
         mainModule: '销售管理'

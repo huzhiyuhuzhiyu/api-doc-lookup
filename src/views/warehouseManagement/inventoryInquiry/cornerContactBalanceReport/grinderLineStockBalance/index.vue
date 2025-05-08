@@ -298,6 +298,7 @@ export default {
       
       this.isProjectSwitchFlag = true
     this.$nextTick(function () {
+      this.search('basic', 'search')
   
       // this.getShelvesName()
     })

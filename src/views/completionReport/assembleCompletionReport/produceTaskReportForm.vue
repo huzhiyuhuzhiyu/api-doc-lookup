@@ -383,7 +383,7 @@
                     </el-form-item>
                   </el-col>
              
-                  <el-col :sm="24" :xs="24">
+                  <el-col :sm="24" :xs="24" v-if="currentProcess.cleanReportFlag">
                     <el-form-item label="是否修磨" class="iptLabel">
                       <el-select v-model="isregrindingFlag" placeholder="是否修磨" style="width: 100%;" class="ipt">
                         <el-option v-for="(item, index) in isregrindingFlagList" :key="index" :label="item.label"

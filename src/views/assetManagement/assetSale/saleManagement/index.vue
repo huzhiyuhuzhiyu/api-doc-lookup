@@ -347,12 +347,12 @@ export default {
         this.$refs.Form.init('', 'add')
       })
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,type) {
       this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
+          this.$refs.Form.init(id, type)
         })
         // }, 600);
       }

@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" >
           <el-page-header @back="goBack"
-            :content="btnType == 'add' ? '新建报废' : btnType == 'edit' ? '编辑报废' : btnType == 'look' ? '查看报废' : '新建报废'" />
+            :content="btnType == 'add' ? '新建售出' : btnType == 'edit' ? '编辑售出' : btnType == 'look' ? '查看售出' : '新建售出'" />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('draft')">
@@ -115,18 +115,31 @@
                         </el-col>
                         <el-col :sm="6" :xs="24" >
                        
-                          <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                            <!-- 供应商选择弹窗  -->
-                            <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page" isdisabled
-                              @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
-                              title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
+                          <el-form-item label="客户名称" prop="cooperativePartnerName" ref="cooperativePartnerName"   v-if="btnType=='approve'">
+                            <!-- 客户选择弹窗  -->
+                            <ComSelect-page clearable  :treeNodeClick="treeNodeClick"
+                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page" :isdisabled="btnType!='add'"
+                              @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择客户名称'"
+                              title="选择客户" treeTitle="客户分类" :methodArr="PartnerMethodArr"
                               :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
-                              :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                              :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" :renderTree="false"/>
                        
                           </el-form-item>
                         </el-col> 
-   
+                        <el-col :sm="6" :xs="24"  v-if="btnType=='approve'">
+                          <el-form-item label="金额(含税)" prop="totalAmount">
+                            <el-input v-model="dataForm.totalAmount" placeholder="请输入备注"
+                              :disabled="btnType == 'look' ? true : false" type="text"  />
+                          </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24"  v-if="btnType=='approve'">
+                          <el-form-item label="税率(%)" prop="tax">
+                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" 
+                                :value="item.taxRate"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                     
                         <el-col :sm="6" :xs="24" v-if="btnType=='approve'">
                           <el-form-item label="状态" prop="state">
@@ -137,8 +150,8 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24"  v-if="btnType=='approve'">
-                          <el-form-item label="审批说明" prop="approvalInstructions">
-                            <el-input v-model="dataForm.approvalInstructions" placeholder="请输入审批说明"
+                          <el-form-item label="确认说明" prop="approvalInstructions">
+                            <el-input v-model="dataForm.approvalInstructions" placeholder="请输入确认说明"
                                type="textarea" :rows="2" maxlength="200" />
                           </el-form-item>
                         </el-col>
@@ -149,6 +162,7 @@
                                type="textarea" :rows="2" maxlength="200" />
                           </el-form-item>
                         </el-col>
+                        
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -191,6 +205,7 @@ import { addPropertySaleOrder,editPropertySaleOrder,propertySaleOrderDeatil} fro
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import selectAsset from '../../callManagement/assetForm.vue'
+import {getbimProductAttributes} from "@/api/masterDataManagement/index";
  
 import { mapGetters, mapState } from 'vuex' 
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -202,6 +217,7 @@ export default {
   
   data() {
     return {
+      taxRateList:[],
       selectAssetVisible:false,
       tipsvisible:false,
       categoryType:"purchase",
@@ -219,21 +235,21 @@ export default {
       assetCategoryFormVisible:false,
       getCooperativeData,
       getcategoryTree,
-      //  供应商 树请求
+      //  客户 树请求
       PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'supplier' } },
-      // 供应商 列表
+      // 客户 列表
       PartnerTableItems: [
-        { prop: 'code', label: '供应商编码', fixed: 'left' },
-        { prop: 'name', label: '供应商名称', fixed: 'left' },
+        { prop: 'code', label: '客户编码', fixed: 'left' },
+        { prop: 'name', label: '客户名称', fixed: 'left' },
         { prop: 'nameEn', label: '英文名称' },
         { prop: 'taxId', label: '税号' }
       ],
-      // 供应商搜索条件
+      // 客户搜索条件
       PartnerTableSearchList: [
-        { prop: 'code', label: '供应商编码', type: 'input' },
-        { prop: 'name', label: '供应商名称', type: 'input' }
+        { prop: 'code', label: '客户编码', type: 'input' },
+        { prop: 'name', label: '客户名称', type: 'input' }
       ],
-      // 供应商请求参数
+      // 客户请求参数
       PartnerListRequestObj: {
         code: '',
         name: '',
@@ -241,7 +257,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         partnerCategoryId: '',
-        type: 'supplier'
+        type: 'customer'
       },
       operateType:"",
       oldData:[],
@@ -285,6 +301,9 @@ export default {
         projectId: [
           { required: true, message: '所属项目不能为空', trigger: 'change' }
         ],
+        cooperativePartnerName:[
+        { required: true, message: '客户不能为空', trigger: 'change' }
+        ],
         state: [
           { required: true, message: '请选择状态', trigger: 'change' }
         ],
@@ -306,12 +325,22 @@ export default {
 
 },
   async created() { 
- 
+    this.getProductClassFun()
   },
   mounted() { 
   },
 
   methods: {
+    getProductClassFun() {
+    
+    // 获取税率(数据字典)
+    getbimProductAttributes("585438081021126405").then(res => {
+      res.data.list.forEach(item => {
+        item.taxRate = item.enCode.replace('%', '') * 1
+      })
+      this.taxRateList = res.data.list 
+    })
+  },
     openSelectAsset(){
       this.selectAssetVisible=true
       this.$nextTick(()=>{
@@ -321,9 +350,9 @@ export default {
     changeAsset(data){
       console.log("资产数据",data);
       this.dataForm=data
-      this.$set(this.dataForm,'propertyId',data.id)
-      this.$set(this.dataForm,'propertyName',data.name)
-      this.$set(this.dataForm,'propertyCode',data.code)
+      this.$set(this.dataForm,'cooperativePartnerId','')
+      this.$set(this.dataForm,'cooperativePartnerName','')
+      this.$set(this.dataForm,'cooperativePartnerCode','')
       this.$set(this.dataForm,'propertySpec',data.spec)
       this.dataForm.id=""
     },

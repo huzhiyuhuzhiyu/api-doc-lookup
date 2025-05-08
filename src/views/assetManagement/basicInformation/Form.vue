@@ -115,10 +115,10 @@
                         </el-col>
                         <el-col :sm="6" :xs="24" >
                        
-                          <el-form-item label="供应商名称" prop="partnerName" ref="partnerName">
+                          <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                             <!-- 供应商选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.partnerName"  ref="ComSelect-page"
+                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page"
                               @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                               title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                               :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -170,7 +170,7 @@
                   <JNPF-table ref="tableRef" :height="customStyleData" :data="scrapData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
                     <el-table-column prop="orderNo" label="报废单号" min-width="200"></el-table-column>
                     <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="partnerName" label="状态" min-width="180" />
+                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
                     <el-table-column prop="deliveryDate" label="创建时间" width="110" />
                     <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
                     <el-table-column prop="taxAmount" label="备注" width="80" />
@@ -188,7 +188,7 @@
                     <el-table-column prop="orderNo" label="含税金额" min-width="200"></el-table-column>
                     <el-table-column prop="orderNo" label="税率" min-width="200"></el-table-column>
                     <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="partnerName" label="状态" min-width="180" />
+                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
                     <el-table-column prop="deliveryDate" label="创建时间" width="110" />
                     <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
                     <el-table-column prop="taxAmount" label="备注" width="80" />
@@ -207,7 +207,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="cooperativePartnerCode" label="申请人" min-width="180" />
-                    <el-table-column prop="partnerName" label="状态" min-width="180" />
+                    <el-table-column prop="cooperativePartnerName" label="状态" min-width="180" />
                     <el-table-column prop="deliveryDate" label="创建时间" width="110" />
                     <el-table-column prop="excludingTaxTotalAmount" label="更新时间" width="160" />
                     <el-table-column prop="taxAmount" label="备注" width="80" />
@@ -334,7 +334,7 @@ export default {
         netPrice:"",
         ownerId:"",
         purchaserId:"",
-        partnerName:"",
+        cooperativePartnerName:"",
         cooperativePartnerId:"",
         remark:"",
         state:"normal",
@@ -502,7 +502,7 @@ export default {
     supplierdata(id, data) {
      
       if (data.length === 0) {
-        this.dataForm.partnerName = ''
+        this.dataForm.cooperativePartnerName = ''
         this.dataForm.cooperativePartnerCode = ''
         this.dataForm.cooperativePartnerId = ''
       } else {
@@ -510,7 +510,7 @@ export default {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.partnerName = data[0].all.name
+        this.dataForm.cooperativePartnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
        

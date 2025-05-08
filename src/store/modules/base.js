@@ -6,6 +6,7 @@ import { getPrintDevSelector } from '@/api/system/printDev'
 import jnpf from '@/utils/jnpf';
 import { getBimBusinessDetail, getOrderFiledMap, getBimBusinessSwitchConfigList } from '@/api/basicData'
 import { getWebCache } from '@/api/system/system'
+import { getBillRuleConfig } from '@/api/system/billRule'
 
 const state = {
   dictionaryList: [],
@@ -67,10 +68,10 @@ const mutations = {
 
     const divideEquallyIndex = FieldNameJson.findIndex(obj => obj.enCode === 'divideEqually')
     state.divideEqually = divideEquallyIndex !== -1 ?  FieldNameJson[divideEquallyIndex].fullName : '开等分'
-    
+
     const protrusionIndex = FieldNameJson.findIndex(obj => obj.enCode === 'protrusion')
     state.protrusion = protrusionIndex !== -1 ?  FieldNameJson[protrusionIndex].fullName : '凸出量'
-  
+
   },
   SET_CONFIG_GLOBAL: (state, configGlobal) => {
     state.configGlobal = configGlobal
@@ -340,6 +341,19 @@ const actions = {
             })
         })
   },
+    // 获取编码规则
+    getOrderNoConfig({ commit },code) {
+        return new Promise((resolve, reject) => {
+            let obj = {
+                code
+            }
+            getBillRuleConfig(obj).then(res => {
+                resolve(res.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
 }
 
 export default {

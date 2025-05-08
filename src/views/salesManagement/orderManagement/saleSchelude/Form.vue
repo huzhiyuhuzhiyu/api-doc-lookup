@@ -118,7 +118,7 @@
                 <!-- <el-table-column prop="num" label="订单金额" width="100" :key="7">
                 </el-table-column>
                 <el-table-column prop="price" label="收款金额" width="120" :key="11">
-                </el-table-column> 
+                </el-table-column>
                 <el-table-column prop="deliveryDate" label="欠款金额" width="180" :key="131"></el-table-column>
                 <el-table-column prop="excludingTaxAmount" label="开票金额" width="140" :key="126">
                   <template slot-scope="scope">
@@ -944,33 +944,33 @@ export default {
     ];
     // gantt.getMarker(markerId);
     // 初始化甘特图
-  
-  
+
+
     gantt.templates.task_class = (start, end, task) => {
       console.log(task.progress);
       if (task.progress == 0) return 'Noproduc'
       if (task.progress < 0.5) {
-        return "low-progress"; //进度低于50%  
+        return "low-progress"; //进度低于50%
       } else if (task.progress < 1.0) {
-        return "mid-progress"; //进度在50%-99%之间 
+        return "mid-progress"; //进度在50%-99%之间
       } else {
-        return "high-progress"; // 完成 }  
+        return "high-progress"; // 完成 }
       };
     }
     const style = document.createElement('style');
-    style.innerHTML = `  
+    style.innerHTML = `
     .Noproduc{
     background-color:"#FFbc00!important"
     }
-      .low-progress {  
-      background-color:#FFbc00; /*低进度颜色 */  
-      }  
-      .mid-progress {  
-      background-color: #FFbc00; /* 中等进度颜色 */  
-      }  
-      .high-progress {  
-      background-color: green!important; /* 高进度颜色 */  
-      }  
+      .low-progress {
+      background-color:#FFbc00; /*低进度颜色 */
+      }
+      .mid-progress {
+      background-color: #FFbc00; /* 中等进度颜色 */
+      }
+      .high-progress {
+      background-color: green!important; /* 高进度颜色 */
+      }
       `;
     document.head.appendChild(style);
 
@@ -1189,8 +1189,8 @@ export default {
                         console.log("items.workOrderList", items.workOrderList);
                         items.workOrderList.forEach((itemss, index) => {
 
-                          itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : ""
-                          itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : ""
+                          itemss.actualStartDate = itemss.actualStartDate ? itemss.actualStartDate.substring(0, 10) : itemss.planStartDate
+                          itemss.actualEndDate = itemss.actualEndDate ? itemss.actualEndDate.substring(0, 10) : itemss.planEndDate
                           console.log("时间1", itemss.actualStartDate,);
                           console.log("时间2", itemss.actualEndDate,);
                           let bjss = {
@@ -1361,7 +1361,7 @@ export default {
       //   // 退款记录
       // }
       else if (this.categoryType == 'invoice') {
-        // 开票记录 
+        // 开票记录
         let obj = {
           approvalStatus: "OK",
           // billingStatus:"finished",

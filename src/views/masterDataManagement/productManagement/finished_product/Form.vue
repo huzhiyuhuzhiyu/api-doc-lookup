@@ -31,7 +31,7 @@
               <UploadWj v-model="datafilelist" :disabled="btnType" :detailed="btnType"></UploadWj>
           </el-tab-pane>
         </el-tabs>
-        
+
       </div>
     </div>
   </transition>
@@ -281,6 +281,7 @@ export default {
           // tc.dialogTitle = '选择' + tc.label
           // tc.method = getbimProductAttributesList
           // tc.requestObj = { typeCode: tc.typeCode }
+          tc.render = this.$store.getters.configData.product.enable_productAttribute
           let data = []
           getbimProductAttributesList({ typeCode: tc.typeCode }).then((res) => {
             data = res.data.records.map((item) => {
@@ -520,6 +521,7 @@ export default {
                   ].includes(ele.prop)
                 ) {
                   ele.itemRules[0].required = true
+                  ele.render = this.$store.getters.configData.product.enable_productAttribute
                 }
                 if (ele.prop == 'productSource') {
                   ele.options = [
@@ -550,6 +552,7 @@ export default {
                   ].includes(ele.prop)
                 ) {
                   ele.itemRules[0].required = false
+                  ele.render = this.$store.getters.configData.product.enable_productAttribute
                 }
                 if (ele.prop == 'productSource') {
                   ele.options = [{ label: '采购', value: 'purchase' }]
@@ -670,12 +673,12 @@ export default {
         this.$set(target,'itemDisabled',!this.codeConfig.modifyFlag)
         if (flag) {
           this.dataForm.code = data.number
-       
+
         }
       } catch (error) { }
     },
     async init(id, btnType = false, flag,row,isProjectSwitch) {
-      
+
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -903,7 +906,7 @@ export default {
 
           let targetOther = this.otherItems.find((tc) => tc.prop === 'bomFlag')
           targetOther.itemDisabled = true
-         
+
           this.formLoading = false
         })
       } else {
@@ -936,14 +939,14 @@ export default {
               this.dataForm.steelBallManufacturerName = item.name
             }
           })
-        
+
 
           this.modelForm.model = this.dataForm.model
 
           this.formLoading = false
         })
         }
-        
+
         this.fetchData('CPBM', true)
         this.formLoading = false
       }

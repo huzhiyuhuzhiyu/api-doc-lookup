@@ -87,7 +87,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px;">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -658,7 +658,7 @@ export default {
         planProductionQuantity: "",
         availableArrangeQuantity: "",
         productionQuantity: "",
-        taskMethod: "appoint",
+        taskMethod: "not_appoint",
         planStartDate: "",
         planEndDate: "",
         routingName: "",
@@ -960,7 +960,7 @@ export default {
       this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
       this.creaFun()
-      
+
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
           console.log("bom详情", res);
@@ -970,7 +970,7 @@ export default {
             return {
               ...item,
               productsCode: item.productCode,
-              productsName: item.productName, 
+              productsName: item.productName,
               productsDrawingNo: item.productDrawingNo,
               materialsUsedQuantity: totalNum,
               processName: '',
@@ -1432,7 +1432,7 @@ export default {
           ],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 160,
-    
+
         },
         { prop: "materialsUsedQuantity", label: "领料数量", value: "", type: 'input', minWidth: 140 },
       ]
@@ -1476,7 +1476,7 @@ export default {
               });
               break;
             }
-          } 
+          }
           // else {
           //   if (!item.personId && item.processingType == "self_produced") {
           //     submitFlag = false;
@@ -1590,7 +1590,7 @@ export default {
       let hasItemList = []
       for (let i = 0; i < data.length; i++) {
         let item = data[i];
-        
+
         item.productsId =  item.id
         item.productsCode =  item.code
         item.productsName =  item.name

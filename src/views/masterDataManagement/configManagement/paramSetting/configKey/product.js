@@ -11,4 +11,8 @@ export default {
         configKeyLabel: '启用配对方式',
         description: '启用配对方式后，销售将显示配对方式。'
     },
+    enable_productAttribute: {
+        configKeyLabel: '启用产品属性',
+        description: '启用产品属性后，产品管理将显示产品属性。'
+    },
 }

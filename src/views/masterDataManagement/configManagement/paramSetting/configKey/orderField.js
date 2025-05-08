@@ -176,7 +176,7 @@ export default {
     },
     holder: {
         configKeyLabel: '启用保持架',
-        description: '启用销售管理保持架后，新建销售管理时，将会显示保持架字段，对应发货通知单、计划、需求、生产计划等也将显示保持架字段。',
+        description: '启用销售管理保持架后，新建销售管理时，将会显示保持架字段。',
         mainModule: '销售管理'
     },
 

@@ -222,7 +222,7 @@ export default {
 
         scrapFlag: '',
         virtuallyFlag: '',
-        warehouseId: '1868889766953533441',
+        warehouseId: '1868933726937858050',
         productDrawingNo: '',
         productsCode: '',
         superQuery: {},
@@ -298,6 +298,7 @@ export default {
       
       this.isProjectSwitchFlag = true
     this.$nextTick(function () {
+      this.search('basic', 'search')
   
       // this.getShelvesName()
     })
@@ -376,8 +377,8 @@ export default {
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1244',
-        exportName: '角接触库存',
+        exportType: '1248',
+        exportName: '角接触磨工线边仓结存报表',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -469,7 +470,7 @@ export default {
         pageSize: 20,
         scrapFlag: false,
         virtuallyFlag: false,
-        warehouseId: '1868848271110225922',
+        warehouseId: '1868933726937858050',
         productDrawingNo: '',
         productsCode: '',
         superQuery: {},

@@ -2,6 +2,12 @@
 <template>
   <div class="JNPF-common-layout">
 
+   
+
+
+
+
+
     <div class="JNPF-common-layout-center JNPF-flex-main" >
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
@@ -373,8 +379,8 @@ this.tableQuery.accountPeriod=this.jnpf.getToday('YYYY-MM')
       const targetListQuery = this.tableQuery
       let _data = {
         ...targetListQuery,
-        exportType: '1244',
-        exportName: '角接触库存',
+        exportType: '1248',
+        exportName: '常规装配线边仓结存报表',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

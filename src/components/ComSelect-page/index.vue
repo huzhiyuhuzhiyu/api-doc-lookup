@@ -610,7 +610,7 @@ export default {
       this.treeLoading = true
       this.listLoading = true
       this.$nextTick(() => {
-        if (typeof this.listRequestObj === 'function') { this.listQuery = this.listRequestObj(this.itemScope.$index) }
+        if (typeof this.listRequestObj === 'function') { this.listQuery = structuredClone(this.listRequestObj(this.itemScope.$index)) }
         else { this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj)) }
         // 判断是否要渲染树
         if (this.renderTree) {
@@ -876,9 +876,12 @@ export default {
           this.$emit('input', this.selectedIds[0])
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj, this.index)
         }
-        this.$nextTick(() => { this.btnLoading = false })
         this.visible = false
-        this.$nextTick(() => { this.handleResize() });
+        setTimeout(async () => {
+          await this.$nextTick()
+          this.btnLoading = false
+          this.handleResize()
+        }, 300);
       }, 100)
     },
     setDefault() {

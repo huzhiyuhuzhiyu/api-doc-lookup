@@ -152,7 +152,7 @@
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" disabled/>
+                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
                           </el-form-item>
                         </el-col>
                       </el-row>

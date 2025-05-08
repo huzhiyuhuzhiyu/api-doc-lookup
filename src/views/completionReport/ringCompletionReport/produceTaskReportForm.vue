@@ -149,11 +149,19 @@
                     <el-col :sm="24" :xs="24">
                       <el-form-item label="生产重量" prop="productionWeight" class="iptLabel"
                         :style="{ marginBottom: iptLabelMargin }">
-                        <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt" />
+                        <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt" @blur="productionWeightFun"/>
                       </el-form-item>
                     </el-col>
                   </template>
                   
+                
+                  <el-col :sm="24" :xs="24">
+                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
+                        @blur="handleBlur(item)" />
+                    </el-form-item>
+                  </el-col>
                   <el-col :sm="24" :xs="24" v-if="isXY||isJR">
                     <el-form-item label="规值:" prop="standardValue" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -172,11 +180,13 @@
                             </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24">
-                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
+                  <el-col :sm="24" :xs="24" v-if="isXY">
+                    <el-form-item label="是否全部报工:" prop="forceCompleteFlag" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
-                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
-                        @blur="handleBlur(item)" />
+                      <el-select v-model="currentProcess.forceCompleteFlag" placeholder="请选择" clearable style="width: 100%;" class="ipt">
+                              <el-option v-for="(item, index) in forceCompleteFlagList" :key="index"
+                                :label="item.label" :value="item.value"></el-option>
+                            </el-select>
                     </el-form-item>
                   </el-col>
                   <!-- <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
@@ -359,6 +369,10 @@ export default {
   },
   data() {
     return {
+      forceCompleteFlagList:[
+        {label:"是",value:true},
+        {label:"否",value:false},
+      ],
       bimProductAttributesList:{},
       printVisible: false,
       printBrowseVisible: false,
@@ -642,6 +656,7 @@ export default {
             this.currentProcessId = matchingItem.processId
             this.currentProcess = matchingItem
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
+            this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
             this.$set(this.currentProcess,'qualifiedQuantity',this.dataForm.productionQuantity) 
             this.processInfo = JSON.parse(JSON.stringify(matchingItem))
@@ -650,7 +665,8 @@ export default {
         } else {
           this.currentProcessId = res.data.workOrderList[0].processId
           this.currentProcess = res.data.workOrderList[0]
-          this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
+            this.$set(this.currentProcess,'forceCompleteFlag',false)
+            this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
           this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)    
           this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
         }
@@ -675,7 +691,8 @@ export default {
     },
     getProcessFun(item) {
       this.currentProcess = item
-      this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
+            this.$set(this.currentProcess,'forceCompleteFlag',false)
+            this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
       this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
 
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
@@ -706,6 +723,15 @@ export default {
         console.log('el-col的高度是1：', height);
         this.targetHeight = height;
       })
+    },
+    productionWeightFun(){
+      let num=this.jnpf.numberFormat(this.jnpf.math('subtract', [this.dataForm.productionWeight, this.currentProcess.productionWeight]), 6)
+      if(num<0){
+        this.currentProcess.productionWeight=0
+        this.$message.error("当前生产重量不可超过任务的生产重量")
+      }else{
+        this.currentProcess.materialWasteQuantity=num
+      }
     },
     handleBlur2() {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
@@ -842,7 +868,7 @@ export default {
             }
           }
           if (submitFlag === false) return
-          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length) return this.$message.error("料废金额不能为空")
+          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length&&!this.isXY) return this.$message.error("料废金额不能为空")
           let obj = {}
           let arr = []
           obj.classAttribute = this.currentProcess.classAttribute
@@ -868,7 +894,10 @@ export default {
           obj.reportingType = "normal"
           obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
           obj.aperture = this.currentProcess.aperture
+          obj.productionBarrels = this.currentProcess.productionBarrels
+          obj.productionWeight = this.currentProcess.productionWeight
           obj.workOrderId = this.currentProcess.id
+          obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
           if (this.currentProcess.processType === 'boxing') {
             obj.processType = this.currentProcess.processType
             // obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag

@@ -148,7 +148,7 @@ import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {getStocktak,stockTakingToAdjus} from '@/api/warehouseManagement/stocktak.js'
+import {getStocktak,stockTakingToAdjus,deleteStocktak} from '@/api/warehouseManagement/stocktak.js'
 import Adjust from '../inventoryAdjustmentSheet/Form.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
@@ -382,7 +382,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteQuotationsendlist(id).then(res => {
+        deleteStocktak(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

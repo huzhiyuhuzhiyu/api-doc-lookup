@@ -1,7 +1,6 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="goBack" :content="title" />
         <div class="options">
@@ -108,9 +107,19 @@
                           @click="batchDelete">批量删除</el-button>
 
                       </div> -->
-
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
-                        class="inboundProduct" style="width: 100%;height: auto">
+                      <div class="JNPF-common-head">
+                      <div >  </div>
+                      <div ></div>
+                      <div class="JNPF-common-head-right fixedRight">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun()" />
+                        </el-tooltip>
+                      </div>
+                      </div>
+                      <JNPF-table ref="product" :data="productData"  :fixedNO="true" border :key="165"
+                        class="inboundProduct" style="width: 100%;height: auto" :partent-or-child="'child'"  custom-column
+                        :setColumnDisplayList="columnList">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
@@ -210,7 +219,35 @@
                             </el-select>
                           </template>
                         </el-table-column>
-
+                        <el-table-column prop="forceCompleteFlag" label="是否强制完成"  width="120" :key="1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成" 
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in forceCompleteFlagList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
+                        key="123"> 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
+                        key="123"> 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
+                            :disabled="btnType == 'look'">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa027" key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column>
                         <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="2">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="振动等级" clearable
@@ -378,9 +415,19 @@
                           @click="batchDelete">批量删除</el-button>
 
                       </div> -->
-
+                      <div class="JNPF-common-head">
+                      <div >  </div>
+                      <div ></div>
+                      <div class="JNPF-common-head-right fixedRight">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun()" />
+                        </el-tooltip>
+                      </div>
+                      </div>
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" border :key="165"
-                        class="inboundProduct" style="width: 100%;">
+                        class="inboundProduct" style="width: 100%;" :partent-or-child="'child'"  custom-column
+                        :setColumnDisplayList="columnList">
                         <!-- <el-table-column type="selection" width="55" fixed="left" :key="2">
                         </el-table-column> -->
 
@@ -476,6 +523,15 @@
                               :disabled="btnType == 'look'">
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
                                 :value="item.name"></el-option>
+                            </el-select>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="forceCompleteFlag" label="是否强制完成"  width="120" :key="1">
+                          <template slot-scope="scope">
+                            <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成" 
+                              :disabled="btnType == 'look'">
+                              <el-option v-for="(item, index) in forceCompleteFlagList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
                             </el-select>
                           </template>
                         </el-table-column>
@@ -689,6 +745,10 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList,tenantMinix],
   data() {
     return {
+      forceCompleteFlagList:[
+        {label:"是",value:true},
+        {label:"否",value:false},
+      ],
       datafilelist: [],
       isattachmentswitch: '',
       attachmentData: {},
@@ -822,6 +882,7 @@ export default {
       productNameFlag: null,
       tableDataFlag: false,
       mainUnitFlag: null,
+      columnList:[],
       pairingModeList: [],
       pairingModeNum: "",//配对方式的基本数量
       productDataCopy: [],
@@ -832,10 +893,10 @@ export default {
     }
   },
   async created() {
+    await this.getProductClassFun()
     await this.getProjectSwitch('system', 'project')
     await this.getpairingModeListFun()
 
-    this.getProductClassFun()
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
@@ -861,6 +922,9 @@ export default {
 
   },
   methods: {
+    columnSetFun() {
+      this.$refs.product.showDrawer()
+    },
     handleClear(scope) {
       let item = this.productData[scope.$index]
       console.log("this.productDataCopy", this.productDataCopy);
@@ -1453,6 +1517,11 @@ export default {
             if (item.pairingModeId) {
               item.mainUnit = "对"
               item.deputyUnit = "对"
+            }
+            if (item.processType=='boxing') {
+              item.mainUnit = "盒数"
+              item.deputyUnit = "万粒"
+              this.$set(item,'forceCompleteFlag',false)
             }
             this.$set(item, 'num', item.waitReceivedQuantity)
             this.$set(item, 'sourceNo', item.orderNo)

@@ -56,4 +56,10 @@ export default {
         configKeyLabel: '可报工数量自动带出',
         description: '开启后，完工汇报报工时，合格数量默认带出可报工数量'
     },
+    task_process_selection: {
+      configKeyLabel: '任务工艺选择',
+      description: '如果开启按工艺列表，新建任务时工艺路线来源为工艺列表；如果开启按工艺设置，新建任务时工艺路线来源为工艺设置'
+  },
+
+
 }

@@ -55,7 +55,7 @@
                   </el-radio-group>
                 </div>
                 <div v-else>
-                  <template v-if="scope.row.configKey == 'auto_material' || scope.row.configKey == 'web_cache_way'">
+                  <template v-if="scope.row.configKey == 'auto_material' || scope.row.configKey == 'web_cache_way'||scope.row.configKey == 'task_process_selection'">
                     <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
                       <el-radio :label="0" style="margin-bottom: 7px;">
                         {{ scope.row.radioOff }}
@@ -513,7 +513,11 @@ export default {
             } else if (item.configKey === 'web_cache_way') {
               item.radioOff = '在浏览器缓存'
               item.radioOn = '在服务器缓存'
+            } else if (item.configKey === 'task_process_selection') {
+              item.radioOff = '按工艺列表'
+              item.radioOn = '按工艺设置'
             }
+            
             const configKeyObj = ConfigKey[item.configKey]
             console.log(configKeyObj, 'obj')
             console.log(notEmpty(configKeyObj), 'notEmpty(configKeyObj)')

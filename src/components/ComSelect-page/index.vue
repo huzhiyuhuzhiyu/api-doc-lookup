@@ -877,11 +877,12 @@ export default {
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj, this.index)
         }
         this.visible = false
-        setTimeout(async () => {
-          await this.$nextTick()
-          this.btnLoading = false
+        this.$nextTick(() => {          
           this.handleResize()
-        }, 300);
+          setTimeout(() => {
+            this.btnLoading = false
+          }, 300);
+        })
       }, 100)
     },
     setDefault() {

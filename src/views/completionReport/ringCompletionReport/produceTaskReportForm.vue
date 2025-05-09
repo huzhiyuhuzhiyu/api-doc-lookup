@@ -31,8 +31,8 @@
                 <el-descriptions-item v-if="isXY||isJR" label="生产重量">{{ dataForm.productionWeight }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="规值">{{ dataForm.standardValue }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
-                <el-descriptions-item v-if="isXY" label="钢丝炉号">{{ dataForm.wireHeatNumber }}</el-descriptions-item>
-                <el-descriptions-item v-if="isXY" label="原材料厂家">{{ dataForm.rawStockMill }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="钢丝炉号">{{ dataForm.wireHeatNumber }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="原材料厂家">{{ dataForm.rawStockMill }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
                 <el-descriptions-item label="领料方式">{{ dataForm.pickingWay == 'production_order' ? '生产订单领料' : "工单领料"
                   }}</el-descriptions-item>
@@ -180,7 +180,7 @@
                             </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="isXY">
+                  <!-- <el-col :sm="24" :xs="24" v-if="isXY">
                     <el-form-item label="是否全部报工:" prop="forceCompleteFlag" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-select v-model="currentProcess.forceCompleteFlag" placeholder="请选择" clearable style="width: 100%;" class="ipt">
@@ -188,7 +188,7 @@
                                 :label="item.label" :value="item.value"></el-option>
                             </el-select>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <!-- <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
                     <el-form-item label="是否强制完成:" class="iptLabel">
                       <el-select v-model="currentProcess.forceCompleteFlag" placeholder="是否强制完成" style="width: 100%;"
@@ -656,7 +656,7 @@ export default {
             this.currentProcessId = matchingItem.processId
             this.currentProcess = matchingItem
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
-            this.$set(this.currentProcess,'forceCompleteFlag',false)
+            // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
             this.$set(this.currentProcess,'qualifiedQuantity',this.dataForm.productionQuantity) 
             this.processInfo = JSON.parse(JSON.stringify(matchingItem))
@@ -665,7 +665,7 @@ export default {
         } else {
           this.currentProcessId = res.data.workOrderList[0].processId
           this.currentProcess = res.data.workOrderList[0]
-            this.$set(this.currentProcess,'forceCompleteFlag',false)
+            // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
           this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)    
           this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
@@ -691,7 +691,7 @@ export default {
     },
     getProcessFun(item) {
       this.currentProcess = item
-            this.$set(this.currentProcess,'forceCompleteFlag',false)
+            // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
       this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
 
@@ -897,7 +897,7 @@ export default {
           obj.productionBarrels = this.currentProcess.productionBarrels
           obj.productionWeight = this.currentProcess.productionWeight
           obj.workOrderId = this.currentProcess.id
-          obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
+          // obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
           if (this.currentProcess.processType === 'boxing') {
             obj.processType = this.currentProcess.processType
             // obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag

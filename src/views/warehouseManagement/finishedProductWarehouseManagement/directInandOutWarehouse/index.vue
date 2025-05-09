@@ -335,8 +335,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
-                        key="123">
+                      <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120"
+                        key="123"> 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -345,8 +345,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
-                        key="123">
+                      <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120"
+                        key="123"> 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -733,8 +733,8 @@
                 key="sealingCoverTyping" />
               <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom"
                 v-if=" accuracyLevelFlag == 1" key="accuracyLevel" />
-                <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
-                <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
+                <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+                <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
 
               <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom"
                 v-if="dataForm.documentType == 'outbound' && vibrationLevelFlag == 1" key="vibrationLevel" />

@@ -149,19 +149,23 @@ export default {
       })
     },
 
-    init(mainProdId, type, processName) {
+    init(row, type, processName) {
       if (type === 'inventoryFlag') { this.title = '可报工数明细' }
       else if (type === 'occupancyFlag') { this.title = '占用数明细' }
       else if (type === 'availableFlag') { this.title = '可用数明细' }
       this.visible = true
       let tempListQuery = {
-        productsId: mainProdId,
+        productsId: row.productsId,
         processName: processName,
         productionPlanNo: "",
         orderNo: "",
         prodOrderStatus: "normal",
         classAttribute: "semi_finished",
         workReportFlag: true,
+        standardValue: row.standardValue,
+        accuracyLevel: row.accuracyLevel,
+        wireHeatNumber: row.wireHeatNumber,
+        rawStockMill: row.rawStockMill,
         pageNum: 1,
         pageSize: 20,
         superQuery: {

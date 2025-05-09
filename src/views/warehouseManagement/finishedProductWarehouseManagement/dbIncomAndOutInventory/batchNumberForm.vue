@@ -81,8 +81,8 @@
               sortable="custom"></el-table-column>
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" 
               sortable="custom"></el-table-column>
-              <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
-              <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
+              <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+              <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
               sortable="custom"></el-table-column>
             <el-table-column prop="oil" label="油脂" min-width="120"

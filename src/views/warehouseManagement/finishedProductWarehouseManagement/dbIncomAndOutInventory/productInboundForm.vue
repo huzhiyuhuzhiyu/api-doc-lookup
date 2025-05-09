@@ -228,7 +228,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
+                        <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120"
                         key="123"> 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
@@ -238,7 +238,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
+                      <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120"
                         key="123"> 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
@@ -535,7 +535,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
+                        <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120"
                         key="123"> 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
@@ -545,7 +545,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
+                      <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120"
                         key="123"> 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
@@ -687,8 +687,8 @@
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"  key="standardValue" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" />
-                <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
-                <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
+                <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+                <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" />
                 <el-table-column prop="oil" label="油脂" width="80" />
                 <el-table-column prop="clearance" label="游隙" width="80" />
@@ -900,6 +900,7 @@ export default {
     let objs = { "pageSize": -1, "businessCode": "product" }
     getBimBusinessSwitchConfigList(objs).then(res => {
       this.productNameFlag = res.data.product[1].configValue1
+      this.$nextTick(() => { this.$refs.product.doLayout() })
 
 
     })
@@ -1450,6 +1451,7 @@ export default {
           this.dataForm.projectId = response.data.projectId
           this.dataForm.warehouseType = response.data.type
           this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
+          console.log("allocationFlag",this.allocationFlag);
         })
       })
     },
@@ -1457,12 +1459,13 @@ export default {
       this.$emit('close', true)
     },
     init(data, btnType, classAttributeList, warehouseCode, type) {
-      console.log(655656, "订单");
+      this.warehouseCode = warehouseCode
+      console.log(warehouseCode, "订单");
       this.productData = []
       this.dataForm.businessType = type
       console.log("11", data, btnType, classAttributeList, warehouseCode);
       // this.visible = true
-      this.warehouseCode = warehouseCode
+      console.log(3434);
       this.classAttributeList = classAttributeList
       this.btnType = btnType
       this.getWarehouseListFun()

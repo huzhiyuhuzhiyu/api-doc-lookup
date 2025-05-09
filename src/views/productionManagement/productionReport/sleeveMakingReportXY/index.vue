@@ -42,7 +42,7 @@
                   {{ scope.row.coldHeading }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '冷镦')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '冷镦')">
                   {{ scope.row.coldHeading }}
                 </el-link>
               </template>
@@ -53,7 +53,7 @@
                   {{ scope.row.lightBallOne }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '光球一')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '光球一')">
                   {{ scope.row.lightBallOne }}
                 </el-link>
               </template>
@@ -64,7 +64,7 @@
                   {{ scope.row.lightBallTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '光球二')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '光球二')">
                   {{ scope.row.lightBallTwo }}
                 </el-link>
               </template>
@@ -76,7 +76,7 @@
                   {{ scope.row.quench }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '淬火')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '淬火')">
                   {{ scope.row.quench }}
                 </el-link>
               </template>
@@ -87,7 +87,7 @@
                   {{ scope.row.temper }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '回火')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '回火')">
                   {{ scope.row.temper }}
                 </el-link>
               </template>
@@ -98,7 +98,7 @@
                   {{ scope.row.hardGrindOne }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '硬磨一')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '硬磨一')">
                   {{ scope.row.hardGrindOne }}
                 </el-link>
               </template>
@@ -109,7 +109,7 @@
                   {{ scope.row.intensify }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '强化')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '强化')">
                   {{ scope.row.intensify }}
                 </el-link>
               </template>
@@ -120,7 +120,7 @@
                   {{ scope.row.temperTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '二次回火')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '二次回火')">
                   {{ scope.row.temperTwo }}
                 </el-link>
               </template>
@@ -131,7 +131,7 @@
                   {{ scope.row.hardGrindTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '硬磨二')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '硬磨二')">
                   {{ scope.row.hardGrindTwo }}
                 </el-link>
               </template>
@@ -142,7 +142,7 @@
                   {{ scope.row.initialGrindOne }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '初研一')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '初研一')">
                   {{ scope.row.initialGrindOne }}
                 </el-link>
               </template>
@@ -153,7 +153,7 @@
                   {{ scope.row.initialGrindTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '初研二')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '初研二')">
                   {{ scope.row.initialGrindTwo }}
                 </el-link>
               </template>
@@ -164,7 +164,7 @@
                   {{ scope.row.fineGrindOne }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '精研一')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '精研一')">
                   {{ scope.row.fineGrindOne }}
                 </el-link>
               </template>
@@ -175,7 +175,7 @@
                   {{ scope.row.fineGrindTwo }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '精研二')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '精研二')">
                   {{ scope.row.fineGrindTwo }}
                 </el-link>
               </template>
@@ -186,7 +186,7 @@
                   {{ scope.row.clean }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '清洗')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '清洗')">
                   {{ scope.row.clean }}
                 </el-link>
               </template>
@@ -197,7 +197,7 @@
                   {{ scope.row.optoelectronicAppearance }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '光电外观')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '光电外观')">
                   {{ scope.row.optoelectronicAppearance }}
                 </el-link>
               </template>
@@ -208,7 +208,7 @@
                   {{ scope.row.pack }}
                 </template>
                 <el-link v-else type="primary"
-                  @click.native="viewTask(scope.row.productsId, 'inventoryFlag', '成品包装')">
+                  @click.native="viewTask(scope.row, 'inventoryFlag', '成品包装')">
                   {{ scope.row.pack }}
                 </el-link>
               </template>
@@ -285,10 +285,10 @@ export default {
       })
     },
     // 查看产品明细
-    viewTask(mainProdId, type, processName) {
+    viewTask(row, type, processName) {
       this.taskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.TaskForm.init(mainProdId, type, processName)
+        this.$refs.TaskForm.init(row, type, processName)
       })
     },
     initData() {

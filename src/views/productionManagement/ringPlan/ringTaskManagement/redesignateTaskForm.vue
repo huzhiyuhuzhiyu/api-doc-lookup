@@ -85,7 +85,7 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isXY">
+                      <el-col :sm="6" :xs="24" v-if="isXY||isJR">
                         <el-form-item  label="钢丝炉号" >
                           <el-select v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
@@ -93,7 +93,7 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"  v-if="isXY">
+                      <el-col :sm="6" :xs="24"  v-if="isXY||isJR">
                         <el-form-item  label="原材料厂家" >
                           <el-select v-model="dataForm.rawStockMill" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"

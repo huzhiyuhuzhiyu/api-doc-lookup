@@ -333,7 +333,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
-                          v-if="isXY">
+                          v-if="isXY||isJR">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
@@ -345,7 +345,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="rawStockMill" label="原材料厂家" width="120"
-                          v-if="isXY">
+                          v-if="isXY||isJR">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable

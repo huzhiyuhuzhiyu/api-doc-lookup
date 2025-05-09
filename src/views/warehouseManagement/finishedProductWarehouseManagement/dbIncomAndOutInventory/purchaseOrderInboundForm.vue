@@ -226,8 +226,8 @@
                         <el-table-column prop="pairingModeName" label="配对方式" width="100" />
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" />
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" />
-                        <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
-                        <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
+                        <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+                        <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                         <el-table-column prop="oil" label="油脂" width="160" />
                         <el-table-column prop="oilQuantity" label="油脂量" width="100" />
@@ -498,8 +498,8 @@
                         <el-table-column prop="pairingModeName" label="配对方式" width="100" />
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" />
                         <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" />
-                        <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
-                        <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
+                        <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+                        <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
                         <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                         <el-table-column prop="oil" label="油脂" width="160" />
                         <el-table-column prop="oilQuantity" label="油脂量" width="100" />
@@ -629,8 +629,8 @@
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="110" sortable="custom" />
-                <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120" />
-                <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120" />
+                <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+                <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
                 <el-table-column prop="oilQuantity" label="油脂量" width="100" />

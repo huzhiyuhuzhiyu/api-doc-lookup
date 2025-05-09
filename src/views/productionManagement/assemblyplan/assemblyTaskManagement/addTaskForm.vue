@@ -2,14 +2,22 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+        <div v-if="!completeQueryVisible" :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" content="新建任务" />
           <div class="options">
+            <el-button type="primary"
+              @click="handleToQT()">齐套查询</el-button>
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
               @click="handleConfirm('submit')">提交</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
+        </div>
+        <div v-if="completeQueryVisible" :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+              <el-page-header @back="completeQueryVisible = false" content="返回新建任务" />
+              <div class="options">
+                  <el-button @click="completeQueryVisible = false">{{ $t('common.cancelButton') }}</el-button>
+              </div>
         </div>
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
@@ -579,6 +587,8 @@
         </RoutingForm>
         <SelectProductForm v-if="productVisible" ref="productForm" @selectProduct="selectProductFun">
         </SelectProductForm>
+
+      <completeQuery :drawingNo="dataForm.productsDrawingNo" v-if="completeQueryVisible" @close="close" ref="completeQueryRef"></completeQuery>
       </div>
     </transition>
   </div>
@@ -607,15 +617,18 @@ import {
 import getProjectList from '@/mixins/generator/getProjectList'
 import TableFormProduct from '../TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
+import CompleteQuery from '@/views/planManagement/assemblyPlan/completeQuery/index.vue'
 export default {
   mixins: [getProjectList],
   components: {
+      CompleteQuery,
     TableFormProduct,
     RoutingForm,
     SelectProductForm,
   },
   data() {
     return {
+      completeQueryVisible:false,
       productVisible: false,
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
@@ -702,7 +715,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: '品名规格不能为空', trigger: 'blur' }
+          { required: true, message: '品名规格不能为空', trigger: 'change' }
         ]
       },
       selectArr: [],
@@ -733,7 +746,7 @@ export default {
         backgroundColor: '#f5f7fa',
         fontWeight: 'bold'
       },
-      naturalResourcesFlag: true,
+      naturalResourcesFlag: false,
       processList: [],
       warehouseList: [],
       isProjectSwitch: "",
@@ -755,6 +768,11 @@ export default {
       materialList: [],
       linesFormItems_right: [],
     }
+  },
+  mounted() {
+      this.$nextTick(() => {
+          this.$refs.product.doLayout()
+      })
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -954,7 +972,7 @@ export default {
       this.dataForm = data
       this.$set(this.dataForm, 'orderType', 'manually')
       this.$set(this.dataForm, 'pairingModeId', pairingModeId)
-      this.$set(this.dataForm, 'taskMethod', 'appoint')
+      this.$set(this.dataForm, 'taskMethod', 'not_appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'productsName', data.name)
       this.$set(this.dataForm, 'bomId', data.bomId)
@@ -1629,6 +1647,16 @@ export default {
       } else if (prop) {
         this.materialList[dataOrIndex][prop] = value
       }
+    },
+    handleToQT(){
+        if (!this.dataForm.productsDrawingNo) return this.$message.warning('请先选择品名规格')
+        this.completeQueryVisible = true
+        this.$nextTick(() => {
+            this.$refs.completeQueryRef.initData()
+        })
+    },
+    close(){
+        this.completeQueryVisible = false
     },
   }
 }

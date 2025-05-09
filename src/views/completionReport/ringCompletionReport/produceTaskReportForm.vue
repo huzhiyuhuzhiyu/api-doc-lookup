@@ -725,7 +725,7 @@ export default {
       })
     },
     productionWeightFun(){
-      let num=this.jnpf.numberFormat(this.jnpf.math('subtract', [this.dataForm.productionWeight, this.currentProcess.productionWeight]), 6)
+      let num=this.currentProcess.productionWeight?this.jnpf.numberFormat(this.jnpf.math('subtract', [this.dataForm.productionWeight, this.currentProcess.productionWeight]), 6):0
       if(num<0){
         this.currentProcess.productionWeight=0
         this.$message.error("当前生产重量不可超过任务的生产重量")

@@ -25,7 +25,13 @@
               </el-form-item>
             </el-col>
           </template>
- 
+          <el-col :span="6">
+            <el-form-item>
+              <el-date-picker v-model="reconciliationDate" type="daterange" value-format="yyyy-MM-dd"
+                style="width: 100%;" start-placeholder="请选择盘点开始日期" end-placeholder="请选择盘点结束日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -38,8 +44,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" />
-
+          <div></div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -55,19 +60,25 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="name" label="分类名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="分类编码" min-width="150" sortable="custom" />
-          <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
-            <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column> -->
-          <el-table-column prop="remark" label="备注" width="250" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column prop="no" label="盘点单号" sortable="custom" >
+            <template slot-scope="scope">
+                <el-link type="primary" @click.native="viewDetail(scope.row.id)">{{
+                  scope.row.no
+                }}</el-link>
+              </template>
+          </el-table-column>
+          <el-table-column prop="stocktakingTime" label="盘点完成时间" sortable="custom" />
+     
+          <el-table-column prop="stocktakingUserName" label="盘点人" />
+          <el-table-column prop="state" label="是否完全盘点"  sortable="custom">
+            <template slot-scope="scope">
+              {{ scope.row.state=='finished'? "完全盘点":"未完全盘点"}}
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-      
-              </tableOpts>
+                <el-button size="mini" type="text"  
+                @click.native="viewDetail(scope.row.id)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -83,7 +94,7 @@
 </template>
 
 <script> 
-import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index'
+import { propertyStocktakingList} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -98,9 +109,10 @@ export default {
 
     return {
       searchList: [
-        { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'no', fieldValue: '', label: '盘点单号', symbol: 'like', searchType: 1, width: 120 },
+        
       ],
+      reconciliationDate:[],
       superQueryVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -117,15 +129,16 @@ export default {
       organizeIdTree: [],
       superForm:{},
       form: {
-        code: '',
-        name: '',
+        no: '',
+        orderStartDate:"",
+        orderEndDate:"",
         pageNum: 1,
         pageSize: 20,
 
         orderItems: [
           {
             asc: false,
-            column: 'create_time'
+            column: 'stocktakingTime'
           }
         ]
       },
@@ -144,28 +157,17 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      columnList: [],
-      createTimeArr: [],
+      columnList: [], 
 
       superQueryJson: [
         {
-          prop: 'name',
-          label: '类别名称',
+          prop: 'no',
+          label: '盘点单号',
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '类别编码',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
+          prop: 'stocktakingTime',
+          label: '盘点完成时间',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
@@ -173,10 +175,20 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'createByName',
-          label: '创建人',
+          prop: 'stocktakingUserName',
+          label: '盘点人',
           type: 'input'
-        }
+        },
+        {
+          prop: 'state',
+          label: "是否完全盘点",
+          type: 'select',
+
+          options: [
+            { label: "完全盘点", value: "finished" },
+            { label: "未完全盘点", value: "not_finish" },
+          ]
+        },
       ]
     }
   },
@@ -226,22 +238,26 @@ export default {
         this.initData()
       }
     },
-
+    viewDetail(id){
+      this.formVisible=true
+      this.$nextTick(()=>{
+        this.$refs.Form.init(id)
+      })
+    },
  
     async initData() {
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.superForm.endTime = this.createTimeArr[1] + ' 23:59:59'
+      if (this.reconciliationDate && this.reconciliationDate.length > 0) {
+        this.superForm.orderStartDate = this.reconciliationDate[0] + ' 00:00:00'
+        this.superForm.orderEndDate = this.reconciliationDate[1] + ' 23:59:59'
       } else {
-        this.superForm.startTime = ''
-        this.superForm.endTime = ''
+        this.superForm.orderStartDate = ''
+        this.superForm.orderEndDate = ''
       }
       this.listLoading = true
-      console.log("this.abProjectSwitchVisible",this.abProjectSwitchVisible);
       if(this.abProjectSwitchVisible) this.superForm.projectId=this.userInfo.projectId
 
 
-      await getBimPropertyCategoryList(this.superForm).then((res) => {
+      await propertyStocktakingList(this.superForm).then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
@@ -279,7 +295,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
+      this.reconciliationDate = []
       this.form = {
         code: '',
         name: '',
@@ -297,29 +313,13 @@ export default {
       }
       this.searchList = [
       { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')
     },
  
-    addSupplier() {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init('', 'add')
-      })
-    },
-    addOrUpdateHandle(id) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
-        })
-        // }, 600);
-      }
-    },
+ 
  
    
     handleDel(id) {
@@ -339,12 +339,7 @@ export default {
         })
         .catch(() => { })
     },
-    handleUserRelation(id, parentId, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType)
-      })
-    },
+  
 
   }
 }

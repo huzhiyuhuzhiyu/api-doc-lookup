@@ -181,20 +181,61 @@ export default {
       createTimeArr: [],
 
       superQueryJson: [
-        {
-          prop: 'name',
-          label: '类别名称',
+      {
+          prop: 'orderNo',
+          label: '单号',
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '类别编码',
+          prop: 'propertyName',
+          label: '资产名称',
           type: 'input'
         },
         {
-          prop: 'remark',
-          label: '备注',
+          prop: 'propertyCode',
+          label: '资产编码',
           type: 'input'
+        },
+        {
+          prop: 'propertyName',
+          label: '资产规格',
+          type: 'input'
+        },
+        {
+          prop: 'propertyCategoryName',
+          label: '资产分类',
+          type: 'input'
+        },
+        
+        {
+          prop: 'userTime',
+          label: '投入使用日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'ownerName',
+          label: '资产管理员',
+          type: 'input',
+        },
+        {
+          prop: 'position',
+          label: '常用位置',
+          type: 'input',
+        },
+        {
+          prop: 'orderStatus',
+          label: "报废单状态",
+          type: 'select',
+          options: [
+          {label:"待同意",value:"toBeAgreed",},
+            {label:"待报废",value:"toBeScrapped",},
+            {label:"已报废",value:"scrapped",},
+            {label:"已拒绝",value:"rejected",},
+          ]
         },
         {
           prop: 'createTime',

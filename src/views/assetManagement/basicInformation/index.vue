@@ -37,7 +37,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" />
+          <topOpts @add="addSupplier()" >
+            <el-button size="mini" type="primary" icon="el-icon-printer"
+            @click="printView('p038')">打印资产二维码</el-button>
+          </topOpts>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -53,7 +56,8 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData" :fixedNO="true"
-          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
+          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasC
+          @selection-change="handleSelectionChange" >
           <el-table-column prop="propertyCategoryName" label="资产分类" width="150" sortable="custom" />
           <el-table-column prop="code" label="资产编码" min-width="120" sortable="custom" />
           <el-table-column prop="name" label="资产名称" min-width="120" sortable="custom" />
@@ -109,6 +113,11 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+        <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+      <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      :fullName="fullName" ref="printForm" />
   </div>
 </template>
 
@@ -117,11 +126,20 @@ import { delBimProperty,bimPropertyList} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue' 
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'basicInformation',
-  components: { Form, SuperQuery },
+  components: { Form, SuperQuery,PrintBrowse,PrintDialog  },
   data() {
     return {
+      printBrowseVisible: false,
+      formId:"",
+      enCode:"",
+      fullName:"",
+      printVisible:false,
+      selectList:[],
       searchList: [
         { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'ownerName', fieldValue: '', label: '资产管理员', symbol: 'like', searchType: 1, width: 120 },
@@ -238,6 +256,36 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    handleSelectionChange(val) {
+      this.selectList = val
+    },
+       // 选择模版弹窗
+       printView(enCode) {
+      if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
+      this.enCode = enCode
+      this.fullName = '资产二维码'
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+    printWarehouse(enCode) {
+      if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectList.map(item => item.id).join(',')
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
     changeMove(data) {
       console.log(data, 'iiiiii')
       data.forEach(item => {

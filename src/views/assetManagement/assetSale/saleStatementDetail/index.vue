@@ -1,12 +1,9 @@
 <template>
   <div class="JNPF-common-layout">
-    <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
-        <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
-          <div class="JNPF-common-layout"> -->
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent :rules="rules">
-          <template v-for="(item, index) in searchList">
+        <el-form @submit.native.prevent>
+          <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
@@ -24,7 +21,6 @@
               </el-form-item>
             </el-col>
           </template>
- 
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -35,10 +31,14 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" />
-
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
+        <div class="JNPF-common-head">
+          <div>
+            <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
+              导出
+            </el-button>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -52,196 +52,377 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
-          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="name" label="分类名称" width="250" sortable="custom" />
-          <el-table-column prop="code" label="分类编码" min-width="150" sortable="custom" />
-          <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
-            <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column> -->
-          <el-table-column prop="remark" label="备注" width="250" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" />
-          <el-table-column label="操作" width="110" fixed="right">
+
+        <JNPF-table v-if="tableFlag" highlight-current-row ref="tableForm" :data="tableDataList"
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="abProjectSwitchVisible"></el-table-column>
+          <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-      
-              </tableOpts>
+              <el-link type="primary" @click.native="handleUserRelation(scope.row.accountsReceivableId, 'look')">
+                {{ scope.row.orderNo }}
+              </el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="reconciliationDate" label="对账日期" min-width="180" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="200" sortable="custom" />
+ 
+
+          <el-table-column prop="totalPaymentAmount" label="已收款金额" width="130" sortable="custom">
+            <template slot-scope="scope">
+              <div :class="scope.row.totalPaymentAmount > 0 ? 'green' : 'red'">
+                {{
+                  scope.row.totalPaymentAmount > 0 ? '+' + scope.row.totalPaymentAmount : scope.row.totalPaymentAmount
+                }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalInvoicingAmount" label="已开票金额" width="130" sortable="custom">
+            <template slot-scope="scope">
+              <div :class="scope.row.totalInvoicingAmount > 0 ? 'green' : 'red'">
+                {{
+                  scope.row.totalInvoicingAmount > 0
+                    ? '+' + scope.row.totalInvoicingAmount
+                    : scope.row.totalInvoicingAmount
+                }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ordersNo" label="资产出售单号" width="180" sortable="custom" />
+          <el-table-column prop="propertyName" label="资产名称" width="180" sortable="custom" />
+          <el-table-column prop="propertyCode" label="资产编码" width="160" 
+            show-overflow-tooltip></el-table-column>
+          <el-table-column prop="totalExcludingTaxAmount" label="金额(不含税)" width="120" />
+          <el-table-column prop="totalIncludingTaxAmount" label="金额(含税)" width="130" sortable="custom" />
+          <el-table-column label="操作" width="100" fixed="right">
+            <template slot-scope="scope">
+              <tableOpts @edit="handleUserRelation(scope.row.accountsReceivableId, 'look')" :editText="'查看详情'"
+                :hasDel="false"></tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
+          :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
+    <!-- <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" /> -->
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script> 
-import { getBimPropertyCategoryList,delBimPropertyCategoryList} from '@/api/bimPropertyCategory/index'
-import Form from './Form'
-import moment from 'moment'
+
+import {propertyAccountReconciliationLineList} from '@/api/bimPropertyCategory/index' 
+import JNPFForm from '../salePendReconciliation/Form.vue'
+import { withdrawn } from '@/api/basicData/approvalAdministrator'
+// import withdrawnForm from '../purReconciliation/withranForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { updateSortBatch } from '@/api/masterDataManagement/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
+import { getBimBusinessDetail } from '@/api/basicData/index'
+import getProjectList from '@/mixins/generator/getProjectList'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
-import { mapGetters, mapState } from 'vuex'
+
 export default {
-  name: 'assetCategory',
-  components: { Form, SuperQuery },
-  mixins: [AbProjectMixin],
-  data() {  
+  name: 'purReconManagementDetail',
+  components: { JNPFForm, SuperQuery, ExportForm },
+  mixins: [getProjectList,AbProjectMixin],
 
+  data() {
     return {
-      searchList: [
-        { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
-      ],
+      isProjectSwitch: '',
+      isProductNameSwitch: '',
+      tableDataFlag: false,
+      isDeputyUnitSwitch: '',
+      tableFlag: false,
       superQueryVisible: false,
-      title: '更多查询',
-      background: true, //分页器背景颜色
-      activeName: 'supplierPage',
-      visible: false,
-      warehouseFormVisible: true,
-      treeData: [],
-      leftFlag: false,
-      tableData: [],
-      treeLoading: false,
-      listLoading: false,
-      authorizeFormVisible: false,
-      userRelationListVisible: false,
-      organizeIdTree: [],
-      superForm:{},
-      form: {
-        code: '',
-        name: '',
-        pageNum: 1,
-        pageSize: 20,
-
-        orderItems: [
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      },
-
-      gradeList: [],
-      defaultProps: {
-        children: 'childrenList',
-        label: 'fullName'
-      },
-      rules: {
-        code: [{}]
-      },
-      total: 0,
-      diagramVisible: false,
-      formVisible: false,
-      expands: true,
-      refreshTree: true,
-      filterText: '',
-      columnList: [],
-      createTimeArr: [],
-
       superQueryJson: [
         {
-          prop: 'name',
-          label: '类别名称',
+          prop: 'orderNo',
+          label: '对账单号',
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '类别编码',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
+          prop: 'reconciliationDate',
+          label: '对账日期',
           type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          valueFormat: 'yyyy-MM-dd',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'createByName',
-          label: '创建人',
+          prop: 'cooperativePartnerName',
+          label: '客户名称',
           type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerCode',
+          label: '供应商编码',
+          type: 'input'
+        },
+        {
+          prop: 'ordersNo',
+          label: '资产出售单号',
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'input'
+        },
+        {
+          prop: 'stockMoveDate',
+          label: '出入库日期',
+          type: 'datetimerange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
         }
-      ]
+      ],
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '对账单号', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '客户名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        },
+        {
+          field: 'ordersNo',
+          fieldValue: '',
+          label: '资产出售单号',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        },
+        {
+          field: 'propertyName',
+          fieldValue: '',
+          label: '资产名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        }
+      ],
+      columnList: ['cooperativePartnerCode', 'totalReconciliationAmount'],
+      withdrawnVisible: false,
+      title: '更多查询',
+      background: true, //分页器背景颜色
+      visible: false,
+      tableDataList: [],
+      formVisible: false,
+      listLoading: false,
+      reconciliationDate: [],
+      createRequirementDate: [],
+      listQuery: {
+        active: true,
+        cooperativePartnerName: '',
+        orderNo: '',
+        reconciliationType: 'payable',
+        billStatus:"billed",
+        approvalStatus: '',
+
+        endTime: '',
+        keyword: '',
+        pageNum: 1,
+        pageSize: 20,
+        reconciliationEndDate: '',
+        reconciliationStartDate: '',
+        startTime: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          }
+        ]
+      },
+      total: 0,
+      formVisible: false,
+      exportFormVisible: false
     }
-  },
-  watch: {
-    filterText(val) {
-      this.$refs.treeBox.filter(val)
-    }
-  },
-  computed: {
-    ...mapState('user', ['token']),
-    ...mapGetters(['userInfo'])
   },
   async created() {
-    this.superForm = this.form
-    await this.awaitAbProject()
-      console.log("this.abProjectSwitchVisible",this.abProjectSwitchVisible);
-    await this.initData()
-  },
+    await this.getDeputyUnit()
+    await this.getProjectSwitch('system', 'project')
+    await this.getProductNameSwitch('product', 'enable_productName')
+    if (this.isDeputyUnitSwitch === '1') {
+      this.superQueryJson.forEach((item) => {
+        if (item.prop === 'mainUnit') {
+          item.label = '单位(主)'
+        }
+      })
+      this.superQueryJson.splice(8, 0, {
+        prop: 'deputyUnit',
+        label: '单位(副)',
+        type: 'input'
+      })
+    }
+    if (this.isProductNameSwitch === '1') {
+      this.superQueryJson.splice(6, 0, {
+        prop: 'productName',
+        label: '产品名称',
+        type: 'input'
+      })
+    }
+    this.superForm = this.listQuery
 
- 
+    this.search('basic')
+  },
   methods: {
- 
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },
+    async getProductNameSwitch(code, type) {
+      try {
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+      } catch (error) { }
+    },
+    getDeputyUnit() {
+      let obj = {
+        businessCode: 'deputyUnit',
+        configKey: `procureDeputyUnit`
+      }
+      getBimBusinessDetail(obj).then((res) => {
+        this.isDeputyUnitSwitch = res.data.configValue1
+      })
+    },
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
-      this.superForm.orderItems[0].asc = order !== 'descending'
-      this.superForm.orderItems[0].column = newProp
+      let newProp
+      if (
+        [
+          'orderNo',
+          'cooperativePartnerName',
+          'cooperativePartnerCode',
+          'ordersNo',
+          'productCode',
+          'stockMoveDate'
+        ].includes(prop)
+      ) {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      }
+      this.listQuery.orderItems[0].asc = order !== 'descending'
+      this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
-    changeLeft() {
-      this.leftFlag = !this.leftFlag
-    },
+
     columnSetFun() {
-      this.$refs.dataTable.showDrawer()
+      this.$refs.tableForm.showDrawer()
     },
-
-
+    exportType(data, ref) {
+      if (data.length) {
+        this.exportFormVisible = true
+        let domRef = this.$refs[`${ref}`]
+        console.log(domRef)
+        let columnList = domRef.columnList.filter((item) => !!item.label && !!item.prop)
+        columnList = columnList.map((item) => {
+          return { label: item.label, prop: item.prop }
+        })
+        console.log(columnList, 'columnList')
+        this.$nextTick(() => {
+          this.$refs.exportForm.init(columnList)
+        })
+      } else {
+        this.$message({
+          message: '暂无数据导出',
+          type: 'error',
+          duration: 1500
+        })
+      }
+    },
+    // 导出
+    exportForm() {
+      this.exportType(this.tableDataList, 'tableForm')
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        let query = this.listQuery
+        let _data = {
+          ...query,
+          exportType: '1226',
+          exportName: '对账单明细',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
+      }
+    },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.withdrawnVisible = false
       if (isRefresh) {
-        this.keyword = ''
         this.initData()
       }
     },
+    refresh() {
+      this.formVisible = false
+      this.withdrawnVisible = false
+      this.reset()
+    },
+    moreQueries() {
+      this.visible = true
+    },
 
- 
-    async initData() {
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.superForm.endTime = this.createTimeArr[1] + ' 23:59:59'
+    initData() {
+      if (this.reconciliationDate && this.reconciliationDate.length > 0) {
+        this.listQuery.reconciliationStartDate = this.reconciliationDate[0]
+        this.listQuery.reconciliationEndDate = this.reconciliationDate[1]
       } else {
-        this.superForm.startTime = ''
-        this.superForm.endTime = ''
+        this.listQuery.reconciliationStartDate = ''
+        this.listQuery.reconciliationEndDate = ''
+      }
+      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
+        this.listQuery.createStartTime = this.createRequirementDate[0] + ' 00:00:00'
+        this.listQuery.createEndTime = this.createRequirementDate[1] + ' 23:59:59'
+      } else {
+        this.listQuery.createStartTime = ''
+        this.listQuery.createEndTime = ''
       }
       this.listLoading = true
-      console.log("this.abProjectSwitchVisible",this.abProjectSwitchVisible);
-      if(this.abProjectSwitchVisible) this.superForm.projectId=this.userInfo.projectId
-
-
-      await getBimPropertyCategoryList(this.superForm).then((res) => {
-          this.tableData = res.data.records
+      propertyAccountReconciliationLineList(this.listQuery)
+        .then((res) => {
+          console.log(res, '对账单列表')
+          res.data.records.forEach((item) => {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.excludingTaxAmount - item.adjustExcludingTaxAmount)
+            item.taxAmount = this.jnpf.numberFormat(item.taxAmount - item.adjustTaxAmount)
+          })
+          this.tableDataList = res.data.records
+          this.tableFlag = true
           this.total = res.data.total
           this.listLoading = false
           this.visible = false
@@ -251,12 +432,11 @@ export default {
         })
     },
     search(type) {
-      Object.keys(this.form).forEach((key) => {
-        let item = this.form[key]
-        this.form[key] = typeof item === 'string' ? item.trim() : item
+      Object.keys(this.listQuery).forEach((key) => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.form.pageNum = 1
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      this.listQuery.pageNum = 1
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
@@ -277,82 +457,160 @@ export default {
       this.initData()
     },
     reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.form = {
-        code: '',
-        name: '',
-
+      this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+      this.superForm = this.listQuery = {
+        approvalStatus: '',
+        cooperativePartnerName: '',
+        createByName: '',
+        createEndTime: '',
+        createStartTime: '',
+        documentStatus: '',
+        endTime: '',
+        keyword: '',
+        orderNo: '',
         pageNum: 1,
         pageSize: 20,
+        reconciliationEndDate: '',
+        reconciliationStartDate: '',
+        reconciliationType: 'payable',
+        startTime: '',
         orderItems: [
-        
           {
             asc: false,
-            column: 'create_time'
-
+            column: 'stockMoveDate'
           }
         ]
       }
+      this.reconciliationDate = []
       this.searchList = [
-      { field: 'name', fieldValue: '', label: '分类名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '分类编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '对账单号', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '客户名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        },
+        {
+          field: 'ordersNo',
+          fieldValue: '',
+          label: '资产出售单号',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        },
+        {
+          field: 'propertyName',
+          fieldValue: '',
+          label: '资产名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        }
       ]
-      this.$refs.SuperQuery.conditionList = []
-
+      this.createRequirementDate = []
       this.search('basic')
     },
- 
-    addSupplier() {
+    addSupplier(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add')
+        this.$refs.JNPFForm.init(id, type)
       })
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id, type) {
       this.formVisible = true
       if (id) {
-        // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit')
+          this.$refs.JNPFForm.init(id, type)
         })
-        // }, 600);
       }
     },
- 
-   
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
-          delBimPropertyCategoryList(id).then((res) => {
+          deletebuyInquirySheet(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',
               message: '删除成功',
               duration: 1500
             })
-            location.reload()
           })
         })
         .catch(() => { })
     },
-    handleUserRelation(id, parentId, btnType) {
+    handleUserRelation(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType)
+        this.$refs.JNPFForm.init(id, type)
       })
     },
-
+    // 重新提交和撤回
+    withdrawnAddHandle(id, type) {
+      let row = {}
+      let dataFormTwo = []
+      getfinAccountDetail(id).then((res) => {
+        console.log(res, '详情')
+        row = {
+          cooperativePartnerName: res.data.cooperativePartnerName,
+          cooperativePartnerId: res.data.cooperativePartnerId,
+          excludingTaxAmount: res.data.excludingTaxAmount,
+          includingTaxAmount: res.data.includingTaxAmount,
+          taxAmount: res.data.taxAmount,
+          reconciliationDate: res.data.reconciliationDate,
+          totalReconciliationAmount: res.data.totalReconciliationAmount,
+          id: '',
+          reconciliationType: 'payable',
+          reasonRejection: '',
+          documentStatus: 'submit',
+          orderNo: '',
+          remark: res.data.remark,
+          submitDate: '',
+          backAmount: '', // 退货总金额
+          receiptAmount: '', // 收货总金额
+          brTotalAmount: '' // 收/退货总金额
+        }
+        res.data.reconciliationLines.forEach((item) => {
+          if (item.noticeBillVO) {
+            dataFormTwo.push(item.noticeBillVO)
+          } else {
+            dataFormTwo.push(item)
+          }
+        })
+        this.withdrawnVisible = true
+        this.$nextTick(() => {
+          this.$refs.withdrawnForm.init(row, dataFormTwo, type)
+        })
+      })
+    },
+    withdrawnHandle(formId) {
+      let _data = {
+        formId
+      }
+      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          withdrawn(_data).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '撤回成功',
+              duration: 1500,
+              onClose: () => {
+                this.initData()
+              }
+            })
+          })
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>
 <style scoped>
-::v-deep .el-tabs__content {
-  height: calc(100vh - 163px);
-}
-
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
   padding: 0 10px;
@@ -381,8 +639,8 @@ export default {
 }
 
 ::v-deep.el-tree-node__content {
-  height: 40px !important;
-  line-height: 40px;
+  height: 30px;
+  line-height: 30px;
 }
 
 .JNPF-common-el-tree {
@@ -392,21 +650,12 @@ export default {
 .el-tabs__nav-scroll {
   padding-left: 0;
 }
-</style>
-<style scoped>
-.title_box {
-  width: 100%;
-  display: flex;
-  border-bottom: 1px solid #ebeef5;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  padding: 0 10px;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+
+.red {
+  color: red;
+}
+
+.green {
+  color: #67c23a;
 }
 </style>

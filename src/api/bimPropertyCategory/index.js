@@ -302,3 +302,65 @@ export function propertySaleOrderDeatil(id) {
     method: 'get', 
   })
 }
+
+
+// 资产盘点 列表
+
+export function propertyStocktakingList(data) {
+  return request({
+    url: `/api/zgt/propertyStocktaking/list/condition`,
+    method: 'post',
+    data 
+  })
+}
+// 资产盘点 详情
+
+export function propertyStocktakingDeatil(id) {
+  return request({
+    url: `/api/zgt/propertyStocktaking/detail/${id}`,
+    method: 'get', 
+  })
+}
+
+
+// 资产对账单 列表(报表) 
+export function propertyAccountReconciliationListReport(data) {
+  return request({
+    url: `/api/zgt/propertyAccountReconciliation/report`,
+    method: 'post',
+    data 
+  })
+}
+// 资产对账单 列表
+export function propertyAccountReconciliationList(data) {
+  return request({
+    url: `/api/zgt/propertyAccountReconciliation/list/condition`,
+    method: 'post',
+    data 
+  })
+}
+
+// 资产对账单 明细列表
+export function propertyAccountReconciliationLineList(data) {
+  return request({
+    url: `/api/zgt/propertyAccountReconciliation/line/list`,
+    method: 'post',
+    data 
+  })
+}
+// 资产对账单 详情
+export function propertyAccountReconciliationDetail(id) {
+  return request({
+    url: `/api/zgt/propertyAccountReconciliation/detail/${id}`,
+    method: 'get',
+  })
+}
+// 资产对账单 新增
+export function addPropertyAccountReconciliation(data) {
+  return request({
+    url: `/api/zgt/propertyAccountReconciliation/insert`,
+    method: 'post',
+    data 
+  })
+}
+

@@ -72,12 +72,19 @@
           <el-table-column prop="propertyCategoryName" label="分类" min-width="180" sortable="custom" />
           <el-table-column prop="userTime" label="投入使用日期" min-width="180" sortable="custom" />
           <el-table-column prop="ownerName" label="资产管理员" min-width="180" sortable="custom" />
-          <el-table-column prop="orderStatus" label="状态" min-width="120" >
+          <el-table-column prop="orderStatus" label="采购单状态" min-width="120" >
             <template  slot-scope="scope">
               <div v-if="scope.row.orderStatus=='toBeAgreed'">待同意</div>
               <div v-if="scope.row.orderStatus=='toBeConfirmed'">待确认</div>
               <div v-if="scope.row.orderStatus=='received'">已接收</div>
               <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="billStatus" label="对账状态" min-width="120" >
+            <template  slot-scope="scope">
+              <div v-if="scope.row.billStatus=='no_billing'">未对账</div>
+              <div v-if="scope.row.billStatus=='billed'">已对账</div>
+              <div v-if="scope.row.billStatus=='in_bill'">对账中</div>
             </template>
           </el-table-column>
           <el-table-column prop="createByName" label="申请人" min-width="150" sortable="custom" />
@@ -180,23 +187,73 @@ export default {
       filterText: '',
       columnList: [],
       createTimeArr: [],
-
       superQueryJson: [
         {
-          prop: 'name',
-          label: '类别名称',
+          prop: 'orderNo',
+          label: '采购单号',
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '类别编码',
+          prop: 'propertyName',
+          label: '资产名称',
           type: 'input'
         },
         {
-          prop: 'remark',
-          label: '备注',
+          prop: 'propertyCode',
+          label: '资产编码',
           type: 'input'
         },
+        {
+          prop: 'propertySpec',
+          label: '资产规格',
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerName',
+          label: '客户名称',
+          type: 'input'
+        },
+        {
+          prop: 'propertyCategoryName',
+          label: '分类',
+          type: 'input'
+        }, 
+        {
+          prop: 'projectName',
+          label: '所属项目',
+          type: 'input'
+        }, 
+        {
+          prop: 'createByName',
+          label: '申请人',
+          type: 'input'
+        }, 
+        {
+          prop: 'orderStatus',
+          label: "采购单状态",
+          type: 'select',
+          options: [
+          {label:"待同意",value:"toBeAgreed",},
+            {label:"待确认",value:"toBeConfirmed",},
+            {label:"已接收",value:"received",},
+            {label:"已拒绝",value:"rejected",},
+          ]
+        },
+        {
+          prop: 'billStatus',
+          label: "对账状态",
+          type: 'select',
+          options: [
+          {label:"未对账",value:"no_billing",},
+            {label:"已对账",value:"billed",},
+            {label:"对账中",value:"in_bill",},
+          ]
+        },
+        {
+          prop: 'ownerName',
+          label: '资产管理员',
+          type: 'input'
+        },  
         {
           prop: 'createTime',
           label: '创建时间',

@@ -251,7 +251,14 @@ export function getEquEquipmentList(data) {
     data
   })
 }
-
+// 批量设置任务
+export function batchEquTaskSettings(data) {
+  return request({
+    url: `/api/zgt/equTaskSettings/settings`,
+    method: 'put',
+    data
+  })
+}
 // 设备档案设置获取字典
 export function getCategoryTrees(data) {
   return request({

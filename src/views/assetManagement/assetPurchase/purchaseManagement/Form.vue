@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" >
           <el-page-header @back="goBack"
-            :content="btnType == 'add' ? '新建资产' : btnType == 'edit' ? '编辑资产' : btnType == 'look' ? '查看资产' : '新建资产'" />
+            :content="btnType == 'add' ? '新建采购单' : btnType == 'edit' ? '编辑采购单' : btnType == 'look' ? '查看采购单' : '新建采购单'" />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('draft')">

@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" >
           <el-page-header @back="goBack"
-            :content="btnType == 'add' ? '新建售出' : btnType == 'edit' ? '编辑售出' : btnType == 'look' ? '查看售出' : '新建售出'" />
+            :content="btnType == 'add' ? '新建售出' : btnType == 'edit'||operateType ? '编辑售出' : btnType == 'look' ? '查看售出' : '新建售出'" />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('draft')">
@@ -31,21 +31,21 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产编码" prop="code">
-                            <el-input v-model="dataForm.code" placeholder="请输入资产编码"
+                          <el-form-item label="资产编码" prop="propertyCode">
+                            <el-input v-model="dataForm.propertyCode" placeholder="请输入资产编码"
                               disabled />
                           </el-form-item>
                         </el-col>
                
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产名称" prop="name">
-                            <el-input v-model="dataForm.name" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="btnType!='add'"
+                          <el-form-item label="资产名称" prop="propertyName">
+                            <el-input v-model="dataForm.propertyName" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="btnType!='add'"
                                />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" >
-                          <el-form-item label="资产规格" prop="spec">
-                            <el-input v-model="dataForm.spec" placeholder="请输入资产规格"
+                          <el-form-item label="资产规格" prop="propertySpec">
+                            <el-input v-model="dataForm.propertySpec" placeholder="请输入资产规格"
                               disabled />
                           </el-form-item>
                         </el-col>
@@ -106,19 +106,19 @@
                           </el-form-item>
                         </el-col>
                     
-                        <el-col :sm="6" :xs="24" >
+                        <!-- <el-col :sm="6" :xs="24" >
                           <el-form-item label="采购人" prop="purchaserId">
                             <user-select v-model="dataForm.purchaserId" placeholder="请选择采购人" clearable disabled
                                   style="width: 100%;"  @change="hangleSelectSales">
                                 </user-select>
                           </el-form-item>
-                        </el-col>
+                        </el-col> -->
                         <el-col :sm="6" :xs="24" >
                        
-                          <el-form-item label="客户名称" prop="cooperativePartnerName" ref="cooperativePartnerName"   v-if="btnType=='approve'">
+                          <el-form-item label="客户名称" prop="cooperativePartnerName" ref="cooperativePartnerName"   v-if="operateType=='approve'">
                             <!-- 客户选择弹窗  -->
                             <ComSelect-page clearable  :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page" :isdisabled="btnType!='add'"
+                              v-model="dataForm.cooperativePartnerName"  ref="ComSelect-page" 
                               @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择客户名称'"
                               title="选择客户" treeTitle="客户分类" :methodArr="PartnerMethodArr"
                               :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -126,22 +126,22 @@
                        
                           </el-form-item>
                         </el-col> 
-                        <el-col :sm="6" :xs="24"  v-if="btnType=='approve'">
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
                           <el-form-item label="金额(含税)" prop="totalAmount">
                             <el-input v-model="dataForm.totalAmount" placeholder="请输入备注"
-                              :disabled="btnType == 'look' ? true : false" type="text"  />
+                               type="text"  />
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24"  v-if="btnType=='approve'">
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
                           <el-form-item label="税率(%)" prop="tax">
-                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                            <el-select v-model="dataForm.tax" placeholder="请选择" style="width: 100%;" >
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" 
                                 :value="item.taxRate"></el-option>
                             </el-select>
                           </el-form-item>
                         </el-col>
                     
-                        <el-col :sm="6" :xs="24" v-if="btnType=='approve'">
+                        <el-col :sm="6" :xs="24" v-if="operateType=='approve'">
                           <el-form-item label="状态" prop="state">
                             <el-select v-model="dataForm.state" placeholder="请选择" style="width: 100%;" >
                               <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" 
@@ -149,14 +149,14 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24"  v-if="btnType=='approve'">
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='approve'">
                           <el-form-item label="确认说明" prop="approvalInstructions">
                             <el-input v-model="dataForm.approvalInstructions" placeholder="请输入确认说明"
                                type="textarea" :rows="2" maxlength="200" />
                           </el-form-item>
                         </el-col>
 
-                        <el-col :sm="6" :xs="24"  v-if="btnType=='sale'">
+                        <el-col :sm="6" :xs="24"  v-if="operateType=='sale'">
                           <el-form-item label="售出说明" prop="saleInstructions">
                             <el-input v-model="dataForm.saleInstructions" placeholder="请输入售出说明"
                                type="textarea" :rows="2" maxlength="200" />
@@ -228,7 +228,10 @@ export default {
         { code: "call", fullName: "资产调用单", },
 
       ],
-
+      stateList:[
+        {label:"同意",value:true,},
+        {label:"拒绝",value:false,},
+      ],
       btnType:"",
       activeName:'orderInfo',
       activeNames:['basicInfo','associationInfo'],
@@ -266,7 +269,7 @@ export default {
         propertyCategoryId:"",
         code:"",
         name:"",
-        spec:"",
+        propertySpec:"",
         projectId:"",
         userTime:"",
         position:"",
@@ -350,9 +353,13 @@ export default {
     changeAsset(data){
       console.log("资产数据",data);
       this.dataForm=data
+      this.$set(this.dataForm,'propertyId',data.id)
       this.$set(this.dataForm,'cooperativePartnerId','')
       this.$set(this.dataForm,'cooperativePartnerName','')
       this.$set(this.dataForm,'cooperativePartnerCode','')
+      this.$set(this.dataForm,'propertyName',data.name)
+      this.$set(this.dataForm,'propertyCode',data.code)
+      this.$set(this.dataForm,'propertySpec',data.spec)
       this.$set(this.dataForm,'propertySpec',data.spec)
       this.dataForm.id=""
     },
@@ -476,7 +483,7 @@ export default {
             if (submitFlag === false) return
             this.btnLoading = true
             let formMethod = null;
-            if (this.btnType == 'edit') {
+            if (this.btnType == 'edit'||this.operateType) {
               formMethod = editPropertySaleOrder
            
               if(this.dataForm.state===true)this.dataForm.orderStatus='toBeSold'

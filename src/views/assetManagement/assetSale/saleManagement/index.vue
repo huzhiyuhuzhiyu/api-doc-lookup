@@ -55,17 +55,17 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange"  >
-          <el-table-column prop="orderNo" label="出售单号" width="250" sortable="custom" />
-          <el-table-column prop="propertyName" label="资产名称" width="250" sortable="custom" />
-          <el-table-column prop="propertyCode" label="资产编码" width="250" sortable="custom" />
-          <el-table-column prop="propertySpec" label="资产规格" width="250" sortable="custom" />
+          <el-table-column prop="orderNo" label="出售单号" width="200" sortable="custom" />
+          <el-table-column prop="propertyName" label="资产名称" width="160" sortable="custom" />
+          <el-table-column prop="propertyCode" label="资产编码" width="160" sortable="custom" />
+          <el-table-column prop="propertySpec" label="资产规格" width="160" sortable="custom" />
           <el-table-column prop="cooperativePartnerName" label="客户名称" width="250" sortable="custom" />
-          <el-table-column prop="totalMount" label="金额" width="250" sortable="custom" />
-          <el-table-column prop="tax" label="税率" width="250" sortable="custom" />
-          <el-table-column prop="propertyCategoryName" label="分类" width="250" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" width="250" sortable="custom" />
-          <el-table-column prop="createByName" label="申请人" width="250" sortable="custom" />
-          <el-table-column prop="orderStatus" label="状态" width="250" sortable="custom">
+          <el-table-column prop="totalAmount" label="金额" width="140" sortable="custom" />
+          <el-table-column prop="tax" label="税率" width="100" sortable="custom" />
+          <el-table-column prop="propertyCategoryName" label="分类" width="120" sortable="custom" />
+          <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" />
+          <el-table-column prop="createByName" label="申请人" width="120" sortable="custom" />
+          <el-table-column prop="orderStatus" label="状态" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.orderStatus=='toBeAgreed'">待确认</div>
               <div v-if="scope.row.orderStatus=='toBeSold'">待售出</div>
@@ -73,12 +73,19 @@
               <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
             </template>
           </el-table-column>
-          <el-table-column prop="ownerName" label="资产管理员" width="250" sortable="custom" />
-          <el-table-column prop="userTime" label="投入使用日期" width="250" sortable="custom" />
-          <el-table-column prop="position" label="常用位置" width="250" sortable="custom" />
-          <el-table-column prop="approvalUserName" label="确认人" width="250" sortable="custom" />
-          <el-table-column prop="approvalInstructions" label="确认说明" width="250" sortable="custom" />
-          <el-table-column prop="saleInstructions" label="售出说明" width="250" sortable="custom" />
+          <el-table-column prop="billStatus" label="对账状态" min-width="120" >
+            <template  slot-scope="scope">
+              <div v-if="scope.row.billStatus=='no_billing'">未对账</div>
+              <div v-if="scope.row.billStatus=='billed'">已对账</div>
+              <div v-if="scope.row.billStatus=='in_bill'">对账中</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ownerName" label="资产管理员" width="140" sortable="custom" />
+          <el-table-column prop="userTime" label="投入使用日期" width="160" sortable="custom" />
+          <el-table-column prop="position" label="常用位置" width="160" sortable="custom" />
+          <el-table-column prop="approvalUserName" label="确认人" width="120" sortable="custom" />
+          <el-table-column prop="approvalInstructions" label="确认说明" width="160" sortable="custom" />
+          <el-table-column prop="saleInstructions" label="售出说明" width="160" sortable="custom" />
           
           <el-table-column prop="remark" label="备注" width="250" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -86,7 +93,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">确认</el-button>
-              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'scrap')" v-if="scope.row.orderStatus=='toBeSold'">确认售出</el-button>
+              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'sale')" v-if="scope.row.orderStatus=='toBeSold'">确认售出</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -118,7 +125,7 @@ export default {
     return {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '出售', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'propertyName', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
             {label:"待确认",value:"toBeAgreed",},
@@ -177,20 +184,71 @@ export default {
 
       superQueryJson: [
         {
-          prop: 'name',
-          label: '类别名称',
+          prop: 'orderNo',
+          label: '出售单号',
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '类别编码',
+          prop: 'propertyName',
+          label: '资产名称',
           type: 'input'
         },
         {
-          prop: 'remark',
-          label: '备注',
+          prop: 'propertyCode',
+          label: '资产编码',
           type: 'input'
         },
+        {
+          prop: 'propertySpec',
+          label: '资产规格',
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerName',
+          label: '客户名称',
+          type: 'input'
+        },
+        {
+          prop: 'propertyCategoryName',
+          label: '分类',
+          type: 'input'
+        }, 
+        {
+          prop: 'projectName',
+          label: '所属项目',
+          type: 'input'
+        }, 
+        {
+          prop: 'createByName',
+          label: '申请人',
+          type: 'input'
+        }, 
+        {
+          prop: 'orderStatus',
+          label: "出售单状态",
+          type: 'select',
+          options: [
+          {label:"待确认",value:"toBeAgreed",},
+            {label:"待售出",value:"toBeSold",},
+            {label:"已售出",value:"sold",},
+            {label:"已拒绝",value:"rejected",},
+          ]
+        },
+        {
+          prop: 'billStatus',
+          label: "对账状态",
+          type: 'select',
+          options: [
+          {label:"未对账",value:"no_billing",},
+            {label:"已对账",value:"billed",},
+            {label:"对账中",value:"in_bill",},
+          ]
+        },
+        {
+          prop: 'ownerName',
+          label: '资产管理员',
+          type: 'input'
+        },  
         {
           prop: 'createTime',
           label: '创建时间',
@@ -326,7 +384,7 @@ export default {
       }
       this.searchList = [
       { field: 'orderNo', fieldValue: '', label: '报废单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'propertyName', fieldValue: '', label: '资产名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderStatus', fieldValue: '', label: '状态', symbol: 'like', searchType: 4, width: 120,
           options:[
           {label:"待确认",value:"toBeAgreed",},

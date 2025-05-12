@@ -1,4 +1,4 @@
-<!-- 任务配置 -->
+<!-- 维修单 -->
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
@@ -35,8 +35,6 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="batchSet('maintain')">批量设置保养</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="batchSet('spotCheck')">批量设置点检</el-button>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -54,27 +52,26 @@
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"
             :fixedNO="true"  @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="name" label="维修单号" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="报修说明" min-width="180" sortable="custom" />
             <el-table-column prop="name" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="code" label="设备编码" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenancePlanDate" label="保养开始日期" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenanceIntervalNum" label="保养间隔天数" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenanceSettingsFlag" label="保养配置状态" min-width="180" sortable="custom" >
-              <template slot-scope="scope">
-             
-                <el-tag type="danger" v-if="!scope.row.maintenanceSettingsFlag">否</el-tag>
-                <el-tag type="success" v-if="scope.row.maintenanceSettingsFlag">是</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="inspectionPlanDate" label="点检开始日期" min-width="180" sortable="custom" />
-            <el-table-column prop="inspectionIntervalNum" label="点检间隔天数" min-width="180" sortable="custom" >
-            
-            </el-table-column>
-            <el-table-column prop="inspectionSettingsFlag" label="点检配置状态" min-width="180" sortable="custom" >
-              <template slot-scope="scope">
-                <el-tag type="danger" v-if="!scope.row.inspectionSettingsFlag">否</el-tag>
-                <el-tag type="success" v-if="scope.row.inspectionSettingsFlag">是</el-tag>
-              </template>
-            </el-table-column>
+     
+            <el-table-column prop="code" label="报修照片" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="上报人" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="状态" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="维修人" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="维修说明" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="维修照片" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="报修时间" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="维修开始时间" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="维修完成时间" min-width="180" sortable="custom" />
+            <el-table-column prop="maintenancePlanDate" label="创建时间" min-width="180" sortable="custom" />
+            <el-table-column prop="maintenancePlanDate" label="更新时间" min-width="180" sortable="custom" />
+            <el-table-column prop="maintenancePlanDate" label="确认人" min-width="180" sortable="custom" />
+            <el-table-column prop="maintenancePlanDate" label="确认时间" min-width="180" sortable="custom" />
+            <el-table-column prop="maintenancePlanDate" label="确认内容" min-width="180" sortable="custom" />
+  
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" />

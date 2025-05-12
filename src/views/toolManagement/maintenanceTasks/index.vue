@@ -1,291 +1,230 @@
 <!-- 保养任务 -->
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入设备编码" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入设备名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="orderForm.actualMaintenanceIdText" placeholder="请输入实际保养人" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-              </el-button>
-            </el-form-item>
-          </el-col>
-          <!-- <el-button style="float: right;margin-right: 10px;" size="mini" type="primary"
-                        icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
-        <div class="JNPF-common-head">
-          <topOpts @add="addSupplier('', 'add')" />
-          <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-            </el-tooltip>
+    <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!formVisible">
+      <div class="JNPF-common-layout-center JNPF-flex-main">
+        <el-row class="JNPF-common-search-box" :gutter="16">
+          <el-form @submit.native.prevent>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
+          <div class="JNPF-common-head">
+            <div>
+            </div>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="advanceFun" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
           </div>
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"
+            :fixedNO="true"  @selection-change="handleSelectionChange" hasC
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="no" label="保养任务单号" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="state" label="任务状态" min-width="180" sortable="custom" >
+                 <template slot-scope="scope">
+                  <el-tag  v-if="!scope.row.state">未完成</el-tag>
+                <el-tag type="success" v-if="scope.row.state">已完成</el-tag>
+               </template>
+            </el-table-column>
+            <el-table-column prop="actualMaintenanceName" label="保养人" min-width="180" sortable="custom" />
+            <el-table-column prop="actualMaintenanceDate" label="实际保养时间" min-width="180" sortable="custom" />
+            <el-table-column prop="position" label="设备常用位置" min-width="180" sortable="custom" />
+            <el-table-column prop="pic" label="保养图片" min-width="180" sortable="custom" />
+            <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+  
+          </JNPF-table>
+          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+            @pagination="initData" />
         </div>
-
-        <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="maintenanceTaskIdText" label="任务名称" min-width="180" />
-          <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" />
-          <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom" />
-          <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
-          <el-table-column prop="factoryFloor" label="使用车间" min-width="140" />
-          <el-table-column prop="mountedPlaces" label="安装地点" min-width="140" />
-          <el-table-column prop="level" label="保养等级" width="140" />
-          <el-table-column prop="cycle" label="周期" width="90" />
-          <el-table-column prop="unit" label="单位" width="90" />
-          <el-table-column prop="departmentIdText" label="计划保养部门" min-width="150" />
-          <el-table-column prop="maintainerIdText" label="计划保养人" width="120"></el-table-column>
-          <el-table-column prop="planMaintenanceDate" label="计划保养日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="actualDepartmentIdText" label="实际保养部门" min-width="150" />
-          <el-table-column prop="actualMaintenanceIdText" label="实际保养人" width="120"></el-table-column>
-          <el-table-column prop="actualMaintenanceDate" label="实际保养日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="picList" label="保养拍照" min-width="160">
-            <template slot-scope="scope">
-              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.picList" :key="item.fileId" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
-            </template>
-          </el-table-column>
-          <el-table-column prop="cycleType" label="周期类型" width="120" sortable="custom" fixed="right" align="center">
-            <template slot-scope="scope">
-              <div v-if="scope.row.cycleType == 'cycle'"><el-tag type="success">周期</el-tag></div>
-              <div v-else-if="scope.row.cycleType == 'disposable'">
-                <el-tag type="success">一次</el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" width="120" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts :hasEdit="false" @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" />
       </div>
     </div>
+ 
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+  
   </div>
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { equMaintenanceList, deleteequMaintenance } from '@/api/dailyManagement/Maintenance'
-import Form from './Form'
-import getProjectList from '@/mixins/generator/getProjectList'
-import { mapGetters } from 'vuex'
+import {  equTaskMaintenanceList } from '@/api/bimPropertyCategory/index'
+
+import { mapGetters, mapState } from 'vuex'
 export default {
-  mixins: [getProjectList],
-  name: 'maintenanceRecords',
-  components: { Form, SuperQuery },
+  name: 'maintenanceTasks',
+  components: {  SuperQuery },
   data() {
     return {
-      istable: false,
-      isProjectSwitch: '',
-      srcList: [
-        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
-      ],
-      superQueryJson: [
-        {
-          prop: 'maintenanceTaskIdText',
-          label: "任务名称",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentIdCode',
-          label: "设备编码",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentIdName',
-          label: "设备名称",
-          type: 'input'
-        },
-        {
-          prop: 'factoryFloor',
-          label: "使用车间",
-          type: 'input'
-        },
-        {
-          prop: 'mountedPlaces',
-          label: "安装地点",
-          type: 'input'
-        },
-        { // 下拉选
-          prop: 'maintainerLevel',
-          label: '保养等级',
-          type: 'select',
-          options: [
-            { label: "日常保养", value: "日常保养" },
-            { label: "二级保养", value: "二级保养" },
-            { label: "三级保养", value: "三级保养" },
-            { label: "四级保养", value: "四级保养" },
-            { label: "年度保养", value: "年度保养" }
-          ]
-        },
-        {
-          prop: 'maintainerCycle',
-          label: "周期",
-          type: 'input'
-        },
-        {
-          prop: 'maintainerUnit',
-          label: "单位",
-          type: 'input'
-        },
-        {
-          prop: 'departmentIdText',
-          label: "计划保养部门",
-          type: 'input'
-        },
-        {
-          prop: 'maintainerIdText',
-          label: "计划保养人",
-          type: 'input'
-        },
-        { // 日期选择器（区间）
-          prop: 'planMaintenanceDate',
-          label: '计划保养日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: {}
-        },
-        {
-          prop: 'actualDepartmentIdText',
-          label: "实际保养部门",
-          type: 'input'
-        },
-        {
-          prop: 'actualMaintenanceIdText',
-          label: "实际保养人",
-          type: 'input'
-        },
-        { // 日期选择器（区间）
-          prop: 'actualMaintenanceDate',
-          label: '实际保养日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: {}
-        },
-        { // 下拉选
-          prop: 'cycleType',
-          label: '周期类型',
-          type: 'select',
-          options: [
-            { label: '周期', value: 'cycle' },
-            { label: '一次', value: 'disposable' }
-          ]
-        },
-        { // 日期时间选择器（区间）
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '创建开始时间',
-          endPlaceholder: '创建结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: "备注",
-          type: 'input'
-        }
-      ],
       superQueryVisible: false,
+      columnList: [],
+      superQuery: {},
+      superForm: {},
+      taskSetTitle:"",
+   
+
+ 
+   
+      basicQuery: {},
+      searchList: [
+        { field: 'no', fieldValue: '', label: '保养任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      taskKey:"",
+ 
+      reworkVisible: false,
+      btnLoading: false,
+      title: "更多查询",
       tableData: [],
       listLoading: false,
-      orderForm: {
-        projectId: '',
-        classAttribute: "equipment",
-        recordType: 'maintenance',
-        equipmentIdCode: '',
-        equipmentIdName: '',
-        actualMaintenanceIdText: '',
+      detailFlag: false,
+      orderForm: {},
+      orderFormlist: {
+        taskType:"maintenance",
+        equipmentType:"tool",
+        no:"",
+        equipmentCode:"",
+        equipmentName:"",
         pageNum: 1,
         pageSize: 20,
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
         orderItems: [{
           asc: false,
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "create_time"
         }],
       },
       total: 0,
       formVisible: false,
+      selectArr: [],
+      superQueryJson: [
+          {
+          prop: 'no',
+          label: "保养任务单号",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentName',
+          label: "设备名称",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentCode',
+          label: "设备编码",
+          type: 'input'
+        }, 
+          {
+          prop: 'state',
+          label: "任务状态",
+          type: 'select',
+          options: [
+            { label: "已完成", value: true },
+            { label: "未完成", value: false},
+          ]
+        }, 
+        {
+          prop: 'actualMaintenanceName',
+          label: "保养人",
+          type: 'input'
+        }, 
+        {
+          prop: 'actualMaintenanceDate',
+          label: '实际保养时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+        },
+       {
+          prop: 'position',
+          label: "设备常用位置",
+          type: 'input'
+        }, 
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+        },
+    
+      ],
+      list:[],
+   
+ 
+ 
+   
     }
   },
   async created() {
-    await this.getProjectSwitch('system', 'project')
-    this.istable = true
-    this.initData()
+
+
+    this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+    this.search('basic')
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
+  mounted() {
+  },
   methods: {
-    bigimg(url) {
-      this.srcList[0] = url
-    },
-    columnSetFun() {
-      this.$refs.dataTable.showDrawer()
-    },
+ 
+ 
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
     sortChange({ prop, order }) {
-      let newProp
-      if (prop === 'equipmentIdName') {
-        newProp = prop
+      let newProp;
+      if (prop === 'partnerCode' ||prop=='productionLineNmae'|| prop == 'pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+        if (prop === 'createByName') {
+          newProp = 'create_by'
+        } else {
+          newProp = prop
+        }
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
@@ -293,97 +232,74 @@ export default {
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
-    // 关闭新建编辑页面
-    closeForm(isRefresh) {
-      this.formVisible = false
-      if (isRefresh) {
-        this.initData()
-      }
-    },
+   
     initData() {
       this.listLoading = true
-      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      equMaintenanceList(this.orderForm).then(res => {
-        this.tableData = res.data.records.map(item => {
-          if (item.picList && item.picList.length) item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
-          return item
-        })
+      equTaskMaintenanceList(this.orderForm).then(res => {
+        this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
     },
-
-    search() {
+    search(type) {
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.orderForm.pageNum = 1 // 重置页码
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.orderForm = {
-        classAttribute: "equipment",
-        recordType: 'maintenance',
-        equipmentIdCode: '',
-        equipmentIdName: '',
-        actualMaintenanceIdText: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
-        }],
-      }
-      this.search()
+      this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
+      this.$refs.SuperQuery.conditionList = []
+      this.searchList = [
+             { field: 'no', fieldValue: '', label: '保养任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+      ],
+        this.search('basic')
     },
 
-    addSupplier(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
     },
-    addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype,)
-        })
-        // }, 600);
-      }
-    },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        deleteequMaintenance(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
-          })
-        })
-      }).catch(() => { })
-    },
-    handleUserRelation(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
-    }
+ 
   }
 }
 </script>
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
-
-  
-  
+<style scoped>
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0 !important;
+  margin-bottom: 5px;
+}
+</style>
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style scoped>
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
+}
+::v-deep #qrcode img{
+  margin: 0 auto;
+}
+</style>

@@ -72,8 +72,8 @@
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
-              <el-button size="mini" type="primary" icon="el-icon-printer"
-                @click="printView('p038')">打印设备二维码</el-button>
+              <el-button size="mini" type="primary" v-has="'property_addBtn'" icon="el-icon-plus" @click="propertyAddFun('', false, 'add','propertyAdd')">从资产新建</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p038')">打印设备二维码</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button>
               <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
                 @click="importProductFun">导入</el-button>
@@ -808,7 +808,13 @@ export default {
       })
 
     },
+    propertyAddFun(id, type, types,key){
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type, types,key)
+      })
 
+    },
 
 
     handleDel(id) {

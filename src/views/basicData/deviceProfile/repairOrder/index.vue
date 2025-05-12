@@ -50,15 +50,13 @@
             </div>
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"
-            :fixedNO="true"  @selection-change="handleSelectionChange" hasC
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="name" label="维修单号" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="报修说明" min-width="180" sortable="custom" />
-            <el-table-column prop="name" label="设备名称" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="设备编码" min-width="180" sortable="custom" />
-     
+            :fixedNO="true"  @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="maintenanceNo" label="维修单号" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="code" label="报修说明" min-width="180" sortable="custom" /> 
             <el-table-column prop="code" label="报修照片" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="上报人" min-width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="上报人" min-width="180" sortable="custom" />
             <el-table-column prop="code" label="状态" min-width="180" sortable="custom" />
             <el-table-column prop="code" label="维修人" min-width="180" sortable="custom" />
             <el-table-column prop="code" label="维修说明" min-width="180" sortable="custom" />
@@ -68,7 +66,7 @@
             <el-table-column prop="code" label="维修完成时间" min-width="180" sortable="custom" />
             <el-table-column prop="maintenancePlanDate" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="maintenancePlanDate" label="更新时间" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenancePlanDate" label="确认人" min-width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="确认人" min-width="180" sortable="custom" />
             <el-table-column prop="maintenancePlanDate" label="确认时间" min-width="180" sortable="custom" />
             <el-table-column prop="maintenancePlanDate" label="确认内容" min-width="180" sortable="custom" />
   
@@ -78,59 +76,7 @@
         </div>
       </div>
     </div>
-    <el-dialog :title="taskSetTitle" :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="left">
-          <el-col :span="24" v-if="taskKey=='maintain'">
-            <el-form-item label="保养配置是否开启" prop="maintenanceSettingsFlag">
-              <el-select v-model="dataForm.maintenanceSettingsFlag" placeholder="请选择" style="width: 100%;" >
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label" 
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='maintain'">
-            <el-form-item label="保养开始日期" prop="maintenancePlanDate">
-              <el-date-picker v-model="dataForm.maintenancePlanDate" type="date" value-format="yyyy-MM-dd"
-                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择保养开始日期" >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='maintain'">
-            <el-form-item label="保养间隔天数" prop="maintenanceIntervalNum">
-              <el-input v-model="dataForm.maintenanceIntervalNum" placeholder="保养间隔天数"  />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="24"  v-if="taskKey=='spotCheck'">
-            <el-form-item label="点检配置是否开启" prop="inspectionSettingsFlag">
-              <el-select v-model="dataForm.inspectionSettingsFlag" placeholder="请选择" style="width: 100%;" >
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label" 
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='spotCheck'">
-            <el-form-item label="点检开始日期" prop="inspectionPlanDate">
-              <el-date-picker v-model="dataForm.inspectionPlanDate" type="date" value-format="yyyy-MM-dd"
-                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择点检开始日期" >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='spotCheck'">
-              <el-form-item label="点检间隔天数" prop="inspectionIntervalNum">
-                <el-input v-model="dataForm.inspectionIntervalNum" placeholder="点检间隔天数"  />
-              </el-form-item>
-            </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
-          提交</el-button>
-      </span>
-    </el-dialog>
+ 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -138,51 +84,41 @@
   </div>
 </template>
 <script>
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import {  getEquEquipmentList,batchEquTaskSettings  } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue' 
+import { RepairRequestList} from '@/api/dailyManagement/Maintenance'
 
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'taskConfig',
   components: {  SuperQuery },
   data() {
-    return {
-      addOrderVisible: false,
+    return { 
       superQueryVisible: false,
       columnList: [],
       superQuery: {},
-      superForm: {},
-      taskSetTitle:"",
-      statusList:[
-      { label: "是", value: true },
-      { label: "否", value: false},
-      ],
+      superForm: {}, 
+ 
 
  
    
       basicQuery: {},
       searchList: [
-        { field: 'name', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'maintenanceNo', fieldValue: '', label: '维修单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentIdName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentIdCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
       ],
       taskKey:"",
-      dataForm: {
-        maintenanceSettingsFlag:"",
-          inspectionSettingsFlag:"",
-          maintenancePlanDate:"",
-          inspectionPlanDate:"",
-          maintenanceIntervalNum:"",
-          inspectionIntervalNum:"",
-      },
-      reworkVisible: false,
+    
       btnLoading: false,
       title: "更多查询",
       tableData: [],
       listLoading: false,
-      detailFlag: false,
       orderForm: {},
       orderFormlist: {
         classAttribute:"equipment",
+        equipmentIdName:"",
+        equipmentIdCode:"",
+        maintenanceNo:"",
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -356,7 +292,7 @@ export default {
    
     initData() {
       this.listLoading = true
-      getEquEquipmentList(this.orderForm).then(res => {
+      RepairRequestList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -393,9 +329,10 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.$refs.SuperQuery.conditionList = []
-      this.searchList = [
-      { field: 'name', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+      this.searchList =  [
+        { field: 'maintenanceNo', fieldValue: '', label: '维修单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentIdName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentIdCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.search('basic')
     },
@@ -403,9 +340,7 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    closePrint() {
-      this.printVisible = false
-    },
+   
   }
 }
 </script>

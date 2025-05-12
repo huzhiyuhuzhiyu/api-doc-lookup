@@ -144,7 +144,7 @@ export default {
         if (valid) {
           this.btnLoading = true
           let formMethod = this.dataForm.id ? editEquContentSettings : addEquContentSettings
-          this.$set(this.dataForm,'equipmentType','equipment')
+          this.$set(this.dataForm,'equipmentType','tool')
           formMethod(this.dataForm)
             .then((res) => {
               console.log(666, res)

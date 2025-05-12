@@ -59,16 +59,18 @@
                     @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
                     <!-- <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="abProjectSwitchVisible"></el-table-column> -->
-                        <el-table-column prop="type" label="内容类型" align="center" sortable="custom" width="160">
+                        <el-table-column prop="contentType" label="内容类型" align="center" sortable="custom" width="160">
                         <template slot-scope="scope">
-                            <div v-if="scope.row.type == 'responsibility_fee'">责废</div>
-                            <div v-if="scope.row.type == 'material_fee'">料废</div>
-                            <div v-if="scope.row.type == 'rework'">返工</div>
+                            <div v-if="scope.row.contentType == 'abnormal'">异常</div>
+                            <div v-if="scope.row.contentType == 'repair'">维修</div>
+                            <div v-if="scope.row.contentType == 'inspection'">点检</div>
+                            <div v-if="scope.row.contentType == 'maintenance'">保养</div>
                         </template>
                     </el-table-column>
+                          
                     <el-table-column prop="name" label="内容名称" sortable="custom" />
                 
-                    <el-table-column prop="remark" label="内容详情" sortable="custom"></el-table-column>
+                    <el-table-column prop="contentText" label="内容详情" sortable="custom"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
@@ -89,12 +91,12 @@
 </template>
 
 <script>
-import { deleteScrapCategoryData, getScrapCategoryList } from '@/api/basicData/index'
 import DepForm from './depForm'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+
+import {equContentSettingsList,delEquContentSettings} from '@/api/bimPropertyCategory/index'
 export default {
     name: 'scrappedType',
     components: { DepForm, SuperQuery },
@@ -105,30 +107,26 @@ export default {
             tableDataFlag: false,
             superQueryVisible: false,
             superQueryJson: [
-                {
-                    prop: 'name',
-                    label: '不良名称',
-                    type: 'input'
-                },
-                {
-                    prop: 'price',
-                    label: '单价',
-                    type: 'input'
-                },
-                {
-                    prop: 'type',
-                    label: '不良类型',
+                     {
+                    prop: 'contentType',
+                    label: '内容类型',
                     type: 'select',
                     options: [
-                        {
-                            value: 'responsibility_fee',
-                            label: '责废'
-                        },
-                        {
-                            value: 'material_fee',
-                            label: '料废'
-                        }
+                        {value: 'abnormal',label: '异常'},
+                        {value: 'repair',label: '维修'},
+                        {value: 'inspection',label: '点检'},
+                        {value: 'maintenance',label: '保养'},
                     ]
+                },
+                {
+                    prop: 'name',
+                    label: '内容名称',
+                    type: 'input'
+                }, 
+                {
+                    prop: 'contentText',
+                    label: '内容详情',
+                    type: 'input'
                 },
                 {
                     prop: 'createTime',
@@ -148,7 +146,9 @@ export default {
             listLoading: false,
             timeArr: [],
             tableQuery: {
-                type: '',
+              contentType:"",
+              equipmentType:"equipment",
+              name:"",
                 pageNum: 1,
                 pageSize: 20,
                 orderItems: [
@@ -157,25 +157,14 @@ export default {
                         column: 'create_time'
                     }
                 ],
-                name: '',
-                code: ''
             },
-
             total: 0,
             typeData: [
-                {
-                    value: 'responsibility_fee',
-                    label: '责废'
-                },
-                {
-                    value: 'material_fee',
-                    label: '料废'
-                },
-                {
-                    value: 'rework',
-                    label: '返工'
-                }
-            ],
+                      {value: 'abnormal',label: '异常'},
+                      {value: 'repair',label: '维修'},
+                      {value: 'inspection',label: '点检'},
+                      {value: 'maintenance',label: '保养'},
+                    ],
             formVisible: false,
             filterText: ''
         }
@@ -219,17 +208,9 @@ export default {
             }
         },
         initData() {
-            if (this.timeArr.length) {
-                this.tableQuery.startTime = this.timeArr[0] + ' 00:00:00'
-                this.tableQuery.endTime = this.timeArr[1] + ' 23:59:59'
-            } else {
-                this.tableQuery.startTime = ''
-                this.tableQuery.endTime = ''
-            }
-            if (this.abProjectSwitchVisible) {
-                this.tableQuery.projectId = this.abProjectId
-            }
-            getScrapCategoryList(this.tableQuery)
+        
+             
+            equContentSettingsList(this.tableQuery)
                 .then((res) => {
                     this.tableDataList = res.data.records
                     this.total = res.data.total
@@ -246,21 +227,17 @@ export default {
         reset() {
             this.$refs['dataTable'].$refs.JNPFTable.clearSort()
             this.tableQuery = {
-                type: '',
+                 contentType:"",
+              equipmentType:"equipment",
+              name:"",
                 pageNum: 1,
                 pageSize: 20,
                 orderItems: [
                     {
                         asc: false,
-                        column: ''
-                    },
-                    {
-                        asc: false,
                         column: 'create_time'
                     }
                 ],
-                code: '',
-                name: ''
             }
             this.timeArr = []
             this.search()
@@ -286,7 +263,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    deleteScrapCategoryData(id).then((res) => {
+                    delEquContentSettings(id).then((res) => {
                         this.initData()
                         this.$message({
                             type: 'success',

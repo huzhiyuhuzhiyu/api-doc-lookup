@@ -364,3 +364,73 @@ export function addPropertyAccountReconciliation(data) {
   })
 }
 
+
+
+
+
+
+
+// 设备内容
+// 列表
+
+export function equContentSettingsList(data) {
+  return request({
+    url: `/api/zgt/equContentSettings/list`,
+    method: 'post',
+    data 
+  })
+}
+// 新增
+
+export function addEquContentSettings(data) {
+  return request({
+    url: `/api/zgt/equContentSettings/add`,
+    method: 'post',
+    data 
+  })
+}
+// 删除
+
+export function delEquContentSettings(id) {
+  return request({
+    url: `/api/zgt/equContentSettings/del/${id}`,
+    method: 'delete', 
+  })
+}
+// 修改
+export function editEquContentSettings(data) {
+  return request({
+    url: `/api/zgt/equContentSettings/update`,
+    method: 'put',
+    data 
+  })
+}
+// 详情
+
+export function equContentSettingsDetail(id) {
+  return request({
+    url: `/api/zgt/equContentSettings/detail/${id}`,
+    method: 'get', 
+  })
+}
+
+
+// 设备  查看异常
+
+export function equAbnormalReportingList(data) {
+  return request({
+    url: `/api/zgt/equAbnormalReporting/list`,
+    method: 'post',
+    data 
+  })
+}
+
+// 设备 查看保养和点检
+
+export function equTaskMaintenanceList(data) {
+  return request({
+    url: `/api/zgt/equTaskMaintenance/list`,
+    method: 'post',
+    data 
+  })
+}

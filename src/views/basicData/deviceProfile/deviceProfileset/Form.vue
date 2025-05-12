@@ -56,7 +56,12 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="24" >
+                      <el-form-item label="资产名称" prop="propertyName">
+                        <el-input v-model="dataForm.propertyName" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="disabled"
+                           />
+                      </el-form-item>
+                    </el-col>
                     <!-- <el-col :sm="8" :xs="24">
               <el-form-item label="计量单位" prop="unitVolume">
                 <el-select v-model="dataForm.unitVolume" placeholder="请选择计量单位" :disabled="disabled" style="width: 100%;">
@@ -247,6 +252,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <selectAsset v-if="selectAssetVisible" ref="assetRef" @selectAsset="changeAsset"></selectAsset>
     </div>
   </transition>
 </template>
@@ -265,14 +271,21 @@ import formValidate from "@/utils/formValidate";
 import getProjectLists from '@/mixins/generator/getProjectList'
 import { getProjectList } from '@/api/system/projectManagement'
 import { mapGetters } from 'vuex'
+import selectAsset from '@/views/assetManagement/callManagement/assetForm.vue'
+
 export default {
   mixins: [getProjectLists],
   components: {
     singleImg,
-    UploadImg
-  },
+    UploadImg,
+    selectAsset
+  }, 
+
   data() {
     return {
+      
+      selectAssetVisible:false,
+      propertyKey:"",
       isProjectSwitch: '',
       loadingprojectId: false,
       projectIdList: [],
@@ -326,6 +339,8 @@ export default {
       picArr: [],
       type: '',
       dataForm: {
+        propertyId:"",
+        propertyName:"",
         projectId: '',
         repairUserId: '',
         salespersonId: "",
@@ -488,6 +503,17 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+     openSelectAsset(){
+      this.selectAssetVisible=true
+      this.$nextTick(()=>{
+        this.$refs.assetRef.init()
+      })
+    },
+       changeAsset(data){
+      console.log("资产数据",data); 
+      this.$set(this.dataForm,'propertyId',data.id) 
+      this.$set(this.dataForm,'propertyName',data.name) 
+    },
     getProjectListdata() {
       let query = {
         pageNum: 1,
@@ -588,13 +614,14 @@ export default {
       })
     },
 
-    init(id, disabled, type) {
+    init(id, disabled, type,key) {
       console.log(disabled, id);
       this.visible = true
       this.dataForm.id = id || ''
       this.organizeIdTree = []
       this.disabled = disabled
       this.type = type
+      this.propertyKey=key
       if (this.dataForm.id) {
         getEquEquipmentInfo(this.dataForm.id).then(res => {
           this.$nextTick(() => {

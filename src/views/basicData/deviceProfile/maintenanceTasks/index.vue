@@ -52,16 +52,21 @@
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"
             :fixedNO="true"  @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="name" label="保养任务单号" min-width="180" sortable="custom" />
-            <el-table-column prop="name" label="设备名称" min-width="180" sortable="custom" />
-            <el-table-column prop="name" label="设备编码" min-width="180" sortable="custom" />
-            <el-table-column prop="name" label="任务状态" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="保养人" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="实际保养时间" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="设备常用位置" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="保养图片" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="备注" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="创建时间" min-width="180" sortable="custom" />
+            <el-table-column prop="no" label="保养任务单号" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="state" label="任务状态" min-width="180" sortable="custom" >
+                 <template slot-scope="scope">
+                  <el-tag  v-if="!scope.row.state">未完成</el-tag>
+                <el-tag type="success" v-if="scope.row.state">已完成</el-tag>
+               </template>
+            </el-table-column>
+            <el-table-column prop="actualMaintenanceName" label="保养人" min-width="180" sortable="custom" />
+            <el-table-column prop="actualMaintenanceDate" label="实际保养时间" min-width="180" sortable="custom" />
+            <el-table-column prop="position" label="设备常用位置" min-width="180" sortable="custom" />
+            <el-table-column prop="pic" label="保养图片" min-width="180" sortable="custom" />
+            <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
   
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -69,59 +74,7 @@
         </div>
       </div>
     </div>
-    <el-dialog :title="taskSetTitle" :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="left">
-          <el-col :span="24" v-if="taskKey=='maintain'">
-            <el-form-item label="保养配置是否开启" prop="maintenanceSettingsFlag">
-              <el-select v-model="dataForm.maintenanceSettingsFlag" placeholder="请选择" style="width: 100%;" >
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label" 
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='maintain'">
-            <el-form-item label="保养开始日期" prop="maintenancePlanDate">
-              <el-date-picker v-model="dataForm.maintenancePlanDate" type="date" value-format="yyyy-MM-dd"
-                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择保养开始日期" >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='maintain'">
-            <el-form-item label="保养间隔天数" prop="maintenanceIntervalNum">
-              <el-input v-model="dataForm.maintenanceIntervalNum" placeholder="保养间隔天数"  />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="24"  v-if="taskKey=='spotCheck'">
-            <el-form-item label="点检配置是否开启" prop="inspectionSettingsFlag">
-              <el-select v-model="dataForm.inspectionSettingsFlag" placeholder="请选择" style="width: 100%;" >
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label" 
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='spotCheck'">
-            <el-form-item label="点检开始日期" prop="inspectionPlanDate">
-              <el-date-picker v-model="dataForm.inspectionPlanDate" type="date" value-format="yyyy-MM-dd"
-                style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择点检开始日期" >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24"  v-if="taskKey=='spotCheck'">
-              <el-form-item label="点检间隔天数" prop="inspectionIntervalNum">
-                <el-input v-model="dataForm.inspectionIntervalNum" placeholder="点检间隔天数"  />
-              </el-form-item>
-            </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
-          提交</el-button>
-      </span>
-    </el-dialog>
+ 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -130,41 +83,31 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {  getEquEquipmentList,batchEquTaskSettings  } from '@/api/basicData/index'
+import {  equTaskMaintenanceList } from '@/api/bimPropertyCategory/index'
 
 import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'taskConfig',
+  name: 'maintenanceTasks',
   components: {  SuperQuery },
   data() {
     return {
-      addOrderVisible: false,
       superQueryVisible: false,
       columnList: [],
       superQuery: {},
       superForm: {},
       taskSetTitle:"",
-      statusList:[
-      { label: "是", value: true },
-      { label: "否", value: false},
-      ],
+   
 
  
    
       basicQuery: {},
       searchList: [
-        { field: 'name', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'code', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'no', fieldValue: '', label: '保养任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
       ],
       taskKey:"",
-      dataForm: {
-        maintenanceSettingsFlag:"",
-          inspectionSettingsFlag:"",
-          maintenancePlanDate:"",
-          inspectionPlanDate:"",
-          maintenanceIntervalNum:"",
-          inspectionIntervalNum:"",
-      },
+ 
       reworkVisible: false,
       btnLoading: false,
       title: "更多查询",
@@ -173,7 +116,11 @@ export default {
       detailFlag: false,
       orderForm: {},
       orderFormlist: {
-        classAttribute:"equipment",
+        taskType:"maintenance",
+        equipmentType:"equipment",
+        no:"",
+        equipmentCode:"",
+        equipmentName:"",
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -192,73 +139,60 @@ export default {
       formVisible: false,
       selectArr: [],
       superQueryJson: [
+          {
+          prop: 'no',
+          label: "保养任务单号",
+          type: 'input'
+        },
         {
-          prop: 'name',
+          prop: 'equipmentName',
           label: "设备名称",
           type: 'input'
         },
         {
-          prop: 'code',
+          prop: 'equipmentCode',
           label: "设备编码",
           type: 'input'
-        },
+        }, 
+          {
+          prop: 'state',
+          label: "任务状态",
+          type: 'select',
+          options: [
+            { label: "已完成", value: true },
+            { label: "未完成", value: false},
+          ]
+        }, 
         {
-          prop: 'maintenancePlanDate',
-          label: '保养开始日期',
+          prop: 'actualMaintenanceName',
+          label: "保养人",
+          type: 'input'
+        }, 
+        {
+          prop: 'actualMaintenanceDate',
+          label: '实际保养时间',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd HH:mm:ss",
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
         },
+       {
+          prop: 'position',
+          label: "设备常用位置",
+          type: 'input'
+        }, 
         {
-          prop: 'maintenanceSettingsFlag',
-          label: "保养配置状态",
-          type: 'select',
-          options: [
-            { label: "是", value: true },
-            { label: "否", value: false},
-          ]
-        },
-        {
-          prop: 'inspectionPlanDate',
-          label: '点检开始日期',
+          prop: 'createTime',
+          label: '创建时间',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd HH:mm:ss",
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
         },
-        {
-          prop: 'inspectionSettingsFlag',
-          label: "点检配置状态",
-          type: 'select',
-          options: [
-            { label: "是", value: true },
-            { label: "否", value: false},
-          ]
-        },
+    
       ],
       list:[],
-      dataRule: {
-        maintenancePlanDate: [
-        { required: true, message: '保养开始日期不能为空', trigger: 'change' }
-        ],
-        inspectionPlanDate: [
-        { required: true, message: '点检开始日期不能为空', trigger: 'change' }
-        ],
-        maintenanceIntervalNum: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["保养间隔天数不能为空", (errMsg, index) => { this.$message.error(`保养间隔天数${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
-          { validator: this.formValidate('bigInt'), trigger: 'blur' }
-        ],
-        inspectionIntervalNum: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["点检间隔天数不能为空", (errMsg, index) => { this.$message.error(`点检间隔天数${errMsg}`) }] }), trigger: 'blur' },
-          { required: true, trigger: 'blur' },
-          { validator: this.formValidate('bigInt'), trigger: 'blur' }
-        ],
-      
-       
-       
-      },
+   
  
  
    
@@ -276,54 +210,8 @@ export default {
   mounted() {
   },
   methods: {
-    batchSet(key){
-      this.taskKey=key 
-      this.$nextTick(()=>{
-        this.taskSetTitle=key=='spotCheck'?'批量设置点检任务':'批量设置保养任务'
-        console.log("key",key);
-        if(key=='spotCheck') {
-          if(!this.selectArr.length)return this.$message.error("请选择你要批量设置点检任务的数据")
-          this.dataForm.inspectionSettingsFlag=true
-          this.dataForm.inspectionPlanDate= this.jnpf.getToday()
-        }
-        if(key=='maintain') {
-          if(!this.selectArr.length)return this.$message.error("请选择你要批量设置保养任务的数据")
-          this.dataForm.maintenancePlanDate= this.jnpf.getToday()
-          this.dataForm.maintenanceSettingsFlag=true
-        }
-      this.addOrderVisible=true
-      })
-      
-      console.log(this.dataForm);
-    },
-    // 追加生产数量 提交
-    submitFun() {
-      this.$refs['diaForm'].validate((valid) => {
-        if (valid) {
-          this.btnLoading = true
-          this.$set(this.dataForm,'ids',this.selectArr.map(item => item.id))
-          batchEquTaskSettings(this.dataForm).then(res => {
-            this.addOrderVisible = false
-            this.btnLoading = false
-            this.search('basic')
-            this.dataForm={
-        maintenanceSettingsFlag:"",
-          inspectionSettingsFlag:"",
-          maintenancePlanDate:"",
-          inspectionPlanDate:"",
-          maintenanceIntervalNum:"",
-          inspectionIntervalNum:"",
-      }
-          }).catch(error => {
-            this.btnLoading = false
-          })
-        }
-      })
-    },
-    // 多选
-    handleSelectionChange(val) {
-      this.selectArr = val
-    },
+ 
+ 
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -347,7 +235,7 @@ export default {
    
     initData() {
       this.listLoading = true
-      getEquEquipmentList(this.orderForm).then(res => {
+      equTaskMaintenanceList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -385,8 +273,9 @@ export default {
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-      { field: 'name', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
-      { field: 'code', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+             { field: 'no', fieldValue: '', label: '保养任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.search('basic')
     },
@@ -394,9 +283,7 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    closePrint() {
-      this.printVisible = false
-    },
+ 
   }
 }
 </script>

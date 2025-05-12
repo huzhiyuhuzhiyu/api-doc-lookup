@@ -5,7 +5,7 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-select v-model="tableQuery.type" placeholder="不良类型" clearable>
+                            <el-select v-model="tableQuery.contentType" placeholder="内容类型" clearable>
                                 <el-option v-for="item in typeData" :key="item.value" :label="item.label"
                                     :value="item.value"></el-option>
                             </el-select>
@@ -13,17 +13,17 @@
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input @keyup.native.enter="search()" v-model.trim="tableQuery.name" placeholder="不良名称"
+                            <el-input @keyup.native.enter="search()" v-model.trim="tableQuery.name" placeholder="内容名称"
                                 clearable />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <!-- <el-col :span="6">
                         <el-form-item>
                             <el-date-picker v-model="timeArr" type="daterange" value-format="yyyy-MM-dd"
                                 style="width: 100%;" start-placeholder="请选择创建开始日期"
                                 end-placeholder="请选择创建结束日期"></el-date-picker>
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="6">
                         <el-form-item>
                             <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -57,20 +57,19 @@
                 </div>
                 <JNPF-table v-if="tableDataFlag" v-loading="listLoading" :data="tableDataList" ref="dataTable"
                     @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-                    <el-table-column prop="projectName" label="所属项目" width="120"
-                        v-if="abProjectSwitchVisible"></el-table-column>
-                    <el-table-column prop="name" label="不良名称" sortable="custom" />
-                    <el-table-column prop="price" label="单价" sortable="custom" width="120"></el-table-column>
-                    <el-table-column prop="type" label="不良类型" align="center" sortable="custom" width="160">
+                    <!-- <el-table-column prop="projectName" label="所属项目" width="120"
+                        v-if="abProjectSwitchVisible"></el-table-column> -->
+                        <el-table-column prop="type" label="内容类型" align="center" sortable="custom" width="160">
                         <template slot-scope="scope">
                             <div v-if="scope.row.type == 'responsibility_fee'">责废</div>
                             <div v-if="scope.row.type == 'material_fee'">料废</div>
                             <div v-if="scope.row.type == 'rework'">返工</div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="remark" label="备注" sortable="custom"></el-table-column>
+                    <el-table-column prop="name" label="内容名称" sortable="custom" />
+                
+                    <el-table-column prop="remark" label="内容详情" sortable="custom"></el-table-column>
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-                    <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
                             <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id)" />

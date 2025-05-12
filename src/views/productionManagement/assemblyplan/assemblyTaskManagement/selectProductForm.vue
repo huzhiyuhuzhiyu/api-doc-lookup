@@ -18,7 +18,7 @@
                 <el-input @keyup.native.enter="search()"  v-model="form.productCode" placeholder="产品编码" clearable />
               </el-form-item>
             </el-col>
-        
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -40,6 +40,12 @@
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="150" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="150" sortable="custom" />
+            <el-table-column prop="totalStock" label="预计总库存" min-width="150">
+                <template slot-scope="scope" >
+                    <div :style="{color:scope.row.totalStock * 1 < 1 * scope.row.safetyStock ? 'red' : ''}">{{ scope.row.totalStock }}</div>
+                </template>
+            </el-table-column>
+            <el-table-column prop="safetyStock" label="安全库存" min-width="150"  />
             <el-table-column label="操作" width="100" >
               <template slot-scope="scope" >
                 <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
@@ -55,28 +61,28 @@
   </el-dialog>
 </template>
 <script>
-import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表 
+import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
   mixins: [getProjectList],
   data() {
     return {
-      
+
       customerVisible: false,
       form: {
         classAttribute: "finish_product",
         productDrawingNo:"",
         productCode:"",
         pageNum: 1,
-        pageSize: 20, 
+        pageSize: 20,
         productStatus:"enable",
         orderItems: [{
           asc: false,
           column: ""
         },],
-        
-      }, 
+
+      },
       listLoading: false,
       total: 0,
       tableDataList: [],
@@ -88,8 +94,8 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    
-  }, 
+
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -97,7 +103,7 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
- 
+
       } catch (error) { }
     },
     init(id) {
@@ -112,9 +118,9 @@ export default {
       this.customerVisible = false
     },
     getbatchNumList(id) {
-      this.listLoading = true 
+      this.listLoading = true
       this.form.projectId = id
-      
+
       getProducts(this.form).then(res => {
       this.customerVisible = true
       console.log("工艺路线", res);
@@ -135,7 +141,7 @@ export default {
         productDrawingNo:"",
         productCode:"",
         pageNum: 1,
-        pageSize: 20, 
+        pageSize: 20,
         productStatus:"enable",
         orderItems: [{
           asc: false,

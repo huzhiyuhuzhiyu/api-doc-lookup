@@ -8,7 +8,7 @@ import Element from 'element-ui'
 import './styles/element-variables.scss'
 import './assets/scss/common.scss'
 import "./assets/scss/date.scss";
-
+import './assets/scss/transitionForm.scss' //transition业务表单样式
 import '@/styles/index.scss' // global css
 import './assets/scss/theme.scss' // 主题
 import './assets/scss/menu.scss' // 主题

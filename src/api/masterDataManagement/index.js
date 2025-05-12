@@ -280,7 +280,7 @@ export function detailColumnList(id) {
   return request({
       url: '/api/zgt/data/column/display/detail/'+id,
       method: 'get',
-   
+
   })
 }
 // 列表自定义(批量更新排序)
@@ -555,3 +555,72 @@ export function delBimPairingMode(id) {
       method: 'delete',
   })
 }
+// 产品属性 代号 关联产品列表
+export function productAttributeCodeRelated(data) {
+  return request({
+      url: '/api/erp/bimProductAttributeCodeRelated/list',
+      method: 'post',
+      data
+  })
+}
+//  产品属性 代号 绑定关联产品列表
+export function addProductAttributeCodeRelated(data) {
+  return request({
+      url: '/api/erp/bimProductAttributeCodeRelated/add',
+      method: 'post',
+      data
+  })
+}
+// 代号新增
+export function addProductAttributeCode(data) {
+  return request({
+      url: '/api/erp/bimProductAttributesCode/add',
+      method: 'post',
+      data
+  })
+}
+// 代号修改
+export function updateProductAttributeCode(data) {
+  return request({
+      url: '/api/erp/bimProductAttributesCode/update',
+      method: 'post',
+      data
+  })
+}
+// 详情
+export function detailProductAttributeCode(id) {
+  return request({
+      url: `/api/erp/bimProductAttributesCode/detail/${id}`,
+      method: 'get',
+  })
+}
+// 代号 列表
+export function productAttributesCodeList(data) {
+  return request({
+      url: `/api/erp/bimProductAttributesCode/list`,
+      method: 'post',
+      data
+  })
+}
+// 代号 删除
+export function delProductAttributesCode(id) {
+    return request({
+        url: `/api/erp/bimProductAttributesCode/remove/${id}`,
+        method: 'delete',
+    })
+}
+// 代号 管理产品 删除
+export function delProductAttributesCodeRelated(id) {
+    return request({
+        url: `/api/erp/bimProductAttributeCodeRelated/remove/${id}`,
+        method: 'delete',
+    })
+}
+// 代号 管理产品 检查代号重复
+export function checkProductAttributesCode(data) {
+    return request({
+        url: `/api/erp/bimProductAttributesCode/check/code/exist?id=${data.id}&code=${data.code}`,
+        method: 'get',
+    })
+}
+

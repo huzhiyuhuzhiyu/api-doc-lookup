@@ -118,7 +118,11 @@ export default {
       cooperativePartnerId:{
           type:String,
           default:''
-      }
+      },
+      productCategoryId:{
+          type:String,
+          default:''
+      },
   },
   data() {
     return {
@@ -154,7 +158,8 @@ export default {
         processId: "",
         pairingModeId:"",
         excludeProcessFlag:false,
-        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : ''
+        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : '',
+        productCategoryId: this.productCategoryId ,
       },
       refreshTree: true,
       listLoading: false,
@@ -252,6 +257,7 @@ export default {
       this.form.standardValue = ""
       this.form.excludeProcessFlag=this.excludeProcessFlag
       this.form.cooperativePartnerId = this.isYS ? this.cooperativePartnerId : ''
+      this.form.productCategoryId = this.productCategoryId
       this.dataForm = data
       console.log(requestFlag,'requestFlag')
       if (!requestFlag) {
@@ -317,7 +323,8 @@ export default {
         standardValue:this.dataForm.standardValue,
         colour:this.dataForm.colour,
         excludeProcessFlag:this.excludeProcessFlag,
-        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : ''
+        cooperativePartnerId:this.isYS ? this.cooperativePartnerId : '',
+        productCategoryId: this.productCategoryId
       }
       if (this.requestFlag) {
         this.getlistOutBatchStockFun()

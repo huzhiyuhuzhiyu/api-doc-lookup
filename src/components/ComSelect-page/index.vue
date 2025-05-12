@@ -169,8 +169,8 @@
             <JNPF-table v-loading="treeLoading || listLoading" :data="tableData" hasNO fixedNO :hasC="multiple"
               :highlight-current-row="false" @row-dblclick="rowDblclickFun" @selection-change="currentChange"
               :row-class-name="getRowClassName" :checkSelectable="checkSelectable" ref="dataTable"
-              @row-click="handleRowClick" :tree-props="{ children: 'childrenList', hasChildren: '' }" row-key="_index"
-              :default-expand-all="expandsTable" @sort-change="sortChange">
+              @row-click="handleRowClick" :tree-props="{ children: 'childrenList', hasChildren: '' }" :row-key="'id'"
+              :default-expand-all="expands" @sort-change="sortChange">
 
               <!-- 普通结构 -->
               <template v-if="!listDataTreeFlag">
@@ -459,6 +459,10 @@ export default {
       type: String,
       default: ""
     },
+    expands:{
+        type: Boolean,
+        default: true
+    },
   },
   data() {
     return {
@@ -502,7 +506,7 @@ export default {
       total: 0,
       btnLoading: false,
       refreshTree: true,
-      expandsTable: false,
+      expandsTable: true,
       initRSelectData: [],
       throttleFlag: true
     }

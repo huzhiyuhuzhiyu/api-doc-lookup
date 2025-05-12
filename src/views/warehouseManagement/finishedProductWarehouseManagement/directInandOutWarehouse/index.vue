@@ -594,10 +594,12 @@
                             placeholder="备注"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="操作" fixed="right" width="100"
+                      <el-table-column label="操作" fixed="right" :width="$store.getters.configData.product.enable_symbol ? 120 : 100"
                         v-if=" btnType != 'look'">
                         <template slot-scope="scope">
                           <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                          <el-button type="text" v-if="$store.getters.configData.product.enable_symbol && ['inbound_order_production','inbound_purchase','inbound_other'].includes(dataForm.businessType)" :disabled="!scope.row.productsId ? true : btnType === 'look'"
+                                       @click="selectProductSymbol(scope,productData)" style=" color: #3fb9f8">选择代号</el-button>
                         </template>
                       </el-table-column>
                     </JNPF-table>
@@ -812,6 +814,7 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+    <productSymbolForm v-if="productSymbolVisible" ref="productSymbolForm" :productId="currentProductId" @selectProductSymbolData="selectProductSymbolData"></productSymbolForm>
   </div>
 </template>
 <script>
@@ -837,10 +840,12 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import tenantMinix from "@/mixins/generator/TenantMinix";
+import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList/productSymbol.vue'
+import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
 
 export default {
-  components: { WareHouseForm, BatchNumberForm, CustomerForm, Process, PrintBrowse, PrintDialog },
-  mixins: [flowMixin, getProjectList,tenantMinix],
+  components: { ProductSymbolForm, WareHouseForm, BatchNumberForm, CustomerForm, Process, PrintBrowse, PrintDialog },
+  mixins: [flowMixin, getProjectList,tenantMinix,ProductSymbolMixin],
   props: {
     warehouseCode: "",
   },

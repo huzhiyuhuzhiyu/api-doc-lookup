@@ -2,14 +2,22 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+        <div v-if="!completeQueryVisible" :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" content="新建任务" />
           <div class="options">
+            <el-button type="primary"
+              @click="handleToQT()">齐套查询</el-button>
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
               @click="handleConfirm('submit')">提交</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
+        </div>
+        <div v-if="completeQueryVisible" :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+              <el-page-header @back="completeQueryVisible = false" content="返回新建任务" />
+              <div class="options">
+                  <el-button @click="completeQueryVisible = false">{{ $t('common.cancelButton') }}</el-button>
+              </div>
         </div>
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
@@ -117,6 +125,15 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                        <el-col :sm="6" :xs="24" v-if="$store.getters.configData.product.enable_symbol">
+                            <el-form-item label="代号"  prop="productSymbol">
+                                <el-select @change="selectProductSymbolFormData" v-model="dataForm.productSymbol" placeholder="代号" clearable
+                                           style="width: 100%;">
+                                    <el-option  v-for="(item, index) in productSymbolList" :key="index" :label="item.code"
+                                               :value="item.code"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
                       <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
                         <el-form-item :label="$store.getters.sealingCoverTyping"  prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
@@ -579,6 +596,8 @@
         </RoutingForm>
         <SelectProductForm v-if="productVisible" ref="productForm" @selectProduct="selectProductFun">
         </SelectProductForm>
+
+      <completeQuery :drawingNo="dataForm.productsDrawingNo" v-if="completeQueryVisible" @close="close" ref="completeQueryRef"></completeQuery>
       </div>
     </transition>
   </div>
@@ -594,7 +613,11 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import SelectProductForm from './selectProductForm.vue'
-import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
+import {
+    getbimProductAttributesList,
+    getbimProductAttributesListMap,
+    productAttributeCodeRelated
+} from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
@@ -607,15 +630,18 @@ import {
 import getProjectList from '@/mixins/generator/getProjectList'
 import TableFormProduct from '../TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
+import CompleteQuery from '@/views/planManagement/assemblyPlan/completeQuery/index.vue'
 export default {
   mixins: [getProjectList],
   components: {
+      CompleteQuery,
     TableFormProduct,
     RoutingForm,
     SelectProductForm,
   },
   data() {
     return {
+      completeQueryVisible:false,
       productVisible: false,
       isattachmentswitch: "",
       taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
@@ -647,7 +673,9 @@ export default {
       list6: [],
       list7: [],
       list8: [],
+      productSymbolList:[],
       dataForm: {
+        productSymbol:'',
         planDate: [],
         lineEdgeList: [],
         lineEdgeId: "",
@@ -702,7 +730,7 @@ export default {
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
         ],
         productsDrawingNo: [
-          { required: true, message: '品名规格不能为空', trigger: 'blur' }
+          { required: true, message: '品名规格不能为空', trigger: 'change' }
         ]
       },
       selectArr: [],
@@ -733,7 +761,7 @@ export default {
         backgroundColor: '#f5f7fa',
         fontWeight: 'bold'
       },
-      naturalResourcesFlag: true,
+      naturalResourcesFlag: false,
       processList: [],
       warehouseList: [],
       isProjectSwitch: "",
@@ -755,6 +783,11 @@ export default {
       materialList: [],
       linesFormItems_right: [],
     }
+  },
+  mounted() {
+      this.$nextTick(() => {
+          this.$refs.product.doLayout()
+      })
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -946,21 +979,43 @@ export default {
         }
       })
     },
+    async selectProductSymbol(id){
+        let query = {
+            orderItems: [{
+                asc: false,
+                column: ""
+            }, {
+                asc: false,
+                column: "create_time"
+            }],
+            productId: id,
+        }
+        productAttributeCodeRelated(query).then(res=>{
+            this.productSymbolList = res.data.records
+        })
+    },
+    selectProductSymbolFormData(val){
+        let row = this.productSymbolList.find(item=>item.code === val)
+        if (row){
+            for (let key in row){
+                this.dataForm[key] = row[key]
+            }
+        }
+    },
     // 选择产品
-    selectProductFun(data) {
+     async selectProductFun(data) {
       this.$set(data, 'orderNo', this.dataForm.orderNo)
       console.log("所选返工产品", data);
       let pairingModeId = JSON.parse(JSON.stringify(this.dataForm.pairingModeId))
       this.dataForm = data
       this.$set(this.dataForm, 'orderType', 'manually')
       this.$set(this.dataForm, 'pairingModeId', pairingModeId)
-      this.$set(this.dataForm, 'taskMethod', 'appoint')
+      this.$set(this.dataForm, 'taskMethod', 'not_appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'productsName', data.name)
       this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
       this.creaFun()
-
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
           console.log("bom详情", res);
@@ -982,6 +1037,7 @@ export default {
       } else {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
       }
+      await this.selectProductSymbol(this.dataForm.id)
       this.getWarehouseListFun()
       if (!data.routingId) return
       if (!this.$store.getters.configData.produce.task_process_selection) {
@@ -1629,6 +1685,16 @@ export default {
       } else if (prop) {
         this.materialList[dataOrIndex][prop] = value
       }
+    },
+    handleToQT(){
+        if (!this.dataForm.productsDrawingNo) return this.$message.warning('请先选择品名规格')
+        this.completeQueryVisible = true
+        this.$nextTick(() => {
+            this.$refs.completeQueryRef.initData()
+        })
+    },
+    close(){
+        this.completeQueryVisible = false
     },
   }
 }

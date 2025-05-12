@@ -35,7 +35,7 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip>
-       
+
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -92,22 +92,28 @@
 
   </div>
 </template>
-  
+
 <script>
 import { getTreeByDrawNo } from '@/api/plan/index.js'
 export default {
   name: 'completeQuery',
+  props:{
+      drawingNo:{
+          type:String,
+          default:''
+      },
+  },
   data() {
     return {
       columnList:[],
       expands: true,
       refreshTable: true,
-      background: true,//分页器背景颜色  
+      background: true,//分页器背景颜色
       tableDataList: [],
       listLoading: false,
       listQuery: {},
       initListQuery: {
-        drawingNo:'',
+        drawingNo:this.drawingNo,
       },
       total: 0,
       isProductNameSwitch: '',
@@ -118,12 +124,12 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
     await this.getProductNameSwitch('product', 'enable_productName')
-    
+
   },
   methods: {
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
     columnSetFun() {
@@ -165,11 +171,11 @@ export default {
           this.tableDataList=[]
           this.listLoading = false
         })
-     
+
       }else{
         this.tableDataList=[]
       }
-        
+
 
     },
     search() {
@@ -186,4 +192,3 @@ export default {
 </script>
 
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
-  

@@ -220,14 +220,7 @@
                       </el-table-column>
                       <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"
                         v-if="vibrationLevelFlag == 1"></el-table-column>
-                        <el-table-column prop="standardValue" label="规值" width="120">
-                          <template slot-scope="scope">
-                              <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
-                                style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index"
-                                  :label="item.name" :value="item.name"></el-option>
-                              </el-select>
-                          </template>
+                        <el-table-column prop="standardValue" label="规值" width="120"  v-if="isJR || isXY">
                         </el-table-column>
                       <el-table-column prop="oil" label="油脂" width="120" :key="61"
                         v-if="oilFlag == 1"></el-table-column>
@@ -436,7 +429,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" width="120">
+                    <el-table-column prop="standardValue" label="规值" width="120" v-if="isJR || isXY">
                           <template slot-scope="scope">
                               <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable
                                 style="width: 100%;">
@@ -558,10 +551,12 @@
                         <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="180" fixed="right" :key="15">
+                    <el-table-column label="操作" :width="$store.getters.configData.product.enable_symbol ? 220 : 180" fixed="right" :key="15">
                       <template slot-scope="scope">
                         <el-button type="text" :disabled="selectProductClassFlag"
                           @click="selectProductClass(scope.$index)" style=" color: #3fb9f8">选择属性</el-button>
+                        <el-button type="text" v-if="$store.getters.configData.product.enable_symbol" :disabled="!scope.row.productsId ? true : btnType === 'look'"
+                          @click="selectProductSymbol(scope,productData)" style=" color: #3fb9f8">选择代号</el-button>
                         <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
                       </template>
                     </el-table-column>
@@ -1282,14 +1277,11 @@
       <Form v-if="formVisible" ref="Form"></Form>
       <productAttributesListForm v-if="attributesListVisible" ref="attributesListForm" @selectData="selectData">
       </productAttributesListForm>
+      <productSymbolForm v-if="productSymbolVisible" ref="productSymbolForm" :productId="currentProductId" @selectProductSymbolData="selectProductSymbolData"></productSymbolForm>
     </div>
   </transition>
 </template>
 <script>
-// import productForm from "./productForm"
-import { getQuotationmxLists } from "@/api/salesManagement/index";
-import { excelExport } from '@/api/basicData/index'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, addBimProductAttributesRecord } from '@/api/salesManagement/assemblyOrders'
@@ -1298,12 +1290,8 @@ import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index
 import { getOrganization } from '@/api/permission/user'
 import { getDepartmentSelectorByAuth } from "@/api/permission/department";
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import {
-  getProvinceList,
-} from '@/api/system/province'
 import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
 import { mapGetters, mapState } from 'vuex'
-import { BillNumber } from '@/api/system/billRule'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
@@ -1315,9 +1303,13 @@ import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import productAttributesListForm from './productAttributesListForm.vue'
+import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList/productSymbol.vue'
+import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
+import tenantMinix from '@/mixins/generator/TenantMinix'
 export default {
-  mixins: [busFlow, getProjectList],
+  mixins: [busFlow, getProjectList,tenantMinix,ProductSymbolMixin],
   components: {
+      ProductSymbolForm,
     ExportForm, Process, recordList, Form, productAttributesListForm
   },
   props: {

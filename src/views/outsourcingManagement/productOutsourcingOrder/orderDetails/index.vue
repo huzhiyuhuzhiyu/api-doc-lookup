@@ -124,7 +124,10 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background"
-            :limit.sync="listsQuery.pageSize" @pagination="detailData" />
+            :limit.sync="listsQuery.pageSize" @pagination="detailData" >
+            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
+          
+          </pagination>
         </div>
       </div>
     </div>
@@ -397,7 +400,8 @@ export default {
         'packagingMethod',
         'processName'
         // 'createByName'
-      ]
+      ],
+      totalNum:0,
     }
   },
   mounted() {
@@ -599,15 +603,16 @@ export default {
         this.listsQuery.deliveryStartTime = ''
         this.listsQuery.deliveryEndTime = ''
       }
-      detailpurchaseOrderList(this.listsQuery)
+      purchaseOrderReport(this.listsQuery)
         .then((res) => {
           console.log(res, '明细列表')
-          this.detailTableData = res.data.records
+          this.detailTableData = res.data.page.records||[]
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
             item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
           })
-          this.total = res.data.total
+          this.total = res.data.page.total||0
+          this.totalNum=res.data.total.purchaseQuantity||0
           this.listLoading = false
         })
         .catch(() => {

@@ -36,7 +36,7 @@
           <el-table-column prop="accuracyLevel" label="等级" width="130" sortable="custom"  fixed="left"></el-table-column>
           <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="130" sortable="custom" fixed="left"></el-table-column>
           <el-table-column prop="rawStockMill" label="原材料厂家" width="130" sortable="custom" fixed="left"></el-table-column>
-          <el-table-column prop="coldHeading" label="冷镦" width="130" sortable="custom"  fixed="left">
+          <el-table-column prop="coldHeading" label="冷镦" width="130" sortable="custom"  >
             <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.coldHeading }}

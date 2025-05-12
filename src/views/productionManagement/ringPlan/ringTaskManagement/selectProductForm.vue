@@ -66,7 +66,7 @@ export default {
       customerVisible: false,
      
       form: {
-        classAttribute: "semi_finished",
+        classAttributeList: ["semi_finished",'raw_material'],
         productDrawingNo:"",
         productCode:"",
         pageNum: 1,

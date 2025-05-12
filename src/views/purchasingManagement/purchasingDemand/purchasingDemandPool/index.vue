@@ -110,7 +110,7 @@
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
           <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
-          <el-table-column prop="demandDate" label="需求日期" width="120" sortable="custom" />
+          <el-table-column prop="demandDate" label="需求日期" width="120" sortable="custom" v-if="isMS"/>
           <el-table-column prop="source" label="来源" width="100" sortable="custom">
             <template slot-scope="scope">
               <!-- <div v-if="scope.row.source == 'procure'">请购单</div>
@@ -197,11 +197,12 @@ import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel 
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 
 export default {
   name: 'purchasingDemandPool',
   components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
-  mixins: [AbProjectMixin],
+  mixins: [AbProjectMixin,tenantMinix],
 
   data() {
     return {

@@ -247,6 +247,11 @@ export default {
           type: 'input'
         },
         {
+          prop: 'productCategoryName',
+          label: '产品分类',
+          type: 'input'
+        },
+        {
           prop: 'productCode',
           label: '产品编码',
           type: 'input'
@@ -290,14 +295,14 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        
+  
         {
           prop: 'receivingStatus',
           label: '订单状态',
           type: 'select',
           options: [
-            { label: '审批中', value: 'receiving' },
-            { label: '已完成', value: 'received' },
+            { label: '未完成', value: 'not_finished' },
+            { label: '已完成', value: 'finished' },
             { label: '已停止', value: 'stopped' }
           ]
         },

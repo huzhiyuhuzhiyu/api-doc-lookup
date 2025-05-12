@@ -628,44 +628,57 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <el-row class="JNPF-common-search-box" :gutter="16">
             <el-form @submit.native.prevent>
-              <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
+              <el-col :span="4" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.partnerName" placeholder="请输入供应商"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
+              <el-col :span="4"  v-if="dataForm.documentType == 'outbound'">
+                <el-form-item>
+                  <el-input v-model="orderForm.productCategoryName" placeholder="请输入产品分类"
+                  @keyup.enter.native="searchProductFun" clearable />
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="4" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
                 <el-form-item>
                   <el-input v-model="orderForm.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
                     clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
+              <el-col :span="4" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
                     @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
 
-              <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
+              <el-col :span="4" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
                   <el-input v-model="listQuery.partnerName" placeholder="请输入供应商"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
+              <el-col :span="4" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
                 <el-form-item>
                   <el-input v-model="listQuery.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
                     clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
+              <el-col :span="4"  v-if="dataForm.documentType == 'inbound'">
+                <el-form-item>
+                  <el-input v-model="listQuery.productCategoryName" placeholder="请输入产品分类"
+                  @keyup.enter.native="searchProductFun" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :span="4" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
                   <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-form-item>
                   <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
                     {{ $t('common.search') }}</el-button>
@@ -704,7 +717,8 @@
                 v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
-              <el-table-column prop="pairingModeName" label="配对方式" width="160" />
+              <el-table-column prop="productCategoryName" label="产品分类" width="160"/>
+              <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isXBN"/>
 
 
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -946,6 +960,7 @@ export default {
         ],
       },
       orderForm: { //获取产品数据
+        productCategoryName:"",
         productDrawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
@@ -999,6 +1014,7 @@ export default {
       list12: [],
       taxRateList: [],
       listQuery: {
+        productCategoryName:"",
         productName: '',
         productCode: '',
         productDrawingNo: '', // 图号
@@ -1591,6 +1607,8 @@ export default {
         productName: "",
         productCode: "",
         warehouseId: "",
+        productCategoryName:"",
+        partnerName:"",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -1602,6 +1620,8 @@ export default {
         }],
       },
         this.listQuery = {
+          productCategoryName:"",
+          partnerName:"",
           productName: '',
           productCode: '',
           productDrawingNo: '', // 图号

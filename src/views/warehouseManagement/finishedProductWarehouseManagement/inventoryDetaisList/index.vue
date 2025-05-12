@@ -312,7 +312,7 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import { getBimBusinessSwitchConfigList, getWarehouseInfo, excelExport, getOrderFiledMap } from '@/api/basicData/index'
-import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
+import { getWarehouseTree,deleteWarehouseData } from '@/api/warehouseManagement/inboundAndOutbound'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import TakingAdjustForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/adjust.vue'
@@ -1182,7 +1182,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteOrders(id).then(res => {
+        deleteWarehouseData(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

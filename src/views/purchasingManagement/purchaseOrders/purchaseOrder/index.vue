@@ -82,7 +82,7 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="110" sortable="custom" />
-            <el-table-column prop="demandDate" label="需求日期" width="110" sortable="custom" />
+            <el-table-column prop="demandDate" label="需求日期" width="110" sortable="custom" v-if="isMS"/>
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="160" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" width="80" sortable="custom" />
             <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
@@ -193,9 +193,11 @@ import PrintDialog from '@/components/no_mount/printDialog'
 import { getQueryConfirm } from '@/utils';
 import { ApprovalStatus, DocumentStatus } from '@/views/esop/fileUpload/workinginstruction/utils/constant';
 import addForm from './addForm.vue'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse, PrintDialog,addForm},
+  mixins: [tenantMinix],
   data() {
     return {
       addFormVisible:false,

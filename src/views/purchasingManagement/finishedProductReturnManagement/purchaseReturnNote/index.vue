@@ -103,6 +103,9 @@
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="printFun(scope.row.id, 'p008')">
+                      打印通知单
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -120,6 +123,9 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -132,10 +138,13 @@ import {
   splitlist
 } from '@/api/purchasingAndOutsourcingOrders'
 import { UserListAll } from '@/api/permission/user'
+import { getPrintBusInfo } from '@/api/system/printDev'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 import {
   getpurPurchaseReceiptReturnGoodsdetail,
   addpurPurchaseReceiptReturnGoods,
@@ -143,8 +152,8 @@ import {
   deletepurPurchaseReceiptReturnGoods
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 export default {
-  name: 'foreigntradenotice',
-  components: { Form, SuperQuery, ExportForm },
+  name: 'purchaseReturnNote',
+  components: { Form, SuperQuery, ExportForm, PrintBrowse, PrintDialog, },
   data() {
     return {
       superQueryVisible: false,
@@ -317,7 +326,12 @@ export default {
           label: '备注',
           type: 'input'
         }
-      ]
+      ],
+      prindId: '',
+      formId: '',
+      enCode: "",
+      printVisible: false,
+      printBrowseVisible: false,
     }
   },
   created() {
@@ -332,6 +346,33 @@ export default {
     }
   },
   methods: {
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    printFun(id) {
+      this.enCode = 'p008' // 筛选出 businessType 等于 type 的项
+      this.formId = id
+      this.fullName = "退货通知单" // 筛选出 businessType 等于 type 的项
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    closePrint() {
+      this.printVisible = false
+    },
     //禁用复选框
     checkSelectable(row) {
       if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false

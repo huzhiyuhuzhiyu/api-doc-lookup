@@ -83,20 +83,20 @@
                       id="table" :partent-or-child="'child'" :height="customStyleData">
                       <el-table-column prop="projectName" label="所属项目" width="120"
                         v-if="isProjectSwitch === '1'"></el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="120"
-                        v-if="isProductNameSwitch === '1'"></el-table-column>
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" width="120" ></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="120" ></el-table-column>
                       <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
-                            :rules="productRules.drawingNo">
-                            <el-input v-model="scope.row.drawingNo" :disabled="type === 'look'" maxlength="20"
-                              :placeholder="type == 'look' ? '' : '品名规格'">
-                              {{ scope.row.drawingNo }}
-                            </el-input>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                          :rules="productRules.drawingNo">
+                          <el-input v-model="scope.row.drawingNo" :disabled="type === 'look'" maxlength="20"
+                          :placeholder="type == 'look' ? '' : '品名规格'">
+                          {{ scope.row.drawingNo }}
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
 
                       <el-table-column prop="price" key="price" label="协议价" min-width="160">
                         <template slot="header">

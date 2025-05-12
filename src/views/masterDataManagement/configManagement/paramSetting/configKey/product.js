@@ -15,4 +15,8 @@ export default {
         configKeyLabel: '启用产品属性',
         description: '启用产品属性后，产品管理将显示产品属性。'
     },
+    enable_symbol: {
+        configKeyLabel: '启用产品属性代号',
+        description: '启用产品属性代号后，可以通过代号带出其绑定的产品属性。'
+    },
 }

@@ -38,6 +38,15 @@
                         @focus="openSelectProductFun"></el-input>
                     </el-form-item>
                   </el-col>
+                    <el-col :sm="6" :xs="24" v-if="$store.getters.configData.product.enable_symbol">
+                        <el-form-item label="代号"  prop="productSymbol">
+                            <el-select @change="selectProductSymbolFormData" v-model="dataForm.productSymbol" placeholder="代号" clearable
+                                       style="width: 100%;">
+                                <el-option  v-for="(item, index) in productSymbolList" :key="index" :label="item.code"
+                                            :value="item.code"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
                   <template v-for="item in attrDictionaryData">
                       <el-col :sm="6" :xs="24"  :key="item.id">
                           <el-form-item :label="$store.getters[item.description] || item.fullName" :prop="item.description">
@@ -147,6 +156,13 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
+                  <el-table-column label="操作" fixed="right" width="100"
+                                     v-if=" btnType !== 'look'">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                            <el-button class="JNPF-table-delBtn" type="text" @click="delFun(scope.row, scope.$index)" size="mini">删除</el-button>
+                        </template>
+                  </el-table-column>
                 </el-table>
               </el-form>
             </el-collapse-item>
@@ -175,10 +191,9 @@ import {
 } from '@/api/productOrdes/finishedProductOrders'
 import BatchNumberForm from '../../../warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory/batchNumberForm.vue'
 
-
 import {
-  getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
-} from "@/api/masterDataManagement/index";
+    getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap, productAttributeCodeRelated
+} from '@/api/masterDataManagement/index'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import getProjectList from '@/mixins/generator/getProjectList'
@@ -425,6 +440,7 @@ export default {
       list10: [],
       attrDictionaryData:[],
       currentProductCategory:'',
+      productSymbolList:[],
     }
   },
   async created() {
@@ -529,6 +545,8 @@ export default {
       this.$set(list[index], 'cooperativePartnerId', data.cooperativePartnerId)
       this.$set(list[index], 'classType', data.classType)
       this.$set(list[index], 'mainUnit', data.mainUnit)
+      this.$set(list[index], 'ratio', data.ratio)
+      this.$set(list[index], 'calculationDirection', data.calculationDirection)
       this.$set(list[index], 'material', data.classType === 'holder' ? data.material : '')
       this.$set(list[index], 'colour', data.classType === 'sealing_cap' ? data.colour : '')
 
@@ -550,7 +568,7 @@ export default {
       this.$refs['ComSelect-page'].openDialog()
     },
     // 选择装配产品
-    addth(val, data) {
+    async addth(val, data) {
       console.log('所选装配产品', data)
       this.dataForm = {
           ...data[0].all,
@@ -560,6 +578,7 @@ export default {
           orderNo:this.dataForm.orderNo || this.codeConfig.number,
           productionQuantity:this.dataForm.productionQuantity || '',
       }
+      await this.selectProductSymbol(this.dataForm.id)
     },
 
     async fetchData(code, flag) {
@@ -603,15 +622,46 @@ export default {
           if(submitFlag){
               let obj = {
                   collect:this.allocationFlag ? this.collect : '',
-                  materialList: this.dataFormOne.collectData,
+                  materialList: this.dataFormOne.collectData.map(item=>{
+                      item.num = item.materialsUsedQuantity
+                      return item
+                  }),
                   prodOrder: this.dataForm,
               }
               addProdPickOrder({...obj,bomFlag:true,})
-                  .then((res) => {
+                  .then(async (res) => {
                       this.$message.success('新建装配任务成功')
-                      this.dataForm ={}
-                      this.collect ={}
+                      this.dataForm = {
+                          taskMethod: 'not_appoint',
+                          planDate: [],
+                          orderNo: '',
+                          productsDrawingNo: '',
+                          productsCode: '',
+                          mainUnit: '',
+                          planProductionQuantity: '',
+                          availableArrangeQuantity: '',
+                          productionQuantity: '',
+                          planStartDate: '',
+                          planEndDate: '',
+                          routingName: '',
+                          routingId: '',
+
+                          remark: '',
+                          bomId: '',
+                          drawingNo: '',
+                          productionLineId: '',
+
+                          pieceworkFlag: false,
+                          pairingModeId: ''
+                      }
+                      this.collect ={
+                          orderNo: '',
+                          operationDate: this.jnpf.getToday(),
+                          personId: ''
+                      }
                       this.dataFormOne.collectData = []
+                      await this.fetchData('PROD', true)
+                      await this.fetchData('PODH', true)
                       this.btnLoading = false
                       this.$emit('close')
                   })
@@ -643,6 +693,8 @@ export default {
                       inventoryQuantity:'',
                       batchNumber:'',
                       materialsUsedQuantity: this.dataForm.productionQuantity,
+                      ratio: item.ratio,
+                      calculationDirection: item.calculationDirection,
                       remark: item.remark,
                       reduceType:'picking',
                       id:'',
@@ -665,6 +717,36 @@ export default {
               this.dataFormOne.collectData = [...this.dataFormOne.collectData, ...selectArr]
           }
     },
+      selectProductSymbolFormData(val){
+          let row = this.productSymbolList.find(item=>item.code === val)
+          if (row){
+              for (let key in row){
+                  this.dataForm[key] = row[key]
+              }
+          }
+      },
+      async selectProductSymbol(id){
+          let query = {
+              orderItems: [{
+                  asc: false,
+                  column: ""
+              }, {
+                  asc: false,
+                  column: "create_time"
+              }],
+              productId: id,
+          }
+          productAttributeCodeRelated(query).then(res=>{
+              this.productSymbolList = res.data.records
+          })
+      },
+      copyFun(row, index){
+          let data = JSON.parse(JSON.stringify(row))
+          this.dataFormOne.collectData.splice(index + 1, 0, data);
+      },
+      delFun(row,index){
+          this.dataFormOne.collectData.splice(index, 1)
+      },
   }
 }
 </script>

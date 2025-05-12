@@ -461,7 +461,7 @@ export default {
     },
     expands:{
         type: Boolean,
-        default: false
+        default: true
     },
   },
   data() {

@@ -125,6 +125,15 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                        <el-col :sm="6" :xs="24" v-if="$store.getters.configData.product.enable_symbol">
+                            <el-form-item label="代号"  prop="productSymbol">
+                                <el-select @change="selectProductSymbolFormData" v-model="dataForm.productSymbol" placeholder="代号" clearable
+                                           style="width: 100%;">
+                                    <el-option  v-for="(item, index) in productSymbolList" :key="index" :label="item.code"
+                                               :value="item.code"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
                       <el-col :sm="6" :xs="24" v-if="sealingCoverTypingFlag == 1">
                         <el-form-item :label="$store.getters.sealingCoverTyping"  prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
@@ -604,7 +613,11 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import SelectProductForm from './selectProductForm.vue'
-import { getbimProductAttributesList, getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
+import {
+    getbimProductAttributesList,
+    getbimProductAttributesListMap,
+    productAttributeCodeRelated
+} from '@/api/masterDataManagement/index'
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange, detailResourceProcess } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
@@ -660,7 +673,9 @@ export default {
       list6: [],
       list7: [],
       list8: [],
+      productSymbolList:[],
       dataForm: {
+        productSymbol:'',
         planDate: [],
         lineEdgeList: [],
         lineEdgeId: "",
@@ -964,8 +979,31 @@ export default {
         }
       })
     },
+    async selectProductSymbol(id){
+        let query = {
+            orderItems: [{
+                asc: false,
+                column: ""
+            }, {
+                asc: false,
+                column: "create_time"
+            }],
+            productId: id,
+        }
+        productAttributeCodeRelated(query).then(res=>{
+            this.productSymbolList = res.data.records
+        })
+    },
+    selectProductSymbolFormData(val){
+        let row = this.productSymbolList.find(item=>item.code === val)
+        if (row){
+            for (let key in row){
+                this.dataForm[key] = row[key]
+            }
+        }
+    },
     // 选择产品
-    selectProductFun(data) {
+     async selectProductFun(data) {
       this.$set(data, 'orderNo', this.dataForm.orderNo)
       console.log("所选返工产品", data);
       let pairingModeId = JSON.parse(JSON.stringify(this.dataForm.pairingModeId))
@@ -978,7 +1016,6 @@ export default {
       this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
       this.creaFun()
-
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
           console.log("bom详情", res);
@@ -1000,6 +1037,7 @@ export default {
       } else {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
       }
+      await this.selectProductSymbol(this.dataForm.id)
       this.getWarehouseListFun()
       if (!data.routingId) return
       if (!this.$store.getters.configData.produce.task_process_selection) {

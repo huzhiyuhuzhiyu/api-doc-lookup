@@ -271,7 +271,7 @@ import formValidate from "@/utils/formValidate";
 import getProjectLists from '@/mixins/generator/getProjectList'
 import { getProjectList } from '@/api/system/projectManagement'
 import { mapGetters } from 'vuex'
-import selectAsset from '@/views/assetManagement/callManagement/assetForm.vue'
+import selectAsset from './assetForm.vue'
 
 export default {
   mixins: [getProjectLists],
@@ -615,7 +615,7 @@ export default {
     },
 
     init(id, disabled, type,key) {
-      console.log(disabled, id);
+      console.log(disabled, id,'key',key);
       this.visible = true
       this.dataForm.id = id || ''
       this.organizeIdTree = []

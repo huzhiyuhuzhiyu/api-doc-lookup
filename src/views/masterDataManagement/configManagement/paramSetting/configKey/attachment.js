@@ -314,5 +314,10 @@ export default {
       configKeyLabel: '启动仓库出入库附件',
       description: '开启后，在仓库管理待办出入库和直接出入库中出库、入库及出入库列表、出入库明细列表查看都会显示附件操作。',
       mainModule: '仓库管理'
-    }
+    },
+    fj_property: {
+      configKeyLabel: '启动资产附件',
+      description: '开启后，在资产管理新建、编辑、查看都会显示附件操作。',
+      mainModule: '资产管理'
+    },
 }    

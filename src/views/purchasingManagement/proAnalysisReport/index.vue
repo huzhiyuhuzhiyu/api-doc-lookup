@@ -148,7 +148,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: ""
         }],
       },
 
@@ -246,9 +246,8 @@ export default {
         // res.data.records.forEach(item => {
         //   item.selectFlag = false
         // })
-        this.tableData = res.data.page.records
-        this.total = res.data.page.total
-        this.totalData = res.data.total ? res.data.total : {}
+        this.tableData = res.data.records
+        this.total = res.data.total 
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -324,7 +323,7 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: "1020",
+        exportType: "1249",
         exportName: '采购分析报表',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1

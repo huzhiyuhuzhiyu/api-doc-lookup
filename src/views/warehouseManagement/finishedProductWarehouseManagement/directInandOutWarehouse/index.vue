@@ -918,7 +918,7 @@ export default {
         sourceType: "direct",
         id: "",
         warehouseType: "",
-        inspectionResults: "",
+        inspectionResults: "qualified",
         partnerName: "",
         cooperativePartnerId: "",
         cooperativePartnerIdText:"",

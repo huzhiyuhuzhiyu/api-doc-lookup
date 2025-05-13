@@ -32,7 +32,7 @@ export default {
       return tenant['fhjrgq'].includes(this[tenantSymbol])
     },
     isXBN(){
-      return tenant['zgt_xbn','xbeining'].includes(this[tenantSymbol])
+      return tenant['zgt_xbn'].includes(this[tenantSymbol])
     },
   }
 }

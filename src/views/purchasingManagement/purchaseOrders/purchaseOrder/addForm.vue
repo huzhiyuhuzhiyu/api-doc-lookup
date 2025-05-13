@@ -77,7 +77,7 @@
                       </el-button>
                    </div>
                       <div class="JNPF-common-head-right">
-                    
+
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                           <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                             @click="columnSetFun()" />
@@ -333,7 +333,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
-                          v-if="isXY">
+                          v-if="isXY || isJR">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
@@ -345,7 +345,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="rawStockMill" label="原材料厂家" width="120"
-                          v-if="isXY">
+                          v-if="isXY || isJR">
                           <template slot-scope="scope">
                             <el-form-item>
                               <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
@@ -448,7 +448,7 @@
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip key="1">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-input :title="scope.row.remark" v-model="scope.row.remark" 
+                              <el-input :title="scope.row.remark" v-model="scope.row.remark"
                                 placeholder="备注"></el-input>
                             </el-form-item>
                           </template>
@@ -460,12 +460,12 @@
                               @click="delequipment_process_relList(scope.$index)">
                               删除
                             </el-button>
-                            <el-button type="text" 
+                            <el-button type="text"
                               @click="copyFun(scope.row)">
                               复制
                             </el-button>
                           </template>
-                     
+
                         </el-table-column>
                       </JNPF-table>
                     </el-form>
@@ -896,7 +896,7 @@ export default {
       this.dataForm.taxAmount = this.jnpf.numberFormat(taxAmountCount)
       return this.dataForm.excludingTaxTotalAmount
     },
- 
+
     computedValue2() {
       // 在这里计算第三个输入框的值
       let count = 0
@@ -1504,7 +1504,7 @@ export default {
           flowData: this.flowData
         }
         console.log(_data, 'data')
-        
+
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'
@@ -1528,7 +1528,7 @@ export default {
               })
             } else {
               this.$emit('close',true)
-          
+
             }
           })
           .catch(() => {

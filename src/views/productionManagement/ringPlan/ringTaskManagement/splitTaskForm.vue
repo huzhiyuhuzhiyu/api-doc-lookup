@@ -53,7 +53,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      
+
                       <template v-if="$store.getters.configData.produce.steelBallTask">
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="生产桶数" prop="productionBarrels" >
@@ -89,7 +89,7 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isXY">
+                      <el-col :sm="6" :xs="24" v-if="isXY || isJR">
                         <el-form-item  label="钢丝炉号" >
                           <el-select v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
@@ -97,7 +97,7 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"  v-if="isXY">
+                      <el-col :sm="6" :xs="24"  v-if="isXY || isJR">
                         <el-form-item  label="原材料厂家" >
                           <el-select v-model="dataForm.rawStockMill" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
@@ -243,7 +243,7 @@
                             <el-form-item prop="reportFlag" ref="reportFlag">
                               <el-checkbox v-model="scope.row.reportFlag"  :disabled="scope.row.defaultReport ||
                                 scope.row.defaultFlag ||
-                                
+
                                 type === 'look'">
                                 {{ scope.row.reportFlag ? '是' : '否' }}
                               </el-checkbox>
@@ -283,7 +283,7 @@
                       </el-table-column> -->
                       <el-table-column label="操作" width="180" fixed="right" v-if="splitModifiedFlag">
                         <template slot-scope="scope">
-                          <el-button type="text" class="JNPF-table-delBtn" 
+                          <el-button type="text" class="JNPF-table-delBtn"
                             @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
@@ -298,7 +298,7 @@
                 </el-collapse-item>
               </el-collapse>
         </div>
-      
+
         <ComSelect-page ref="ComSelect-page" :beforeSubmit="beforeSubmit" @change="submit" :tableItems="ProductTableItems"
           title="选择工序" treeTitle="工序分类" :methodArr="ProductMethodArr" :listMethod="getBimProcessList"
           :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple
@@ -386,7 +386,7 @@ export default {
 
       },
       pickDataRule: {
-        
+
         orderNo: [
           { required: true, message: '领料单号单号不能为空', trigger: 'blur' }
         ],
@@ -449,7 +449,7 @@ export default {
           //     validator: (rule, value, callback) => {
           //       if (!value) { callback() }
           //       else if (Number(this.dataForm.splitQuantity) >= Number(this.dataFormTwo[0].productionQuantity)) { callback(new Error('拆分数量不能大于等于可拆分数量')); }
-                
+
           //     },
           //     trigger: 'blur'
           //   }
@@ -529,7 +529,7 @@ export default {
           } else {
             this.dataForm.splitQuantity = 0
           }
-          
+
         }
       },
       deep: true
@@ -734,9 +734,9 @@ export default {
       }
 
       this.responseLoading = false
-   
+
     },
- 
+
     init(id) {
       detailordershengchan(id).then(res => {
           console.log("生产任务详情", res);
@@ -748,10 +748,10 @@ export default {
           this.dataForm.productionWeight = 0
           this.dataForm.splitQuantity = 0
           this.dataForm.orderNo = ''
-          this.oldWorkOrderList = deepClone(res.data.workOrderList) 
-      
+          this.oldWorkOrderList = deepClone(res.data.workOrderList)
+
           this.dataFormTwo = res.data.workOrderList
-          
+
           if (this.$store.getters.configData.produce.steelBallTask) {
           let obj = {
             productsId: this.dataForm.productsId
@@ -762,7 +762,7 @@ export default {
           })
         }
       })
-      
+
       this.creaFun()
     },
     changeMove(data) {
@@ -890,7 +890,7 @@ export default {
       const splitNo = Number(this.dataForm.splitNo) -1
       if (!this.dataForm.splitNo || this.dataForm.splitNo > this.dataFormTwo.length) {
         this.dataForm.splitNo = null
-        return this.dataFormTwo = deepClone(this.oldWorkOrderList) 
+        return this.dataFormTwo = deepClone(this.oldWorkOrderList)
       }
       if (splitNo === this.oldWorkOrderList.length) {
         console.log(321)
@@ -901,7 +901,7 @@ export default {
           if (index === 0) {
              item.firstFlag = true
           }
-         
+
         })
       }
       console.log(this.oldWorkOrderList,'444')
@@ -1023,7 +1023,7 @@ export default {
     async handleConfirm(value) {
       console.log(this.dataForm);
       let falg = true
-    
+
         if (!this.dataForm.splitNo) {
           this.$message.error("拆分工序序号不能为空")
           falg = false
@@ -1036,7 +1036,7 @@ export default {
         //   this.$message.error("拆分数量不能超过首道可拆分数量")
         //   falg = false
         // }
-        
+
         if (this.$store.getters.configData.produce.steelBallTask && !this.dataForm.orderNo) {
           this.$message.error("新生产任务单号不能为空")
           falg = false
@@ -1044,8 +1044,8 @@ export default {
         if (falg) {
            this.checkFun()
         }
-        
-   
+
+
 
     },
     addth(data, index, type) {

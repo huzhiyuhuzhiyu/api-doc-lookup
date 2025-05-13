@@ -29,10 +29,10 @@
                       <el-col :sm="6" :xs="24" v-if="$store.getters.configData.produce.production_related_customers">
                         <el-form-item label="客户名称" prop="cooperativePartnerName">
                           <ComSelect-page clearable :isdisabled="btnType === 'look'"
-                            v-model="codeConfig.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems" 
+                            v-model="codeConfig.cooperativePartnerName" @change="supplierdata" :tableItems="PartnerTableItems"
                             :placeholder="'请选择客户名称'" title="选择客户"
                             treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                            :listRequestObj="PartnerListRequestObj" 
+                            :listRequestObj="PartnerListRequestObj"
                             :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
@@ -151,7 +151,7 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isXY">
+                      <el-col :sm="6" :xs="24" v-if="isXY || isJR">
                         <el-form-item  label="钢丝炉号" >
                           <el-select v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
@@ -815,7 +815,7 @@ export default {
           } else {
             this.$set(this.dataForm,'productionQuantity',0)
           }
-          
+
         }
       },
       deep: true
@@ -902,7 +902,7 @@ export default {
         }
         this.codeConfig.cooperativePartnerName = data[0].all.name
         this.codeConfig.cooperativePartnerCode = data[0].all.code
-        this.codeConfig.cooperativePartnerId = data[0].all.id   
+        this.codeConfig.cooperativePartnerId = data[0].all.id
       }
     },
     openSelectProductFun() {
@@ -1400,7 +1400,7 @@ export default {
                     productsDrawingNo: item.productDrawingNo,
                     materialsUsedQuantity: totalNum,
                     processName: '',
-                    processId: item.processId || '', 
+                    processId: item.processId || '',
                     productsId: item.productId,
                   }
                 }) : []

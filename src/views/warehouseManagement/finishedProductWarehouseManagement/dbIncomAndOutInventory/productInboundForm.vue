@@ -479,8 +479,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="wireHeatNumber" v-if="isXY" label="钢丝炉号" width="120"
-                        key="123"> 
+                        <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -489,8 +489,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="rawStockMill" v-if="isXY" label="原材料厂家" width="120"
-                        key="123"> 
+                      <el-table-column prop="rawStockMill" v-if="isXY || isJR" label="原材料厂家" width="120"
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -1124,9 +1124,9 @@ export default {
               this.$set(item, 'shelfSpaceName', data.name)
               this.$set(item, 'warehouseId', data.warehouseId)
               this.$set(item, 'shelfSpaceId', data.id)
-            } 
+            }
           });
-          
+
         }
       }
 

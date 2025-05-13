@@ -410,3 +410,13 @@ export function mergeOutOrderAdd(data) {
     data
   })
 }
+
+
+// 采购分析报表
+export function purchaseAnalysis(data) {
+  return request({
+    url: `/api/report/data/purchase/analysis`,
+    method: 'post',
+    data
+  })
+}

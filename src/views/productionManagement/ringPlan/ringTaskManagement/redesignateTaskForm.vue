@@ -85,7 +85,7 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="isXY||isJR">
+                      <el-col :sm="6" :xs="24" v-if="isXY || isJR">
                         <el-form-item  label="钢丝炉号" >
                           <el-select v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
@@ -93,7 +93,7 @@
                             </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24"  v-if="isXY||isJR">
+                      <el-col :sm="6" :xs="24"  v-if="isXY || isJR">
                         <el-form-item  label="原材料厂家" >
                           <el-select v-model="dataForm.rawStockMill" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
@@ -111,13 +111,13 @@
                   </el-form>
                 </el-collapse-item>
 
-              
+
               </el-collapse>
             </el-tab-pane>
-          
+
           </el-tabs>
         </div>
-     
+
         <SelectProductForm v-if="productVisible" ref="productForm" @selectProduct="selectProductFun">
         </SelectProductForm>
       </div>
@@ -222,7 +222,7 @@ export default {
         productionQuantity: [{ required: true, message: '万粒数不能为空', trigger: 'blur' },
         { validator: this.formValidate('positiveNumber', '万粒数必须大于0', (errMsg, index) => { this.$message.error(`万粒数：${errMsg}`) }), trigger: 'blur' },
         ],
-    
+
       },
       selectArr: [],
 
@@ -307,7 +307,7 @@ export default {
           } else {
             this.dataForm.productionQuantity = 0
           }
-          
+
         }
       },
       deep: true
@@ -379,7 +379,7 @@ export default {
       this.dataForm.productCode = data.code
       this.dataForm.productName = data.name
       this.dataForm.productsId = data.id
- 
+
       console.log(this.dataForm)
     },
     //领料人
@@ -466,7 +466,7 @@ export default {
         this.listLoading = false
       })
     },
- 
+
     init(id) {
       detailordershengchan(id).then(res => {
           console.log("生产任务详情", res);
@@ -486,7 +486,7 @@ export default {
           })
         }
       })
-  
+
       // this.fetchData("PROD")
       this.creaFun()
     },
@@ -604,9 +604,9 @@ export default {
         if (!this.allocationFlag) {
           return this.checkFun()
         }
-      
-     
-    
+
+
+
 
     },
   }

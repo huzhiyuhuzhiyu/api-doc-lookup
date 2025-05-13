@@ -336,8 +336,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120"
-                        key="123"> 
+                      <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -346,8 +346,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120"
-                        key="123"> 
+                      <el-table-column prop="rawStockMill" v-if="isXY || isJR" label="原材料厂家" width="120"
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -704,7 +704,7 @@
             </div>
             <JNPF-table ref="productVisibles" :partentOrChild="'child'" custom-column v-loading="listLoading"
               :data="productList" hasC :fixedNO="true" @selection-change="handleSelectionChangeAllPruduct"
-              @sort-change="sortChange">
+              @sort-change="sortChange" @row-click="handleRowClick">
               <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" sortable="custom"
                 v-if="dataForm.businessType !== 'inbound_sale_return'" />
               <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"
@@ -1227,6 +1227,7 @@ export default {
     async getOrderFiledMap() {
       await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+          console.log(this.sealingCoverTypingFlag,'thissealingCoverTypingFlag')
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel
         this.oilFlag = res.data.oil
@@ -1239,6 +1240,7 @@ export default {
       })
       await getOrderFiledMap('purchase').then(res => {
         this.standardValueFlag = res.data.standardValue
+          console.log(this.standardValueFlag,'standardValueFlag')
         this.processFlag = res.data.process
       })
     },
@@ -1283,7 +1285,7 @@ export default {
       //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       console.log(this.dataForm.businessType, this.bimProductAttributesList);
-      if (this.dataForm.businessType == 'inbound_purchase') {
+      // if (this.dataForm.businessType == 'inbound_purchase') {
         if (this.standardValueFlag === '1') {
           this.list8 = this.bimProductAttributesList.pa008.map((item) => {
             return {
@@ -1293,7 +1295,7 @@ export default {
           })
         }
 
-      }
+      // }
       if (this.materialFlag === '1') {
         this.list12 = this.bimProductAttributesList.pa021.map((item) => {
           return {
@@ -1604,6 +1606,9 @@ export default {
     // 选择产品 (销售发货——多选)
     handleSelectionChangeAllPruduct(val) {
       this.selectSaleProductArr = val
+    },
+    handleRowClick(row){
+        this.$refs.productVisibles.$refs.JNPFTable.toggleRowSelection(row);
     },
     // 销售发货选择产品——重置
     resetProductFun() {

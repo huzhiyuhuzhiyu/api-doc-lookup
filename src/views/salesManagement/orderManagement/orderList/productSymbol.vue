@@ -70,10 +70,11 @@ export default {
 
     },
     methods: {
-        init(index,dataFormTwo){
+        init(index,dataFormTwo,id){
             this.visible = true
             this.dataFormTwo = dataFormTwo
             this.index = index
+            this.orderForm.productId = id
             this.getData()
         },
         getData(){

@@ -14,10 +14,11 @@ export default {
         },
         //   点击选择代号 带出属性
         selectProductSymbol(scope,dataFormTwo){
-            this.currentProductId = scope.row.productsId || scope.row.productId
+            console.log(scope,'值')
+            this.currentProductId = scope.row.productsId
             this.productSymbolVisible = true
             this.$nextTick(() => {
-                this.$refs.productSymbolForm.init(scope.$index,dataFormTwo)
+                this.$refs.productSymbolForm.init(scope.$index,dataFormTwo,scope.row.productsId)
             })
         },
     },

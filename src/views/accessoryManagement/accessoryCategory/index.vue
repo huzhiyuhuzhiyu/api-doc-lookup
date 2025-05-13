@@ -42,8 +42,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" />
+          <topOpts @add="addSupplier()" >
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="batchFun">批量标记</el-button>
 
+            </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -57,10 +59,15 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
+        <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData" hasC @selection-change="handeleProductInfoData" 
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
           <el-table-column prop="name" label="类别名称" width="250" sortable="custom" />
           <el-table-column prop="code" label="类别编码" min-width="150" sortable="custom" />
+          <el-table-column prop="accessoryFlag" label="是否标记为配件" min-width="150" sortable="custom" >
+            <template slot-scope="scope">
+              {{ scope.row.accessoryFlag?'是':"否" }}
+            </template>
+          </el-table-column>
           <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
             <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
           </el-table-column> -->
@@ -192,7 +199,8 @@ export default {
           label: '创建人',
           type: 'input'
         }
-      ]
+      ],
+      selectArr:[],
     }
   },
   watch: {
@@ -207,6 +215,27 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    handeleProductInfoData(data){
+      this.selectArr=data
+    },
+    batchFun(){
+      if(!this.selectArr.length)return this.$message.error("请先选择您要标记为配件的数据")
+      this.$confirm(this.$t('确定将所选的数据标记为配件'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          // delClassAttribute(id).then((res) => {
+          //   this.initData()
+          //   this.$message({
+          //     type: 'success',
+          //     message: '删除成功',
+          //     duration: 1500
+          //   })
+          //   location.reload()
+          // })
+        })
+        .catch(() => { })
+    },
     changeMove(data) {
       console.log(data, 'iiiiii')
       data.forEach(item => {

@@ -62,6 +62,18 @@
                            />
                       </el-form-item>
                     </el-col>
+                        <el-col :sm="8" :xs="24" v-if='$store.getters.configData.equipment.inspectionUserSetting'>
+                      <el-form-item label="点检人员" prop="inspectionUserId">
+                        <user-select v-model="dataForm.inspectionUserId" placeholder="请选择点检人员" style="width: 100%;" :disabled="disabled">
+                        </user-select>
+                      </el-form-item>
+                    </el-col>
+                        <el-col :sm="8" :xs="24" v-if="$store.getters.configData.equipment.maintenanceUserSetting">
+                      <el-form-item label="保养人员" prop="maintenanceUserId">
+                        <user-select v-model="dataForm.maintenanceUserId" placeholder="请选择保养人员" style="width: 100%;" :disabled="disabled">
+                        </user-select>
+                      </el-form-item>
+                    </el-col>
                     <!-- <el-col :sm="8" :xs="24">
               <el-form-item label="计量单位" prop="unitVolume">
                 <el-select v-model="dataForm.unitVolume" placeholder="请选择计量单位" :disabled="disabled" style="width: 100%;">
@@ -339,6 +351,8 @@ export default {
       picArr: [],
       type: '',
       dataForm: {
+        maintenanceUserId:"",
+        inspectionUserId:"",
         propertyId:"",
         propertyName:"",
         projectId: '',
@@ -477,6 +491,8 @@ export default {
           },
         ],
         state: [{ required: true, message: '请选择设备状态', trigger: 'change' }],
+        maintenanceUserId:[{ required: true, message: '请选择保养人员', trigger: 'change' }],
+        inspectionUserId:[{ required: true, message: '请选择点检人员', trigger: 'change' }],
         productCategoryName: [
           { required: true, message: '请选择设备分类', trigger: 'change' }
         ],
@@ -498,6 +514,7 @@ export default {
     this.getProjectListdata()
     this.getBimBusinessDetail()
     this.getfactoryFloor()
+    console.log("444",this.$store.getters.configData.equipment.inspectionUserSetting);
   },
   computed: {
     ...mapGetters(['userInfo'])

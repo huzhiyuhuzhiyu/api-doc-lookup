@@ -60,8 +60,8 @@
                         </el-col>
                 
                         <el-col :span="6"  v-if="btnType=='look'||btnType=='edit'">
-                          <el-form-item prop="eqCode" label="设备工具编码">
-                            <el-input v-model="dataForm.eqCode" placeholder="请输入设备工具编码" disabled />
+                          <el-form-item prop="equipmentCode" label="设备工具编码">
+                            <el-input v-model="dataForm.equipmentCode" placeholder="请输入设备工具编码" disabled />
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24">

@@ -20,7 +20,7 @@
                             placeholder="采购单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data') 
+                      <el-col :span="6" v-if="userInfo.roleCode.split(',').includes('show_procure_data')
                         && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
@@ -261,6 +261,30 @@
                           </el-select>
                         </template>
                       </el-table-column>
+                        <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
+                                         v-if="isXY || isJR">
+                            <template slot-scope="scope">
+                                <el-form-item>
+                                    <el-select disabled v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                                               style="width: 100%;">
+                                        <el-option v-for="(item, index) in bimProductAttributesObj.pa026" :key="index"
+                                                   :label="item.name" :value="item.name"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="rawStockMill" label="原材料厂家" width="120"
+                                         v-if="isXY || isJR">
+                            <template slot-scope="scope">
+                                <el-form-item>
+                                    <el-select disabled v-model="scope.row.rawStockMill" placeholder="请选择" clearable
+                                               style="width: 100%;">
+                                        <el-option v-for="(item, index) in bimProductAttributesObj.pa027" :key="index"
+                                                   :label="item.name" :value="item.name"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
 
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -566,6 +590,30 @@
                       </el-select>
                     </template>
                   </el-table-column>
+                    <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
+                                     v-if="isXY || isJR">
+                        <template slot-scope="scope">
+                            <el-form-item>
+                                <el-select disabled v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                                           style="width: 100%;">
+                                    <el-option v-for="(item, index) in bimProductAttributesObj.pa026" :key="index"
+                                               :label="item.name" :value="item.name"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="rawStockMill" label="原材料厂家" width="120"
+                                     v-if="isXY || isJR">
+                        <template slot-scope="scope">
+                            <el-form-item>
+                                <el-select disabled v-model="scope.row.rawStockMill" placeholder="请选择" clearable
+                                           style="width: 100%;">
+                                    <el-option v-for="(item, index) in bimProductAttributesObj.pa027" :key="index"
+                                               :label="item.name" :value="item.name"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </template>
+                    </el-table-column>
 
                   <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                     <template slot-scope="scope">
@@ -610,6 +658,7 @@ import {
 } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { mapGetters, mapState } from 'vuex'
+import TenantMinix from '@/mixins/generator/TenantMinix'
 export default {
   components: {
     workFlow,
@@ -617,7 +666,7 @@ export default {
     Process,
     recordList
   },
-  mixins: [busFlow,AbProjectMixin],
+  mixins: [busFlow,AbProjectMixin,TenantMinix],
   data() {
     return {
       isDeputyUnitSwitch: '',

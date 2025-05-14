@@ -320,7 +320,7 @@
                             <el-form-item>
                               <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                                 style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
                             </el-form-item>

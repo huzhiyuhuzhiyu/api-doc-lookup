@@ -457,7 +457,7 @@ export default {
         buyBackPrice: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["回购单价不能为空", (errMsg, index) => { this.$message.error(`回购单价：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
+          { validator: this.formValidate({ type: 'decimal', params: [20, 12, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
         ],
       },
       

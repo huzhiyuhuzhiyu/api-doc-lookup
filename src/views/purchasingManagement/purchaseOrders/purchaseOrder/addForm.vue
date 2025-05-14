@@ -212,7 +212,7 @@
                         </el-table-column>
 
                         <el-table-column prop="price" label="含税单价" min-width="140">
-                          <template slot="header">
+                          <template slot="header"  v-if="$store.getters.configData.purchase.priceFlag">
                             <span class="required">*</span>
                             单价(含税)
                           </template>
@@ -350,7 +350,7 @@
                             <el-form-item>
                               <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                                 style="width: 100%;">
-                                <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
+                                <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index"
                                   :label="item.name" :value="item.name"></el-option>
                               </el-select>
                             </el-form-item>
@@ -794,7 +794,9 @@ export default {
         ],
         price: [
           // 含税单价
-          {
+              this.$store.getters.configData.purchase.priceFlag
+            ?
+            {
             validator: this.formValidate({
               type: 'noEmtry',
               params: [
@@ -804,8 +806,8 @@ export default {
                 }
               ]
             }),
-            trigger: ['blur']
-          },
+            trigger: ['blur'],
+            }:{},
           // {
           //   validator: this.formValidate({
           //     type: 'decimal',

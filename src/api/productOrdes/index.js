@@ -350,3 +350,40 @@ export function workTodoOutSouringList(data) {
     data
   })
 }
+
+// 生产日报表
+// 每日生产
+
+export function produceDataReport(data) {
+  return request({
+    url: `/api/report/data/produce/report`,
+    method: 'POST',
+    data
+  })
+}
+// 每日生产入库
+
+export function produceInboundReport(data) {
+  return request({
+    url: `/api/report/data/produce/inbound/report`,
+    method: 'POST',
+    data
+  })
+}
+// 当日工单进度
+
+export function produceWorkOrderReport(data) {
+  return request({
+    url: `/api/report/data/produce/work/order/report`,
+    method: 'POST',
+    data
+  })
+}
+// 工序料合计
+export function produceProcessReport(data) {
+  return request({
+    url: `/api/report/data/produce/process/materials/report`,
+    method: 'POST',
+    data
+  })
+}

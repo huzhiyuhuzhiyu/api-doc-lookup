@@ -55,7 +55,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')" :addText="'创建发货'">
+            <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </topOpts>
@@ -366,7 +366,7 @@ export default {
         type: 'input'
       })
     }
-    // 默认设置为近3天  
+    // 默认设置为近3天
     const end = new Date();
     const start = new Date();
     end.setDate(end.getDate() + 3);
@@ -396,9 +396,9 @@ export default {
             this.printVisible = false
         },
     printFun(id) {
-      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p002' // 筛选出 businessType 等于 type 的项
       this.formId = id
-      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "销售单" // 筛选出 businessType 等于 type 的项
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
@@ -425,7 +425,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'deliveryDate')
       if (this.colourFlag === '1') {
@@ -563,7 +563,7 @@ export default {
       // 产品属性
       const res = await getbimProductAttributesListMap()
       this.bimProductAttributesList = res.data
-      
+
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
         let arr = []
@@ -577,7 +577,7 @@ export default {
         })
         let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -614,11 +614,11 @@ export default {
     },
     dateFun(dateStr) {
       const date = new Date(dateStr);
-      // 获取年份、月份和日期  
-      const year = date.getFullYear(); // 获取年份  
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)  
-      const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数  
-      // 拼接成年月日格式  
+      // 获取年份、月份和日期
+      const year = date.getFullYear(); // 获取年份
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)
+      const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数
+      // 拼接成年月日格式
       const formattedDate = `${year}-${month}-${day}`;
       console.log("forma", formattedDate);
       return formattedDate
@@ -629,10 +629,10 @@ export default {
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.orderForm.extensionFlag=1 
+      this.orderForm.extensionFlag=1
         this.search('basic')
     },
-    // 为近3天  
+    // 为近3天
     btnsearch2() {
       const end = new Date();
       const start = "";
@@ -643,7 +643,7 @@ export default {
       this.orderForm.extensionFlag=0
       this.search('basic')
     },
-    // 为近7天  
+    // 为近7天
     btnsearch3() {
       let end = new Date()
       let start = ""
@@ -654,7 +654,7 @@ export default {
       this.orderForm.extensionFlag=0
       this.search('basic')
     },
-    // 为近30天  
+    // 为近30天
     btnsearch4() {
       let end = new Date()
       let start = ""
@@ -673,7 +673,7 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    // 
+    //
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""
       if (cellValue.includes(":")) {
@@ -769,7 +769,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      // 默认设置为近3天  
+      // 默认设置为近3天
       const end = new Date();
       const start = "";
       end.setDate(end.getDate() + 3);
@@ -832,7 +832,7 @@ export default {
       for (const item of arr) {
         codes.add(item.cooperativePartnerCode);
       }
-      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
+      return codes.size > 1; // 如果有多个不同的代码，则返回 true
     },
     getCopyOrders(id, btntype) {
       this.formVisible = true

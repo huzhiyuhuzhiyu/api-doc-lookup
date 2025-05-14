@@ -50,8 +50,8 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
-          
+            <topOpts @add="addSupplier('', 'add')">
+
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -569,7 +569,7 @@ export default {
     this.dataFormSubmit()
     },
     reset() {
-     
+
       this.orderForm.mergeFlag=0
     this.$nextTick(() => { this.$refs.dataTable.doLayout() })
     this.$nextTick(()=>{

@@ -50,7 +50,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')" :addText="'新建收货单'">
+            <topOpts @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -97,7 +97,7 @@
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="120" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" min-width="120" sortable="custom" />
-            
+
             <el-table-column prop="material" label="材质" width="130" sortable="custom"
               v-if="materialFlag == 1"></el-table-column>
             <el-table-column prop="colour" :label="$store.getters.colour"  width="130" sortable="custom"

@@ -2187,6 +2187,7 @@ export default {
             this.productData.forEach((item, index) => {
               if (!item.shelfSpaceId) {
                 submitFlag = false
+                this.btnLoading = false
                 this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
               }
             })
@@ -2198,12 +2199,22 @@ export default {
               const item = this.productData[index];
               if (!item.num) {
                 submitFlag = false
+                this.btnLoading = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
                 break
+              }
+              if (item.num && item.inventoryQuantity && this.dataForm.documentType === 'outbound'){
+                    if (Number(item.num) > Number(item.inventoryQuantity)){
+                        submitFlag = false
+                        this.btnLoading = false
+                        this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
+                        break
+                    }
               }
               if (!this.$store.getters.configData.warehouse.unitPriceSetting) break
               if (!item.costPrice) {
                 submitFlag = false
+                this.btnLoading = false
                 this.$message.error("产品信息第" + (index + 1) + "行单价不能为空或为0")
                 break
               }
@@ -2226,6 +2237,7 @@ export default {
               // }
             }
           }
+          return
           // 自动聚焦未使用则提交
           if (submitFlag) {
             this.dataForm.documentStatus = submitModel

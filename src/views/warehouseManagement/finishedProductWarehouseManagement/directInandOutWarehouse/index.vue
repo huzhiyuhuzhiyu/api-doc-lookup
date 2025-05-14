@@ -147,7 +147,7 @@
                       </div>
                     </div>
 
-                    <JNPF-table ref="products" :data="productData" custom-column :fixedNO="true"
+                    <JNPF-table  v-keyboard-focus  ref="products" :data="productData" custom-column :fixedNO="true"
                       :hasC="btnType != 'look'" v-if="tableDataFlag" @selection-change="handeleProductInfoData" border
                       :height="customStyleData" :setColumnDisplayList="columnList"
                       :customKey="`directInandOutWarehouse_tableForm_${dataForm.businessType}_${dataForm.weightFlag}`">

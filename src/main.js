@@ -58,6 +58,8 @@ Vue.directive('focus', {
 // 自定义按钮权限指令
 import permission from "@/directive/permission";
 Vue.use(permission)
+import keyboardFocus from "@/directive/keyboardFocus"; // v-keyboard-focus
+Vue.use(keyboardFocus)
 
 Vue.use(Element, {
   size: jnpf.storageGet('size') || 'small', // set element-ui default size

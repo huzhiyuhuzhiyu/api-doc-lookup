@@ -203,3 +203,12 @@ export const delBimProductAttributesRecord = (id) => {
     method: 'delete'
   })
 }
+// 销售发货报表
+
+export const saleDeliveryReport = (data) => {
+  return request({
+    url: `/api/report/data/sale/delivery/report`,
+    method: 'post',
+    data
+  })
+}

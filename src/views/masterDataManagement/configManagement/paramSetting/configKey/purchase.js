@@ -11,4 +11,9 @@ export default {
         configKeyLabel: '是否开启自定义产品校验',
         description: '启用是否开启自定义产品校验后，新建供应商产品时，将会使用产品Id和轴承相关字段拼接而成的字段进行校验是否唯一。'
     },
+    
+    priceFlag: {
+        configKeyLabel: '是否开启单价必填',
+        description: '开启单价必填后，将在采购需求池生成采购订单和采购订单列表新建时，产品信息中，单价为必填项；如果不开启，则为非必填'
+    },
 }

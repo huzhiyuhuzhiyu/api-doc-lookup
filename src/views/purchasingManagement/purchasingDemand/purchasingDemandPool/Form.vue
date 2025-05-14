@@ -214,7 +214,7 @@
                         </el-table-column>
 
                         <el-table-column prop="price" label="含税单价" min-width="140">
-                          <template slot="header">
+                          <template slot="header" v-if="$store.getters.configData.purchase.priceFlag">
                             <span class="required">*</span>
                             单价(含税)
                           </template>
@@ -916,19 +916,21 @@ export default {
 
                 ],
                 price: [
-                    // 含税单价
-                    {
+                       // 含税单价
+                        this.$store.getters.configData.purchase.priceFlag
+                        ?
+                        {
                         validator: this.formValidate({
-                            type: 'noEmtry',
-                            params: [
-                                '',
-                                (errMsg, index) => {
-                                    this.$message.error(`产品信息第${index + 1}行：含税单价${errMsg}`)
-                                }
-                            ]
+                          type: 'noEmtry',
+                          params: [
+                            '',
+                            (errMsg, index) => {
+                              this.$message.error(`产品信息第${index + 1}行：含税单价${errMsg}`)
+                            }
+                          ]
                         }),
-                        trigger: ['blur']
-                    }
+                        trigger: ['blur'],
+                        }:{},
                     // {
                     //   validator: this.formValidate({
                     //     type: 'decimal',

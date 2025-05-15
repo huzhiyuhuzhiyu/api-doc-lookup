@@ -1691,7 +1691,7 @@ export default {
         item.ordersId = ""
         item.ordersLineId = ""
         item.noticeId = ""
-        item.num = ''
+        item.num = item.inventoryQuantity || ''
         item.costPrice = ""
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
@@ -2365,7 +2365,7 @@ export default {
 
       // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
       let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 520
+      let maxHeight = mainHeight1 - 450
       console.log(maxHeight, 'maxHeight')
       this.customStyleData = maxHeight
       // 附带防抖的监听适配模式屏幕缩放

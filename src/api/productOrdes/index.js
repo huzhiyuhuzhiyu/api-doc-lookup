@@ -8,6 +8,14 @@ export function getWorkList(data) {
     data
   })
 }
+// 工单管理列表
+export function getWorkSimplePage(data) {
+  return request({
+    url: `/api/mrp/work/simple/page`,
+    method: 'POST',
+    data
+  })
+}
 // 工单管理列表2
 export function getWorkPage(data) {
   return request({
@@ -16,6 +24,7 @@ export function getWorkPage(data) {
     data
   })
 }
+
 // 工单详情
 export function detailWorkData(id) {
   return request({

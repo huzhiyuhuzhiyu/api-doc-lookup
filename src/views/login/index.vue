@@ -190,10 +190,25 @@
                 </div>
               </div>
               <div class="userxy">登录代表您已阅读并同意<a href='https://www.nbjuxuan.com/user_agreement.html' target="_blank">《用户协议》</a>和<a href='https://www.nbjuxuan.com/privacy_policy.html' target="_blank">《隐私政策》</a></div>
-              <el-popover placement="bottom" width="172" trigger="hover">
-                <img src="@/assets/images/qygzh.png" alt="">
-                <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>
-              </el-popover>
+<!--              <el-popover placement="bottom" width="172" trigger="hover">-->
+<!--                <img src="@/assets/images/qygzh.png" alt="">-->
+<!--                <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>-->
+<!--              </el-popover>-->
+                <div class="QR_code">
+                    <el-popover placement="bottom" width="172" trigger="hover">
+                        <img src="@/assets/images/qygzh.png" alt="">
+                        <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i
+                            class="el-icon-info"></i>公众号
+                        </div>
+                    </el-popover>
+                    <span class="QR_code_line"></span>
+                    <el-popover placement="bottom" width="172" trigger="hover">
+                        <img src="@/assets/images/PDADownloadQRCODE.png" alt="">
+                        <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i
+                            class="el-icon-info"></i>PDA应用下载
+                        </div>
+                    </el-popover>
+                </div>
               <div v-show="active == 2" :style="{width: '100%',height: needCode?'141px':'72px',}"></div>
             </div>
             <div class="componey">
@@ -350,8 +365,8 @@ export default {
       }
       const result = classifyUrl(location.origin);
       console.log(result);
-      
-    
+
+
     if (result === 'Domain'){
       const url = location.origin;
       // const url = 'http://zgt_zy.test.zgt.nbjuxuan.com/';
@@ -367,7 +382,7 @@ export default {
     }else{
       this.isDomain = true
     }
-   
+
     this.berning = []
     for (var i = 0; i < 5; i++) {
       let x = Math.floor(Math.random() * 80)
@@ -1004,6 +1019,22 @@ export default {
             color: #1890ff;
           }
         }
+          .QR_code{
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .QR_code_line{
+                  background: linear-gradient(to right,
+                      transparent 49%,
+                      #ddd 50%,
+                      transparent 51%
+                  );
+                  width: 1px;
+                  height: 19px;
+                  margin: 0 10px;
+              }
+          }
         padding: 0 33px;
         position: absolute;
         // right: 50px;

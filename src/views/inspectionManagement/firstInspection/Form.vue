@@ -51,7 +51,7 @@
   
 <script>
 import { addPFIData, updatePFIData, detailPFIDatalist } from '@/api/inspectionManagement/productionFirstInspection'
-import { getWorkList } from "@/api/productOrdes/index"
+import { getWorkSimplePage } from "@/api/productOrdes/index"
 import { mapGetters } from 'vuex'
 export default {
   data() {

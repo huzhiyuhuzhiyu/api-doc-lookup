@@ -86,7 +86,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="timePrice" label="单价(元)" min-width="140">
+              <!-- <el-table-column prop="timePrice" label="单价(元)" min-width="140">
                 <template slot-scope="scope">
                   <div v-if="scope.row.pricingType == 'by_time'"
                     :style="{ color: Number(scope.row.timePrice) <= 0 ? 'red' : '' }">{{ scope.row.timePrice }}</div>
@@ -94,7 +94,7 @@
                     :style="{ color: Number(scope.row.unitPrice) <= 0 ? 'red' : '' }">{{ scope.row.unitPrice }}</div>
                   <div v-else>无计价类型</div>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <!-- <el-table-column prop="timePrice" label="单价(元)" min-width="140">
                 <template slot-scope="scope">
                   <el-input v-if="scope.row.pricingType == 'by_time'" v-model="scope.row.timePrice"
@@ -107,12 +107,12 @@
               </el-table-column> -->
               <el-table-column prop="reportingQuantity" label="报工合格数量" min-width="160" sortable="custom" />
               <!-- <el-table-column prop="reportingWages" label="报工金额" min-width="140" sortable="custom" /> -->
-              <el-table-column prop="reportingWages" label="工资(元)" min-width="140" sortable="custom">
+              <!-- <el-table-column prop="reportingWages" label="工资(元)" min-width="140" sortable="custom">
                 <template slot-scope="scope">
                   <div :style="{ color: Number(scope.row.reportingWages) <= 0 ? 'red' : '' }">{{
                     scope.row.reportingWages }}</div>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column prop="reportingTime" label="报工时间" min-width="180" sortable="custom" />
               <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
               <el-table-column prop="aperture" label="孔径" min-width="140" sortable="custom" />

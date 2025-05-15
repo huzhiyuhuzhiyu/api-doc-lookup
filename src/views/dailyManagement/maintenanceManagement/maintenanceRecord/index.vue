@@ -45,11 +45,11 @@
         </div>
         <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column>
           <el-table-column prop="maintenanceNo" label="维修单号" min-width="200" sortable="custom">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.maintenanceNo
                             }}</el-link>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="equipmentIdCode" label="设备编码" min-width="200" sortable="custom" />
           <el-table-column prop="equipmentIdName" label="设备名称" min-width="200" sortable="custom"></el-table-column>
@@ -125,7 +125,7 @@
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.state === 'maintaining'" @click="handleDel(scope.row.id)">删除</el-button>
-              <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+              <!-- <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button> -->
             </template>
           </el-table-column>
         </JNPF-table>

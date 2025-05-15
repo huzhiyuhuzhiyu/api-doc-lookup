@@ -113,12 +113,19 @@
                     :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除
                   </el-button>
+                    <div class="JNPF-common-head-right" style="margin-right: 8px;float: right;">
+                    
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun()" />
+                        </el-tooltip>
+                      </div>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form"
                   :rules="productRules">
                   <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData"
                     :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData"
-                    :height="customStyleData">
+                    :height="customStyleData"    :partent-or-child="'child'" custom-column  :setColumnDisplayList="columnList">
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                       key="2"></el-table-column>
                     <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip key="3" />
@@ -135,7 +142,7 @@
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch === '1'" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
-                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                    <el-table-column v-if="btnType !== 'look'&&isXBN" prop="maxReceiptNum" label="最大可收货数量" width="160" />
                     <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
                       v-if="isProportionSwitch === '1'">
                       <template slot-scope="scope">
@@ -380,11 +387,18 @@
                 :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                 批量删除
               </el-button>
+               <div class="JNPF-common-head-right" style="margin-right: 8px;float: right;">
+                    
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                            @click="columnSetFun()" />
+                        </el-tooltip>
+                      </div>
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <JNPF-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.productData"
-                :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData"
-                :height="customStyleData">
+              <JNPF-table ref="product"  :data="dataFormTwo.productData"   :partent-or-child="'child'"  v-bind="dataFormTwo.productData"
+                :hasC="btnType !== 'look'" hasNO fixedNO @selection-change="handeleProductInfoData" custom-column   :setColumnDisplayList="columnList"
+                :height="customStyleData"  >
                 <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"
                   key="2"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="200" show-overflow-tooltip key="3" />
@@ -400,7 +414,7 @@
                 <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch === '1'" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="120" />
-                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                <el-table-column v-if="btnType !== 'look'&&isXBN" prop="maxReceiptNum" label="最大可收货数量" width="160" />
                 <el-table-column prop="weight" label="重量(kg)" min-width="140" :key="737"
                   v-if="isProportionSwitch === '1'">
                   <template slot-scope="scope">
@@ -780,6 +794,8 @@ export default {
   mixins: [busFlow, getProjectList,tenantMinix],
   data() {
     return {
+      columnList:[],
+      customColumnFlag:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       isProportionSwitch: '',
@@ -878,7 +894,7 @@ export default {
             }),
             trigger: ['blur']
           },
-          { validator: this.calcValidate(), trigger: 'blur' },
+          this.isXBN? { validator: this.calcValidate(), trigger: 'blur' }:"",
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
@@ -1140,6 +1156,9 @@ export default {
     // this.getProvinceList()
     this.getAttributeline()
     this.getWarehouseList()
+    this.$nextTick(() => { this.$refs.product.doLayout()
+   
+     })
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -1147,6 +1166,10 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+      columnSetFun() {
+        this.$refs.product.showDrawer()
+      
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight
@@ -1281,7 +1304,7 @@ export default {
 
             this.dataFormTwo.productData = Array.from(mergedMap.values())
             this.dataFormTwo.productData.forEach(item => {
-        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+            if(this.isXBN)  this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
               
             });
           }
@@ -1448,7 +1471,7 @@ export default {
       this.productVisible = false
       this.selectArr.forEach((item) => {
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-        this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+       if(this.isXBN) this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
         this.dataFormTwo.productData.push(item)
       })
       let uniqueArr = []
@@ -1496,7 +1519,7 @@ export default {
       if (!row.receivedQuantity) {
         return
       }
-      row.receivedQuantity = row.receivedQuantity.replace(/[^0-9.]/g, '')
+      row.receivedQuantity = String(row.receivedQuantity).replace(/[^0-9.]/g, '')
 
       if (row.receivedQuantity.length == 1 && row.receivedQuantity == '.') {
         // 如果第一位是小数点，则清空输入框
@@ -1855,7 +1878,7 @@ export default {
             item.ordersNo = item.orderNo
             this.$set(item, 'receivedQuantity', item.waitReceiptNum)
             this.$set(item, 'discount', 1)
-            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+            if(this.isXBN)this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
           })
         }
       }
@@ -1882,7 +1905,7 @@ export default {
             data.forEach((item) => {
               console.log('ooo888oooo', item)
               item.drawingNo = item.productDrawingNo
-              this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
+             if(this.isXBN) this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
 
             })
             this.dataFormTwo.productData = data
@@ -2033,7 +2056,7 @@ export default {
             })
             return
           }
-          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
+          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)&&this.isXBN) {
             console.log(123)
             submitFlag = false
             this.btnLoading = false
@@ -2059,17 +2082,7 @@ export default {
               }
             }
           }
-          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
-            console.log(123)
-            submitFlag = false
-            this.btnLoading = false
-            this.$message({
-              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
-              type: 'error',
-              duration: 1500
-            })
-            return
-          }
+        
         }
 
 
@@ -2307,12 +2320,12 @@ export default {
         .catch(() => { })
     }
   },
-  beforeUpdate() {
-    this.$nextTick(() => {
-      //在数据加载完，重新渲染表格
-      this.$refs['product'].doLayout()
-    })
-  }
+  // beforeUpdate() {
+  //   this.$nextTick(() => {
+  //     //在数据加载完，重新渲染表格
+  //     this.$refs['product'].doLayout()
+  //   })
+  // }
 }
 </script>
 <style lang="scss" scoped>

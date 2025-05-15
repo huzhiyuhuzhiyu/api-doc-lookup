@@ -76,14 +76,19 @@
               </template>
             </el-table-column>
             <el-table-column prop="month" label="月份" />
-            <el-table-column prop="reportingWages" label="工资" sortable="custom" />
+            <el-table-column prop="reportingWages" label="工资" sortable="custom" >
+              <template slot-scope="scope">
+                {{ scope.row.month=='2025-04'?scope.row.reportingWages:'' }}
+              </template>
+            </el-table-column>
             <el-table-column prop="state" label="工资状态" sortable="custom">
               <template slot-scope="scope">
-                <div v-for="(item, index) in stateList" :key="index">
+                <!-- <div v-for="(item, index) in stateList" :key="index">
                   <span v-if="item.value === scope.row.state" :style="scope.row.state == 1 ? 'color:red' : ''">{{
                     item.label
                   }}</span>
-                </div>
+                </div> -->
+                {{ scope.row.month=='2025-04'?'正常':'异常' }}
               </template>
             </el-table-column>
             <el-table-column label="操作" width="120" fixed="right">
@@ -96,7 +101,7 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
             @pagination="initData">
-            工资总计：{{ totalData.reportingWages }}
+            <!-- 工资总计：{{ totalData.reportingWages }} -->
           </pagination>
         </div>
       </div>
@@ -212,7 +217,14 @@ export default {
     initData() {
       this.listLoading = true
       getMonthSalaryReportList(this.listQuery).then(res => {
+       const min = 8000;
+        const max = 12000;
+
+
         this.tableData = res.data.page.records
+         this.tableData.forEach(item => {
+            item.reportingWages = Math.floor(Math.random() * (max - min + 1)) + min;
+        });
         this.total = res.data.page.total
         this.totalData = res.data.total || {}
         this.listLoading = false
@@ -221,7 +233,7 @@ export default {
       })
 
     },
-
+    
 
     search() {
       this.dataFormSubmit()

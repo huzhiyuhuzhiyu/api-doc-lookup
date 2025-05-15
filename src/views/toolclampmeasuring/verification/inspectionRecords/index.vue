@@ -68,7 +68,7 @@
               <!-- <el-button type="text" @click="addSupplier(scope.row.id, 'edit')" size="mini">送检</el-button> -->
               <el-button type="text" @click="recover(scope.row.id, 'recover')" size="mini" :disabled="scope.row.recoverFlag == '0' ? false : true">收回</el-button>
               <el-button type="text" @click="handleDel(scope.row.id,)" size="mini" :disabled="scope.row.recoverFlag == '1' ? false : true" class="JNPF-table-delBtn">删除</el-button>
-              <el-dropdown hide-on-click>
+              <!-- <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
                     {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -79,7 +79,7 @@
                     查看详情
                   </el-dropdown-item>
                 </el-dropdown-menu>
-              </el-dropdown>
+              </el-dropdown> -->
             </template>
           </el-table-column>
         </JNPF-table>

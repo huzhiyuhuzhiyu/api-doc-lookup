@@ -427,7 +427,7 @@ export default {
         ],
         qualifiedQuantity: [
           { required: true, message: '合格数量不能为空', trigger: 'blur' },
-          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          { validator: this.formValidate({ type: "decimal", params: [20, 4, "请输入正确的数量(最多保留4位小数,整数8位)"], }), trigger: "blur", },
           // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ],
         productionBarrels: [
@@ -460,7 +460,9 @@ export default {
       handler: function (newVal, oldVal) {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : this.currentProcess.qualifiedQuantity?this.currentProcess.qualifiedQuantity:this.currentProcess.waitReportNum
+            
+             
+            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ?  Math.floor((Number(newVal) / Number(this.weight) *Number(this.quantity)) * 10000) / 10000 : this.currentProcess.qualifiedQuantity?this.currentProcess.qualifiedQuantity:this.currentProcess.waitReportNum
             
           } else {
             // this.currentProcess.qualifiedQuantity = 0

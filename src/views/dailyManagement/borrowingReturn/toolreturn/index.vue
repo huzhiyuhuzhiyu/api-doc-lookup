@@ -55,15 +55,15 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column customKey="JNPFTableKey_759857">
           <el-table-column prop="orderNo" label="归还单号" min-width="200" sortable="custom">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                                 scope.row.orderNo
                             }}</el-link>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
-          <el-table-column prop="productName" label="设备名称" min-width="200"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" min-width="120"></el-table-column>
@@ -100,9 +100,9 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
+                    <!-- <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
                       重新提交
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                     <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>

@@ -80,7 +80,7 @@
           <el-table-column label="操作" width="120" fixed="right">
             <template slot-scope="scope">
               <tableOpts :hasEdit="false" @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -91,7 +91,7 @@
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </tableOpts>
             </template>
           </el-table-column>

@@ -114,7 +114,7 @@ export default {
       this.dataFormItems = [
         {
           prop: "workOrder", label: "工单", value: "", type: "custom", customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "change" }], renderTree: false, sm: 12,
-          dialogTitle: "选择工单", listMethod: getWorkList, listRequestObj: this.dialogListRequestObj, tableItems: this.dialogTableItems, searchList: this.dialogTableSearchList,
+          dialogTitle: "选择工单", listMethod: getWorkSimplePage, listRequestObj: this.dialogListRequestObj, tableItems: this.dialogTableItems, searchList: this.dialogTableSearchList,
           change: this.workOrderChange, listDataFormatting: this.dialogListDataFormatting
         },
         { prop: "inspectorId", label: "检验员", value: "", type: "custom", customComponent: "user-select", itemRules: [{ required: true, trigger: "change" }], change: this.inspectorIdChange, sm: 12 },

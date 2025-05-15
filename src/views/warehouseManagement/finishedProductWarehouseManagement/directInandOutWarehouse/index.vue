@@ -79,6 +79,15 @@
                               @change="changeWarehousex"></ComSelect-list>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24" v-if="(isZY || isMS) && dataForm.businessType === 'outbound_pick_out'">
+                            <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
+                                <el-select @change="stockOutboundFlagChange" v-model="dataForm.totalStockOutboundFlag" placeholder="请选择是否按总库存出库" style="width: 100%;"
+                                           :disabled="btnType === 'look'">
+                                    <el-option v-for="(item, index) in global.booleanOptions" :key="index" :label="item.label"
+                                               :value="item.value"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
                         <el-col :sm="6" :xs="24"
                           v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
                           <el-form-item :label="dataForm.businessType == 'outbound_pick_out' ? '领料人' : '退料人'"
@@ -171,14 +180,14 @@
                       <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
-                        v-if="dataForm.documentType == 'inbound'">
+                        v-if="dataForm.documentType == 'inbound' && !dataForm.totalStockOutboundFlag">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.batchNumber" :disabled="btnType == 'look'" placeholder="批次号">
                           </el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="batchNumber" label="批次号" width="200" key="batchNumber"
-                        v-if="dataForm.documentType == 'outbound'">
+                        v-if="dataForm.documentType == 'outbound' && !dataForm.totalStockOutboundFlag">
                         <template slot="header">
                           <span class="required">*</span>批次号
                         </template>
@@ -193,7 +202,7 @@
                         v-if="dataForm.documentType == 'outbound' && btnType != 'look'">
                       </el-table-column>
                       <el-table-column prop="shelfSpaceName" label="库位" width="140" key="shelfSpaceName"
-                        v-if="allocationFlag">
+                        v-if="allocationFlag && !dataForm.totalStockOutboundFlag">
                         <template slot="header" v-if="dataForm.documentType == 'inbound'">
                           <span class="required">*</span>库位
                         </template>
@@ -305,7 +314,7 @@
                       v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','outbound_pick_out','outbound_other','inbound_other'].includes(dataForm.businessType)"
                         label="规值" width="120" key="211">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
+                          <el-select @change="changeStandardValue(scope.row.standardValue,scope)" v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
                               :value="item.name"></el-option>
@@ -815,6 +824,10 @@
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
     <productSymbolForm v-if="productSymbolVisible" ref="productSymbolForm" :productId="currentProductId" @selectProductSymbolData="selectProductSymbolData"></productSymbolForm>
+    <ComSelect-page ref="stockProduct" @change="addOrDelLinesItem" :tableItems="ProductTableItems"
+                      dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObjs"
+                      :searchList="ProductTableSearchList" :elementShow="false"
+                      :multiple="true" :renderTree="false" />
   </div>
 </template>
 <script>
@@ -842,6 +855,7 @@ import { mapGetters, mapState } from 'vuex'
 import tenantMinix from "@/mixins/generator/TenantMinix";
 import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList/productSymbol.vue'
 import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
+import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 
 export default {
   components: { ProductSymbolForm, WareHouseForm, BatchNumberForm, CustomerForm, Process, PrintBrowse, PrintDialog },
@@ -852,6 +866,10 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
+        ProductTableItems: [],
+        ProductListRequestObjs: {},
+        ProductTableSearchList:[],
+        currentStandardValue:'',
       seleBtnLoading:false,
       customStyleData:0,
       columnList:[],
@@ -933,6 +951,7 @@ export default {
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
         diffBatchNumFlag: true,
+        totalStockOutboundFlag: false,
       },
       weightFlagList: [
         { label: "是", value: true },
@@ -1145,6 +1164,7 @@ export default {
   async created() {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
+    this.advancedQueryFuns()
     await this.getProjectSwitch('system', 'project')
     await this.getpairingModeListFun()
     await this.getWarehouseListFun()
@@ -1171,6 +1191,8 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+      getProductList,
+      inventoryWarehouseList,
     selectWeight() {
       this.$nextTick(() => { this.$refs.products.doLayout() })
 
@@ -1293,6 +1315,7 @@ export default {
               name: item.name
             }
           })
+          console.log(this.list8,'规值')
         }
 
       // }
@@ -1553,10 +1576,104 @@ export default {
       let data = JSON.parse(JSON.stringify(row))
       this.productData.splice(index + 1, 0, data);
     },
+    stockOutboundFlagChange(val){
+          if (val) this.$refs.products.doLayout()
+    },
+
+    //  中亚 切换规值时使用 按总库存出库
+    changeStandardValue(val,scope){
+        if (this.isZY || this.isMS) {
+            let query = {
+                classAttributeList:this.classAttributeList,
+                inventoryFlag:1,
+                orderItems:[{asc: true, column: "inventory_quantity"}],
+                pageNum: 1,
+                pageSize: 20,
+                productCode: "",
+                productDrawingNo: "",
+                projectId: this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : '',
+                scrapFlag:false,
+                totalInventoryFlag:true,
+                virtuallyFlag:false,
+                excludeProcessFlag:1,
+                warehouseId: this.dataForm.warehouseId,
+                warehouseName: "",
+                standardValue:val
+            }
+            inventoryWarehouseList(query).then(res=>{
+                let list = res.data.whPage.records
+                if (!list.length) return
+                delete list[0].id
+                this.productData[scope.$index] = {
+                    ...list[0],
+                    num:list[0].inventoryQuantity || '',
+                    taxRate:this.productData[scope.$index].taxRate,
+                    drawingNo:list[0].productDrawingNo,
+                }
+            })
+        }
+
+    },
+    addOrDelLinesItem(id,data){
+        if(!data && !data.length) return
+        let list = data.map(item=>item.all)
+        this.productData = list.map(item=>{
+            this.$set(item,'num','')
+            item.ordersId = ""
+            item.ordersLineId = ""
+            item.noticeId = ""
+            item.noticeLineId = ""
+            item.ordersLineId = ""
+            item.costPrice = item.price || ''
+            item.productsId = item.id
+            item.productDrawingNo = item.drawingNo
+            item.productCode = item.code
+            item.productName = item.name
+            delete item.id
+            return item
+        })
+    },
+    productSelect(){
+        this.ProductListRequestObj = {
+                classAttribute: '',
+                classAttributeList:this.classAttributeList,
+                productCategoryId: '',
+                code: '',
+                name: '',
+                orderItems: [
+                {
+                    asc: false,
+                    column: 'create_time'
+                }
+            ],
+                productStatus: 'enable',
+                productSource: 'purchase',
+                pageNum: 1,
+                pageSize: 20
+            // queryType: 3
+        } // 产品选择弹出框列表请求参数
+        this.ProductTableItems = [
+            { prop: 'code', label: '产品编码', fixed: 'left' },
+            { prop: 'name', label: '产品名称', fixed: 'left' },
+            { prop: 'drawingNo', label: '品名规格' },
+            // { prop: 'spec', label: '规格型号' }
+            // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
+            // { prop: 'processName', label: '工序名称' },
+            // { prop: 'classAttributeText', label: '产品分类' },
+            { prop: "mainUnit", label: "单位" },
+            { prop: "inventoryQuantity", label: "库存数量" },
+        ] // 产品选择弹出框表单展示字段
+            this.ProductTableSearchList = [
+            { prop: 'productCode', label: '产品编码', type: 'input' },
+            { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        ] // 产品选择弹出框搜索条件
+        this.$refs.stockProduct.openDialog()
+    },
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
+      if (this.dataForm.totalStockOutboundFlag) return this.productSelect()
       this.productVisible = true
     this.seleBtnLoading=false
       this.orderForm.productName = ""
@@ -1940,6 +2057,7 @@ export default {
     },
     // 选择业务类型
     selectDocutementType(val) {
+      this.dataForm.totalStockOutboundFlag = val === 'outbound_pick_out'
       // 如果选择的是外协收货 外协发料 采购收退货 需要调用后台参数配置 是否开启显示重量比重折扣显示
       if (val == 'inbound_purchase' || val == 'outbound_purchase' || val == 'outbound_external_send' || val == 'inbound_external') {
         this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')

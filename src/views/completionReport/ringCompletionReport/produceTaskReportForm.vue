@@ -47,7 +47,7 @@
               style="text-align: center;display: inline-block;">
               <div class="processInfoBox" style="cursor: pointer;"
                 :class="item.processId == currentProcessId ? 'processInfo' : ''" @click="getProcessFun(item)">
-                {{ item.processName }} <div>({{ item.processCode }})</div>
+                {{ item.processName }} {{ item.waitReportNum *1 ? '(' + item.waitReportNum + ')' : '' }} <div>({{ item.processCode }})</div>
               </div>
 
             </div>
@@ -153,8 +153,8 @@
                       </el-form-item>
                     </el-col>
                   </template>
-                  
-                
+
+
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -203,15 +203,15 @@
                     <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
                         @blur="handleBlur2" class="ipt materialWaste" />
-                        <el-button type="primary" 
+                        <el-button type="primary"
                         style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
                     <el-form-item label="料废数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"  
+                      <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"
                         class="ipt materialWaste" />
-                      <el-button type="primary"  
+                      <el-button type="primary"
                         style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
                   </el-col>
@@ -271,7 +271,7 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
-                 
+
                   <el-col :sm="24" :xs="24">
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">
@@ -336,7 +336,7 @@
 
 </template>
 
-<script> 
+<script>
 
 import {
   getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
@@ -407,7 +407,7 @@ export default {
         {label:"否",value:false,},
 
       ],
-      equipmentList:"", 
+      equipmentList:"",
       currentProcess: {},
       listLoading: false,
       currentProcessId: "",
@@ -461,7 +461,7 @@ export default {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
             this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : this.currentProcess.qualifiedQuantity?this.currentProcess.qualifiedQuantity:this.currentProcess.waitReportNum
-            
+
           } else {
             // this.currentProcess.qualifiedQuantity = 0
           }
@@ -484,7 +484,7 @@ export default {
         this.bimProductAttributesList = res.data
       })
     },
-    
+
     // 工单顺序调换申请
     orderRemakeRequest(type){
       this.TransitionRemakeVisible = true
@@ -541,7 +541,7 @@ export default {
     materialWasteData(data,totalNums) {
       console.log("设置的料废金额", data,totalNums);
       if(totalNums){
-     
+
       this.materialWasteDataList = data
       this.currentProcess.materialWasteQuantity=totalNums
         this.handleBlur2()
@@ -636,7 +636,7 @@ export default {
             ...item,
           autoUnqualifiedQuantity :item.unqualifiedQuantity
           }
-          
+
         })
         this.remakeUnqualifiedQuantity = this.workList[0].autoUnqualifiedQuantity
         this.materialList = res.data.materialList
@@ -649,7 +649,7 @@ export default {
             this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
           })
         }
-      
+
         if (Object.keys(this.copyCurrentProcess).length !== 0) {
           const matchingItem = res.data.workOrderList.find(item => item.processId === this.copyCurrentProcess.processId);
           if (matchingItem) {
@@ -657,21 +657,22 @@ export default {
             this.currentProcess = matchingItem
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
-            this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
-            this.$set(this.currentProcess,'qualifiedQuantity',this.dataForm.productionQuantity) 
+            this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
+            this.$set(this.currentProcess,'qualifiedQuantity',this.dataForm.productionQuantity)
             this.processInfo = JSON.parse(JSON.stringify(matchingItem))
           } else {
           }
         } else {
-          this.currentProcessId = res.data.workOrderList[0].processId
-          this.currentProcess = res.data.workOrderList[0]
+            // 修改初始进入报工默认展示第一条  更改为可报工数量有值的项显示
+          this.currentProcess =  res.data.workOrderList.find(item=>+item.waitReportNum && item.reportFlag) || res.data.workOrderList[0]
+          this.currentProcessId = this.currentProcess.processId
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
-          this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)    
-          this.processInfo = JSON.parse(JSON.stringify(res.data.workOrderList[0]))
+          this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
+          this.processInfo = JSON.parse(JSON.stringify(this.currentProcess))
         }
         if(this.currentProcess.workOrderResMap && this.currentProcess.workOrderResMap.device){
-          
+
           this.equipmentList=this.currentProcess.workOrderResMap.device
         }
         this.$set(this.currentProcess, 'reportingQuantity', 0)
@@ -693,7 +694,7 @@ export default {
       this.currentProcess = item
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
-      this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight) 
+      this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
 
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
@@ -737,7 +738,7 @@ export default {
       this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.qualifiedQuantity, this.currentProcess.unqualifiedQuantity]), 6)
       this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
-  
+
     },
     reportingTimeChange(e) {
       this.currentProcess.reportingTime = e + ' 00:00:00'
@@ -830,7 +831,7 @@ export default {
     },
     // 报工
     report() {
-      // 先判断是否有测震工序(sort有值表示有测震工序)  
+      // 先判断是否有测震工序(sort有值表示有测震工序)
       // 如果有 拿当前工序排序值大于等于测震工序值 则表示是测震工序或测震后工序
       // 如果没有 则是测震前工序
       console.log(this.currentProcess);
@@ -859,7 +860,7 @@ export default {
             return
           }
           }
-          
+
           if (this.currentProcess.reportFlag && this.currentProcessType === 1) {
             if (!this.totalReportNum) {
               submitFlag = false
@@ -882,7 +883,7 @@ export default {
           obj.reworkQuantity = this.currentProcess.reworkQuantity
           obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
           obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
-          obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList] 
+          obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList]
           obj.pricingType = this.currentProcess.pricingType
           obj.processId = this.currentProcess.processId
           obj.producerId = this.currentProcess.producerId
@@ -904,9 +905,9 @@ export default {
             obj.actualQualifiedQuantity = this.currentProcess.qualifiedQuantity
             // obj.mainUnit = '盒'
           }
-          
+
           arr.push(obj)
-      
+
           addWorkReport(arr).then(res => {
             this.$message.success("报工成功")
             this.init(this.id)
@@ -972,7 +973,7 @@ export default {
 
 
 
- 
+
 ::v-deep .el-tabs__content {
 height: auto !important;
 padding: 0;
@@ -987,7 +988,7 @@ padding: 9px 10px;
   color: red;
   margin-right: 4px;
 }
- 
+
 .el-dialog .el-dialog__body {
   padding: 20px 0px 2px !important;
 }

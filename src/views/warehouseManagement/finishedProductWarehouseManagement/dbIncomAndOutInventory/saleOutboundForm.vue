@@ -53,7 +53,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                             && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled>
@@ -75,7 +75,7 @@
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                           
+
                           <el-col :sm="6" :xs="24" >
                             <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
                               <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" style="width: 100%;" :disabled="btnType=='look'"
@@ -85,13 +85,21 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="12" :xs="24">
-                            <el-form-item label="备注" prop="remark">
-                              <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                                :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
-                                maxlength="200" />
-                            </el-form-item>
-                          </el-col>
+                            <el-col :sm="isZY ? 6 : 12" :xs="24">
+                                <el-form-item label="备注" prop="remark">
+                                    <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
+                                              maxlength="200" />
+                                </el-form-item>
+                            </el-col>
+                            <template v-for="item in 6">
+                                <el-col :sm="6" :xs="24" :key="item" v-if="isZY">
+                                    <el-form-item :label="'备注'+item" :prop="'ordersRemark'+item">
+                                        <el-input v-model="dataForm['ordersRemark'+item]" :placeholder="'请输入备注'+item"
+                                                  disabled type="textarea" :rows="2" maxlength="200" />
+                                    </el-form-item>
+                                </el-col>
+                            </template>
                         </el-row>
                       </el-form>
                     </el-collapse-item>
@@ -202,12 +210,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -220,7 +228,7 @@
                         <el-table-column prop="colour" :label="$store.getters.colour"  width="130"></el-table-column>
                         <el-table-column prop="material" label="材质" width="120" v-if="$store.getters.configData.orderField.material">
                        </el-table-column>
-                        <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                        <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -307,7 +315,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                             && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="客户" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" disabled>
@@ -338,13 +346,21 @@
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="12" :xs="24">
-                            <el-form-item label="备注" prop="remark">
-                              <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                                :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
-                                maxlength="200" />
-                            </el-form-item>
-                          </el-col>
+                            <el-col :sm="isZY ? 6 : 12" :xs="24">
+                                <el-form-item label="备注" prop="remark">
+                                    <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
+                                              maxlength="200" />
+                                </el-form-item>
+                            </el-col>
+                            <template v-for="item in 6">
+                                <el-col :sm="6" :xs="24" :key="item" v-if="isZY">
+                                    <el-form-item :label="'备注'+item" :prop="'ordersRemark'+item">
+                                        <el-input v-model="dataForm['ordersRemark'+item]" :placeholder="'请输入备注'+item"
+                                                  disabled type="textarea" :rows="2" maxlength="200" />
+                                    </el-form-item>
+                                </el-col>
+                            </template>
                         </el-row>
                       </el-form>
                     </el-collapse-item>
@@ -453,12 +469,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -468,7 +484,7 @@
                        </el-table-column>
                        <el-table-column prop="material" label="材质" width="120" v-if="$store.getters.configData.orderField.material">
                        </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -950,7 +966,7 @@ export default {
         this.$set(this.productData[index], 'num', newNum)
         console.log(this.productData,'this.productData')
       }
-    }, 
+    },
 
 
 
@@ -962,7 +978,7 @@ export default {
 
     },
 
-    // 点击选择产品 销售发货 
+    // 点击选择产品 销售发货
     openSeleceProductDialog() {
       if (this.dataForm.businessType != 'inbound_return_materials' && this.dataForm.businessType != 'outbound_pick_out') {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
@@ -1343,7 +1359,7 @@ export default {
 
 
 
-      
+
       }
 
 
@@ -1481,7 +1497,7 @@ export default {
 
               this.productData.forEach(item => {
                 this.$set(item,'warehouseId',this.dataForm.warehouseId)
-                    
+
               })
             }
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))

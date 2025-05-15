@@ -54,21 +54,29 @@
             <el-table-column prop="maintenanceNo" label="维修单号" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="报修说明" min-width="180" sortable="custom" /> 
-            <el-table-column prop="code" label="报修照片" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="上报人" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="状态" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="维修人" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="维修说明" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="维修照片" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="报修时间" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="维修开始时间" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="维修完成时间" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenancePlanDate" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenancePlanDate" label="更新时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="确认人" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenancePlanDate" label="确认时间" min-width="180" sortable="custom" />
-            <el-table-column prop="maintenancePlanDate" label="确认内容" min-width="180" sortable="custom" />
+            <el-table-column prop="reportInstructions" label="报修说明" min-width="180" sortable="custom" /> 
+            <!-- <el-table-column prop="code" label="报修照片" min-width="180" sortable="custom" /> -->
+            <el-table-column prop="applicantIdName" label="上报人" min-width="180" sortable="custom" />
+            <el-table-column prop="state" label="状态" min-width="180" sortable="custom" >
+              <template slot-scope="scope">
+                <div v-if="scope.row.state=='toBeMaintain'">待维修</div>
+                <div v-if="scope.row.state=='maintaining'">待确定</div>
+                <div v-if="scope.row.state=='maintained'">已确认</div>
+              
+              </template>
+                   
+            </el-table-column>
+            <el-table-column prop="maintenancePersonnel" label="维修人" min-width="180" sortable="custom" />
+            <el-table-column prop="repairInstructions" label="维修说明" min-width="180" sortable="custom" />
+            <el-table-column prop="afterPic" label="维修照片" min-width="180" sortable="custom" />
+            <!-- <el-table-column prop="code" label="报修时间" min-width="180" sortable="custom" /> -->
+            <el-table-column prop="startMaintenanceTime" label="维修开始时间" min-width="180" sortable="custom" />
+            <el-table-column prop="repairCompletionTime" label="维修完成时间" min-width="180" sortable="custom" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+            <!-- <el-table-column prop="maintenancePlanDate" label="更新时间" min-width="180" sortable="custom" /> -->
+            <el-table-column prop="applicantIdName" label="确认人" min-width="180" sortable="custom" />
+            <!-- <el-table-column prop="maintenancePlanDate" label="确认时间" min-width="180" sortable="custom" /> -->
+            <!-- <el-table-column prop="maintenancePlanDate" label="确认内容" min-width="180" sortable="custom" /> -->
   
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"

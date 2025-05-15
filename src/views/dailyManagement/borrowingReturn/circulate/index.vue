@@ -48,7 +48,7 @@
           </el-table-column>
           <el-table-column prop="maintainerIdText" label="领用人" min-width="120"></el-table-column>
           <el-table-column prop="collectionTime" label="领用日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="productName" label="设备名称" min-width="200"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="200"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="120"></el-table-column>

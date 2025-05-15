@@ -56,85 +56,40 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" custom-column>
-          <el-table-column prop="orderNo" label="归还单号" min-width="200" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
-                                scope.row.orderNo
-                            }}</el-link>
-            </template>
-          </el-table-column>
+          <el-table-column prop="orderNo" label="归还单号" min-width="200" sortable="custom"> </el-table-column>
           <el-table-column prop="collectionTime" label="归还日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="maintainerIdText" label="归还人" min-width="120"></el-table-column>
-          <el-table-column prop="productName" label="设备名称" min-width="200"></el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="180"></el-table-column>
+          <el-table-column prop="equipmentIdName" label="工具名称" min-width="120"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" min-width="120"></el-table-column>
+          <el-table-column prop="useOderNO" label="领用单号" min-width="180"></el-table-column>
+          <el-table-column prop="useIdName" label="领用人" min-width="120"></el-table-column>
+          <el-table-column prop="useTime" label="领用时间" min-width="180"></el-table-column>
+          <el-table-column prop="returnFlag" label="是否归还" min-width="120">
+            <template slot-scope="scope">
+              {{ scope.row.returnFlag?'是':"否" }}
+            </template>
+          </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" min-width="120"></el-table-column>
-          <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
-            <template slot-scope="scope">
-              <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
-              </div>
-              <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
-            <template slot-scope="scope">
-              <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
-                <el-tag>审批中</el-tag>
-              </div>
-              <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'">
-                <el-tag type="success">审批通过</el-tag>
-              </div>
-              <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'">
-                <el-tag type="danger">审批拒绝</el-tag>
-              </div>
-              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'">
-                <el-tag type="warning">审批撤回</el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.documentStatus == 'submit'" :delDisabled="scope.row.documentStatus == 'submit'">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag" @click.native="handleUserRelation(scope.row.id, 'add')">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag" @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-            </template>
-          </el-table-column>
+       
+        
         </JNPF-table>
         <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" />
       </div>
     </div>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 <script>
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { CollectionandreturnList, deleteCollectionandreturn } from '@/api/dailyManagement/Maintenance'
-import Form from './Form'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters } from 'vuex'
 export default {
   mixins: [getProjectList],
   name: 'equipmentreturn',
-  components: { Form, SuperQuery },
+  components: {  SuperQuery },
   data() {
     return {
       isProjectSwitch: '',
@@ -142,7 +97,12 @@ export default {
       createRequirementDate: [],
       superQueryVisible: false,
       superQueryJson: [
-        { // 日期选择器（区间）
+        {
+          prop: 'orderNo',
+          label: "归还单号",
+          type: 'input'
+        },
+             { // 日期选择器（区间）
           prop: 'collectionTime',
           label: '归还日期',
           type: 'daterange',
@@ -151,14 +111,54 @@ export default {
           endPlaceholder: '申请结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        {
+          {
           prop: 'maintainerIdText',
           label: "归还人",
           type: 'input'
         },
+          {
+          prop: 'equipmentIdName',
+          label: "工具名称",
+          type: 'input'
+        },
+
+          {
+          prop: 'equipmentIdCode',
+          label: "工具编码",
+          type: 'input'
+        },
+   
         {
-          prop: 'remark',
-          label: "备注",
+          prop: 'useOderNO',
+          label: "领用单号",
+          type: 'input'
+        },
+           {
+          prop: 'useIdName',
+          label: "领用人",
+          type: 'input'
+        },
+           {
+          prop: 'useTime',
+          label: "领用时间",
+           type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '领用开始日期',
+          endPlaceholder: '领用结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+         {
+          prop: 'returnFlag',
+          label: "是否归还",
+          type: 'select',
+          options: [
+            { label: '是', value: true },
+            { label: '否', value: false }
+          ]
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
           type: 'input'
         },
         { // 日期时间选择器（区间）
@@ -170,31 +170,6 @@ export default {
           endPlaceholder: '创建结束时间',
           pickerOptions: this.global.timePickerOptions
         },
-        {
-          prop: 'createByName',
-          label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'documentStatus',
-          label: "单据状态",
-          type: 'select',
-          options: [
-            { label: '草稿', value: 'draft' },
-            { label: '提交', value: 'submit' }
-          ]
-        },
-        {
-          prop: 'approvalStatus',
-          label: "审批状态",
-          type: 'select',
-          options: [
-            { label: '审批中', value: 'ing' },
-            { label: '审批通过', value: 'ok' },
-            { label: '审批拒绝', value: 'rebut' },
-            { label: '审批撤回', value: 'withdrawn' },
-          ]
-        }
       ],
       tableData: [],
       listLoading: false,
@@ -202,7 +177,7 @@ export default {
       orderFormone: {
         projectId: '',
         requisitionType: 'back',
-        equipmentType: 'equipment',
+        equipmentType: 'tool',
         maintainerIdText: '',
         useApplication: '',
         collStartTime: '',

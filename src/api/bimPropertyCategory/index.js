@@ -434,3 +434,19 @@ export function equTaskMaintenanceList(data) {
     data 
   })
 }
+
+
+
+
+
+
+// 配件
+// 批量标记为配件
+
+export function batchAccessory(data) {
+  return request({
+    url: `/api/zgt/product/classAttribute/batch/accessory`,
+    method: 'put',
+    data 
+  })
+}

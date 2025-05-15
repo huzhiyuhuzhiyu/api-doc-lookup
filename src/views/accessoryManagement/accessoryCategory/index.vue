@@ -42,10 +42,8 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 8px">
-          <topOpts @add="addSupplier()" >
-              <el-button size="mini" type="primary" icon="el-icon-printer" @click="batchFun">批量标记</el-button>
+                    <el-button size="mini" type="primary" icon="el-icon-printer" @click="batchFun">批量标记</el-button>
 
-            </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -77,16 +75,6 @@
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-                <!-- <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
-                  @click="onHandle(scope.row, 'edit')">
-                  开启仓库
-                </el-button>
-                <el-button v-else type="text" size="mini" @click="offHandle(scope.row.id)">
-                  关闭仓库
-                </el-button> -->
-                <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
-                复制
-              </el-button> -->
               </tableOpts>
             </template>
           </el-table-column>
@@ -96,10 +84,31 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <WarehouseForm v-if="warehouseFormVisible" ref="warehouseForm" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+          <el-dialog title="批量设置为配件" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="batchVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="requestForm"  label-width="120px" label-position="left">
+          
+          <el-col :span="24">
+            <el-form-item label="是否设置为配件" prop="accessoryFlag">
+               <el-select v-model="requestForm.accessoryFlag" placeholder="请选择" >
+                  <el-option v-for="(item, index) in accessoryFlagList" :key="index" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+          </el-col>
+         
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -110,16 +119,21 @@ import {
   getclassAttributeList,
   disabledClassAttributeState
 } from '@/api/masterDataManagement/index'
+import { batchAccessory} from '@/api/bimPropertyCategory/index'
 import Form from './Form'
-import WarehouseForm from './WarehouseForm.vue'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { updateSortBatch } from '@/api/masterDataManagement/index'
 export default {
   name: 'supplierProfile',
-  components: { Form, SuperQuery, WarehouseForm },
+  components: { Form, SuperQuery,  },
   data() {
     return {
+      batchVisible:false,
+      accessoryFlagList:[
+        {label:"是",value:true},
+        {label:"否",value:false},
+      ],
       searchList: [
         { field: 'code', fieldValue: '', label: '类别编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '类别名称', symbol: 'like', searchType: 1, width: 120 },
@@ -138,6 +152,10 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
+      requestForm:{
+        ids:[],
+        accessoryFlag:true,
+      },
       form: {
         code: '',
         name: '',
@@ -220,7 +238,10 @@ export default {
     },
     batchFun(){
       if(!this.selectArr.length)return this.$message.error("请先选择您要标记为配件的数据")
-      this.$confirm(this.$t('确定将所选的数据标记为配件'), this.$t('common.tipTitle'), {
+      this.batchVisible=true
+    },
+    submitFun(){
+           this.$confirm(this.$t('确定将所选的数据标记为配件'), this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
@@ -373,14 +394,7 @@ export default {
         // }, 600);
       }
     },
-    onHandle(row, btn) {
-      this.warehouseFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.warehouseForm.init(row, btn)
-      })
 
-
-    },
     offHandle(id, btn) {
       let obj = {
         id: id,

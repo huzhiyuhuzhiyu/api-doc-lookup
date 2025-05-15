@@ -716,6 +716,12 @@ export default {
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
+        productionWeight: [
+          { required: true, message: '生产重量不能为空', trigger: 'blur' }
+        ],
+        productionBarrels: [
+          { required: true, message: '生产桶数不能为空', trigger: 'blur' }
+        ],
         productionQuantity: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["生产数量不能为空", (errMsg, index) => { this.$message.error(`生产数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },

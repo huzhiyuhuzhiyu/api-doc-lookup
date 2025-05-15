@@ -2237,7 +2237,6 @@ export default {
               // }
             }
           }
-          return
           // 自动聚焦未使用则提交
           if (submitFlag) {
             this.dataForm.documentStatus = submitModel

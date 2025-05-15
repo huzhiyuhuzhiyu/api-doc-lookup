@@ -704,9 +704,8 @@
             </div>
             <JNPF-table ref="productVisibles" :partentOrChild="'child'" custom-column v-loading="listLoading"
               :data="productList" hasC :fixedNO="true" @selection-change="handleSelectionChangeAllPruduct"
-              @sort-change="sortChange" @row-click="handleRowClick">
-              <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" sortable="custom"
-                v-if="dataForm.businessType !== 'inbound_sale_return'" />
+              @sort-change="sortChange" :header-cell-class-name="handleHeaderCellClass" @row-click="handleRowClick">
+              <el-table-column prop="partnerName" label="供应商名称" width="140" key="partnerName" v-if="dataForm.businessType !== 'inbound_sale_return'" />
               <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="productCode" />
               <el-table-column prop="code" label="产品编码" min-width="130" sortable="custom"
@@ -1121,7 +1120,15 @@ export default {
       diffBatchList: [
         { label: '产品生成同批次号', value: false },
         { label: '产品生成不同批次号', value: true },
-      ]
+      ],
+
+      // 排序数组
+      sortArr: [{
+        asc: false,
+        column: "create_time"
+      }],
+      sortField: {}, // 存储每个字段的排序方式 ascending/descending
+      sortStack: [], // 记录排序字段点击顺序
     }
   },
   computed: {
@@ -1653,17 +1660,67 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
+
       if (prop === 'productDrawingNo' || prop === 'productName' || prop === 'productCode') {
-        newProp = prop
+        newProp = prop;
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
-      if (prop == 'partnerName' && this.dataForm.businessType == 'outbound') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase())
-      this.orderForm.orderItems[0].asc = order === 'ascending'
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
-      this.searchProductFun()
+
+      if (prop === 'partnerName' && this.dataForm.businessType === 'outbound') {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+
+      const index = this.sortStack.indexOf(prop);
+
+      // 如果取消排序（再次点击同一个字段）
+      if (!order || this.sortField[prop] === order) {
+        this.sortField[prop] = null;
+        if (index > -1) {
+          this.sortStack.splice(index, 1); // 删除该字段
+        }
+      } else {
+        this.sortField[prop] = order;
+        if (index === -1) {
+          this.sortStack.unshift(prop); // 变化字段放在首位
+        }
+      }
+
+      // 构建排序数组（按照 sortStack 顺序）
+      this.sortArr = this.sortStack.map(key => ({
+        column: key,
+        asc: this.sortField[key] === 'ascending'
+      }));
+
+      // 添加默认排序字段（仅当无自定义排序时）
+      const defaultSort = this.dataForm.documentType === 'inbound'
+        ? 'create_time'
+        : 't1.create_time';
+
+      if (this.sortArr.length === 0) {
+        this.sortArr.push({ column: defaultSort, asc: false });
+      } else {
+        // 若已存在默认排序字段，则替换或忽略
+        const existsDefault = this.sortArr.some(item => item.column === defaultSort);
+        if (!existsDefault) {
+          this.sortArr.push({ column: defaultSort, asc: false });
+        }
+      }
+
+      // 更新请求参数
+      if (this.dataForm.documentType === 'inbound') {
+        this.listQuery.orderItems = this.sortArr;
+      } else {
+        this.orderForm.orderItems = this.sortArr;
+      }
+
+      this.searchProductFun();
+    },
+    // 设置列的排序为我们自定义的排序
+    handleHeaderCellClass({ column }) {
+      if (this.sortField[column.property]) {
+        column.order = this.sortField[column.property]
+      }
     },
     // 选完产品后  渲染在产品信息列表
     submitAllProduct() {

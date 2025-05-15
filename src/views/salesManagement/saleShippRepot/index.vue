@@ -137,7 +137,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: ""
+          column: "sale_delivery_no"
         }],
       },
 

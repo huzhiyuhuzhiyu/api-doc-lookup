@@ -88,7 +88,7 @@ export default {
         { prop: 'productDrawingNo', label: '产品图号', minWidth: 200 },
         { prop: 'processCode', label: '工序编码' },
         { prop: 'processName', label: '工序名称' },
-        { prop: 'dispatchedQuantity', label: '派工数量' },
+        { prop: 'productionQuantity', label: '生产数量' },
         { prop: 'productionOrderNo', label: '生产订单号', minWidth: 200 },
         // { prop: 'workOrderNo', label: '工作令号', minWidth: 200 },
         { prop: 'firstInspectionStatus', label: '上次首检结果' },
@@ -97,10 +97,7 @@ export default {
       dialogTableSearchList: [
         { prop: "orderNo", label: "工单号", type: 'input' },
         { prop: "productName", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "产品图号", type: 'input' },
         { prop: "processName", label: "工序名称", type: 'input' },
-        { prop: "productionOrderNo", label: "生产订单号", type: 'input' },
-        { prop: "workOrderNo", label: "工作令号", type: 'input' },
       ], // 弹出框搜索条件
     }
   },

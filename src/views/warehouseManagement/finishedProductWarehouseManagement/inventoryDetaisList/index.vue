@@ -792,7 +792,7 @@ export default {
           this.tableDataFlag = true
           if (this.productNameFlag == '1') {
             this.superQueryJson.splice(5, 0, {
-              prop: 'productsName',
+              prop: 'productName',
               label: '产品名称',
               type: 'input'
             })

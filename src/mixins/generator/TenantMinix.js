@@ -5,6 +5,7 @@ export const tenant = {
   fhxygq: ['fhxygq'], // 项源钢球
   fhjrgq: ['fhjrgq'], // 精瑞钢球
   zgt_xbn: ['zgt_xbn','xbeining'], // 精瑞钢球
+  zgt_zy: ['zhongya','xzhongya', 'zgt_zy', 'zgt_xzy'], // 精瑞钢球
 }
 const tenantSymbol = Symbol('tenant')
 
@@ -33,6 +34,9 @@ export default {
     },
     isXBN(){
       return tenant['zgt_xbn'].includes(this[tenantSymbol])
+    },
+    isZY(){
+      return tenant['zgt_zy'].includes(this[tenantSymbol])
     },
   }
 }

@@ -1588,7 +1588,7 @@ export default {
     },
 
     //  中亚 切换规值时使用 按总库存出库
-    changeStandardValue(val,scope){
+    async changeStandardValue(val,scope){
         if (this.isZY || this.isMS) {
             let query = {
                 classAttributeList:this.classAttributeList,
@@ -1608,30 +1608,31 @@ export default {
                 warehouseName: "",
                 standardValue:val
             }
-            inventoryWarehouseList(query).then(res=>{
-                let list = res.data.whPage.records
-                if (!list.length) return
-                delete list[0].id
-                this.productData[scope.$index] = {
-                    ...list[0],
-                    num:list[0].inventoryQuantity || '',
-                    taxRate:this.productData[scope.$index].taxRate,
-                    drawingNo:list[0].productDrawingNo,
-                }
-            })
+            const res = await inventoryWarehouseList(query)
+            let list = res.data.whPage.records
+            if (!list.length) {
+                this.productData[scope.$index].inventoryQuantity = 0
+                return
+            }
+            delete list[0].id
+            this.productData[scope.$index].num = list[0].inventoryQuantity || ''
+            this.productData[scope.$index].drawingNo = list[0].productDrawingNo
+            this.productData[scope.$index].inventoryQuantity = list[0].inventoryQuantity
+            this.productData[scope.$index].warehouseId = list[0].warehouseId
         }
 
     },
     addOrDelLinesItem(id,data){
         if(!data && !data.length) return
         let list = data.map(item=>item.all)
-        this.productData = list.map(item=>{
-            this.$set(item,'num','')
+        let selectArr = list.map(item=>{
+            this.$set(item,'num',item.inventoryQuantity)
             item.ordersId = ""
             item.ordersLineId = ""
             item.noticeId = ""
             item.noticeLineId = ""
             item.ordersLineId = ""
+            item.warehouseId = this.dataForm.warehouseId
             item.costPrice = item.price || ''
             item.productsId = item.id
             item.productDrawingNo = item.drawingNo
@@ -1640,6 +1641,11 @@ export default {
             delete item.id
             return item
         })
+        if (this.productData.length){
+            this.productData = [...this.productData,...selectArr]
+        }else{
+            this.productData = selectArr
+        }
     },
     productSelect(){
         this.ProductListRequestObjs = {
@@ -1862,7 +1868,7 @@ export default {
         item.ordersId = ""
         item.ordersLineId = ""
         item.noticeId = ""
-        item.num = item.inventoryQuantity || ''
+        item.num = ''
         item.costPrice = ""
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
@@ -2489,7 +2495,8 @@ export default {
                 warehouseType: this.dataForm.warehouseType,
                 inspectionResults: this.dataForm.inspectionResults,
                 approvalFlag: false,
-                orderDate: this.dataForm.orderDate
+                orderDate: this.dataForm.orderDate,
+                totalStockOutboundFlag: this.dataForm.businessType
               }
               this.productData = []
               this.$refs.dataForm.resetFields()

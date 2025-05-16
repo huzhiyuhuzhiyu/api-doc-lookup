@@ -675,7 +675,6 @@ export default {
       dataForm: {
         planDate: [],
         lineEdgeList: [],
-        lineEdgeId: "",
         orderNo: "",
         productsDrawingNo: "",
         productsCode: "",
@@ -701,6 +700,7 @@ export default {
         projectId: "",
         orderType: "manually",
         lineEdgeId: "",
+        productionBarrels:1,
       },
       dataFormTwo: {
         data: [],
@@ -829,9 +829,18 @@ export default {
     await this.getCheckingSwitch('produce', 'checking_information')
     this.getPickingConfig()
     this.getProductClassFun()
+    if (this.isXY || this.isJR){
+      this.setPlanDate()
+    }
   },
 
   methods: {
+      setPlanDate(){
+          const today = new Date();
+          const nextWeek = new Date(today);
+          nextWeek.setDate(today.getDate() + 7);
+          this.dataForm.planDate = [this.jnpf.getToday(), this.jnpf.dateFormat(nextWeek,'YYYY-MM-DD')];
+      },
     getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
@@ -937,7 +946,7 @@ export default {
       this.$refs.dataForm.resetFields('routingName');
 console.log("this.$refs.dataForm",this.$refs.dataForm);
       this.dataForm.productsDrawingNo = data.drawingNo
-      this.dataForm.productsCode = data.code 
+      this.dataForm.productsCode = data.code
       this.dataForm.productsName = data.name
       this.dataForm.productsId = data.id
       if (this.$store.getters.configData.produce.steelBallTask) {

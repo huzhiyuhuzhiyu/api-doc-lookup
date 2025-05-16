@@ -292,7 +292,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      // this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       this.jnpf.searchTimeFormat(this.orderForm, this.createRequirementDate, 'collStartTime', 'collEndTime')
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records

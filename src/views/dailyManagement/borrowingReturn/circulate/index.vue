@@ -285,7 +285,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+      // this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       CollectionandreturnList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total

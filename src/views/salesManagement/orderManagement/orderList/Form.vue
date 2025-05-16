@@ -6,6 +6,8 @@
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售订单' : btnType == 'edit' ? '编辑销售订单' : btnType == 'look' ? '查看销售订单' : '新建销售订单'" />
           <div class="options">
+            <el-button type="primary" v-if="btnType !== 'look' && isZY" size="mini" :loading="btnLoading" @click="getHistoryRemark()">
+                  历史备注</el-button>
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('draft')">
               保存草稿</el-button>
@@ -1292,7 +1294,19 @@
 <script>
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, addBimProductAttributesRecord } from '@/api/salesManagement/assemblyOrders'
+import {
+    getOrderDetail,
+    addOrders,
+    editOrders,
+    getcategoryTrees,
+    getAttributeline,
+    getcooperativeProduct,
+    getCopyOrders,
+    getWorkOrderNo,
+    uploadProduct,
+    addBimProductAttributesRecord,
+    getSaleHistoryRemark
+} from '@/api/salesManagement/assemblyOrders'
 import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
 import { getOrganization } from '@/api/permission/user'
@@ -3400,6 +3414,19 @@ export default {
           this.switchStyleheight()
         }, 100)
       }
+    },
+    getHistoryRemark(){
+        this.btnLoading = true
+        getSaleHistoryRemark().then(res=>{
+            this.btnLoading = false
+            if (res.data){
+                for (let key in res.data){
+                    this.dataForm[key] = res.data[key]
+                }
+            }
+        }).catch(err=>{
+            this.btnLoading = false
+        })
     },
   }
 }

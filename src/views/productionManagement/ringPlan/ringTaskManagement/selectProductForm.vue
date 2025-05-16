@@ -58,15 +58,17 @@
 import { getProducts} from '@/api/masterDataManagement/index.js' // 产品列表 
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import tenantMinix from "@/mixins/generator/TenantMinix";
+
 export default {
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
   data() {
     return {
       
       customerVisible: false,
      
       form: {
-        classAttributeList: ["semi_finished",'raw_material'],
+        classAttributeList: [],
         productDrawingNo:"",
         productCode:"",
         pageNum: 1,
@@ -115,6 +117,7 @@ export default {
     getbatchNumList(id) {
       this.listLoading = true
       this.form.projectId = id
+      this.form.classAttributeList=this.isXBN?["semi_finished",'raw_material']:['semi_finished']
       getProducts(this.form).then(res => {
       this.customerVisible = true
       console.log("工艺路线", res);

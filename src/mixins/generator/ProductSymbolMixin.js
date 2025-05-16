@@ -9,7 +9,7 @@ export default {
         selectProductSymbolData(row,index,data){
             delete row.id
             for (let key in row){
-                data[index][key] = row[key]
+                this.$set(data[index],data[index][key],row[key])
             }
         },
         //   点击选择代号 带出属性

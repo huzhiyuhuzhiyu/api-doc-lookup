@@ -221,7 +221,7 @@
                         </el-table-column>
                         <el-table-column prop="forceCompleteFlag" label="是否强制完成"  width="120" :key="1">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成" 
+                            <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成"
                               :disabled="btnType == 'look'">
                               <el-option v-for="(item, index) in forceCompleteFlagList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
@@ -229,9 +229,9 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120"
-                        key="123"> 
+                        key="123">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                          <el-select  filterable allow-create  v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
                               :value="item.name"></el-option>
@@ -239,7 +239,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120"
-                        key="123"> 
+                        key="123">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -528,7 +528,7 @@
                         </el-table-column>
                         <el-table-column prop="forceCompleteFlag" label="是否强制完成"  width="120" :key="1">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成" 
+                            <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成"
                               :disabled="btnType == 'look'">
                               <el-option v-for="(item, index) in forceCompleteFlagList" :key="index" :label="item.label"
                                 :value="item.value"></el-option>
@@ -538,7 +538,7 @@
                         <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
                         key="123">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                          <el-select  filterable allow-create  v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
                               :value="item.name"></el-option>

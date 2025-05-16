@@ -348,7 +348,7 @@
                       <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
                         key="123">
                         <template slot-scope="scope">
-                          <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                          <el-select filterable allow-create v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
                               :value="item.name"></el-option>

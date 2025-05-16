@@ -814,7 +814,7 @@ export default {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
             if (this.weight && this.quantity) {
-              this.$set(this.dataForm,'productionQuantity',Number(newVal) / Number(this.weight) * Number(this.quantity))
+              this.$set(this.dataForm,'productionQuantity',  Math.floor((Number(newVal) / Number(this.weight) *Number(this.quantity)) * 10000) / 10000)
             } else {
               this.$set(this.dataForm,'productionQuantity',0)
             }

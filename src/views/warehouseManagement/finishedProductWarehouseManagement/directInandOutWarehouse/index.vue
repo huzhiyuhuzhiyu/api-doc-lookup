@@ -2496,7 +2496,7 @@ export default {
                 inspectionResults: this.dataForm.inspectionResults,
                 approvalFlag: false,
                 orderDate: this.dataForm.orderDate,
-                totalStockOutboundFlag: this.dataForm.businessType
+                totalStockOutboundFlag: this.dataForm.businessType === 'outbound_pick_out'
               }
               this.productData = []
               this.$refs.dataForm.resetFields()

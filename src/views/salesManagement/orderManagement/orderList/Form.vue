@@ -6,7 +6,7 @@
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售订单' : btnType == 'edit' ? '编辑销售订单' : btnType == 'look' ? '查看销售订单' : '新建销售订单'" />
           <div class="options">
-            <el-button type="primary" v-if="btnType !== 'look' && isZY" size="mini" :loading="btnLoading" @click="getHistoryRemark()">
+            <el-button type="primary" v-if="isZY ? btnType !== 'look' : false" size="mini" :loading="btnLoading" @click="getHistoryRemark()">
                   历史备注</el-button>
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('draft')">
@@ -3420,8 +3420,10 @@ export default {
         getSaleHistoryRemark().then(res=>{
             this.btnLoading = false
             if (res.data){
+                delete res.data.id
+                delete res.data.createTime
                 for (let key in res.data){
-                    this.dataForm[key] = res.data[key]
+                    this.$set(this.dataForm,key,res.data[key])
                 }
             }
         }).catch(err=>{

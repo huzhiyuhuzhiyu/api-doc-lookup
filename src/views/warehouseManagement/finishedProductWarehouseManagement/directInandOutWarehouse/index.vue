@@ -1598,6 +1598,7 @@ export default {
                 pageSize: 20,
                 productCode: "",
                 productDrawingNo: "",
+                productsId:this.productData[scope.$index].productsId,
                 projectId: this.isProjectSwitch === '1' ? this.dataForm.projectId || '' : '',
                 scrapFlag:false,
                 totalInventoryFlag:true,
@@ -1641,7 +1642,7 @@ export default {
         })
     },
     productSelect(){
-        this.ProductListRequestObj = {
+        this.ProductListRequestObjs = {
                 classAttribute: '',
                 classAttributeList:this.classAttributeList,
                 productCategoryId: '',
@@ -1663,10 +1664,6 @@ export default {
             { prop: 'code', label: '产品编码', fixed: 'left' },
             { prop: 'name', label: '产品名称', fixed: 'left' },
             { prop: 'drawingNo', label: '品名规格' },
-            // { prop: 'spec', label: '规格型号' }
-            // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
-            // { prop: 'processName', label: '工序名称' },
-            // { prop: 'classAttributeText', label: '产品分类' },
             { prop: "mainUnit", label: "单位" },
             { prop: "inventoryQuantity", label: "库存数量" },
         ] // 产品选择弹出框表单展示字段

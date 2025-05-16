@@ -203,3 +203,10 @@ export const delBimProductAttributesRecord = (id) => {
     method: 'delete'
   })
 }
+// 获取中亚备注
+export const getSaleHistoryRemark = () => {
+  return request({
+    url: `/api/erp/sale/orders/ordersRemark`,
+    method: 'get'
+  })
+}

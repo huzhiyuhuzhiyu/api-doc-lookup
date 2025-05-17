@@ -1428,6 +1428,7 @@ export default {
               })
             }
             this.dataForm = res.data
+            if(!res.data.relatedOut)return
             this.dataForm.outType=res.data.relatedOut.outType
             this.dataForm.outPartnerName=res.data.relatedOut.outPartnerName
             this.dataForm.outPartnerId=res.data.relatedOut.outPartnerId

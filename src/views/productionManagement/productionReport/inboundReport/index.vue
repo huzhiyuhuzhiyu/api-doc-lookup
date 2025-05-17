@@ -1,18 +1,19 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-     <div class="JNPF-common-layout-center JNPF-flex-main">
+ 
+          <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
                   <el-col :span="4">
                 <el-form-item>
-                  <el-date-picker v-model="productionDate" type="daterange" value-format="yyyy-MM-dd"
-                    style="width: 100%;" start-placeholder="请选择生产开始日期" end-placeholder="请选择生产结束日期">
+                  <el-date-picker v-model="inboundDate" type="daterange" value-format="yyyy-MM-dd"
+                    style="width: 100%;" start-placeholder="请选择单据开始日期" end-placeholder="请选择单据结束日期">
                   </el-date-picker>
                 </el-form-item>
               </el-col>
-               <template v-for="item in searchList1">
-                <el-col :span="item.searchType === 3 ? 6 : 3">
+               <template v-for="item in searchList2">
+                <el-col :span="item.searchType === 3 ? 6 : 4">
                   <el-form-item>
                     <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                       @keyup.enter.native="search('basic')" />
@@ -28,9 +29,8 @@
                       :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                   </el-form-item>
                 </el-col>
-              </template>
-           
-                <el-col :span="4">
+              </template> 
+                <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                       {{ $t('common.search') }}</el-button>
@@ -43,51 +43,53 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
                 <div>
-                  <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTableProduce','1250')"> 导出</el-button>
+                  <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTableInbound','1251')"> 导出</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
                     <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFunProduce()" />
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFunInbound()" />
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
                   </el-tooltip>
                 </div>
               </div>
- 
-              <JNPF-table ref="dataTableProduce" v-loading="listLoading" :data=" produceData" :fixedNO="true" @sort-change="sortChange" custom-column>
+            
+              <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="inboundData" :fixedNO="true" @sort-change="sortChange" custom-column>
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="productionOrderNo" label="生产任务单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="workNo" label="工单单号" min-width="180" />
-                <el-table-column prop="orderNo" label="报工单号" min-width="180" />
-                <el-table-column prop="reportingTime" label="报工时间" min-width="180" />
-                <el-table-column prop="producerName" label="生产人" min-width="120" />
-                <el-table-column prop="processName" label="工序名称" min-width="120" />
-                <el-table-column prop="processCode" label="工序编码" min-width="120" />
-                <el-table-column prop="equipmentName" label="设备名称" min-width="120" />
-                <el-table-column prop="equipmentCode" label="设备编码" min-width="120" />
+                <el-table-column prop="orderNo" label="入库单号" min-width="180" />
+                <el-table-column prop="batchNumber" label="批次号" min-width="180" />
                 <el-table-column prop="productName" label="产品名称" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" min-width="120" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" />
-                <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" />
-                <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="num" label="入库数量" min-width="120" />
+                <el-table-column prop="warehouseName" label="仓库" min-width="120" />
+                <el-table-column prop="shelfSpaceName" label="库位" min-width="120" />
                 <el-table-column prop="pairingModeName" label="配对方式" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="oil" label="油脂" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="clearance" label="游隙" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="greaseMethod" label="注脂方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="mainUnit" label="单位" width="100" sortable="custom"></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="mainUnit" label="单位" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="orderDate" label="单据日期" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="remark" label="备注" width="120" sortable="custom"></el-table-column>
               </JNPF-table>
-              <pagination :total="produceTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize" @pagination="initData" />
+              <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" />
             </div>
+           
             <!-- 高级查询 -->
-            <SuperQuery :partentOrChild="activeName" :show="superQueryProduceVisible" ref="SuperQuery" :columnOptions="superQueryProduct" @superQuery="superQuerySearchProduce" @close="superQueryProduceVisible = false" />
+            <SuperQuery :partentOrChild="activeName" :show="superQueryInboundVisible" ref="SuperQuery" :columnOptions="superQueryInbound" @superQuery="superQuerySearchInbound" @close="superQueryInboundVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+
           </div>
+ 
     </div>
   </div>
 </template>
@@ -98,24 +100,29 @@ import { produceDataReport,produceInboundReport,produceWorkOrderReport,producePr
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 export default {
-  name: 'productDayReport',
+  name: 'inboundReport',
   components: { SuperQuery,ExportForm },
 
   mixins: [getProjectList],
   data() {
     return {
-      productionDate:[],
-      produceData:[],
-      produceTotal:0,
-      superProductForm: {},
-      productForm:{},
-      productFormList:{
+
+
+
+
+      inboundDate:[],
+      inboundData:[],
+      inboundTotal:0,
+      superInboundForm: {},
+      inboundForm:{},
+      inboundFormList:{
+        classAttribute: "finish_product",
+        businessType: "inbound_mock_production",
         produceStartDate: "",
         produceEndDate: "",
         productName: "",
-        processName: "",
-        producerName: "",
-        equipmentName: "",
+        productionOrderNo: "",
+        orderNo: "",
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -133,13 +140,13 @@ export default {
             condition: []
         }
       }, 
-      searchList1:[
+      searchList2:[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '入库单号', symbol: 'like', searchType: 1, width: 120 },
       ],
-      superQueryProduce: [
+      
+      superQueryInbound: [
         {
           prop: 'projectName',
           label: "所属项目",
@@ -150,51 +157,17 @@ export default {
           label: "生产任务单号",
           type: 'input'
         }, 
-        {
-          prop: 'workNo',
-          label: "工单单号",
-          type: 'input'
-        }, 
-        {
+          {
           prop: 'orderNo',
-          label: "报工单号",
-          type: 'input'
-        }, 
-        { 
-          prop: 'reportingTime',
-          label: '报工时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '创建开始时间',
-          endPlaceholder: '创建结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'producerName',
-          label: "生产人",
+          label: "入库单号",
           type: 'input'
         }, 
         {
-          prop: 'processName',
-          label: "工序名称",
-          type: 'input'
-        },
-          {
-          prop: 'processCode',
-          label: "工序编码",
+          prop: 'batchNumber',
+          label: "批次号",
           type: 'input'
         }, 
-          {
-          prop: 'equipmentName',
-          label: "设备名称",
-          type: 'input'
-        }, 
-             {
-          prop: 'equipmentCode',
-          label: "设备编码",
-          type: 'input'
-        }, 
-        {
+       {
           prop: 'productName',
           label: "产品名称",
           type: 'input'
@@ -209,53 +182,69 @@ export default {
           label: "品名规格",
           type: 'input'
         }, 
+       
         {
-          prop: 'vibrationLevel',
-          label: "振动等级",
+          prop: 'warehouseName',
+          label: "仓库",
           type: 'input'
-        }, 
+        },
+        {
+          prop: 'warehouseName',
+          label: "库位",
+          type: 'input'
+        },
+           {
+          prop: 'pairingModeName',
+          label: "配对方式",
+          type: 'input'
+        },
         {
           prop: 'accuracyLevel',
           label: "精度等级",
           type: 'input'
         },
-         {
-          prop: 'pairingModeName',
-          label: "配对方式",
+
+       {
+          prop: 'oil',
+          label: "油脂",
           type: 'input'
         },
-         {
+        {
+          prop: 'clearance',
+          label: "游隙",
+          type: 'input'
+        },
+        {
           prop: 'packagingMethod',
           label: "包装方式",
           type: 'input'
         },
-       {
-          prop: 'greaseMethod',
-          label: "注脂方式",
+        {
+          prop: 'specialRequire',
+          label: "特殊要求",
           type: 'input'
         },
-       {
-          prop: 'sealingCoverTyping',
-          label: "打字内容",
-          type: 'input'
-        },
-       {
+         {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
-        },  
+        },
+    { 
+          prop: 'reportingTime',
+          label: '单据日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '创建开始日期',
+          endPlaceholder: '创建结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
       ],
-      superQueryProduceVisible: false,
+      superQueryInboundVisible: false,
 
 
+    
 
-      
-
-  
-
-
-
-
+ 
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
@@ -272,8 +261,8 @@ export default {
   },
   async created() { 
  
-    this.superProductForm=this.productForm = JSON.parse(JSON.stringify(this.productFormList))
-    
+    this.superInboundForm=this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList))
+   
    this.search()
   },
   watch: {
@@ -282,16 +271,18 @@ export default {
     }
   },
   methods: {
-    columnSetFunProduce(){
-      this.$refs['dataTableProduce'].showDrawer()
+   
+    columnSetFunInbound(){
+      this.$refs['dataTableInbound'].showDrawer()
     },
-
-    superQuerySearchProduce(query) {
-      this.superProductForm = query
-      this.superQueryProduceVisible = false
+   
+ 
+       superQuerySearchInbound(query) {
+      this.superInboundForm = query
+      this.superQueryInboundVisible = false
       this.search()
     },
-
+     
     //排序
     sortChange({ prop, order }) {
       let newProp;
@@ -300,8 +291,9 @@ export default {
         } else {
           newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
         }
-        this.productForm.orderItems[0].asc = order !== "descending"
-        this.productForm.orderItems[0].column = order === null ? "" : newProp
+        this.inboundForm.orderItems[0].asc = order !== "descending"
+        this.inboundForm.orderItems[0].column = order === null ? "" : newProp
+ 
       this.initData()
     },
     moreQueries() {
@@ -309,9 +301,10 @@ export default {
     },
     initData() {
       this.listLoading = true
-        produceDataReport(this.productForm).then(res => {
-          this.produceData = res.data.records
-          this.produceTotal = res.data.total
+
+         produceInboundReport(this.inboundForm).then(res => {
+          this.inboundData = res.data.records
+          this.inboundTotal = res.data.total
           this.listLoading = false
           this.visible = false
         }).catch(() => {
@@ -322,22 +315,23 @@ export default {
     }, 
   
     search(type) {
-        if (this.productionDate && this.productionDate.length > 0) {
-          this.productForm.produceStartDate = this.productionDate[0].replace(/ 0(?!0)/g, " ")
-          this.productForm.produceEndDate = this.productionDate[1].replace(/ 0(?!0)/g, " ")
+    
+        if (this.inboundDate && this.inboundDate.length > 0) {
+          this.inboundForm.produceStartDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.produceEndDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
         } else {
-          this.productForm.produceStartDate = ''
-          this.productForm.produceEndDate = ''
+          this.inboundForm.produceStartDate = ''
+          this.inboundForm.produceEndDate = ''
         }
-        Object.keys(this.productForm).forEach(key => { // 清除搜索条件两端空格
-          let item = this.productForm[key]
-          this.productForm[key] = typeof item === 'string' ? item.trim() : item
+        Object.keys(this.inboundForm).forEach(key => { // 清除搜索条件两端空格
+          let item = this.inboundForm[key]
+          this.inboundForm[key] = typeof item === 'string' ? item.trim() : item
         })
-        this.productForm.pageNum = 1 // 重置页码
-        if (type === 'basic') {
-          this.superProductForm.superQuery  = {
+        this.inboundForm.pageNum = 1 // 重置页码
+         if (type === 'basic') {
+          this.superInboundForm.superQuery  = {
             matchLogic: 'AND',
-            condition: this.searchList1
+            condition: this.searchList2
               .filter((item) => item.fieldValue)
               .map((item) => {
                 return {
@@ -348,24 +342,23 @@ export default {
           } 
         }
         if (type === 'super') {
-          this.superProductForm.superQuery = this.superQuery
+          this.superInboundForm.superQuery = this.superQuery
         }
-   
+      
       
     
       this.initData()
     },
     reset() {
-        this.$refs['dataTableProduce'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-        this.productionDate = []
-       this.superProductForm= this.productForm = JSON.parse(JSON.stringify(this.productFormList))
-        this.searchList1=[
+        this.$refs['dataTableInbound'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+        this.inboundDate = []
+        this.superInboundForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
+         this.searchList2=[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '入库单号', symbol: 'like', searchType: 1, width: 120 },
       ]
-     
+  
       this.search('basic')
     },
       // 导出
@@ -384,12 +377,11 @@ export default {
         includeFieldMap[data.selectKey[i]] = data.selectVal[i];
       }
       let targetListQuery={},exportName="";
-      if(this.reportCode=='1250'){
-        targetListQuery=this.productForm
-        exportName='每日生产'
+ 
+       if(this.reportCode=='1251'){
+        targetListQuery=this.inboundForm
+        exportName='每日生产入库'
       }
-  
-         
       let _data = {
         ...targetListQuery,
         exportType: this.reportCode,

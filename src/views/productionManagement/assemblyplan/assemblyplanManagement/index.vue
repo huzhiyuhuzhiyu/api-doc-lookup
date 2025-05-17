@@ -126,8 +126,8 @@
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="addition(scope.row)">编排</el-button>
-                <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
-                  @click="planSchedule(scope.row)">计划进度</el-button>
+                <!-- <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
+                  @click="planSchedule(scope.row)">计划进度</el-button> -->
                 <el-button size="mini" type="text" 
                   @click="viewDetailFun(scope.row)">查看详情</el-button>
               </template>

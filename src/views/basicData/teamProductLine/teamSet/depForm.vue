@@ -101,7 +101,7 @@
                 </el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="joinTime" label="加入时间" width="260">
+            <!-- <el-table-column prop="joinTime" label="加入时间" width="260">
               <template slot-scope="scope">
                 <el-date-picker v-model="scope.row.joinTime" type="datetime" format="yyyy-MM-dd hh:mm:ss"
                   value-format="yyyy-MM-dd hh:mm:ss" :picker-options="pickerOptions" placeholder="请选择时间"
@@ -116,7 +116,7 @@
                   :disabled="btntype ? true : false">
                 </el-date-picker>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="state" label="状态" width="100">
               <template slot-scope="scope">
                 <el-select v-model="scope.row.state" style="width: 100%;" :disabled="btntype ? true : false">

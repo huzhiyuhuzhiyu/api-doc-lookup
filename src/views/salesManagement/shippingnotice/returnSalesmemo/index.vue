@@ -135,6 +135,10 @@
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
                     </el-dropdown-item>
+                      <el-dropdown-item :disable="scope.row.documentStatus === 'draft'"
+                      @click.native="printFun(scope.row.id)">
+                      打印
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -153,6 +157,9 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+        <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
   </div>
 </template>
 
@@ -162,12 +169,20 @@ import { UserListAll, } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import Form from './Form'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   name: 'foreigntradenotice',
-  components: { Form, SuperQuery, ExportForm },
+  components: { Form, SuperQuery, ExportForm,PrintBrowse,PrintDialog, },
   data() {
     return {
+         printVisible: false,
+      printBrowseVisible: false,
+ prindId: '',
+      formId: '',
+      enCode: "",
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -524,7 +539,34 @@ export default {
         if (!res.data.url) return
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
-    }
+    },
+    printWarehouse(enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.printBrowseVisible = true
+          this.printVisible = false
+
+          this.printVisible = false
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    printFun(id) {
+      this.enCode = 'p004' // 筛选出 businessType 等于 type 的项
+      this.formId = id
+      this.fullName = "销售退货单" // 筛选出 businessType 等于 type 的项
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(this.enCode)
+      })
+    },
+    closePrint() {
+            this.printVisible = false
+        },
   }
 }
 </script>

@@ -62,11 +62,11 @@
           <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
-              <!-- <template slot-scope="scope">
+              <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
-              </template> -->
+              </template>
             </el-table-column>
             <el-table-column prop="docNo" label="业务单号" min-width="200" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" width="100" sortable="custom" />
@@ -107,7 +107,7 @@
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
-            <!-- <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -115,7 +115,7 @@
                   </el-button>
                 </tableOpts>
               </template>
-            </el-table-column> -->
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
             @pagination="initData" />

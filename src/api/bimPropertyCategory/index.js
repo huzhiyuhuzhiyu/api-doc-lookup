@@ -472,11 +472,19 @@ export function equAccessoryRequisitionRevoke(id) {
 export function batchAccessoryEquipment(data) {
   return request({
     url: `/api/zgt/product/batch/accessory/equipment`,
+    method: 'put',
+    data 
+  })
+}
+//  查看配件所关联的设备
+
+export function accessoryEquipmentRelation(data) {
+  return request({
+    url: `/api/zgt/product/accessory/equipment/relation`,
     method: 'post',
     data 
   })
 }
- 
 // 批量设置配件是否归还
 export function batchAccessoryReturnState(data) {
   return request({

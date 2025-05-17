@@ -69,6 +69,11 @@
           </el-table-column>
           <el-table-column prop="createTime" label="所属设备"  sortable="custom" />
           <el-table-column prop="createByName" label="创建人"  />
+          <el-table-column label="操作" width="120" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text"    @click="viewEquFun(scope.row.id)" >查看所属设备</el-button>
+            </template>
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
           @pagination="initData" />
@@ -100,21 +105,25 @@
       </span>
     </el-dialog>
       <ComSelect-page ref="ComSelect-pagesb" :multiple="true" @change="selectEquFun" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
+    <Form v-if="formVisible" ref="formRef"></Form>
   </div>
 </template>
 
 <script>
 import {getProducts } from '@/api/masterDataManagement/index'
-import { batchAccessoryEquipment,batchAccessoryReturnState} from '@/api/bimPropertyCategory/index'
+import { batchAccessoryEquipment,batchAccessoryReturnState,accessoryEquipmentRelation} from '@/api/bimPropertyCategory/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { updateSortBatch } from '@/api/masterDataManagement/index'
+import Form from './Form.vue'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 export default {
   name: 'supplierProfile',
-  components: {  SuperQuery,  },
+  components: {  SuperQuery,Form  },
   data() {
     return {
+      formVisible:false,
+
       batchVisible:false,
       accessoryFlagList:[
         {label:"是",value:true},
@@ -261,6 +270,21 @@ export default {
     this.initData() 
   },
   methods: {
+    viewEquFun(id){
+      let form={
+        id:id,
+        equipmentIdCode:"",
+        equipmentIdName:"",
+      }
+      accessoryEquipmentRelation(form).then(res=>{
+        console.log(res);
+        if(!res.data.records.length)return this.$message.error("当前配件暂未设置所属设备")
+        this.formVisible=true
+      this.$nextTick(()=>{
+        this.$refs.formRef.init(id)
+      })
+      })
+    },
         //选择设备
     selectEquFun(val, data) {
       console.log(5555,data);

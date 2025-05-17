@@ -146,6 +146,7 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="version" label="版本号" min-width="180" sortable="custom" />
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look', scope.row)">

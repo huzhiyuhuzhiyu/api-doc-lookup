@@ -99,7 +99,7 @@
           提交</el-button>
       </span>
     </el-dialog>
-    <selectEqu v-if="selectEquVisible" ref="selectEqu" @close="closeFun"></selectEqu>
+      <ComSelect-page ref="ComSelect-pagesb" :multiple="true" @change="selectEquFun" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
   </div>
 </template>
 
@@ -108,6 +108,8 @@ import {getProducts } from '@/api/masterDataManagement/index'
 import { batchAccessoryEquipment,batchAccessoryReturnState} from '@/api/bimPropertyCategory/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { updateSortBatch } from '@/api/masterDataManagement/index'
+import { getcategoryTree } from '@/api/basicData/materialSettings'
+import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 export default {
   name: 'supplierProfile',
   components: {  SuperQuery,  },
@@ -193,7 +195,60 @@ export default {
         }
       ],
       selectArr:[],
-    }
+      getEquEquipmentList,
+      getcategoryTree,
+         ProductTableItemss: [
+        { prop: 'code', label: '设备编码', fixed: 'left' },
+        { prop: 'name', label: '设备名称', fixed: 'left' },
+        { prop: 'categoryName', label: '设备分类' },
+        { prop: 'specModel', label: '设备规格' },
+      ],
+     ProductListRequestObj: {
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            "asc": false,
+            "column": ""
+          },
+          {
+            "asc": false,
+            "column": "createTime"
+          }
+        ],
+        code: "",
+        name: "",
+        typeCode: "faultType"
+      },
+       ProductTableSearchLists: [
+        { prop: "code", label: "设备编码", type: 'input' },
+        { prop: "name", label: "设备名称", type: 'input' },
+      ],
+      setForm:{
+        pidList:[],
+        eidList:[],
+      },
+         ProductListRequestObjs: {
+        projectId:'',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            "asc": false,
+            "column": ""
+          },
+          {
+            "asc": false,
+            "column": "create_time"
+          }
+        ],
+        code: "",
+        name: "",
+        unState: 'discard',
+        deviceType: 'normal',
+        classAttribute: "equipment",
+      },
+       } 
   },
   watch: {
     filterText(val) {
@@ -206,6 +261,29 @@ export default {
     this.initData() 
   },
   methods: {
+        //选择设备
+    selectEquFun(val, data) {
+      console.log(5555,data);
+      if (!val && !data.length) return
+        this.setForm.eidList=data.map(item => item.id);
+   
+         this.$confirm(this.$t('确定为所选的配件设置所属设备吗'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          batchAccessoryEquipment(this.setForm).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '设置所属设备成功',
+              duration: 1500
+            })
+            this.batchVisible=false
+            this.initData()
+          })
+        })
+        .catch(() => { })
+    },
     handeleProductInfoData(data){
       this.selectArr=data
     },
@@ -215,7 +293,8 @@ export default {
       this.batchVisible=true
     },
     submitFun(){
-           this.$confirm(this.$t('确定将所选的数据设置为已归还吗？'), this.$t('common.tipTitle'), {
+      let msg=this.requestForm.flag?'已归还':'不归还'
+      this.$confirm(this.$t('确定将所选的数据设置为'+msg+'吗？'), this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
@@ -234,9 +313,9 @@ export default {
     },
     
     batchSetEquFun(){
-      if(!this.selectArr.length)return this.$message.error("请先选择您要设置的配件数据")
-     this.requestForm.idList=this.selectArr.map(item => item.id);
-      this.batchVisible=true
+      if(!this.selectArr.length)return this.$message.error("请先选择您要设置所属设备的配件数据")
+      this.setForm.pidList=this.selectArr.map(item => item.id); 
+      this.$refs['ComSelect-pagesb'].openDialog()
     },
     changeMove(data) {
       console.log(data, 'iiiiii')

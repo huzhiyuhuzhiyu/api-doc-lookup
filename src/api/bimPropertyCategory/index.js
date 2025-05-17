@@ -460,8 +460,13 @@ export function equAccessoryRequisitionList(data) {
 }
 
 // 领用——撤回
-// api/zgt/equAccessoryRequisition/revoke
 
+export function equAccessoryRequisitionRevoke(id) {
+  return request({
+    url: `api/zgt/equAccessoryRequisition/revoke/${id}`,
+    method: 'put',
+  })
+}
 
 // 设置配件关联设备
 export function batchAccessoryEquipment(data) {
@@ -477,6 +482,18 @@ export function batchAccessoryReturnState(data) {
   return request({
     url: `/api/zgt/product/batch/accessory`,
     method: 'put',
+    data 
+  })
+}
+
+
+
+// 工具  批量设置归还
+
+export function equEquipmentBatchReturn(data) {
+  return request({
+    url: `/api/mes/equEquipment/batch/accessory`,
+    method: 'post',
     data 
   })
 }

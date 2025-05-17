@@ -55,9 +55,9 @@
             <el-table-column prop="orderNo" label="领用单号" min-width="180" sortable="custom" />
             <el-table-column prop="maintainerIdText" label="领用人" min-width="180" sortable="custom" />
             <el-table-column prop="collectionTime" label="领用日期" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentName" label="配件名称" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentCode" label="配件编码" min-width="180" sortable="custom" />
-            <el-table-column prop="productName" label="领用数量" min-width="180" sortable="custom" />
+            <el-table-column prop="accessorIdName" label="配件名称" min-width="180" sortable="custom" />
+            <el-table-column prop="accessorIdCode" label="配件编码" min-width="180" sortable="custom" />
+            <el-table-column prop="requisitionNum" label="领用数量" min-width="180" sortable="custom" />
             <el-table-column prop="returnFlag" label="配件是否归还" min-width="180" sortable="custom" >
               <template slot-scope="scope">
                   <div v-if="scope.row.returnFlag "><el-tag type="success">是</el-tag></div>
@@ -66,7 +66,7 @@
             </el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text"   @click="withdrawFun(scope.row.id)" >撤回</el-button>
+              <el-button size="mini" type="text" :disabled="Number(scope.row.incomingOutgoingNum)"   @click="withdrawFun(scope.row.lineId)" >撤回</el-button>
             </template>
           </el-table-column>
           </JNPF-table>
@@ -84,7 +84,7 @@
 </template>
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {  equAccessoryRequisitionList } from '@/api/bimPropertyCategory/index'
+import {  equAccessoryRequisitionList,equAccessoryRequisitionRevoke } from '@/api/bimPropertyCategory/index'
 
 import { mapGetters, mapState } from 'vuex'
 export default {
@@ -119,8 +119,8 @@ export default {
       orderFormlist: {
         requisitionType: 'requisition',
         orderNo:"",
-        equipmentCode:"",
-        equipmentName:"",
+        accessorIdCode:"",
+        accessorIdName:"",
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -202,14 +202,14 @@ export default {
   },
   methods: {
     withdrawFun(id){
-      this.$confirm("您确定当前领用数据吗？", this.$t('提示'), {
+      this.$confirm("您确定撤回当前领用数据吗？", this.$t('提示'), {
         type: 'warning'
       }).then(() => {
-        closeOrders(id).then(res => {
+        equAccessoryRequisitionRevoke(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
-            message: "关闭成功",
+            message: "撤回成功",
             duration: 1500,
           })
         })

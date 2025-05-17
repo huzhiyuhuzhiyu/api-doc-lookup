@@ -73,6 +73,7 @@
           <div>
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
               <el-button size="mini" type="primary" v-has="'tool_addBtn'" icon="el-icon-plus" @click="propertyAddFun('', false, 'add','propertyAdd')">从资产新建</el-button>
+             <el-button size="mini" type="primary" icon="el-icon-printer" @click="batchFun">设置归还</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p038')">打印工具二维码</el-button>
               <!-- <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button> -->
               <!-- <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
@@ -95,7 +96,7 @@
           </div>
         </div>
         <JNPF-table v-if="istable" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC
-          @selection-change="handleSelectionChange">
+          @selection-change="handleSelectionChange" :fixedNO="true">
           <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
           <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'"
@@ -179,10 +180,33 @@
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
       <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
       :fullName="fullName" ref="printForm" />
+          <el-dialog title="批量设置为归还" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="batchVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="requestForm"  label-width="120px" label-position="left">
+          
+          <el-col :span="24">
+            <el-form-item label="是否设置为归还" prop="accessoryFlag">
+               <el-select v-model="requestForm.flag" placeholder="请选择" >
+                  <el-option v-for="(item, index) in accessoryFlagList" :key="index" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+          </el-col>
+         
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="batchVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {batchAccessoryReturnState} from '@/api/bimPropertyCategory/index'
 import { excelExport, equEquipmentupload } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -198,10 +222,15 @@ import { mapGetters } from 'vuex'
 import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   mixins: [getProjectList],
-  name: 'deviceProfileSet',
+  name: 'toolBasicInformation',
   components: { Form, PrintBrowse, share, SuperQuery, ExportForm,PrintDialog },
   data() {
     return {
+           accessoryFlagList:[
+        {label:"是",value:true},
+        {label:"否",value:false},
+      ],
+      batchVisible:false,
       formId:"",
       printVisible:false,
       fileList: [],
@@ -231,113 +260,11 @@ export default {
             { label: '虚拟工具', value: 'virtually' }
           ]
         },
-        {
-          prop: 'factoryFloor',
-          label: "车间",
-          type: 'input'
-        },
-        {
-          prop: 'mountedPlaces',
-          label: "安装地点",
-          type: 'input'
-        },
-        {
-          prop: 'partnerName',
-          label: "供应商",
-          type: 'input'
-        },
-        {
-          prop: 'supplier',
-          label: "生产厂家",
-          type: 'input'
-        },
-        {
-          prop: 'serialNo',
-          label: "序列号",
-          type: 'input'
-        },
-        { // 日期选择器（区间）
-          prop: 'scrapDate',
-          label: '报废日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        { // 日期选择器（区间）
-          prop: 'purchaseDate',
-          label: '采购日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        { // 日期选择器（区间）
-          prop: 'productDate',
-          label: '制造日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'weight',
-          label: "重量（KG）",
-          type: 'input'
-        },
-        {
-          prop: 'serviceLife',
-          label: "额定使用年限（年）",
-          type: 'input'
-        },
-        {
-          prop: 'ratedVoltage',
-          label: "额定电压V",
-          type: 'input'
-        },
-        {
-          prop: 'ratedCurrent',
-          label: "额定电流A",
-          type: 'input'
-        },
-        {
-          prop: 'power',
-          label: "额定功率KW",
-          type: 'input'
-        },
-        {
-          prop: 'equLong',
-          label: "长（CM）",
-          type: 'input'
-        },
-        {
-          prop: 'width',
-          label: "宽（cm）",
-          type: 'input'
-        },
-        {
-          prop: 'height',
-          label: "高（CM）",
-          type: 'input'
-        },
-        {
-          prop: 'equipmentValue',
-          label: "工具原值（万元）",
-          type: 'input'
-        },
-        {
-          prop: 'theoryBeat',
-          label: "理论节拍",
-          type: 'input'
-        },
-        {
-          prop: 'usin',
-          label: "用途",
-          type: 'input'
-        },
+        
+        
+         
+       
+      
         {
           prop: 'remark',
           label: "备注",
@@ -452,6 +379,10 @@ export default {
       filterText: '',
       selectList: [],
       printBrowseVisible: false,
+        requestForm:{
+        idList:[],
+        flag:true,
+      },
     }
   },
   watch: {
@@ -475,6 +406,31 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    
+    batchFun(){
+      if(!this.selectList.length)return this.$message.error("请先选择您要归还的工具数据")
+     this.requestForm.idList=this.selectList.map(item => item.id);
+      this.batchVisible=true
+    },
+    submitFun(){
+      let msg=this.requestForm.flag?'已归还':'不归还'
+           this.$confirm(this.$t('确定将所选的数据设置为'+msg+'吗？'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          batchAccessoryReturnState(this.requestForm).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '批量标记成功',
+              duration: 1500
+            })
+            this.batchVisible=false
+            this.initData()
+          })
+        })
+        .catch(() => { })
+    },
     submit() {
       this.UploadProduct(this.file)
     },

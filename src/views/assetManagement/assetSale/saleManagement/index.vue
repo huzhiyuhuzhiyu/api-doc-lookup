@@ -65,19 +65,20 @@
           <el-table-column prop="propertyCategoryName" label="分类" width="120" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" />
           <el-table-column prop="createByName" label="申请人" width="120" sortable="custom" />
-          <el-table-column prop="orderStatus" label="状态" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <div v-if="scope.row.orderStatus=='toBeAgreed'">待确认</div>
-              <div v-if="scope.row.orderStatus=='toBeSold'">待售出</div>
-              <div v-if="scope.row.orderStatus=='sold'">已售出</div>
-              <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
+        
+          <el-table-column prop="orderStatus" label="状态" min-width="150" sortable="custom" >
+            <template slot-scope="{row}">
+              <el-tag type="success" disable-transitions v-if="row.orderStatus == 'sold'">已售出</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.orderStatus == 'rejected'">已拒绝</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeAgreed'">待确认</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeSold'">待确认</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="billStatus" label="对账状态" min-width="120" >
             <template  slot-scope="scope">
-              <div v-if="scope.row.billStatus=='no_billing'">未对账</div>
-              <div v-if="scope.row.billStatus=='billed'">已对账</div>
-              <div v-if="scope.row.billStatus=='in_bill'">对账中</div>
+                <div v-if="scope.row.billStatus == 'no_billing'"><el-tag>未对账</el-tag> </div>
+              <div v-if="scope.row.billStatus == 'billed'"><el-tag type="success">已对账</el-tag></div>
+              <div v-if="scope.row.billStatus == 'no_billing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">对账中</el-tag></div>
             </template>
           </el-table-column>
           <el-table-column prop="ownerName" label="资产管理员" width="140" sortable="custom" />

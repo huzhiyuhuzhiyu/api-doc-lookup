@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
-        <el-page-header @back="goBack" :content="!dataForm.id ? `新建设备` : disabled ? '查看设备' : '编辑设备'" />
+        <el-page-header @back="goBack" :content="!dataForm.id ? `新建工具` : disabled ? '查看工具' : '编辑工具'" />
         <div class="options">
           <el-button type="primary" v-if="!disabled" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>
@@ -25,17 +25,17 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="所属分类" prop="productCategoryName">
-                        <ComSelect-list :isdisabled="disabled" v-model="dataForm.productCategoryName" placeholder="请选择设备类型" auth @change="onOrganizeChangeTwo" :title="'选择设备类型'" :method="getCategoryTrees" :requestObj="requestObj" :paramsObj="{}" />
+                        <ComSelect-list :isdisabled="disabled" v-model="dataForm.productCategoryName" placeholder="请选择工具类型" auth @change="onOrganizeChangeTwo" :title="'选择工具类型'" :method="getCategoryTrees" :requestObj="requestObj" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="设备编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入设备编码" maxlength="20" :disabled="disabled" />
+                      <el-form-item label="工具编码" prop="code">
+                        <el-input v-model="dataForm.code" placeholder="请输入工具编码" maxlength="20" :disabled="type!='add'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="设备名称" prop="name">
-                        <el-input v-model="dataForm.name" placeholder="请输入设备名称" maxlength="20" :disabled="disabled" />
+                      <el-form-item label="工具名称" prop="name">
+                        <el-input v-model="dataForm.name" placeholder="请输入工具名称" maxlength="20" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
 
@@ -45,217 +45,50 @@
               </el-form-item>
             </el-col> -->
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="设备规格" prop="specModel">
-                        <el-input maxlength="50" v-model="dataForm.specModel" placeholder="请输入设备规格" :disabled="disabled" />
+                      <el-form-item label="工具规格" prop="specModel">
+                        <el-input maxlength="50" v-model="dataForm.specModel" placeholder="请输入工具规格" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="设备类型" prop="deviceType">
-                        <el-select v-model="dataForm.deviceType" placeholder="请选择设备类型" :disabled="dataForm.id ? true : false" style="width: 100%;">
+                    <!-- <el-col :sm="8" :xs="24">
+                      <el-form-item label="工具类型" prop="deviceType">
+                        <el-select v-model="dataForm.deviceType" placeholder="请选择工具类型" :disabled="dataForm.id ? true : false" style="width: 100%;">
                           <el-option v-for="item in deviceTypeList" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24" >
+                    </el-col> -->
+                    <el-col :sm="8" :xs="24" v-if="this.propertyKey" >
                       <el-form-item label="资产名称" prop="propertyName">
                         <el-input v-model="dataForm.propertyName" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="disabled"
                            />
                       </el-form-item>
                     </el-col>
-                        <el-col :sm="8" :xs="24" v-if='$store.getters.configData.equipment.inspectionUserSetting'>
+                         <el-col :sm="8" :xs="24"   >
+                      <el-form-item label="常用位置" prop="position">
+                        <el-input v-model="dataForm.position" placeholder="请输入常用位置"   :disabled="disabled"
+                           />
+                      </el-form-item>
+                    </el-col>
+                        <el-col :sm="8" :xs="24" v-if='$store.getters.configData.equipment.inspectionUserFlag'>
                       <el-form-item label="点检人员" prop="inspectionUserId">
                         <user-select v-model="dataForm.inspectionUserId" placeholder="请选择点检人员" style="width: 100%;" :disabled="disabled">
                         </user-select>
                       </el-form-item>
                     </el-col>
-                        <el-col :sm="8" :xs="24" v-if="$store.getters.configData.equipment.maintenanceUserSetting">
+                        <el-col :sm="8" :xs="24" v-if="$store.getters.configData.equipment.maintenanceUserFlag">
                       <el-form-item label="保养人员" prop="maintenanceUserId">
                         <user-select v-model="dataForm.maintenanceUserId" placeholder="请选择保养人员" style="width: 100%;" :disabled="disabled">
                         </user-select>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="8" :xs="24">
-              <el-form-item label="计量单位" prop="unitVolume">
-                <el-select v-model="dataForm.unitVolume" placeholder="请选择计量单位" :disabled="disabled" style="width: 100%;">
-                  <el-option v-for="item in typeOptions" :key="item.id" :label="item.name"
-                    :value="item.unitCode"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col> -->
-                    <!-- <el-col :sm="8" :xs="24">
-              <el-form-item label="安全等级" prop="unit">
-                <el-select v-model="dataForm.grade" placeholder="请选择安全等级"  :disabled="disabled">
-                    <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
-                      :value="item.enCode"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col> -->
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="供应商" prop="partnerName">
-                        <ComSelect-list :isdisabled="type === 'look'" v-model="dataForm.partnerName" placeholder="请选择供应商" auth @change="selectPartner" :title="'选择供应商'" :method="getCooperativeData" :requestObj="parentRequsetObj" :paramsObj="{}" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="维修人" prop="repairUserId">
-                        <user-select v-model="dataForm.repairUserId" placeholder="请选择维修人" clearable style="width: 100%;" :disabled="disabled" @change="hanglerepairUserId">
-                        </user-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="使用人" prop="userId">
-                        <user-select v-model="dataForm.userId" placeholder="请选择使用人" style="width: 100%;" :disabled="disabled" @change="hangleSelectSales">
-                        </user-select>
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="8">
-                      <el-form-item label="使用部门" prop="userDepartmentId">
-                        <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="车间" prop="factoryFloorId">
-                        <el-select v-model="dataForm.factoryFloorId" filterable placeholder="请选择车间" :disabled="disabled" clearable style="width: 100%;" :loading="factorylistLoading">
-                          <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="安装地点" prop="mountedPlacesId">
-                        <el-select v-model="dataForm.mountedPlacesId" filterable placeholder="请选择安装地点" :disabled="disabled" clearable style="width: 100%;" :loading="factorylistLoading">
-                          <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="采购金额(万元)" prop="purchaseAmount">
-                        <el-input v-model="dataForm.purchaseAmount" placeholder="请输入采购金额" :disabled="disabled">
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24" v-if="type !== 'add'">
-                      <el-form-item label="设备状态" prop="state">
-                        <el-select v-model="dataForm.state" placeholder="请选择设备状态" :disabled="type !== 'add'" style="width: 100%;">
-                          <el-option v-for="( item, index ) in  equipmentStatusList " :key="index" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="理论节拍" prop="theoryBeat">
-                        <el-input v-model.number="dataForm.theoryBeat" placeholder="请输入理论节拍" :disabled="disabled" maxlength="8" oninput="value = value.replace(/[^0-9]/g,'')" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="用途" prop="usin">
-                        <el-input maxlength="200" v-model="dataForm.usin" placeholder="请输入用途" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="设备原值（万元）" prop="equipmentValue">
-                        <el-input v-model="dataForm.equipmentValue" placeholder="请输入设备原值" :disabled="disabled">
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="保修截止时间" prop="warrantyDate">
-                        <el-date-picker v-model="dataForm.warrantyDate" type="datetime" placeholder="请选择保修截止时间" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="采购人员" prop="purchaserId">
-                        <user-select v-model="dataForm.purchaserId" placeholder="请选择采购人员" style="width: 100%;" :disabled="disabled">
-                        </user-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="采购日期" prop="purchaseDate">
-                        <el-date-picker v-model="dataForm.purchaseDate" type="date" placeholder="请选择购买日期" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="24" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input maxlength="200" class="shuru" v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :disabled="disabled" style="width: 100%;" />
-                      </el-form-item>
-                    </el-col>
+                     <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                            :disabled="disabled" type="textarea" :rows="2" maxlength="200" />
+                        </el-form-item>
+                      </el-col>
                   </el-row>
                 </el-collapse-item>
-                <el-collapse-item title="设备参数" name="sbInfo">
-                  <el-row :gutter="20" class="custom-row">
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="生产厂家" prop="supplier">
-                        <el-input maxlength="200" v-model="dataForm.supplier" placeholder="请输入生产厂家" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="序列号" prop="serialNo">
-                        <el-input maxlength="100" v-model="dataForm.serialNo" placeholder="请输入序列号" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="重量（KG）" prop="weight">
-                        <el-input v-model="dataForm.weight" placeholder="请输入重量" :disabled="disabled">
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定电压（V）" prop="ratedVoltage">
-                        <el-input v-model="dataForm.ratedVoltage" placeholder="请输入额定电压" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定电流（A）" prop="ratedCurrent">
-                        <el-input v-model="dataForm.ratedCurrent" placeholder="请输入额定电流" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定功率（KW）" prop="power">
-                        <el-input v-model="dataForm.power" placeholder="请输入额定功率" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="长（cm）" prop="equLong">
-                        <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="宽（cm）" prop="width">
-                        <el-input v-model="dataForm.width" placeholder="请输入宽" :disabled="disabled">
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="高（cm）" prop="height">
-                        <el-input v-model="dataForm.height" placeholder="请输入高" :disabled="disabled">
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="额定使用年限" prop="serviceLife">
-                        <el-input maxlength="9" oninput="value = value.replace(/\D/g, '')" v-model.number="dataForm.serviceLife" placeholder="请输入额定使用年限" :disabled="disabled" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="制造日期" prop="productDate">
-                        <el-date-picker v-model="dataForm.productDate" type="date" placeholder="请选择制造日期" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="报废日期" prop="scrapDate">
-                        <el-date-picker v-model="dataForm.scrapDate" type="date" placeholder="请选择报废日期" value-format="yyyy-MM-dd HH:mm:ss" :disabled="disabled" style="width: 100%;" />
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-collapse-item>
+      
               </el-form>
             </el-collapse>
           </el-tab-pane>
@@ -360,10 +193,10 @@ export default {
         salespersonId: "",
         purchaseAmount: "",
         id: "",
-        name: null, //设备名称
-        shortName: null, //设备简称
-        code: null, //设备编码
-        productCategoryId: null, //设备分类
+        name: null, //工具名称
+        shortName: null, //工具简称
+        code: null, //工具编码
+        productCategoryId: null, //工具分类
         grade: null, //安全等级
         serviceLife: null, //使用年限
         specModel: null, //规格型号
@@ -375,7 +208,7 @@ export default {
         supplier: null, //生产厂家
         serialNo: null, //序列号
         warrantyDate: null, //保修日期
-        state: 'normal', //设备状态
+        state: 'normal', //工具状态
         scrapDate: null, //报废日期
         purchaseDate: null, //购买日期
         productDate: null, //制造日期
@@ -386,7 +219,7 @@ export default {
         equLong: null, //长
         width: null, //宽
         height: null, //高
-        equipmentValue: null, //设备原值（万元）
+        equipmentValue: null, //工具原值（万元）
         theoryBeat: '', //理论节拍
         usin: '', //用途
         remark: '', //备注
@@ -394,16 +227,16 @@ export default {
         userId: '', //使用人
         attachmentList: [], //bim附件
         purchaserId: "",
-        productCategoryName: null, //设备名称
+        productCategoryName: null, //工具名称
         deviceType: 'normal',
         partnerName: '',
       },
       userList: [],
       deviceTypeList: [
-        { value: "normal", label: "正常设备" },
-        { value: "virtually", label: "虚拟设备" },
+        { value: "normal", label: "正常工具" },
+        { value: "virtually", label: "虚拟工具" },
       ],
-      // 设备状态
+      // 工具状态
       equipmentStatusList: [
         {
           value: "normal",
@@ -451,7 +284,7 @@ export default {
           column: 'create_time'
         }],
         pageSize: -1,
-        classAttribute: 'equipment'
+        classAttribute: 'tool'
       },
       parentRequsetObj: {
         pageNum: 1,
@@ -472,6 +305,10 @@ export default {
           // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
           // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
         ],
+         propertyName: [
+          { required: true, message: '请选择资产', trigger: 'blur' },
+       
+        ],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
           // { validator: this.formValidate('fullName', '编码不能含有特殊符号'), trigger: 'blur' },
@@ -490,11 +327,11 @@ export default {
             }, trigger: 'blur'
           },
         ],
-        state: [{ required: true, message: '请选择设备状态', trigger: 'change' }],
+        state: [{ required: true, message: '请选择工具状态', trigger: 'change' }],
         maintenanceUserId:[{ required: true, message: '请选择保养人员', trigger: 'change' }],
         inspectionUserId:[{ required: true, message: '请选择点检人员', trigger: 'change' }],
         productCategoryName: [
-          { required: true, message: '请选择设备分类', trigger: 'change' }
+          { required: true, message: '请选择工具分类', trigger: 'change' }
         ],
         // unitVolume: [{ validator: formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }],
         equLong: [{ validator: formValidate({ type: 'decimal', params: [10, 2] }), trigger: 'blur' }],
@@ -575,7 +412,7 @@ export default {
         let bimAttachments = {
           businessType: "equipment",
           documentId: data[0].id,
-          fileFlag: "设备",
+          fileFlag: "工具",
           sort: 1
         }
         this.dataForm.attachmentList = [{ bimAttachments: bimAttachments }]
@@ -682,7 +519,7 @@ export default {
         if (valid) {
           console.log(valid);
           this.btnLoading = true
-          this.dataForm.classAttribute = 'equipment'
+          this.dataForm.classAttribute = 'tool'
           this.dataForm.productCategoryId = this.dataForm.productCategoryId
           // 如果userDepartmentId是数组，取最后一个值
           if (this.dataForm.userDepartmentId && typeof this.dataForm.userDepartmentId === 'object') {
@@ -710,7 +547,7 @@ export default {
           //   let bimAttachments = {
           //     businessType: "equipment",
           //     documentId: this.picArr[0].id,
-          //     fileFlag: "设备",
+          //     fileFlag: "工具",
           //     sort: 1
           //   }
           //   this.dataForm.attachmentList = [{ bimAttachments: bimAttachments }]

@@ -189,7 +189,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time" /* 使用倒序日期作为默认排序 */
+          column: "collection_time" /* 使用倒序日期作为默认排序 */
         }],
       },
       total: 0,

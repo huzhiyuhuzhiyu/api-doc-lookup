@@ -149,7 +149,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true, 'look')">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true, 'look','propertyAdd')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -801,10 +801,10 @@ export default {
       return fullPath
     },
 
-    addOrUpdateHandle(id, type, types) {
+    addOrUpdateHandle(id, type, types,key) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, types)
+        this.$refs.Form.init(id, type, types,key)
       })
 
     },

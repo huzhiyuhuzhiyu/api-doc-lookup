@@ -50,11 +50,11 @@
             </div>
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"
-            :fixedNO="true"  @selection-change="handleSelectionChange" hasC
+            :fixedNO="true"  
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="no" label="点检任务单号" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom" />
             <el-table-column prop="state" label="任务状态" min-width="180" sortable="custom" >
                  <template slot-scope="scope">
                   <el-tag  v-if="!scope.row.state">未完成</el-tag>
@@ -63,8 +63,12 @@
             </el-table-column>
             <el-table-column prop="actualMaintenanceName" label="点检人" min-width="180" sortable="custom" />
             <el-table-column prop="actualMaintenanceDate" label="实际点检时间" min-width="180" sortable="custom" />
-            <el-table-column prop="position" label="设备常用位置" min-width="180" sortable="custom" />
-            <el-table-column prop="pic" label="点检图片" min-width="180" sortable="custom" />
+            <el-table-column prop="position" label="工具常用位置" min-width="180" sortable="custom" />
+            <el-table-column prop="pic" label="点检图片" min-width="180" sortable="custom" >
+              <template slot-scope="scope">
+                <el-image @click="bigimg(define.comUrl+scope.row.url)" style="width: 25px;height: 25px;margin-left: 5px;"   :src="define.comUrl+scope.row.url" :preview-src-list="srcList"></el-image>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
   
@@ -95,16 +99,18 @@ export default {
       columnList: [],
       superQuery: {},
       superForm: {},
-      taskSetTitle:"",
-   
+      taskSetTitle:"",  
+        srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
+      ],
 
  
    
       basicQuery: {},
       searchList: [
         { field: 'no', fieldValue: '', label: '点检任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'equipmentCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentName', fieldValue: '', label: '工具名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentCode', fieldValue: '', label: '工具编码', symbol: 'like', searchType: 1, width: 120 },
       ],
       taskKey:"",
  
@@ -117,7 +123,7 @@ export default {
       orderForm: {},
       orderFormlist: {
         taskType:"inspection",
-        equipmentType:"tool",
+        classAttribute:"tool",
         no:"",
         equipmentCode:"",
         equipmentName:"",
@@ -146,12 +152,12 @@ export default {
         },
         {
           prop: 'equipmentName',
-          label: "设备名称",
+          label: "工具名称",
           type: 'input'
         },
         {
           prop: 'equipmentCode',
-          label: "设备编码",
+          label: "工具编码",
           type: 'input'
         }, 
           {
@@ -178,7 +184,7 @@ export default {
         },
        {
           prop: 'position',
-          label: "设备常用位置",
+          label: "工具常用位置",
           type: 'input'
         }, 
         {
@@ -192,7 +198,8 @@ export default {
     
       ],
       list:[],
-   
+      
+
  
  
    
@@ -210,7 +217,9 @@ export default {
   mounted() {
   },
   methods: {
- 
+    bigimg(url) { 
+      this.srcList[0] = url
+    },
  
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -236,7 +245,13 @@ export default {
     initData() {
       this.listLoading = true
       equTaskMaintenanceList(this.orderForm).then(res => {
-        this.tableData = res.data.records
+          this.tableData = res.data.records.map(item => {
+          if (item.pic) {
+            item.pic = JSON.parse(`{${item.pic}}`)
+          }
+         
+          return item
+        }) 
         this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
@@ -274,8 +289,8 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
              { field: 'no', fieldValue: '', label: '点检任务单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'equipmentCode', fieldValue: '', label: '设备编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentName', fieldValue: '', label: '工具名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'equipmentCode', fieldValue: '', label: '工具编码', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.search('basic')
     },

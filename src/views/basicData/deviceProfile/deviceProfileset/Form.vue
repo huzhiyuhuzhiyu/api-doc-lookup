@@ -56,7 +56,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" >
+                    <el-col :sm="8" :xs="24" v-if='propertyKey'>
                       <el-form-item label="资产名称" prop="propertyName">
                         <el-input v-model="dataForm.propertyName" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="disabled"
                            />
@@ -471,6 +471,10 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' },
           // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
           // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
+        ],
+            propertyName: [
+          { required: true, message: '请选择资产', trigger: 'blur' },
+       
         ],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },

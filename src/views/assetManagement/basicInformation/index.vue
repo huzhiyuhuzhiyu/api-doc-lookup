@@ -73,11 +73,12 @@
           <el-table-column prop="netPrice" label="资产净值" min-width="150" sortable="custom" />
           <el-table-column prop="ownerName" label="资产管理员" min-width="150" sortable="custom" />
           <el-table-column prop="state" label="资产状态" min-width="150" sortable="custom" >
-            <template  slot-scope="scope">
-              <div v-if="scope.row.state=='normal'">正常</div>
-              <div v-if="scope.row.state=='sale'">售出</div>
-              <div v-if="scope.row.state=='discard'">报废</div>
-              <div v-if="scope.row.state=='out'">调出</div>
+             
+            <template slot-scope="{row}">
+              <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.state == 'sale'">售出</el-tag>
+              <el-tag disable-transitions v-if="row.state == 'out'">调出</el-tag>
             </template>
           </el-table-column>
     

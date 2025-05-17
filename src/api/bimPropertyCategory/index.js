@@ -450,3 +450,33 @@ export function batchAccessory(data) {
     data 
   })
 }
+// 领用 归还记录表
+export function equAccessoryRequisitionList(data) {
+  return request({
+    url: `/api/zgt/equAccessoryRequisition/list`,
+    method: 'post',
+    data 
+  })
+}
+
+// 领用——撤回
+// api/zgt/equAccessoryRequisition/revoke
+
+
+// 设置配件关联设备
+export function batchAccessoryEquipment(data) {
+  return request({
+    url: `/api/zgt/product/batch/accessory/equipment`,
+    method: 'post',
+    data 
+  })
+}
+ 
+// 批量设置配件是否归还
+export function batchAccessoryReturnState(data) {
+  return request({
+    url: `/api/zgt/product/batch/accessory`,
+    method: 'put',
+    data 
+  })
+}

@@ -55,7 +55,11 @@
             <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
             <el-table-column prop="reportInstructions" label="报修说明" min-width="180" sortable="custom" /> 
-            <el-table-column prop="frontPic" label="报修照片" min-width="180" sortable="custom" />
+            <el-table-column prop="frontPic" label="报修照片" min-width="180" sortable="custom" >
+                  <template slot-scope="scope">
+              <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.frontPicList" :key="item.id" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+            </template>
+            </el-table-column>
             <el-table-column prop="applicantIdName" label="上报人" min-width="180" sortable="custom" />
             <el-table-column prop="state" label="状态" min-width="180" sortable="custom" >
               <template slot-scope="scope">
@@ -66,9 +70,13 @@
               </template>
                    
             </el-table-column>
-            <el-table-column prop="maintenancePersonnel" label="维修人" min-width="180" sortable="custom" />
+            <el-table-column prop="maintenancePersonnelName" label="维修人" min-width="180" sortable="custom" />
             <el-table-column prop="repairInstructions" label="维修说明" min-width="180" sortable="custom" />
-            <el-table-column prop="afterPic" label="维修照片" min-width="180" sortable="custom" />
+            <el-table-column prop="afterPic" label="维修照片" min-width="180" sortable="custom" >
+              <template slot-scope="scope">
+                <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.afterPicList" :key="item.id" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
+              </template>
+            </el-table-column>
             <el-table-column prop="applicationDate" label="报修时间" min-width="180" sortable="custom" />
             <el-table-column prop="startMaintenanceTime" label="维修开始时间" min-width="180" sortable="custom" />
             <el-table-column prop="repairCompletionTime" label="维修完成时间" min-width="180" sortable="custom" />
@@ -105,7 +113,9 @@ export default {
       columnList: [],
       superQuery: {},
       superForm: {}, 
- 
+        srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
+      ],
 
  
    
@@ -226,9 +236,13 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  mounted() {
+  mounted() { 
   },
   methods: {
+       bigimg(url) {
+        console.log("url");
+      this.srcList[0] = url
+    },
     batchSet(key){
       this.taskKey=key 
       this.$nextTick(()=>{
@@ -299,11 +313,21 @@ export default {
     },
    
     initData() {
+
       this.listLoading = true
       RepairRequestList(this.orderForm).then(res => {
-        this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
+          this.tableData = res.data.records.map(item => {
+          if (item.frontPic) {
+            item.frontPicList = item.frontPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          if (item.afterPic) {
+            item.afterPicList = item.afterPicList.map(o => { return JSON.parse(`{${o}}`) })
+          }
+          return item
+        }) 
+        console.log("this.tableData",this.tableData);
       }).catch(() => {
         this.listLoading = false
       })

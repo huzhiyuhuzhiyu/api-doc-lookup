@@ -72,12 +72,12 @@
           <el-table-column prop="position" label="常用位置" min-width="160" />
     
           <el-table-column prop="orderStatus" label="状态" min-width="120" >
-            <template  slot-scope="scope">
-              <div v-if="scope.row.orderStatus=='toBeAgreed'">待同意</div>
-              <div v-if="scope.row.orderStatus=='toBeOut'">待调出</div>
-              <div v-if="scope.row.orderStatus=='toBeRecall'">待调回</div>
-              <div v-if="scope.row.orderStatus=='finished'">已完成</div>
-              <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
+            <template  slot-scope="scope"> 
+              <el-tag type="success" disable-transitions v-if="row.orderStatus == 'finished'">已完成</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.orderStatus == 'rejected'">已拒绝</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeRecall'">备用</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeOut'">备用</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeAgreed'">备用</el-tag>
             </template>
           </el-table-column>
         

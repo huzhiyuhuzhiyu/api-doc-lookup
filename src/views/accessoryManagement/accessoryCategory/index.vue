@@ -62,9 +62,11 @@
           <el-table-column prop="name" label="类别名称" width="250" sortable="custom" />
           <el-table-column prop="code" label="类别编码" min-width="150" sortable="custom" />
           <el-table-column prop="accessoryFlag" label="是否标记为配件" min-width="150" sortable="custom" >
-            <template slot-scope="scope">
-              {{ scope.row.accessoryFlag?'是':"否" }}
-            </template>
+        
+              <template slot-scope="scope">
+                <div v-if="scope.row.accessoryFlag"><el-tag type="success">是</el-tag></div>
+                <div v-if="!scope.row.accessoryFlag"><el-tag type="danger">否</el-tag></div>
+              </template>
           </el-table-column>
           <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
             <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
@@ -94,7 +96,7 @@
           
           <el-col :span="24">
             <el-form-item label="是否设置为配件" prop="accessoryFlag">
-               <el-select v-model="requestForm.accessoryFlag" placeholder="请选择" >
+               <el-select v-model="requestForm.flag" placeholder="请选择" >
                   <el-option v-for="(item, index) in accessoryFlagList" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
@@ -153,8 +155,8 @@ export default {
       userRelationListVisible: false,
       organizeIdTree: [],
       requestForm:{
-        ids:[],
-        accessoryFlag:true,
+        idList:[],
+        flag:true,
       },
       form: {
         code: '',
@@ -238,6 +240,7 @@ export default {
     },
     batchFun(){
       if(!this.selectArr.length)return this.$message.error("请先选择您要标记为配件的数据")
+     this.requestForm.idList=this.selectArr.map(item => item.id);
       this.batchVisible=true
     },
     submitFun(){
@@ -245,15 +248,16 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          // delClassAttribute(id).then((res) => {
-          //   this.initData()
-          //   this.$message({
-          //     type: 'success',
-          //     message: '删除成功',
-          //     duration: 1500
-          //   })
-          //   location.reload()
-          // })
+          batchAccessory(this.requestForm).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '批量标记成功',
+              duration: 1500
+            })
+            this.batchVisible=false
+            this.initData()
+          })
         })
         .catch(() => { })
     },

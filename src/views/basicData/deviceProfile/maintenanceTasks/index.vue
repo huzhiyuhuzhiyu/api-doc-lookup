@@ -50,11 +50,11 @@
             </div>
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData"
-            :fixedNO="true"  @selection-change="handleSelectionChange" hasC
+            :fixedNO="true"  
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="no" label="保养任务单号" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentName" label="设备名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentCode" label="设备编码" min-width="180" sortable="custom" />
             <el-table-column prop="state" label="任务状态" min-width="180" sortable="custom" >
                  <template slot-scope="scope">
                   <el-tag  v-if="!scope.row.state">未完成</el-tag>
@@ -64,7 +64,11 @@
             <el-table-column prop="actualMaintenanceName" label="保养人" min-width="180" sortable="custom" />
             <el-table-column prop="actualMaintenanceDate" label="实际保养时间" min-width="180" sortable="custom" />
             <el-table-column prop="position" label="设备常用位置" min-width="180" sortable="custom" />
-            <el-table-column prop="pic" label="保养图片" min-width="180" sortable="custom" />
+            <el-table-column prop="pic" label="保养图片" min-width="180" sortable="custom" >
+                <template slot-scope="scope">
+                <el-image @click="bigimg(define.comUrl+scope.row.url)" style="width: 25px;height: 25px;margin-left: 5px;"   :src="define.comUrl+scope.row.url" :preview-src-list="srcList"></el-image>
+              </template>
+            </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
   
@@ -117,7 +121,7 @@ export default {
       orderForm: {},
       orderFormlist: {
         taskType:"maintenance",
-        equipmentType:"equipment",
+        classAttribute:"equipment",
         no:"",
         equipmentCode:"",
         equipmentName:"",
@@ -192,7 +196,10 @@ export default {
     
       ],
       list:[],
-   
+      superForm: {}, 
+        srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
+      ],
  
  
    
@@ -210,7 +217,9 @@ export default {
   mounted() {
   },
   methods: {
- 
+     bigimg(url) { 
+      this.srcList[0] = url
+    },
  
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -236,7 +245,13 @@ export default {
     initData() {
       this.listLoading = true
       equTaskMaintenanceList(this.orderForm).then(res => {
-        this.tableData = res.data.records
+        this.tableData = res.data.records.map(item => {
+          if (item.pic) {
+            item.pic = JSON.parse(`{${item.pic}}`)
+          }
+         
+          return item
+        }) 
         this.total = res.data.total
         this.listLoading = false
       }).catch(() => {

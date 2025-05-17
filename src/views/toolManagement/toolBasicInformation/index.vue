@@ -72,13 +72,13 @@
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
-              <el-button size="mini" type="primary" v-has="'property_addBtn'" icon="el-icon-plus" @click="propertyAddFun('', false, 'add','propertyAdd')">从资产新建</el-button>
+              <el-button size="mini" type="primary" v-has="'tool_addBtn'" icon="el-icon-plus" @click="propertyAddFun('', false, 'add','propertyAdd')">从资产新建</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p038')">打印工具二维码</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button>
-              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
+              <!-- <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button> -->
+              <!-- <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
                 @click="importProductFun">导入</el-button>
               <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm"
-                :disabled="!tableData.length">导出</el-button>
+                :disabled="!tableData.length">导出</el-button> -->
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
@@ -96,49 +96,39 @@
         </div>
         <JNPF-table v-if="istable" :data="tableData" ref="dataTable" @sort-change="sortChange" custom-column hasC
           @selection-change="handleSelectionChange">
-          <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom" />
+          <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch === '1'"
             key="projectName" />
-          <el-table-column prop="deviceType" label="工具类型" width="140" sortable="custom">
-            <template slot-scope="scope">
-              <el-tag type="success" disable-transitions v-if="scope.row.deviceType == 'normal'">正常工具</el-tag>
-              <el-tag disable-transitions v-if="scope.row.deviceType == 'virtually'">虚拟工具</el-tag>
+          <el-table-column prop="categoryName" label="所属分类" min-width="200" sortable="custom" />
+          <el-table-column prop="inspectionUserName" label="点检人" min-width="200" sortable="custom" />
+          <el-table-column prop="maintenanceUserName" label="保养人" min-width="200" sortable="custom" />
+          <el-table-column prop="requisitionFlag" label="工具领用状态" min-width="200" sortable="custom" >
+            <template slot-scope="{row}">
+              <el-tag type="success" disable-transitions v-if="row.requisitionFlag">已领用</el-tag>
+              <el-tag disable-transitions v-if="!row.requisitionFlag">未领用</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
-          <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
-          <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
-          <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
-          <el-table-column prop="serialNo" label="序列号" min-width="200" sortable="custom" />
-          <el-table-column prop="scrapDate" label="报废日期" width="180" sortable="custom" />
-          <el-table-column prop="purchaseDate" label="采购日期" width="180" sortable="custom">
-          </el-table-column>
-          <el-table-column prop="productDate" label="制造日期" width="180" sortable="custom" />
-          <el-table-column prop="weight" label="重量（KG）" width="200" sortable="custom" />
-          <el-table-column prop="serviceLife" label="额定使用年限（年）" width="200" sortable="custom" />
-          <el-table-column prop="ratedVoltage" label="额定电压V" width="200" sortable="custom" />
-          <el-table-column prop="ratedCurrent" label="额定电流A" width="200" sortable="custom" />
-          <el-table-column prop="power" label="额定功率KW" width="200" sortable="custom" />
-          <el-table-column prop="equLong" label="长（CM）" width="200" sortable="custom" />
-          <el-table-column prop="width" label="宽（cm）" width="200" sortable="custom" />
-          <el-table-column prop="height" label="高（CM）" width="200" sortable="custom" />
-          <el-table-column prop="equipmentValue" label="工具原值（万元）" width="200" sortable="custom" />
-          <el-table-column prop="theoryBeat" label="理论节拍" min-width="200" sortable="custom" />
-          <el-table-column prop="usin" label="用途" min-width="180" sortable="custom" />
-          <el-table-column prop="remark" label="备注" min-width="200" sortable="custom" />
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
+
           <el-table-column prop="state" label="工具状态" width="140" align="center" sortable="custom" fixed="right">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
               <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
               <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
-              <el-tag type="danger" disable-transitions v-if="row.state == 'abnormal'">异常</el-tag>
-              <el-tag disable-transitions v-if="row.state == 'spare'">备用</el-tag>
-              <el-tag type="info" disable-transitions v-if="row.state == 'stop'">停用</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.state == 'sale'">售出</el-tag>
+              <el-tag disable-transitions v-if="row.state == 'out'">调出</el-tag>
             </template>
           </el-table-column>
+  
+          
+          <el-table-column prop="position" label="常用位置" min-width="200" sortable="custom" />
+             <el-table-column prop="accessoryReturnFlag" label="是否归还" min-width="140"  sortable="custom" >
+              <template slot-scope="scope">
+                <div v-if="scope.row.accessoryReturnFlag"><el-tag type="success">是</el-tag></div>
+                <div v-if="!scope.row.accessoryReturnFlag"><el-tag type="danger">否</el-tag></div>
+              </template>
+          </el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="200" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, false, 'edit')" @del="handleDel(scope.row.id)">
@@ -149,7 +139,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true, 'look')">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true, 'look','propertyAdd')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -410,7 +400,7 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
-        classAttribute: "equipment"
+        classAttribute: "tool"
       },
       form: {
         productCategoryId: "",
@@ -695,7 +685,7 @@ export default {
         page: 1,
         limit: 999,
         keyword: '',
-        classAttribute: 'equipment'
+        classAttribute: 'tool'
       }
       getCategoryTrees(listQuery).then(res => {
         console.log(99, res)
@@ -772,7 +762,7 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
-        classAttribute: "equipment"
+        classAttribute: "tool"
       }
       this.form = {
         state: '',
@@ -801,10 +791,10 @@ export default {
       return fullPath
     },
 
-    addOrUpdateHandle(id, type, types) {
+    addOrUpdateHandle(id, type, types,key) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, types)
+        this.$refs.Form.init(id, type, types,key)
       })
 
     },

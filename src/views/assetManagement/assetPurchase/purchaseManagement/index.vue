@@ -73,18 +73,18 @@
           <el-table-column prop="userTime" label="投入使用日期" min-width="180" sortable="custom" />
           <el-table-column prop="ownerName" label="资产管理员" min-width="180" sortable="custom" />
           <el-table-column prop="orderStatus" label="采购单状态" min-width="120" >
-            <template  slot-scope="scope">
-              <div v-if="scope.row.orderStatus=='toBeAgreed'">待同意</div>
-              <div v-if="scope.row.orderStatus=='toBeConfirmed'">待确认</div>
-              <div v-if="scope.row.orderStatus=='received'">已接收</div>
-              <div v-if="scope.row.orderStatus=='rejected'">已拒绝</div>
+            <template  slot-scope="scope"> 
+              <el-tag type="success" disable-transitions v-if="row.orderStatus == 'received'">已接收</el-tag>
+              <el-tag type="danger" disable-transitions v-if="row.orderStatus == 'rejected'">已拒绝</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeAgreed'">待确认</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeConfirmed'">待确认</el-tag>
             </template>
           </el-table-column>
           <el-table-column prop="billStatus" label="对账状态" min-width="120" >
             <template  slot-scope="scope">
-              <div v-if="scope.row.billStatus=='no_billing'">未对账</div>
-              <div v-if="scope.row.billStatus=='billed'">已对账</div>
-              <div v-if="scope.row.billStatus=='in_bill'">对账中</div>
+              <div v-if="scope.row.billStatus == 'no_billing'"><el-tag>未对账</el-tag> </div>
+              <div v-if="scope.row.billStatus == 'billed'"><el-tag type="success">已对账</el-tag></div>
+              <div v-if="scope.row.billStatus == 'no_billing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">对账中</el-tag></div>
             </template>
           </el-table-column>
           <el-table-column prop="createByName" label="申请人" min-width="150" sortable="custom" />

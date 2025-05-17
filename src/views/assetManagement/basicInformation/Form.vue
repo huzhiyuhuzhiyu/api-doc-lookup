@@ -136,7 +136,7 @@
                       </el-row>
                     </el-form>
                   </el-collapse-item>
-                  <el-collapse-item title="关联信息" name="associationInfo" class="orderInfo" v-if="btnType=='look'">
+                  <!-- <el-collapse-item title="关联信息" name="associationInfo" class="orderInfo" v-if="btnType=='look'">
                     <el-radio-group v-model="categoryType"
                       style="width:100%;border-bottom: 1px solid #dcdfe6 ;margin-top: 8px;">
                       <el-radio-button v-for="item in categoryTypeList" :key="item.code" style="height: 100%;"
@@ -145,7 +145,6 @@
                         }}</el-radio-button>
                     </el-radio-group>
             
-                    <!-- 采购 -->
                     <div v-if="categoryType == 'purchase'">
                   <JNPF-table ref="tableRef" :data="purchaseData" fixedNO v-loading="tableloading" :height="customStyleData"  :partent-or-child="'child'">
                     <el-table-column prop="orderNo" label="采购单号" min-width="180" />
@@ -164,7 +163,6 @@
                     <el-table-column prop="remark" min-width="180" label="审批说明" />
                   </JNPF-table>
                     </div>
-                    <!-- 报废 -->
            
                     <div v-if="categoryType == 'scrap'">
                   <JNPF-table ref="tableRef" :height="customStyleData" :data="scrapData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
@@ -178,7 +176,6 @@
                     <el-table-column prop="createByName" label="审批说明" />
                   </JNPF-table>
                     </div>
-                    <!-- 出售 -->
                     <div v-if="categoryType == 'sale'">
                   <JNPF-table ref="tableRef" :height="customStyleData" :data="saleData" fixedNO  :partent-or-child="'child'"
                     v-loading="tableloading">
@@ -196,7 +193,6 @@
                     <el-table-column prop="createByName" label="审批说明" />
                   </JNPF-table>
                     </div>
-                    <!-- 调出 -->
                     <div v-if="categoryType == 'call'">
                   <JNPF-table ref="tableRef" :height="customStyleData" :data="callData" fixedNO v-loading="tableloading"  :partent-or-child="'child'">
                     <el-table-column prop="orderNo" label="调出单号" min-width="200">
@@ -215,7 +211,7 @@
                     <el-table-column prop="createByName" label="审批说明" />
                   </JNPF-table>
                     </div>
-                  </el-collapse-item>
+                  </el-collapse-item> -->
                 </el-collapse>
               </el-tab-pane>
               <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">

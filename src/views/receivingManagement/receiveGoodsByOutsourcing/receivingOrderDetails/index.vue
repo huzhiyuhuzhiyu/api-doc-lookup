@@ -40,7 +40,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <topOpts @add="addSupplier('', 'add')" :addText="'创建收货单'">
+              <topOpts @add="addSupplier('', 'add')">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>

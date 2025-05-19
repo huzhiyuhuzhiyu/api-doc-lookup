@@ -43,7 +43,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <topOpts @add="addSupplier('', 'add')" :addText="'创建收货单'">
+              <topOpts @add="addSupplier('', 'add')">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
@@ -343,11 +343,11 @@ export default {
   },
 
   methods: {
-     
+
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
-          this.prindId = res.data.id 
+          this.prindId = res.data.id
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')

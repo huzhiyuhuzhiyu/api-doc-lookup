@@ -43,7 +43,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <topOpts @add="addSupplier('', 'add')" :addText="'创建收货单'">
+              <topOpts @add="addSupplier('', 'add')">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
@@ -348,7 +348,7 @@ export default {
   methods: {
     withdrawFun() {
       if (!this.selectArr.length) return this.$message.error("请选择您要撤回的数据")
-      const idArray = this.selectArr.map(item => item.id); 
+      const idArray = this.selectArr.map(item => item.id);
       this.$confirm("您确定撤回所选择的数据吗?", "提示", {
         type: 'warning'
       }).then(() => {
@@ -365,7 +365,7 @@ export default {
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
-          this.prindId = res.data.id 
+          this.prindId = res.data.id
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')
@@ -389,7 +389,7 @@ export default {
     },
     //禁用复选框
     checkSelectable(row) {
-      if (row.documentStatus == 'draft' ) return false 
+      if (row.documentStatus == 'draft' ) return false
       return true
     },
     // 选中得数据

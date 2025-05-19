@@ -38,7 +38,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <topOpts @add="addSupplier('', 'add')" :addText="'创建收货单'">
+              <topOpts @add="addSupplier('', 'add')">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
@@ -87,7 +87,7 @@
           <el-table-column prop="proportion" label="比重" min-width="120" />
           <el-table-column prop="discount" label="折扣" min-width="120" />
             <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
-     
+
             <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" width="130" sortable="custom"
               v-if="standardValueFlag == 1"></el-table-column>

@@ -526,7 +526,7 @@
             </div>
           </div>
         </el-dialog>
-        <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
+        <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="true"
           :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
           append-to-body>
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -880,7 +880,8 @@ export default {
       treeLoading: false,
       selectRows: [],
       codeConfig: {},
-      orderForm: {
+      orderForm:{},
+      orderFormList: {
         cooperativePartnerId: "",
         customerProductDrawingNo: "",
         deliverQueryFlag: 1,
@@ -1050,29 +1051,31 @@ export default {
     },
     // 选择产品——重置
     resetProductFun() {
+    this.orderForm=JSON.parse(JSON.stringify(this.orderFormList))
       this.deliveryDateArr = []
-      this.orderForm = {
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: "",
-        deliverQueryFlag: 1,
-        drawingNo: "",        // customerProductNo: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
-      }
+      // this.orderForm = {
+      //   cooperativePartnerId: this.dataForm.cooperativePartnerId,
+      //   customerProductDrawingNo: "",
+      //   deliverQueryFlag: 1,
+      //   drawingNo: "",        // customerProductNo: "",
+      //   deliveryStartTime: "",
+      //   deliveryEndTime: "",
+      //   pageNum: 1,
+      //   pageSize: 20,
+      //   orderItems: [{
+      //     asc: false,
+      //     column: ""
+      //   }, {
+      //     asc: false,
+      //     column: "t1.create_time"
+      //   }],
+      // }
       this.searchProductFun()
     },
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+    this.orderForm=JSON.parse(JSON.stringify(this.orderFormList))
       this.productVisible = true
       this.searchProductFun()
     },

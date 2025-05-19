@@ -132,9 +132,9 @@
                             品名规格
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
-                              :rules="productRules.productDrawingNo">
-                              <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
+                              :rules="productRules.drawingNo">
+                              <el-input v-model="scope.row.drawingNo" placeholder="请输入品名规格" disabled />
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -594,7 +594,6 @@ export default {
       // 客户产品查询条件
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
 
       ],
       getcooperativeProduct,
@@ -693,7 +692,7 @@ export default {
         buyBackRate:[{ required: true, message: '请选择回购税率', trigger: ['change'] }],
       },
       productRules: {
-        productDrawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
+        drawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
         productName: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
         purchaseQuantity: [
           // 主数量
@@ -854,12 +853,11 @@ export default {
   },
   async created() {
     await this.getProjectList()
-    await this.switchStyleheight()
    
 
     this.tableDataFlag = true
     this.formLoading = false
-
+    await this.switchStyleheight()
     this.getBimBusinessDetail()
   },
   computed: {
@@ -1016,7 +1014,6 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
-        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{
@@ -1428,7 +1425,8 @@ export default {
               })
             }
             this.dataForm = res.data
-            if(!res.data.relatedOut)return
+            this.dataFormTwo.data = res.data.purchaseOrderLineVOList
+            if(!res.data.relatedOut)return this.dataForm.outType='purchase_sale'
             this.dataForm.outType=res.data.relatedOut.outType
             this.dataForm.outPartnerName=res.data.relatedOut.outPartnerName
             this.dataForm.outPartnerId=res.data.relatedOut.outPartnerId
@@ -1440,7 +1438,6 @@ export default {
             this.dataForm.yieldRate=res.data.relatedOut.yieldRate
             this.dataForm.warehouseName=res.data.relatedOut.warehouseName
             this.dataForm.warehouseId=res.data.relatedOut.warehouseId
-            this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })

@@ -439,8 +439,13 @@ export default {
 
     async created() {
         await this.awaitAbProject()
-        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
-        this.initListQuery.projectId = this.defaultProjectId
+        if(this.abProjectSwitchVisible){
+
+          this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+          this.initListQuery.projectId = this.defaultProjectId
+        }else{
+          this.defaultProjectId='1'
+        }
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
         const res = await canStockBalance(this.defaultProjectId)
         this.accountPeriod = res.data
@@ -448,23 +453,12 @@ export default {
         await this.getProductNameSwitch('product', 'enable_productName')
         this.setSuperQueryJson()
         this.setSearchList()
-        this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
         this.initData()
     },
     methods: {
         setSearchList(){
             this.searchList = [
-                {
-                    fieldValue: this.defaultProjectId,
-                    field: 'projectId',
-                    label: '所属项目',
-                    prop: 'projectId',
-                    disabled:this.abProjectId === '1' ? false : true,
-                    symbol: 'like',
-                    searchType: 4,
-                    options:this.abProjectNoCommonList,
-                    clearable:false,
-                },
+            
                 {
                     fieldValue: '',
                     field: 'accountPeriod',
@@ -490,6 +484,26 @@ export default {
                     searchType: 1
                 }
             ]
+            if(this.abProjectSwitchVisible){
+              let arr=[
+                    {
+                    fieldValue: this.defaultProjectId,
+                    field: 'projectId',
+                    label: '所属项目',
+                    prop: 'projectId',
+                    disabled:this.abProjectId === '1' ? false : true,
+                    symbol: 'like',
+                    searchType: 4,
+                    options:this.abProjectNoCommonList,
+                    clearable:false,
+                },
+              ]
+              this.searchList=[...arr,...this.searchList]
+              this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
+            }else{
+        this.searchList[0].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
+
+            }
         },
         setSuperQueryJson(){
             this.superQueryJson = [

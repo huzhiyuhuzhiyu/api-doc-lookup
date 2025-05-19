@@ -75,7 +75,7 @@
           <el-table-column prop="productName" label="产品名称" min-width="400" />
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="400" />
           <el-table-column prop="processName" label="工序名称" sortable="custom" min-width="120" />
-          <el-table-column prop="dispatchedQuantity" label="派工数量" min-width="120" />
+          <el-table-column prop="productionQuantity" label="生产数量" min-width="120" />
           <el-table-column prop="firstInspectionDate" label="首检日期" sortable="custom" width="140" />
           <el-table-column prop="inspectorIdName" label="检验员" min-width="120" />
           <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" width="120">

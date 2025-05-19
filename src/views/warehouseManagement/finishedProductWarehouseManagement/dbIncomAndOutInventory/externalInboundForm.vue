@@ -11,7 +11,7 @@
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">提交</el-button>
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
-            @click="handleConfirm('submit', 'print')">提交并打印1</el-button>
+            @click="handleConfirm('submit', 'print')">提交并打印</el-button>
 
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

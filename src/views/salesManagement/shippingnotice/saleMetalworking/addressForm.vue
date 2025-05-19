@@ -114,7 +114,7 @@ export default {
         city: [{ required: true, message: '请选择城市', trigger: 'change' }],
         area: [{ required: true, message: '请选择地区', trigger: 'change' }],
         address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
-        phone: [{ required: true, message: '请输入电话', trigger: 'blur' }, { validator: this.formValidate('iphone'), trigger: 'blur' },],
+        phone: [{ required: true, message: '请输入收件人电话', trigger: 'blur' }, { validator: this.formValidate('iphone'), trigger: 'blur' },],
         recipient: [{ required: true, message: '请输入收件人名称', trigger: 'change' }, { validator: formValidate('fullName'), trigger: 'blur' }],
       }
     }

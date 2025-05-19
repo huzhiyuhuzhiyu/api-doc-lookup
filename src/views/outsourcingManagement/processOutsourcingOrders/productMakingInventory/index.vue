@@ -91,8 +91,8 @@
             :limit.sync="listQuery.pageSize" @pagination="initData">
             <div style="display: flex;">
               <div class="text" style="margin-right: 10px;"><span>库存数量:{{ inventoryQuantityNum }}</span></div>
-              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ occupancyQuantityNum }}</span></div>
-              <div class="text"><span>占用数量:{{ availableQuantityNum }}</span></div>
+              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ availableQuantityNum }}</span></div>
+              <div class="text"><span>占用数量:{{ occupancyQuantityNum }}</span></div>
             </div>
 
           </pagination>
@@ -424,7 +424,7 @@ export default {
           console.log(res, '外协订单列表')
           this.tableDataList = res.data.page.records
           this.tableFlag = true
-
+ 
           this.total = res.data.page.total
           this.inventoryQuantityNum = res.data.total ? res.data.total.inventoryQuantity : 0
           this.occupancyQuantityNum = res.data.total ? res.data.total.occupancyQuantity : 0

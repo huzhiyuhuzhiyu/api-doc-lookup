@@ -24,7 +24,7 @@
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" :highlight-current="highlightCurrentFlage"
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode" v-model="selectedKeys">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
@@ -167,6 +167,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      highlightCurrentFlage:true,
       superQuery: {},
       superForm: {},
       basicQuery: {},
@@ -492,6 +493,7 @@ export default {
     
       this.searchList.splice(1, 0,  { field: 'name', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
     }
+    this.highlightCurrentFlage=false
       this.initData()
     },
 

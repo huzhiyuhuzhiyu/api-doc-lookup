@@ -91,8 +91,13 @@ export default {
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 120
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 120,
+          change(){
+            this.$nextTick(() => {
+              this.$refs['sleeveForm'][0].$children[0].validateField('model')
+            })
+          },
         },
         {
           prop: 'outerCircle',
@@ -127,7 +132,6 @@ export default {
           value: '',
           type: 'input',
           itemRules: [
-            { required: true, message: '钢球用量不能为空', trigger: 'blur' },
             {
               validator: this.formValidate({
                 type: 'noEmtry',
@@ -139,7 +143,10 @@ export default {
                 ]
               }),
               trigger: 'blur'
-            }
+            },
+            // { validator: this.formValidate({ type: "decimal", params: [20, 2, (errMsg,index) => { this.$message.error(`第${index + 1}行钢球：` + '请输入正确的数量(最多保留2位小数,整数18位)') }], }), trigger: "blur", },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的钢球用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, message: '钢球用量不能为空', trigger: 'blur' },
           ],
           minWidth: 130
         },
@@ -148,7 +155,10 @@ export default {
           label: '油脂用量(毫克)',
           value: '',
           type: 'input',
-          itemRules: [{ required: true, message: '油脂用量不能为空', trigger: 'blur' }],
+          itemRules: [
+            { required: true, message: '油脂用量不能为空', trigger: 'blur' }, 
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的油脂用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+          ],
           minWidth: 140
         },
         {
@@ -156,7 +166,12 @@ export default {
           label: '保持架用量(个)',
           value: 0,
           type: 'input',
-          itemRules: [{ required: true, message: '保持架用量不能为空', trigger: 'blur' }],
+          itemRules: [
+            { required: true, message: '保持架用量不能为空', trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的保持架用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+
+            
+          ],
           minWidth: 150
         },
         {
@@ -164,7 +179,11 @@ export default {
           label: '密封圈用量(个)',
           value: 0,
           type: 'input',
-          itemRules: [{ required: true, message: '密封圈用量不能为空', trigger: 'blur' }],
+          itemRules: [{ required: true, message: '密封圈用量不能为空', trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的密封圈用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+
+
+          ],
           minWidth: 150
         }
       ],
@@ -384,7 +403,10 @@ export default {
     },
 
     sleeveNameChange1(val, data, paramsObj) {
-      let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      console.log("this.$refs['sleeveForm'].$children[0].fields",this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor);
+      // let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      let prop = `data.${paramsObj.scope.$index}.innerCircle`
+      console.log('prop',prop);
       this.$nextTick(() => {
         this.$refs['sleeveForm'].$children[0].validateField(prop)
       })
@@ -395,7 +417,8 @@ export default {
       this.sleeveList[index].innerCircle = data[0].all.drawingNo
     },
     sleeveNameChange2(val, data, paramsObj) {
-      let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      // let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      let prop = `data.${paramsObj.scope.$index}.outerCircle`
       this.$nextTick(() => {
         this.$refs['sleeveForm'].$children[0].validateField(prop)
       })
@@ -405,7 +428,8 @@ export default {
       this.sleeveList[index].outerCircle = data[0].all.drawingNo
     },
     sleeveNameChange3(val, data, paramsObj) {
-      let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      // let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      let prop = `data.${paramsObj.scope.$index}.steelBall`
       this.$nextTick(() => {
         this.$refs['sleeveForm'].$children[0].validateField(prop)
       })
@@ -415,7 +439,8 @@ export default {
       this.sleeveList[index].steelBall = data[0].all.drawingNo
     },
     sleeveNameChange4(val, data, paramsObj) {
-      let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      // let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
+      let prop = `data.${paramsObj.scope.$index}.sealingRing`
       this.$nextTick(() => {
         this.$refs['sleeveForm'].$children[0].validateField(prop)
       })

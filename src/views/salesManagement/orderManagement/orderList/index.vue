@@ -63,9 +63,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-                      hasC
-                      :checkSelectable="checkSelectable"
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" hasC :checkSelectable="checkSelectable"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
               <template slot-scope="scope">

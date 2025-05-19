@@ -62,7 +62,9 @@ export default {
       tempCodeRules: [],
       tempDrawingNoRules: [],
       dataForm: {
-        category: 'warehouse'
+        category: 'warehouse',
+        warehouseId:"",
+        warehouseName:"",
       },
       sleeveItems: [
         {
@@ -210,6 +212,7 @@ export default {
   },
   methods: {
     init(data, btntype) {
+      console.log("data",data);
       this.btnType = btntype
       this.visible = true
       this.formLoading = true

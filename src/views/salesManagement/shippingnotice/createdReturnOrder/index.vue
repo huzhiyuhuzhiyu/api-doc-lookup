@@ -14,7 +14,7 @@
               <!-- <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
             </div>
           </div>
-          <div class="main" v-loading="formLoading">
+          <div class="main" v-loading="formLoading" ref="main">
 
             <el-tabs v-model="activeName" @tab-click="handleClick">
               <el-tab-pane label="基础信息" name="orderInfo">
@@ -117,7 +117,7 @@
                     </div>
                     <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                       <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO
-                        fixedNO @selection-change="handeleProductInfoData">
+                        fixedNO @selection-change="handeleProductInfoData"  :height="customStyleData">
                         <el-table-column type="selection" width="60" fixed='left' align="center"
                           v-if="btnType !== 'look'" key="1" />
                         <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -580,16 +580,16 @@
                   </el-form>
                 </el-row>
                 <div class="JNPF-common-layout-main JNPF-flex-main">
-                  <JNPF-table v-loading="listLoading" :data="allproductData" hasC
+                  <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                     @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
-                    <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" show-overflow-tooltip ></el-table-column>
+                    <el-table-column prop="name" label="产品名称" min-width="140"  sortable="custom" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" />
-                    <el-table-column prop="productCategoryName" label="所属分类" />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="140"  sortable="custom"/>
+                    <el-table-column prop="productCategoryName" min-width="140"  label="所属分类" sortable="custom"/>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                     <el-table-column prop="mainUnit" label="单位" />
-                    <el-table-column prop="inventoryQuantity" label="库存数量">
+                    <el-table-column prop="inventoryQuantity" min-width="140"  label="库存数量" sortable="custom">
                       <template slot-scope="scope">
                         <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
                           {{ scope.row.inventoryQuantity }}
@@ -638,6 +638,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      customStyleData:0,
       allProVisible: false,
       tipsvisible: false,
       submitmethodsTitle: "",
@@ -953,6 +954,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
+    await this.switchStyleheight()
     setTimeout(() => {
     this.formLoading=false
       
@@ -965,6 +967,21 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+       sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'inventoryQuantity' || prop == 'productCategoryName' || prop === 'drawingNo' || prop === 'name'||prop=='code') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.ProductListRequestObj.orderItems[0].asc = order === "ascending"
+      this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
+      this.searchAllProduct()
+    },
+
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -1405,6 +1422,7 @@ export default {
           this.taxRateList = res.data.list
           console.log("税率", this.taxRateList);
         })
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.allProVisible = true
         let arr = [];
         this.ProductListRequestObj = {
@@ -1591,6 +1609,7 @@ export default {
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.orderDateArr = []
       this.ProductListRequestObj = {
         // neOrderState: 'finish',
@@ -2042,6 +2061,37 @@ export default {
           this.dataForm.approvalFlag = false
         }
       }).catch(() => { })
+    },
+      switchStyleheight() {
+      const mainRegion1 = this.$refs.main // 表单页面区域
+      console.log("this.$refs.main", this.$refs.main);
+      const mainHeight1 = mainRegion1.clientHeight
+      // 其他同级组件占用高度
+      let bortherHeight = 0
+      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
+      bortherItems.forEach((item) => {
+        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
+      })
+
+      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
+      let maxHeight2 = mainHeight1 - bortherHeight - 112
+      let maxHeight;
+      if (this.btnType == 'look') {
+         maxHeight = mainHeight1 - 580
+
+      } else {
+         maxHeight = mainHeight1 - 500
+      }
+
+      console.log(maxHeight, 'maxHeight')
+      this.customStyleData = Number(maxHeight) > 0 ? maxHeight : 300
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100)
+      }
     },
   }
 }

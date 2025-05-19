@@ -7,7 +7,7 @@
               <el-page-header @back="goBack" :content="dialogTitle + `工序外协订单`" v-if="!!dialogTitle" />
               <div style="font-size:18px" v-else>新建工序外协订单</div>
               <div class="options" v-if="type != 'look'">
-                <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
+                <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')" v-if="!preData">
                   保存草稿
                 </el-button>
                 <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">

@@ -72,15 +72,14 @@
           <el-table-column prop="position" label="常用位置" min-width="160" />
     
           <el-table-column prop="orderStatus" label="状态" min-width="120" >
-            <template  slot-scope="scope"> 
+            <template  slot-scope="{row}"> 
               <el-tag type="success" disable-transitions v-if="row.orderStatus == 'finished'">已完成</el-tag>
               <el-tag type="danger" disable-transitions v-if="row.orderStatus == 'rejected'">已拒绝</el-tag>
-              <el-tag disable-transitions v-if="row.orderStatus == 'toBeRecall'">备用</el-tag>
-              <el-tag disable-transitions v-if="row.orderStatus == 'toBeOut'">备用</el-tag>
-              <el-tag disable-transitions v-if="row.orderStatus == 'toBeAgreed'">备用</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeRecall'">待调回</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeOut'">待调出</el-tag>
+              <el-tag disable-transitions v-if="row.orderStatus == 'toBeAgreed'">待同意</el-tag>
             </template>
           </el-table-column>
-        
           <el-table-column prop="createByName" label="申请人" min-width="150" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="150" sortable="custom" />
           <el-table-column prop="updateTime" label="更新时间" min-width="100" />
@@ -90,12 +89,13 @@
           <el-table-column prop="outInstructions" label="调出说明" min-width="180" sortable="custom" />
           <el-table-column label="操作" width="110" fixed="right">
             <template slot-scope="scope"> 
-                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
-                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'out')" v-if="scope.row.orderStatus=='toBeOut'">确认调出</el-button>
-                <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'back')" v-if="scope.row.orderStatus=='toBeRecall'">确认调回</el-button>
+                <el-button size="mini" type="text" :disabled="!userInfo.roleCode.split(',').includes('property_call_approve')&&userInfo.userId!=='admin'"  @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
+                <el-button size="mini" type="text" :disabled="userInfo.userId!==scope.row.ownerId&&userInfo.userId!=='admin'"  @click="addOrUpdateHandle(scope.row.id, 'out')" v-if="scope.row.orderStatus=='toBeOut'">确认调出</el-button>
+                <el-button size="mini" type="text" :disabled="userInfo.userId!==scope.row.ownerId&&userInfo.userId!=='admin'"  @click="addOrUpdateHandle(scope.row.id, 'back')" v-if="scope.row.orderStatus=='toBeRecall'">确认调回</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
+        
         <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
           @pagination="initData" />
       </div>

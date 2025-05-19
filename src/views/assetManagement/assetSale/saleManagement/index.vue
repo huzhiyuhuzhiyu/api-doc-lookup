@@ -93,8 +93,8 @@
           <el-table-column prop="updateTime" label="更新时间" width="180" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">确认</el-button>
-              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'sale')" v-if="scope.row.orderStatus=='toBeSold'">确认售出</el-button>
+              <el-button size="mini" type="text" :disabled="!userInfo.roleCode.split(',').includes('property_sale_approve')&&userInfo.userId!=='admin'"  @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">确认</el-button>
+              <el-button size="mini" type="text" :disabled="userInfo.userId!==scope.row.ownerId&&userInfo.userId!=='admin'"  @click="addOrUpdateHandle(scope.row.id, 'sale')" v-if="scope.row.orderStatus=='toBeSold'">确认售出</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -118,7 +118,7 @@ import { updateSortBatch } from '@/api/masterDataManagement/index'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'assetCategory',
+  name: 'saleManagement',
   components: { Form, SuperQuery },
   mixins: [AbProjectMixin],
   data() {  

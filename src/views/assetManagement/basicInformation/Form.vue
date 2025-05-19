@@ -272,6 +272,7 @@ export default {
   
   data() {
     return {
+      datafilelist:[],
       tipsvisible:false,
       categoryType:"purchase",
       categoryTypeList: [
@@ -597,22 +598,22 @@ export default {
           let f = {};
           // this.dataForm.documentStatus = value
    
-          // if (this.datafilelist.length) {
-          //   this.datafilelist.map((item, index) => {
-          //     item.bimAttachments = {
-          //       businessType: "system_attachment",
-          //       categoryId: this.attachmentData.configValue2,
-          //       configKey: this.attachmentData.configKey,
-          //       documentId: item.id,
-          //       fileFlag: '',
-          //       sort: index
-          //     }
-          //   })
-          // }
-          // let obj = {
-          //   attachmentList: this.datafilelist,
-          //   order: ,
-          // }
+          if (this.datafilelist.length) {
+            this.datafilelist.map((item, index) => {
+              item.bimAttachments = {
+                businessType: "system_attachment",
+                categoryId: this.attachmentData.configValue2,
+                configKey: this.attachmentData.configKey,
+                documentId: item.id,
+                fileFlag: '',
+                sort: index
+              }
+            })
+          }
+          let obj = {
+            attachmentList: this.datafilelist, 
+          }
+          this.$set(this.dataForm,'attachmentList',this.datafilelist)
           let filteredArr = []
      
           setTimeout(() => {
@@ -652,6 +653,19 @@ export default {
         this.dataForm=res.data
         this.autoCode=res.data.code
         this.copyForm=JSON.parse(JSON.stringify(res.data))
+          if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
       })
     },
    

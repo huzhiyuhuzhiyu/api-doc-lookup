@@ -73,7 +73,7 @@
           <el-table-column prop="userTime" label="投入使用日期" min-width="180" sortable="custom" />
           <el-table-column prop="ownerName" label="资产管理员" min-width="180" sortable="custom" />
           <el-table-column prop="orderStatus" label="采购单状态" min-width="120" >
-            <template  slot-scope="scope"> 
+            <template  slot-scope="{row}"> 
               <el-tag type="success" disable-transitions v-if="row.orderStatus == 'received'">已接收</el-tag>
               <el-tag type="danger" disable-transitions v-if="row.orderStatus == 'rejected'">已拒绝</el-tag>
               <el-tag disable-transitions v-if="row.orderStatus == 'toBeAgreed'">待确认</el-tag>
@@ -97,9 +97,10 @@
           <el-table-column prop="updateTime" label="更新时间" min-width="180" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
-              <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'receive')" v-if="scope.row.orderStatus=='toBeConfirmed'">确认接收</el-button>
+              <el-button size="mini" type="text" :disabled="!userInfo.roleCode.split(',').includes('property_purchase_approve')&&userInfo.userId!=='admin'"   @click="addOrUpdateHandle(scope.row.id, 'approve')" v-if="scope.row.orderStatus=='toBeAgreed'">审批</el-button>
+              <el-button size="mini" type="text" :disabled="userInfo.userId!==scope.row.ownerId&&userInfo.userId!=='admin'"   @click="addOrUpdateHandle(scope.row.id, 'receive')" v-if="scope.row.orderStatus=='toBeConfirmed'">确认接收</el-button>
             </template>
+            <!-- "property_call_approve,property_sale_approve,property_scrap_approve,property_purchase_approve" -->
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
@@ -122,7 +123,7 @@ import { updateSortBatch } from '@/api/masterDataManagement/index'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'assetCategory',
+  name: 'purchaseManagement',
   components: { Form, SuperQuery },
   mixins: [AbProjectMixin],
   data() {  
@@ -281,6 +282,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   async created() {
+    console.log("this.userInfo", this.userInfo);
     this.superForm = this.form
     await this.awaitAbProject()
       console.log("this.abProjectSwitchVisible",this.abProjectSwitchVisible);

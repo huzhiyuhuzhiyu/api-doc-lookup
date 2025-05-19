@@ -116,7 +116,7 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 
 export default {
-  name: 'purchaseStatement',
+  name: 'saleStatement',
   components: { JNPFForm, ExportForm, SuperQuery },
   mixins: [getProjectList,AbProjectMixin],
   data() {

@@ -102,7 +102,7 @@ import { updateSortBatch } from '@/api/masterDataManagement/index'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'assetCategory',
+  name: 'inventoryRecords',
   components: { Form, SuperQuery },
   mixins: [AbProjectMixin],
   data() {  

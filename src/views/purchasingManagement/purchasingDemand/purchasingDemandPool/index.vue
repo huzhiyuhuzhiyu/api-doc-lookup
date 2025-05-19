@@ -186,6 +186,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getclassAttributeList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
+import { mapGetters, mapState } from 'vuex'
 Vue.prototype.$getLabel = getLabel
 import getProjectList from '@/mixins/generator/getProjectList'
 
@@ -421,6 +422,11 @@ export default {
   },
   mounted() {
     this.getProductClassFun()
+    console.log("this.userInfo", this.userInfo);
+  },
+    computed: {
+    ...mapState('user', ['token']),
+    ...mapGetters(['userInfo'])
   },
   async created() {
     await this.getOrderFiledMap()

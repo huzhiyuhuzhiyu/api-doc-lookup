@@ -295,7 +295,7 @@ export default {
         // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
       },
       copyForm:{},
-    
+      datafilelist:[],
     }
   },
   computed: {
@@ -465,24 +465,19 @@ export default {
           let f = {};
           // this.dataForm.documentStatus = value
    
-          // if (this.datafilelist.length) {
-          //   this.datafilelist.map((item, index) => {
-          //     item.bimAttachments = {
-          //       businessType: "system_attachment",
-          //       categoryId: this.attachmentData.configValue2,
-          //       configKey: this.attachmentData.configKey,
-          //       documentId: item.id,
-          //       fileFlag: '',
-          //       sort: index
-          //     }
-          //   })
-          // }
-          // let obj = {
-          //   attachmentList: this.datafilelist,
-          //   order: ,
-          // }
-          let filteredArr = []
-     
+          if (this.datafilelist.length) {
+            this.datafilelist.map((item, index) => {
+              item.bimAttachments = {
+                businessType: "system_attachment",
+                categoryId: this.attachmentData.configValue2,
+                configKey: this.attachmentData.configKey,
+                documentId: item.id,
+                fileFlag: '',
+                sort: index
+              }
+            })
+          } 
+               this.$set(this.dataForm,'attachmentList',this.datafilelist)
           setTimeout(() => {
             if (submitFlag === false) return
             this.btnLoading = true
@@ -528,6 +523,19 @@ export default {
         this.dataForm=res.data
         this.autoCode=res.data.code
         this.copyForm=JSON.parse(JSON.stringify(res.data))
+          if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
       })
     },
    

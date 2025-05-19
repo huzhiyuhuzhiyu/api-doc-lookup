@@ -218,7 +218,7 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 // import withdrawnForm from './withranForm'
 export default {
-  name: 'purchaseInquirySheet',
+  name: 'purchasePendReconciliation',
   components: { JNPFForm, SuperQuery },
   data() {
     return {

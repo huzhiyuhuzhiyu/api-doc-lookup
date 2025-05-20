@@ -35,7 +35,7 @@
             <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewFun(scope.row.blankProductsId, 'availableFlag', scope.row.warehouseId, projectId)">
+                  @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId, projectId)">
                   {{ scope.row.waitHeat }}
                 </el-link>
               </template>

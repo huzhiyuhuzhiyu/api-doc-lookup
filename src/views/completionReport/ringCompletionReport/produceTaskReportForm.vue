@@ -26,9 +26,9 @@
 
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                 <el-descriptions-item label="产品分类">{{ dataForm.productCategoryName }}</el-descriptions-item>
-                <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
-                <el-descriptions-item v-if="isXY||isJR" label="生产桶数">{{ dataForm.productionBarrels }}</el-descriptions-item>
-                <el-descriptions-item v-if="isXY||isJR" label="生产重量">{{ dataForm.productionWeight }}</el-descriptions-item>
+                <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ isXY?'万粒':'' }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="生产桶数">{{ dataForm.productionBarrels }}{{ isXY?'桶':'' }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="生产重量">{{ dataForm.productionWeight }}{{ isXY?'kg':'' }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="规值">{{ dataForm.standardValue }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="钢丝炉号">{{ dataForm.wireHeatNumber }}</el-descriptions-item>
@@ -271,7 +271,11 @@
                       <!-- equipmentId -->
                     </el-form-item>
                   </el-col>
-
+                       <el-col :sm="24" :xs="24"  class="iptLabel">
+                          <el-form-item label="备注" prop="remark">
+                            <el-input class="ipt" v-model="currentProcess.remark" placeholder="请输入备注" type="input"  maxlength="200" />
+                          </el-form-item>
+                        </el-col>
                   <el-col :sm="24" :xs="24">
                     <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                       style="margin-bottom: 20px;" class="reportBtn_right">

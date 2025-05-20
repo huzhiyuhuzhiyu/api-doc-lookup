@@ -149,7 +149,7 @@
                           <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip key="remark">
                             <template slot-scope="scope">
                               <el-input v-model="scope.row.remark"  :disabled="type === 'look'"
-                                :placeholder="type == 'look' ? '' : '请输入备注'">
+                                :placeholder="type == 'look' ? '' : '请输入备注'" maxlength="200">
                                 {{ scope.row.remark }}
                               </el-input>
                             </template>
@@ -328,7 +328,7 @@
                       <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip key="remark">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark"  :disabled="type === 'look'"
-                            :placeholder="type == 'look' ? '' : '请输入备注'">
+                            :placeholder="type == 'look' ? '' : '请输入备注'" maxlength="200">
                             {{ scope.row.remark }}
                           </el-input>
                         </template>

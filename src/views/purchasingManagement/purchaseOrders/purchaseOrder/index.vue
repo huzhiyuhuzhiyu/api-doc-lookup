@@ -598,20 +598,14 @@ export default {
 
     initData() {
       this.listLoading = true
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
-        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listQuery.deliveryStartDate = this.deliveryDate[0]
-        this.listQuery.deliveryEndDate = this.deliveryDate[1]
+      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
+        this.listQuery.deliveryStartDate = this.deliveryDateArr[0] 
+        this.listQuery.deliveryEndDate = this.deliveryDateArr[1]
       } else {
         this.listQuery.deliveryStartDate = ''
         this.listQuery.deliveryEndDate = ''
       }
+     
       purchaseOrderList(this.listQuery)
         .then((res) => {
           console.log(res, '采购订单列表')
@@ -657,15 +651,13 @@ export default {
         delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
         deliveryEndDate: '', //交货结束日期
         deliveryStartDate: '',
-        deliveryDate: '',
-        endTime: '',
+        deliveryDate: '', 
         orderNo: '', //订单号
         orderType: 'procure', //	订单类型 采购 procure、外协 external
         classAttribute: 'other',
-        receivingStatus: '',
-        startTime: ''
+        receivingStatus: '', 
       }
-      this.createRequirementDate = []
+      this.deliveryDateArr = []
       this.deliveryDate = []
       this.$refs.SuperQuery.conditionList = []
       this.search()

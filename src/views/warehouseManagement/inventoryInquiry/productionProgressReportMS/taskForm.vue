@@ -20,6 +20,8 @@
               ref="dataTable" customKey="JNPFTableKey_714465">
               <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="160"
                 sortable="custom"></el-table-column>
+                 <el-table-column prop="productionWeight" label="生产重量" min-width="160"
+                sortable="custom"></el-table-column>
               <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
               <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
               <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">

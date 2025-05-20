@@ -217,11 +217,11 @@
                   <!-- equipmentId -->
                 </el-form-item>
               </el-col>
-              <!-- <el-col :sm="24" :xs="24">
+              <el-col :sm="24" :xs="24">
               <el-form-item label="备注" prop="remark">
                 <el-input v-model="form.remark" placeholder="请输入备注" type="textarea" maxlength="200" :rows="2" />
               </el-form-item>
-            </el-col> -->
+            </el-col>
             </div>
 
 

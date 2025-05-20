@@ -1172,7 +1172,7 @@
               </div>
               <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
                 <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                  highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                  :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                   class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                   <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                     <i
@@ -1645,7 +1645,8 @@ export default {
       taxRate: 13,
       isPairingModeSwitch: '', // 配对方式显示隐藏
       pairingModeList: [],
-      pageType: ""
+      pageType: "",
+      highlightCurrentFlag:false,
     }
   },
   computed: {
@@ -2581,6 +2582,7 @@ export default {
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
+      this.highlightCurrentFlag=false
       this.ProductListRequestObj = {
         classAttributeList: [],
         classAttribute: "",

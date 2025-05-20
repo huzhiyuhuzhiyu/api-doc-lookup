@@ -90,7 +90,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="110" sortable="custom">
+          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="110">
             <template slot-scope="scope">
               <div style="color:red;" v-if="scope.row.immediatelyBuyFlag">是</div>
               <div v-else>否</div>

@@ -1179,9 +1179,9 @@ export default {
         })
         .catch(() => { })
     },
+ 
   },
-  mounted() {
-    this.switchStyleheight()
+  mounted() { 
     // 页面发生缩放，触发明细表格表单的resize
     this.clientResize = () => {
       if (!this.$refs.table) return

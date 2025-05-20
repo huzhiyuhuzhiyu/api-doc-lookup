@@ -2,7 +2,7 @@
 
   <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProduct" width="70%" append-to-body
-    @close="customerVisible = false">
+    @close=" cancelFun">
 
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
       <div class="JNPF-common-layout-center JNPF-flex-main">
@@ -31,7 +31,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList"    customKey="JNPFTableKey_327472">
+          <JNPF-table v-loading="listLoading" :data="tableDataList"    customKey="JNPFTableKey_327472"   ref="dataTable"    @row-dblclick="selectFun"   @sort-change="sortChange">
             <el-table-column prop="code" label="产品编码" sortable="custom" min-width="150"/>
             <el-table-column prop="name" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -39,7 +39,7 @@
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="150" sortable="custom" />
-            <el-table-column prop="routingCode" label="工艺路线编码" min-width="150" sortable="custom" />
+            <!-- <el-table-column prop="routingCode" label="工艺路线编码" min-width="150" sortable="custom" /> -->
             <el-table-column prop="totalStock" label="预计总库存" min-width="150">
                 <template slot-scope="scope" >
                     <div :style="{color:scope.row.totalStock * 1 < 1 * scope.row.safetyStock ? 'red' : ''}">{{ scope.row.totalStock }}</div>
@@ -70,7 +70,8 @@ export default {
     return {
 
       customerVisible: false,
-      form: {
+      form:{},
+      formList: {
         classAttribute: "finish_product",
         productDrawingNo:"",
         productCode:"",
@@ -94,8 +95,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-
-  },
+  }, 
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -106,8 +106,26 @@ export default {
 
       } catch (error) { }
     },
+    cancelFun(){
+        this.customerVisible = false
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
+    },
+     sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'code' ||prop=='name'|| prop == 'drawingNo' || prop == 'projectName' || prop == 'routingName'   ) {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order !== "descending"
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.getbatchNumList(this.id)
+    },
     init(id) {
-      console.log(777);
+    this.form=JSON.parse(JSON.stringify(this.formList))
+        this.customerVisible = true
+      console.log(777,this.form);
       this.id=id
       this.getbatchNumList(id)
     },
@@ -122,11 +140,10 @@ export default {
       this.form.projectId = id
 
       getProducts(this.form).then(res => {
-      this.customerVisible = true
-      console.log("工艺路线", res);
         this.tableDataList=res.data.records
         this.total=res.data.total
         this.listLoading = false
+        console.log("工艺路线", res);
       }).catch(() => {
         this.listLoading = false
       })
@@ -136,18 +153,9 @@ export default {
       this.getbatchNumList(this.id)
     },
     reset() {
-      this.form = {
-        classAttribute: "finish_product",
-        productDrawingNo:"",
-        productCode:"",
-        pageNum: 1,
-        pageSize: 20,
-        productStatus:"enable",
-        orderItems: [{
-          asc: false,
-          column: ""
-        },],
-      }
+    this.form=JSON.parse(JSON.stringify(this.formList))
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+     
       this.search()
     },
   }

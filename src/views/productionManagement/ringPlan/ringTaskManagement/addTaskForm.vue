@@ -64,6 +64,12 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24" v-if="isMS">
+                        <el-form-item label="排序" prop="sort">
+                          <el-input v-model="dataForm.sort" placeholder="排序">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
                       <template v-if="$store.getters.configData.produce.steelBallTask">
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="生产桶数" prop="productionBarrels">
@@ -701,6 +707,7 @@ export default {
         orderType: "manually",
         lineEdgeId: "",
         productionBarrels:1,
+        sort:0,
       },
       dataFormTwo: {
         data: [],
@@ -735,6 +742,9 @@ export default {
         ],
         cooperativePartnerName: [
           { required: true, message: '客户名称不能为空', trigger: 'change' }
+        ],
+        sort:[
+            { validator: this.formValidate('number'), trigger: 'blur' }
         ],
       },
       selectArr: [],

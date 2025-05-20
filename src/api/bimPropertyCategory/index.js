@@ -501,7 +501,7 @@ export function batchAccessoryReturnState(data) {
 export function equEquipmentBatchReturn(data) {
   return request({
     url: `/api/mes/equEquipment/batch/accessory`,
-    method: 'post',
+    method: 'put',
     data 
   })
 }

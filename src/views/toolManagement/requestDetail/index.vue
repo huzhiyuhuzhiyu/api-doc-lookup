@@ -16,6 +16,15 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
+           <el-col :span="4">
+            <el-form-item>
+              <el-select  v-model="orderForm.returnFlag" :placeholder="是否已归还"
+                    clearable>
+                    <el-option v-for="(item2, index2) in returnFlagList" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -124,11 +133,15 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {},
+      returnFlagList:[
+        {label:"是",value:true},
+        {label:"否",value:false},
+      ],
       orderFormone: {
         projectId: '',
         requisitionType: 'requisition',
         equipmentType: 'tool',
-        returnFlag: 0,
+        returnFlag: "",
         maintainerIdText: '',
         pageNum: 1,
         pageSize: 20,

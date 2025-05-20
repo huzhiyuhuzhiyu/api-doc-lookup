@@ -66,7 +66,7 @@
             <el-table-column prop="position" label="工具常用位置" min-width="180" sortable="custom" />
             <el-table-column prop="pic" label="保养图片" min-width="180" sortable="custom" >
                 <template slot-scope="scope">
-                <el-image @click="bigimg(define.comUrl+scope.row.url)" style="width: 25px;height: 25px;margin-left: 5px;"   :src="define.comUrl+scope.row.url" :preview-src-list="srcList"></el-image>
+                <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.picList" :key="item.id" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
               </template>
             </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" />
@@ -245,9 +245,9 @@ export default {
     initData() {
       this.listLoading = true
       equTaskMaintenanceList(this.orderForm).then(res => {
-        this.tableData = res.data.records.map(item => {
-          if (item.pic) {
-            item.pic = JSON.parse(`{${item.pic}}`)
+          this.tableData = res.data.records.map(item => {
+          if (item.picList) {
+            item.picList = item.picList.map(o => { return JSON.parse(`{${o}}`) })
           }
          
           return item

@@ -21,7 +21,7 @@
           suffix-icon="el-icon-search" clearable></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" :highlight-current="highlightCurrentFlag"
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
@@ -201,6 +201,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      highlightCurrentFlag:false,
       printVisible: false,
       printBrowseVisible:false,
       isProjectSwitch: '',
@@ -720,6 +721,7 @@ export default {
       this.initData()
     },
     reset() {
+      this.highlightCurrentFlag=false
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
         orderItems: [

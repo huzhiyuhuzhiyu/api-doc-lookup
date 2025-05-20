@@ -83,7 +83,8 @@ export default {
               },
               trigger: 'blur'
             }
-          ]
+          ],
+          minWidth: 140,
         },
         {
           prop: 'innerCircle',
@@ -92,12 +93,8 @@ export default {
           type: 'custom',
           customComponent: 'ComSelect-page',
           itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 120,
-          change(){
-            this.$nextTick(() => {
-              this.$refs['sleeveForm'][0].$children[0].validateField('model')
-            })
-          },
+          minWidth: 140,
+         
         },
         {
           prop: 'outerCircle',
@@ -106,7 +103,7 @@ export default {
           type: 'custom',
           customComponent: 'ComSelect-page',
           itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 120
+          minWidth: 140
         },
         {
           prop: 'steelBall',
@@ -115,7 +112,7 @@ export default {
           type: 'custom',
           customComponent: 'ComSelect-page',
           itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 120
+          minWidth: 180
         },
         {
           prop: 'sealingRing',
@@ -124,7 +121,7 @@ export default {
           type: 'custom',
           customComponent: 'ComSelect-page',
           itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 120
+          minWidth: 160
         },
         {
           prop: 'steelBallNum',
@@ -159,7 +156,7 @@ export default {
             { required: true, message: '油脂用量不能为空', trigger: 'blur' }, 
             { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的油脂用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
           ],
-          minWidth: 140
+          minWidth: 160
         },
         {
           prop: 'holderNum',
@@ -172,7 +169,7 @@ export default {
 
             
           ],
-          minWidth: 150
+          minWidth: 160
         },
         {
           prop: 'sealingRingNum',
@@ -184,7 +181,7 @@ export default {
 
 
           ],
-          minWidth: 150
+          minWidth: 160
         }
       ],
       visible: false,

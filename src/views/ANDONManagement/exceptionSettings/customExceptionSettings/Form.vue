@@ -133,7 +133,7 @@ export default {
           sm: 24, itemDisabled: this.btnType === 'look' ? true : false,clearable:false,change:this.selectPlanPerson, render: this.category === 'type' ? false : true
         },
         {
-          prop: "projectId", label: "所属项目", value: '', type: "select",itemRules:[{ required: true, message: '所属项目不能为空', trigger: 'blur' }],
+          prop: "projectId", label: "所属项目", value: this.userInfo.projectId||'', type: "select",itemRules:[{ required: true, message: '所属项目不能为空', trigger: 'blur' }],
           sm: 24, itemDisabled: this.btnType === 'look' || this.projectId !== '1' ? true : false,clearable:false,options:this.projectIdData, render: this.isProjectSwitch === '1' ? true : false
         },
         {
@@ -150,6 +150,11 @@ export default {
           sm: 24, itemDisabled: this.btnType === 'look' ? true : false, render: this.category === 'type' ? true : false
         },
       ]
+          this.$nextTick(()=>{
+            console.log("project",this.projectId);
+            this.$refs.dataForm.setDefaultValue()
+          })
+
     },
     selectPlanPerson(id,data){
       this.$nextTick(() => this.$refs['dataForm'].$children[0].validateField('planPersonId'))

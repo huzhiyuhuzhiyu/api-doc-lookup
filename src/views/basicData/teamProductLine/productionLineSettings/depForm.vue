@@ -497,7 +497,21 @@ export default {
           item.processTypeName = '包装工序'
         } else if (item.processType == 'pairs') {
           item.processTypeName = '配对工序'
-        }
+        }else if (item.processType == 'typing') {
+          item.processTypeName = '打字工序'
+        }else if (item.processType == 'fatInjection') {
+          item.processTypeName = '注脂工序'
+        }else if (item.processType == 'grinding') {
+          item.processTypeName = '磨孔工序'
+        }else if (item.processType == 'accuracy') {
+          item.processTypeName = '精度工序'
+        }else if (item.processType == 'boxing') {
+          item.processTypeName = '装盒工序'
+        }else if (item.processType == 'regrinding') {
+          item.processTypeName = '修磨工序'
+        }else if (item.processType == 'clean') {
+          item.processTypeName = '清洗工序'
+        } 
         return item
       })
       return treeData

@@ -78,7 +78,7 @@
              <el-button @click="addPerson()" type="primary">添加人员</el-button>
           </topOpts>
           <el-table :data="lines" height="300" highlight-current-row>
-            <el-table-column prop="personnelIdText" label="人员名称" width="120">
+            <el-table-column prop="personnelIdText" label="人员名称" width="160">
               <template slot="header">
                 <span class="required">*</span>人员名称
               </template>
@@ -117,7 +117,7 @@
                 </el-date-picker>
               </template>
             </el-table-column> -->
-            <el-table-column prop="state" label="状态" width="100">
+            <el-table-column prop="state" label="状态" width="140">
               <template slot-scope="scope">
                 <el-select v-model="scope.row.state" style="width: 100%;" :disabled="btntype ? true : false">
                   <el-option v-for="(item, index) in ponsestatusList" :key="index" :label="item.label"
@@ -127,7 +127,7 @@
             </el-table-column>
             <el-table-column prop="remark" label="备注">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.remark" :disabled="btntype ? true : false" placeholder="请输入备注">{{
+                <el-input v-model="scope.row.remark" maxlength="200" :disabled="btntype ? true : false" placeholder="请输入备注">{{
                   scope.row.remark
                 }}
                 </el-input>

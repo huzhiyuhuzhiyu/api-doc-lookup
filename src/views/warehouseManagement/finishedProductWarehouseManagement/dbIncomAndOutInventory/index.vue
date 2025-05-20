@@ -2622,7 +2622,7 @@ export default {
     },
     // 外协收货  订单 列表数据
     getExternalFun(type) {
-      if (this.externalDate.length) {
+      if (this.externalDate&&this.externalDate.length) {
         this.externalForm.deliveryStartDate = this.externalDate[0]
         this.externalForm.deliveryEndDate = this.externalDate[1]
 
@@ -3304,12 +3304,12 @@ export default {
           this.purchaseForm.receiptQueryFlag = true
           this.purchaseForm.classAttributeList = this.classAttributeList
           this.purchaseForm.orderType = 'procure'
-          if (this.purchaserOrderDateArr.length) {
-            this.purchaseForm.deliveryStartTime = this.purchaserOrderDateArr[0]
-            this.purchaseForm.deliveryEndTime = this.purchaserOrderDateArr[1]
+          if (this.purchaserOrderDateArr&&this.purchaserOrderDateArr.length) {
+            this.purchaseForm.deliveryStartDate = this.purchaserOrderDateArr[0]
+            this.purchaseForm.deliveryEndDate = this.purchaserOrderDateArr[1]
           } else {
-            this.purchaseForm.deliveryStartTime = ""
-            this.purchaseForm.deliveryEndTime = ""
+            this.purchaseForm.deliveryStartDate = ""
+            this.purchaseForm.deliveryEndDate = ""
           }
           this.purchaseForm.approvalStatus = 'ok'
           this.superForm = this.purchaseForm

@@ -23,9 +23,9 @@
               </el-form-item>
             </el-col>
           </template>
-          <el-col :span="4">
+          <el-col :span="2">
             <el-form-item prop="type">
-              <el-select v-model="form.type" placeholder="仓库类型" style="width: 100%;">
+              <el-select v-model="form.type" placeholder="仓库类型" style="width: 100%;" @change="search('basic')">
                 <el-option v-for="(item, index) in typeList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>

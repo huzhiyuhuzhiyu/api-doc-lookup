@@ -466,7 +466,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"  @row-click="handleRowClick"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_878268">
                 <el-table-column prop="orderNo" label="退货单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="deliverDate" label=" 退货日期" width="130" sortable="custom" />
@@ -711,6 +711,9 @@ export default {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
   methods: {
+      handleRowClick(row){
+        this.$refs.form.$refs.JNPFTable.toggleRowSelection(row);
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

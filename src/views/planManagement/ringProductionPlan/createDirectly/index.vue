@@ -826,8 +826,7 @@ export default {
 
       this.allProVisible = true
       this.allproductData = []
-      this.resetAllProduct()
-
+      this.searchAllProduct()
 
     },
     // 获取所有产品列表数据
@@ -853,6 +852,7 @@ export default {
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.ProductListRequestObj = {
         classAttribute: "semi_finished",
         productDrawingNo: "",

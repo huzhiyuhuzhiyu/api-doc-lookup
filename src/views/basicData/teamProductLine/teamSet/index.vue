@@ -10,9 +10,9 @@
                                     :placeholder="item.label" clearable @keyup.enter.native="search('basic')" />
 
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
-                                    :placeholder="item.label" clearable>
+                                    :placeholder="item.label" clearable @change="selectFun">
                                     <el-option v-for="(item2, index2) in item.options" :key="index2"
-                                        :label="item2.label" :value="item2.value"></el-option>
+                                        :label="item2.label" :value="item2.value" ></el-option>
                                 </el-select>
                                 <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
                                     :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'"
@@ -158,7 +158,7 @@ export default {
                         },
                         {
                             label: '停用',
-                            value: 'disabled '
+                            value: 'disabled'
                         }
                     ]
                 }
@@ -233,7 +233,7 @@ export default {
                 },
                 {
                     label: '停用',
-                    value: 'disabled '
+                    value: 'disabled'
                 }
             ],
             depFormVisible: false,
@@ -250,7 +250,7 @@ export default {
                         column: 'create_time'
                     }
                 ],
-                state: '',
+                state: 'enable',
                 code: '',
                 name: ''
             },
@@ -276,6 +276,11 @@ export default {
         // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
     },
     methods: {
+      selectFun(val){
+        console.log(val);
+        this.tableQuery.state=val
+        this.search('basic')
+      },
         superQuerySearch(query) {
             this.superQuery = query
             this.superQueryVisible = false
@@ -354,7 +359,7 @@ export default {
                         },
                         {
                             label: '停用',
-                            value: 'disabled '
+                            value: 'disabled'
                         }
                     ]
                 }

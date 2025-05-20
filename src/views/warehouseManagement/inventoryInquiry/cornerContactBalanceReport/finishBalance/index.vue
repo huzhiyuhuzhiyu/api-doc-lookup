@@ -110,6 +110,7 @@ clearable>
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
           @sort-change="sortChange" ref="tabForm" :setColumnDisplayList="columnList" customKey="JNPFTableKey_281345">
           <el-table-column prop="productsCode" label="物料编号" min-width="130" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" min-width="130" sortable="custom" />
           <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="130" sortable="custom" />
           <el-table-column prop="pairingModeName" label="配对方式" width="130" sortable="custom" />
           <el-table-column prop="initInventoryQuantity" label="期初" width="120" />

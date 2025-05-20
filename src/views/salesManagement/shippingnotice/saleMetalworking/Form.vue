@@ -1077,6 +1077,7 @@ export default {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
     this.orderForm=JSON.parse(JSON.stringify(this.orderFormList))
       this.productVisible = true
+        this.listLoading = true
       this.searchProductFun()
     },
     changeclick(e) {

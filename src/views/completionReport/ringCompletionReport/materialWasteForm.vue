@@ -32,7 +32,7 @@
               </template>
               <template slot-scope="scope">
                 <el-input v-model="scope.row.scrapQuantity" placeholder="料废数量" @blur="countFun(scope)"
-                  :disabled="btnType === 'look'"></el-input>
+                  :disabled="btnType === 'look'" maxlenth="16"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">

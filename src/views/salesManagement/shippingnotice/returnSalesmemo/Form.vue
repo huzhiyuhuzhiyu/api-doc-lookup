@@ -79,7 +79,7 @@
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
+                    @selection-change="handeleProductInfoData"  >
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -351,7 +351,7 @@
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
               <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData">
+                @selection-change="handeleProductInfoData"  >
                 <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
@@ -746,7 +746,7 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
               <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                :highlight-current='highlightCurrentFlag' :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                 class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                 <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                   <i
@@ -1130,6 +1130,7 @@ export default {
       list10: [],
       pairingModeList: [],
       pageType:"",
+      highlightCurrentFlag:false,
     }
   },
   computed: {
@@ -1172,6 +1173,9 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+     handleRowClick(row){
+        this.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row);
+    },
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
@@ -1436,11 +1440,12 @@ export default {
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
       this.dataFormTwo.productData = productArr
     },
+    
     // 查看库存明细
-    viewFun(id, type, warehouseId) {
+    viewFun(row, type, warehouseId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, "",  row.projectId)
+        this.$refs.Form.init(row.id, type, "", row.projectId)
       })
     },
     getBimBusinessDetail() {
@@ -2020,6 +2025,7 @@ export default {
         partnerCategoryId: "",
         type: "customer",
       }
+      this.highlightCurrentFlag=false
       this.getcategoryTree()
     },
     initData() {

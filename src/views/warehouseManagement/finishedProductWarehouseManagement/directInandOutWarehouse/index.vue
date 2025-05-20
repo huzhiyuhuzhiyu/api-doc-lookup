@@ -247,13 +247,13 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120">
+                      <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.warehouseDeputyUnit ? '单位(主)' : '单位'" min-width="120">
 
                       </el-table-column>
 
-                      <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
+                      <el-table-column prop="num" :label="$store.getters.configData.deputyUnit.warehouseDeputyUnit ? '数量(主)' : '数量'" min-width="160">
                         <template slot="header">
-                          <span class="required">*</span>{{ mainUnitFlag == 1 ? '数量(主)' : '数量' }}
+                          <span class="required">*</span>{{ $store.getters.configData.deputyUnit.warehouseDeputyUnit ? '数量(主)' : '数量' }}
                         </template>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.num" placeholder="数量" :disabled="btnType == 'look'"
@@ -261,10 +261,10 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1">
+                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="$store.getters.configData.deputyUnit.warehouseDeputyUnit">
 
                       </el-table-column>
-                      <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                      <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="$store.getters.configData.deputyUnit.warehouseDeputyUnit" />
                       <!-- <el-table-column prop="mainUnit" label="单位" width="80" key="8" />
                       <el-table-column prop="num" label="数量" width="140" key="77">
                         <template slot="header">
@@ -278,7 +278,7 @@
                       <el-table-column prop="costPrice" label="单价(含税)" width="120" key="110">
                         <template slot="header" v-if="$store.getters.configData.warehouse.unitPriceSetting">
                           <span class="required">*</span>单价(含税)
-                        </template>
+                        </template> 
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.costPrice" :disabled="btnType == 'look' ? true : false"
                             @input="watchPrice(scope.row, scope.$index)" placeholder="请输入"
@@ -733,10 +733,10 @@
 
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
-              <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" width="120" sortable="custom"
+              <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.warehouseDeputyUnit ? '单位(主)' : '单位'" width="120" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="mainUnit" />
               <el-table-column prop="deputyUnit" label="单位(副)" width="120" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && mainUnitFlag == 1" key="mainUnit" />
+                v-if="dataForm.documentType == 'outbound' && $store.getters.configData.deputyUnit.warehouseDeputyUnit == 1" key="mainUnit" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="inventoryQuantity" />
               <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
@@ -1419,7 +1419,7 @@ export default {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
         if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
         this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
-        console.log("this.dataForm.weightFlag ", this.dataForm.weightFlag);
+        console.log("unitFlag ", this.mainUnitFlag);
         this.tableDataFlag = true
         this.listLoading = false
       } catch (error) {
@@ -1854,7 +1854,7 @@ export default {
           this.$set(item, 'proportion', '')
           this.$set(item, 'weight', '')
         }
-        if (this.mainUnitFlag == 1) {
+        if (this.$store.getters.configData.deputyUnit.warehouseDeputyUnit == 1) {
           this.$set(item, 'deputyNum', '')
           this.$set(item, 'deputyUnit', item.deputyUnit)
         }
@@ -2103,7 +2103,7 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
-      if (this.mainUnitFlag == 1) {
+      if (this.$store.getters.configData.deputyUnit.warehouseDeputyUnit == 1) {
         if (row.calculationDirection == 'multiplication') {
           productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6)
         } else {

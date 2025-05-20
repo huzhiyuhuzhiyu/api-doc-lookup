@@ -507,7 +507,7 @@ export default {
           receiptReturnType: item.businessType,
           mainUnit: item.mainUnit,
           ordersLineId: item.ordersLineId,
-          ordersId: item.ordersId,
+          ordersId: item.id,
           moveId: item.moveId,
           moveLineId: item.id,
           propertyId: item.propertyId,

@@ -500,7 +500,7 @@ export default {
           receiptReturnType: item.businessType,
           mainUnit: item.mainUnit,
           ordersLineId: item.ordersLineId,
-          ordersId: item.ordersId,
+          ordersId: item.id,
           moveId: item.moveId,
           moveLineId: item.id,
           propertyId: item.propertyId,
@@ -589,7 +589,7 @@ export default {
               flowData: this.flowData
             }
             _data.reconciliation.includingTaxAmount = this.includingTaxAmount
-            _data.reconciliation.reconciliationType = "payable"
+            _data.reconciliation.reconciliationType = "receivable"
             console.log("_data",_data);
             if (submitFlag) {
               setTimeout(() => {

@@ -34,7 +34,7 @@
             suffix-icon="el-icon-search" clearable></el-input>
         </div>
         <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-          <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" :highlight-current="highlightCurrentFlag"
             :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
             v-if="refreshTree" :filter-node-method="filterNode">
             <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
@@ -387,6 +387,7 @@ export default {
   name: 'productPriceSetting',
   data() {
     return {
+      highlightCurrentFlag:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       categoryList: [],
@@ -1945,6 +1946,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.highlightCurrentFlag=false
 
       this.$refs.SuperQuery.conditionList = []
       this.filterText = ''

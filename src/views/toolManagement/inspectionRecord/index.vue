@@ -53,8 +53,8 @@
             :fixedNO="true"  
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="no" label="点检任务单号" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentName" label="工具名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentCode" label="工具编码" min-width="180" sortable="custom" />
             <el-table-column prop="state" label="任务状态" min-width="180" sortable="custom" >
                  <template slot-scope="scope">
                   <el-tag  v-if="!scope.row.state">未完成</el-tag>

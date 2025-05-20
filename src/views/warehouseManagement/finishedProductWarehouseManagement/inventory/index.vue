@@ -77,7 +77,7 @@
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'inventoryFlag', scope.row.warehouseId, projectId)">
+                @click.native="viewFun(scope.row, 'inventoryFlag', scope.row.warehouseId, projectId)">
                 {{ scope.row.inventoryQuantity }}
               </el-link>
             </template>
@@ -86,7 +86,7 @@
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId, projectId)">
+                @click.native="viewFun(scope.row, 'availableFlag', scope.row.warehouseId, projectId)">
                 {{ scope.row.availableQuantity }}
               </el-link>
             </template>
@@ -94,7 +94,7 @@
           <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'occupancyFlag', scope.row.warehouseId, projectId)">
+                @click.native="viewFun(scope.row, 'occupancyFlag', scope.row.warehouseId, projectId)">
                 {{ scope.row.occupancyQuantity }}
               </el-link>
             </template>
@@ -102,7 +102,32 @@
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
           <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
+          <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="logo" label="logo" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="material" label="材质" width="120" sortable="custom"></el-table-column>
 
+          <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isXBN" sortable="custom" />
+          <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
+          <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" />
+          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
+            sortable="custom"></el-table-column>
+          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
+            sortable="custom"></el-table-column>
+            <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
+            <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
+          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
+            sortable="custom"></el-table-column>
+          <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
+            sortable="custom"></el-table-column>
+          <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
+            sortable="custom"></el-table-column>
+          <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
+            sortable="custom"></el-table-column>
+          <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
+            sortable="custom"></el-table-column>
+          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="specialRequireFlag == 1"
+            sortable="custom"></el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="initData">
@@ -134,6 +159,8 @@ import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import { getWarehouseTree } from '@/api/warehouseManagement/inboundAndOutbound'
+import {  getOrderFiledMap } from '@/api/basicData/index'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 
 import Form from './Form'
 
@@ -143,10 +170,23 @@ export default {
   props: {
     warehouseCode: "",
   },
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
 
   data() {
     return {
+          accuracyLevelFlag: "",
+      clearanceFlag: "",
+      oilFlag: "",
+      oilQuantityFlag: "",
+      packagingMethodFlag: "",
+      sealingCoverTypingFlag: "",
+      specialRequireFlag: "",
+      vibrationLevelFlag: "",
+      bimProductAttributesList: [],
+      standardValueFlag: "",
+      colourFlag: "",
+      processFlag: "",
+
       tableFlag: false,
       superQuery: {},
       superForm: {},
@@ -189,7 +229,7 @@ export default {
         pageSize: 20,
         productCode:"",
         productDrawingNo:"",
-        totalInventoryFlag :true,
+        totalInventoryFlag :false,
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
@@ -284,6 +324,7 @@ export default {
     }
   },
   async created() {
+    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getWarehouseListFun()
     this.superForm = this.tableQuery
@@ -300,6 +341,23 @@ export default {
 
   },
   methods: {
+    getOrderFiledMap() {
+      getOrderFiledMap('sale').then((res) => {
+        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
+        this.accuracyLevelFlag = res.data.accuracyLevel
+        this.vibrationLevelFlag = res.data.vibrationLevel
+        this.oilFlag = res.data.oil
+        this.oilQuantityFlag = res.data.oilQuantity
+        this.clearanceFlag = res.data.clearance
+        this.packagingMethodFlag = res.data.packagingMethod
+        this.specialRequireFlag = res.data.specialRequire
+      })
+      getOrderFiledMap('purchase').then(res => {
+        this.standardValueFlag = res.data.standardValue
+        this.colourFlag = res.data.colour
+        this.processFlag = res.data.process
+      })
+    },
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {
@@ -383,10 +441,10 @@ export default {
       this.search()
     },
     // 查看产品明细
-    viewFun(id, type, warehouseId, projectId) {
+    viewFun(row, type, warehouseId, projectId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, warehouseId, projectId)
+        this.$refs.Form.init(row, type, warehouseId, projectId)
       })
     },
 

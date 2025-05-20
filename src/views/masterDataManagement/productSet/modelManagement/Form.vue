@@ -216,7 +216,7 @@ export default {
             message: '请输入钢球用量',
             trigger: ['blur']
           },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的钢球用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的钢球用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           {
             validator: this.formValidate('number'),
             trigger: ['blur']
@@ -228,7 +228,7 @@ export default {
             message: '请输入油脂用量',
             trigger: ['blur']
           },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的油脂用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的油脂用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           {
             validator: this.formValidate('number'),
             trigger: ['blur']
@@ -240,7 +240,7 @@ export default {
             message: '请输入保持架用量',
             trigger: ['blur']
           },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的保持架用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的保持架用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           {
             validator: this.formValidate('number'),
             trigger: ['blur']
@@ -252,7 +252,7 @@ export default {
             message: '请输入密封圈用量',
             trigger: ['blur']
           },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的密封圈用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "请输入正确的密封圈用量(最多保留2位小数,整数18位)", (errMsg, index) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           {
             validator: this.formValidate('number'),
             trigger: ['blur']

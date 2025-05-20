@@ -66,7 +66,7 @@
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC v-if="tableDataFlag"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_760379">
                         <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                        <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                        <el-table-column prop="productName" label="产品名称"  width="160"
                         v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
@@ -197,11 +197,11 @@
                   <JNPF-table ref="product" :data="productData" :fixedNO="true"
                     @selection-change="handeleProductInfoData" :hasC="btnType !== 'look'" border :key="165" style="width: 100%;">
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                    <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
+                    <el-table-column prop="productName" label="产品名称"  width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
+                    <el-table-column prop="projectName" label="所属项目" min-width="120" 
                     v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -321,8 +321,8 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange" :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_634540">
-                <el-table-column prop="partnerName" label="供应商名称" min-width="160" />
-                <el-table-column prop="partnerCode" label="供应商编码" min-width="160" />
+                <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
+                <el-table-column prop="partnerCode" label="供应商编码" min-width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                 v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
@@ -639,9 +639,9 @@ export default {
       if (prop == "createByName") {
         newProp = "create_by"
       }
-      this.dataForm.orderItems[0].asc = order === "ascending"
-      this.dataForm.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
+      this.ProductListRequestObj.orderItems[0].asc = order === "ascending"
+      this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
+      this.initData2()
     },
     // 产品列表选中
     handeleProductInfoData(val) {
@@ -707,6 +707,7 @@ export default {
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.ProductListRequestObj = {
         classAttributeList: [], 
         productDrawingNo: "",
@@ -1006,6 +1007,7 @@ export default {
                 vibrationLevel: item.vibrationLevel,
                 pairingModeId:item.pairingModeId,
                 specialRequire:item.specialRequire,
+                cooperativePartnerId:item.cooperativePartnerId,
               }
               arr.push(obj)
             });

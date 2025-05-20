@@ -118,7 +118,7 @@ export default {
   async created() {
     await this.getProjectSwitch('system', 'project')
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.initData()
+    await this.initData()
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -150,6 +150,7 @@ export default {
       if (!this.parentId) return
       this.listLoading = true
       let projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          console.log("pro",projectId);
       detailAbnoramlTypeData(current.id,projectId).then((res) => {
         this.dataDetail = res.data.contentList || []
         this.listLoading = false
@@ -165,6 +166,7 @@ export default {
         if (this.list.length !== 0) {
           this.parentId = this.parentId ? this.parentId : this.list[0].id
           let projectId =this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
+          console.log("pro",projectId);
           detailAbnoramlTypeData(this.parentId, projectId).then((res) => {
             this.dataDetail = res.data.contentList || []
             this.activeName =this.tabCode ? this.tabCode :  this.list[0].code

@@ -36,7 +36,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
                             <el-form-item label="客户合同号" prop="contractNo">
-                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
+                              <el-input v-model="dataForm.contractNo" placeholder="" disabled />
                             </el-form-item>
                           </el-col>
                           <!-- <el-col :sm="6" :xs="24">
@@ -582,7 +582,7 @@
 
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"  @row-click="handleRowClick"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_808981">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
@@ -880,6 +880,9 @@ export default {
 
   },
   methods: {
+      handleRowClick(row){
+        this.$refs.form.$refs.JNPFTable.toggleRowSelection(row);
+    },
     columnSetFun() {
       this.$refs.product.showDrawer()
     },

@@ -66,7 +66,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" @selection-change="handeleProductInfoData" hasC  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
-            header-cell-class-name="all-select" @sort-change="sortChange" custom-column
+             @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList" customKey="JNPFTableKey_852046">
             <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="220" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
@@ -90,6 +90,7 @@
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
             <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="170" sortable="custom" />
             <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="170" sortable="custom" />
+            <el-table-column prop="productionWeight" label="生产重量" min-width="170" sortable="custom" />
 
 
 

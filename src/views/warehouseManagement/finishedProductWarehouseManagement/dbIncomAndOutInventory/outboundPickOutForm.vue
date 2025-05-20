@@ -443,7 +443,7 @@
                                 placeholder="备注"></el-input>
                             </template>
                           </el-table-column>
-                          <el-table-column label="操作" min-width="100" v-show="productData.length && btnType != 'look'"
+                          <el-table-column label="操作" min-width="100" v-if="productData.length && btnType != 'look'"
                             fixed="right">
                             <template slot-scope="scope">
                               <el-button type="text" @click="copyFun(scope.row, scope.$index)"
@@ -512,7 +512,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"  @row-click="handleRowClick"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_948213">
                 <el-table-column prop="orderNo" label="领料单号" width="190" sortable="custom"></el-table-column>
                 <el-table-column prop="operationDate" label="领料日期" width="180" sortable="custom" />
@@ -765,6 +765,9 @@ export default {
 
   },
   methods: {
+      handleRowClick(row){
+        this.$refs.form.$refs.JNPFTable.toggleRowSelection(row);
+    },
     columnSetFun(refForm) {
       this.$refs[refForm].showDrawer()
     },

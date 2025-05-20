@@ -84,7 +84,7 @@
             <template  slot-scope="scope">
               <div v-if="scope.row.billStatus == 'no_billing'"><el-tag>未对账</el-tag> </div>
               <div v-if="scope.row.billStatus == 'billed'"><el-tag type="success">已对账</el-tag></div>
-              <div v-if="scope.row.billStatus == 'no_billing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">对账中</el-tag></div>
+              <div v-if="scope.row.billStatus == 'in_bill'"><el-tag type="warning">对账中</el-tag></div>
             </template>
           </el-table-column>
           <el-table-column prop="createByName" label="申请人" min-width="150" sortable="custom" />

@@ -22,7 +22,7 @@
           <template slot="label">
             排序<span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.sortCode" type="text"  placeholder="请输入排序" />
+          <el-input v-model="dataForm.sortCode" type="text"  placeholder="请输入排序" maxlength="9"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />

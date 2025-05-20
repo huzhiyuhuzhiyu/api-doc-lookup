@@ -168,7 +168,7 @@
                       </el-table-column>
                       <el-table-column prop="application" label="应用" width="160" key="application">
                       </el-table-column>
-                      <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                      <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                         v-if="saleContractNoSwitch === '0'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
@@ -304,7 +304,7 @@
                     </el-table-column>
                     <el-table-column prop="application" label="应用" width="160" key="application">
                     </el-table-column>
-                    <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                    <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                       v-if="saleContractNoSwitch === '0'">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
@@ -733,7 +733,7 @@
                   </el-table-column>
                   <el-table-column prop="application" label="应用" width="160" key="application">
                   </el-table-column>
-                  <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                  <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                     v-if="saleContractNoSwitch === '0'">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
@@ -841,7 +841,7 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
+                <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                   v-if="saleContractNoSwitch === '0'">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"

@@ -169,78 +169,9 @@ export default {
                  task：普通任务
                  milestone：菱形块，可表示中转关系
            * */
-          { id: 1, text: 'PPDH202410080004', person: '管理员', progress: 0.1, type: 'task', start_date: new Date('2022-10-01'), end_date: new Date('2023-10-12'), open: true },
-          { id: 11, parent: 1, text: '初始化项目', person: '李四', type: 'task', progress: 0.1, color: '#ff0000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-05'), open: true },
-          { id: 12, parent: 1, text: '前后端开发', type: 'task', progress: 0.1, color: '#00ff00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-08'), open: true },
-          { id: 13, parent: 1, text: '测试', type: 'task', progress: 0.1, color: '#0000ff', start_date: new Date('2023-10-08'), end_date: new Date('2023-10-10') },
-          { id: 14, parent: 1, text: '上线', type: 'task', progress: 0.1, color: '#00ffff', start_date: new Date('2023-10-10'), end_date: new Date('2023-10-12') },
 
-          { id: 111, parent: 11, text: '创建git仓库', type: 'task', progress: 1, color: '#880000', start_date: new Date('2023-10-02'), end_date: new Date('2023-10-03') },
-          { id: 112, parent: 11, text: '搭建脚手架', type: 'task', progress: 0.5, color: '#550000', start_date: new Date('2023-10-03'), end_date: new Date('2023-10-04') },
-          { id: 113, parent: 11, text: '完成初始化', type: 'task', progress: 0.1, color: '#330000', start_date: new Date('2023-10-04'), end_date: new Date('2023-10-05') },
-
-
-          { id: 121, parent: 12, text: '前端开发', person: '甲', type: 'task', progress: 0, color: '#00aa00', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
-          { id: 122, parent: 12, text: '后端开发', person: '已', type: 'task', progress: 0, color: '#007700', start_date: new Date('2023-10-05'), end_date: new Date('2023-10-07') },
-          { id: 123, parent: 12, text: '前后端对接', person: '甲、已', type: 'task', progress: 0, color: '#003300', start_date: new Date('2023-10-07'), end_date: new Date('2023-10-08') },
-
-
-          // { id: 3, text: 'Team', type: 'milestone', start_date: '14-07-2023' },
-          // { id: 1, text: '1222', start_date: '25-04-2023', end_date: '01-07-2023', open: true },
-          // {
-          //   id: 12323544,
-          //   text: '44444',
-          //   start_date: '27-04-2023',
-          //   end_date: '01-06-2023',
-          //   duration: 5,
-          //   progress: 0.5,
-          //   person: 'Julia Garner',
-          //   parent: 1,
-          //   open: true
-          // },
-          // {
-          //   id: 1232354422,
-          //   text: '5555555555555555555555555555555555555555555555555555555555555555',
-          //   start_date: new Date('2023-04-27'),
-          //   end_date: new Date('2023-05-01'),
-          //   duration: 2,
-          //   progress: 0.2,
-          //   color: '#2F80ED',
-          //   person: 'Julia Garner',
-          //   parent: 12323544
-          // },
-          // {
-          //   id: 1232354421,
-          //   text: '22222',
-          //   start_date: new Date('2023-05-02'),
-          //   end_date: new Date('2023-05-21'),
-          //   duration: 2,
-          //   progress: 0.3,
-          //   color: '#2F80ED',
-          //   parent: 12323544
-          // },
-          // {
-          //   id: 12323545,
-          //   text: '333333333333333',
-          //   start_date: new Date('2023-05-15'),
-          //   end_date: new Date('2023-06-30'),
-          //   time: '02/01-02/20',
-          //   duration: 2,
-          //   progress: 0.7,
-          //   parent: 1,
-          //   open: true
-          // },
-          // {
-          //   id: 12345453,
-          //   text: '222222',
-          //   start_date: new Date('2023-04-27'),
-          //   end_date: new Date('2023-05-18'),
-          //   time: '02/01-02/20',
-          //   duration: 3,
-          //   progress: 0.9,
-          //   color: '#ED263D',
-          //   parent: 12323545
-          // }
+      
+      
         ],
         links: [
           { id: 1, source: 11, target: 12, type: '0' },
@@ -347,8 +278,8 @@ export default {
     //   }
     // };
     gantt.plugins({
-      tooltip: true, // 启用tooltip悬浮框
-      marker: true, // 时间标记
+      tooltip: false, // 启用tooltip悬浮框
+      marker: false, // 时间标记
       // drag_timeline: true, // 拖动图
     });
     gantt.config.autofit = false;

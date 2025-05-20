@@ -668,7 +668,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"  @row-click="handleRowClick"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_785670">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="productCode" label="产品编码" width="140" />
@@ -923,6 +923,9 @@ export default {
 
   },
   methods: {
+      handleRowClick(row){
+        this.$refs.form.$refs.JNPFTable.toggleRowSelection(row);
+    },
     columnSetFun() {
       this.$refs.product.showDrawer()
     },

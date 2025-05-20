@@ -153,7 +153,12 @@
                       </el-form-item>
                     </el-col>
                   </template>
-
+                   <el-col :sm="24" :xs="24" v-if="isMS">
+                      <el-form-item label="生产重量" prop="productionWeight" class="iptLabel"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.productionWeight" placeholder="生产重量" class="ipt" />
+                      </el-form-item>
+                    </el-col>
 
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
@@ -305,7 +310,7 @@
                     </el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
-                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity
+                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?urrentProcess.qualifiedQuantity:0
                       }}</el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">

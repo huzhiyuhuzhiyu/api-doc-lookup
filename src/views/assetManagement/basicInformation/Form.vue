@@ -87,7 +87,7 @@
                         <el-col :sm="6" :xs="24" >
                           <el-form-item label="年折旧率" prop="depreciationRate">
                             <el-input v-model="dataForm.depreciationRate" placeholder="请输入年折旧率"
-                              :disabled="btnType == 'look' ? true : false" />
+                              :disabled="btnType == 'look' ? true : false" ><template #append>%</template></el-input>
                           </el-form-item>
                         </el-col>
                    

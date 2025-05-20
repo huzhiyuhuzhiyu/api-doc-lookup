@@ -79,50 +79,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <!-- <el-col :sm="6" :xs="24">
-                  <el-form-item label="物流公司" prop="logisticsCompany">
-                    <el-input v-model="dataForm.logisticsCompany" placeholder="请输入物流公司" :disabled="btnType == 'look'"
-                      maxlength="200" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="物流单号" prop="logisticsNumber">
-                    <el-input v-model="dataForm.logisticsNumber" placeholder="请输入物流单号" :disabled="btnType == 'look'"
-                      maxlength="50" />
-                  </el-form-item>
-                </el-col> -->
-                <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="审批状态" prop="approvalStatus">
-                    <el-select v-model="dataForm.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false">
-                      <el-option v-for="(item, index) in approvalStatusList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'start'">
-                  <el-form-item label="审批完成时间" prop="approvalCompletionDate">
-                    <el-date-picker v-model="dataForm.approvalCompletionDate" type="datetime" placeholder="请选择审批完成时间"
-                      :disabled="btnType == 'look'" style="width: 100%;" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="单据状态" prop="documentStatus">
-                    <el-select v-model="dataForm.documentStatus" placeholder="请选择单据状态" clearable style="width: 100%;"
-                      :disabled="btnType == 'look' ? true : false">
-                      <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="提交时间" prop="submitDate">
-                    <el-date-picker v-model="dataForm.submitDate" type="datetime" placeholder="请选择提交时间"
-                      :disabled="btnType == 'look'" style="width: 100%;" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col> -->
+  
                 <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                   <el-form-item label="退货状态" prop="deliveryStatus">
                     <el-select v-model="dataForm.deliveryStatus" placeholder="请选择退货状态" clearable style="width: 100%;" :disabled="btnType == 'look' ? true : false">

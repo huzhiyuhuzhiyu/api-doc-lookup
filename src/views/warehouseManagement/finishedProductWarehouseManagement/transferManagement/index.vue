@@ -19,7 +19,7 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="2">
               <el-form-item>
                 <el-select v-model="form.documentStatus" placeholder="单据状态" clearable style="width: 100%;">
                   <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
@@ -70,7 +70,7 @@
             </el-table-column>
             <el-table-column prop="pickingDate" label="调拨日期" min-width="160" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="160" sortable="custom" />
-            <el-table-column prop="documentStatus" label="单据状态" min-width="160" sortable="custom">
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" fixed="right">
               <template slot-scope="scope">
                 <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
                 <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>

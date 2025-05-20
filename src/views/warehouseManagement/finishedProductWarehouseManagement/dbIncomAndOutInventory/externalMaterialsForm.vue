@@ -456,7 +456,7 @@
 
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+              <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true" @row-click="handleRowClick"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_847629">
                 <el-table-column prop="orderNo" label="订单号" min-width="200" sortable="custom"></el-table-column>
                 <el-table-column prop="cooperativePartnerName" label="供应商名称" width="140" sortable="custom" />
@@ -733,6 +733,9 @@ export default {
 
   },
   methods: {
+      handleRowClick(row){
+        this.$refs.form.$refs.JNPFTable.toggleRowSelection(row);
+    },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

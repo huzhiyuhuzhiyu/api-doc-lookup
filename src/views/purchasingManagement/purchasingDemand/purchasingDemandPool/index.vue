@@ -74,7 +74,7 @@
         </div>
 
         <JNPF-table v-if="tableFlag" @selection-change="handeleProductInfoData" hasC highlight-current-row
-          :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
+          :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column @row-click="handleRowClick"
           :checkSelectable="checkSelectable" :setColumnDisplayList="columnList" customKey="JNPFTableKey_904807">
           <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="abProjectSwitchVisible "></el-table-column>
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -502,6 +502,9 @@ if (classAttributeObj) {
     this.initData()
   },
   methods: {
+        handleRowClick(row){
+        this.$refs.tableForm.$refs.JNPFTable.toggleRowSelection(row);
+    },
     classAttributeChange(){
       this.initData()
     },

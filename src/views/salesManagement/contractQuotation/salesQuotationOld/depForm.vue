@@ -688,7 +688,7 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
               <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                 class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                 <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                   <i
@@ -701,16 +701,17 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
+                 <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                  </el-form-item>
+                </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
-                  </el-form-item>
-                </el-col>
+               
 
 
 
@@ -728,15 +729,15 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="allproductData" hasC
+              <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_612241">
-                <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="drawingNo" label="品名规格" />
-                <el-table-column prop="productCategoryName" label="所属分类" />
+                <el-table-column prop="code" label="产品编码" show-overflow-tooltip sortable="custom"></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" sortable="custom"/>
+                <el-table-column prop="productCategoryName" label="所属分类" sortable="custom"/>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" />
-                <el-table-column prop="inventoryQuantity" label="库存数量">
+                <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
                       {{ scope.row.inventoryQuantity }}
@@ -786,6 +787,7 @@ export default {
   mixins: [busFlow, flowMixin, getProjectList],
   data() {
     return {
+      highlightCurrentFlag:false,
       isProductNameSwitch: "",
       isProjectSwitch: '',
       list1: [],
@@ -1048,7 +1050,20 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
   },
   methods: {
+    
+    sortChange({ prop, order }) {
+      let newProp
+      if (prop == 'cooperativePartnerIdText'||prop=='cooperativePartnerCode') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.ProductListRequestObj.orderItems[0].asc = order !== 'descending'
+      this.ProductListRequestObj.orderItems[0].column = newProp
+      this.listLoading=true
+      this.searchAllProduct()
 
+    },
     // 点击选择产品
     addProduct() {
       this.allProVisible = true
@@ -1125,6 +1140,8 @@ export default {
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
+      this.$refs.dataTable.$refs.JNPFTable.clearSort()
+      this.highlightCurrentFlag=false
       this.ProductListRequestObj = {
         classAttributeList: [],
         classAttribute: "",
@@ -2146,9 +2163,7 @@ export default {
             this.dataFormTwo.lines.splice(index, 1);
           }
         }
-        this.btnLoading = true
-        this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
-        this.dataForm.totalAmount = this.totalPrice
+        this.btnLoading = true 
         if (localStorage.getItem('loginTenant')) {
           this.dataForm.tenant = localStorage.getItem('loginTenant')
         }
@@ -2163,6 +2178,11 @@ export default {
           })
         }
         let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
+        // 计算arr中所有amount的总和
+const totalAmount = filteredArr.reduce((sum, item) => sum + item.amounts, 0);
+
+// 将总和赋值给form中的amounts
+this.dataForm.totalAmount = totalAmount;
         let obj = {
           attachmentList: this.datafilelist,
           sale: this.dataForm,

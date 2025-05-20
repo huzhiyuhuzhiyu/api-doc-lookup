@@ -105,7 +105,7 @@
 
 
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" width="110" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="110"  />
             <el-table-column prop="remark" label="备注" min-width="280" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
@@ -173,7 +173,7 @@ export default {
       superForm: {},
       basicQuery: {},
       searchList: [
-        { field: 'quotationNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'quotationNo', fieldValue: '', label: '报价单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'bidder', fieldValue: '', label: '报价人', symbol: 'like', searchType: 1, width: 120 },
 

@@ -330,8 +330,8 @@ export default {
     //   }
     // };
     gantt.plugins({
-      tooltip: true, // 启用tooltip悬浮框
-      marker: true, // 时间标记
+      tooltip: false, // 启用tooltip悬浮框
+      marker: false, // 时间标记
       // drag_timeline: true, // 拖动图
     });
     gantt.config.autofit = false;

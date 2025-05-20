@@ -423,8 +423,8 @@ export default {
 
 
     },
-    init(id, type, flag, projectId) {
-      console.log(id, type, flag, projectId);
+    init(row, type, flag, projectId) {
+      console.log(row, type, flag, projectId);
       this.getProductClassFun()
       this.tableData=[]
       this.fieldFlag = flag || true
@@ -437,7 +437,7 @@ export default {
       this.visible = true
       let tempListQuery = {
 
-        productsId: id,
+        productsId: row.productsId,
         batchNumber: "",
         availableFlag: 0, // 可用数标识（0 否 1是）默认否
         inventoryFlag: 0, // 库存数标识（0 否 1是）默认否
@@ -453,14 +453,23 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
-        vibrationLevel: '',
-        standardValue: '',
+      
         projectId: this.projectId,
         // excludeProcessFlag:!flag,
-        accuracyLevel: '',
-        sealingCoverTyping: '',
-        pairingModeId: "",
-
+        pairingModeId:row.pairingModeId,
+        material:row.material,
+        standardValue:row.standardValue,
+        colour:row.colour,
+        sealingCoverTyping:row.sealingCoverTyping,
+        accuracyLevel:row.accuracyLevel,
+        wireHeatNumber:row.wireHeatNumber,
+        rawStockMill:row.rawStockMill,
+        vibrationLevel:row.vibrationLevel,
+        oil:row.oil,
+        clearance:row.clearance,
+        aperture:row.aperture,
+        packagingMethod:row.packagingMethod,
+        specialRequire:row.specialRequire, 
       }
       console.log("object", tempListQuery);
       tempListQuery[type] = 1
@@ -482,6 +491,8 @@ export default {
     },
     reset() {
       this.listQuery = JSON.parse(JSON.stringify(this.originalListQuery))
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
       this.initData()
     },
     initData() {

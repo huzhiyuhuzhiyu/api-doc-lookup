@@ -31,7 +31,7 @@
                 <span class="required">*</span>责废数量
               </template>
               <template slot-scope="scope">
-                <el-input v-model="scope.row.scrapQuantity" placeholder="责废数量" @blur="countFun(scope)" :disabled="btnType==='look'"></el-input>
+                <el-input v-model="scope.row.scrapQuantity" placeholder="责废数量" @blur="countFun(scope)" :disabled="btnType==='look'" maxlenth="16"></el-input>
               </template>
             </el-table-column>
             <el-table-column prop="scrapUserId" label="责任人" min-width="180" sortable="custom">

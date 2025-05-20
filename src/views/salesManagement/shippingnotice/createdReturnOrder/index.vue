@@ -541,7 +541,7 @@
 
                 <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
                   <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                    highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                    :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                     class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                     <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                       <i
@@ -923,6 +923,7 @@ export default {
       list10: [],
       pairingModeList: [],
       bimProductAttributesList  :[],
+      highlightCurrentFlag:false,
     }
   },
   computed: {
@@ -967,6 +968,9 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+     handleRowClick(row){
+        this.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row);
+    },
        sortChange({ prop, order }) {
       let newProp;
       if (prop === 'inventoryQuantity' || prop == 'productCategoryName' || prop === 'drawingNo' || prop === 'name'||prop=='code') {
@@ -1610,6 +1614,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.highlightCurrentFlag=false
       this.orderDateArr = []
       this.ProductListRequestObj = {
         // neOrderState: 'finish',

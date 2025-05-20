@@ -1055,6 +1055,9 @@ export default {
     }
   },
   methods: {
+      handleRowClick(row){
+        this.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row);
+    },
     getSwitchList() {
       this.switchlist = !this.switchlist
     },

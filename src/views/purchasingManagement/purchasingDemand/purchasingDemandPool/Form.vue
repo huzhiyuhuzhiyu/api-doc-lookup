@@ -289,7 +289,11 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-
+                          <el-table-column v-if="isZY" prop="productSymbol" label="代号" width="160">
+                              <template slot-scope="scope">
+                                  <el-input placeholder="请输入代号" v-model="scope.row.productSymbol" :disabled="type === 'look'"></el-input>
+                              </template>
+                          </el-table-column>
                         <el-table-column prop="standardValue" label="规值" width="120"
                           v-if="dataForm.classAttribute !== 'finish_product' && standardValueFlag === '1'">
                           <template slot-scope="scope">

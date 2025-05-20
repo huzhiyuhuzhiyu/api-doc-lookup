@@ -223,6 +223,11 @@
                       </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                       <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
+                        <el-table-column v-if="isZY" prop="productSymbol" label="代号" width="160">
+                            <template slot-scope="scope">
+                                <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
+                            </template>
+                        </el-table-column>
                       <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                         :key="211" v-if="sealingCoverTypingFlag == 1"></el-table-column>
                       <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"width="120" :key="123"
@@ -404,11 +409,11 @@
                         </el-date-picker>
                       </template>
                     </el-table-column>
-                    <!-- <el-table-column prop="contractNo" label="客户单号" width="160" :key="116">
+                    <el-table-column v-if="isZY" prop="productSymbol" label="代号" width="160">
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
+                        <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
                       </template>
-                    </el-table-column> -->
+                    </el-table-column>
                     <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
                       v-if="sealingCoverTypingFlag == 1" :key="211">
                       <template slot-scope="scope">

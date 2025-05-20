@@ -8,6 +8,11 @@
                             <el-input @keyup.native.enter="search()"  v-model="listQuery.code" placeholder="代号" clearable />
                         </el-form-item>
                     </el-col>
+                    <el-col :span="4">
+                        <el-form-item>
+                            <el-input @keyup.native.enter="search()"  v-model="listQuery.drawingNo" placeholder="品名规格" clearable />
+                        </el-form-item>
+                    </el-col>
 
                     <el-col :span="6">
                         <el-form-item>
@@ -40,8 +45,10 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table hasC ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_26735678567">
-                    <el-table-column prop="code" label="代号" />
+                <JNPF-table v-if="tableData.length" hasC ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column customKey="JNPFTableKey_26735678567">
+                    <el-table-column min-width="120" prop="code" label="代号" />
+                    <el-table-column min-width="220" prop="drawingNo" label="品名规格" />
+                    <el-table-column v-for="item in attrDictionaryData" :key="item.id" min-width="140" :prop="item.description" :label="$store.getters[item.description] || item.fullName" />
                     <el-table-column prop="remark" label="备注" />
                     <el-table-column label="操作" width="240" fixed="right">
                         <template slot-scope="scope">
@@ -79,7 +86,7 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
-    productAttributesCodeList, delProductAttributesCode, addProductAttributeCodeRelated
+    productAttributesCodeList, delProductAttributesCode, addProductAttributeCodeRelated, getbimProductAttributesListMap
 } from '@/api/masterDataManagement'
 import ProductAttributeSymbolForm from '@/views/masterDataManagement/productSet/productAttributeSymbol/Form.vue'
 import RelatedProductForm from '@/views/masterDataManagement/productSet/productAttributeSymbol/relatedProductForm.vue'
@@ -125,6 +132,7 @@ export default {
             listQuery:{},
             total:0,
             initListQuery:{
+                drawingNo:'',
                 "code": "",
                 "createByName": "",
                 "endTime": "",
@@ -150,9 +158,26 @@ export default {
                 "superQuery": {},
                 "totalRowFlag": false
             },
+            bimProductAttributesList:{},
+            attrDictionaryData:[]
         }
     },
-    created(){
+    async created(){
+        const res = await getbimProductAttributesListMap()
+        this.bimProductAttributesList = res.data
+        const productAttribute = await this.$store.dispatch('base/getDictionaryData', { sort: 'productAttributes'})
+        this.attrDictionaryData = productAttribute.filter(item=>!['pa014','pa017','pa018','pa021','pa022'].includes(item.enCode)).map(item=>{
+            return {
+                ...item,
+                list:this.bimProductAttributesList[item.enCode].map(item=>{
+                    return {
+                        label:item.name,
+                        value:item.name,
+                    }
+                })
+            }
+        })
+        console.log(this.attrDictionaryData,'attrDictionaryData')
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery));
         this.initData()
     },

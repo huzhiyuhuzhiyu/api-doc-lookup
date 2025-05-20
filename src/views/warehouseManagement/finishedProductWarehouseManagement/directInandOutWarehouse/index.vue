@@ -309,7 +309,11 @@
                         </template>
                       </el-table-column> -->
                       <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-
+                      <el-table-column key="productSymbol" v-if="['inbound_purchase','inbound_other'].includes(dataForm.businessType) && isZY" prop="productSymbol" label="代号" width="160">
+                          <template slot-scope="scope">
+                              <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
+                          </template>
+                      </el-table-column>
                       <el-table-column prop="standardValue"
                       v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','outbound_pick_out','outbound_other','inbound_other'].includes(dataForm.businessType)"
                         label="规值" width="120" key="211">

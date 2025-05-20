@@ -146,6 +146,9 @@
                 <div v-if="scope.row.processType == 'grinding'">磨孔工序</div>
                 <div v-if="scope.row.processType == 'accuracy'">精度工序</div>
                 <div v-if="scope.row.processType == 'boxing'">装盒工序</div>
+                <div v-if="scope.row.processType == 'regrinding'">修磨工序</div>
+                <div v-if="scope.row.processType == 'clean'">清洗工序</div>
+           
             </template>
           </el-table-column>
           <el-table-column prop="unitPrice" label="计件单价" min-width="120"></el-table-column>

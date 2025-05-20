@@ -42,21 +42,21 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_386744">
-            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
-            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
+          <JNPF-table ref="dataTable" v-if="istable" :data="tableData" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"  customKey="JNPFTableKey_386744">
+            <el-table-column prop="code" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="name" label="设备名称" min-width="180" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch==='1'" key="projectName" />
             <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
             <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
             <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
-            <el-table-column prop="equipmentIdState" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
+            <el-table-column prop="state" label="设备状态" width="140" align="center" sortable="custom" fixed="right">
               <template slot-scope="{row}">
-                <el-tag type="success" disable-transitions v-if="row.equipmentIdState == 'normal'">正常</el-tag>
-                <el-tag type="warning" disable-transitions v-if="row.equipmentIdState == 'repair'">维修</el-tag>
-                <el-tag type="danger" disable-transitions v-if="row.equipmentIdState == 'discard'">报废</el-tag>
-                <el-tag disable-transitions v-if="row.equipmentIdState == 'spare'">备用</el-tag>
-                <el-tag type="info" disable-transitions v-if="row.equipmentIdState == 'stop'">停用</el-tag>
+                <el-tag type="success" disable-transitions v-if="row.state == 'normal'">正常</el-tag>
+                <el-tag type="warning" disable-transitions v-if="row.state == 'repair'">维修</el-tag>
+                <el-tag type="danger" disable-transitions v-if="row.state == 'discard'">报废</el-tag>
+                <el-tag disable-transitions v-if="row.state == 'spare'">备用</el-tag>
+                <el-tag type="info" disable-transitions v-if="row.state == 'stop'">停用</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="180" />
@@ -64,7 +64,7 @@
             <el-table-column prop="createByName" label="创建人" width="120" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
-                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.equipmentId, 'look')">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   查看履历
                 </el-button>
               </template>

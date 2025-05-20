@@ -24,6 +24,7 @@
           <el-radio-button label="inspect">质量设置</el-radio-button>
           <el-radio-button label="purchase">采购设置</el-radio-button>
           <el-radio-button label="sale">销售设置</el-radio-button>
+          <el-radio-button label="equipment">设备设置</el-radio-button>
         </el-radio-group>
       </div>
       <div class="JNPF-common-layout-center JNPF-flex-main" style="background-color: #FFFFFF;margin-top: 5px">
@@ -417,6 +418,10 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'sale'
         this.getData(15)
+      }else if (this.activeName === 'equipment') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'equipment'
+        this.getData(16)
       }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -477,6 +482,8 @@ export default {
             })
           } else if (this.activeName === 'price') {
             list = res.data.price
+          }else if (this.activeName === 'equipment') {
+            list = res.data.equipment
           }
 
           list.forEach((item) => {

@@ -56,7 +56,24 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="24" v-if='propertyKey'>
+                      <el-form-item label="资产名称" prop="propertyName">
+                        <el-input v-model="dataForm.propertyName" placeholder="请输入资产名称" readonly @focus="openSelectAsset" :disabled="disabled"
+                           />
+                      </el-form-item>
+                    </el-col>
+                        <el-col :sm="8" :xs="24" v-if='$store.getters.configData.equipment.inspectionUserSetting'>
+                      <el-form-item label="点检人员" prop="inspectionUserId">
+                        <user-select v-model="dataForm.inspectionUserId" placeholder="请选择点检人员" style="width: 100%;" :disabled="disabled">
+                        </user-select>
+                      </el-form-item>
+                    </el-col>
+                        <el-col :sm="8" :xs="24" v-if="$store.getters.configData.equipment.maintenanceUserSetting">
+                      <el-form-item label="保养人员" prop="maintenanceUserId">
+                        <user-select v-model="dataForm.maintenanceUserId" placeholder="请选择保养人员" style="width: 100%;" :disabled="disabled">
+                        </user-select>
+                      </el-form-item>
+                    </el-col>
                     <!-- <el-col :sm="8" :xs="24">
               <el-form-item label="计量单位" prop="unitVolume">
                 <el-select v-model="dataForm.unitVolume" placeholder="请选择计量单位" :disabled="disabled" style="width: 100%;">
@@ -247,6 +264,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <selectAsset v-if="selectAssetVisible" ref="assetRef" @selectAsset="changeAsset"></selectAsset>
     </div>
   </transition>
 </template>
@@ -265,14 +283,21 @@ import formValidate from "@/utils/formValidate";
 import getProjectLists from '@/mixins/generator/getProjectList'
 import { getProjectList } from '@/api/system/projectManagement'
 import { mapGetters } from 'vuex'
+import selectAsset from './assetForm.vue'
+
 export default {
   mixins: [getProjectLists],
   components: {
     singleImg,
-    UploadImg
-  },
+    UploadImg,
+    selectAsset
+  }, 
+
   data() {
     return {
+      
+      selectAssetVisible:false,
+      propertyKey:"",
       isProjectSwitch: '',
       loadingprojectId: false,
       projectIdList: [],
@@ -326,6 +351,10 @@ export default {
       picArr: [],
       type: '',
       dataForm: {
+        maintenanceUserId:"",
+        inspectionUserId:"",
+        propertyId:"",
+        propertyName:"",
         projectId: '',
         repairUserId: '',
         salespersonId: "",
@@ -443,6 +472,10 @@ export default {
           // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
           // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
         ],
+            propertyName: [
+          { required: true, message: '请选择资产', trigger: 'blur' },
+       
+        ],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
           // { validator: this.formValidate('fullName', '编码不能含有特殊符号'), trigger: 'blur' },
@@ -462,6 +495,8 @@ export default {
           },
         ],
         state: [{ required: true, message: '请选择设备状态', trigger: 'change' }],
+        maintenanceUserId:[{ required: true, message: '请选择保养人员', trigger: 'change' }],
+        inspectionUserId:[{ required: true, message: '请选择点检人员', trigger: 'change' }],
         productCategoryName: [
           { required: true, message: '请选择设备分类', trigger: 'change' }
         ],
@@ -483,11 +518,23 @@ export default {
     this.getProjectListdata()
     this.getBimBusinessDetail()
     this.getfactoryFloor()
+    console.log("444",this.$store.getters.configData.equipment.inspectionUserSetting);
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   methods: {
+     openSelectAsset(){
+      this.selectAssetVisible=true
+      this.$nextTick(()=>{
+        this.$refs.assetRef.init()
+      })
+    },
+       changeAsset(data){
+      console.log("资产数据",data); 
+      this.$set(this.dataForm,'propertyId',data.id) 
+      this.$set(this.dataForm,'propertyName',data.name) 
+    },
     getProjectListdata() {
       let query = {
         pageNum: 1,
@@ -588,13 +635,14 @@ export default {
       })
     },
 
-    init(id, disabled, type) {
-      console.log(disabled, id);
+    init(id, disabled, type,key) {
+      console.log(disabled, id,'key',key);
       this.visible = true
       this.dataForm.id = id || ''
       this.organizeIdTree = []
       this.disabled = disabled
       this.type = type
+      this.propertyKey=key
       if (this.dataForm.id) {
         getEquEquipmentInfo(this.dataForm.id).then(res => {
           this.$nextTick(() => {

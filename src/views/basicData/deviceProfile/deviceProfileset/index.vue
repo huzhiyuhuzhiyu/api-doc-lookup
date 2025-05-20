@@ -72,8 +72,8 @@
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addOrUpdateHandle('', false, 'add')">
-              <el-button size="mini" type="primary" icon="el-icon-printer"
-                @click="printView('p038')">打印设备二维码</el-button>
+              <el-button size="mini" type="primary" v-has="'property_addBtn'" icon="el-icon-plus" @click="propertyAddFun('', false, 'add','propertyAdd')">从资产新建</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p038')">打印设备二维码</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="setrepairUserId">批量设置维修人</el-button>
               <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus"
                 @click="importProductFun">导入</el-button>
@@ -149,7 +149,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true, 'look')">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true, 'look','propertyAdd')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -801,14 +801,20 @@ export default {
       return fullPath
     },
 
-    addOrUpdateHandle(id, type, types) {
+    addOrUpdateHandle(id, type, types,key) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, types)
+        this.$refs.Form.init(id, type, types,key)
       })
 
     },
+    propertyAddFun(id, type, types,key){
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type, types,key)
+      })
 
+    },
 
 
     handleDel(id) {

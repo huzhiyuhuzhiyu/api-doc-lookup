@@ -837,9 +837,10 @@ export default {
       this.search()
     },
     confirm() {
-      this.btnLoading = true
       setTimeout(async () => {
         let selectedData = []
+        if(!this.selectedIds.length)return this.$message.error("请选择数据")
+      this.btnLoading = true
         for (let i = 0; i < this.selectedIds.length; i++) {
           let item = []
           let selectedNames = this.selectedData[i]

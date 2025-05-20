@@ -198,6 +198,7 @@ import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel 
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import tenantMinix from "@/mixins/generator/TenantMinix";
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'purchasingDemandPool',
@@ -448,7 +449,11 @@ export default {
   },
   mounted() {
     this.getProductClassFun()
-
+    console.log("this.userInfo", this.userInfo);
+  },
+    computed: {
+    ...mapState('user', ['token']),
+    ...mapGetters(['userInfo'])
   },
   async created() {
     await this.getOrderFiledMap()

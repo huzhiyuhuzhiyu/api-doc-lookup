@@ -114,19 +114,14 @@
                     </el-col>
 
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="车间" prop="factoryFloorId">
-                        <el-select v-model="dataForm.factoryFloorId" filterable placeholder="请选择车间" :disabled="true" clearable style="width: 100%;" :loading="factorylistLoading">
-                          <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                      <el-form-item label="车间" prop="factoryFloor">
+                        <el-input v-model="dataForm.factoryFloor" readonly placeholder="请输入使用部门" :disabled="true" />
+                  
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="安装地点" prop="mountedPlacesId">
-                        <el-select v-model="dataForm.mountedPlacesId" filterable placeholder="请选择安装地点" :disabled="true" clearable style="width: 100%;" :loading="factorylistLoading">
-                          <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
-                          </el-option>
-                        </el-select>
+                      <el-form-item label="安装地点" prop="mountedPlaces">
+                        <el-input v-model="dataForm.mountedPlaces" readonly placeholder="请输入使用部门" :disabled="true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">

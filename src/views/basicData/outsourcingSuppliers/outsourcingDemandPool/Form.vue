@@ -1179,33 +1179,9 @@ export default {
         })
         .catch(() => { })
     },
-    switchStyleheight() {
-      const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
-      const mainRegion1 = this.$refs.main // 表单页面区域
-      const mainHeight = mainRegion.clientHeight
-      const mainHeight1 = mainRegion1.clientHeight
-      // 其他同级组件占用高度
-      let bortherHeight = 0
-      const bortherItems = mainRegion1.querySelectorAll('.orderInfo > *')
-      bortherItems.forEach((item) => {
-        if (item.className !== 'el-form data-form') bortherHeight += item.clientHeight
-      })
-
-      // 表格高度 = 区域总高度 - 同级元素高度 - 安全高度
-      let maxHeight2 = mainHeight1 - bortherHeight - 112
-      let maxHeight = mainHeight1 - 280
-      this.customStyleData = maxHeight
-      // 附带防抖的监听适配模式屏幕缩放
-      window.onresize = () => {
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-          this.switchStyleheight()
-        }, 100)
-      }
-    }
+ 
   },
-  mounted() {
-    this.switchStyleheight()
+  mounted() { 
     // 页面发生缩放，触发明细表格表单的resize
     this.clientResize = () => {
       if (!this.$refs.table) return

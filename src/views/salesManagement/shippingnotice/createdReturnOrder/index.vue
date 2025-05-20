@@ -1422,8 +1422,8 @@ export default {
           this.taxRateList = res.data.list
           console.log("税率", this.taxRateList);
         })
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.allProVisible = true
+      // this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         let arr = [];
         this.ProductListRequestObj = {
           classAttributeList: [],

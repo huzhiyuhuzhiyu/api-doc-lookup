@@ -1872,7 +1872,7 @@ export default {
         item.ordersId = ""
         item.ordersLineId = ""
         item.noticeId = ""
-        item.num = ''
+        item.num = item.inventoryQuantity || ''
         item.costPrice = ""
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""

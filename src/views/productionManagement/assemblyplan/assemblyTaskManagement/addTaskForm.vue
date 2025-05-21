@@ -95,7 +95,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px;">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 19px;">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -1041,6 +1041,10 @@ export default {
       this.$set(this.dataForm, 'productsName', data.name)
       this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
+      this.$nextTick(()=>{
+        this.$refs.dataForm.clearValidate('routingName');
+      })
+
       this.creaFun()
       if (this.dataForm.bomId) {
         BOMLineList(this.dataForm.bomId).then(res => {
@@ -1065,6 +1069,7 @@ export default {
       }
       await this.selectProductSymbol(this.dataForm.id)
       this.getWarehouseListFun()
+     
       if (!data.routingId) return
       if (!this.$store.getters.configData.produce.task_process_selection) {
         this.dataForm.routingId = ''

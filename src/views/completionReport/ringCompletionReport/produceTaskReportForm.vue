@@ -877,7 +877,7 @@ export default {
             }
           }
           if (submitFlag === false) return
-          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length&&!this.isXY) return this.$message.error("料废金额不能为空")
+          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length&&this.isXBN) return this.$message.error("料废金额不能为空")
           let obj = {}
           let arr = []
           obj.classAttribute = this.currentProcess.classAttribute

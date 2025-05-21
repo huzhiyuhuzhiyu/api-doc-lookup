@@ -112,10 +112,35 @@ clearable>
           <el-table-column prop="productCategoryName" label="物料分类" min-width="130" sortable="custom" />
           <el-table-column prop="productsCode" label="物料编号" min-width="130" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" min-width="130" sortable="custom" />
+              <el-table-column prop="inboundOtherQuantity" label="直接入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundOtherQuantity" label="直接出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundPurchaseQuantity" label="采购入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundPurchaseQuantity" label="采购退货出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundExternalQuantity" label="外协入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundExternalSendQuantity" label="外协发料出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundSaleReturnQuantity" label="销售退货入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundSaleSendQuantity" label="销售发货出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundShiftQuantity" label="形态转换入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundShiftQuantity" label="形态转换出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundTransferQuantity" label="调拨入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundTransferQuantity" label="调拨出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundTakingAdjustQuantity" label="盘点调整入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundTakingAdjustQuantity" label="盘点调整出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundPickQuantity" label="生产领料入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundPickOutQuantity" label="生产领料出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundReceiveMaterialQuantity" label="直接领料入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundReceiveMaterialQuantity" label="直接领料出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundFlipQuantity" label="翻库入库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundProductionQuantity" label="生产工单入库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundOrderProductionQuantity" label="生产订单入库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundScrapQuantity" label="报废入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundScrapQuantity" label="报废出库数量" width="160" sortable="custom" />
+          <el-table-column prop="inboundIoOtherQuantity" label="其他入库数量" width="160" sortable="custom" />
+          <el-table-column prop="outboundIoOtherQuantity" label="其他出库数量" width="160" sortable="custom" />
           <el-table-column prop="initInventoryQuantity" label="期初" width="120" />
-          <el-table-column prop="inboundReceiveMaterialQuantity" label="直接领料入库" width="120" />
-          <el-table-column prop="outboundReceiveMaterialQuantity" label="直接领料出库" width="120" />
           <el-table-column prop="endInventoryQuantity" label="本期结存" width="120" />
+             <el-table-column prop="outboundQuantity" label="总出库数量" width="120" />
+          <el-table-column prop="inboundQuantity" label="总入库数量" width="120" />
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
           @pagination="initData()" :pageSizes="[50, 100, 500,1000]">

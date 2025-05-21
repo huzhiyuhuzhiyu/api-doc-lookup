@@ -605,7 +605,8 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '工序编码', fixed: 'left' },
         { prop: 'name', label: '工序名称', fixed: 'left' },
-        { prop: 'processTyepeName', label: '工序类型', fixed: 'left' },
+        { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
+        
         { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [

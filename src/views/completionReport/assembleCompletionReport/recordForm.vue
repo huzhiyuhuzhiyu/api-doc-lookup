@@ -46,7 +46,7 @@
             </div>
           </div>
 
-          <JNPF-table v-loading="listLoading" ref="dataTable"  custom-column :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_580176">
+          <JNPF-table v-loading="listLoading" ref="dataTable"  custom-column :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_580176"  @sort-change="sortChange">
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="180" sortable="custom"></el-table-column>
@@ -112,6 +112,22 @@ export default {
 
   },
   methods: {
+          sortChange({ prop, order }) {
+      let newProp; 
+           
+      if (prop === 'code' ||prop=='name'|| prop == 'projectName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+        if (prop === 'createByName') {
+          newProp = 'create_by'
+        } else {
+          newProp = prop
+        }
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order !== "descending"
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.getrecordsList()
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -150,6 +166,8 @@ export default {
       this.getrecordsList()
     },
     reset() {
+            this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
       this.form = {
         productDrawingNo: "",
         orderNo: "",

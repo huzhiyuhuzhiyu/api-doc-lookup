@@ -35,7 +35,7 @@
                         </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="业务类型" prop="documentType">
-                            <el-select v-model="dataForm.businessType" placeholder="业务类型" clearable style="width: 100%;"
+                            <el-select v-model="dataForm.businessType" placeholder="业务类型"  style="width: 100%;"
                               :disabled="btnType == 'look'" filterable @change="selectDocutementType">
                               <el-option v-for="(item, index) in list" :label="item.label"
                                 :value="item.value"></el-option>
@@ -1216,10 +1216,7 @@ export default {
         this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
       } catch (error) { }
-    },
-
-      getProductList,
-      inventoryWarehouseList,
+    }, 
     selectWeight() {
       this.$nextTick(() => { this.$refs.products.doLayout() })
 

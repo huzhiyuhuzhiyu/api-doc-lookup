@@ -45,8 +45,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24"  >
-                        <el-form-item label="生产总数" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="原生产总数" disabled>
+                        <el-form-item label="生产总数" prop="oldProductionQuantity">
+                          <el-input v-model="dataForm.oldProductionQuantity" placeholder="原生产总数" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -473,6 +473,7 @@ export default {
           this.dataForm = res.data.prodOrder
           this.$set(this.dataForm,'oldProductionBarrels',this.dataForm.productionBarrels)
           this.$set(this.dataForm,'oldProductionWeight',this.dataForm.productionWeight)
+          this.$set(this.dataForm,'oldProductionQuantity',this.dataForm.productionQuantity)
           this.$set(this.dataForm,'splitNo',1)
           this.oldWorkOrderList = res.data.workOrderList
           this.dataFormTwo.data = res.data.workOrderList

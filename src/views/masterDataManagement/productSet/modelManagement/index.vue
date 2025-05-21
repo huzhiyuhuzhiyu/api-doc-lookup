@@ -97,7 +97,7 @@
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" />
     <Table-Form v-if="tableFormVisible" ref="TableForm" @refresh="refresh"></Table-Form>
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" @close="cancelFun">
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
         :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
@@ -112,7 +112,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="saveSubmit()">
+        <el-button type="primary" @click="saveSubmit()" :loading="btnLoading" :disabled="btnLoading">
           提交
         </el-button>
       </span>
@@ -147,6 +147,7 @@ export default {
   components: { JNPFForm, ExportForm, TableForm, SuperQuery },
   data() {
     return {
+      btnLoading:false,
       tableFormVisible: false,
       exportFormVisible: false,
       columnList: ['remark', 'createTime', 'createByName'],
@@ -172,7 +173,7 @@ export default {
         pageSize: 20,
         model: ''
       },
-
+      file:[],
       total: 0,
       formVisible: false,
       selectList: [],
@@ -274,6 +275,7 @@ export default {
     },
     handleRemove(file, fileList) {
       console.log(file, fileList)
+      this.file=[]
     },
     handlePreview(file) {
       console.log(file)
@@ -283,6 +285,7 @@ export default {
       this.file = file.raw
     },
     saveSubmit() {
+      if(!this.file.length) return this.$message.error("请选择你要上传的文件")
       this.UploadProduct(this.file)
     },
     download(data) {
@@ -330,6 +333,7 @@ export default {
       console.log('data', data)
       this.loadingText = '正在导入数据'
       this.formLoading = true
+      this.btnLoading=true
       var formData = new FormData()
       formData.append('file', data)
       //调用上传文件接口
@@ -339,6 +343,7 @@ export default {
             this.$message.success(`导入成功`)
             this.initData()
             this.formLoading = false
+            this.btnLoading = false
             this.loadingText = ''
           } else {
             this.handleMessage(res.data)
@@ -347,6 +352,7 @@ export default {
         .catch((err) => {
           this.$message.error(`文件上传失败`)
           this.formLoading = false
+            this.btnLoading = false
           this.loadingText = ''
         })
     },
@@ -394,6 +400,8 @@ export default {
     },
     cancelFun() {
       this.uploadVisib = false
+      this.btnLoading = false
+      this.file=[]
       this.$refs['uploadRef'].clearFiles()
     },
     // 导入产品  下载导入错误数据

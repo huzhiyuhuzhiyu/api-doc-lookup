@@ -480,6 +480,7 @@ export default {
         aperture:row.aperture,
         packagingMethod:row.packagingMethod,
         specialRequire:row.specialRequire, 
+        processId:row.processId, 
       }
       console.log("object", tempListQuery);
       tempListQuery[type] = 1

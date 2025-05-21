@@ -35,7 +35,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
                             <el-form-item label="客户合同号" prop="contractNo">
-                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
+                              <el-input v-model="dataForm.contractNo" placeholder="" disabled />
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">
@@ -264,7 +264,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
                             <el-form-item label="客户合同号" prop="contractNo">
-                              <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" disabled />
+                              <el-input v-model="dataForm.contractNo" placeholder="" disabled />
                             </el-form-item>
                           </el-col>
                           <el-col :sm="6" :xs="24">

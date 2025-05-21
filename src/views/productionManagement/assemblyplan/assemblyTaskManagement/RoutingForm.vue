@@ -31,7 +31,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_282843">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_282843" @sort-change="sortChange"   ref="dataTable">
             <el-table-column prop="code" label="工艺路线编码" sortable="custom" ></el-table-column>
             <el-table-column prop="name" label="工艺路线名称" sortable="custom" />
             <el-table-column prop="projectName" label="所属项目" sortable="custom" v-if="isProjectSwitch == 1" />
@@ -89,6 +89,22 @@ export default {
       this.id=id
       this.customerVisible = true
       this.getbatchNumList(id)
+    },
+      sortChange({ prop, order }) {
+      let newProp; 
+           
+      if (prop === 'code' ||prop=='name'|| prop == 'projectName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+        if (prop === 'createByName') {
+          newProp = 'create_by'
+        } else {
+          newProp = prop
+        }
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order !== "descending"
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.getbatchNumList(this.id)
     },
     // 选择批次
     selectFun(row) {

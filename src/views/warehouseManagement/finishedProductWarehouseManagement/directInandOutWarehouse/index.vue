@@ -957,7 +957,7 @@ export default {
         cooperativePartnerId: "",
         cooperativePartnerIdText:"",
         approvalFlag: false,
-        weightFlag: false,
+        weightFlag: true,
         orderDate: this.jnpf.getToday(),
         recipientBy: "",
         diffBatchNumFlag: true,
@@ -1435,7 +1435,7 @@ export default {
       try {
         if (flag == 'unitFlag') this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
         if (flag == 'proportionFlag') this.calculateQuantityFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
+        // this.dataForm.weightFlag = this.calculateQuantityFlag == 1 ? true : false
         console.log("unitFlag ", this.mainUnitFlag);
         this.tableDataFlag = true
         this.listLoading = false
@@ -1601,7 +1601,7 @@ export default {
       this.productData.splice(index + 1, 0, data);
     },
     stockOutboundFlagChange(val){
-          if (val) this.$refs.products.doLayout()
+          this.$refs.products.doLayout()
     },
 
     //  中亚 切换规值时使用 按总库存出库
@@ -1885,7 +1885,7 @@ export default {
         item.ordersId = ""
         item.ordersLineId = ""
         item.noticeId = ""
-        item.num = item.inventoryQuantity || ''
+        item.num = this.dataForm.documentType=='outbound'? item.inventoryQuantity || '':''
         item.costPrice = ""
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""

@@ -35,7 +35,7 @@
             <el-table-column prop="waitHeat" label="待热处理" width="120" align="center">
               <template slot-scope="scope">
                 <el-link type="primary"
-                  @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId, projectId)">
+                  @click.native="viewFun(scope.row, 'availableFlag', scope.row.warehouseId, projectId)">
                   {{ scope.row.waitHeat }}
                 </el-link>
               </template>
@@ -302,11 +302,10 @@ export default {
   },
   methods: {
     // 查看产品明细
-    viewFun(id, type, warehouseId, projectId) {
-      if (!id) id = 0
+    viewFun(row, type, warehouseId, projectId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, type, warehouseId, projectId)
+        this.$refs.Form.init(row, type, warehouseId, projectId)
       })
     },
     // 

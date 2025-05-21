@@ -35,7 +35,7 @@
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
-              <el-button v-has="'reworkTask'" size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')"></el-button>
+              <el-button v-has="'reworkTask'" size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">返工任务</el-button>
               <el-button size="mini" v-has="'btn_split'" type="primary"  @click="splitHander()">拆分</el-button>
               <el-button size="mini" v-has="'btn_redesignate'" type="primary"  @click="redesignateHander()">改制</el-button>
               <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button> -->
@@ -393,7 +393,7 @@ import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrde
 import QRCode from 'qrcodejs2'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, PrintDialog2, PrintBrowse2, ProcessOutForm,OutSouringForm,SplitTaskForm,RedesignateTaskForm, },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2,ProcessOutForm,OutSouringForm },
   mixins: [getProjectList],
   data() {
     return {

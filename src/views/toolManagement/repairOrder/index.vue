@@ -56,7 +56,7 @@
             <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom" />
             <el-table-column prop="reportInstructions" label="报修说明" min-width="180" sortable="custom" /> 
             <el-table-column prop="frontPic" label="报修照片" min-width="180" sortable="custom" >
-                  <template slot-scope="scope">
+                  <template slot-scope="scope"> 
               <el-image @click="bigimg(define.comUrl+item.url)" style="width: 25px;height: 25px;margin-left: 5px;" v-for="item in scope.row.frontPicList" :key="item.id" :src="define.comUrl+item.url" :preview-src-list="srcList"></el-image>
             </template>
             </el-table-column>
@@ -82,7 +82,7 @@
             <el-table-column prop="repairCompletionTime" label="维修完成时间" min-width="180" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="updateTime" label="更新时间" min-width="180" sortable="custom" />
-            <el-table-column prop="applicantIdName" label="确认人" min-width="180" sortable="custom" />
+            <!-- <el-table-column prop="applicantIdName" label="确认人" min-width="180" sortable="custom" /> -->
             <el-table-column prop="confirmedTime" label="确认时间" min-width="180" sortable="custom" />
             <el-table-column prop="confirmedInstructions" label="确认内容" min-width="180" sortable="custom" />
   

@@ -82,7 +82,7 @@
             <el-table-column prop="repairCompletionTime" label="维修完成时间" min-width="180" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="updateTime" label="更新时间" min-width="180" sortable="custom" />
-            <el-table-column prop="applicantIdName" label="确认人" min-width="180" sortable="custom" />
+            <!-- <el-table-column prop="applicantIdName" label="确认人" min-width="180" sortable="custom" /> -->
             <el-table-column prop="confirmedTime" label="确认时间" min-width="180" sortable="custom" />
             <el-table-column prop="confirmedInstructions" label="确认内容" min-width="180" sortable="custom" />
   

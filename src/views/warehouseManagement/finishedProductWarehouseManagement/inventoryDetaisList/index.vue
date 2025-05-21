@@ -114,8 +114,8 @@
             sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 
-          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
 
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
@@ -568,6 +568,7 @@ export default {
       colourFlag: "",
       processFlag: "",
       processList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
       outTotalNum:0,
       InTotalNum:0,
     }
@@ -577,6 +578,7 @@ export default {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.$store.dispatch('base/getBusinessConfig','gobal')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getWarehouseListFun()
     this.tableDataFlag = true
     this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -588,6 +590,13 @@ export default {
     await this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
       // 选中列表的数据 将其带到生成订单下面表单表格中
       handeleProductInfoData(val) {
       this.selectData = val

@@ -8,8 +8,10 @@ export default {
     methods:{
         selectProductSymbolData(row,index,data){
             delete row.id
+            delete row.productsId
             for (let key in row){
                 this.$set(data[index], key, row[key])
+                this.$set(data[index], 'productSymbol', row.code)
             }
         },
         //   点击选择代号 带出属性

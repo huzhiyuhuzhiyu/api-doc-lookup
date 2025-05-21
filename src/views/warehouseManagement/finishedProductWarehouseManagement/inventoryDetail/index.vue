@@ -71,7 +71,7 @@
             v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-          <el-table-column prop="pairingModeName" label="配对方式" width="160" />
+          <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isPairingModeSwitch === '1'" />
 
           <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
@@ -288,6 +288,7 @@ export default {
       isProjectSwitch: '',
       projectId: "",
       warehouseInfo: {},
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   watch: {
@@ -297,6 +298,7 @@ export default {
   },
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getWarehouseListFun()
     this.superForm = this.tableQuery
     this.getConfig()
@@ -312,6 +314,13 @@ export default {
 
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     async getOrderFiledMap() {
       await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping

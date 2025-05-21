@@ -66,7 +66,7 @@
                     <el-table-column sortable="custom" prop="planStartDate" label="计划开始日期" min-width="160"/>
                     <el-table-column sortable="custom" prop="planEndDate" label="计划结束日期" min-width="160"/>
                     <el-table-column sortable="custom" prop="vibrationLevel" label="振动等级" min-width="120"/>
-                    <el-table-column sortable="custom" prop="pairingModeName" label="配对方式" min-width="120"/>
+                    <el-table-column sortable="custom" prop="pairingModeName" label="配对方式" min-width="120"  v-if="isPairingModeSwitch === '1'"/>
                     <template v-if="mainUnitFlag">
                         <el-table-column sortable="custom" prop="mainUnit" label="单位（主）" width="140"/>
                         <el-table-column sortable="custom" prop="deputyUnit" label="单位（副）" width="140"/>
@@ -238,7 +238,11 @@ export default {
                     pickerOptions: this.global.timePicker,
                 },
             ]),
+            isPairingModeSwitch: '', // 配对方式显示隐藏
         };
+    },
+    async created() {
+        await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     },
     async mounted() {
         try {
@@ -259,6 +263,13 @@ export default {
         }
     },
     methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
         async checkReportRecord({id}) {
             this.reportRecordFormVisible = true;
             await this.$nextTick();

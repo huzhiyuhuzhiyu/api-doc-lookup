@@ -182,7 +182,7 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'">
 
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -442,7 +442,7 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'">
 
                         </el-table-column>
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
@@ -594,7 +594,7 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="300" sortable="custom" />
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'"></el-table-column>
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                 <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
@@ -840,11 +840,13 @@ export default {
       enCode: "",
       printBrowseVisible: false,
       printVisible: false,
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     this.isProjectSwitchFlag = true
     let objs = { "pageSize": -1, "businessCode": "product" }
     await getBimBusinessSwitchConfigList(objs).then(res => {
@@ -880,6 +882,13 @@ export default {
 
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
       handleRowClick(row){
         this.$refs.form.$refs.JNPFTable.toggleRowSelection(row);
     },

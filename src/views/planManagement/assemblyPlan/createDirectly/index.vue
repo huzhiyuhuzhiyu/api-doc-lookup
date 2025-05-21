@@ -451,7 +451,8 @@ export default {
       projectIdDataList: [],
       isProductNameSwitch: "",
       pairingModeList: [],
-      tableflag: false,
+      isPairingModeSwitch: '', // 配对方式显示隐藏
+      tableflag:false,
       bimProductAttributesList: {},
        // 属性字段  控制属性字段显示隐藏
       accuracyLevelFlag: "",
@@ -481,9 +482,10 @@ export default {
     await this.getProductClassFun()
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getpairingModeListFun()
-
-    await this.getProjectList()
-
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+    await this.getProjectList() 
+    await this.getProductAttributeFun()
+   
   },
   mounted() {
     // this.getBimBusinessDetail()
@@ -496,6 +498,14 @@ export default {
   beforeDestroy() {
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
+ 
     // 产线
     getProductionLineListFun() {
       let objs = {

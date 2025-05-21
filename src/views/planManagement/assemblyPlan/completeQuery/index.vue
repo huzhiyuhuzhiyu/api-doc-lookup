@@ -60,7 +60,7 @@
               {{ scope.row.drawNo }}
             </template>
           </el-table-column>
-        <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+        <el-table-column prop="productCategoryName" label="产品分类" width="160"   />
         <!-- <el-table-column prop="productName" key="productName" label="产品名称" min-width="140" /> -->
           <el-table-column prop="productSource" key="productSource" label="产品来源" min-width="100">
             <template slot-scope="scope">

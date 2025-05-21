@@ -68,7 +68,7 @@
               </el-col>
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="listQuery.shelfSpaceName" placeholder="库位名称" clearable
+                  <el-input v-model="listQuery.stockGoodsShelvesName" placeholder="库位名称" clearable
                     @keyup.enter.native="search()" />
                 </el-form-item>
               </el-col>
@@ -114,7 +114,7 @@
                 v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
               <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-              <el-table-column prop="pairingModeName" label="配对方式" width="160" />
+              <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isPairingModeSwitch === '1'" />
 
               <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
@@ -132,7 +132,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
-              <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="stockGoodsShelvesName" label="库位名称" min-width="120" sortable="custom" />
               <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
               <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
               <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
@@ -260,12 +260,15 @@ export default {
       warehouseId: "",
       pairingModeList: [],
       accuracyLevelList: [],
-      sealingCoverTypingList: []
+      sealingCoverTypingList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   async created() {
 
     await this.getProjectSwitch('system', 'project')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+
     await this.getpairingModeListFun()
     await this.getOrderFiledMap()
     await this.getConfig()
@@ -280,6 +283,13 @@ export default {
 
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -525,7 +535,7 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productCode' || prop == 'partnerCode' || prop == 'partnerName' || prop == 'productDrawingNo' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'shelfSpaceName' || prop == 'warehouseName') { newProp = prop }
+      if (prop === 'productCode' || prop == 'partnerCode' || prop == 'partnerName' || prop == 'productDrawingNo' || prop === 'productName' || prop === 'productSpec' || prop === 'routingName' || prop === 'processName' || prop == 'stockGoodsShelvesName' || prop == 'warehouseName') { newProp = prop }
       else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp

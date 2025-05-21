@@ -359,8 +359,6 @@ export default {
         { label: '配对工序', value: 'pairs' },
         { label: '磨孔工序', value: 'grinding' },
         { label: '精度工序', value: 'accuracy' },
-     
-    
         { label: '打字工序', value: 'typing' },
         { label: '注脂工序', value: 'fatInjection' },
         { label: '装盒工序', value: 'boxing' },

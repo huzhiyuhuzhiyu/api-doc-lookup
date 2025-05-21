@@ -114,7 +114,11 @@
                         <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门" :disabled="disabled" />
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="8">
+                      <el-form-item label="常使用位置" prop="position">
+                        <el-input v-model="dataForm.position" readonly placeholder="请输入常使用位置" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="车间" prop="factoryFloorId">
                         <el-select v-model="dataForm.factoryFloorId" filterable placeholder="请选择车间" :disabled="disabled" clearable style="width: 100%;" :loading="factorylistLoading">
@@ -368,6 +372,7 @@ export default {
         serviceLife: null, //使用年限
         specModel: null, //规格型号
         userDepartmentId: null, //使用部门
+        position:"",
         userDepartmentName: null, //使用部门
         factoryFloorId: null,
         mountedPlacesId: null,

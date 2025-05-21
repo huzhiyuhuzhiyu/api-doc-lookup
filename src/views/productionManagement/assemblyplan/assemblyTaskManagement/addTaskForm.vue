@@ -67,7 +67,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="配对方式" prop="pairingModeName">
+                        <el-form-item label="配对方式" prop="pairingModeName" v-if="isPairingModeSwitch === '1'">
                           <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
@@ -782,6 +782,23 @@ export default {
       pairingModeList: [],
       materialList: [],
       linesFormItems_right: [],
+        linesFormItems_right: [
+            { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
+            { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 120,render:this.isProductNameSwitch === '1' },
+            { prop: "productDrawingNo", label: "品名规格", value: "", type: 'view', minWidth: 150 },
+            {
+                prop: "qty", label: "数量", value: "", type: 'input', width: 180,
+                itemRules: [
+                    { validator: this.formValidate({ type: 'noEmtry', params: ["", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+                    { required: true, message: '', trigger: 'blur' },
+                    { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }] }), trigger: 'blur' },
+                    { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单列表第${index + 1}行：数量${errMsg}`) }), trigger: 'blur' }
+                ]
+            },
+            { prop: "mainUnit", label: "单位", value: "", type: 'view', minWidth: 80 },
+            { prop: "materialsUsedQuantity", label: "投料数量", value: "", type: 'view', minWidth: 140},
+        ],
+        isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   mounted() {
@@ -823,9 +840,18 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     this.getPickingConfig()
   },
   methods: {
+    
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     getProcessData(id, data, params, index) {
       this.materialList[params.scope.$index].processId = data[0].id || ''
       this.materialList[params.scope.$index].processName = data[0].name || ''

@@ -2043,6 +2043,7 @@ export default {
               message: '请输入第' + (index + 1) + '行产品的收货数量',
               type: 'error',
               duration: 1500
+
             })
             return
           }
@@ -2084,7 +2085,6 @@ export default {
           }
         
         }
-
 
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
@@ -2201,8 +2201,7 @@ export default {
         console.log(obj, 'obj')
         if(submitFlag===false) return
         this.btnLoading = true
-        formMethod(obj)
-          .then((res) => {
+        formMethod(obj).then((res) => {
             this.btnLoading = false
             // let msg = "";
             // if (formMethod == addpurPurchaseReceiptReturnGoods) {
@@ -2232,8 +2231,7 @@ export default {
             } else {
               this.tipsvisible = true
             }
-          })
-          .catch(() => {
+          }).catch(() => {
             this.btnLoading = false
           })
       }

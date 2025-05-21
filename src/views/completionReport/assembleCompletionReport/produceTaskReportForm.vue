@@ -217,7 +217,7 @@
                 </div>
                 <div style="padding: 0 20px;">
                   <el-col :sm="24" :xs="24" class="iptLabel"
-                    v-if="currentProcessType === 4 || currentProcessType === 5">
+                    v-if="(currentProcessType === 4 || currentProcessType === 5) && isPairingModeSwitch === '1'">
                     <el-form-item label="配对方式" prop="pairingModeName">
                       <el-select v-model="currentProcess.pairingModeId" placeholder="请选择配对方式" style="width: 60%;"
                         clearable @input="handleClear" class="ipt" @change="(value) => changePairingMode(value)">
@@ -656,13 +656,16 @@ export default {
       materialFlag: '',
       colourFlag: '',
       accuracyLevelList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
       copyCurrentProcess: {},
       materialWasteDataList: [],
       responsWasteDataList: [],
       equipmentList: [],
     }
   },
-
+  async created() {
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+  },
   async mounted() {
 
   },
@@ -675,6 +678,13 @@ export default {
     this.getsealingcoverTypingList()
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     regrindingFun(){
       let obj = {
               "classAttribute": this.currentProcess.classAttribute,

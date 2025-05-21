@@ -757,7 +757,7 @@
           <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
           <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
           <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="160">
@@ -1207,7 +1207,7 @@
           <el-table-column prop="productName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+          <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
@@ -2235,6 +2235,7 @@ export default {
         orderDate: this.jnpf.getToday(),
       },
       allocationFlag: false,
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   watch: {
@@ -2289,6 +2290,7 @@ export default {
     await this.getWarehouseListFun()
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.$store.dispatch('base/getBusinessConfig','gobal')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
 
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
   },
@@ -2296,6 +2298,13 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     submitFun() {
       this.$refs['diaForm'].validate((valid) => {
         if (valid) {

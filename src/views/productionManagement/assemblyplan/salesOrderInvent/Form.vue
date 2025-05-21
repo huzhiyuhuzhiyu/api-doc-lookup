@@ -58,7 +58,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="配对方式" prop="pairingModeName">
+                        <el-form-item label="配对方式" prop="pairingModeName" v-if="isPairingModeSwitch === '1'">
                           <el-select v-model="dataForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
@@ -745,6 +745,7 @@ export default {
       isCheckingSwitch: "",
       pairingModeList: [],
       materialList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
 
     }
   },
@@ -783,9 +784,17 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getTechnicalSwitch('produce', 'technical_requirement')
     await this.getCheckingSwitch('produce', 'checking_information')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     this.getPickingConfig()
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
       // 输入编排数量，重新计算投料数量
       compount() {
       if (this.dataForm.productionQuantity) {

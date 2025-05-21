@@ -344,6 +344,7 @@ export function reformOrderNum(data) {
     data
   })
 }
+
 /**工单管理-工单转外协详情 */
 export function detailProductionToOutSouring(id) {
   return request({
@@ -359,7 +360,7 @@ export function workTodoOutSouringList(data) {
     data
   })
 }
-
+ 
 // 生产日报表
 // 每日生产
 

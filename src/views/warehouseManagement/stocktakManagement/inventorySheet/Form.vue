@@ -95,7 +95,7 @@
                         </el-table-column>
                         <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                               :disabled="btnType == 'look' ? true : false">
@@ -397,7 +397,7 @@
                     </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false"
@@ -972,6 +972,7 @@ export default {
       list11: [],
       partnerInfo: {},
       pairingModeList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   // components: {
@@ -983,6 +984,7 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getpairingModeListFun()
     await this.switchStyleheight()
     this.formLoading = false
@@ -1013,6 +1015,13 @@ export default {
   },
 
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight

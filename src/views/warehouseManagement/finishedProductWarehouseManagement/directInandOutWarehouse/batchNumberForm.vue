@@ -68,7 +68,7 @@
             <el-table-column prop="proportion" label="比重" min-width="120" />
             <el-table-column prop="discount" label="折扣" min-width="120" />
             <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 
             <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
             <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
@@ -158,12 +158,21 @@ export default {
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
       isProductNameSwitch: "",
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   async created() {
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getOrderFiledMap()
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     columnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()

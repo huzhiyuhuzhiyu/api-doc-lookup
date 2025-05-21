@@ -158,7 +158,7 @@
 
 
 
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                               disabled>
@@ -466,7 +466,7 @@
 
 
 
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                               disabled>
@@ -540,7 +540,7 @@
                         <template slot-scope="scope">
                           <el-select  filterable allow-create  v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
@@ -550,7 +550,7 @@
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa027" key="index" :label="item.name"
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa027" :key="index" :label="item.name"
                               :value="item.name"></el-option>
                           </el-select>
                         </template>
@@ -675,7 +675,7 @@
                 <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160"
                   sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="300" />
-                <el-table-column prop="pairingModeName" label="配对方式" width="160" />
+                <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isPairingModeSwitch === '1'" />
 
                 <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'" min-width="160" />
                 <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -885,6 +885,7 @@ export default {
       columnList:[],
       pairingModeList: [],
       pairingModeNum: "",//配对方式的基本数量
+      isPairingModeSwitch: '', // 配对方式显示隐藏
       productDataCopy: [],
       diffBatchList: [
         { label: '产品生成同批次号', value: 0 },
@@ -895,6 +896,7 @@ export default {
   async created() {
     await this.getProductClassFun()
     await this.getProjectSwitch('system', 'project')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getpairingModeListFun()
 
     let objs = { "pageSize": -1, "businessCode": "product" }
@@ -923,6 +925,13 @@ export default {
 
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
       handleRowClick(row){
         this.$refs.form.$refs.JNPFTable.toggleRowSelection(row);
     },

@@ -56,7 +56,7 @@
               <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
               <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'" min-width="160" sortable="custom" />
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" /> 
+            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" v-if="isPairingModeSwitch === '1'" /> 
               <el-table-column prop="weight" label="重量(KG)" min-width="120" sortable="custom" />
               <el-table-column prop="proportion" label="比重" min-width="120" sortable="custom" />
               <el-table-column prop="processName" label="工序名称" min-width="120" />
@@ -207,10 +207,12 @@ export default {
         colourFlag: "",
         processFlag: "",
         projectId:"",
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   async created() {
 
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getProjectSwitch('system', 'project')
 
     await this.getOrderFiledMap()
@@ -226,6 +228,13 @@ export default {
 
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     columnSetFun() {
       console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()

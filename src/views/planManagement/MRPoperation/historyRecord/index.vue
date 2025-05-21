@@ -72,8 +72,12 @@
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
+<<<<<<< HEAD
+                <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
+=======
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+>>>>>>> BN_新需求
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
@@ -199,8 +203,8 @@
                 <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
-            <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+                <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -766,6 +770,7 @@ export default {
       colourFlag:'',
       bimProductAttributesList: [],
       superQueryJson: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     };
   },
   computed: {
@@ -783,6 +788,7 @@ export default {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     this.superForm1 = this.assembleForm
     this.getassembleData('basic');
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -796,6 +802,13 @@ export default {
     }
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping

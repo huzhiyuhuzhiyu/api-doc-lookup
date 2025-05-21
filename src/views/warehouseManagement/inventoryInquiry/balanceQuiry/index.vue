@@ -63,9 +63,19 @@ export default {
     },
     async created() {
         await this.awaitAbProject()
-        this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
-        console.log(this.abProjectId,'this.defaultProjectId')
-        this.listRequestObj.projectId = this.defaultProjectId
+
+         if(this.abProjectSwitchVisible){
+
+          this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+          this.listRequestObj.projectId = this.defaultProjectId
+        }else{
+          this.defaultProjectId='1'
+        }
+
+        // this.defaultProjectId = this.abProjectNoCommonList.find(item=>item.value === this.abProjectId) ? this.abProjectId : this.abProjectNoCommonList[0].id
+        // console.log(this.abProjectId,'this.defaultProjectId')
+        // this.listRequestObj.projectId = this.defaultProjectId
+
         await this.getProductNameSwitch('product', 'enable_productName')
         const res = await canStockBalance(this.defaultProjectId)
         this.accountPeriod = res.data
@@ -73,7 +83,7 @@ export default {
         this.setTableItems()
         this.setSuperQueryJson()
         this.setSearchList()
-        this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.jnpf.getToday('YYYY-MM')
+        // this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.jnpf.getToday('YYYY-MM')
         this.indexFlag = true
     },
     methods: {
@@ -163,17 +173,17 @@ export default {
         },
         setSearchList(){
             this.searchList = [
-                {
-                    fieldValue: this.defaultProjectId,
-                    field: 'projectId',
-                    disabled:this.abProjectId === '1' ? false : true,
-                    label: '所属项目',
-                    prop: 'projectId',
-                    symbol: 'like',
-                    searchType: 4,
-                    options:this.abProjectNoCommonList,
-                    clearable:false,
-                },
+                // {
+                //     fieldValue: this.defaultProjectId,
+                //     field: 'projectId',
+                //     disabled:this.abProjectId === '1' ? false : true,
+                //     label: '所属项目',
+                //     prop: 'projectId',
+                //     symbol: 'like',
+                //     searchType: 4,
+                //     options:this.abProjectNoCommonList,
+                //     clearable:false,
+                // },
                 {
                     fieldValue: '',
                     field: 'accountPeriod',
@@ -197,6 +207,26 @@ export default {
                     searchType: 1,
                 },
             ]
+              if(this.abProjectSwitchVisible){
+              let arr=[
+                    {
+                    fieldValue: this.defaultProjectId,
+                    field: 'projectId',
+                    label: '所属项目',
+                    prop: 'projectId',
+                    disabled:this.abProjectId === '1' ? false : true,
+                    symbol: 'like',
+                    searchType: 4,
+                    options:this.abProjectNoCommonList,
+                    clearable:false,
+                },
+              ]
+              this.searchList=[...arr,...this.searchList]
+              this.searchList[1].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
+            }else{
+              this.searchList[0].fieldValue = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
+
+            }
         },
     }
 

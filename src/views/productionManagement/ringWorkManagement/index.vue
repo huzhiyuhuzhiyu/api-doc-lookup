@@ -45,7 +45,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
+              <!-- <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </div>
@@ -64,8 +64,7 @@
             </div>
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag"
-            :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" min-width="120" sortable="custom" />
             <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
@@ -148,6 +147,7 @@
 </template>
 <script>
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
+import { getWorkSimplePage } from "@/api/productOrdes/index"
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
 
@@ -515,7 +515,7 @@ export default {
     initData() {
       this.listLoading = true
       this.dataForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-      getWorkList(this.dataForm).then(res => {
+      getWorkSimplePage(this.dataForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

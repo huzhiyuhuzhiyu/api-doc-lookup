@@ -13,6 +13,7 @@ const getters = {
     cachedViews: state => state.tagsView.cachedViews,
     permission_routes: state => state.permission.routes,
     dictionaryList: state => state.base.dictionaryList,
+    dictionaryMap: state => state.base.dictionaryMap,
     userList: state => state.base.userList,
     positionList: state => state.base.positionList,
     roleList: state => state.base.roleList,

@@ -10,6 +10,7 @@ import { getBillRuleConfig } from '@/api/system/billRule'
 
 const state = {
   dictionaryList: [],
+  dictionaryMap: {},
   userList: [],
   userTree: [],
   positionList: [],
@@ -28,6 +29,13 @@ const state = {
 const mutations = {
   SET_DICTIONARY_LIST: (state, dictionaryList) => {
     state.dictionaryList = dictionaryList
+    state.dictionaryMap = dictionaryList.reduce((acc, dict) => {
+        acc[dict.enCode] = dict.dictionaryList.reduce((acc, dict) => {
+            acc[dict.enCode] = dict.fullName
+            return acc
+        },{})
+        return acc
+    },{})
   },
   SET_USER_LIST: (state, userList) => {
     state.userList = userList

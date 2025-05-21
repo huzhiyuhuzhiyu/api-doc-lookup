@@ -96,7 +96,7 @@
                     <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="180" v-if="isPairingModeSwitch === '1'">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                           :disabled="btnType == 'look' || noticeswitch === '1' ? true : false"
@@ -368,7 +368,7 @@
                 <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="120">
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="180" v-if="isPairingModeSwitch === '1'">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                       :disabled="btnType == 'look' || noticeswitch === '1' ? true : false"
@@ -674,7 +674,7 @@
                 <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'"></el-table-column>
 
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
@@ -1130,6 +1130,7 @@ export default {
       list10: [],
       pairingModeList: [],
       pageType:"",
+      isPairingModeSwitch: '', // 配对方式显示隐藏
       highlightCurrentFlag:false,
     }
   },
@@ -1161,6 +1162,7 @@ export default {
     await this.getProductAttributeFun()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
 
     this.getAttributeline()
   },
@@ -1173,6 +1175,13 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
      handleRowClick(row){
         this.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row);
     },
@@ -1444,8 +1453,9 @@ export default {
     // 查看库存明细
     viewFun(row, type, warehouseId) {
       this.formVisible = true
+      this.$set(row,'productsId',row.id)
       this.$nextTick(() => {
-        this.$refs.Form.init(row.id, type, "", row.projectId)
+        this.$refs.Form.init(row, type, "", row.projectId)
       })
     },
     getBimBusinessDetail() {

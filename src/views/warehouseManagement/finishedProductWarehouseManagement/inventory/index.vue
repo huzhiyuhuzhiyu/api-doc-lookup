@@ -102,6 +102,7 @@
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
           <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
+          <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="logo" label="logo" width="120" sortable="custom"></el-table-column>
           <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" sortable="custom"></el-table-column>
@@ -194,7 +195,7 @@ export default {
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
       superQueryVisible: false,
@@ -511,7 +512,8 @@ export default {
         warehouseName: "",
         pageNum: 1,
         pageSize: 20,
-
+          totalInventoryFlag:false,
+        inventoryFlag: 1,
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',

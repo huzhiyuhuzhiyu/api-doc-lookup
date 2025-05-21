@@ -781,13 +781,13 @@ export default {
       getProductionLineInfo(e).then(res => {
         console.log("产线", res);
         let list = res.data.workstationList
-        // 遍历 arr 数组  
+        // 遍历 arr 数组
         this.dataFormTwo.data.forEach(item => {
-          // 在 arr2 中查找与当前 item 的 processId 相同的 item  
+          // 在 arr2 中查找与当前 item 的 processId 相同的 item
           const match = list.find(el => el.processId === item.processId && item.processingType == "self_produced");
           if (match) {
             console.log(match);
-            // 如果匹配，更新 workstationResList 和 workstationResMap  
+            // 如果匹配，更新 workstationResList 和 workstationResMap
             item.routingProResList = match.workstationResList;
             item.routingProResMap = match.workstationResMap;
           }
@@ -1324,29 +1324,37 @@ export default {
 
       })
     },
-    handleConfirm(value) {
+    async handleConfirm(value) {
       console.log(this.dataForm);
-
-      this.$refs['dataForm'].validate((valid) => {
-        this.dataForm.documentStatus = value
-        if (valid) {
-          if (this.allocationFlag) {
-            this.$refs['collectForm'].validate((valid2) => {
-              if (valid2) {
+        try {
+            try {
+                await this.$refs['dataForm'].validate()
+                this.dataForm.documentStatus = value
+            }catch (e) {
+                console.log('基础信息');
+                console.log(e);
+                throw new Error('orderInfo')
+            }
+            if (!this.allocationFlag) {
+                return   this.checkFun()
+            }
+            try {
+                await this.$refs['collectForm'].validate()
                 this.checkFun()
-              }
-            })
-          } else {
-            this.checkFun()
-          }
-
-
-
-
-
-
+            }catch (e) {
+                console.log('领料清单');
+                console.log(e);
+                throw new Error('annex')
+            }
+        }catch (e) {
+            const name = e.message
+           if(this.activeName === name){
+               return;
+           }
+            this.activeName = name
+            this.$message.info('已为您自动切换到未填页，请补充完成后再试')
         }
-      })
+
     }
   }
 }

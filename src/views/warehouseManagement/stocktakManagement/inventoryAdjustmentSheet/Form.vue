@@ -85,7 +85,7 @@
                         </el-table-column>
                         <el-table-column prop="stockNum" label="调整前库存" width="150" :key="6" show-overflow-tooltip>
                         </el-table-column>
-                        <el-table-column prop="pairingModeName" label="配对方式" width="120" :key="6" show-overflow-tooltip>
+                        <el-table-column prop="pairingModeName" label="配对方式" width="120" :key="6" show-overflow-tooltip v-if="isPairingModeSwitch === '1'">
                         </el-table-column>
                         <el-table-column prop="num" label="调整数量" width="120" :key="10112">
                           <template slot="header">
@@ -351,7 +351,7 @@
                     </el-table-column>
                     <el-table-column prop="stockNum" label="当前库存" width="120" :key="6" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="pairingModeName" label="配对方式" width="120" :key="6" show-overflow-tooltip>
+                    <el-table-column prop="pairingModeName" label="配对方式" width="120" :key="6" show-overflow-tooltip v-if="isPairingModeSwitch === '1'">
                     </el-table-column>
                     <el-table-column prop="num" label="盘点数量" width="120" :key="10112">
                       <template slot="header">
@@ -740,9 +740,11 @@ export default {
       list9: [],
       list10: [],
       list11: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   async created() {
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getOrderFiledMap()
   },
 
@@ -769,6 +771,13 @@ export default {
   },
 
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     getOrderFiledMap() {
       getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping

@@ -4,8 +4,9 @@ export const tenant = {
   yongshun: ['yongshun'], // 示例：配置别名到实际租户标识
   fhxygq: ['fhxygq'], // 项源钢球
   fhjrgq: ['fhjrgq'], // 精瑞钢球
-  zgt_xbn: ['zgt_xbn','xbeining'], // 精瑞钢球
-  zgt_zy: ['zhongya','xzhongya', 'zgt_zy', 'zgt_xzy'], // 精瑞钢球
+  zgt_xbn: ['zgt_xbn','xbeining'], // 倍宁
+  zgt_zy: ['zhongya','xzhongya', 'zgt_zy', 'zgt_xzy'], // 中亚
+  boos: ['boos'], // 精瑞钢球
 }
 const tenantSymbol = Symbol('tenant')
 
@@ -37,6 +38,9 @@ export default {
     },
     isZY(){
       return tenant['zgt_zy'].includes(this[tenantSymbol])
+    },
+     isBOOS(){
+      return tenant['boos'].includes(this[tenantSymbol])
     },
   }
 }

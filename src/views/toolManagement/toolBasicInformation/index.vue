@@ -123,10 +123,10 @@
   
           
           <el-table-column prop="position" label="常用位置" min-width="200" sortable="custom" />
-             <el-table-column prop="accessoryReturnFlag" label="是否归还" min-width="140"  sortable="custom" >
+             <el-table-column prop="returnFlag" label="是否归还" min-width="140"  sortable="custom" >
               <template slot-scope="scope">
-                <div v-if="scope.row.accessoryReturnFlag"><el-tag type="success">是</el-tag></div>
-                <div v-if="!scope.row.accessoryReturnFlag"><el-tag type="danger">否</el-tag></div>
+                <div v-if="scope.row.returnFlag"><el-tag type="success">是</el-tag></div>
+                <div v-if="!scope.row.returnFlag"><el-tag type="danger">否</el-tag></div>
               </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200" sortable="custom" />
@@ -206,7 +206,7 @@
 </template>
 
 <script>
-import {batchAccessoryReturnState} from '@/api/bimPropertyCategory/index'
+import {equEquipmentBatchReturn} from '@/api/bimPropertyCategory/index'
 import { excelExport, equEquipmentupload } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -418,11 +418,11 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          batchAccessoryReturnState(this.requestForm).then((res) => {
+          equEquipmentBatchReturn(this.requestForm).then((res) => {
             this.initData()
             this.$message({
               type: 'success',
-              message: '批量标记成功',
+              message: '批量设置成功',
               duration: 1500
             })
             this.batchVisible=false

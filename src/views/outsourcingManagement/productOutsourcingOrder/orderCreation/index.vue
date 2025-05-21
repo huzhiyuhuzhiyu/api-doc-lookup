@@ -1284,6 +1284,7 @@ export default {
                       } else if (this.dataForm.documentStatus == 'submit') {
                         this.submitmethodsTitle = '提交成功'
                       }
+                      this.btnLoading = false
                       this.tipsvisible = true
                     })
                     .catch(() => {

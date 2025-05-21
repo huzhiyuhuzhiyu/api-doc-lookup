@@ -14,7 +14,7 @@
               style="width: 100px;text-align: left;padding-top: 0;">新增一行</el-button>
           </div>
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_491034">
-            <el-table-column prop="scrapCategoryName" label="责废原因" min-width="180" sortable="custom">
+            <el-table-column prop="scrapCategoryName" label="责废原因" min-width="180" >
               <template slot="header">
                 <span class="required">*</span>责废原因
               </template>
@@ -26,7 +26,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column prop="scrapQuantity" label="责废数量" min-width="180" sortable="custom">
+            <el-table-column prop="scrapQuantity" label="责废数量" min-width="180" >
               <template slot="header">
                 <span class="required">*</span>责废数量
               </template>
@@ -34,7 +34,7 @@
                 <el-input v-model="scope.row.scrapQuantity" placeholder="责废数量" @blur="countFun(scope)" :disabled="btnType==='look'" maxlenth="16"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="scrapUserId" label="责任人" min-width="180" sortable="custom">
+            <el-table-column prop="scrapUserId" label="责任人" min-width="180" >
               <template slot="header">
                 <span class="required">*</span>责任人
               </template>
@@ -49,8 +49,8 @@
                 <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="price" label="单价" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="amount" label="金额" min-width="180" sortable="custom"></el-table-column> -->
+            <!-- <el-table-column prop="price" label="单价" min-width="180" ></el-table-column>
+            <el-table-column prop="amount" label="金额" min-width="180" ></el-table-column> -->
           </JNPF-table>
           <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
             <span style="font-weight:500;margin-right:10px">责废数量合计：{{ totalNum }}</span>

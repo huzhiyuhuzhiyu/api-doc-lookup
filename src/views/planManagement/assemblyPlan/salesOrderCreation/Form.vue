@@ -60,7 +60,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="配对方式" prop="taskMethod">
+                        <el-form-item label="配对方式" prop="taskMethod" v-if="isPairingModeSwitch === '1'">
                           <el-select v-model="planForm.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             disabled>
                             <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name"
@@ -515,6 +515,7 @@ export default {
       dataFalg: false,
       pairingModeList: [],
       pairingModeNum: 1,
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
 
@@ -532,6 +533,7 @@ export default {
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     this.dataFalg = true
     this.isProjectSwitchFlag = true
 
@@ -542,6 +544,13 @@ export default {
   beforeDestroy() {
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     async getProductClassFun() {
       // 产品属性

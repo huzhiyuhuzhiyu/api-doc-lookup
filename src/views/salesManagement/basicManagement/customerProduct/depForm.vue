@@ -90,7 +90,7 @@
                       </template>
                       <!-- @select="handleSelect(scope.row, scope.$index, $event)" -->
                     </el-table-column>
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
                           <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" :value="item.id">
@@ -376,13 +376,14 @@
                     <span class="required">*</span> 品名规格
                   </template>
                   <template slot-scope="scope">
+                    <el-form-item :prop="'lines.' + scope.$index + '.' + 'productDrawingNo'" :rules='productRules.productDrawingNo'>
                     <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync" placeholder="请输入" prefix-icon="el-icon-search" style="width: 100%;" @stop.keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)" :disabled="btnType == 'look'" @select="handleSelect(scope.row, scope.$index, $event)"></el-autocomplete>
-
+                  </el-form-item>
                     <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                             style="width: 100%;"  /> -->
                   </template>
                 </el-table-column>
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;" :disabled="btnType == 'look' ? true : false">
                       <el-option v-for="item in pairingModeList" size="small" :key="item.id" :label="item.name" :value="item.id">
@@ -909,7 +910,11 @@ export default {
           { validator: this.formValidate('positiveNumber', '单价(含税)必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' },
           { validator: this.formValidate({ type: 'decimal', params: [18, 6, "", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：单价(含税)${errMsg}`) }] }), trigger: 'blur' }
         ],
-
+        // 品名规格
+        productDrawingNo: [
+          { validator: this.formValidate({ type: 'noEmtry', params: [" 品名规格不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' }
+        ]
 
       },
       activeNames: ["productInfo", "basicInfo"],
@@ -1018,7 +1023,8 @@ export default {
       centerDiameterFlag: '',
       bimProductAttributesList: [],
       row: null,
-      switchlist: true
+      switchlist: true,
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   computed: {
@@ -1036,7 +1042,9 @@ export default {
   beforeDestroy() {
     window.onresize = null
   },
-
+  async created() {
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+  },
   async mounted() {
     try {
 
@@ -1055,6 +1063,13 @@ export default {
     }
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
       handleRowClick(row){
         this.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row);
     },
@@ -1966,17 +1981,6 @@ export default {
     async handleConfirm(value) {
       this.dataForm.documentStatus = value
       let submitFlag = true
-      if (this.dataFormTwo.lines.length) {
-        let index = this.dataFormTwo.lines.findIndex(item =>
-          item.customerProductNo === "" &&
-          item.price === "" &&
-          item.productDrawingNo == ""
-        )
-        console.log(index);
-        if (index !== -1) {
-          this.dataFormTwo.lines.splice(index, 1);
-        }
-      }
 
       // 校验主表
       const form_1 = this.$refs['dataForm']
@@ -2012,6 +2016,17 @@ export default {
         });
       }
 
+      if (this.dataFormTwo.lines.length > 1) {
+        let index = this.dataFormTwo.lines.findIndex(item =>
+          item.customerProductNo === "" &&
+          item.price === "" &&
+          item.productDrawingNo == ""
+        )
+        console.log(index);
+        if (index !== -1) {
+          this.dataFormTwo.lines.splice(index, 1);
+        }
+      }
       if (this.dataFormTwo.lines.length) {
 
         for (let index = 0; index < this.dataFormTwo.lines.length; index++) {

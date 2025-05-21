@@ -70,7 +70,7 @@
             <el-table-column prop="productName" label="产品名称" width="120"
               v-if="isProductNameSwitch === '1'"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
             <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
@@ -287,6 +287,7 @@ export default {
       vibrationLevelFlag: "",
       materialFlag:'',
       colourFlag:'',
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   computed: {
@@ -296,6 +297,7 @@ export default {
     await this.getDeputyUnit()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     if (this.isDeputyUnitSwitch === '1') {
       this.superQueryJson.forEach(item => {
         if (item.prop === 'mainUnit') {
@@ -324,6 +326,13 @@ export default {
   },
 
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     async getOrderFiledMap() {
       await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping

@@ -115,7 +115,7 @@
               <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" />
               <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-              <el-table-column prop="pairingModeName" label="配对方式" width="160" />
+              <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isPairingModeSwitch === '1'" />
 
               <el-table-column prop="productSource" label="产品来源" min-width="160">
                 <template slot-scope="scope">
@@ -184,7 +184,7 @@
                   <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
-                  <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"  v-if="isPairingModeSwitch === '1'"  />
 
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -261,7 +261,7 @@
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
-                  <el-table-column prop="pairingModeName" label="配对方式" width="160"  />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"  v-if="isPairingModeSwitch === '1'" />
 
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -557,7 +557,7 @@
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
-                  <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"  v-if="isPairingModeSwitch === '1'"  />
 
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -634,7 +634,7 @@
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
-                  <el-table-column prop="pairingModeName" label="配对方式" width="160"   />
+                  <el-table-column prop="pairingModeName" label="配对方式" width="160"  v-if="isPairingModeSwitch === '1'"  />
 
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -1299,6 +1299,7 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   computed: {
@@ -1310,6 +1311,7 @@ export default {
     await this.getProjectSwitch('system', 'project')
     await this.getProjectList()
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
 
     console.log("下拉项", this.projectIdDataList);
     this.getMrpCalcSchemeListFun()
@@ -1323,6 +1325,13 @@ export default {
     this.fetchData("AMDH")
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       // 产品属性

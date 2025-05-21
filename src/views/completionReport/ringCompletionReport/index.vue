@@ -458,7 +458,7 @@ import { getUserListPost } from '@/api/permission/user'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  name: 'assembleCompletionReport',
+  name: 'ringCompletionReport',
   components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm, ProduceLineReportForm },
   mixins: [getProjectList],
   data() {

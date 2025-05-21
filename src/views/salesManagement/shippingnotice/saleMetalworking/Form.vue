@@ -150,7 +150,7 @@
                       <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                       <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'"></el-table-column>
 
                       <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
                         show-overflow-tooltip>
@@ -402,7 +402,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'"></el-table-column>
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
@@ -574,7 +574,7 @@
                   <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                   <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
                   </el-table-column>
-                  <el-table-column prop="pairingModeName" label="配对方式" min-width="120"></el-table-column>
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'"></el-table-column>
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" />
@@ -920,6 +920,7 @@ export default {
       materialFlag: '',
       colourFlag: '',
       bimProductAttributesList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   computed: {
@@ -955,6 +956,7 @@ export default {
     this.isProjectSwitchFlag = true
     this.getbimProductAttributesFun()
     await this.getProductNameSwitch('product', 'enable_productName')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
   },
   mounted() {
     console.log(5555);
@@ -962,6 +964,13 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 获取业务参数中 属性字段动态显示
     getProductAttributeFun() {
       getOrderFiledMap('sale').then(res => {

@@ -52,7 +52,7 @@
             <el-table-column prop="warehouseName" label="仓库名称" sortable="custom" min-width="120" />
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 
             <el-table-column prop="weight" label="重量(KG)" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
             <el-table-column prop="proportion" label="比重" sortable="custom" min-width="120" v-if="type == 'wxfl'" />
@@ -183,7 +183,9 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",
-      excludeProcessFlag:"",
+      isPairingModeSwitch: '', // 配对方式显示隐藏
+      excludeProcessFlag:null,
+
     }
   },
   computed: {
@@ -191,10 +193,18 @@ export default {
   },
   async created() {
     await this.getOrderFiledMap()
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
 
 
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

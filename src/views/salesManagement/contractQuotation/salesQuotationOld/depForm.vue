@@ -1050,7 +1050,10 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
   },
   methods: {
-    
+      //多选
+    handleRowClick(row) {
+      this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
+    },
     sortChange({ prop, order }) {
       let newProp
       if (prop == 'cooperativePartnerIdText'||prop=='cooperativePartnerCode') {

@@ -283,6 +283,10 @@ export default {
       console.log(e);
       if (this.dataForm.workType == "different") {
         this.dataForm.reportingType = ""
+         this.$nextTick(()=>{
+          this.$refs.dataForm.clearValidate('reportingType');
+
+         })
       }
       this.lines = []
     }

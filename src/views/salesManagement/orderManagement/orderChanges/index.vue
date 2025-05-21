@@ -207,7 +207,7 @@
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
 
                 <el-table-column prop="num" label="原数量(主)" min-width="120" />
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="140" />
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="140" v-if="isPairingModeSwitch === '1'" />
                 <el-table-column prop="mainUnit" label="单位(主)" min-width="120" />
                 <el-table-column prop="assistantNum" label="原数量(副)" min-width="120" />
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" />
@@ -555,6 +555,7 @@ export default {
       formVisible: false,
       filterText: '',
       customerContractNoSwitch: null,
+      isPairingModeSwitch: '', // 配对方式显示隐藏
 
     }
   },
@@ -564,6 +565,7 @@ export default {
     }
   },
   async created() {
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     // await this.$store.dispatch('base/getBusinessConfig','gobal')
     await Promise.all([
       getOrderFiledMap('gobal'),
@@ -589,6 +591,13 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     columnSetFun() {
       this.$refs['dataTable'].showDrawer()
     },

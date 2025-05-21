@@ -35,7 +35,7 @@
                         </el-col>
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="业务类型" prop="documentType">
-                            <el-select v-model="dataForm.businessType" placeholder="业务类型" clearable style="width: 100%;"
+                            <el-select v-model="dataForm.businessType" placeholder="业务类型"  style="width: 100%;"
                               :disabled="btnType == 'look'" filterable @change="selectDocutementType">
                               <el-option v-for="(item, index) in list" :label="item.label"
                                 :value="item.value"></el-option>
@@ -61,7 +61,7 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24"
-                          v-if="['inbound_sale_return', 'inbound_purchase', 'inbound_external', 'inbound_return_materials', 'inbound_order_production', 'inbound_production', 'inbound_flip', 'inbound_return'].includes(dataForm.businessType)">
+                          v-if="['inbound_sale_return', 'inbound_purchase', 'inbound_external', 'inbound_return_materials', 'inbound_order_production', 'inbound_production', 'inbound_flip', 'inbound_return',].includes(dataForm.businessType)">
                           <el-form-item label="批次号生成规则" prop="diffBatchNumFlag">
                             <el-select v-model="dataForm.diffBatchNumFlag" placeholder="请选择批次号生成规则" style="width: 100%;"
                               :disabled="btnType == 'look'">
@@ -78,6 +78,15 @@
                               :method="getWarehouseList" placeholder="请选择仓库"
                               @change="changeWarehousex"></ComSelect-list>
                           </el-form-item>
+                        </el-col>
+                        <el-col :sm="6" :xs="24" v-if="(isZY || isMS) && dataForm.businessType === 'outbound_pick_out'">
+                            <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
+                                <el-select @change="stockOutboundFlagChange" v-model="dataForm.totalStockOutboundFlag" placeholder="请选择是否按总库存出库" style="width: 100%;"
+                                           :disabled="btnType === 'look'">
+                                    <el-option v-for="(item, index) in global.booleanOptions" :key="index" :label="item.label"
+                                               :value="item.value"></el-option>
+                                </el-select>
+                            </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24" v-if="(isZY || isMS) && dataForm.businessType === 'outbound_pick_out'">
                             <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
@@ -236,7 +245,7 @@
                             v-model="scope.row.discount" placeholder="折扣(0~1)"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                             :disabled="btnType == 'look' ? true : false"
@@ -731,10 +740,8 @@
                 v-if="dataForm.documentType == 'outbound'" key="productDrawingNo" />
               <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" key="drawingNo" />
+              <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isPairingModeSwitch === '1'" />
               <el-table-column prop="productCategoryName" label="产品分类" width="160"/>
-              <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isXBN"/>
-
-
               <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                 v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.warehouseDeputyUnit ? '单位(主)' : '单位'" width="120" sortable="custom"
@@ -1177,6 +1184,7 @@ export default {
     await this.getOrderFiledMap()
     this.advancedQueryFuns()
     await this.getProjectSwitch('system', 'project')
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getpairingModeListFun()
     await this.getWarehouseListFun()
     await this.switchStyleheight()
@@ -1202,8 +1210,13 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
-      getProductList,
-      inventoryWarehouseList,
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    }, 
     selectWeight() {
       this.$nextTick(() => { this.$refs.products.doLayout() })
 
@@ -1994,6 +2007,7 @@ export default {
     },
     // 监听含税价格输入
     watchPrice(row, index) {
+      console.log("this.dataForm",this.dataForm.businessType);
       // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
       // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
       // 如果计算方向是除 则副数量等于主数量*套数/转换系数

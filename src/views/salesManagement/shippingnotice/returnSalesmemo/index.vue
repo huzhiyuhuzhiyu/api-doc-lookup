@@ -189,6 +189,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '通知单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
 
       ],
 
@@ -459,7 +460,7 @@ export default {
       this.searchList=[
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-
+        { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')

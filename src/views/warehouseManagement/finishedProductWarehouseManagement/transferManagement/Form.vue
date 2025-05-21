@@ -43,7 +43,7 @@
                           </el-col>
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
-                              <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
+                              <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"  :disabled="btnType == 'look' ? true : false"
                                 maxlength="200" />
                             </el-form-item>
                           </el-col>
@@ -174,7 +174,7 @@
                       </el-col>
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
-                          <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
+                          <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"  :disabled="btnType == 'look' ? true : false"
                             maxlength="200" />
                         </el-form-item>
                       </el-col>
@@ -525,6 +525,7 @@ export default {
       standardValueFlag: "",
       colourFlag: "",
       processFlag: "",
+      scanResult:"",
     }
   },
 

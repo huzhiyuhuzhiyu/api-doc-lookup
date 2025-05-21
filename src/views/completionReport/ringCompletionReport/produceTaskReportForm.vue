@@ -373,8 +373,7 @@ export default {
 
   components: {
     recordForm, OutForm, MaterialWasteForm,responsWaste,PrintBrowse,
-    PrintDialog, TransitionRemake, TransitionRemakeRecord,
-    OutSouringForm
+    PrintDialog, TransitionRemake, TransitionRemakeRecord,OutSouringForm
   },
   data() {
     return {
@@ -469,10 +468,8 @@ export default {
       handler: function (newVal, oldVal) {
         if (this.$store.getters.configData.produce.steelBallTask) {
           if (newVal) {
-            
-             
-            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ?  Math.floor((Number(newVal) / Number(this.weight) *Number(this.quantity)) * 10000) / 10000 : this.currentProcess.qualifiedQuantity?this.currentProcess.qualifiedQuantity:this.currentProcess.waitReportNum
-            
+            this.currentProcess.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : this.currentProcess.qualifiedQuantity?this.currentProcess.qualifiedQuantity:this.currentProcess.waitReportNum
+
           } else {
             // this.currentProcess.qualifiedQuantity = 0
           }
@@ -880,7 +877,7 @@ export default {
             }
           }
           if (submitFlag === false) return
-          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length&&!this.isXY) return this.$message.error("料废金额不能为空")
+          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length&&this.isXBN) return this.$message.error("料废金额不能为空")
           let obj = {}
           let arr = []
           obj.classAttribute = this.currentProcess.classAttribute

@@ -16,6 +16,15 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
+           <el-col :span="4">
+            <el-form-item>
+              <el-select  v-model="orderForm.returnFlag" :placeholder="是否已归还"
+                    clearable>
+                    <el-option v-for="(item2, index2) in returnFlagList" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -47,10 +56,9 @@
           <el-table-column prop="collectionTime" label="领用日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="collectionTime" label="领用数量" min-width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="returnFlag" label="工具是否归还" min-width="180" sortable="custom">
+          <el-table-column prop="lineReturnFlag" label="工具是否归还" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <div>{{ scope.row.returnFlag?'是':'否' }}</div>
+              <div>{{ scope.row.lineReturnFlag?'是':'否' }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
@@ -124,11 +132,15 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {},
+      returnFlagList:[
+        {label:"是",value:true},
+        {label:"否",value:false},
+      ],
       orderFormone: {
         projectId: '',
         requisitionType: 'requisition',
         equipmentType: 'tool',
-        returnFlag: 0,
+        returnFlag: "",
         maintainerIdText: '',
         pageNum: 1,
         pageSize: 20,

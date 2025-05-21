@@ -660,7 +660,8 @@ export default {
         excludingTaxTotalAmount: '', //订单 不含税总金额
         totalAmount: '', //   含税总金额
         taxAmount: '', // 税额
-        approvalFlag: false
+        approvalFlag: false,
+        remark:""
       },
       receivingStatusOptions: [
         {

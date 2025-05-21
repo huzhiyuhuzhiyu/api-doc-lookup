@@ -335,23 +335,39 @@ export default {
   },
 
   methods: {
-    async backFn() {
-      await getQueryConfirm(this, '是否确认撤回')
-      const arr = this.$refs.tableForm.getCurrentSelection()
-      if (arr.length === 0) {
-        this.$message.error('请选择要撤回的数据')
-        return
-      }
-      console.log(arr);
-      const res = await batchRevokeOrder(arr.map(item => item.id))
-      if (res.code === 200) {
-        this.$message.success('撤回成功')
-        this.initData()
-      } else {
-        this.$message.error(res.msg)
-      }
+     async backFn(){
+          if(!this.selectData.length)return this.$message.error('请选择要撤回的数据')
+        this.$confirm('是否撤回当前所选的数据？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            let data = this.selectData.map((item) => item.id)
+            batchRevokeOrder(data)
+              .then((res) => {
+                console.log(res, '1111')
+                if (res.msg == 'Success') {
+                  this.$message({
+                    message: '撤回成功',
+                    type: 'success',
+                    duration: 1000,
+                    onClose: () => {
+                      this.btnLoading = false
+                      this.initData()
+                    }
+                  })
+                }
+              })
+              .catch(() => {
+                this.btnLoading = false
+              })
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
 
-    },
+
+  },
     // 获取合计数据
     getOrderLineReportFun() {
       let count = 0

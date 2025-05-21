@@ -1856,8 +1856,9 @@ export default {
     // 查看库存明细
     viewFun(row) {
       this.formVisible = true
+      this.$set(row,'productsId',row.id)
       this.$nextTick(() => {
-        this.$refs.Form.init(row.id, '', "", row.projectId)
+        this.$refs.Form.init(row, 'inventoryFlag', "", row.projectId)
       })
     },
     addLinFun() {
@@ -1903,6 +1904,7 @@ export default {
       this.productData[index].productsId = item.data.id
       this.productData[index].productName = item.data.name
       this.productData[index].productCode = item.data.code
+      this.productData[index].customerProductNo = item.data.customerProductNo
       this.productData[index].taxRate = item.data.taxRate * 1 || this.taxRate * 1
       let exists = this.taxRateList.some(line => line.taxRate === item.data.taxRate * 1);
       if (!exists && item.data.taxRate) {
@@ -1954,6 +1956,7 @@ export default {
           classAttributeList: [],
           classAttribute: "",
           productDrawingNo: queryString,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
           productCategoryId: "",
           queryType: 2,
           productStatus: 'enable',

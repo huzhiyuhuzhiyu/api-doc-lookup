@@ -203,7 +203,7 @@ import {
 import { getSalaryDetailList } from '@/api/salaryManagement'
 import userTransfer from '@/components/JNPF-userTransfer'
 export default {
-  name: 'assemblyplanManagement',
+  name: 'ringReportRecord',
   components: { SuperQuery, ExportForm ,userTransfer,InspectionDetail},
   mixins: [getProjectList],
   data() {

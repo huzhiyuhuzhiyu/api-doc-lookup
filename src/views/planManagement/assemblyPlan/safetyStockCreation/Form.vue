@@ -83,7 +83,7 @@
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
                   <el-table-column prop="availableQuantity" label="可用库存数量" width="140" :key="8" />
-                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160">
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                         :disabled="btnType == 'look' ? true : false" >
@@ -412,6 +412,7 @@ export default {
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
       pairingModeList: [],
+      isPairingModeSwitch: '', // 配对方式显示隐藏
 
     }
   },
@@ -427,6 +428,7 @@ export default {
     await this.getProjectList()
     await this.getpairingModeListFun()
 
+    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
 
@@ -442,6 +444,13 @@ export default {
   beforeDestroy() {
   },
   methods: {
+     // 配对方式显示隐藏
+     async getPairingModeSwitch(code, type) {
+      try {
+        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
+        this.tableDataFlag = true
+      } catch (error) { }
+    },
     // 获取配对方式
     async getpairingModeListFun() {
       try {

@@ -369,7 +369,8 @@ export default {
           }
         ],
         pageNum: 1,
-        pageSize: 20
+        pageSize: 20,
+        prodOrderStatus:'normal'
       },
       total: 0,
       formVisible: false,

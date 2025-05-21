@@ -64,9 +64,9 @@
           <el-table-column prop="useOderNO" label="领用单号" min-width="180"></el-table-column>
           <el-table-column prop="useIdName" label="领用人" min-width="120"></el-table-column>
           <el-table-column prop="useTime" label="领用时间" min-width="180"></el-table-column>
-          <el-table-column prop="returnFlag" label="是否归还" min-width="120">
+          <el-table-column prop="lineReturnFlag" label="是否归还" min-width="120">
             <template slot-scope="scope">
-              {{ scope.row.returnFlag?'是':"否" }}
+              {{ scope.row.lineReturnFlag?'是':"否" }}
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="200" sortable="custom"></el-table-column>
@@ -148,7 +148,7 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
          {
-          prop: 'returnFlag',
+          prop: 'lineReturnFlag',
           label: "是否归还",
           type: 'select',
           options: [

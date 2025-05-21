@@ -56,9 +56,9 @@
           <el-table-column prop="collectionTime" label="领用日期" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="equipmentIdName" label="工具名称" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="equipmentIdCode" label="工具编码" min-width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="returnFlag" label="工具是否归还" min-width="180" sortable="custom">
+          <el-table-column prop="lineReturnFlag" label="工具是否归还" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <div>{{ scope.row.returnFlag?'是':'否' }}</div>
+              <div>{{ scope.row.lineReturnFlag?'是':'否' }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>

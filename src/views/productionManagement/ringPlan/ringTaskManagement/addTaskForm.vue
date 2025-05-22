@@ -1663,7 +1663,7 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
       this.btnLoading = true
       addProdOrder(obj).then(res => {
         this.btnLoading = false
-        this.$message.success("手动新建任务成功")
+        this.$message.success("新建任务成功")
         setTimeout(() => {
           this.$emit('close')
         }, 1500);

@@ -78,7 +78,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
-                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'manually'">新建任务</div>
                 <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
                 <div v-if="scope.row.orderType == 'transit'">在制任务</div>
                 <div v-if="scope.row.orderType == 'regrinding'">修磨任务</div>
@@ -231,7 +231,7 @@ export default {
           options: [
             { label: "正常任务", value: "normal" },
             { label: "返工任务", value: "rework" },
-            { label: "手动新建任务", value: "manually" },
+            { label: "新建任务", value: "manually" },
             { label: "翻库任务", value: "flipping" },
             { label: "在制任务", value: "transit" },
             { label: "修磨任务", value: "regrinding" },
@@ -386,7 +386,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'routingCode')
       if (this.colourFlag === '1') {
@@ -568,21 +568,21 @@ export default {
         this.showFlag = true
         if (res.data.records.length) {
           res.data.records.forEach(item => {
-            // 初始化 processInfoList 为一个空数组  
+            // 初始化 processInfoList 为一个空数组
             item.processInfoList = [];
-            // 检查 processSchedule 字段是否有值  
+            // 检查 processSchedule 字段是否有值
             if (item.processSchedule) {
-              // 判断是否包含逗号  
+              // 判断是否包含逗号
               if (item.processSchedule.includes(',')) {
-                // 以逗号分割为数组  
+                // 以逗号分割为数组
                 const processes = item.processSchedule.split(',');
-                // 遍历每一项并处理  
+                // 遍历每一项并处理
                 processes.forEach(process => {
                   const [name, value] = process.split(':');
                   item.processInfoList.push({ name, value: parseInt(value, 10) });
                 });
               } else {
-                // 直接以冒号分割  
+                // 直接以冒号分割
                 const [name, value] = item.processSchedule.split(':');
                 item.processInfoList.push({ name, value: parseInt(value, 10) });
               }

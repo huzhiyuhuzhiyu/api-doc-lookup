@@ -844,7 +844,7 @@ export default {
     this.getPickingConfig()
   },
   methods: {
-    
+
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {
@@ -1067,7 +1067,7 @@ export default {
       }
       await this.selectProductSymbol(this.dataForm.id)
       this.getWarehouseListFun()
-     
+
       if (!data.routingId) return
       if (!this.$store.getters.configData.produce.task_process_selection) {
         console.log(44444444);
@@ -1635,7 +1635,7 @@ export default {
       this.btnLoading = true
       addProdOrder(obj).then(res => {
         this.btnLoading = false
-        this.$message.success("手动新建任务成功")
+        this.$message.success("新建任务成功")
         setTimeout(() => {
           this.$emit('close')
         }, 1500);

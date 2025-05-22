@@ -67,11 +67,11 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
-                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'manually'">新建任务</div>
 
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom"
               v-if="$store.getters.configData.produce.production_related_customers" />
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
@@ -85,7 +85,7 @@
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="160" sortable="custom" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
-            
+
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="orderStatus" label="状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -155,8 +155,8 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
-       
-     
+
+
       title: "更多查询",
       visible: false,
       tableData: [],
@@ -197,7 +197,7 @@ export default {
           options: [
             { label: "正常任务", value: "normal" },
             { label: "返工任务", value: "rework" },
-            { label: "手动新建任务", value: "manually" },
+            { label: "新建任务", value: "manually" },
 
           ]
         },
@@ -246,7 +246,7 @@ export default {
           label: "工艺路线名称",
           type: 'input'
         },
-         
+
         {
           prop: 'productionPlanNo',
           label: "生产计划单号",
@@ -290,7 +290,7 @@ export default {
 
     }
   },
- 
+
   async created() {
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -304,7 +304,7 @@ export default {
     this.isProjectSwitchFlag = true
        this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -314,7 +314,7 @@ export default {
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
- 
+
       } catch (error) { }
     },
     superQuerySearch(query) {
@@ -347,7 +347,7 @@ export default {
       this.listLoading = true
 
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
-  
+
       ordershengchanList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -388,9 +388,9 @@ export default {
 
     this.superForm=  this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
-   
+
       this.$refs.SuperQuery.conditionList = []
-      
+
       this.searchList= [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },

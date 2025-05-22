@@ -30,7 +30,7 @@
                 <el-input v-model="orderNoS" placeholder="生产任务单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-          
+
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
@@ -89,7 +89,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
-                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'manually'">新建任务</div>
                 <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
                 <div v-if="scope.row.orderType == 'transit'">在制任务</div>
               </template>
@@ -221,9 +221,9 @@ export default {
           label: "生产任务单号",
           type: 'input'
         },
-     
 
-        
+
+
         {
           prop: 'orderType',
           label: "生产任务类型",
@@ -231,7 +231,7 @@ export default {
           options: [
             { label: "正常任务", value: "normal" },
             { label: "返工任务", value: "rework" },
-            { label: "手动新建任务", value: "manually" },
+            { label: "新建任务", value: "manually" },
             { label: "翻库任务", value: "flipping" },
             { label: "在制任务", value: "transit" },
           ]
@@ -264,10 +264,10 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-  
-  
- 
-       
+
+
+
+
 
 
         {
@@ -300,23 +300,23 @@ export default {
 
     }
   },
- 
+
   async created() {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
-    await this.getProjectSwitch('system', 'project') 
+    await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(2, 0, {
         prop: 'productName',
         label: '产品名称',
         type: 'input'
-      }) 
+      })
     }
     this.advancedQueryFun()
     this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -325,7 +325,7 @@ export default {
       this.search('basic')
     }
   },
-  mounted() { 
+  mounted() {
   },
   methods: {
     async getOrderFiledMap() {
@@ -356,7 +356,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'planEndDate')
       if (this.specialRequireFlag === '1') {
@@ -501,7 +501,7 @@ export default {
         });
       }
     },
-  
+
 
     superQuerySearch(query) {
       this.superQuery = query

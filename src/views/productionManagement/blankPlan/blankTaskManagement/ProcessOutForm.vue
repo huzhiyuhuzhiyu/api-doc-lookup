@@ -297,7 +297,7 @@ export default {
       this.$emit('close', true)
     },
     handleConfirm(submitType) {
-      if (!this.selectedData.length) return this.$message.error('请选择要转外协的工序！')
+      if (!this.selectedData.length) return this.$message.error('请选择要外协的工序！')
       if (!this.isSortedCorrectly(this.selectedData)) return this.$message.error('选择的工序必须连贯！')
       // this.outSouringFormVisible = true
       // this.$nextTick(() => {

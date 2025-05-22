@@ -417,7 +417,7 @@ export default {
       }
       await getQueryConfirm(this, '是否确认撤回')
 
-     
+
       const res = await batchRevokeOrder(this.selectData.map(item => item.id))
       if (res.code === 200) {
         this.$message.success('撤回成功')
@@ -599,13 +599,13 @@ export default {
     initData() {
       this.listLoading = true
       if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.listQuery.deliveryStartDate = this.deliveryDateArr[0] 
+        this.listQuery.deliveryStartDate = this.deliveryDateArr[0]
         this.listQuery.deliveryEndDate = this.deliveryDateArr[1]
       } else {
         this.listQuery.deliveryStartDate = ''
         this.listQuery.deliveryEndDate = ''
       }
-     
+
       purchaseOrderList(this.listQuery)
         .then((res) => {
           console.log(res, '采购订单列表')
@@ -651,11 +651,11 @@ export default {
         delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
         deliveryEndDate: '', //交货结束日期
         deliveryStartDate: '',
-        deliveryDate: '', 
+        deliveryDate: '',
         orderNo: '', //订单号
         orderType: 'procure', //	订单类型 采购 procure、外协 external
         classAttribute: 'other',
-        receivingStatus: '', 
+        receivingStatus: '',
       }
       this.deliveryDateArr = []
       this.deliveryDate = []
@@ -728,7 +728,7 @@ export default {
       // if (!row.length) return this.$message.error("请选择您要打印的数据!")
       this.selectWarehouse = [row]
       this.enCode = enCode
-      this.fullName = '仓库二维码'
+      this.fullName = '采购收货单'
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(enCode)

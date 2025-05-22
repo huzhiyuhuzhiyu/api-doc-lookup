@@ -234,7 +234,7 @@ export function addOrderNum(data) {
   })
 }
   // 扫码报工 获取数据
-  
+
   export function getscanResultData(data) {
     return request({
       url: `/api/mrp/work/scan/getDocId`,
@@ -244,7 +244,7 @@ export function addOrderNum(data) {
   }
 
   // 改派
-  
+
 export function changProdWork(data) {
   return request({
     url: `/api/mrp/prod/order/change`,
@@ -252,7 +252,7 @@ export function changProdWork(data) {
     data
   })
 }
-  
+
 // 报工记录撤回
 export function revokeReport(id) {
   return request({
@@ -360,7 +360,7 @@ export function workTodoOutSouringList(data) {
     data
   })
 }
- 
+
 // 生产日报表
 // 每日生产
 
@@ -401,6 +401,15 @@ export function produceProcessReport(data) {
 export function addRegrinding(data) {
   return request({
     url: `/api/mrp/work/report/regrinding/add`,
+    method: 'POST',
+    data
+  })
+}
+
+// 修磨
+export function prodOrderUpdateSort(data) {
+  return request({
+    url: `/api/mrp/prod/order/updateSort`,
     method: 'POST',
     data
   })

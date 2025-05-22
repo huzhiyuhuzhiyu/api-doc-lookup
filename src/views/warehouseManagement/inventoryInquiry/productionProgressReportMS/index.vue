@@ -304,8 +304,10 @@ export default {
     // 查看产品明细
     viewFun(row, type, warehouseId, projectId) {
       this.formVisible = true
+      let data=JSON.parse(JSON.stringify(row))
+      this.$set(data,'productsId',data.blankProductsId)
       this.$nextTick(() => {
-        this.$refs.Form.init(row, type, warehouseId, projectId)
+        this.$refs.Form.init(data, type, warehouseId, projectId)
       })
     },
     // 

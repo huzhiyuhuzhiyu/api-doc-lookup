@@ -166,3 +166,28 @@ export function addReportWorkInspectionData(data) {
     data
   })
 }
+
+
+
+
+
+
+// 质量报表
+// 供应商货品质量概况
+
+export function supplierProductReport(data) {
+  return request({
+    url: `/api/zgt/ZgtReport/supplier/product/quality`,
+    method: 'POST',
+    data
+  })
+}
+// 检验员检验概况
+
+export function inspectorReport(data) {
+  return request({
+    url: `/api/zgt/ZgtReport/inspector/inspection/overview`,
+    method: 'POST',
+    data
+  })
+}

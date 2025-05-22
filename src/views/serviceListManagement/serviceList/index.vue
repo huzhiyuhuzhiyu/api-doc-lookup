@@ -80,10 +80,6 @@
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData">
-          <div class="text">
-            <span>合计：</span>
-            <span style="margin-left: 10px">总含税金额：{{ totalTotalAmount }}</span>
-          </div>
         </pagination>
       </div>
     </div>
@@ -118,9 +114,9 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '服务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '供应商/客户名称', symbol: 'like', searchType: 1, width: 120 }, 
         { field: 'billStatus', fieldValue: '', label: '对账状态', symbol: 'like', searchType: 4, width: 120, options: [
-          {label:"no_billing",value:"未对账",},
-          {label:"billed",value:"已对账",},
-          {label:"no_billing",value:"对账中",},
+          {label:"未对账",value:"no_billing",},
+          {label:"已对账",value:"billed",},
+          {label:"对账中",value:"no_billing",},
         ]},
       ],
       columnList: [],
@@ -144,6 +140,7 @@ export default {
         }],
         orderNo: "",
         cooperativePartnerName: "",
+        billStatus:"",
         pageNum: 1,
         pageSize: 20,
         businesbillStatusType: '',

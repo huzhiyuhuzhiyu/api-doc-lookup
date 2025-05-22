@@ -58,7 +58,6 @@ import { getProjectList } from '@/api/system/projectManagement'
 import { mapGetters } from 'vuex'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import formValidate from '@/utils/formValidate'
-
 export default {
     name: 'finished_product',
     data() {
@@ -595,14 +594,27 @@ export default {
             const res = await getbimProductAttributesListMap()
             this.bimProductAttributesList = res.data
             const productAttribute = await this.$store.dispatch('base/getDictionaryData', { sort: 'productAttributes'})
-            const productUnit = await this.$store.dispatch('base/getDictionaryData', { sort: 'ProductUnit'})
-            this.productUnit = productUnit.map(item=>{
-                return {
-                    ...item,
-                    label:item.fullName,
-                    value:item.enCode,
+            // const productUnit = await this.$store.dispatch('base/getDictionaryData', { sort: 'ProductUnit'})
+              // 单位
+            let obj1 = {
+              pageNum: 1,
+              pageSize: 100
+            }
+            await getUnitData(obj1).then((res) => {
+              let arr = []
+            let unitOptions=[]
+              res.data.records.forEach((item) => {
+                let obj = {
+                  label: item.name,
+                  value: item.name
                 }
-            })
+                arr.push(obj)
+              })
+              unitOptions = arr
+              console.log("unitOptions",unitOptions);
+              this.productUnit = unitOptions
+            }) 
+         
             this.attrDictionaryData = productAttribute.filter(item=>!['pa008','pa015','pa016','pa017','pa018','pa019','pa020','pa021','pa022','pa023','pa024','pa025','pa026','pa027'].includes(item.enCode)).map(item=>{
                 return {
                     ...item,
@@ -975,7 +987,7 @@ export default {
 
                     let targetOther = this.otherItems.find((tc) => tc.prop === 'bomFlag')
                     targetOther.itemDisabled = true
-                    this.setDataFormItems()
+                   this.setDataFormItems()
                     this.formLoading = false
                 })
             } else {

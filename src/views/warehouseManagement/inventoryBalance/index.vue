@@ -302,7 +302,7 @@ export default {
                 endTime: '',
                 endUpdateTime: '',
                 keyword: '',
-                moveOrderNo: '',
+                orderNo: '',
                 'orderItems': [
                     {
                         'asc': true,
@@ -311,9 +311,9 @@ export default {
                 ],
                 pageNum: 1,
                 pageSize: 20,
-                productsCode: '',
-                productsDrawingNo: '',
-                productsName: '',
+                productCode: '',
+                drawingNo: '',
+                productName: '',
                 startTime: '',
                 startUpdateTime: '',
                 totalRowFlag: false,
@@ -322,10 +322,10 @@ export default {
                 createTimeArr: []
             },
             tableItems: [
-                { prop: 'moveOrderNo', label: '出库单号', minWidth: '180' },
-                { prop: 'productsDrawingNo', label: '品名规格', minWidth: '300' },
-                { prop: 'productsName', label: '产品名称' },
-                { prop: 'productsCode', label: '产品编码', minWidth: '140' },
+                { prop: 'orderNo', label: '出库单号', minWidth: '180' },
+                { prop: 'drawingNo', label: '品名规格', minWidth: '300' },
+                { prop: 'productName', label: '产品名称' },
+                { prop: 'productCode', label: '产品编码', minWidth: '140' },
                 { prop: 'batchNumber', label: '批次号', minWidth: '180' },
                 { prop: 'mainUnit', label: '单位', minWidth: '80' },
                 { prop: 'num', label: '数量' },

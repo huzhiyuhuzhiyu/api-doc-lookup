@@ -132,7 +132,7 @@
                           show-overflow-tooltip></el-table-column>
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
-                        <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                        <el-table-column prop="projectName" label="所属项目" v-if="abProjectSwitchVisible"
                           min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                           v-if="!dataForm.totalStockOutboundFlag">
@@ -342,7 +342,7 @@
                       </div>
                       <JNPF-table ref="product" :data="productData" :partent-or-child="'child'" custom-column :fixedNO="true"
                         :hasC="btnType != 'look'" @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;"
-                        :setColumnDisplayList="columnList">
+                        :setColumnDisplayList="columnList" >
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
                         <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
@@ -361,7 +361,7 @@
                           show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="pairingModeNames" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'"></el-table-column>
-                        <el-table-column prop="projectName" label="所属项目" v-if="isProjectSwitch == '1'"
+                        <el-table-column prop="projectName" label="所属项目" v-if="abProjectSwitchVisible"
                           min-width="160" />
                         <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                           v-if="!dataForm.totalStockOutboundFlag">
@@ -635,10 +635,11 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import tenantMinix from "@/mixins/generator/TenantMinix";
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 
 export default {
   components: { CustomerForm, BatchNumberForm, Process, recordList, PrintBrowse, PrintDialog },
-  mixins: [flowMixin, busFlow, getProjectList,tenantMinix],
+  mixins: [flowMixin, busFlow, getProjectList,tenantMinix,AbProjectMixin],
   data() {
     return {
       columnList:[],
@@ -1218,6 +1219,8 @@ export default {
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         })
       } else {
+        console.log("this",this.userInfo.projectId);
+          console.log(this.abProjectSwitchVisible);
         this.dataForm.cooperativePartnerId = data.cooperativePartnerId
         this.dataForm.partnerName = data.partnerName
         this.$set(this.dataForm, 'sourceNo', data.orderNo)
@@ -1232,7 +1235,13 @@ export default {
           this.dataForm.contractNo = res.data.notice.contractNo
           // let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
           let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute));
-          if (filteredArray.length) {
+           setTimeout(() => {
+             if(this.abProjectSwitchVisible){
+              console.log(55555);
+            let arr=filteredArray.filter(item => item.projectId === this.wareHouseInfo.projectId)
+            filteredArray=JSON.parse(JSON.stringify(arr))
+          }
+      if (filteredArray.length) {
             filteredArray.forEach(item => {
               item.noticeId = item.returnDeliveryNoticeId
               item.noticeLineId = item.id
@@ -1259,6 +1268,7 @@ export default {
           this.productData = filteredArray
           this.dataForm.id = this.productData[0].returnDeliveryNoticeId
           this.formLoading = false
+           }, 500);
         }).catch(() => { this.formLoading = false })
       }
     },

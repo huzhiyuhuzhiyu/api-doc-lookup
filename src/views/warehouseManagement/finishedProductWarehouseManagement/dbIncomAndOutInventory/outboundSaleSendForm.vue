@@ -522,7 +522,7 @@
                 </el-col>
               </el-form>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main"> 
+            <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"  @row-click="handleRowClick"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_838151">
                 <el-table-column prop="orderNo" label="发货单号" width="180" sortable="custom"></el-table-column>
@@ -604,7 +604,7 @@
       <!-- 选客户 -->
       <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
       <!-- 选批次号 -->
-      <BatchNumberForm :cooperativePartnerId="dataForm.cooperativePartnerId" v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
+      <BatchNumberForm :productSymbol="productSymbol" :cooperativePartnerId="dataForm.cooperativePartnerId" v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
       <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
         :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
@@ -641,6 +641,7 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList,tenantMinix],
   data() {
     return {
+      productSymbol:'',
       columnList:[],
       datafilelist: [],
       isattachmentswitch: '',
@@ -860,6 +861,7 @@ export default {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
+      this.productSymbol = data.productSymbol
       this.$nextTick(() => {
         this.$refs.BatchNumberForms.init(data, index,'sale')
       })

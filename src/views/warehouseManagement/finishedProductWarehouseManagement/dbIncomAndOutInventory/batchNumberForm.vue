@@ -83,7 +83,7 @@
               sortable="custom"></el-table-column>
               <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
               <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" 
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"
               sortable="custom"></el-table-column>
             <el-table-column prop="oil" label="油脂" min-width="120"
               sortable="custom"></el-table-column>
@@ -120,6 +120,10 @@ export default {
           default:''
       },
       productCategoryId:{
+          type:String,
+          default:''
+      },
+      productSymbol:{
           type:String,
           default:''
       },
@@ -160,6 +164,7 @@ export default {
         excludeProcessFlag:false,
         cooperativePartnerId:this.isYS ? this.cooperativePartnerId : '',
         productCategoryId: this.productCategoryId ,
+        productSymbol:this.productSymbol,
       },
       refreshTree: true,
       listLoading: false,
@@ -268,6 +273,7 @@ export default {
       this.form.excludeProcessFlag=this.excludeProcessFlag
       this.form.cooperativePartnerId = this.isYS ? this.cooperativePartnerId : ''
       this.form.productCategoryId = this.productCategoryId
+      this.form.productSymbol = this.productSymbol
       this.dataForm = data
       console.log(requestFlag,'requestFlag')
       if (!requestFlag) {
@@ -334,7 +340,8 @@ export default {
         colour:this.dataForm.colour,
         excludeProcessFlag:this.excludeProcessFlag,
         cooperativePartnerId:this.isYS ? this.cooperativePartnerId : '',
-        productCategoryId: this.productCategoryId
+        productCategoryId: this.productCategoryId,
+        productSymbol:this.productSymbol,
       }
       if (this.requestFlag) {
         this.getlistOutBatchStockFun()

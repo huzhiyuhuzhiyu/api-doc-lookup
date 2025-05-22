@@ -54,22 +54,61 @@ export default {
     }
   },
   methods: {
-    init() {
+    init(code,name) {
+      console.log('code',code,name);
       this.printDataForm.enCode=""
       this.printList=[]
       getPrintList(this.printQuery).then(res => {
         if (res.data) {
           if (res.data.hasOwnProperty(this.enCode)) {
             this.printList = res.data[this.enCode]
-            this.printList && this.printList.forEach(item=>{
-              if (item.enabledMark){
-                this.printDataForm.enCode = item.id
+            if(this.printList){
+              if(name){
+                // 如果有传客户名称过来 则走这里 根据客户名称去匹配模板 然后自动选中
+                    // 步骤1：筛选带括号的数据
+                    const withParentheses = this.printList.filter(item => /\(.*?\)/.test(item.fullName));
+                    console.log('带括号的数据:', withParentheses);
+
+                    // 步骤2：提取括号里的内容，存到对象中
+                    const extracted = withParentheses.map(item => {
+                      const match = item.fullName.match(/\((.*?)\)/);
+                      const name = match ? match[1] : '';
+                      return {...item, name};
+                    });
+                    console.log('提取括号内容:', extracted);
+                  
+                    // 步骤3：判断titlename是否包含name的前两位字符
+                    const matchedData = extracted.filter(item => {
+                      const prefix = item.name.substring(0,2); // 前两字符
+                      return name.includes(prefix);
+                    });
+                    console.log(111,matchedData);
+                    if(matchedData.length){
+                      this.printDataForm.enCode = matchedData[0].id
+                      console.log("555555555");
+                    }else{
+                      console.log("666666666666");
+                       this.printList.forEach(item=>{
+                        if (item.enabledMark){
+                          this.printDataForm.enCode = item.id
+                        }
+                      })
+                    }
+              }else{
+                 this.printList.forEach(item=>{
+                  if (item.enabledMark){
+                    this.printDataForm.enCode = item.id
+                  }
+                })
               }
-            })
+
+            }
+            
           }
         }
       }).catch(() => { })
     },
+   
     printSubmit() {
       this.btnLoading = true
       this.$refs.printListForm.validate((valid) => {

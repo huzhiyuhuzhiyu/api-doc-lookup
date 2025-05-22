@@ -38,12 +38,12 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
+            <topOpts :isJudgePer="true" @add="addSupplier('', 'add')">
               <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
-                <el-button :disabled="tableDataList.length <= 0" size="mini" type="primary" icon="iconfont  icon-chehui1" @click="backFn">撤回</el-button>
+                <el-button :disabled="tableDataList.length <= 0" size="mini" type="primary" icon="iconfont-menu  icon-chehui1" @click="backFn">撤回</el-button>
             </topOpts>
 
             <div class="JNPF-common-head-right">

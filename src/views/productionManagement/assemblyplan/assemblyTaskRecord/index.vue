@@ -5,8 +5,8 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-       
-            
+
+
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4">
                 <el-form-item>
@@ -68,7 +68,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
-                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'manually'">新建任务</div>
                 <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
                 <div v-if="scope.row.orderType == 'transit'">在制任务</div>
                 <div v-if="scope.row.orderType == 'regrinding'">修磨任务</div>
@@ -175,7 +175,7 @@ export default {
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
- 
+
       title: "更多查询",
       visible: false,
       tableData: [],
@@ -204,7 +204,7 @@ export default {
       total: 0,
       formVisible: false,
       superQueryJson: [
-           
+
       {
           prop: 'productionPlanNo',
           label: "生产计划单号",
@@ -222,7 +222,7 @@ export default {
           options: [
             { label: "正常任务", value: "normal" },
             { label: "返工任务", value: "rework" },
-            { label: "手动新建任务", value: "manually" },
+            { label: "新建任务", value: "manually" },
             { label: "翻库任务", value: "flipping" },
             { label: "在制任务", value: "transit" },
             { label: "修磨任务", value: "regrinding" },
@@ -263,8 +263,8 @@ export default {
           label: "工艺路线编码",
           type: 'input'
         },
-        
-      
+
+
         {
           prop: 'orderStatus',
           label: "状态",
@@ -317,7 +317,7 @@ export default {
           type: 'input'
         },
       ],
-     
+
       isProductNameSwitch:"",
       // 属性字段  控制属性字段显示隐藏
       accuracyLevelFlag: "",
@@ -352,7 +352,7 @@ export default {
     this.isProjectSwitchFlag = true
     this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
-  }, 
+  },
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -395,7 +395,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'routingCode')
       if (this.colourFlag === '1') {
@@ -535,7 +535,7 @@ export default {
         this.isProjectSwitchFlag = true
       } catch (error) { }
     },
- 
+
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -565,7 +565,7 @@ export default {
     initData() {
       this.listLoading = true
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
- 
+
       ordershengchanList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -605,7 +605,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
       this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
- 
+
       this.$refs.SuperQuery.conditionList = []
       this.searchList= [
         { field: 'productionPlanNo', fieldValue: '', label: '生产计划单号', symbol: 'like', searchType: 1, width: 120 },

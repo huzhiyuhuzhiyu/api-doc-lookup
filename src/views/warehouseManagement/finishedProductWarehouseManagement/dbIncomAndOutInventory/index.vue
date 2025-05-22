@@ -1860,7 +1860,7 @@ export default {
       orderTypeList: [
         { label: "正常任务", value: "normal", },
         { label: "返工任务", value: "rework", },
-        { label: "手动新建任务", value: "manually", },
+        { label: "新建任务", value: "manually", },
       ],
       filpOrderTypeList: [
         { label: "在制任务", value: "transit", },

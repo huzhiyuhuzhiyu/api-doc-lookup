@@ -46,7 +46,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
-                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'manually'">新建任务</div>
                 <div v-if="scope.row.orderType == 'flipping'">翻库任务</div>
                 <div v-if="scope.row.orderType == 'transit'">在制任务</div>
               </template>

@@ -87,7 +87,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.orderType == 'normal'">正常任务</div>
                 <div v-if="scope.row.orderType == 'rework'">返工任务</div>
-                <div v-if="scope.row.orderType == 'manually'">手动新建任务</div>
+                <div v-if="scope.row.orderType == 'manually'">新建任务</div>
 
               </template>
             </el-table-column>
@@ -240,7 +240,7 @@ export default {
           options: [
             { label: "正常任务", value: "normal" },
             { label: "返工任务", value: "rework" },
-            { label: "手动新建任务", value: "manually" },
+            { label: "新建任务", value: "manually" },
 
           ]
         },

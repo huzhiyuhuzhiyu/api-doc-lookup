@@ -958,9 +958,9 @@ export default {
         planDate: [],
         orderNo: this.codeConfig.number
       }
-      this.$refs.dataForm.clearValidate('productsDrawingNo');
       this.$nextTick(()=>{
-        this.$refs.dataForm.resetFields('routingName');
+       this.$refs.dataForm.clearValidate('productsDrawingNo');
+        this.$refs.dataForm.clearValidate('routingName');
       })
 console.log("this.$refs.dataForm",this.$refs.dataForm);
       this.dataForm.productsDrawingNo = data.drawingNo

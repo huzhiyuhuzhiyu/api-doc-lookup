@@ -1041,9 +1041,7 @@ export default {
       this.$set(this.dataForm, 'productsName', data.name)
       this.$set(this.dataForm, 'bomId', data.bomId)
       this.$set(this.dataForm, 'planDate', [])
-      this.$nextTick(()=>{
-        this.$refs.dataForm.clearValidate('routingName');
-      })
+    
 
       this.creaFun()
       if (this.dataForm.bomId) {
@@ -1072,8 +1070,14 @@ export default {
      
       if (!data.routingId) return
       if (!this.$store.getters.configData.produce.task_process_selection) {
-        this.dataForm.routingId = ''
+        console.log(44444444);
+          this.dataForm.routingId = ''
         this.dataForm.routingName = ''
+          this.$nextTick(()=>{
+      //  this.$refs.dataForm.clearValidate('productsDrawingNo');
+        this.$refs.dataForm.clearValidate('routingName');
+      })
+      
         return
       }
       this.getRoutingDetail(this.dataForm.routingId)

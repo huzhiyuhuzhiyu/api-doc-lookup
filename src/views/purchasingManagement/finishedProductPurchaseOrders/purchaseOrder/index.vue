@@ -116,7 +116,7 @@
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
 
-            <el-table-column label="操作" width="350" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
@@ -130,9 +130,9 @@
                 <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   查看详情
                 </el-button>
-                <el-button size="mini" type="text" @click.native="orderFormDownload(scope.row.id)">
+                <!-- <el-button size="mini" type="text" @click.native="orderFormDownload(scope.row.id)">
                   下载订货单
-                </el-button>
+                </el-button> -->
                 <el-button size="mini" type="text" @click.native="printView(scope.row, 'p006')">
                   打印订货单
                 </el-button>

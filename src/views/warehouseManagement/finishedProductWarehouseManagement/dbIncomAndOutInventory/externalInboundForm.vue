@@ -1431,6 +1431,11 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")
                 break
               }
+                 if (!item.batchNumber) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行批次号不能为空")
+                break
+              }
               // if (this.dataForm.weightFlag) {
               // if (!item.discount) {
               //   submitFlag = false

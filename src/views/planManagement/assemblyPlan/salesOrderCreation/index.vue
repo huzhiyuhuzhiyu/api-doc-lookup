@@ -109,7 +109,7 @@
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" min-width="120" fixed="right">
+            <el-table-column label="操作" min-width="120" fixed="right" v-if="isXBN">
               <template slot-scope="scope">
 
                 <el-button size="mini" type="text" @click.native="printFun(scope.row.id)">打印备货工艺</el-button>
@@ -156,12 +156,14 @@ import {
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery, PrintBrowse,
     PrintDialog,},
-  mixins: [getProjectList],
+    mixins: [getProjectList,tenantMinix],
+
   data() {
     return {
       superQuery: {},

@@ -212,7 +212,6 @@ import {  getOrderFiledMap } from '@/api/basicData/index'
 export default {
   mixins: [AbProjectMixin],
 
-  components: {   selectAsset},
   
   data() {
     return {

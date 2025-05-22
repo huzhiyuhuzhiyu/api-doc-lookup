@@ -58,10 +58,20 @@
                 </div>
               </div>
             
-              <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="inboundData"  @sort-change="sortChange" custom-column customKey="JNPFTableKey_8957749">
-                <el-table-column prop="inspectorName" label="检验人"  />
-                <el-table-column prop="samplingSumQuantity" label="累计检验总数"  />
-                <el-table-column prop="unqualifiedSumQuantity" label="累计检验不合格总数"  ></el-table-column>
+              <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="inboundData"  @sort-change="sortChange" custom-column customKey="JNPFTableKey_7668545512749">
+                <el-table-column prop="productName" label="产品名称"  sortable="custom"/>
+                <el-table-column prop="projectName" label="产品编码"  sortable="custom"/>
+                <el-table-column prop="supplierName" label="品名规格"  sortable="custom"></el-table-column>
+                <el-table-column prop="samplingSumQuantity" label="单位"  sortable="custom"></el-table-column>
+                <el-table-column prop="unqualifiedSumQuantity" label="累计销售发货次数"  sortable="custom"></el-table-column>
+                <el-table-column prop="unqualifiedSumQuantity" label="销售发货数量"  sortable="custom"></el-table-column>
+                <el-table-column prop="unqualifiedSumQuantity" label="销售金额"  sortable="custom"></el-table-column>
+                <el-table-column prop="unqualifiedSumQuantity" label="客户名称"  sortable="custom"></el-table-column>
+                <el-table-column prop="unqualifiedSumQuantity" label="销售额占比"  sortable="custom">
+                   <template slot-scope="scope">
+                    <el-progress :percentage="scope.row.unqualifiedPercent || 0"></el-progress>
+                  </template>
+                </el-table-column>
               </JNPF-table>
               <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" />
             </div>
@@ -78,16 +88,20 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { inspectorReport } from '@/api/inspectionManagement/index.js'
+import { supplierProductReport } from '@/api/inspectionManagement/index.js'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 export default {
-  name: 'inspectorReport',
+  name: 'supplierQualityReport',
   components: { SuperQuery,ExportForm },
 
   mixins: [getProjectList],
   data() {
     return {
+
+
+
+
       inboundDate:[],
       inboundData:[],
       inboundTotal:0,
@@ -96,7 +110,8 @@ export default {
       inboundFormList:{
         startDate: "",
         endDate: "",
-        inspectorName: "",
+        productName: "",
+        supplierName: "",
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
@@ -116,13 +131,22 @@ export default {
         }
       }, 
       searchList2:[
-        { field: 'inspectorName', fieldValue: '', label: '检验人', symbol: 'like', searchType: 1, width: 120 },
-      ],
-      
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
+      ], 
       superQueryInbound: [
+          {
+          prop: 'productName',
+          label: "产品名称",
+          type: 'input'
+        },
         {
-          prop: 'inspectorName',
-          label: "检验人",
+          prop: 'projectName',
+          label: "所属项目",
+          type: 'input'
+        },
+           {
+          prop: 'supplierName',
+          label: "供应商名称",
           type: 'input'
         },
       ],
@@ -189,7 +213,7 @@ export default {
     initData() {
       this.listLoading = true
 
-         inspectorReport(this.inboundForm).then(res => {
+         supplierProductReport(this.inboundForm).then(res => {
           this.inboundData = res.data.records
           this.inboundTotal = res.data.total
           this.listLoading = false
@@ -204,11 +228,11 @@ export default {
     search(type) {
     
         if (this.inboundDate && this.inboundDate.length > 0) {
-          this.inboundForm.produceStartDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
-          this.inboundForm.produceEndDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.startDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.endDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
         } else {
-          this.inboundForm.produceStartDate = ''
-          this.inboundForm.produceEndDate = ''
+          this.inboundForm.startDate = ''
+          this.inboundForm.endDate = ''
         }
         Object.keys(this.inboundForm).forEach(key => { // 清除搜索条件两端空格
           let item = this.inboundForm[key]
@@ -241,7 +265,8 @@ export default {
         this.inboundDate = []
         this.superInboundForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
         this.searchList2=[
-        { field: 'inspectorName', fieldValue: '', label: '检验人', symbol: 'like', searchType: 1, width: 120 }, 
+           { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'supplierName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ]
   
       this.search('basic')
@@ -263,8 +288,8 @@ export default {
       
       let _data = {
         ...this.inboundForm,
-        exportType: '1257',
-        exportName: "检验员检验报表",
+        exportType: '1256',
+        exportName: "供应商货品质量报表",
         includeFieldMap,
         pageSize: data.dataType == 0 ? this.inboundForm.pageSize : -1
       }
@@ -277,5 +302,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+::v-deep .el-progress-bar{
+  width: 80%;
+}
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
 

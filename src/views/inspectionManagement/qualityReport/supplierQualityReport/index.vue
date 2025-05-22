@@ -58,13 +58,17 @@
                 </div>
               </div>
             
-              <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="inboundData" :fixedNO="true" @sort-change="sortChange" custom-column>
-                <el-table-column prop="productName" label="产品名称"  sortable="custom"/>
-                <el-table-column prop="projectName" label="所属项目"  sortable="custom"/>
-                <el-table-column prop="supplierName" label="供应商名称"  sortable="custom"></el-table-column>
-                <el-table-column prop="samplingSumQuantity" label="检验数量合计"  sortable="custom"></el-table-column>
-                <el-table-column prop="unqualifiedSumQuantity" label="累计检验不合格数量"  sortable="custom"></el-table-column>
-                <el-table-column prop="unqualifiedPercent" label="不合格百分比"  sortable="custom"></el-table-column>
+              <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="inboundData"  @sort-change="sortChange" custom-column customKey="JNPFTableKey_7668545512749">
+                <el-table-column prop="productName" label="产品名称"  />
+                <el-table-column prop="projectName" label="所属项目"  />
+                <el-table-column prop="supplierName" label="供应商名称"  ></el-table-column>
+                <el-table-column prop="samplingSumQuantity" label="检验数量合计"  ></el-table-column>
+                <el-table-column prop="unqualifiedSumQuantity" label="累计检验不合格数量"  ></el-table-column>
+                <el-table-column prop="unqualifiedPercent" label="不合格百分比"   width="200">
+                  <template slot-scope="scope">
+                    <el-progress :percentage="scope.row.unqualifiedPercent || 0"></el-progress>
+                  </template>
+                </el-table-column>
               </JNPF-table>
               <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" />
             </div>
@@ -296,5 +300,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+::v-deep .el-progress-bar{
+  width: 80%;
+}
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
 

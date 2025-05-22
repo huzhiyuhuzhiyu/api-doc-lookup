@@ -38,7 +38,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="handleProcessOut()">创建外协订单</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click="handleProcessOut()">新建</el-button>
             </div>
 
             <div class="JNPF-common-head-right">

@@ -46,9 +46,9 @@ export function getConfig(account) {
   })
 }
 // 获取登录信息
-export function getpattern() {
+export function getpattern(tenantId) {
   return request({
-    url: `/api/system/SysConfig/get/pattern`,
+    url: `/api/system/SysConfig/get/pattern?tenantId=${tenantId}`,
     method: 'get',
   })
 }

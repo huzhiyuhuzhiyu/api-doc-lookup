@@ -403,7 +403,7 @@ export default {
 
 
     this.loginForm.sys = this.argSys ? this.argSys : this.localSys
-    getpattern().then(res => {
+    getpattern(this.loginForm.busCode).then(res => {
       for (let key in res.data) {
         res.data[key] = res.data[key].replace(new RegExp('\"', 'g'), '')
       }

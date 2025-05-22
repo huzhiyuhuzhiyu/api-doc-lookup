@@ -287,7 +287,7 @@
                       <el-table-column prop="costPrice" label="单价(含税)" width="120" key="110">
                         <template slot="header" v-if="$store.getters.configData.warehouse.unitPriceSetting">
                           <span class="required">*</span>单价(含税)
-                        </template> 
+                        </template>
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.costPrice" :disabled="btnType == 'look' ? true : false"
                             @input="watchPrice(scope.row, scope.$index)" placeholder="请输入"
@@ -760,6 +760,8 @@
                 v-if="dataForm.documentType == 'outbound'" key="warehouseName" />
               <el-table-column prop="shelfSpaceName" label="库位名称" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" key="shelfSpaceName" />
+              <el-table-column prop="productSymbol" label="代号" width="180"
+                v-if="dataForm.documentType === 'outbound' && isZY" key="productSymbol" />
               <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
                 v-if="standardValueFlag == 1" key="standardValue" />
               <el-table-column prop="colour" :label="$store.getters.colour" width="80" sortable="custom"
@@ -1216,7 +1218,7 @@ export default {
         this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
         this.tableDataFlag = true
       } catch (error) { }
-    }, 
+    },
     selectWeight() {
       this.$nextTick(() => { this.$refs.products.doLayout() })
 

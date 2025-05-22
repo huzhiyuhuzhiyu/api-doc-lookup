@@ -310,7 +310,7 @@
                     </el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
-                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?urrentProcess.qualifiedQuantity:0
+                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?currentProcess.qualifiedQuantity:0
                       }}</el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
@@ -707,8 +707,8 @@ export default {
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
       this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
-      this.$set(this.currentProcess, 'reportingQuantity', 0)
-          this.currentProcess.qualifiedQuantity = this.currentProcess.waitReportNum
+      this.$set(this.currentProcess, 'reportingQuantity', 0) 
+      if(this.currentProcess.processingType=='self_produced') this.currentProcess.qualifiedQuantity =  this.currentProcess.waitReportNum
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)

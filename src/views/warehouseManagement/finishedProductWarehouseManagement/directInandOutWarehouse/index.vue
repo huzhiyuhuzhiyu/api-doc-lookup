@@ -878,6 +878,7 @@ export default {
   name: "directInandOutWarehouse",
   data() {
     return {
+      getProductList,
         ProductTableItems: [],
         ProductListRequestObjs: {},
         ProductTableSearchList:[],

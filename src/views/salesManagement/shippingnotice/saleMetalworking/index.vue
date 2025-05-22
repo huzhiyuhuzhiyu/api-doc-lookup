@@ -435,7 +435,7 @@ export default {
       this.fullName = "发货通知单" // 筛选出 businessType 等于 type 的项  
       this.printVisible = true
       this.$nextTick(() => {
-        this.$refs.printTemplate.init(this.enCode)
+        this.$refs.printTemplate.init(this.enCode,this.selectArr[0].partnerName)
       })
 
     },

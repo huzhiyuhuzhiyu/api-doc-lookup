@@ -310,7 +310,7 @@
                     </el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
-                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?urrentProcess.qualifiedQuantity:0
+                    <el-descriptions-item label="完工数量" class="external_cotent">{{ currentProcess.qualifiedQuantity?currentProcess.qualifiedQuantity:0
                       }}</el-descriptions-item>
                   </el-descriptions>
                   <el-descriptions :column="1">
@@ -672,7 +672,7 @@ export default {
           }
         } else {
             // 修改初始进入报工默认展示第一条  更改为可报工数量有值的项显示
-          this.currentProcess =  res.data.workOrderList.find(item=>+item.waitReportNum && item.reportFlag) || res.data.workOrderList[0]
+          this.currentProcess =  res.data.workOrderList.find(item=>+item.waitReportNum && item.reportFlag&&item.processingType=='self_produced') || res.data.workOrderList[0]
           this.currentProcessId = this.currentProcess.processId
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
@@ -684,7 +684,7 @@ export default {
           this.equipmentList=this.currentProcess.workOrderResMap.device
         }
         this.$set(this.currentProcess, 'reportingQuantity', 0)
-        this.$set(this.currentProcess, 'qualifiedQuantity', "")
+        // this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
@@ -708,7 +708,8 @@ export default {
       this.currentProcessId = item.processId
       this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
       this.$set(this.currentProcess, 'reportingQuantity', 0)
-          this.currentProcess.qualifiedQuantity = this.currentProcess.waitReportNum
+      if(this.currentProcess.processingType=='self_produced') this.currentProcess.qualifiedQuantity =  this.currentProcess.waitReportNum
+          
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)

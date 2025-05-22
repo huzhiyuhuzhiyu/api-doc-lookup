@@ -408,8 +408,9 @@ export default {
         res.data[key] = res.data[key].replace(new RegExp('\"', 'g'), '')
       }
       this.loginpattern = res.data
-      this.isbgload = false
       this.isLogin = false
+      if(this.loginpattern.loginBg!='null') return this.isbgload = true
+      this.isbgload = false
     })
     // getConfig('isTenancy').then(res => {
 

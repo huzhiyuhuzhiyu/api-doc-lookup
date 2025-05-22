@@ -46,6 +46,7 @@
                 @click="batchPrint">批量打印</el-button>
                <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button> -->
               <!-- <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
+              <el-button v-has="'batchSort'" size="mini" type="primary" icon="el-icon-edit" @click="batchSort()">批量排序</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p035')">打印装配单</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer"
                 @click="printFlowCard('p020')">打印流转卡</el-button>
@@ -118,7 +119,7 @@
             <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
-              
+
               <el-table-column prop="standardValue" label="规值"  width="140" sortable="custom"
               v-if="standardValueFlag == 1" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
@@ -360,6 +361,7 @@
     :visible.sync="dialogVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" style="text-align: center;">
       <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
     </el-dialog>
+    <BatchSortForm v-if="batchSortVisible" ref="batchSortForm" @close="closeForm" />
   </div>
 </template>
 <script>
@@ -391,12 +393,14 @@ import { getProcessList,detailProcess } from '@/api/basicData/processSettingss'
 import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderCreation/index.vue'
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
+import BatchSortForm from '@/views/productionManagement/ringPlan/ringTaskManagement/batchSortForm.vue'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2,ProcessOutForm,OutSouringForm },
+  components: { BatchSortForm, SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2,ProcessOutForm,OutSouringForm },
   mixins: [getProjectList],
   data() {
     return {
+      batchSortVisible:false,
       dialogVisible:false,
       qrCode:"",
       addTaskFormVisible: false,
@@ -1162,6 +1166,7 @@ export default {
       this.taskFormVisible = false
       this.processOutFormVisible = false
       this.outSouringFormVisible = false
+      this.batchSortVisible = false
       this.search()
     },
     handleProcessOut(id) {
@@ -1340,6 +1345,13 @@ export default {
       }).catch(() => {
         this.printBrowseVisible = false
       });
+    },
+    batchSort(){
+        if (!this.selectArr.length) return this.$message.error("请选择您要排序的数据!")
+        this.batchSortVisible = true
+        this.$nextTick(() => {
+            this.$refs.batchSortForm.init(this.selectArr)
+        })
     },
   }
 }

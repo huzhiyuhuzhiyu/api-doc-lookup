@@ -193,7 +193,7 @@
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="140" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
-
+                        <el-table-column v-if="isZY" prop="productSymbol" label="代号" width="120" />
                         <el-table-column prop="standardValue" label="规值" width="120" >
                         </el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" />
@@ -453,6 +453,7 @@
                         <el-table-column prop="taxRates" label="税率" width="100" :key="171" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="taxAmount" label="税额" width="140" :key="1721" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
                         <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')"></el-table-column>
+                        <el-table-column v-if="isZY" prop="productSymbol" label="代号" width="120" />
                         <el-table-column prop="standardValue" label="规值" width="120" >
                         </el-table-column>
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="100" />
@@ -656,7 +657,7 @@
       <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
 
       <!-- 选批次号 -->
-      <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
+      <BatchNumberForm :productSymbol="productSymbol" v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
       <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
         :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
@@ -701,7 +702,7 @@ export default {
       datafilelist: [],
       isattachmentswitch: '',
       attachmentData: {},
-
+      productSymbol:'',
       batchNumVisible: false,
       wareHouseVisible: false,
       // 选择批次号请求条件
@@ -940,6 +941,7 @@ export default {
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
+      this.productSymbol = data.productSymbol
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
       this.$nextTick(() => {

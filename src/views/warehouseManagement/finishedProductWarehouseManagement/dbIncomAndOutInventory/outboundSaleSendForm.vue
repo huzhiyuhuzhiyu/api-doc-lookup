@@ -859,9 +859,9 @@ export default {
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
+      this.productSymbol = data.productSymbol
       this.batchNumVisible = true
       data.warehouseId = this.dataForm.warehouseId
-      this.productSymbol = data.productSymbol
       this.$nextTick(() => {
         this.$refs.BatchNumberForms.init(data, index,'sale')
       })

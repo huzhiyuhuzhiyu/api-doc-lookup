@@ -146,7 +146,7 @@ export default {
         cooperativePartnerName: "",
         pageNum: 1,
         pageSize: 20,
-        businesbillStatusType: '',
+        billStatus: 'no_billing',
         superQuery: {},
       },
       selectData: [],                    // 选中的数据 带到form页

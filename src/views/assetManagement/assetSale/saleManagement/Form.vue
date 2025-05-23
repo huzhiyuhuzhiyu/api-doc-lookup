@@ -239,7 +239,7 @@ export default {
       getCooperativeData,
       getcategoryTree,
       //  客户 树请求
-      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'supplier' } },
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'customer' } },
       // 客户 列表
       PartnerTableItems: [
         { prop: 'code', label: '客户编码', fixed: 'left' },

@@ -67,7 +67,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-if="tableDataFlag" ref="dataTable"hasC @selection-change="handleSelectionChange" 
+        <JNPF-table v-if="tableDataFlag" ref="dataTable"
          :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_908077">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">

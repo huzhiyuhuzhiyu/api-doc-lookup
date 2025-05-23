@@ -299,7 +299,7 @@ export default {
                 batchNumber: '',
                 createByName: '',
                 documentType: '',
-                endTime: '',
+                orderEndDate: '',
                 endUpdateTime: '',
                 keyword: '',
                 orderNo: '',
@@ -314,12 +314,12 @@ export default {
                 productCode: '',
                 drawingNo: '',
                 productName: '',
-                startTime: '',
+                orderStartDate: '',
                 startUpdateTime: '',
                 totalRowFlag: false,
                 warehouseCode: '',
                 warehouseName: '',
-                createTimeArr: []
+                orderDate: []
             },
             tableItems: [
                 { prop: 'orderNo', label: '出库单号', minWidth: '180' },
@@ -730,7 +730,7 @@ export default {
             this.lineVisible = true
             this.inboundAndOutboundQuery.documentType = type
             this.inboundAndOutboundQuery.balanceId = id
-            this.inboundAndOutboundQuery.createTimeArr = [this.listQuery.accountPeriod + '-01 00:00:00', this.listQuery.accountPeriod + '-31 23:59:59']
+            this.inboundAndOutboundQuery.orderDate = []
             this.tableItems.forEach(item => item.label = type == 'inbound' ? item.label.replaceAll('出库', '入库') : item.label.replaceAll('入库', '出库'))
             this.searchLineList.forEach(item => item.label = type == 'inbound' ? item.label.replaceAll('出库', '入库') : item.label.replaceAll('入库', '出库'))
             this.$nextTick(() => {

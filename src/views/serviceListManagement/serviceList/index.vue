@@ -75,8 +75,18 @@
               <div v-if="scope.row.billStatus == 'in_bill' && scope.row.documentStatus == 'submit'"><el-tag type="warning">对账中</el-tag></div>
             </template>
           </el-table-column> 
-        
-          <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" />
+             <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+          
+
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.billStatus !== 'no_billing'"
+                  @click="handleDel(scope.row.id)">删除</el-button>
+                  <el-button size="mini" type="text"   @click="detailFun(scope.row)">查看详情</el-button>
+                <!-- :disabled="scope.row.documentStatus == 'draft' ? false : true" -->
+           
+              </template>
+            </el-table-column>
+          <!-- <el-table-column prop="remark" label="备注" min-width="180" sortable="custom" /> -->
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData">
@@ -143,7 +153,7 @@ export default {
         billStatus:"",
         pageNum: 1,
         pageSize: 20,
-        businesbillStatusType: '',
+        billStatus: '',
         superQuery: {},
       },
       selectData: [],                    // 选中的数据 带到form页
@@ -249,7 +259,13 @@ export default {
   },
 
   methods: {
-     
+    detailFun(row){
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.procureForm.init('look',row)
+      })
+
+    },
  
   
    
@@ -316,7 +332,20 @@ export default {
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
-
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        delFinServiceTicket(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false

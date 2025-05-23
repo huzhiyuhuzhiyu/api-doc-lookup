@@ -92,8 +92,8 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'costProjectId'" >
-                              <el-select v-model="scope.row.costProjectId" placeholder="请选择">
-                                <el-option v-for="(item, index) in abProjectNoCommonList" :key="index" :label="item.label"
+                              <el-select v-model="scope.row.costProjectId" placeholder="请选择" :disabled="scope.row.projectId!='1'">
+                                <el-option v-for="(item, index) in abProjectNoCommonList" :key="index" :label="item.label" 
                                   :value="item.value"></el-option>
                               </el-select>
                             </el-form-item>
@@ -1460,6 +1460,9 @@ export default {
                     item.productDrawingNo = item.productDrawingNo
                 } else {
                     item.productDrawingNo = item.drawingNo
+                }
+                if(item.projectId){
+                  if(item.projectId!='1')this.$set(item,'costProjectFlag',item.projectId)
                 }
                 if (this.purchasingType == 'pool') {
                     console.log(333)

@@ -1238,7 +1238,7 @@ export default {
            setTimeout(() => {
              if(this.abProjectSwitchVisible){
               console.log(55555);
-            let arr=filteredArray.filter(item => item.projectId === this.wareHouseInfo.projectId)
+            let arr=filteredArray.filter(item => item.projectId === this.wareHouseInfo.projectId||item.projectId=='1')
             filteredArray=JSON.parse(JSON.stringify(arr))
           }
       if (filteredArray.length) {

@@ -70,10 +70,7 @@
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" >
-                <span>总检验数量：{{ samplingSumQuantity }}</span>
-                <span style="margin-left: 10px;">总检验不合格总数{{ unqualifiedSumQuantity }}</span>
-              </pagination>
+              <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" />
             </div>
            
             <!-- 高级查询 -->
@@ -165,8 +162,7 @@ export default {
       activeName: "produce",
       reportCode:'',
     
-        unqualifiedSumQuantity:0,
-    samplingSumQuantity:0,
+    
       total: 0,
       formVisible: false,
       exportFormVisible:false,
@@ -216,10 +212,8 @@ export default {
       this.listLoading = true
 
          supplierProductReport(this.inboundForm).then(res => {
-          this.inboundData = res.data.page.records||[]
-          this.inboundTotal = res.data.page.total||0
-               this.samplingSumQuantity=res.data.total?res.data.total.samplingSumQuantity:0
-          this.unqualifiedSumQuantity=res.data.total?res.data.total.unqualifiedSumQuantity:0
+          this.inboundData = res.data.records
+          this.inboundTotal = res.data.total
           this.listLoading = false
           this.visible = false
         }).catch(() => {

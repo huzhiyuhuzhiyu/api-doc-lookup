@@ -63,7 +63,10 @@
                 <el-table-column prop="samplingSumQuantity" label="累计检验总数"  />
                 <el-table-column prop="unqualifiedSumQuantity" label="累计检验不合格总数"  ></el-table-column>
               </JNPF-table>
-              <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" />
+              <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" >
+                <span>总检验数量：{{ samplingSumQuantity }}</span>
+                <span style="margin-left: 10px;">总检验不合格总数{{ unqualifiedSumQuantity }}</span>
+              </pagination>
             </div>
            
             <!-- 高级查询 -->
@@ -139,7 +142,8 @@ export default {
       listLoading: false,
       activeName: "produce",
       reportCode:'',
-    
+    unqualifiedSumQuantity:0,
+    samplingSumQuantity:0,
     
       total: 0,
       formVisible: false,
@@ -190,10 +194,12 @@ export default {
       this.listLoading = true
 
          inspectorReport(this.inboundForm).then(res => {
-          this.inboundData = res.data.records
-          this.inboundTotal = res.data.total
+            this.inboundData = res.data.page.records||[]
+          this.inboundTotal = res.data.page.total||0
           this.listLoading = false
           this.visible = false
+          this.samplingSumQuantity=res.data.total?res.data.total.samplingSumQuantity:0
+          this.unqualifiedSumQuantity=res.data.total?res.data.total.unqualifiedSumQuantity:0
         }).catch(() => {
           this.listLoading = false
         })

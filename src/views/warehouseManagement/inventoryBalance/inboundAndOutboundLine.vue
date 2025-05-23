@@ -11,11 +11,11 @@
                                           :placeholder="'请输入' + item.label"
                                           clearable @keyup.enter.native="search('basic')"
                                 />
-                                <el-date-picker v-else-if="item.searchType === 2" v-model="item.fieldValue" type="date"
+                                <!-- <el-date-picker v-else-if="item.searchType === 2" v-model="item.fieldValue" type="daterange"
                                                 value-format="yyyy-MM-dd" style="width: 100%;" :clearable="false"
-                                                popper-class="date_form"
+                                                popper-class="date_form" start-placeholder="请选择开始日期" end-placeholder="请选择结束日期"
                                                 @change="search('basic')"
-                                />
+                                /> -->
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
                                            :placeholder="'请选择' + item.label"
                                            clearable
@@ -28,7 +28,13 @@
                             </el-form-item>
                         </el-col>
                     </template>
-
+ <el-col :span="4">
+            <el-form-item>
+              <el-date-picker v-model="listQuery.orderDate" type="daterange" value-format="yyyy-MM-dd"
+                style="width: 100%;" start-placeholder="请选择对账开始日期" end-placeholder="请选择对账结束日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
                     <el-col :span="6">
                         <el-form-item>
                             <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -262,7 +268,7 @@ export default {
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
-            this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
+            this.jnpf.searchTimeFormat(this.listQuery, 'orderDate', 'orderStartDate', 'orderEndDate')
             this.listMethod(this.listQuery).then(res => {
                 this.tableData = res.data.records
                 this.total = res.data.total

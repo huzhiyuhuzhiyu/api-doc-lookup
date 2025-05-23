@@ -122,7 +122,7 @@
                                   :tableItems="ProcessTableItems" :placeholder="'工序名称'" title="选择工序" treeTitle="工序分类"
                                   :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
                                   :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
-                                  :searchList="ProcessTableSearchList" :beforeOpen="beforeOpen" />
+                                  :searchList="ProcessTableSearchList" :beforeOpen="beforeOpen" :listDataFormatting="listDataFormatting"/>
                               </el-form-item>
                             </template>
                           </el-table-column>
@@ -384,8 +384,7 @@ export default {
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
         { prop: 'name', label: '工序名称' },
-        { prop: 'nameEn', label: '英文名称' },
-        { prop: 'taxId', label: '税号' }
+        { prop: 'processTypeName', label: '工序类型' }, 
       ],
       // 供应商搜索条件
       ProcessTableSearchList: [
@@ -753,6 +752,35 @@ export default {
     this.switchStyleheight()
   },
   methods: {
+           listDataFormatting(res) {
+      let treeData = res.data.records.map((item) => {
+      
+        if (item.processType == 'normal') {
+          item.processTypeName = '正常工序'
+        } else if (item.processType == 'vibrate') {
+          item.processTypeName = '测振工序'
+        } else if (item.processType == 'heat_treatment') {
+          item.processTypeName = '热工工序'
+        } else if (item.processType == 'packing') {
+          item.processTypeName = '包装工序'
+        } else if (item.processType == 'pairs') {
+          item.processTypeName = '配对工序'
+        } else if (item.processType == 'typing') {
+          item.processTypeName = '打字工序'
+        } else if (item.processType == 'fatInjection') {
+          item.processTypeName = '注脂工序'
+        } else if (item.processType == 'grinding') {
+          item.processTypeName = '磨孔工序'
+        } else if (item.processType == 'accuracy') {
+          item.processTypeName = '精度工序'
+        }else if (item.processType == 'boxing') {
+          item.processTypeName = '装盒工序'
+        }
+    
+        return item
+      })
+      return treeData
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight

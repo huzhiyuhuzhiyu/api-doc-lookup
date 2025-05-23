@@ -343,7 +343,7 @@ export default {
     this.initData()
   },
   methods: {
-    
+
     printWarehouse(enCode) {
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
@@ -362,9 +362,9 @@ export default {
     // 打印
     PrintFun(row) {
       console.log(this.arr, row);
-      this.enCode = 'p044' // 打印的编码 
+      this.enCode = 'p044' // 打印的编码
       this.formId = row.id
-      this.fullName = '工艺' // 打印的名称 
+      this.fullName = '工艺' // 打印的名称
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
@@ -474,7 +474,7 @@ export default {
         }
         let _data = {
           ...this.listQuery,
-          exportType: '1042',
+          exportType: '1033',
           exportName: '装配工艺设置信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1

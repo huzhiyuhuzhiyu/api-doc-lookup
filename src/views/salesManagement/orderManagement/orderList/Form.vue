@@ -1210,11 +1210,11 @@
                         placeholder="请输入产品名称" clearable />
                     </el-form-item>
                   </el-col>
-                  <!-- <el-col :span="6">
+                  <el-col :span="6">
                     <el-form-item>
                       <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                     </el-form-item>
-                  </el-col> -->
+                  </el-col>
                   <el-col :span="6">
                     <el-form-item>
                       <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">

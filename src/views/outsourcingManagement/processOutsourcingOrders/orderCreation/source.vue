@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-drawer title="发料清单" :visible.sync="drawer" :direction="direction" :wrapperClosable="false" append-to-body
-      :before-close="handleClose" size="45%" columnSettings-drawer class="JNPF-common-drawer">
-      <div ref="main">
-        <el-scrollbar style="height: 100%;">
+      :before-close="handleClose" size="45%"  class="JNPF-common-drawer columnSettings-drawer">
+      <div ref="main" class="JNPF-flex-main">
+        <el-scrollbar class="column-list">
           <div v-if="!transferOutFlag">
             <el-button type="text" class="topButton" icon="el-icon-plus" @click="openProductDialog('product')">
               选择产品
@@ -15,7 +15,7 @@
           <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
             <JNPF-table hasNO fixedNO :hasC="!transferOutFlag" v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
-              :style="{ height: height + 'px' }" ref="sourceTable" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_713710">
+              ref="sourceTable" @selection-change="handeleProductInfoData" customKey="JNPFTableKey_713710">
               <!-- <el-table-column type="index" width="60" label="序号" align="center" fixed="left" /> -->
               <el-table-column prop="projectName" label="所属项目" width="120"
                 v-if="isProjectSwitch === '1'"></el-table-column>
@@ -651,4 +651,147 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+.columnSettings-drawer {
+    font-size: 16px;
+
+    .JNPF-flex-main {
+        overflow: hidden;
+    }
+
+    .columnSetting-head {
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        font-size: 14px;
+        color: #303133;
+    }
+
+    .column-list {
+        height: 100%;
+        padding: 8px 10px 0;
+
+        .column-item {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+            font-size: 12px;
+            color: #303133;
+            cursor: pointer;
+            border-bottom: 1px solid #e3e6eb;
+
+            &:hover {
+                background: rgba(25, 144, 250, 0.1);
+            }
+
+            .column-item-icon {
+                margin: auto 8px auto 10px;
+                color: #909399;
+                cursor: move;
+                font-size: 14px;
+            }
+
+            .el-switch {
+                transform: scale(0.8);
+            }
+
+            .column-item-label {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                word-break: break-all;
+                display: flex;
+                align-items: center;
+            }
+
+            .check-box {
+                margin-right: 16px;
+            }
+        }
+
+        >>>.el-tabs__header {
+            margin-bottom: 0;
+        }
+    }
+
+    .footer {
+        margin: 4px 20px 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}.columnSettings-drawer {
+     font-size: 16px;
+
+     .JNPF-flex-main {
+         overflow: hidden;
+     }
+
+     .columnSetting-head {
+         height: 46px;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         padding: 0 24px;
+         font-size: 14px;
+         color: #303133;
+     }
+
+     .column-list {
+         height: 100%;
+         padding: 8px 10px 0;
+
+         .column-item {
+             height: 40px;
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             padding: 0;
+             font-size: 12px;
+             color: #303133;
+             cursor: pointer;
+             border-bottom: 1px solid #e3e6eb;
+
+             &:hover {
+                 background: rgba(25, 144, 250, 0.1);
+             }
+
+             .column-item-icon {
+                 margin: auto 8px auto 10px;
+                 color: #909399;
+                 cursor: move;
+                 font-size: 14px;
+             }
+
+             .el-switch {
+                 transform: scale(0.8);
+             }
+
+             .column-item-label {
+                 overflow: hidden;
+                 white-space: nowrap;
+                 text-overflow: ellipsis;
+                 word-break: break-all;
+                 display: flex;
+                 align-items: center;
+             }
+
+             .check-box {
+                 margin-right: 16px;
+             }
+         }
+
+         >>>.el-tabs__header {
+             margin-bottom: 0;
+         }
+     }
+
+     .footer {
+         margin: 4px 20px 20px;
+         display: flex;
+         justify-content: flex-end;
+     }
+ }
 </style>

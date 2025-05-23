@@ -1821,9 +1821,11 @@ export default {
         }
       } else {
         this.sortField[prop] = order;
-        if (index === -1) {
-          this.sortStack.unshift(prop); // 变化字段放在首位
+        // 无论字段是否存在，先移除旧位置再添加到头部
+        if (index > -1) {
+          this.sortStack.splice(index, 1);
         }
+        this.sortStack.unshift(prop); // 最新排序字段始终在首位
       }
 
       // 构建排序数组（按照 sortStack 顺序）

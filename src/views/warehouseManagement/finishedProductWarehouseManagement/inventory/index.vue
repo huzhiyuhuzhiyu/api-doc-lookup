@@ -54,7 +54,7 @@
           </div>
         </div>
         <JNPF-table ref="tabForm" v-if="tableDataFlag == true" :data="tableData" custom-column row-key="id"
-          :fixedNo="true" @sort-change="sortChange" customKey="JNPFTableKey_263873">
+          :fixedNo="true" @sort-change="sortChange" :header-cell-class-name="handleHeaderCellClass" customKey="JNPFTableKey_263873">
 
 
           <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -317,6 +317,14 @@ export default {
       isProjectSwitch: '',
       projectId:"",
       warehouseInfo:{},
+
+      // 排序数组
+      sortArr: [{
+        asc: false,
+        column: "create_time"
+      }],
+      sortField: {}, // 存储每个字段的排序方式 ascending/descending
+      sortStack: [], // 记录排序字段点击顺序
     }
   },
   watch: {
@@ -330,7 +338,7 @@ export default {
     await this.getWarehouseListFun()
     this.superForm = this.tableQuery
     this.getConfig()
-    
+
 
   },
   computed: {
@@ -458,7 +466,7 @@ export default {
 
     initData() {
       this.tableQuery.classAttributeList = this.classAttributeList
-      this.listLoading = true 
+      this.listLoading = true
       this.tableQuery.projectId=this.projectId
       this.tableQuery.warehouseId=this.warehouseInfo.id
       inventoryWarehouseList(this.tableQuery).then((res) => {
@@ -532,21 +540,60 @@ export default {
       this.getConfig()
       this.initData()
     },
-
-
-
-
+    // 设置列的排序为自定义的排序
+    handleHeaderCellClass({ column }) {
+      if (this.sortField[column.property]) {
+        column.order = this.sortField[column.property]
+      }
+    },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop == 'productCode' || prop == 'productName' || prop == 'productDrawingNo' || prop == 'warehouseName') {
-        newProp = prop
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
 
+      if (['productCode', 'productName', 'productDrawingNo', 'warehouseName'].includes(prop)) {
+        newProp = prop;
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
-      this.tableQuery.orderItems[0].asc = order === 'ascending'
-      this.tableQuery.orderItems[0].column = newProp
-      this.initData()
+
+      const index = this.sortStack.indexOf(prop);
+
+      // 如果取消排序（再次点击同一个字段）
+      if (!order || this.sortField[prop] === order) {
+        this.sortField[prop] = null;
+        if (index > -1) {
+          this.sortStack.splice(index, 1); // 删除该字段
+        }
+      } else {
+        this.sortField[prop] = order;
+        // 无论字段是否存在，先移除旧位置再添加到头部
+        if (index > -1) {
+          this.sortStack.splice(index, 1);
+        }
+        this.sortStack.unshift(prop); // 最新排序字段始终在首位
+      }
+
+      // 构建排序数组（按照 sortStack 顺序）
+      this.sortArr = this.sortStack.map(key => ({
+        column: key,
+        asc: this.sortField[key] === 'ascending'
+      }));
+
+      // // 添加默认排序字段（仅当无自定义排序时）
+      // const defaultSort = 'create_time'
+      // if (this.sortArr.length === 0) {
+      //   this.sortArr.push({ column: defaultSort, asc: false });
+      // } else {
+      //   // 若已存在默认排序字段，则替换或忽略
+      //   const existsDefault = this.sortArr.some(item => item.column === defaultSort);
+      //   if (!existsDefault) {
+      //     this.sortArr.push({ column: defaultSort, asc: false });
+      //   }
+      // }
+
+      // 更新请求参数
+      this.tableQuery.orderItems = this.sortArr;
+
+      this.initData();
     },
 
 

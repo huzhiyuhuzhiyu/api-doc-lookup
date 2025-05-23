@@ -27,49 +27,81 @@
                         :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="onlyRead" :listDataFormatting="listDataFormatting"/>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="isval ? 8 : 12" :xs="24">
+                    <el-col :sm="isval ? 8 : 8" :xs="24" v-if="isProjectSwitch === '1'">
+                        <el-form-item label="所属项目" prop="projectId">
+                            <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :disabled="onlyRead"
+                                       style="width: 100%;">
+                                <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
+                                           :value="item.id"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                  <el-col :sm="isval ? 8 : 8" :xs="24">
                     <el-form-item label="姓名" prop="realName">
                       <el-input v-model="dataForm.realName" placeholder="请输入姓名" :disabled="onlyRead || isval" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="isval ? 8 : 12" :xs="24" v-if="isProjectSwitch === '1'">
-                    <el-form-item label="所属项目" prop="projectId">
-                      <el-select v-model="dataForm.projectId" placeholder="请选择所属项目" :disabled="onlyRead"
-                        style="width: 100%;">
-                        <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
-                          :value="item.id"></el-option>
-                      </el-select>
-                    </el-form-item>
+                  <el-col :sm="8" :xs="24">
+                      <el-form-item label="账户" prop="account">
+                          <el-input v-model="dataForm.account" placeholder="请输入账户" :disabled="onlyRead" />
+                      </el-form-item>
                   </el-col>
-                  <el-col :sm="isval ? 8 : 12" :xs="24">
+                    <el-col :sm="8" :xs="24">
+                        <el-form-item label="手机号" prop="mobilePhone">
+                            <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="onlyRead" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24" v-if="!dataForm.id">
+                        <el-form-item label="密码" prop="password">
+                            <el-input v-model="dataForm.password" placeholder="请输入密码" show-password :disabled="onlyRead" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24" v-if="!dataForm.id">
+                        <el-form-item label="确认密码" prop="submitpassword">
+                            <el-input placeholder="请输入确认密码" v-model="dataForm.submitpassword" show-password
+                                      :disabled="onlyRead"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :sm="8" :xs="24">
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="onlyRead" />
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :sm="8" :xs="24">
+                        <el-form-item label="数据权限标识" prop="dataFlag">
+                            <el-select v-model="dataForm.dataFlag" filterable placeholder="请选择数据权限标识" :disabled="onlyRead"
+                                       clearable style="width: 100%;">
+                                <el-option v-for="item in dataFlagList" :key="item.id" :label="item.label"
+                                           :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                        <el-form-item label="状态" prop="enabledMark">
+                            <el-select v-model="dataForm.enabledMark" filterable placeholder="请选择状态" :disabled="onlyRead"
+                                       clearable style="width: 100%;">
+                                <el-option v-for="item in enabledMarkList" :key="item.id" :label="item.label"
+                                           :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :sm="isval ? 8 : 8" :xs="24">
+                        <el-form-item label="直属主管" prop="managerId">
+                            <user-select v-model="dataForm.managerId" placeholder="请选择直属主管" :disabled="onlyRead" />
+                        </el-form-item>
+                    </el-col>
+                  <el-col :sm="12" :xs="24">
                     <el-form-item label="所属组织" prop="organizeIdTree" ref="organizeIdTree">
                       <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
                         :disabled="onlyRead  || isval" multiple @change="onOrganizeChange"
                         clearable auth />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="isval ? 8 : 12" :xs="24">
-                      <el-form-item label="直属主管" prop="managerId">
-                        <user-select v-model="dataForm.managerId" placeholder="请选择直属主管" :disabled="onlyRead" />
-                      </el-form-item>
-                  </el-col>
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="账户" prop="account">
-                      <el-input v-model="dataForm.account" placeholder="请输入账户" :disabled="onlyRead" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="8" :xs="24" v-if="!dataForm.id">
-                    <el-form-item label="密码" prop="password">
-                      <el-input v-model="dataForm.password" placeholder="请输入密码" show-password :disabled="onlyRead" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="8" :xs="24" v-if="!dataForm.id">
-                    <el-form-item label="确认密码" prop="submitpassword">
-                      <el-input placeholder="请输入确认密码" v-model="dataForm.submitpassword" show-password
-                        :disabled="onlyRead"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="8" :xs="24">
+
+
+                  <el-col :sm="12" :xs="24">
                     <el-form-item label="角色" prop="roleId">
                       <el-select v-model="roleId" placeholder="请选择角色" :disabled="onlyRead" @change="onChange('roleId')"
                         style="width: 100%;" @visible-change="visibleChange" multiple filterable clearable>
@@ -81,34 +113,9 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="手机号" prop="mobilePhone">
-                      <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="onlyRead" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="邮箱" prop="email">
-                      <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="onlyRead" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="状态" prop="enabledMark">
-                      <el-select v-model="dataForm.enabledMark" filterable placeholder="请选择状态" :disabled="onlyRead"
-                        clearable style="width: 100%;">
-                        <el-option v-for="item in enabledMarkList" :key="item.id" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="数据权限标识" prop="dataFlag">
-                      <el-select v-model="dataForm.dataFlag" filterable placeholder="请选择数据权限标识" :disabled="onlyRead"
-                        clearable style="width: 100%;">
-                        <el-option v-for="item in dataFlagList" :key="item.id" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
+
+
+
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="onlyRead" type="textarea"

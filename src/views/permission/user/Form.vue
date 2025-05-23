@@ -92,7 +92,7 @@
                             <user-select v-model="dataForm.managerId" placeholder="请选择直属主管" :disabled="onlyRead" />
                         </el-form-item>
                     </el-col>
-                  <el-col :sm="12" :xs="24">
+                  <el-col :sm="8" :xs="24">
                     <el-form-item label="所属组织" prop="organizeIdTree" ref="organizeIdTree">
                       <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
                         :disabled="onlyRead  || isval" multiple @change="onOrganizeChange"
@@ -101,7 +101,7 @@
                   </el-col>
 
 
-                  <el-col :sm="12" :xs="24">
+                  <el-col :sm="8" :xs="24">
                     <el-form-item label="角色" prop="roleId">
                       <el-select v-model="roleId" placeholder="请选择角色" :disabled="onlyRead" @change="onChange('roleId')"
                         style="width: 100%;" @visible-change="visibleChange" multiple filterable clearable>

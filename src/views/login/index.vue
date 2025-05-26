@@ -9,7 +9,7 @@
     <div class="login-container" v-show="!isLogin" v-if="loginpattern.pattern=='1'">
 
       <!-- <el-image class="login-bg" :src="" @load="bgload"></el-image> -->
-      <el-image class="login-bg" :src="define.comUrl + loginpattern.loginBg" @load="bgload" v-show="isbgload"></el-image>
+      <el-image class="login-bg" v-if="loginpattern && loginpattern.loginBg" :src="define.comUrl + loginpattern.loginBg" @load="bgload" v-show="isbgload"></el-image>
       <img class="login-bg" src="@/assets/images/login_bg.png" alt="" v-show="!isbgload" />
       <div class="body">
         <div style="opacity: .8;">

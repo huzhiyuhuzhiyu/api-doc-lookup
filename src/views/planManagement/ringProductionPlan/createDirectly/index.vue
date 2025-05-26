@@ -1003,7 +1003,7 @@ export default {
 
     goBack() {
       if (this.btnType == 'add') {
-        this.$router.push({ path: "/planManagement/assemblyPlan/assemblyPlanManagement" })
+        this.$router.push({ path: "/planManagement/ringProductionPlan/assemblyPlanManagement" })
       } else {
         this.$emit('close')
       }

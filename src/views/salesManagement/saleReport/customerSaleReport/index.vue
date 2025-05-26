@@ -58,18 +58,21 @@
                 </div>
               </div>
             
-              <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="inboundData"  @sort-change="sortChange" custom-column customKey="JNPFTableKey_7668545512749">
-                <el-table-column prop="supplierName" label="客户名称"  sortable="custom"></el-table-column>
-                <el-table-column prop="productName" label="产品名称"  sortable="custom"/>
-                <el-table-column prop="projectName" label="销售发货数量"  sortable="custom"/>
-                <el-table-column prop="samplingSumQuantity" label="销售金额"  sortable="custom"></el-table-column>
-                <el-table-column prop="unqualifiedPercent" label="销售额占比"  sortable="custom" width="200">
+              <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="tableData"  @sort-change="sortChange" custom-column customKey="JNPFTableKey_7668545512749">
+                <el-table-column prop="partnerName" label="客户名称"  ></el-table-column>
+                <el-table-column prop="productsName" label="产品名称"  />
+                <el-table-column prop="sumNum" label="销售发货数量"  />
+                <el-table-column prop="sumAmount" label="销售金额"  ></el-table-column>
+                <el-table-column prop="amountPercent" label="销售额占比"   width="200">
                   <template slot-scope="scope">
-                    <el-progress :percentage="scope.row.unqualifiedPercent || 0"></el-progress>
+                    <el-progress :percentage="scope.row.amountPercent || 0"></el-progress>
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" />
+              <pagination :total="total" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" >
+              <span>总发货数量:{{ totalSumNum }}</span>
+              <span style="margin-left: 10px;">总销售金额:{{ totalSumTotalAmount }}</span>
+              </pagination>
             </div>
            
             <!-- 高级查询 -->
@@ -84,7 +87,7 @@
 <script>
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
-import { supplierProductReport } from '@/api/inspectionManagement/index.js'
+import { saleCustomerReport} from '@/api/salesManagement/assemblyOrders' 
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 export default {
@@ -104,10 +107,11 @@ export default {
       superInboundForm: {},
       inboundForm:{},
       inboundFormList:{
-        startDate: "",
-        endDate: "",
-        productName: "",
-        supplierName: "",
+        businessType:"outbound_sale_send",
+        orderStartDate: "",
+        orderEndDate: "",
+        productsName: "",
+        partnerName: "",
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
@@ -127,27 +131,24 @@ export default {
         }
       }, 
       searchList2:[
-        { field: 'supplierName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
       ], 
       superQueryInbound: [
           {
-          prop: 'productName',
+          prop: 'productsName',
           label: "产品名称",
           type: 'input'
         },
-        {
-          prop: 'projectName',
-          label: "所属项目",
-          type: 'input'
-        },
+     
            {
-          prop: 'supplierName',
-          label: "供应商名称",
+          prop: 'partnerName',
+          label: "客户名称",
           type: 'input'
         },
       ],
       superQueryInboundVisible: false,
-
+      totalSumTotalAmount:0,
+      totalSumNum:0,
 
     
 
@@ -209,9 +210,11 @@ export default {
     initData() {
       this.listLoading = true
 
-         supplierProductReport(this.inboundForm).then(res => {
-          this.inboundData = res.data.records
-          this.inboundTotal = res.data.total
+         saleCustomerReport(this.inboundForm).then(res => {
+           this.tableData = res.data.page.records||[]
+        this.total = res.data.page.total||0
+        this.totalSumTotalAmount=res.data.total.sumAmount||0
+        this.totalSumNum=res.data.total.sumNum||0
           this.listLoading = false
           this.visible = false
         }).catch(() => {
@@ -262,7 +265,7 @@ export default {
         this.superInboundForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
         this.searchList2=[
            { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'supplierName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ]
   
       this.search('basic')
@@ -284,8 +287,8 @@ export default {
       
       let _data = {
         ...this.inboundForm,
-        exportType: '1256',
-        exportName: "供应商货品质量报表",
+        exportType: '1258',
+        exportName: "客户销售报表",
         includeFieldMap,
         pageSize: data.dataType == 0 ? this.inboundForm.pageSize : -1
       }

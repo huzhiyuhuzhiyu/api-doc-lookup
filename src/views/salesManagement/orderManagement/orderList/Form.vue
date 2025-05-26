@@ -51,7 +51,7 @@
                       <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
                         <el-form-item label="客户合同号" prop="contractNo">
                           <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
-                            maxlength="300" clearable />
+                            maxlength="20" clearable />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
@@ -171,7 +171,7 @@
                       <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                         v-if="saleContractNoSwitch === '0'">
                         <template slot-scope="scope">
-                          <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                          <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                             :disabled="btnType === 'look'"></el-input>
                         </template>
                       </el-table-column>
@@ -307,7 +307,7 @@
                     <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                       v-if="saleContractNoSwitch === '0'">
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                        <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                           :disabled="btnType === 'look'"></el-input>
                       </template>
                     </el-table-column>
@@ -629,7 +629,7 @@
                   <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
                     <el-form-item label="客户合同号" prop="contractNo">
                       <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
-                        maxlength="300" clearable />
+                        maxlength="20" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -736,7 +736,7 @@
                   <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                     v-if="saleContractNoSwitch === '0'">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                      <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                         :disabled="btnType === 'look'"></el-input>
                     </template>
                   </el-table-column>
@@ -843,8 +843,8 @@
                 </el-table-column>
                 <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                   v-if="saleContractNoSwitch === '0'">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号"
+                  <template slot-scope="scope"> 
+                    <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                       :disabled="btnType === 'look'"></el-input>
                   </template>
                 </el-table-column>
@@ -3014,7 +3014,7 @@ export default {
             this.defaultAddress = res.data.order.region.countryName + res.data.order.region.provinceName + res.data.order.region.cityName + res.data.order.region.areaName + res.data.order.address
             res.data.order.approvalStatus = ""
             res.data.order.shipmentStatus = ""
-            this.dataForm = res.data.order
+            this.dataForm = res.data.order 
             this.dataForm.orderNo = ""
             this.dataForm.distributeStatus = "undistributed"
             this.dataForm.planStatus = "not_generated"
@@ -3048,6 +3048,7 @@ export default {
               this.salesFlag = true
             }
             res.data.orderLines.forEach(item => {
+              item.shipmentStatus='not_finish'
               if (this.mainUnitFlag == 1) {
                 if (item.calculationDirection == 'multiplication') {
                   this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))

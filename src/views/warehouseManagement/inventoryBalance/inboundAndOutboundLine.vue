@@ -3,38 +3,23 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-
-                    <template v-for="item in searchList">
-                        <el-col :span="4" :key="item.prop">
-                            <el-form-item>
-                                <el-input v-if="item.searchType === 1" v-model="item.fieldValue"
-                                          :placeholder="'请输入' + item.label"
-                                          clearable @keyup.enter.native="search('basic')"
-                                />
-                                <!-- <el-date-picker v-else-if="item.searchType === 2" v-model="item.fieldValue" type="daterange"
-                                                value-format="yyyy-MM-dd" style="width: 100%;" :clearable="false"
-                                                popper-class="date_form" start-placeholder="请选择开始日期" end-placeholder="请选择结束日期"
-                                                @change="search('basic')"
-                                /> -->
-                                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
-                                           :placeholder="'请选择' + item.label"
-                                           clearable
-                                >
-                                    <el-option v-for="(item2, index2) in item.options" :key="index2"
-                                               :label="item2.label"
-                                               :value="item2.value"
-                                    ></el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                    </template>
- <el-col :span="4">
-            <el-form-item>
-              <el-date-picker v-model="listQuery.orderDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="请选择对账开始日期" end-placeholder="请选择对账结束日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
+                    <el-col :span="4">
+                      <el-form-item>
+                            <el-input  v-model="listQuery.moveOrderNo" :placeholder="'请输入' + listQuery.documentType=='inbound'?'入库单号':'出库单号'"  clearable @keyup.enter.native="search('basic')" />
+                      </el-form-item>
+                    </el-col>
+                     <el-col :span="4">
+                      <el-form-item>
+                            <el-input  v-model="listQuery.batchNumber" placeholder="批次号"  clearable @keyup.enter.native="search('basic')" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-form-item>
+                        <el-date-picker v-model="orderDate" type="daterange" value-format="yyyy-MM-dd"
+                          style="width: 100%;" start-placeholder="请选择开始日期" end-placeholder="请选择结束日期">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
                     <el-col :span="6">
                         <el-form-item>
                             <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -59,11 +44,6 @@
                                     :content="listQuery.documentType === 'inbound' ? '入库数量明细' : '出库数量明细'"
                     />
                     <div class="JNPF-common-head-right">
-                        <el-tooltip content="高级查询" placement="top" v-if="true">
-                            <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                                     @click="superQueryVisible = true"
-                            />
-                        </el-tooltip>
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                             <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                                      @click="columnSetFun()"
@@ -188,7 +168,9 @@ export default {
             tableData: [],
             listLoading: false,
             visible: false,
-            listQuery: {},
+            listQuery: {
+              
+            },
             total: 0,
             exportFormVisible: false,
             superQueryVisible: false,
@@ -240,11 +222,13 @@ export default {
                 }
             ],
             basicQuery: {},
-            superQuery: {}
+            superQuery: {},
+            orderDate:[]
         }
     },
 
     created() {
+      console.log("this.listRequestObj",this.listRequestObj);
         this.getData()
     },
     methods: {
@@ -258,6 +242,7 @@ export default {
         },
         getData() {
             this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
+            console.log(222,this.listQuery);
             this.initData()
         },
 
@@ -268,8 +253,51 @@ export default {
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
-            this.jnpf.searchTimeFormat(this.listQuery, 'orderDate', 'orderStartDate', 'orderEndDate')
+            if(this.orderDate&&this.orderDate.length>0){
+              this.listQuery.orderStartDate=this.orderDate[0]
+              this.listQuery.orderEndDate=this.orderDate[1]
+            }else{
+                 this.listQuery.orderStartDate=''
+              this.listQuery.orderEndDate=''
+            }
             this.listMethod(this.listQuery).then(res => {
+                    let arr = [
+                { label: '销售退货', value: 'inbound_sale_return' },
+                { label: '采购收货', value: 'inbound_purchase' },
+                { label: '生产退料', value: 'inbound_return_materials' },
+                { label: '外协退料', value: 'inbound_external_return' },
+                { label: '外协收货', value: 'inbound_external' },
+                { label: '直接入库', value: 'inbound_other' },
+                { label: '调拨入库', value: 'inbound_transfer' },
+                { label: '调拨入库', value: 'inbound_transfer' },
+                { label: '直接领料入库', value: 'inbound_receive_material' },
+                { label: '生产工单入库', value: 'inbound_production' },
+                { label: '生产产品入库', value: 'inbound_order_production' },
+                { label: '翻库入库', value: 'inbound_flip' }, 
+                { label: '盘点调整入库', value: 'inbound_taking_adjust' },
+                { label: '组装入库', value: 'inbound_merge' },
+                { label: '形态转换入库', value: 'inbound_shift' },
+
+
+                { label: '销售发货', value: 'outbound_sale_send' },
+                { label: '采购退货', value: 'outbound_purchase' },
+                { label: '生产领料', value: 'outbound_pick_out' },
+                { label: '外协发料', value: 'outbound_external_send' },
+                { label: '外协退货', value: 'outbound_external' },
+                { label: '直接出库', value: 'outbound_other' },
+                { label: '调拨出库', value: 'outbound_transfer' },
+                { label: '直接领料出库', value: 'outbound_receive_material' },
+                { label: '盘点调整出库', value: 'outbound_taking_adjust' },
+                { label: '组装出库', value: 'outbound_merge' },
+                { label: '拆卸出库', value: 'outbound_split' },
+                { label: '形态转换出库', value: 'outbound_shift' },
+    
+            ]
+            res.data.records.forEach(item1 => {
+              let name=arr.find(item=>item.value === item1.businessType) ?  arr.find(item=>item.value === item1.businessType).label : ''
+              console.log("name",name);
+              this.$set(item1,'businessTypeName',name)
+            });
                 this.tableData = res.data.records
                 this.total = res.data.total
                 this.listLoading = false
@@ -278,25 +306,12 @@ export default {
             })
         },
         search(type) {
-            // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
-            if (type === 'basic') {
-                this.basicQuery = {
-                    matchLogic: 'AND',
-                    condition: this.searchList.filter(item => item.fieldValue).map(item => {
-                        return {
-                            ...item,
-                            fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
-                        }
-                    })
-                }
-                this.listQuery.superQuery = this.basicQuery
-            }
-            if (type === 'super') {
-                this.listQuery.superQuery = this.superQuery
-            }
             this.initData()
         },
         reset() {
+          this.orderDate=[]
+            this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
+            console.log(111,this.listQuery);
             this.getData()
         },
         // 导出

@@ -88,7 +88,7 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24" v-if="(isZY || isMS) && dataForm.businessType === 'outbound_pick_out'">
+                        <!-- <el-col :sm="6" :xs="24" v-if="(isZY || isMS) && dataForm.businessType === 'outbound_pick_out'">
                             <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
                                 <el-select @change="stockOutboundFlagChange" v-model="dataForm.totalStockOutboundFlag" placeholder="请选择是否按总库存出库" style="width: 100%;"
                                            :disabled="btnType === 'look'">
@@ -96,7 +96,7 @@
                                                :value="item.value"></el-option>
                                 </el-select>
                             </el-form-item>
-                        </el-col>
+                        </el-col> -->
                         <el-col :sm="6" :xs="24"
                           v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
                           <el-form-item :label="dataForm.businessType == 'outbound_pick_out' ? '领料人' : '退料人'"
@@ -2135,8 +2135,9 @@ export default {
       this.productData = productArr
     },
     // 选择业务类型
-    selectDocutementType(val) {
-      this.dataForm.totalStockOutboundFlag = val === 'outbound_pick_out'
+    selectDocutementType(val,flag) {
+      if(!flag&&(this.isMS||this.isZY))this.dataForm.totalStockOutboundFlag = val === 'outbound_pick_out'
+      
       // 如果选择的是外协收货 外协发料 采购收退货 需要调用后台参数配置 是否开启显示重量比重折扣显示
       if (val == 'inbound_purchase' || val == 'outbound_purchase' || val == 'outbound_external_send' || val == 'inbound_external') {
         this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')
@@ -2304,7 +2305,7 @@ export default {
         })
       })
     },
-    init(id, btnType) {
+    async init(id, btnType) {
       console.log(777, id, btnType);
       this.formLoading = true
       this.getclassAttributeList()
@@ -2312,13 +2313,16 @@ export default {
       if (id) {
         this.title = btnType == 'look' ? '查看出入库单' : '编辑出入库单'
         // 获取详情
-        detailWarehouseData(id).then(res => {
+        await detailWarehouseData(id).then(res => {
           this.$set(res.data.stockMove, 'cooperativePartnerIdText', res.data.stockMove.partnerName)
           console.log("直接详情",res);
           this.dataForm = res.data.stockMove
           console.log("this.datafo",this.dataForm);
-          this.selectDocutementType(this.dataForm.businessType)
-          res.data.spaceLines.forEach(item => {
+           this.selectDocutementType(this.dataForm.businessType,'detail')
+            this.totalStockOutboundFlag=res.data.totalStockOutboundFlag
+          setTimeout(() => {
+          }, 800);
+          res.data.lines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
           });
           if (res.data.attachmentList) {
@@ -2334,7 +2338,7 @@ export default {
               )
             })
           }
-          this.productData = res.data.spaceLines
+          this.productData = res.data.lines
           this.spaceLines = res.data.spaceLines
           this.formLoading = false
           let arr = [

@@ -1,5 +1,13 @@
 <template>
     <div class="JNPF-common-layout">
+
+
+
+
+
+
+
+
         <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16" v-if="searchList.length">
                 <el-form @submit.native.prevent>
@@ -13,7 +21,7 @@
                                 <el-date-picker v-else-if="item.searchType === 2" v-model="item.fieldValue" type="month"
                                                 value-format="yyyy-MM" style="width: 100%;" :clearable="false"
                                                 popper-class="date_form"
-                                                @change="search('basic')"
+                                                @change="changeDateFun()"
                                 />
                                 <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue"
                                            :placeholder="'请选择' + item.label" :disabled="item.disabled"
@@ -43,11 +51,11 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head" style="padding:10px">
-                    <topOpts :addText="'结存'" :disabled="!tableData.length
-                || tableData[0].accountPeriod !== listQuery.accountPeriod
-                || tableData[0].accountPeriod !== accountPeriod[0]"
-                             @add="addOrUpdateHandle(listQuery.accountPeriod,'normal')"
-                    >
+                  <div >
+                      <el-button type="primary" size="mini" icon="el-icon-plus"
+                        @click="addOrUpdateHandle(listQuery.accountPeriod, 'normal')" :disabled="!tableData.length || tableData[0].accountPeriod !== listQuery.accountPeriod || tableData[0].accountPeriod !== accountPeriod[0]" 
+                        >结存
+                        </el-button>
                         <el-button type="primary" size="mini" icon="el-icon-refresh-left"
                                    @click="addOrUpdateHandle(listQuery.accountPeriod, 'reverse')" :disabled="!tableData.length
                 || tableData[0].accountPeriod !== listQuery.accountPeriod
@@ -56,11 +64,9 @@
                 || isInCurrentOrLastMonth(tableData[0].accountPeriod)"
                         >反结存
                         </el-button>
-                        <el-button type="primary" size="mini" :disabled="!tableData.length" icon="el-icon-download"
-                                   @click="exportForm"
-                        >导出
-                        </el-button>
-                    </topOpts>
+                       
+                  </div>
+                  
                     <div class="JNPF-common-head-right">
                         <el-tooltip content="高级查询" placement="top" v-if="true">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -318,8 +324,8 @@ export default {
                 startUpdateTime: '',
                 totalRowFlag: false,
                 warehouseCode: '',
-                warehouseName: '',
-                orderDate: []
+                warehouseName: '', 
+                moveOrderNo:"",
             },
             tableItems: [
                 { prop: 'orderNo', label: '出库单号', minWidth: '180' },
@@ -327,13 +333,18 @@ export default {
                 { prop: 'productName', label: '产品名称' },
                 { prop: 'productCode', label: '产品编码', minWidth: '140' },
                 { prop: 'batchNumber', label: '批次号', minWidth: '180' },
+                { prop: 'businessTypeName', label: '业务类型', minWidth: '180', },
                 { prop: 'mainUnit', label: '单位', minWidth: '80' },
                 { prop: 'num', label: '数量' },
-                { prop: 'costPrice', label: '单价(含税)' },
-                { prop: 'excludingTaxCostPrice', label: '单价(不含税)' },
-                { prop: 'taxRate', label: '税率' },
-                { prop: 'taxAmount', label: '税额' },
-                { prop: 'totalAmount', label: '金额(不含税)' },
+                { prop: 'beforeInventory', label: '变动前库存' },
+                { prop: 'afterInventory', label: '变动后库存' },
+                
+                
+                // { prop: 'costPrice', label: '单价(含税)' },
+                // { prop: 'excludingTaxCostPrice', label: '单价(不含税)' },
+                // { prop: 'taxRate', label: '税率' },
+                // { prop: 'taxAmount', label: '税额' },
+                // { prop: 'totalAmount', label: '金额(不含税)' },
                 { prop: 'orderDate', label: '出库日期', minWidth: '180' }
             ],
             searchLineList: [
@@ -457,6 +468,13 @@ export default {
         this.initData()
     },
     methods: {
+       
+      async changeDateFun(){
+            const res = await canStockBalance(this.defaultProjectId)
+        this.accountPeriod = res.data
+        this.listQuery.accountPeriod = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
+        this.search('basic')
+      },
         setSearchList(){
             this.searchList = [
             
@@ -729,8 +747,7 @@ export default {
         inboundAndOutboundLine(type, id) {
             this.lineVisible = true
             this.inboundAndOutboundQuery.documentType = type
-            this.inboundAndOutboundQuery.balanceId = id
-            this.inboundAndOutboundQuery.orderDate = []
+            this.inboundAndOutboundQuery.balanceId = id 
             this.tableItems.forEach(item => item.label = type == 'inbound' ? item.label.replaceAll('出库', '入库') : item.label.replaceAll('入库', '出库'))
             this.searchLineList.forEach(item => item.label = type == 'inbound' ? item.label.replaceAll('出库', '入库') : item.label.replaceAll('入库', '出库'))
             this.$nextTick(() => {

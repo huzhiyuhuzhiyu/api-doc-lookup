@@ -78,7 +78,7 @@
 
                           <el-col :sm="6" :xs="24" >
                             <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
-                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" style="width: 100%;" :disabled="btnType=='look'"
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" style="width: 100%;" :disabled="btnType=='look'" @change="selectFun"
                                  >
                                 <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
                                   :value="item.value"></el-option>
@@ -124,7 +124,7 @@
                       </div>
                       </div>
                       <JNPF-table ref="product" :data="productData" custom-column :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'"
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'" customKey="JNPFTableKey_40332542"
                         :setColumnDisplayList="columnList">
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
@@ -332,7 +332,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
-                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" style="width: 100%;" :disabled="btnType=='look'"
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" style="width: 100%;" :disabled="btnType=='look'"  @change="selectFun"
                                  >
                                 <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
                                   :value="item.value"></el-option>
@@ -385,8 +385,8 @@
                       </div>
                       </div>
                       <JNPF-table ref="product" :data="productData" custom-column :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'"
-                        :setColumnDisplayList="columnList">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" :partent-or-child="'child'" customKey="JNPFTableKey_45502542"
+                        :setColumnDisplayList="columnList" >
 
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
@@ -882,6 +882,10 @@ export default {
 
   },
   methods: {
+    selectFun(){
+    this.$nextTick(() => { this.$refs.product.doLayout() })
+
+    },
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {
@@ -971,6 +975,17 @@ export default {
       this.$set(this.productData[index], 'angle', data.angle)
       this.$set(this.productData[index], 'pairingModeName', data.pairingModeName)
       this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
+
+      this.$set(this.productData[index], 'oilQuantity', data.oilQuantity)
+      this.$set(this.productData[index], 'holder', data.holder)
+      this.$set(this.productData[index], 'specSize', data.specSize)
+      this.$set(this.productData[index], 'logo', data.logo)
+      this.$set(this.productData[index], 'aperture', data.aperture)
+      this.$set(this.productData[index], 'divideEqually', data.divideEqually)
+      this.$set(this.productData[index], 'brand', data.brand)
+      this.$set(this.productData[index], 'sealingCoverStructure', data.sealingCoverStructure)
+      this.$set(this.productData[index], 'structureType', data.structureType)
+      this.$set(this.productData[index], 'noise', data.noise)
       // 如果批次数量小于待出库数量，则把出库数量设为批次数量，反之则为待出库数量
       const newNum = Math.min(this.productData[index].availableBatchNumber, this.productData[index].waitDeliverNum)
       if (newNum !== Number(this.productData[index].num)) {
@@ -979,7 +994,6 @@ export default {
         console.log(this.productData,'this.productData')
       }
     },
-
 
 
 

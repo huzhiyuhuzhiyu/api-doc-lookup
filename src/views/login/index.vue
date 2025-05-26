@@ -409,7 +409,7 @@ export default {
       }
       this.loginpattern = res.data
       this.isLogin = false
-      if(this.loginpattern.loginBg!='null') return this.isbgload = true
+      if(this.loginpattern.loginBg) return this.isbgload = true
       this.isbgload = false
     })
     // getConfig('isTenancy').then(res => {
@@ -597,7 +597,6 @@ export default {
           this.codeLength = res.data.verificationCodeNumber || 4
         }
         this.sysConfig = res.data.baseSystemInfo
-        this.isbgload = false
       })
     },
     handleLogin() {

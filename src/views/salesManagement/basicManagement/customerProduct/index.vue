@@ -587,9 +587,9 @@ export default {
     },
     // 打印
     printFun(id) {
-      this.enCode = 'p059' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p059' // 筛选出 businessType 等于 type 的项
       this.formId = id
-      this.fullName = "客户产品备货工艺" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "客户产品备货工艺" // 筛选出 businessType 等于 type 的项
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)
@@ -1145,7 +1145,7 @@ export default {
           pageSize: 20,
           code: "",
           name: "",
-        },
+        }
           this.searchList = [
             { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
             { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },

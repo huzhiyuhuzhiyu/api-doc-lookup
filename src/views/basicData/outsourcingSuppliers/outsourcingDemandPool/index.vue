@@ -79,12 +79,15 @@
               <div v-else>否</div>
             </template>
           </el-table-column>
-          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-            :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
+          <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'" width='120'/>
           <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
           <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="130" sortable="custom" />
 
-          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" />
+          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" >
+            <template slot-scope="scope">
+              {{ scope.row.orderedQuantity? scope.row.orderedQuantity:0}}
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
           <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />

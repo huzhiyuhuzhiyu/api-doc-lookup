@@ -105,6 +105,8 @@ export default {
                 },
                 {prop:"drawingNo", label:'品名规格',minWidth:160,sortable:'custom'},
                 {prop:"productsName", label:'产品名称',minWidth:140,render:this.isProductNameSwitch === '1',sortable:'custom'},
+
+                {prop:"standardValue", label:'规值',minWidth:140,sortable:'custom'},
                 {prop:"productsCode", label:'产品编码',minWidth:140,sortable:'custom'},
                 {prop:"processName", label:'工序名称',minWidth:140,sortable:'custom'},
                 {prop:"warehouseName", label:'仓库名称',minWidth:140,sortable:'custom'},

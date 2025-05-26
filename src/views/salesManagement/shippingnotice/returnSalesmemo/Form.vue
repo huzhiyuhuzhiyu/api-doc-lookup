@@ -636,7 +636,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.orderNo" placeholder="请输入订单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -644,14 +644,18 @@
                     <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
                   </el-form-item>
                 </el-col>
-
                 <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <!-- <el-col :span="6">
                   <el-form-item label="交货日期">
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
                       style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                     </el-date-picker>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
 
                 <el-col :span="6">
                   <el-form-item>
@@ -875,7 +879,8 @@ export default {
         partnerName: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-
+        orderNo:"",
+        drawingNo:"",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{

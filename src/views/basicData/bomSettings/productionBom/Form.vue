@@ -211,7 +211,7 @@ export default {
         { prop: 'remark',  sm: 12, label: '备注', value: '', type: 'textarea' }
       ],
       linesList: [],
-
+     
       linesListItems: [
         { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
         { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
@@ -510,13 +510,21 @@ export default {
       if (this.isProductNameSwitch === '1') {
         this.ProductTableItems.splice(1, 0, { prop: 'name', label: '产品名称' })
         this.ProductTableSearchList.splice(1, 0, { prop: "productName", label: "产品名称", type: 'input' })
-        this.linesListItems.splice(1, 0, { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 })
+        const exists = this.linesListItems.some(item => item.prop === 'productName');
+
+        if (!exists) {
+                this.linesListItems.splice(1, 0, { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 })
+        }
       } else {
 
       }
       if (this.isProjectSwitch === '1') {
         this.ProductTableItems.unshift({ prop: 'projectName', label: '所属项目' })
-        this.linesListItems.unshift({ prop: 'projectName', label: '所属项目', value: '', type: 'view', minWidth: 150 })
+         const exists = this.linesListItems.some(item => item.prop === 'projectName');
+
+        if (!exists) {
+                this.linesListItems.unshift({ prop: 'projectName', label: '所属项目', value: '', type: 'view', minWidth: 150 })
+        }
       } else {
 
       }

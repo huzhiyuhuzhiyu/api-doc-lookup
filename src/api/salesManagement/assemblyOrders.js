@@ -211,7 +211,24 @@ export const saleDeliveryReport = (data) => {
     method: 'post',
     data
   })
-}// 获取中亚备注
+}
+// 产品汇总报表
+export const saleProductReport = (data) => {
+  return request({
+    url: `/api/report/data/sale/product/report`,
+    method: 'post',
+    data
+  })
+}
+// 客户销售汇总报表
+export const saleCustomerReport = (data) => {
+  return request({
+    url: `/api/report/data/sale/customer/report`,
+    method: 'post',
+    data
+  })
+}
+// 获取中亚备注
 export const getSaleHistoryRemark = () => {
   return request({
     url: `/api/erp/sale/orders/ordersRemark`,

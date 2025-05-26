@@ -4,10 +4,10 @@
     <div class="JNPF-common-layout-center JNPF-flex-main" v-if="!visibleForm">
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
-        <el-radio-group v-model="categoryType" style="background-color:#fff;">
+        <el-radio-group v-model="categoryType" style="background-color:#fff;" @input="getStockMovelistFun">
 
           <el-badge :value="item.num != null || item.num != undefined ? item.num : item.todoNum" :max="99"
-            v-for="item in treeData" :key="item.id">
+            v-for="item in treeData" :key="item.id" :hidden="!Number(item.num != null || item.num != undefined ? item.num : item.todoNum)">
             <el-radio-button style="margin:2px 0;" :key="item.businessType" :label="item.businessType">{{ item.fullName
               }}</el-radio-button>
           </el-badge>

@@ -49,7 +49,7 @@
                             </el-form-item>
                           </el-col>
 
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                           && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="供应商" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly disabled>
@@ -221,7 +221,7 @@
                               placeholder="原批次号"></el-input>
                           </template>
                         </el-table-column>
-                        
+
                         <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="pairingModeName" label="配对方式" width="100" />
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" />
@@ -238,12 +238,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -253,7 +253,7 @@
                        </el-table-column>
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                        </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -493,7 +493,7 @@
                               placeholder="原批次号"></el-input>
                           </template>
                         </el-table-column>
-                        
+
                         <el-table-column prop="standardValue" label="规值" width="100" />
                         <el-table-column prop="pairingModeName" label="配对方式" width="100" />
                         <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" />
@@ -512,12 +512,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -527,7 +527,7 @@
                        </el-table-column>
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                        </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -638,7 +638,7 @@
                 <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
                 <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="110" sortable="custom" />
-                <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -765,7 +765,8 @@ export default {
         weightFlag: false,
         orderDate: this.jnpf.getToday(),
         projectId: "",
-        diffBatchNumFlag:1
+        diffBatchNumFlag:1,
+        inspectionResults:'qualified'
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -1105,7 +1106,7 @@ export default {
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
-        item.num = item.requiredReceivedQuantity
+        item.num = item.requiredReceivedQuantity || item.waitReceiptNum
         item.taxRates = item.taxRate + "%"
 
 

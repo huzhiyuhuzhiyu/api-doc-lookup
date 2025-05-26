@@ -409,6 +409,7 @@ export default {
       }
       this.loginpattern = res.data
       this.isLogin = false
+      if (this.loginpattern.loginBg === 'null') return this.isbgload = false
       if(this.loginpattern.loginBg) return this.isbgload = true
       this.isbgload = false
     })

@@ -85,15 +85,15 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="isZY ? 6 : 12" :xs="24">
+                            <el-col :sm="12" :xs="24">
                                 <el-form-item label="备注" prop="remark">
                                     <el-input v-model="dataForm.remark" placeholder="请输入备注"
                                               :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
                                               maxlength="200" />
                                 </el-form-item>
                             </el-col>
-                            <template v-for="item in 6">
-                                <el-col :sm="6" :xs="24" :key="item" v-if="isZY">
+                            <template v-for="item in 1">
+                                <el-col :sm="12" :xs="24" :key="item" v-if="isZY">
                                     <el-form-item :label="'备注'+item" :prop="'ordersRemark'+item">
                                         <el-input v-model="dataForm['ordersRemark'+item]" :placeholder="'请输入备注'+item"
                                                   disabled type="textarea" :rows="2" maxlength="200" />
@@ -346,17 +346,17 @@
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="isZY ? 6 : 12" :xs="24">
+                            <el-col :sm="12" :xs="24">
                                 <el-form-item label="备注" prop="remark">
                                     <el-input v-model="dataForm.remark" placeholder="请输入备注"
                                               :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
                                               maxlength="200" />
                                 </el-form-item>
                             </el-col>
-                            <template v-for="item in 6">
-                                <el-col :sm="6" :xs="24" :key="item" v-if="isZY">
+                            <template v-for="item in 1">
+                                <el-col :sm="12" :xs="24" :key="item" v-if="isZY">
                                     <el-form-item :label="'备注'+item" :prop="'ordersRemark'+item">
-                                        <el-input v-model="dataForm['ordersRemark'+item]" :placeholder="'请输入备注'+item"
+                                        <el-input v-model="dataForm['ordersRemark'+item]"
                                                   disabled type="textarea" :rows="2" maxlength="200" />
                                     </el-form-item>
                                 </el-col>

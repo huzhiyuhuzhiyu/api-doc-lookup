@@ -517,3 +517,14 @@ export function getdailyRequisitionNum(data) {
     data
   })
 }
+
+
+// 设备报表
+export function equipmentReport(data) {
+  return request({
+    url: `/api/zgt/ZgtReport/equipment/report`,
+    method: 'POST',
+    data
+  })
+}
+

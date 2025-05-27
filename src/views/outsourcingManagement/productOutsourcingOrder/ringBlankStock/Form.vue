@@ -128,8 +128,16 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="weight" label="重量(kg)" width="90" />
-                      <el-table-column prop="proportion" label="比重" width="80" />
+                      <el-table-column prop="weight" label="重量(kg)" width="90" >
+                          <template slot-scope="scope">
+                           <el-input v-model="scope.row.weight" maxlength="20" placeholder="重量(kg)" ></el-input>
+                          </template>
+                      </el-table-column>
+                      <el-table-column prop="proportion" label="比重" width="80" >
+                        <template slot-scope="scope">
+                           <el-input v-model="scope.row.proportion" maxlength="20" placeholder="比重" ></el-input>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" min-width="195" :key="6">
                         <template slot="header">
                           <span class="required">*</span>
@@ -166,7 +174,7 @@
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              placeholder="数量" disabled></el-input>
+                              placeholder="数量" ></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -1125,15 +1133,15 @@ export default {
       if (!val) return
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
 
-      let obj = {
-        productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
-      }
-      // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then((res) => {
-        this.dataFormTwo.data[index].outShipmentList = res.data
-      })
-
+      // let obj = {
+      //   productsId: this.dataFormTwo.data[index].productsId,
+      //   purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      // }
+      // // 通过需求池id 获取明细的数据
+      // getShipmentList(obj).then((res) => {
+      //   this.dataFormTwo.data[index].outShipmentList = res.data
+      // })
+      this.dataFormTwo.data[index].outShipmentList[0].demandQuantity1 =(this.dataFormTwo.data[index].purchaseQuantity*1) 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
@@ -1514,8 +1522,8 @@ export default {
               weight :item.weight,
               productsId:item.productsId,
               proportion :item.proportion,
-          mainUnit: item.mainUnit,
-          discount :item.discount,
+              mainUnit: item.mainUnit,
+              discount :item.discount,
               productName:item.productName,
               productsId:item.productsId,
               productDrawingNo:item.productDrawingNo,

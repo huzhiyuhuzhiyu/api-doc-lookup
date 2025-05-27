@@ -265,7 +265,7 @@
                                          v-if="isXY || isJR">
                             <template slot-scope="scope">
                                 <el-form-item>
-                                    <el-select disabled v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                                    <el-select default-first-option filterable allow-create disabled v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                                                style="width: 100%;">
                                         <el-option v-for="(item, index) in bimProductAttributesObj.pa026" :key="index"
                                                    :label="item.name" :value="item.name"></el-option>
@@ -594,7 +594,7 @@
                                      v-if="isXY || isJR">
                         <template slot-scope="scope">
                             <el-form-item>
-                                <el-select disabled v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                                <el-select default-first-option filterable allow-create disabled v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                                            style="width: 100%;">
                                     <el-option v-for="(item, index) in bimProductAttributesObj.pa026" :key="index"
                                                :label="item.name" :value="item.name"></el-option>

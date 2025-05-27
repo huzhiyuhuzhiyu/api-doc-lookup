@@ -91,7 +91,7 @@
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="isXY || isJR">
                         <el-form-item  label="钢丝炉号" >
-                          <el-select filterable allow-create  v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
+                          <el-select default-first-option filterable allow-create  v-model="dataForm.wireHeatNumber" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
                                 :label="item.name" :value="item.name"></el-option>
                             </el-select>

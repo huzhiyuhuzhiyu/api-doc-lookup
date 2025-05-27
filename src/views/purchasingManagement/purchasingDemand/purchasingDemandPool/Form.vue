@@ -93,7 +93,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'costProjectId'" >
                               <el-select v-model="scope.row.costProjectId" placeholder="请选择" :disabled="scope.row.projectId!='1'">
-                                <el-option v-for="(item, index) in abProjectNoCommonList" :key="index" :label="item.label" 
+                                <el-option v-for="(item, index) in abProjectNoCommonList" :key="index" :label="item.label"
                                   :value="item.value"></el-option>
                               </el-select>
                             </el-form-item>
@@ -310,7 +310,7 @@
                           v-if="isXY || isJR">
                           <template slot-scope="scope">
                             <el-form-item>
-                              <el-select v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                              <el-select default-first-option filterable allow-create v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                                 style="width: 100%;">
                                 <el-option v-for="(item, index) in bimProductAttributesList.pa026" :key="index"
                                   :label="item.name" :value="item.name"></el-option>

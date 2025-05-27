@@ -361,7 +361,7 @@
                       <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
                         key="123">
                         <template slot-scope="scope">
-                          <el-select filterable allow-create v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
+                          <el-select default-first-option filterable allow-create v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
                               :value="item.name"></el-option>
@@ -1183,11 +1183,28 @@ export default {
 
   },
   async created() {
+      // 产品属性
+    const ProductAttributesList = await getbimProductAttributesListMap()
+      console.log(ProductAttributesList,'ProductAttributesList')
+    this.bimProductAttributesList = ProductAttributesList.data
     await this.getProductClassFun()
-    await this.getOrderFiledMap()
+      // 优化从缓存取 不重接口拿
+      this.sealingCoverTypingFlag = this.$store.getters.configData.orderField.sealingCoverTyping ? '1' : '0'
+      this.accuracyLevelFlag = this.$store.getters.configData.orderField.accuracyLevel ? '1' : '0'
+      this.vibrationLevelFlag = this.$store.getters.configData.orderField.vibrationLevel ? '1' : '0'
+      this.oilFlag = this.$store.getters.configData.orderField.oil ? '1' : '0'
+      this.oilQuantityFlag = this.$store.getters.configData.orderField.oilQuantity ? '1' : '0'
+      this.clearanceFlag = this.$store.getters.configData.orderField.clearance ? '1' : '0'
+      this.packagingMethodFlag = this.$store.getters.configData.orderField.packagingMethod ? '1' : '0'
+      this.specialRequireFlag = this.$store.getters.configData.orderField.specialRequire ? '1' : '0'
+      this.materialFlag = this.$store.getters.configData.orderField.material ? '1' : '0'
+      this.colourFlag = this.$store.getters.configData.orderField.colour ? '1' : '0'
+      this.standardValueFlag = this.$store.getters.configData.orderField.standardValue ? '1' : '0'
+      this.processFlag = this.$store.getters.configData.orderField.process ? '1' : '0'
     this.advancedQueryFuns()
     await this.getProjectSwitch('system', 'project')
-    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+    this.isPairingModeSwitch = this.$store.getters.configData.product.enable_show_pairing_mode ? '1' : '0'
+    this.productNameFlag = this.$store.getters.configData.product.enable_productName ? '1' : '0'
     await this.getpairingModeListFun()
     await this.getWarehouseListFun()
     await this.switchStyleheight()
@@ -1195,10 +1212,6 @@ export default {
     this.getprocessList()
     this.getclassAttributeList()
     this.getBusInfo('b046')
-    let objs = { "pageSize": -1, "businessCode": "product" }
-    await getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1
-    })
     this.$nextTick(() => { this.$refs.products.doLayout() })
   },
   watch: {
@@ -1213,13 +1226,7 @@ export default {
     this.getBimBusinessDetail()
   },
   methods: {
-     // 配对方式显示隐藏
-     async getPairingModeSwitch(code, type) {
-      try {
-        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.tableDataFlag = true
-      } catch (error) { }
-    },
+
     selectWeight() {
       this.$nextTick(() => { this.$refs.products.doLayout() })
 
@@ -1273,31 +1280,7 @@ export default {
         this.attachmentData = res.data
       })
     },
-    async getOrderFiledMap() {
-      await getOrderFiledMap('sale').then((res) => {
-        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-          console.log(this.sealingCoverTypingFlag,'thissealingCoverTypingFlag')
-        this.accuracyLevelFlag = res.data.accuracyLevel
-        this.vibrationLevelFlag = res.data.vibrationLevel
-        this.oilFlag = res.data.oil
-        this.oilQuantityFlag = res.data.oilQuantity
-        this.clearanceFlag = res.data.clearance
-        this.packagingMethodFlag = res.data.packagingMethod
-        this.specialRequireFlag = res.data.specialRequire
-        this.materialFlag = res.data.material
-        this.colourFlag = res.data.colour
-      })
-      await getOrderFiledMap('purchase').then(res => {
-        this.standardValueFlag = res.data.standardValue
-          console.log(this.standardValueFlag,'standardValueFlag')
-        this.processFlag = res.data.process
-      })
-    },
     getProductClassFun() {
-      // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
         res.data.list.forEach(item => {
@@ -2141,7 +2124,7 @@ export default {
     // 选择业务类型
     selectDocutementType(val,flag) {
       if(!flag&&(this.isMS||this.isZY))this.dataForm.totalStockOutboundFlag = val === 'outbound_pick_out'
-      
+
       // 如果选择的是外协收货 外协发料 采购收退货 需要调用后台参数配置 是否开启显示重量比重折扣显示
       if (val == 'inbound_purchase' || val == 'outbound_purchase' || val == 'outbound_external_send' || val == 'inbound_external') {
         this.getMainUnitFun('warehouse', 'proportion', 'proportionFlag')

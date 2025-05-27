@@ -198,3 +198,34 @@ export function uploadBimProductAttributePrice (data) {
     data
   })
 }
+
+// 产品工序重量 列表
+export function productProcessWeightList (data) {
+  return request({
+    url: '/api/zgt/bimProductProcessWeight/page',
+    method: 'post',
+    data
+  })
+}
+// 产品工序重量 新增
+export function batchAddProductProcessWeight (data) {
+  return request({
+    url: '/api/zgt/bimProductProcessWeight/batchAdd',
+    method: 'post',
+    data
+  })
+}
+// 删除
+export function deleteProductProcessWeight (id) {
+    return request({
+        url: `/api/zgt/bimProductProcessWeight/remove/${id}`,
+        method: 'delete',
+    })
+}
+export function uploadProductProcess (data) {
+    return request({
+        url: '/api/zgt/bimProductProcessWeight/upload',
+        method: 'post',
+        data
+    })
+}

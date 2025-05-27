@@ -16,6 +16,7 @@ import JNPFQuill from '@/components/JNPFEditor/quill'
 import UserSelect from '@/components/JNPF-userSelect'
 import uploadBtn from '@/components/JNPF-uploadBtn'
 import UploadWj from "@/components/upload-wj";
+import UploadDataButton  from "@/components/UploadDataButton";
 // 代码生成器专供
 import JNPFText from '@/components/Generator/components/JNPFText'
 import JNPFTableText from '@/components/Generator/components/JNPFTableText'
@@ -68,6 +69,7 @@ export default {
     Vue.component('jnpfFormTipItem', jnpfFormTipItem)
     Vue.component('jnpfOpenData', jnpfOpenData)
     Vue.component('uploadBtn', uploadBtn)
+    Vue.component('UploadDataButton ', UploadDataButton )
     Vue.component('UserBox', UserBox)
     Vue.component('JNPFText', JNPFText)
     Vue.component('JNPFTableText', JNPFTableText)

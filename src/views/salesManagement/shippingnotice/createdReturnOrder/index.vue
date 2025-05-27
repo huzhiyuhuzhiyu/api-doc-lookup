@@ -155,7 +155,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
                               :rules='productRules.deliveryQuantity'>
-                              <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
+                              <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入退货数量"
                                 :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11" @input="watchnums(scope.row, scope.$index)">
                               </el-input>
                             </el-form-item>

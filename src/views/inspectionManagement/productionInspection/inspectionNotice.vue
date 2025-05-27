@@ -100,7 +100,7 @@
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
           <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
           <el-table-column prop="utilizeQuantity" label="利用数量" min-width="120" sortable="custom" />
-          <el-table-column prop="completedNum" label="返工数量" min-width="120" />
+          <!-- <el-table-column prop="completedNum" label="返工数量" min-width="120" /> -->
           <el-table-column prop="planStartDate" label="计划开始日期" width="150" sortable="custom" />
           <el-table-column prop="planEndDate" label="计划结束日期" width="150" sortable="custom" />
           <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />

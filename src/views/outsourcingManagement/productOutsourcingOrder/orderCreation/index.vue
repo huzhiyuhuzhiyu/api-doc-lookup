@@ -303,12 +303,14 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import { mapGetters, mapState } from 'vuex'
+import TenantMinix from '@/mixins/generator/TenantMinix'
+
 export default {
   components: {
     SourceArea,
     Process
   },
-  mixins: [AbProjectMixin],
+  mixins: [AbProjectMixin,TenantMinix],
   name: 'orderCreation',
   data() {
     return {
@@ -984,6 +986,7 @@ export default {
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
         this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
+        this.ProductListRequestObj.productSource = this.isXBN ? '' : 'out'
       }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true

@@ -294,7 +294,7 @@
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.customerProductNo" placeholder="请输入"
+                        <el-input v-model="scope.row.customerProductNo" placeholder="请输入" maxlength="30"
                           @keyup.enter.native="searchCustomerProduct(scope)">{{
                             scope.row.customerProductNo }}
                         </el-input>
@@ -835,7 +835,7 @@
                 <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.customerProductNo" placeholder="请输入"
+                    <el-input v-model="scope.row.customerProductNo" placeholder="请输入" maxlength="30"
                       @keyup.enter.native="searchCustomerProduct(scope)">{{
                         scope.row.customerProductNo }}
                     </el-input>

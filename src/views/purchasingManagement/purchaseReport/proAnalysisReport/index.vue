@@ -64,7 +64,11 @@
             <el-table-column prop="productsDrawingNo" label="品名规格"  sortable="custom"></el-table-column>
             <el-table-column prop="receiptQuantity" label="累计采购总量"  sortable="custom" />
             <el-table-column prop="returnQuantity" label="累计退货总量" sortable="custom" />
-            <el-table-column prop="rate" label="有效采购百分比"  sortable="custom" />
+            <el-table-column prop="rate" label="有效采购百分比"  sortable="custom" >
+              <template slot-scope="scope">
+                    <el-progress :percentage="scope.row.rate.replace('%','') || 0"></el-progress>
+                  </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" >
@@ -318,5 +322,9 @@ export default {
   margin-bottom: 5px;
 }
 </style>
-
+<style lang="scss" scoped>
+::v-deep .el-progress-bar{
+  width: 80%;
+}
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

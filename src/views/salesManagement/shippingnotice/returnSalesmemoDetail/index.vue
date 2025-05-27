@@ -40,9 +40,9 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
+              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
                 取消退货
-              </el-button>
+              </el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </div>

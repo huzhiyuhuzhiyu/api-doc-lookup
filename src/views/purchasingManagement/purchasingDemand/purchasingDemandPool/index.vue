@@ -106,7 +106,11 @@
               <div v-else>无</div>
             </template>
           </el-table-column> -->
-          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" />
+          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" >
+            <template slot-scope="scope">
+              {{ scope.row.orderedQuantity?scope.row.orderedQuantity:0 }}
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
           <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
@@ -133,6 +137,7 @@
               <div v-if="scope.row.demandStatus == 'not_finish'"><el-tag type="warning">未完成</el-tag></div>
               <div v-if="scope.row.demandStatus == 'finishing'"><el-tag>完成中</el-tag></div>
               <div v-if="scope.row.demandStatus == 'finished'"><el-tag type="success">已完成</el-tag></div>
+              <div v-if="scope.row.demandStatus == 'revoke'"><el-tag type="danger">已撤回</el-tag></div>
             </template>
           </el-table-column>
           <el-table-column prop="material" label="材质" width="130" sortable="custom"
@@ -143,10 +148,10 @@
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
 
-          <!-- <el-table-column label="操作" min-width="180" fixed="right">
+          <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" :disabled="type === 'look'" @click="addOrUpdateHandle(scope.row.id, 'edit')">生成采购订单</el-button>
-              <el-dropdown hide-on-click>
+              <el-button size="mini" type="text" :disabled="scope.row.demandStatus === 'finished'" @click="withdrawFun(scope.row.id,)">撤回</el-button>
+              <!-- <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
                     {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -157,9 +162,9 @@
                     查看详情
                   </el-dropdown-item>
                 </el-dropdown-menu>
-              </el-dropdown>
+              </el-dropdown> -->
             </template>
-          </el-table-column> -->
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -186,7 +191,7 @@
 </template>
 
 <script>
-import { purProcurementDemandPoolList, getPoolSourceList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { purProcurementDemandPoolList, getPoolSourceList,purProcurementDemandPoolRevoke } from '@/api/purchasingManagement/purchaseInquirySheet'
 import JNPFForm from './Form'
 import moment from 'moment'
 import QuiryForm from '@/views/purchasingManagement/priceAdjustmentInquiry/purchaseInquirySheet/Form.vue'
@@ -496,7 +501,24 @@ if (classAttributeObj) {
     this.initData()
   },
   methods: {
-        handleRowClick(row){
+    withdrawFun(id){
+
+      this.$confirm(this.$t('你确定撤回该数据吗？'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        console.log(4444);
+        purProcurementDemandPoolRevoke(id).then(res => {
+          console.log(5555);
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "撤回成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+    handleRowClick(row){
         this.$refs.tableForm.$refs.JNPFTable.toggleRowSelection(row);
     },
     classAttributeChange(){

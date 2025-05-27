@@ -3,6 +3,13 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
+                   <el-col :span="4">
+                      <el-form-item>
+                         <el-select v-model="listQuery.documentType"  @change="cahngeDocuType">
+                            <el-option v-for="(item2, index2) in documentTypeList" :key="index2" :label="item2.label" :value="item2.value"></el-option>
+                          </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :span="4">
                       <el-form-item>
                             <el-input  v-model="listQuery.moveOrderNo" :placeholder="'请输入' + listQuery.documentType=='inbound'?'入库单号':'出库单号'"  clearable @keyup.enter.native="search('basic')" />
@@ -41,7 +48,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head">
                     <el-page-header @back="$emit('close', true)"
-                                    :content="listQuery.documentType === 'inbound' ? '入库数量明细' : '出库数量明细'"
+                                    :content="listQuery.documentType === 'inbound' ? '入库数量明细' :listQuery.documentType === 'outbound' ? '出库数量明细':'出入库明细'"
                     />
                     <div class="JNPF-common-head-right">
                         <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -221,6 +228,11 @@ export default {
                     type: 'input'
                 }
             ],
+            documentTypeList:[
+              {label:"全部",value:""},
+              {label:"出库明细",value:"outbound"},
+              {label:"入库明细",value:"inbound"},
+            ],
             basicQuery: {},
             superQuery: {},
             orderDate:[]
@@ -232,6 +244,10 @@ export default {
         this.getData()
     },
     methods: {
+      cahngeDocuType(){
+          this.search('basic')
+          
+          },
         superQuerySearch(query) {
             this.superQuery = query
             this.superQueryVisible = false

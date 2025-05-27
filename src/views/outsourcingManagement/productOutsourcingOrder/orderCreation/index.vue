@@ -225,7 +225,7 @@
                             <template slot-scope="scope">
                               <el-button size="mini" type="text" :disabled="sourceDisabled"
                                 @click="handlerOpenSource(scope.$index, 'source')">
-                                查看发料清单
+                                发料清单
                               </el-button>
                               <el-button size="mini" type="text" class="JNPF-table-delBtn"
                                 :disabled="dataFormTwo.data.length < 2"
@@ -303,15 +303,18 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import { mapGetters, mapState } from 'vuex'
+import TenantMinix from '@/mixins/generator/TenantMinix'
+
 export default {
   components: {
     SourceArea,
     Process
   },
-  mixins: [AbProjectMixin],
+  mixins: [AbProjectMixin,TenantMinix],
   name: 'orderCreation',
   data() {
     return {
+      sourceData:[],
       isProjectSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
@@ -840,8 +843,9 @@ export default {
         purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
       }
       // 通过需求池id 获取明细的数据
+      console.log(555,this.sourceData);
       getShipmentList(obj).then((res) => {
-        this.sourceData = res.data
+        this.sourceData = res.data.length?res.data:this.sourceData
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
             this.sourceData[ind].demandQuantity1 = item.demandQuantity1
@@ -866,11 +870,16 @@ export default {
         // }
 
         this.$nextTick(() => {
-          this.$refs['sourceRef'].init(this.sourceData, '')
+          console.log(222,this.sourceData);
+          this.$refs['sourceRef'].init(this.sourceData, this.dataFormTwo.data[index])
         })
       })
     },
-
+    handlerConfirm(data){
+      console.log("data",data);
+      this.sourceData=data
+      this.dataFormTwo.data[this.index].outShipmentList=data
+    },
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
@@ -984,6 +993,7 @@ export default {
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
         this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
+        this.ProductListRequestObj.productSource = this.isXBN ? '' : 'out'
       }
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true

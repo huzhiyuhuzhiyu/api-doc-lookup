@@ -328,7 +328,7 @@ export default {
                 moveOrderNo:"",
             },
             tableItems: [
-                { prop: 'orderNo', label: '出库单号', minWidth: '180' },
+                { prop: 'orderNo', label: '出入库单号', minWidth: '180' },
                 { prop: 'drawingNo', label: '品名规格', minWidth: '300' },
                 { prop: 'productName', label: '产品名称' },
                 { prop: 'productCode', label: '产品编码', minWidth: '140' },
@@ -345,13 +345,13 @@ export default {
                 // { prop: 'taxRate', label: '税率' },
                 // { prop: 'taxAmount', label: '税额' },
                 // { prop: 'totalAmount', label: '金额(不含税)' },
-                { prop: 'orderDate', label: '出库日期', minWidth: '180' }
+                { prop: 'orderDate', label: '出入库日期', minWidth: '180' }
             ],
             searchLineList: [
                 {
                     fieldValue: '',
                     field: 'moveOrderNo',
-                    label: '出库单号',
+                    label: '出入库单号',
                     prop: 'moveOrderNo',
                     symbol: 'like',
                     searchType: 1
@@ -367,7 +367,7 @@ export default {
                 {
                     fieldValue: '',
                     field: 'orderDate',
-                    label: '出库日期',
+                    label: '出入库日期',
                     prop: 'orderDate',
                     symbol: 'like',
                     searchType: 2
@@ -748,8 +748,6 @@ export default {
             this.lineVisible = true
             this.inboundAndOutboundQuery.documentType = type
             this.inboundAndOutboundQuery.balanceId = id 
-            this.tableItems.forEach(item => item.label = type == 'inbound' ? item.label.replaceAll('出库', '入库') : item.label.replaceAll('入库', '出库'))
-            this.searchLineList.forEach(item => item.label = type == 'inbound' ? item.label.replaceAll('出库', '入库') : item.label.replaceAll('入库', '出库'))
             this.$nextTick(() => {
                 this.$refs.lineForm.getData()
             })

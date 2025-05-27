@@ -73,7 +73,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="返工数量" prop="warehouseId">
+                  <el-form-item label="返工数量" prop="actualReworkQuantity">
                     <el-input placeholder="返工数量" v-model="dataForm.actualReworkQuantity" disabled>
                       <template slot="append">
                         <el-button @click="setReworkWasteM">修改</el-button>
@@ -82,7 +82,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="责废数量" prop="warehouseId">
+                  <el-form-item label="责废数量" prop="actualResponsibilityWasteQuantity">
                     <el-input placeholder="责废数量" v-model="dataForm.actualResponsibilityWasteQuantity" disabled>
                       <template slot="append">
                         <el-button @click="setResponsWasteM">修改</el-button>
@@ -146,7 +146,7 @@ export default {
   components: { ReworkWaste, MaterialWasteForm, responsWaste },
   mixins: [AbProjectMixin],
   data() {
-    return {
+    return { 
       reworkWasteFormVisible: false,
       responsWasteFormVisible: false,
       materialWasteFormVisible: false,
@@ -197,7 +197,11 @@ export default {
         orderNo: '',
         cooperativePartnerId: '',
         remark: '',
-        approvalFlag: false
+        approvalFlag: false,
+        actualConcessionQuantity:"",
+        actualReworkQuantity:"",
+        actualResponsibilityWasteQuantity:"",
+        actualMaterialQuantity:"",
       },
       workReport:{},
       defaultAddress: '',
@@ -317,6 +321,7 @@ export default {
       if (totalNums) {
         this.dataForm.actualResponsibilityWasteQuantity = totalNums
       }
+      console.log(this.dataForm);
       if (Number(this.qualifiedQuantity) <0) {
         this.$message.error('合格数量不能小于0')
         return
@@ -340,6 +345,7 @@ export default {
       if (totalNums) {
         this.dataForm.actualMaterialQuantity = totalNums
       }
+      console.log(this.dataForm);
       if (Number(this.qualifiedQuantity) <0) {
         this.$message.error('合格数量不能小于0')
         return
@@ -400,6 +406,7 @@ export default {
 
       this.dataForm = { ...row }
       this.workReport = {...row}
+      this.qualifiedQuantity=this.dataForm.qualifiedQuantity
       this.dataForm.reportNo = this.dataForm.orderNo
       this.dataForm.actualResponsibilityWasteQuantity = Number(this.dataForm.responsibilityWasteQuantity) 
       this.dataForm.actualMaterialQuantity = Number(this.dataForm.materialWasteQuantity)
@@ -497,10 +504,10 @@ export default {
         // 实际合格数量 = 合格数量 + 让步接收数量
         this.dataForm.actualQualifiedQuantity =
           Number(this.qualifiedQuantity) + Number(this.dataForm.actualConcessionQuantity)
-
+        console.log('actualQualifiedQuantity',this.dataForm.actualQualifiedQuantity);
         // 实际不合格数量 = 实际责废数量 + 实际料废数量
-        this.dataForm.actualUnqualifiedQuantity =
-          Number(this.dataForm.actualResponsibilityWasteQuantity) + Number(this.dataForm.actualMaterialQuantity)
+        this.dataForm.actualUnqualifiedQuantity = Number(this.dataForm.actualResponsibilityWasteQuantity) + Number(this.dataForm.actualMaterialQuantity)
+        
         if (
           Number(this.dataForm.actualQualifiedQuantity) +
           Number(this.dataForm.actualUnqualifiedQuantity) +
@@ -513,16 +520,16 @@ export default {
         this.dataForm.inspectionStatus = 'inspected'
         let obj = {
           attachmentList: this.datafilelist,
-          inspection: this.dataForm,
-          workReport: this.workReport,
+          inspection: this.workReport,
+          workReport: this.dataForm,
           lines: [],
           flowData: this.flowData
         }
         console.log(obj,'lll')
-        
         this.btnLoading = true
 
         console.log(obj, 'obj')
+
         addReportWorkInspectionData(obj)
           .then((res) => {
             let msg = res.msg

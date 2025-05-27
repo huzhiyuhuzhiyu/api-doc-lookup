@@ -41,7 +41,7 @@
                 <el-collapse-item title="产品信息" name="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                      :data="dataFormTwo.data" id="table" :height="customStyleData">
+                      :data="dataFormTwo.data" id="table" :height="customStyleData" ref="tableForm">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="costProjectName" label="成本核算归属" width="160" v-if="abProjectSwitchVisible"
@@ -57,7 +57,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
@@ -70,13 +70,13 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                        :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                      <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                        width="110" sortable="custom" />
-                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                      <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
-                        v-if="isDeputyUnitSwitch === '1'" />
+                      <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.procureDeputyUnit? '单位(主)' : '单位'"
+                        :width="$store.getters.configData.deputyUnit.procureDeputyUnit? 85 : 60" />
+                      <el-table-column prop="purchaseQuantity" :label="$store.getters.configData.deputyUnit.procureDeputyUnit? '数量(主)' : '数量'"
+                        width="110"  />
+                      <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="$store.getters.configData.deputyUnit.procureDeputyUnit === '1'" />
+                      <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
+                        v-if="$store.getters.configData.deputyUnit.procureDeputyUnit === '1'" />
 
                       <el-table-column prop="price" label="单价(含税)" width="100" v-if="userInfo.roleCode.split(',').includes('show_procure_data')">
                         <template slot-scope="scope">
@@ -155,7 +155,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="material" label="材质" width="120" :key="211" v-if="materialFlag === '1'">
+                      <el-table-column prop="material" label="材质" width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_material">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -164,7 +164,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="colourFlag === '1'">
+                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_colour">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -193,7 +193,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column  prop="accuracyLevel"
-:label="$store.getters.accuracyLevel"  width="120" :key="123">
+                          :label="$store.getters.accuracyLevel"  width="120" :key="123">
                         <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                           <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" disabled clearable>
                             <el-option v-for="(item, index) in bimProductAttributesObj.pa006" :key="index"
@@ -350,7 +350,7 @@
             <el-collapse-item title="产品信息" name="productInfo">
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                 <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
-                  :data="dataFormTwo.data" id="table" :height="customStyleData">
+                  :data="dataFormTwo.data" id="table" :height="customStyleData" ref="tableForm">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                   <el-table-column prop="costProjectName" label="成本核算归属" width="160" v-if="abProjectSwitchVisible"
@@ -367,7 +367,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  <el-table-column prop="productName" label="产品名称" width="160" v-if="$store.getters.configData.product.enable_productName"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140"
                     show-overflow-tooltip></el-table-column>
@@ -391,13 +391,13 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch === '1' ? '单位(主)' : '单位'"
-                    :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
-                  <el-table-column prop="purchaseQuantity" :label="isDeputyUnitSwitch === '1' ? '数量(主)' : '数量'"
-                    width="110" sortable="custom" />
-                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
-                  <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" sortable="custom"
-                    v-if="isDeputyUnitSwitch === '1'" />
+                  <el-table-column prop="mainUnit" :label="$store.getters.configData.deputyUnit.procureDeputyUnit? '单位(主)' : '单位'"
+                    :width="$store.getters.configData.deputyUnit.procureDeputyUnit? 85 : 60" />
+                  <el-table-column prop="purchaseQuantity" :label="$store.getters.configData.deputyUnit.procureDeputyUnit? '数量(主)' : '数量'"
+                    width="110"  />
+                  <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="$store.getters.configData.deputyUnit.procureDeputyUnit === '1'" />
+                  <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" 
+                    v-if="$store.getters.configData.deputyUnit.procureDeputyUnit === '1'" />
 
                   <el-table-column prop="receiptQuantity" label="已入库数量" width="110">
                     <template slot-scope="scope">
@@ -485,7 +485,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="material" label="材质" width="120" :key="211" v-if="materialFlag === '1'">
+                  <el-table-column prop="material" label="材质" width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_material">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable style="width: 100%;">
                         <el-option v-for="(item, index) in bimProductAttributesObj.pa021" :key="index"
@@ -493,7 +493,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="colourFlag === '1'">
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_colour">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
                         <el-option v-for="(item, index) in bimProductAttributesObj.pa010" :key="index"
@@ -502,7 +502,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="processId" label="工序" width="120" :key="102"
-                    v-if="this.dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
+                    v-if="this.dataForm.classAttribute !== 'finish_product' && $store.getters.configData.orderField.purchase_process">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.processId" placeholder="请选择" disabled clearable
                         style="width: 100%;">
@@ -757,12 +757,17 @@ export default {
     }
   },
   async created() {
-    await this.getOrderFiledMap()
-    await this.getDeputyUnit()
-    await this.getProductNameSwitch('product', 'enable_productName')
+    // await this.getOrderFiledMap()
+    // await this.getDeputyUnit()
+    // await this.getProductNameSwitch('product', 'enable_productName')
     await this.switchStyleheight()
     this.formLoading = false
     this.getBimBusinessDetail()
+  },
+  mounted () {
+      this.$nextTick(()=>{
+        this.$refs.tableForm.doLayout()
+      })
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -850,28 +855,28 @@ export default {
         }, 100)
       }
     },
-    getOrderFiledMap() {
-      getOrderFiledMap('purchase').then((res) => {
-        this.standardValueFlag = res.data.standardValue
-        this.materialFlag = res.data.material
-        this.colourFlag = res.data.colour
-        this.processFlag = res.data.process
-      })
-    },
-    async getProductNameSwitch(code, type) {
-      try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
-      } catch (error) { }
-    },
-    getDeputyUnit() {
-      let obj = {
-        businessCode: 'deputyUnit',
-        configKey: `procureDeputyUnit`
-      }
-      getBimBusinessDetail(obj).then((res) => {
-        this.isDeputyUnitSwitch = res.data.configValue1
-      })
-    },
+    // getOrderFiledMap() {
+    //   getOrderFiledMap('purchase').then((res) => {
+    //     this.standardValueFlag = res.data.standardValue
+    //     this.materialFlag = res.data.material
+    //     this.colourFlag = res.data.colour
+    //     this.processFlag = res.data.process
+    //   })
+    // },
+    // async getProductNameSwitch(code, type) {
+    //   try {
+    //     this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
+    //   } catch (error) { }
+    // },
+    // getDeputyUnit() {
+    //   let obj = {
+    //     businessCode: 'deputyUnit',
+    //     configKey: `procureDeputyUnit`
+    //   }
+    //   getBimBusinessDetail(obj).then((res) => {
+    //     this.isDeputyUnitSwitch = res.data.configValue1
+    //   })
+    // },
     getBimBusinessDetail() {
       let obj = {
         businessCode: 'attachment',

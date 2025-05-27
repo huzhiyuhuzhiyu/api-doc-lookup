@@ -328,7 +328,8 @@
                     </el-form-item>
                   </el-col>
 
-                  <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"
+                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcessType == 1" -->
+                  <el-col :sm="24" :xs="24"
                     :style="!currentProcess.vibrateReportFlag ? 'margin-top:5px' : ''">
                     <el-form-item label="责废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
@@ -337,7 +338,8 @@
                         @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="currentProcessType == 1">
+                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcessType == 1"> -->
+                  <el-col :sm="24" :xs="24"  >
                     <el-form-item label="料废数量:" class="iptLabel">
                       <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"
                         @blur="handleBlur3" class="ipt materialWaste" />

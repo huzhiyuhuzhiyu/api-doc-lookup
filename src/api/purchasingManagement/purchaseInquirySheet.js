@@ -420,3 +420,13 @@ export function purchaseAnalysis(data) {
     data
   })
 }
+
+
+// 采购需求池撤回
+
+export function purProcurementDemandPoolRevoke(id) {
+  return request({
+    url: `/api/erp/purProcurementDemandPool/revoke/${id}`,
+    method: 'post',
+  })
+}

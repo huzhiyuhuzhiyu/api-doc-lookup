@@ -1,6 +1,6 @@
 <template>
   <div class="import-button">
-    <el-button :loading="loading" size="mini" type="text" icon="el-icon-upload2" @click="importForm()">{{ buttonText }}</el-button>
+    <el-button :loading="loading" size="mini" :type="buttonType" icon="el-icon-upload2" @click="importForm()">{{ buttonText }}</el-button>
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible="importFormVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px"
       @close="handleClose">
@@ -29,8 +29,12 @@
 
 <script>
 export default {
-  name: 'UploadDataButton ',
+  name: 'UploadDataButton',
   props: {
+    buttonType:{
+        type: String,
+        default: 'text'
+    },
     buttonText: {
       type: String,
       default: '导入'
@@ -58,7 +62,7 @@ export default {
     // 关闭弹窗
     handleClose() {
       this.importFormVisible = false
-      this.$refs.uploadRef?.clearFiles()
+      this.$refs.uploadRef && this.$refs.uploadRef.clearFiles()
       this.file = null
     },
     // 下载模板

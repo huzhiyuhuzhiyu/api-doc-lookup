@@ -119,18 +119,23 @@
 
 
                     <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-                      <div v-if="btnType !== 'look'">
-                        <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
-                          :disabled="btnType == 'look' ? true : false"
-                          @click="openSeleceProductDialog()">选择产品</el-button>|
-                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                          @click="batchDelete">批量删除</el-button>
-
-                      </div>
-
+                        <div style="height:34px">
+                              <div v-if="btnType !== 'look'" style="float: left">
+                                <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                                  :disabled="btnType === 'look'"
+                                  @click="openSeleceProductDialog()">选择产品</el-button>|
+                                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                                  :disabled="btnType === 'look'" icon="el-icon-delete"
+                                  @click="batchDelete">批量删除</el-button>
+                              </div>
+                              <div style="float:right;margin-right: 10px;height:34px">
+                                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="$refs.product.showDrawer()"/>
+                                </el-tooltip>
+                              </div>
+                        </div>
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_517129">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_517129" custom-column>
 
 
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -391,18 +396,24 @@
 
 
                     <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-                      <div v-if="btnType !== 'look'">
-                        <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
-                          :disabled="btnType == 'look' ? true : false"
-                          @click="openSeleceProductDialog()">选择产品</el-button>|
-                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                          @click="batchDelete">批量删除</el-button>
-
-                      </div>
+                        <div style="height:34px">
+                            <div v-if="btnType !== 'look'" style="float: left">
+                                <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                                           :disabled="btnType === 'look'"
+                                           @click="openSeleceProductDialog()">选择产品</el-button>|
+                                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                                           :disabled="btnType === 'look'" icon="el-icon-delete"
+                                           @click="batchDelete">批量删除</el-button>
+                            </div>
+                            <div style="float:right;margin-right: 10px;height:34px">
+                                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="$refs.product.showDrawer()"/>
+                                </el-tooltip>
+                            </div>
+                        </div>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" custom-column>
 
 
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -1303,6 +1314,7 @@ export default {
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
     init(data, btnType, businessType, classAttributeList, warehouseCode) {
+        console.log('勇豪傻逼')
       console.log("11", data, btnType, businessType, warehouseCode);
       this.dataForm.businessType = businessType
       this.classAttributeList = classAttributeList

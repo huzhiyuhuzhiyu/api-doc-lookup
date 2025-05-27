@@ -111,18 +111,24 @@
 
 
                     <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-                      <div v-if="btnType !== 'look'">
-                        <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
-                          :disabled="btnType == 'look' ? true : false"
-                          @click="openSeleceProductDialog()">选择产品</el-button>|
-                        <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                          :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                          @click="batchDelete">批量删除</el-button>
-
-                      </div>
+                        <div style="height:34px">
+                            <div v-if="btnType !== 'look'" style="float: left">
+                                <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                                           :disabled="btnType === 'look'"
+                                           @click="openSeleceProductDialog()">选择产品</el-button>|
+                                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                                           :disabled="btnType === 'look'" icon="el-icon-delete"
+                                           @click="batchDelete">批量删除</el-button>
+                            </div>
+                            <div style="float:right;margin-right: 10px;height:34px">
+                                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="$refs.product.showDrawer()"/>
+                                </el-tooltip>
+                            </div>
+                        </div>>
 
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_912783">
+                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" customKey="JNPFTableKey_912783" custom-column>
 
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                         <el-table-column prop="productName" label="产品名称" v-if="productNameFlag === '1'"
@@ -235,12 +241,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -250,7 +256,7 @@
                        </el-table-column>
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                        </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">
@@ -317,7 +323,7 @@
                             </el-form-item>
                           </el-col>
 
-                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data') 
+                          <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')
                           && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                             <el-form-item label="供应商" prop="cooperativePartnerId">
                               <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" disabled>
@@ -503,12 +509,12 @@
                         <el-table-column prop="specSize" label="规格/尺寸" width="120" v-if="$store.getters.configData.orderField.specSize">
                        </el-table-column>
                        <el-table-column prop="logo" label="Logo" width="120" v-if="$store.getters.configData.orderField.logo">
-                       
+
                        </el-table-column>
                        <el-table-column prop="aperture" label="孔径" min-width="120" v-if="$store.getters.configData.orderField.aperture">
                       </el-table-column>
                        <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  width="120" v-if="$store.getters.configData.orderField.divideEqually">
-                       
+
                        </el-table-column>
                        <el-table-column prop="brand" label="品牌" width="120" v-if="$store.getters.configData.orderField.brand">
                        </el-table-column>
@@ -518,7 +524,7 @@
                        </el-table-column>
                        <el-table-column prop="noise" label="噪音" width="120" v-if="$store.getters.configData.orderField.noise">
                        </el-table-column>
-                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" 
+                       <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120"
                           v-if="$store.getters.configData.orderField.protrusion">
                        </el-table-column>
                        <el-table-column prop="preload" label="预负荷" width="120" v-if="$store.getters.configData.orderField.preload">

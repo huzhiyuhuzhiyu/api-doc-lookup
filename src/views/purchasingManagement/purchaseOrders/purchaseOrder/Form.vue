@@ -155,7 +155,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="material" label="材质" width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_material">
+                      <el-table-column prop="material" label="材质" width="120" :key="211" v-if="$store.getters.configData.orderField.material">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -164,7 +164,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_colour">
+                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="$store.getters.configData.orderField.colour">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable
                             style="width: 100%;">
@@ -485,7 +485,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="material" label="材质" width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_material">
+                  <el-table-column prop="material" label="材质" width="120" :key="211" v-if="$store.getters.configData.orderField.material">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.material" placeholder="请选择" disabled clearable style="width: 100%;">
                         <el-option v-for="(item, index) in bimProductAttributesObj.pa021" :key="index"
@@ -493,7 +493,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="$store.getters.configData.orderField.purchase_colour">
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" :key="211" v-if="$store.getters.configData.orderField.colour">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.colour" placeholder="请选择" disabled clearable style="width: 100%;">
                         <el-option v-for="(item, index) in bimProductAttributesObj.pa010" :key="index"
@@ -760,12 +760,12 @@ export default {
     // await this.getOrderFiledMap()
     // await this.getDeputyUnit()
     // await this.getProductNameSwitch('product', 'enable_productName')
-    await this.switchStyleheight()
     this.formLoading = false
     this.getBimBusinessDetail()
   },
   mounted () {
       this.$nextTick(()=>{
+        this.switchStyleheight()
         this.$refs.tableForm.doLayout()
       })
   },
@@ -832,7 +832,7 @@ export default {
     }
   },
   methods: {
-    switchStyleheight() {
+    async switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight
       // 其他同级组件占用高度
@@ -969,11 +969,15 @@ export default {
                 })
               })
             }
+            this.formLoading = false
             this.dataForm = res.data
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
-          })
+          }).catch(() => {
+            this.formLoading = false
+
+         })
         }
       })
     },

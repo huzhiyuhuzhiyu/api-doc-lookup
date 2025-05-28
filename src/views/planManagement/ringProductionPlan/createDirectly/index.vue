@@ -1059,12 +1059,18 @@ export default {
                   plan: this.productData[0]
                 }
               }
+              if(!item.planQuantity){
+                this.$message.error("产品信息需求数量不能为空")
+                return
+              }
+              if(!item.planStartDate) return this.$message.error("产品信息计划开始日期不能为空")
+              if(!item.planEndDate) return this.$message.error("产品信息计划结束日期不能为空")
               if (num > item.maxInventory) {
                 this.$confirm(this.$t('产品信息可用库存加计划数量大于最高库存,确认提交吗?'), this.$t('提示'), {
                   type: 'warning'
                 }).then(() => {
-              this.btnLoading = true
-              this.productData.forEach(item => {
+                this.btnLoading = true
+                this.productData.forEach(item => {
                     item.documentStatus = value
                     item.finalPlanQuantity = item.planQuantity
                     item.productionLineId = this.planForm.productionLineId

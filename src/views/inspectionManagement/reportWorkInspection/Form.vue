@@ -411,6 +411,8 @@ export default {
       this.dataForm.actualResponsibilityWasteQuantity = Number(this.dataForm.responsibilityWasteQuantity) 
       this.dataForm.actualMaterialQuantity = Number(this.dataForm.materialWasteQuantity)
       this.dataForm.notificationType = 'work_report'
+      this.workReport.notificationType = 'work_report'
+      this.workReport.docLineId = this.dataForm.id
       console.log(this.dataForm, 'hhhh')
       this.dataForm.docLineId = this.dataForm.id
       this.dataForm.causesList.forEach((item) => {

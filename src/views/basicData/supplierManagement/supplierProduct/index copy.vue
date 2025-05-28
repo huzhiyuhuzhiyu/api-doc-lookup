@@ -1,6 +1,8 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="产品价格" name="latestprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -79,7 +81,8 @@
                     {{ scope.row.taxRate }}%
                   </template>
                 </el-table-column>
-  
+                <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" width="130" />
+                <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" width="130" />
 
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" width="140" :label="$store.getters.sealingCoverTyping" sortable="custom" />
@@ -92,17 +95,112 @@
                 <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
                 <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-                  <el-table-column label="操作" width="180" fixed="right">
-                      <template slot-scope="scope">
-                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                                     @click="handleDel(scope.row.id)">删除</el-button>
-                      </template>
-                  </el-table-column>
               </JNPF-table>
               <pagination :total="total" :page.sync="lastListQuery.pageNum" :background="background"
                 :limit.sync="lastListQuery.pageSize" @pagination="initData" />
             </div>
           </div>
+        </el-tab-pane>
+        <el-tab-pane label="历史价格" name="historicalprice">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <template v-for="item in historySearchList">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="search('basic')" />
+
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
+
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
+                      {{ $t('common.search') }}
+                    </el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+                      {{ $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
+              <div class="JNPF-common-head">
+                <div>
+                  <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+                    icon="el-icon-download" @click="exportForm">
+                    导出
+                  </el-button>
+                </div>
+                <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top" v-if="true">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="historySuperQueryVisible = true" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnList()" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                      @click="initData()" />
+                  </el-tooltip>
+                </div>
+              </div>
+              <JNPF-table v-if="tableDataFlag" highlight-current-row :fixedNO="true" ref="dataTable"
+                :partentOrChild="'child'" :data="tableDataList" @sort-change="sortChange" custom-column
+                :setColumnDisplayList="lastColumnList">
+                <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
+                <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
+                <el-table-column prop="projectName" label="所属项目" width="120"
+                  v-if="isProjectSwitch === '1'"></el-table-column>
+                <el-table-column prop="productName" label="产品名称" width="120"
+                  v-if="isProductNameSwitch === '1'"></el-table-column>
+                <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
+                <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
+                <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="60" />
+                <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
+                <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
+                <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+                  <template slot-scope="scope">
+                    {{ scope.row.taxRate }}%
+                  </template>
+                </el-table-column>
+                <el-table-column prop="effectiveTimeStart" label="有效日期起" width="130" sortable="custom" />
+                <el-table-column prop="effectiveTimeEnd" label="有效日期止" width="130" sortable="custom" />
+                <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140" sortable="custom" />
+                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
+                <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
+                <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
+                <el-table-column prop="remark" label="备注" width="150" />
+                <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
+                <el-table-column prop="createByName" label="创建人" sortable="custom" width="180" />
+              </JNPF-table>
+              <pagination :total="total" :page.sync="historyListQuery.pageNum" :background="background"
+                :limit.sync="historyListQuery.pageSize" @pagination="initData" />
+            </div>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -137,10 +235,10 @@
 
 <script>
 import {
-    getBimVehicleTypeData,
-    deleteBimVehicleType,
-    getPartnerOrProductData,
-    uploadPartnerOrProductData, delPartnerOrProductData
+  getBimVehicleTypeData,
+  deleteBimVehicleType,
+  getPartnerOrProductData,
+  uploadPartnerOrProductData
 } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -283,7 +381,8 @@ export default {
         ]
       },
       total: 0,
-      formVisible: false, 
+      formVisible: false,
+      activeName: 'latestprice',
       lastColumnList: [
         'partnerCode',
         'productCode',
@@ -326,7 +425,24 @@ export default {
           type: 'select',
           options: []
         },
- 
+        {
+          prop: 'effectiveTimeStart',
+          label: '有效日期起',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'effectiveTimeEnd',
+          label: '有效日期止',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
 
         {
           prop: 'standardValue',
@@ -407,8 +523,156 @@ export default {
           label: '创建人',
           type: 'input'
         }
-      ], 
-   
+      ],
+      historyColumnList: [
+        'cooperativePartnerCode',
+        'productCode',
+        'sealingCoverTyping',
+        'accuracyLevel',
+        'vibrationLevel',
+        'oil',
+        'oilQuantity',
+        'clearance',
+        'packagingMethod',
+        'specialRequire',
+        'createTime'
+      ],
+      historySuperQueryVisible: false,
+      historySuperQueryJson: [
+        {
+          prop: 'code',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+
+        {
+          prop: 'name',
+          label: '产品名称',
+          type: 'input'
+        },
+        {
+          prop: 'productCategoryName',
+          label: '产品分类',
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: '主单位',
+          type: 'select'
+        },
+        {
+          prop: 'productSource',
+          label: '产品来源',
+          type: 'select',
+          options: [
+            { label: '生产', value: 'produce' },
+            { label: '采购', value: 'purchase' },
+            { label: '外协', value: 'out' }
+          ]
+        },
+        {
+          prop: 'productStatus',
+          label: '产品状态',
+          type: 'select',
+          options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+        },
+        {
+          prop: 'brand',
+          label: '品牌',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'model',
+          label: '型号',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'standardValue',
+          label: '规值',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'sealingCoverTyping',
+          label: this.$store.getters.sealingCoverTyping,
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'accuracyLevel',
+          label: this.$store.getters.accuracyLevel,
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'vibrationLevel',
+          label: '振动等级',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oil',
+          label: '油脂',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oilQuantity',
+          label: '油脂量',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'clearance',
+          label: '游隙',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: this.$store.getters.specialRequire,
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'colour',
+          label: this.$store.getters.colour,
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        }
+      ]
     }
   },
   async created() {
@@ -443,7 +707,9 @@ export default {
     this.initData()
   },
   watch: {
- 
+    activeName() {
+      this.reset()
+    }
   },
   methods: {
     async getProductNameSwitch(code, type) {
@@ -452,15 +718,22 @@ export default {
       } catch (error) { }
     },
     columnList() {
-      this.$refs.tableForm.showDrawer()
-    
+      if (this.activeName == 'latestprice') {
+        this.$refs.tableForm.showDrawer()
+      } else {
+        this.$refs.dataTable.showDrawer()
+      }
     },
     lastSuperQuerySearch(query) {
       this.superQuery = query
       this.lastSuperQueryVisible = false
       this.search('super')
     },
- 
+    historySuperQuerySearch(query) {
+      this.superQuery = query
+      this.historySuperQueryVisible = false
+      this.search('super')
+    },
     // 导入
     importProductFun() {
       // this.$refs.UploadProduct.$el.querySelector('input').click()
@@ -593,7 +866,8 @@ export default {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
         console.log(includeFieldMap)
-        let name = '' 
+        let name = ''
+        if (this.activeName == 'latestprice') {
           name = '最新价格'
           let _data = {
             ...this.superForm,
@@ -609,10 +883,30 @@ export default {
               this.jnpf.downloadFile(res.data.url)
             })
             .catch(() => { })
-        
+        } else {
+          name = '历史价格'
+          let _data = {
+            ...this.superForm,
+            exportType: '1067',
+            exportName: '供应商产品' + '-' + name,
+            includeFieldMap,
+            pageSize: data.dataType == 0 ? this.superForm.pageSize : -1
+          }
+          excelExport(_data)
+            .then((res) => {
+              this.exportFormVisible = false
+              if (!res.data.url) return
+              this.jnpf.downloadFile(res.data.url)
+            })
+            .catch(() => { })
+        }
       }
     },
- 
+    handleClick(e) {
+      console.log(123)
+      this.activeName = e.name
+      // this.reset()
+    },
     sortChange({ prop, order }) {
       if (prop === 'createTime') {
         prop = 'create_Time'
@@ -644,7 +938,8 @@ export default {
 
     initData() {
       this.listLoading = true
-      console.log(this.superForm, 'this.superForm') 
+      console.log(this.superForm, 'this.superForm')
+      if (this.activeName == 'latestprice') {
         this.superForm = this.lastListQuery
         getPartnerOrProductData(this.superForm)
           .then((res) => {
@@ -657,7 +952,20 @@ export default {
           .catch(() => {
             this.listLoading = false
           })
-      
+      } else {
+        console.log('[]')
+        this.superForm = this.historyListQuery
+        buyFixedPointPricingDetailList(this.superForm)
+          .then((res) => {
+            this.tableDataList = res.data.records
+            this.total = res.data.total
+            this.listLoading = false
+            this.visible = false
+          })
+          .catch(() => {
+            this.listLoading = false
+          })
+      }
     },
     search(type) {
       Object.keys(this.lastListQuery).forEach((key) => {
@@ -665,9 +973,12 @@ export default {
         this.lastListQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.lastListQuery.pageNum = 1
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询 
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (this.activeName == 'latestprice') {
         this.searchList = this.lastSearchList
-     
+      } else {
+        this.searchList = this.historySearchList
+      }
       console.log(this.searchList, 'this.searchList')
       if (type === 'basic') {
         this.basicQuery = {
@@ -712,12 +1023,50 @@ export default {
         code: '',
         name: ''
       }
-      
+      this.historyListQuery = {
+        classAttribute: '',
+        approvalStatus: 'ok',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        approvalStatus: '', // 审批状态 审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
+        cooperativePartnerCode: '', //	供应商编码
+        cooperativePartnerId: '', // 供应商id
+        cooperativePartnerName: '', // 	供应商名称
+
+        documentStatus: '', // 单据状态:草稿 draft、提交 submit,可用值:draft,normal,submit
+        startAndEndTime: '',
+        listPriceFlag: '', // 是否设置牌价:0否1是
+        orderNo: '', // 单号
+        pageNum: 1,
+        pageSize: 20,
+        startTime: '',
+        submitEndTime: '', //提交时间-结束
+        submitStartTime: ''
+        // startAndEndTime: [],
+      }
       this.lastSearchList = [
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
       ]
-  
+      this.historySearchList = [
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        {
+          field: 'cooperativePartnerName',
+          fieldValue: '',
+          label: '供应商名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        }
+      ]
       if (this.isProductNameSwitch === '1') {
         this.lastSearchList.unshift({
           field: 'productName',
@@ -727,7 +1076,14 @@ export default {
           searchType: 1,
           width: 120
         })
-  
+        this.historySearchList.unshift({
+          field: 'productName',
+          fieldValue: '',
+          label: '产品名称',
+          symbol: 'like',
+          searchType: 1,
+          width: 120
+        })
       }
       this.search()
     },
@@ -744,20 +1100,22 @@ export default {
         this.$refs.JNPFForm.init(id, type, false, 'other')
       })
     },
-      handleDel(id) {
-          this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-              type: 'warning'
-          }).then(() => {
-              delPartnerOrProductData(id).then(res => {
-                  this.initData()
-                  this.$message({
-                      type: 'success',
-                      message: "删除成功",
-                      duration: 1500,
-                  })
-              })
-          }).catch(() => { })
-      },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          deleteBimVehicleType(id).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500
+            })
+          })
+        })
+        .catch(() => { })
+    },
     handleUserRelation(id, type) {
       this.depFormVisible = true
       this.$nextTick(() => {

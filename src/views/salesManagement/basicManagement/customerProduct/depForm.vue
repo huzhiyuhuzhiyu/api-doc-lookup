@@ -26,13 +26,7 @@
                       </el-form-item>
                     </el-col>
 
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="有效时间起止" prop="validDateArr">
-
-                        <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd" :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起" end-placeholder="有效时间止" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
+                   
                   </el-row>
                 </el-form>
               </el-collapse-item>
@@ -42,7 +36,7 @@
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important" icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important" icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
+                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button> -->
                 </div>
 
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
@@ -318,12 +312,7 @@
                     <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
                   </el-form-item>
                 </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="有效时间起止" prop="validDateArr">
-                    <el-date-picker v-model="dataForm.validDateArr" type="daterange" value-format="yyyy-MM-dd" :disabled='btnType == "look"' style="width: 100%;" start-placeholder="有效时间起" end-placeholder="有效时间止" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
+           
               </el-row>
             </el-form>
           </el-collapse-item>
@@ -333,7 +322,7 @@
               <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important" icon="el-icon-plus" @click="addProduct">选择产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
+              <!-- <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button> -->
             </div>
 
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
@@ -873,10 +862,8 @@ export default {
       formLoading: false,
       dataForm: {
         partnerType: "customer",
-        dateOrderStart: "",
         cooperativePartnerId: '',
-        cooperativePartnerIdText: '',
-        validDateArr: [],
+        cooperativePartnerIdText: '', 
       },
       taxRateList: [],
       pickerOptions: {
@@ -887,8 +874,7 @@ export default {
       selectRows: [],
       taxRate: '13', // 默认税率
       dataRule: {
-        cooperativePartnerIdText: [{ required: true, message: '客户不能为空', trigger: 'change' }],
-        validDateArr: [{ required: true, message: '有效期止不能为空', trigger: 'blur' }],
+        cooperativePartnerIdText: [{ required: true, message: '客户不能为空', trigger: 'change' }], 
       },
       productRules: {
 
@@ -1922,11 +1908,7 @@ export default {
       } catch (error) {
       }
     },
-    calculateExpiryDate() {  
-      const today = new Date();  
-      const expiryDate = new Date(today.setFullYear(today.getFullYear() + 30));  
-      return this.formatDate(expiryDate);  
-    },  
+  
     formatDate(date) {  
       const year = date.getFullYear();  
       const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始  
@@ -1947,8 +1929,7 @@ export default {
       this.status = false
       if (this.btnType == 'add') {
         let obj = JSON.parse(JSON.stringify(this.createdData))
-        this.dataFormTwo.lines.push(obj)
-        this.dataForm.validDateArr = [this.formatDate(new Date()),this.calculateExpiryDate()]
+        this.dataFormTwo.lines.push(obj) 
 
       } else {
         getcooperativeproductInfo(row.id).then(res => {
@@ -1969,8 +1950,7 @@ export default {
             })
           }
         })
-        this.row.taxRate=this.row.taxRate*1
-        this.dataForm.validDateArr = [row.dateOrderStart, row.dateOrderStop]
+        this.row.taxRate=this.row.taxRate*1 
         this.dataFormTwo.lines.push(this.row)
         console.log(this.dataFormTwo.lines,'this.dataFormTwo.lines12')
       }
@@ -2053,10 +2033,7 @@ export default {
         this.btnLoading = true
         this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice
-        if (this.dataForm.validDateArr.length) {
-          this.dataForm.dateOrderStart = this.dataForm.validDateArr[0]
-          this.dataForm.dateOrderStop = this.dataForm.validDateArr[1]
-        }
+     
         console.log(this.datafilelist,';this.datafilelist1')
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -2075,8 +2052,7 @@ export default {
         let obj = {
           attachmentList: this.datafilelist,
           // sale: this.dataForm,
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          dateOrderStart: this.dataForm.dateOrderStart,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId, 
           dateOrderStop: this.dataForm.dateOrderStop,
           list: filteredArr,
           // flowData: this.flowData
@@ -2087,8 +2063,7 @@ export default {
           attachmentList: this.datafilelist,
           // sale: this.dataForm,
           id: this.dataForm.id,
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          dateOrderStart: this.dataForm.dateOrderStart,
+          cooperativePartnerId: this.dataForm.cooperativePartnerId, 
           dateOrderStop: this.dataForm.dateOrderStop,
           // list: filteredArr,
           // flowData: this.flowData

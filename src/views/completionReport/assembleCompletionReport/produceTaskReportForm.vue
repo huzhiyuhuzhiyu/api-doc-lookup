@@ -23,6 +23,7 @@
                   {{ dataForm.orderNo }}</el-descriptions-item>
 
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
+                <el-descriptions-item label="产品名称">{{ dataForm.productName }}</el-descriptions-item>
                 <el-descriptions-item label="产品分类">{{ dataForm.productCategoryName }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}</el-descriptions-item>
                 <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
@@ -106,17 +107,24 @@
                     </span>
                   </el-tooltip>
                 </div>
-
+              </el-col>
+                  <el-col :sm="24" :xs="24">
+                <div class="info">
+                  <span class="left-title">产品名称：</span>
+                  <el-tooltip class="item" effect="dark" :content="currentProcess.productName"
+                    placement="top-start">
+                    <span class="left-title ts">
+                      {{ currentProcess.productName }}
+                    </span>
+                  </el-tooltip>
+                </div>
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
                   <span class="left-title">加工工序：</span>
                   <span class="left-title">{{ processInfo.processName }}</span>
                 </div>
-
               </el-col>
-
-
               <el-col :sm="24" :xs="24" v-if="sealingCoverTypingFlag === '1'">
                 <div class="info">
                   <span class="left-title">打字内容：</span>
@@ -129,63 +137,54 @@
                   <span class="left-title">精度等级：</span>
                   <span class="left-title">{{ processInfo.accuracyLevel }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="vibrationLevelFlag === '1'">
                 <div class="info">
                   <span class="left-title">振动等级：</span>
                   <span class="left-title">{{ processInfo.vibrationLevel }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="oilFlag === '1'">
                 <div class="info">
                   <span class="left-title">油脂：</span>
                   <span class="left-title">{{ processInfo.oil }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="oilQuantityFlag === '1'">
                 <div class="info">
                   <span class="left-title">油脂量：</span>
                   <span class="left-title">{{ processInfo.oilQuantity }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="clearanceFlag === '1'">
                 <div class="info">
                   <span class="left-title">游隙：</span>
                   <span class="left-title">{{ processInfo.clearance }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="packagingMethodFlag === '1'">
                 <div class="info">
                   <span class="left-title">包装方式：</span>
                   <span class="left-title">{{ processInfo.packagingMethod }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="specialRequireFlag === '1'">
                 <div class="info">
                   <span class="left-title">特殊要求：</span>
                   <span class="left-title">{{ processInfo.specialRequire }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="materialFlag === '1'">
                 <div class="info">
                   <span class="left-title">保持架材质：</span>
                   <span class="left-title">{{ processInfo.material }}</span>
                 </div>
-
               </el-col>
               <el-col :sm="24" :xs="24" v-if="colourFlag === '1'">
                 <div class="info">
                   <span class="left-title">颜色：</span>
                   <span class="left-title">{{ processInfo.colour }}</span>
                 </div>
-
               </el-col>
 
             </el-row>

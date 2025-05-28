@@ -334,10 +334,10 @@ export default {
                 { prop: 'productCode', label: '产品编码', minWidth: '140' },
                 { prop: 'batchNumber', label: '批次号', minWidth: '180' },
                 { prop: 'businessTypeName', label: '业务类型', minWidth: '180', },
-                { prop: 'mainUnit', label: '单位', minWidth: '80' },
-                { prop: 'num', label: '数量' },
-                { prop: 'beforeInventory', label: '变动前库存' },
-                { prop: 'afterInventory', label: '变动后库存' },
+                { prop: 'mainUnit', label: '单位', minWidth: '80' ,custom:'custom'},
+                { prop: 'num', label: '数量',custom:'custom' },
+                { prop: 'beforeInventory', label: '变动前库存', custom:'custom'},
+                { prop: 'afterInventory', label: '变动后库存',custom:'custom' },
                 
                 
                 // { prop: 'costPrice', label: '单价(含税)' },
@@ -345,7 +345,7 @@ export default {
                 // { prop: 'taxRate', label: '税率' },
                 // { prop: 'taxAmount', label: '税额' },
                 // { prop: 'totalAmount', label: '金额(不含税)' },
-                { prop: 'orderDate', label: '出入库日期', minWidth: '180' }
+                { prop: 'orderDate', label: '出入库日期', minWidth: '180',custom:'custom' }
             ],
             searchLineList: [
                 {

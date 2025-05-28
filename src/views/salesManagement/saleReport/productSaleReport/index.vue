@@ -66,7 +66,7 @@
                 <el-table-column prop="saleNum" label="累计销售发货次数" />
                 <el-table-column prop="sumNum" label="销售发货数量" />
                 <el-table-column prop="sumAmount" label="销售金额" />
-                <el-table-column prop="partnerName" label="客户名称" />
+                <!-- <el-table-column prop="partnerName" label="客户名称" /> -->
                 <el-table-column prop="amountPercent" label="销售额占比"  width="200">
                   <template slot-scope="scope">
                     <el-progress :percentage="scope.row.amountPercent || 0"></el-progress>
@@ -112,8 +112,8 @@ export default {
       inboundForm:{},
       inboundFormList:{
         businessType:"outbound_sale_send",
-        orderStartDate: "",
-        orderEndDate: "",
+        orderDateStart: "",
+        orderDateEnd: "",
         productsName: "",
         partnerName: "",
         orderNo: "",
@@ -232,11 +232,11 @@ export default {
     search(type) {
     
         if (this.inboundDate && this.inboundDate.length > 0) {
-          this.inboundForm.orderStartDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
-          this.inboundForm.orderEndDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.orderDateStart = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.orderDateEnd = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
         } else {
-          this.inboundForm.orderStartDate = ''
-          this.inboundForm.orderEndDate = ''
+          this.inboundForm.orderDateStart = ''
+          this.inboundForm.orderDateEnd = ''
         }
         Object.keys(this.inboundForm).forEach(key => { // 清除搜索条件两端空格
           let item = this.inboundForm[key]

@@ -30,7 +30,7 @@
       <div class="main" v-loading="loading">
         <el-collapse v-model="activeNames" v-if="!activeStep" style="height: 100%;background-color: #fff;">
           <el-collapse-item title="运算公式" name="basicInfo" class="orderInfo">
-            <el-form ref="dataForm" :model="dataForm" label-width="120px" label-position="left">
+            <el-form ref="dataForm" :model="dataForm"  label-width="120px" label-position="left">
               <el-row style="height: 100%;">
                 <el-col :span="10">
                   <el-form-item label="运算单号">
@@ -75,13 +75,13 @@
                  <template>
                     <el-col :span="8" v-if="isBOOS">
                       <el-form-item label="外圈原材料">
-                        <el-input v-model="dataForm.outerMaterName" placeholder="请选择产品" style="width: auto;"  readonly/>
+                        <el-input v-model="dataForm.outerMaterName" placeholder="请选择产品" style="width: auto;"  @focus="openSelectProductFun('outer')" readonly/>
                       </el-form-item>
                       </el-col>
                       <el-col :span="8" v-if="isBOOS" style="margin-left:20px">
 
-                        <el-form-item label="外圈原材料数量">
-                            <el-input v-model="dataForm.outerMaterNum" placeholder="请输入数量" style="width: auto;"  />
+                        <el-form-item label="外圈原材料数量" prop="outerMaterNum" :rules="outerMaterNumRules">
+                            <el-input v-model="dataForm.outerMaterNum" placeholder="请输入数量" style="width: auto;"  @blur="setOuterMaterNum('outer_ring_blank')"/>
                         </el-form-item>
                       </el-col>
                 </template>
@@ -90,13 +90,13 @@
                  <template>
                     <el-col :span="8" v-if="isBOOS">
                       <el-form-item label="内圈原材料">
-                        <el-input v-model="dataForm.ringMaterName" placeholder="请选择产品" style="width: auto;"  readonly/>
+                        <el-input v-model="dataForm.ringMaterName" placeholder="请选择产品" @focus="openSelectProductFun('ring')" style="width: auto;"  readonly/>
                       </el-form-item>
                       </el-col>
                       <el-col :span="8" v-if="isBOOS" style="margin-left:20px">
 
-                        <el-form-item label="内圈原材料数量">
-                            <el-input v-model="dataForm.ringMaterNum" placeholder="请输入数量" style="width: auto;"  />
+                        <el-form-item label="内圈原材料数量" prop="ringMaterNum">
+                            <el-input v-model="dataForm.ringMaterNum" placeholder="请输入数量" style="width: auto;" @blur="setOuterMaterNum('inner_ring_blank')" />
                         </el-form-item>
                       </el-col>
                 </template>
@@ -1067,7 +1067,7 @@
       <ComplateSetForm v-if="complateSetFormVisible" ref="complateSetForm" @close="closeForm"
         :customList="customList" />
       <DBForm v-if="dbformVisible" ref="dbForm" @close="closeForm" />
-
+      <SelectProductForm v-if="SelectProductFormVisible" ref="SelectProductFormRef" @close="closeForm" @selectFun="selectFun"></SelectProductForm>
 
     </div>
   </transition>
@@ -1083,18 +1083,20 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import DBForm from './dbForm.vue'
 import tenantMinix from "@/mixins/generator/TenantMinix";
-
+import SelectProductForm from './selectProductForm.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 export default {
   components: {
-    PlanForm, ComplateSetForm, DBForm
+    PlanForm, ComplateSetForm, DBForm,SelectProductForm
   },
   mixins: [getProjectList,tenantMinix],
   data() {
     return {
+      SelectProductFormVisible:false,
+      rawMaterType:"",//区分选的数据是内圈原材料还是外圈原材料
       columnList1: ["productCode",  "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
       columnList2: ["productCode",  "planEndDate"],
       columnList3: ["productCode",  "planEndDate"],
@@ -1304,14 +1306,51 @@ export default {
       loading: false,
       activeStep: 0,
       maxStep: 1,
-      dataRule: {
-        outDeliveryDate: [
-          { required: true, message: '外协交货日期不能为空', trigger: 'change' },
-        ],
-        purchaseDeliveryDate: [
-          { required: true, message: '采购交货日期不能为空', trigger: 'change' },
-        ],
-      },
+      outerMaterNumRules: [
+      { 
+        validator: (rule, value, callback) => {
+          if (this.dataForm.outerMaterName) {
+            if (!value) {
+              callback(new Error('数量为必填项'));
+            } else {
+              // 校验是否为合法的数字（最多8位整数和2位小数）
+              const regex = /^\d{1,8}(\.\d{1,2})?$/;
+              if (!regex.test(value)) {
+                callback(new Error('请输入正确的数量，最多8位整数，2位小数'));
+              } else {
+                callback();
+              }
+            }
+          } else {
+            callback(); // 如果outerMaterName为空，跳过验证
+          }
+        }, 
+        trigger: 'blur'
+      }
+    ],
+     ringMaterNum: [
+      { 
+        validator: (rule, value, callback) => {
+          if (this.dataForm.ringMaterName) {
+            if (!value) {
+              callback(new Error('数量为必填项'));
+            } else {
+              // 校验是否为合法的数字（最多8位整数和2位小数）
+              const regex = /^\d{1,8}(\.\d{1,2})?$/;
+              if (!regex.test(value)) {
+                callback(new Error('请输入正确的数量，最多8位整数，2位小数'));
+              } else {
+                callback();
+              }
+            }
+          } else {
+            callback(); // 如果outerMaterName为空，跳过验证
+          }
+        }, 
+        trigger: 'blur'
+      }
+    ],
+   
       issForm: {
         outDeliveryDate: "",
         purchaseDeliveryDate: "",
@@ -1336,6 +1375,8 @@ export default {
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
       isPairingModeSwitch: '', // 配对方式显示隐藏
+      rawMaterialList:[],
+
     }
   },
   computed: {
@@ -1361,6 +1402,59 @@ export default {
     this.fetchData("AMDH")
   },
   methods: {
+    setOuterMaterNum(type){
+      if(this.rawMaterialList.length){
+        const index = this.rawMaterialList.findIndex(item => item.productType === type);
+
+        // 如果存在，删除它
+        if (index !== -1) {
+          if(type=='inner_ring_blank')this.rawMaterialList[index].qty=this.dataForm.ringMaterNum;
+          if(type=='outer_ring_blank')this.rawMaterialList[index].qty=this.dataForm.outerMaterNum;
+          
+        }
+      }
+      console.log("this.rawMaterialList",this.rawMaterialList);
+    },
+    // 选择原材料  内圈、外圈
+    openSelectProductFun(type){
+      this.rawMaterType=type
+      this.SelectProductFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.SelectProductFormRef.init()
+      })
+    },
+    selectFun(row){
+      console.log("row",row);
+      // 内圈原材料
+      if(this.rawMaterType=='ring'){
+        let obj={
+          productType:"inner_ring_blank",
+          productsId:row.id,
+          qty:this.dataForm.ringMaterNum,
+        }
+        this.dataForm.ringMaterName=row.name 
+        const index = this.rawMaterialList.findIndex(item => item.productType === "inner_ring_blank");
+        if (index !== -1) {
+          this.rawMaterialList.splice(index, 1);
+        }
+
+        this.rawMaterialList.push(obj);
+      }
+      if(this.rawMaterType=='outer'){
+        let obj={
+          productType:"outer_ring_blank",
+          productsId:row.id,
+          qty:this.dataForm.outerMaterNum,
+        }
+        this.dataForm.outerMaterName=row.name
+         const index = this.rawMaterialList.findIndex(item => item.productType === "outer_ring_blank");
+        if (index !== -1) {
+          this.rawMaterialList.splice(index, 1);
+        }
+        this.rawMaterialList.push(obj)
+      }
+    },
+  
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {
@@ -1966,6 +2060,7 @@ export default {
       this.formVisible = false
       this.complateSetFormVisible = false
       this.dbformVisible = false
+      this.SelectProductFormVisible=false
     },
     // 获取运算方案
     getMrpCalcSchemeListFun() {
@@ -2158,7 +2253,28 @@ export default {
         this.btnLoading = false
         return this.$message.error("存在无BOM的数据，BOM计算级别错误，请检查后重试")
       } 
-   
+      if(this.dataForm.outerMaterName&&!this.dataForm.outerMaterNum){
+        this.btnLoading = false
+        return this.$message.error("请输入外圈原材料数量")
+      }
+      if(this.dataForm.ringMaterName&&!this.dataForm.ringMaterNum){
+        this.btnLoading = false
+         return this.$message.error("请输入内圈原材料数量")
+      }
+      if(this.dataForm.outerMaterName&&this.dataForm.outerMaterNum){
+        const regex = /^\d{1,8}(\.\d{1,2})?$/;
+        if (!regex.test(this.dataForm.outerMaterNum)) {
+          this.btnLoading = false
+          return this.$message.error("请输入正确的外圈原材料数量，最多8位整数，2位小数")
+        }
+      }
+      if(this.dataForm.ringMaterName&&this.dataForm.ringMaterNum){
+        const regex = /^\d{1,8}(\.\d{1,2})?$/;
+        if (!regex.test(this.dataForm.ringMaterNum)) {
+          this.btnLoading = false
+          return this.$message.error("请输入正确的内圈原材料数量，最多8位整数，2位小数")
+        }
+      }
      this.loading=true
      this.btnLoading=true
       let obj = {
@@ -2174,6 +2290,7 @@ export default {
         },
         planIdList: [],
         rangeList: [],
+        rawMaterialList:this.rawMaterialList
       }
       if (this.dataForm.type.length) {
         this.dataForm.type.forEach(item => {

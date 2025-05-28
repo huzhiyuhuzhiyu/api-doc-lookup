@@ -64,13 +64,15 @@
                     </div>
                 </div>
 
-                <JNPF-table :partentOrChild="'child'" ref="dataTables" v-loading="listLoading" :data="tableData" fixedNO
+                <JNPF-table :partentOrChild="'child'" ref="dataTables" v-loading="listLoading" :data="tableData" fixedNO  @sort-change="sortChange"
                             custom-column
                 >
                     <!-- <template v-for="item in tableItems"> -->
-                    <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+                    <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label" :sortable="item.custom"
                                      :fixed="item.fixed || false" :min-width="item.minWidth || 120"
-                    />
+                    >
+             
+                </el-table-column>
                     <!-- </template> -->
                 </JNPF-table>
                 <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
@@ -261,7 +263,18 @@ export default {
             console.log(222,this.listQuery);
             this.initData()
         },
-
+       sortChange({ prop, order }) {
+            let newProp = ''
+            console.log(prop)
+            if (['productsDrawingNo','productsCode','productsName','orderDate'].includes(prop)) {
+                newProp = prop
+            } else {
+                newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+            }
+            this.listQuery.orderItems[0].asc = order === 'ascending'
+            this.listQuery.orderItems[0].column = order === null ? '' : newProp
+            this.initData()
+        },
         initData() {
             this.visible = false
             this.listLoading = true
@@ -312,6 +325,8 @@ export default {
             res.data.records.forEach(item1 => {
               let name=arr.find(item=>item.value === item1.businessType) ?  arr.find(item=>item.value === item1.businessType).label : ''
               console.log("name",name);
+              if(item1.documentType=='inbound') item1.num='+'+item1.num
+              if(item1.documentType=='outbound') item1.num='-'+item1.num
               this.$set(item1,'businessTypeName',name)
             });
                 this.tableData = res.data.records
@@ -439,6 +454,13 @@ export default {
 
 ::v-deep.el-table__body-wrapper {
     height: auto !important;
+}
+.red {
+  color: red
+}
+
+.green {
+  color: #67C23A;
 }
 </style>
 

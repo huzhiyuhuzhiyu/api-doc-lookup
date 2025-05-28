@@ -148,6 +148,7 @@ export default {
         classAttribute: [{ required: true, message: '请输入类别属性', trigger: 'blur' }]
       },
       classTypelist: [
+        { label: '钢管', value: 'steel_pipe' },
         { label: '包装物', value: 'packaging' },
         { label: '内圈毛坯', value: 'inner_ring_blank' },
         { label: '外圈毛坯', value: 'outer_ring_blank' },
@@ -158,6 +159,7 @@ export default {
         { label: '配件', value: 'accessory' },
         { label: '周转箱', value: 'turnover_box' },
         { label: '保持架', value: 'holder' },
+        { label: '密封盖', value: 'sealing_cap' },
         { label: '密封盖', value: 'sealing_cap' },
       ]
     }

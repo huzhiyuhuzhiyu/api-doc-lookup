@@ -227,11 +227,11 @@ export default {
     search(type) {
     
         if (this.inboundDate && this.inboundDate.length > 0) {
-          this.inboundForm.startDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
-          this.inboundForm.endDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.orderStartDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.orderEndDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
         } else {
-          this.inboundForm.startDate = ''
-          this.inboundForm.endDate = ''
+          this.inboundForm.orderStartDate = ''
+          this.inboundForm.orderEndDate = ''
         }
         Object.keys(this.inboundForm).forEach(key => { // 清除搜索条件两端空格
           let item = this.inboundForm[key]

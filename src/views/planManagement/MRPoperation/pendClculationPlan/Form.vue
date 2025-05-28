@@ -71,7 +71,38 @@
                     </el-checkbox-group>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+             <el-col :span="16" v-if="isBOOS">
+                 <template>
+                    <el-col :span="8" v-if="isBOOS">
+                      <el-form-item label="外圈原材料">
+                        <el-input v-model="dataForm.outerMaterName" placeholder="请选择产品" style="width: auto;"  readonly/>
+                      </el-form-item>
+                      </el-col>
+                      <el-col :span="8" v-if="isBOOS" style="margin-left:20px">
+
+                        <el-form-item label="外圈原材料数量">
+                            <el-input v-model="dataForm.outerMaterNum" placeholder="请输入数量" style="width: auto;"  />
+                        </el-form-item>
+                      </el-col>
+                </template>
+             </el-col>
+              <el-col :span="16" v-if="isBOOS">
+                 <template>
+                    <el-col :span="8" v-if="isBOOS">
+                      <el-form-item label="内圈原材料">
+                        <el-input v-model="dataForm.ringMaterName" placeholder="请选择产品" style="width: auto;"  readonly/>
+                      </el-form-item>
+                      </el-col>
+                      <el-col :span="8" v-if="isBOOS" style="margin-left:20px">
+
+                        <el-form-item label="内圈原材料数量">
+                            <el-input v-model="dataForm.ringMaterNum" placeholder="请输入数量" style="width: auto;"  />
+                        </el-form-item>
+                      </el-col>
+                </template>
+             </el-col>
+          
+                <el-col :span="15">
                   <el-form-item label="计算BOM级别">
                     <el-select v-model="dataForm.calcBomLevel" placeholder="计算BOM级别">
                       <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in BOMList" />
@@ -1051,6 +1082,7 @@ import ComplateSetForm from './complateSetForm.vue'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import DBForm from './dbForm.vue'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
@@ -1060,7 +1092,7 @@ export default {
   components: {
     PlanForm, ComplateSetForm, DBForm
   },
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
   data() {
     return {
       columnList1: ["productCode",  "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
@@ -1252,6 +1284,10 @@ export default {
         calcSchemeId: "",
         arithmeticNo: "",
         projectId: "",
+        outerMaterName:"",
+        outerMaterNum:"",
+        ringMaterName:"",
+        ringMaterNum:"",
       },
       formVisible: false,
       btnLoading: false,

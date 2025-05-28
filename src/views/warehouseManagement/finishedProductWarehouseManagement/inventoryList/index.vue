@@ -60,8 +60,8 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
-            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
+            <!-- <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button> -->
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">导出</el-button>
             <el-button v-has="'btn_print_merge'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -82,8 +82,9 @@
             </el-tooltip>
           </div>
         </div>
+          <!-- hasC :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" :fixedNO="true" -->
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
-          hasC :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" :fixedNO="true"
+           :fixedNO="true"
           @sort-change="sortChange" custom-column customKey="JNPFTableKey_962568">
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">

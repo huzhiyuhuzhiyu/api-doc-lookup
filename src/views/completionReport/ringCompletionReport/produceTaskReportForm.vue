@@ -25,6 +25,7 @@
                   {{ dataForm.orderNo }}</el-descriptions-item>
 
                 <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
+                <el-descriptions-item label="产品名称">{{ dataForm.productName }}</el-descriptions-item>
                 <el-descriptions-item label="产品分类">{{ dataForm.productCategoryName }}</el-descriptions-item>
                 <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ isXY?'万粒':'' }}</el-descriptions-item>
                 <el-descriptions-item v-if="isXY||isJR" label="生产桶数">{{ dataForm.productionBarrels }}{{ isXY?'桶':'' }}</el-descriptions-item>
@@ -53,7 +54,7 @@
             </div>
           </div>
           <el-col :span="11" class="fixedInfo" ref="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
-            style="width: 48%!important;position: relative;">
+            style="width: 38%!important;position: relative;">
             <img src="@/assets/images/extend.png" alt="" v-if="currentProcess.processingType == 'external_production'"
               class="extend">
             <img src="@/assets/images/noReport.png" alt=""
@@ -95,6 +96,17 @@
                   </el-tooltip>
                 </div>
 
+              </el-col>
+              <el-col :sm="24" :xs="24">
+                <div class="info">
+                  <span class="left-title">产品名称：</span>
+                  <el-tooltip class="item" effect="dark" :content="currentProcess.productName"
+                    placement="top-start">
+                    <span class="left-title ts">
+                      {{ currentProcess.productName }}
+                    </span>
+                  </el-tooltip>
+                </div>
               </el-col>
               <el-col :sm="24" :xs="24">
                 <div class="info">
@@ -160,6 +172,55 @@
                       </el-form-item>
                     </el-col>
 
+                   
+                     <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="板数：" prop="plates" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.plates" placeholder="板数" class="ipt"  @input="computedBOOSQuaFun"/>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="每板个数：" prop="plateNumber" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.plateNumber" placeholder="每板个数" class="ipt" @input="computedBOOSQuaFun"/>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="总重量：" prop="totalWeight" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.totalWeight" placeholder="总重量" class="ipt" @input="computedBOOSQuaFun"/>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="托盘重量：" prop="trayTotalWeight" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.trayTotalWeight" placeholder="托盘重量" class="ipt" @input="computedBOOSQuaFun" />
+                      </el-form-item>
+                    </el-col>
+                     <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="箱数：" prop="cases" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.cases" placeholder="箱数" class="ipt" @input="computedBOOSQuaFun" />
+                      </el-form-item>
+                    </el-col>
+                     <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="袋子个数：" prop="bagNumber" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.bagNumber" placeholder="袋子个数" class="ipt" @input="computedBOOSQuaFun" />
+                      </el-form-item>
+                    </el-col>
+                     <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="袋子重量：" prop="bagWeight" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.bagWeight" placeholder="袋子重量" class="ipt"  disabled/>
+                      </el-form-item>
+                    </el-col>
+                       <el-col :sm="6" :xs="24" v-if="isBOOS">
+                      <el-form-item label="产品单重：" prop="productWeight" class="iptLabel responsibility"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="currentProcess.productWeight" :placeholder="currentProcess.productWeight?currentProcess.productWeight:''" class="ipt" disabled/>
+                      </el-form-item>
+                    </el-col>
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
@@ -185,47 +246,24 @@
                             </el-select>
                     </el-form-item>
                   </el-col>
-                  <!-- <el-col :sm="24" :xs="24" v-if="isXY">
-                    <el-form-item label="是否全部报工:" prop="forceCompleteFlag" class="iptLabel"
-                      :style="{ marginBottom: iptLabelMargin }">
-                      <el-select v-model="currentProcess.forceCompleteFlag" placeholder="请选择" clearable style="width: 100%;" class="ipt">
-                              <el-option v-for="(item, index) in forceCompleteFlagList" :key="index"
-                                :label="item.label" :value="item.value"></el-option>
-                            </el-select>
-                    </el-form-item>
-                  </el-col> -->
-                  <!-- <el-col :sm="24" :xs="24" v-if="currentProcess.processType == 'boxing'">
-                    <el-form-item label="是否强制完成:" class="iptLabel">
-                      <el-select v-model="currentProcess.forceCompleteFlag" placeholder="是否强制完成" style="width: 100%;"
-                        class="ipt">
-                        <el-option v-for="(item, index) in totalStockOutboundList" :key="index" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col> -->
+           
 
-                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
-                    <el-form-item label="责废数量:" class="iptLabel">
+                  <el-col :sm="12" :xs="24" v-if="currentProcess.processType !== 'boxing'">
+                    <el-form-item label="责废数量:" class="iptLabel responsibility">
                       <el-input v-model="currentProcess.responsibilityWasteQuantity" disabled placeholder="责废数量"
                         @blur="handleBlur2" class="ipt materialWaste" />
                         <el-button type="primary"
-                        style="float: right;height: 50px" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
+                        style="float: right;height: 50px;width: 50%;" size="mini" @click='setResponsWasteM()'>设置责废原因</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="24" :xs="24" v-if="currentProcess.processType !== 'boxing'">
-                    <el-form-item label="料废数量:" class="iptLabel">
+                  <el-col :sm="12" :xs="24" v-if="currentProcess.processType !== 'boxing'">
+                    <el-form-item label="料废数量:" class="iptLabel responsibility" >
                       <el-input v-model="currentProcess.materialWasteQuantity" disabled placeholder="料废数量"
                         class="ipt materialWaste" />
                       <el-button type="primary"
-                        style="float: right;height: 50px" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
+                        style="float: right;height: 50px;width: 50%;" size="mini" @click='setMaterialWasteM()'>设置料废原因</el-button>
                     </el-form-item>
-                  </el-col>
-                  <!-- <el-col :sm="24" :xs="24">
-                    <el-form-item label="利用数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.utilizeQuantity" placeholder="料废数量" @blur="handleBlur2"
-                        class="ipt" />
-                    </el-form-item>
-                  </el-col> -->
+                  </el-col> 
                   <el-col :sm="24" :xs="24" class="iptLabel" v-if="currentProcess.processType == 'grinding'">
                     <el-form-item label="孔径" :prop="aperture">
                       <el-select v-model="currentProcess.aperture" placeholder="孔径" style="width: 100%;" class="ipt">
@@ -233,13 +271,7 @@
                           :value="item.name"></el-option>
                       </el-select>
                     </el-form-item>
-                  </el-col>
-                  <!-- <el-col :sm="24" :xs="24">
-                    <el-form-item label="返工数量:" class="iptLabel">
-                      <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" class="ipt"
-                        @blur="handleBlur2" />
-                    </el-form-item>
-                  </el-col> -->
+                  </el-col> 
                   <el-col :sm="24" :xs="24">
                     <el-form-item label="报工时间" class="iptLabel">
                       <el-date-picker v-model="currentProcess.reportingTime" value-format="yyyy-MM-dd"
@@ -486,6 +518,26 @@ export default {
   },
 
   methods: {
+    computedBOOSQuaFun(){
+      if(this.currentProcess.plateNumber&&this.currentProcess.plates){
+        this.currentProcess.qualifiedQuantity=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.plateNumber,this.currentProcess.plates]), 4)
+      }else{
+      let  cases=this.jnpf.numberFormat(this.jnpf.math('multiply', [2,this.currentProcess.cases]), 6) //箱数*2
+      let complaReult=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.bagNumber,0.25]), 6)//袋子个数*袋子重量（车加工0.25 磨加工0.5）
+      
+      let numtotal= this.jnpf.numberFormat(this.jnpf.math('subtract', [this.currentProcess.totalWeight,this.currentProcess.trayTotalWeight,cases,complaReult]), 6)
+        this.currentProcess.qualifiedQuantity=this.jnpf.numberFormat(this.jnpf.math('multiply', [numtotal,this.currentProcess.productWeight,1000]), 4)
+        //  plates 板数
+        //   plateNumber 每板个数
+        //   totalWeight 总重量
+        //   trayTotalWeight 托盘重量
+        //   cases 箱数
+        //   bagNumber 袋子个数
+        //   bagWeight 袋子重量
+        //   productWeight 产品单重
+      }
+      this.handleBlur2()
+    },
     getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
@@ -663,6 +715,7 @@ export default {
           if (matchingItem) {
             this.currentProcessId = matchingItem.processId
             this.currentProcess = matchingItem
+            this.$set(this.currentProcess,'bagWeight',0.25)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
@@ -672,9 +725,10 @@ export default {
           }
         } else {
             // 修改初始进入报工默认展示第一条  更改为可报工数量有值的项显示
-          this.currentProcess =  res.data.workOrderList.find(item=>+item.waitReportNum && item.reportFlag&&item.processingType=='self_produced') || res.data.workOrderList[0]
+          this.currentProcess =  res.data.workOrderList.find(item=>+item.waitReportNum && item.reportFlag) || res.data.workOrderList[0]
           this.currentProcessId = this.currentProcess.processId
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
+            this.$set(this.currentProcess,'bagWeight',0.25)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
           this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
           this.processInfo = JSON.parse(JSON.stringify(this.currentProcess))
@@ -684,7 +738,7 @@ export default {
           this.equipmentList=this.currentProcess.workOrderResMap.device
         }
         this.$set(this.currentProcess, 'reportingQuantity', 0)
-        // this.$set(this.currentProcess, 'qualifiedQuantity', "")
+        this.$set(this.currentProcess, 'qualifiedQuantity', "")
         this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
         this.$set(this.currentProcess, 'materialWasteQuantity', 0)
         this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
@@ -701,15 +755,15 @@ export default {
     getProcessFun(item) {
       this.currentProcess = item
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
+            this.$set(this.currentProcess,'bagWeight',0.25)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
       this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
 
       this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
       this.currentProcessId = item.processId
       this.remakeUnqualifiedQuantity = item.autoUnqualifiedQuantity
-      this.$set(this.currentProcess, 'reportingQuantity', 0)
+      this.$set(this.currentProcess, 'reportingQuantity', 0) 
       if(this.currentProcess.processingType=='self_produced') this.currentProcess.qualifiedQuantity =  this.currentProcess.waitReportNum
-          
       this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
       this.$set(this.currentProcess, 'materialWasteQuantity', 0)
       this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
@@ -878,7 +932,7 @@ export default {
             }
           }
           if (submitFlag === false) return
-          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length&&this.isXBN) return this.$message.error("料废金额不能为空")
+          if (this.currentProcess.materialWasteQuantity && !this.materialWasteDataList.length&&!this.isXY) return this.$message.error("料废金额不能为空")
           let obj = {}
           let arr = []
           obj.classAttribute = this.currentProcess.classAttribute
@@ -907,6 +961,17 @@ export default {
           obj.productionBarrels = this.currentProcess.productionBarrels
           obj.productionWeight = this.currentProcess.productionWeight
           obj.workOrderId = this.currentProcess.id
+
+
+          
+          obj.plates=this.currentProcess.plates
+          obj.plateNumber=this.currentProcess.plateNumber
+          obj.totalWeight=this.currentProcess.totalWeight
+          obj.trayTotalWeight=this.currentProcess.trayTotalWeight
+          obj.cases=this.currentProcess.cases
+          obj.bagNumber=this.currentProcess.bagNumber
+          obj.bagWeight=this.currentProcess.bagWeight
+          obj.productWeight=this.currentProcess.productWeight
           // obj.forceCompleteFlag = this.currentProcess.forceCompleteFlag
           if (this.currentProcess.processType === 'boxing') {
             obj.processType = this.currentProcess.processType
@@ -1302,7 +1367,7 @@ box-card:nth-child(n+3) {
 }
 
 .rightInfo {
-  width: 52%;
+  width: 62%;
   /* border: 1px solid; */
   border-radius: 4px;
   // margin-left: 20px;
@@ -1404,6 +1469,12 @@ box-card:nth-child(n+3) {
 }
 
 .materialWaste {
-  width: 70%;
+  width: 50%;
+}
+.responsibility ::v-deep .el-form-item__label{
+  width: 110px!important;
+}
+.responsibility ::v-deep .el-form-item__content{
+  margin-left: 110px!important;
 }
 </style>

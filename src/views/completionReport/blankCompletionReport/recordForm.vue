@@ -63,10 +63,14 @@
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" sortable="custom" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" sortable="custom" />
             <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" sortable="custom" />
-            <el-table-column prop="aperture" label="孔径" min-width="120" sortable="custom" />
+            <el-table-column prop="aperture" label="板数" min-width="120" sortable="custom" />
+            <el-table-column prop="plateNumber" label="每板个数" min-width="120"   v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="totalWeight" label="总重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="trayTotalWeight" label="托盘重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="cases" label="箱数" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="bagNumber" label="袋子个数" min-width="120" v-if="this.isBOOS" sortable="custom" /> 
+            <el-table-column prop="productWeight" label="产品单重" min-width="120" v-if="this.isBOOS" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-
-
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
             @pagination="getrecordsList" />
@@ -78,7 +82,9 @@
 </template>
 <script>
 import { getWorkReportList } from "@/api/productOrdes/index.js"
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
+  mixins: [tenantMinix],
   data() {
     return {
 

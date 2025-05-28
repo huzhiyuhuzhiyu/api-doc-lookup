@@ -32,20 +32,8 @@
                             :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
-                      <el-col :span="8">
-                        <el-form-item label="有效起始时间" prop="dateOrderStart" v-if="$store.getters.configData.purchase.productTimeSetting">
-                          <el-date-picker v-model="dataForm.dateOrderStart" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择有效起始时间"
-                            :disabled="type == 'look' ? true : false"></el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="8">
-                        <el-form-item label="有效结束时间" prop="dateOrderStop" v-if="$store.getters.configData.purchase.productTimeSetting">
-                          <el-date-picker v-model="dataForm.dateOrderStop" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择有效结束时间"  @change="handleEndDateChange"  
-                            :disabled="type == 'look' ? true : false"></el-date-picker>
-                        </el-form-item>
-                      </el-col>
+                 
+                  
                       <el-col :span="12">
                         <el-form-item label="备注">
                           <el-input v-model="dataForm.remark" type="textarea" placeholder="备注"
@@ -310,18 +298,7 @@ export default {
   },
   mixins: [busFlow, getProjectList],
   data() {
-    var checkDateOrderStop = (rule, value, callback) => {
-      if (!this.dataForm.dateOrderStart) {
-        this.dataForm.dateOrderStop = ''
-        return callback(new Error('请先选择有效起始时间'))
-      } else {
-        if (!value) {
-          return callback(new Error('有效结束时间为空'))
-        } else {
-          callback();
-        }
-      }
-    }
+ 
     return {
       isProjectSwitch: '',
       tableDataFlag: false,
@@ -426,9 +403,7 @@ export default {
         approvalStatus: '', // 审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
         cooperativePartnerId: 0, //  供应商id
         cooperativePartnerName: '', //  供应商名称
-        cooperativePartnerCode: '',
-        dateOrderStart: this.jnpf.getToday(),
-        dateOrderStop: '',
+        cooperativePartnerCode: '', 
         createBy: '', //
         documentStatus: '', //  单据状态:草稿 draft、提交 submit,可用值:draft,normal,submit
         id: 0, //
@@ -453,9 +428,7 @@ export default {
       type: '',
       dataFormArr: [],
       rules: {
-        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-        dateOrderStart: [{ required: true, message: '请选择有效起始时间', trigger: ['change'] }],
-        dateOrderStop: [{ required: true, validator: checkDateOrderStop, trigger: 'change' }]
+        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }], 
         // inquiryDate: [{ required: true, message: '请选择询价日期', trigger: ['change'] }],
         // effectiveDate: [{ required: true, message: '请选择报价有效期', trigger: ['change'] }],
       },
@@ -709,48 +682,9 @@ export default {
       this.$refs.product.showDrawer()
     },
  
-    handleEndDateChange(value) {  
-      const startDate = new Date(this.dataForm.dateOrderStart)  
-      const endDate = new Date(value)  
-      if (startDate && endDate < startDate) {  
-        this.$message.error('有效结束时间不能小于有效开始时间')  
-        this.dataForm.dateOrderStop = '' // 清空结束时间  
-      }  
-    },
-    checkDate() {
-      return (rule, value, callback) => {
-        let index = rule.field.split('.')[1]
-        let msg = `当前第${index * 1 + 1}行：有效起始日期不能超过有效结束日期`
-        if (!value) {
-          callback()
-        } else {
-          if (new Date(value) > new Date(this.dataFormTwo.data[index].dateOrderStop)) {
-            // callbackMethod(msg)
-            this.$message.error(msg)
-            callback(new Error(msg))
-          } else {
-            callback()
-          }
-        }
-      }
-    },
-    checkDate2() {
-      return (rule, value, callback) => {
-        let index = rule.field.split('.')[1]
-        let msg = `当前第${index * 1 + 1}行：有效结束日期不能超过有效起始日期`
-        if (!value) {
-          callback()
-        } else {
-          if (new Date(value) < new Date(this.dataFormTwo.data[index].dateOrderStart)) {
-            // callbackMethod(msg)
-            this.$message.error(msg)
-            callback(new Error(msg))
-          } else {
-            callback()
-          }
-        }
-      }
-    },
+  
+ 
+ 
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
       listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
@@ -1433,10 +1367,7 @@ export default {
       //     })
       //   }
       // }
-      if (!this.$store.getters.configData.purchase.productTimeSetting) {
-        this.dataForm.dateOrderStop = '2099-12-31'
-      }
-     
+   
       _data = {
         ...this.dataForm,
         list: this.dataFormTwo.data
@@ -1486,22 +1417,8 @@ export default {
                     })
                     break
                   }
-                  if (!item.dateOrderStart) {
-                    this.$message({
-                      type: 'error',
-                      message: '请选择第' + (i + 1) + '行的有效起始时间',
-                      duration: 1500
-                    })
-                    break
-                  }
-                  if (!item.dateOrderStop) {
-                    this.$message({
-                      type: 'error',
-                      message: '请选择第' + (i + 1) + '行的有效结束时间',
-                      duration: 1500
-                    })
-                    break
-                  }
+               
+                 
                 }
                 return
               } else {

@@ -210,11 +210,11 @@ export default {
     search(type) {
     
         if (this.inboundDate && this.inboundDate.length > 0) {
-          this.inboundForm.produceStartDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
-          this.inboundForm.produceEndDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.startDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
+          this.inboundForm.endDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
         } else {
-          this.inboundForm.produceStartDate = ''
-          this.inboundForm.produceEndDate = ''
+          this.inboundForm.startDate = ''
+          this.inboundForm.endDate = ''
         }
         Object.keys(this.inboundForm).forEach(key => { // 清除搜索条件两端空格
           let item = this.inboundForm[key]

@@ -39,14 +39,8 @@
             <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="150"></el-table-column>
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
             v-if="isProjectSwitch == 1" />
-            <el-table-column prop="routingName" label="工艺路线名称" min-width="150" sortable="custom" />
             <!-- <el-table-column prop="routingCode" label="工艺路线编码" min-width="150" sortable="custom" /> -->
-            <el-table-column prop="totalStock" label="预计总库存" min-width="150">
-                <template slot-scope="scope" >
-                    <div :style="{color:scope.row.totalStock * 1 < 1 * scope.row.safetyStock ? 'red' : ''}">{{ scope.row.totalStock }}</div>
-                </template>
-            </el-table-column>
-            <el-table-column prop="safetyStock" label="安全库存" min-width="150"  />
+           
             <el-table-column label="操作" width="100" >
               <template slot-scope="scope" >
                 <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
@@ -73,7 +67,7 @@ export default {
       customerVisible: false,
       form:{},
       formList: {
-        classAttribute: "finish_product",
+        classType: "steel_pipe",
         productDrawingNo:"",
         productCode:"",
         pageNum: 1,
@@ -133,7 +127,7 @@ export default {
     // 选择批次
     selectFun(row) {
       // if(!row.routingId)return this.$message.error("请配置产品工艺路线")
-      this.$emit("selectProduct", row,)
+      this.$emit("selectFun", row,)
       this.customerVisible = false
     },
     getbatchNumList(id) {

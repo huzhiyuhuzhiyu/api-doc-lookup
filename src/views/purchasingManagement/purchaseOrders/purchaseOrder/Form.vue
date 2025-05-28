@@ -762,12 +762,12 @@ export default {
     // await this.getProductNameSwitch('product', 'enable_productName')
     this.formLoading = false
     this.getBimBusinessDetail()
+   
   },
-  mounted () {
-      this.$nextTick(()=>{
+   mounted () {
+       this.$nextTick(()=>{
         this.switchStyleheight()
-        this.$refs.tableForm.doLayout()
-      })
+       })
   },
   computed: {
     ...mapGetters(['userInfo']),

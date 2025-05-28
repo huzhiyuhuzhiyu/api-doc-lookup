@@ -91,7 +91,13 @@
             <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="170" sortable="custom" />
             <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="170" sortable="custom" />
             <el-table-column prop="productionWeight" label="生产重量" min-width="170" sortable="custom" />
-
+           <el-table-column prop="plateNumber" label="每板个数" min-width="120"   v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="totalWeight" label="总重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="trayTotalWeight" label="托盘重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="cases" label="箱数" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="bagNumber" label="袋子个数" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="bagWeight" label="袋子重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
+            <el-table-column prop="productWeight" label="产品单重" min-width="120" v-if="this.isBOOS" sortable="custom" />
 
 
 
@@ -202,10 +208,12 @@ import {
 } from "@/api/masterDataManagement/index";
 import { getSalaryDetailList } from '@/api/salaryManagement'
 import userTransfer from '@/components/JNPF-userTransfer'
+import tenantMinix from "@/mixins/generator/TenantMinix"
+
 export default {
   name: 'ringReportRecord',
   components: { SuperQuery, ExportForm ,userTransfer,InspectionDetail},
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
   data() {
     return {
       inspectionDetailVisible:false,

@@ -217,7 +217,7 @@
                             <el-form-item prop="reportFlag" ref="reportFlag">
                               <el-checkbox v-model="scope.row.reportFlag"  :disabled="scope.row.defaultReport ||
                                 scope.row.defaultFlag ||
-                                
+
                                 type === 'look'">
                                 {{ scope.row.reportFlag ? '是' : '否' }}
                               </el-checkbox>
@@ -441,7 +441,7 @@
                   <el-table-column prop="pickingFlag" label="是否领料" width="90">
                     <template slot-scope="{ row }">
                         <el-form-item prop="pickingFlag" ref="pickingFlag">
-                          <el-checkbox v-model="row.pickingFlag" 
+                          <el-checkbox v-model="row.pickingFlag"
                             ></el-checkbox>
                         </el-form-item>
                     </template>
@@ -606,7 +606,7 @@ export default {
         { prop: 'code', label: '工序编码', fixed: 'left' },
         { prop: 'name', label: '工序名称', fixed: 'left' },
         { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
-        
+
         { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
@@ -1190,7 +1190,7 @@ export default {
           flag = false
           return
         }
-        
+
       }
      }
 
@@ -1382,7 +1382,7 @@ export default {
       let list = data.map((item) => item.all)
       this.responseLoading = true
       let responseFlag = null
-      list = list.filter(item => !this.dataFormTwo.some(ele => ele.processId === item.id))
+      // list = list.filter(item => !this.dataFormTwo.some(ele => ele.processId === item.id))
       list = list.map((item, index) => {
         const obj = {
           index: item._index,

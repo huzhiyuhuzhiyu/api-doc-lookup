@@ -95,6 +95,12 @@
                 <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
                 <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
+                  <el-table-column label="操作" width="180" fixed="right">
+                      <template slot-scope="scope">
+                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                                     @click="handleDel(scope.row.id)">删除</el-button>
+                      </template>
+                  </el-table-column>
               </JNPF-table>
               <pagination :total="total" :page.sync="lastListQuery.pageNum" :background="background"
                 :limit.sync="lastListQuery.pageSize" @pagination="initData" />
@@ -235,10 +241,10 @@
 
 <script>
 import {
-  getBimVehicleTypeData,
-  deleteBimVehicleType,
-  getPartnerOrProductData,
-  uploadPartnerOrProductData
+    getBimVehicleTypeData,
+    deleteBimVehicleType,
+    getPartnerOrProductData,
+    uploadPartnerOrProductData, delPartnerOrProductData
 } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -1100,22 +1106,20 @@ export default {
         this.$refs.JNPFForm.init(id, type, false, 'other')
       })
     },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          deleteBimVehicleType(id).then((res) => {
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: '删除成功',
-              duration: 1500
-            })
-          })
-        })
-        .catch(() => { })
-    },
+      handleDel(id) {
+          this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+              type: 'warning'
+          }).then(() => {
+              delPartnerOrProductData(id).then(res => {
+                  this.initData()
+                  this.$message({
+                      type: 'success',
+                      message: "删除成功",
+                      duration: 1500,
+                  })
+              })
+          }).catch(() => { })
+      },
     handleUserRelation(id, type) {
       this.depFormVisible = true
       this.$nextTick(() => {

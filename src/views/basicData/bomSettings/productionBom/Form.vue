@@ -482,6 +482,7 @@ export default {
         if (this.btnType === 'add' || this.btnType === 'edit' || this.btnType === 'waitAdd') {
           this.dataFormItems.forEach((tc) => {
             if (tc.prop === 'pickingWay') {
+            console.log(555555);
               // this.dataForm.pickingWay = 'dispatch_list'
               tc.value = 'dispatch_list'
               this.$set(tc,'itemDisabled',true)
@@ -493,6 +494,18 @@ export default {
               this.$set(tc,'itemDisabled',true)
             }
           })
+        }
+      }else{
+        if(this.btnType === 'add'){
+              this.dataFormItems.forEach((tc) => {
+            if (tc.prop === 'pickingWay') {
+            console.log(555555);
+              // this.dataForm.pickingWay = 'dispatch_list'
+              tc.value = 'production_order'
+              this.$set(tc,'itemDisabled',false)
+            }
+          })
+       
         }
       }
       this.approvalFlag = approvalFlag
@@ -751,6 +764,8 @@ export default {
         //  this.$nextTick(() => { this.getApproverData() })
         this.getBusInfo()
       }
+     
+
     },
     async handleConfirm(submitModel) {
       this.btnLoading = true

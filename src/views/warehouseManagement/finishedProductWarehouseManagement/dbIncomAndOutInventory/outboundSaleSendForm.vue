@@ -62,7 +62,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
-                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择"
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" @change="selectOutboundFun"
                                 style="width: 100%;" :disabled="btnType == 'look'">
                                 <el-option v-for="(item, index) in totalStockOutboundList" :key="index"
                                   :label="item.label" :value="item.value"></el-option>
@@ -121,7 +121,7 @@
                       </div>
                       <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" custom-column
                         :partent-or-child="'child'" @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;"
-                        :setColumnDisplayList="columnList">
+                        :setColumnDisplayList="columnList" customKey="JNPFTableKey_972222487">
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-toolti
@@ -291,7 +291,7 @@
                           </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="是否按总库存出库" prop="totalStockOutboundFlag">
-                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择"
+                              <el-select v-model="dataForm.totalStockOutboundFlag" placeholder="请选择" @change="selectOutboundFun"
                                 style="width: 100%;" :disabled="btnType == 'look'">
                                 <el-option v-for="(item, index) in totalStockOutboundList" :key="index"
                                   :label="item.label" :value="item.value"></el-option>
@@ -342,7 +342,7 @@
                       </div>
                       <JNPF-table ref="product" :data="productData" :partent-or-child="'child'" custom-column :fixedNO="true"
                         :hasC="btnType != 'look'" @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;"
-                        :setColumnDisplayList="columnList" >
+                        :setColumnDisplayList="columnList"  customKey="JNPFTableKey_972433387">
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
                         <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
@@ -803,6 +803,10 @@ export default {
     }
   },
   methods: {
+    selectOutboundFun(){
+    this.$nextTick(() => { this.$refs.product.doLayout() })
+
+    },
      // 配对方式显示隐藏
      async getPairingModeSwitch(code, type) {
       try {

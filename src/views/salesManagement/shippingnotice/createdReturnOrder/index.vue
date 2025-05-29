@@ -147,22 +147,24 @@
                         </el-table-column>
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-                        <el-table-column prop="num" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" min-width="150"
-                          v-if="!dataForm.exchangeGoodsFlag">
-                          <template slot="header">
-                            <span class="required">*</span>退货数量(主)
-                          </template>
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
-                              :rules='productRules.deliveryQuantity'>
-                              <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入退货数量"
-                                :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11" @input="watchnums(scope.row, scope.$index)">
-                              </el-input>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                        <el-table-column prop="deputyNum" label="退货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
+                        
+                         <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" width="170"  key="789">
+                      <template slot="header">
+                        <span class="required">*</span>{{ dataForm.exchangeGoodsFlag? (mainUnitFlag === '1' ? '换货数量(主)' : '换货数量'):(mainUnitFlag === '1' ? '退货数量(主)' : '退货数量') }}
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
+                          :rules='productRules.deliveryQuantity'>
+                          <el-input v-model="scope.row.deliveryQuantity" :placeholder="dataForm.exchangeGoodsFlag?'请输入换货数量':'请输入退货数量'"
+                            :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
+                            style="width: 145px;">
+                            {{ scope.row.deliveryQuantity }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" /> 
+                    <el-table-column prop="deputyNum" :label="dataForm.exchangeGoodsFlag?'换货数量(副)':'退货数量(副)'" min-width="150" v-if="mainUnitFlag == 1" />
 
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
                           v-if="isattachmentswitch != 1">
@@ -457,8 +459,8 @@
                   </el-form>
                 </el-row>
                 <div class="JNPF-common-layout-main JNPF-flex-main">
-                  <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
-                    @selection-change="handleSelectionChangeAllPruduct" customKey="JNPFTableKey_794783">
+                  <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC @sort-change="sortChange2"
+                    @selection-change="handleSelectionChangeAllPruduct" customKey="JNPFTableKey_794783" ref="tableData">
                     <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                     <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
@@ -995,7 +997,20 @@ export default {
       this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
       this.searchAllProduct()
     },
-
+sortChange2({ prop, order }) {
+      let newProp;
+      if (prop === 'inventoryQuantity' || prop == 'productCategoryName' || prop === 'drawingNo' || prop === 'name'||prop=='code') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.orderForm.orderItems[0].asc = order === "ascending"
+      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.searchProductFun()
+    },
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -1399,6 +1414,7 @@ export default {
     },
     // 选择产品——重置
     resetProductFun() {
+      this.$refs['tableData'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.deliveryDateArr = []
       this.orderForm = {
         cooperativePartnerId: this.dataForm.cooperativePartnerId,
@@ -1520,6 +1536,7 @@ export default {
         item.ordersNum = item.num
         item.deliveryQuantity = item.num
         item.productCode = item.code||item.productCode
+        item.productName = item.name||item.productName
         item.productsId =this.isattachmentswitch==1?item.productsId: item.id
         item.taxRate = item.taxRate * 1
         this.dataFormTwo.productData.push(item)
@@ -1703,7 +1720,7 @@ export default {
             })
 
             this.dataForm = {
-              exchangeGoodsFlag: false,
+              exchangeGoodsFlag: this.dataForm.exchangeGoodsFlag,
               // orderCategory: "assembly",
               returnDeliveryType: 'back',
               notifyType: 'sale',
@@ -1733,7 +1750,7 @@ export default {
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
           this.dataForm = {
-            exchangeGoodsFlag: false,
+            exchangeGoodsFlag: this.dataForm.exchangeGoodsFlag,
             // orderCategory: "assembly",
             returnDeliveryType: 'back',
             notifyType: 'sale',

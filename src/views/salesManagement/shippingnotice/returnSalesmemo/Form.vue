@@ -110,14 +110,14 @@
 
                     <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
                     <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" width="170"
-                      v-if="!dataForm.exchangeGoodsFlag" key="789">
+                       key="789">
                       <template slot="header">
-                        <span class="required">*</span>{{ mainUnitFlag === '1' ? '退货数量(主)' : '退货数量' }}
+                        <span class="required">*</span>{{ dataForm.exchangeGoodsFlag? (mainUnitFlag === '1' ? '换货数量(主)' : '换货数量'):(mainUnitFlag === '1' ? '退货数量(主)' : '退货数量') }}
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
                           :rules='productRules.deliveryQuantity'>
-                          <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入退货数量"
+                          <el-input v-model="scope.row.deliveryQuantity" :placeholder="dataForm.exchangeGoodsFlag?'请输入换货数量':'请输入退货数量'"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
                             style="width: 145px;">
                             {{ scope.row.deliveryQuantity }}
@@ -125,8 +125,9 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                    <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
+                    <el-table-column prop="deputyNum" :label="dataForm.exchangeGoodsFlag?'换货数量(副)':'退货数量(副)'" min-width="150" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch !== '1'||!pageType">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
@@ -381,23 +382,25 @@
                 </el-table-column>
 
                 <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-                <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" width="170"
-                  v-if="!dataForm.exchangeGoodsFlag" key="789">
-                  <template slot="header">
-                    <span class="required">*</span>{{ mainUnitFlag === '1' ? '退货数量(主)' : '退货数量' }}
-                  </template>
-                  <template slot-scope="scope">
-                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
-                      :rules='productRules.deliveryQuantity'>
-                      <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入退货数量" :disabled="btnType == 'look'"
-                        maxlength="11" @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
-                        {{ scope.row.deliveryQuantity }}
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
+              <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" width="170"
+                     key="789">
+                      <template slot="header">
+                        <span class="required">*</span>{{ dataForm.exchangeGoodsFlag? (mainUnitFlag === '1' ? '换货数量(主)' : '换货数量'):(mainUnitFlag === '1' ? '退货数量(主)' : '退货数量') }}
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
+                          :rules='productRules.deliveryQuantity'>
+                          <el-input v-model="scope.row.deliveryQuantity" :placeholder="dataForm.exchangeGoodsFlag?'请输入换货数量':'请输入退货数量'"
+                            :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
+                            style="width: 145px;">
+                            {{ scope.row.deliveryQuantity }}
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="deputyNum" :label="dataForm.exchangeGoodsFlag?'换货数量(副)':'退货数量(副)'" min-width="150" v-if="mainUnitFlag == 1" />
+
                 <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch !== '1'">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
@@ -670,7 +673,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC  @sort-change="sortChange"
+              <JNPF-table v-loading="listLoading" :data="productList" ref="tableDataForm" @row-dblclick="seleceCustomer" hasC  @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" customKey="JNPFTableKey_799990">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
@@ -1660,6 +1663,9 @@ export default {
     },
     // 选择产品——重置
     resetProductFun() {
+      
+            this.$refs['tableDataForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
       this.deliveryDateArr = []
       this.orderForm = {
         cooperativePartnerId: this.dataForm.cooperativePartnerId,
@@ -1755,6 +1761,7 @@ export default {
       this.selectArr.forEach(item => {
         item.ordersNum = item.num
         item.deliveryQuantity = item.num
+        item.productName = item.name||item.productName
 
         item.productCode = item.code||item.productCode
         item.productsId =this.noticeswitch==='1'?item.productsId: item.id
@@ -1895,6 +1902,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.orderDateArr = []
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.ProductListRequestObj = {
         // neOrderState: 'finish',
         orderNo: "",
@@ -1971,7 +1979,7 @@ export default {
             })
 
             this.dataForm = {
-              exchangeGoodsFlag: false,
+              exchangeGoodsFlag: this.dataForm.exchangeGoodsFlag,
               // orderCategory: "assembly",
               returnDeliveryType: 'back',
               notifyType: 'sale',
@@ -2001,7 +2009,7 @@ export default {
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
           this.dataForm = {
-            exchangeGoodsFlag: false,
+            exchangeGoodsFlag: this.dateForm.exchangeGoodsFlag,
             // orderCategory: "assembly",
             returnDeliveryType: 'back',
             notifyType: 'sale',

@@ -271,30 +271,6 @@ export default {
           type: 'input'
         },
         {
-          prop: 'excludingTaxAmount',
-          label: "不含税总金额",
-          type: 'input'
-        }, {
-          prop: 'taxAmount',
-          label: "总税额",
-          type: 'input'
-        }, {
-          prop: 'totalReconciliationAmount',
-          label: "对账金额",
-          type: 'input'
-        }, {
-          prop: 'totalPaymentAmount',
-          label: "已收款金额",
-          type: 'input'
-        }, {
-          prop: 'totalInvoicingAmount',
-          label: "已开票金额",
-          type: 'input'
-        }, {
-          prop: 'remark',
-          label: "备注",
-          type: 'input'
-        }, {
           prop: 'remark',
           label: "备注",
           type: 'input'

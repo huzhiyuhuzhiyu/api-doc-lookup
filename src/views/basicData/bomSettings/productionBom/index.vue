@@ -190,7 +190,7 @@
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px" @close="cancelFun">
       <div style="margin-bottom: 10px;" v-if="isProjectSwitch === '1'">
         <el-select v-model="importProjectId" placeholder="请选择所属项目" style="width: 100%;" filterable
           :disabled="!userInfo.projectId ? false : userInfo.projectId === '1' ? false : true">
@@ -198,7 +198,7 @@
         </el-select>
       </div>
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
+        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef" >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
         <div class="el-upload__tip" slot="tip">
@@ -211,7 +211,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="saveSubmit()">
+        <el-button type="primary" @click="saveSubmit()" :loading="btnLoading" :disabled="btnLoading">
           提交
         </el-button>
       </span>
@@ -335,6 +335,7 @@ export default {
       columnList: ['pickingWay', 'createByName', 'createTime'],
       showAppCodeFlag: true,
       uploadVisib: false,
+      file:[],
     }
   },
   watch: {
@@ -385,7 +386,9 @@ export default {
       this.uploadVisib = true
 
     },
-    handleRemove(file, fileList) { },
+    handleRemove(file, fileList) {
+      this.file=[]
+     },
     handlePreview(file) { },
     handleFileChange(file) {
       this.file = file.raw
@@ -410,16 +413,19 @@ export default {
       if (this.isProjectSwitch === '1') {
         formData.append('projectId', this.importProjectId)
       }
+      this.btnLoading=true
       uploadBomData(formData)
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)
             this.uploadVisib = false
             this.$refs['UploadProduct']
+            this.btnLoading=false
             this.initData()
           } else {
             this.uploadVisib = false
             this.handleMessage(res.data)
+            this.btnLoading=false
           }
 
           this.formLoading = false
@@ -431,6 +437,7 @@ export default {
           console.log(err, 'err')
           this.formLoading = false
           this.loadingText = ''
+            this.btnLoading=false
         })
 
 
@@ -442,6 +449,7 @@ export default {
       this.$refs['uploadRef'].clearFiles()
     },
     cancelFun() {
+      console.log(666);
       this.uploadVisib = false
       this.$refs['uploadRef'].clearFiles()
     },
@@ -449,7 +457,7 @@ export default {
       if (this.isProjectSwitch === '1') {
         if (!this.importProjectId) return this.$message.error('请选择所属项目');
       }
-      if (!this.file) return this.$message.error('请上传文件');
+      if (!this.file.length) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     // 提示
@@ -721,29 +729,7 @@ export default {
     selectionChange(data) {
       this.selectedData = data
     },
-    // 批量操作
-    handleBatch() {
-      if (!this.selectedData.length) return this.$message.error('请先选择数据')
-      this.loadingText = '正在计算，请稍等'
-      this.btnLoading = true
-      this.listLoading = true
-      batchCalculateLen(this.selectedData.map((item) => item.id))
-        .then((res) => {
-          this.selectedData = []
-          this.$refs['tableForm'].$refs.JNPFTable.clearSelection()
-          this.$message.success('操作成功')
-          this.btnLoading = false
-          this.listLoading = false
-          this.loadingText = ''
-        })
-        .catch((err) => {
-          this.btnLoading = false
-          this.listLoading = false
-          this.loadingText = ''
-          // let msg = err.substring(err.indexOf('Error: ') + 7, err.indexOf('at') - 2)
-          // this.$confirm(msg, this.$t('common.tipTitle'), { type: 'error' }).then(() => { }).catch(() => { })
-        })
-    }
+   
   }
 }
 </script>

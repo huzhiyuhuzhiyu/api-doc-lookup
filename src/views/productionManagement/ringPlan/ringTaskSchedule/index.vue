@@ -57,7 +57,7 @@
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable"   :data="tableData"  v-show="showFlag"
             :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="任务单号" min-width="200" sortable="custom">
+            <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
                   scope.row.orderNo

@@ -444,13 +444,14 @@ export default {
               && row.approvalStatus !== ApprovalStatus.ING
       },
       async backFn(){
-          await getQueryConfirm(this,'是否确认撤回')
-          const arr =this.$refs.dataTable.getCurrentSelection()
+         const arr =this.$refs.dataTable.getCurrentSelection()
 
           if(arr.length === 0){
               this.$message.error('请选择要撤回的数据')
               return
           }
+          await getQueryConfirm(this,'是否确认撤回')
+         
           console.log(arr);
           const res =await batchRevokeSaleOrder(arr.map(item=>item.id))
           if(res.code === 200){

@@ -433,7 +433,7 @@ export default {
     copyFun(id, type) {
       this.depFormVisible = true
       this.$nextTick(() => {
-        this.$refs.depForm.init(id, type)
+        this.$refs.depForm.init('', type)
       })
     },
   }

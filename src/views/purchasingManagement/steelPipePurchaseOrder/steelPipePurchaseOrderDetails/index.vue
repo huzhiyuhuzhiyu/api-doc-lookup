@@ -67,7 +67,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-if="tableFlag" @selection-change="handeleFinshData" highlight-current-row :fixedNO="true"
+          <JNPF-table  @selection-change="handeleFinshData" highlight-current-row :fixedNO="true"
             ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
             :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
@@ -219,7 +219,6 @@ export default {
       isProductNameSwitch: '',
       tableDataFlag: false,
       isDeputyUnitSwitch: '',
-      tableFlag: false,
       printBrowseVisible: false,
       prindId: '',
       formId: '',
@@ -445,6 +444,7 @@ export default {
   },
   mounted() {
     this.getProductClassFun()
+      this.listLoading = true
   },
   async created() {
     await this.getOrderFiledMap()
@@ -750,7 +750,6 @@ export default {
         .then((res) => {
           console.log(res, '明细列表')
           this.detailTableData = res.data.records
-          this.tableFlag = true
 
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
@@ -819,7 +818,7 @@ export default {
     addOrUpdateHandle(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.procureForm.init(id, type)
+        this.$refs.procureForm.init(id,'', type)
       })
     },
     // 导出订货单

@@ -482,7 +482,7 @@ export default {
     },
     //明细列表取消发货
     Cancelshipmentline(id) {
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
+      this.$confirm('您确认取消选中的发货通知单吗？', this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
         Cancelshipmentlinelist(id).then(res => {

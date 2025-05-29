@@ -24,8 +24,8 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期"
-                  end-placeholder="结束日期" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="time" type="datetimerange" range-separator="至" start-placeholder="入库开始时间"
+                  end-placeholder="入库结束时间" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -80,7 +80,7 @@
               :width="isDeputyUnitSwitch === '1' ? 85 : 60" />
             <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch === '1'" />
             <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
-            <el-table-column prop="latestStorageTime" label="入库日期" width="220" sortable="custom" />
+            <el-table-column prop="latestStorageTime" label="最新入库时间" width="220" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData"></pagination>
@@ -391,8 +391,8 @@ export default {
     initData() {
       this.listLoading = true
       if (this.time && this.time.length > 0) {
-        this.listQuery.lsSd = this.time[0] + ' 00:00:00'
-        this.listQuery.lsEd = this.time[1] + ' 23:59:59'
+        this.listQuery.lsSd = this.time[0] 
+        this.listQuery.lsEd = this.time[1] 
       } else {
         this.listQuery.lsSd = ''
         this.listQuery.lsEd = ''

@@ -805,9 +805,10 @@ export default {
         deliveryStartDate: '',
         endTime: '',
         orderNo: '',
+        documentStatus:'submit',
         orderType: 'procure',
         classAttribute: 'other',
-        receivingStatus: 'not_finished',
+        receivingStatus: '',
         orderItems: [
           {
             asc: false,

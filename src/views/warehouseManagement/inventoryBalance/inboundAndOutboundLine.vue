@@ -67,12 +67,27 @@
                 <JNPF-table :partentOrChild="'child'" ref="dataTables" v-loading="listLoading" :data="tableData" fixedNO  @sort-change="sortChange"
                             custom-column
                 >
-                    <!-- <template v-for="item in tableItems"> -->
-                    <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label" :sortable="item.custom"
+                <template v-for="item in tableItems">
+                   <template v-if="['num'].includes(item.prop)">
+                    <el-table-column  :key="item.prop" :prop="item.prop" :label="item.label" :sortable="item.custom"
                                      :fixed="item.fixed || false" :min-width="item.minWidth || 120"
                     >
-             
+                    <template slot-scope="{row}">
+                      <div :class="row.documentType=='inbound'?'green':'red'">{{ row.num }}</div>
+                    </template>
+                  </el-table-column>
+                   </template>
+                   <template v-else>
+                      <el-table-column  :key="item.prop" :prop="item.prop" :label="item.label" :sortable="item.custom"
+                                     :fixed="item.fixed || false" :min-width="item.minWidth || 120"
+                    >
+                   
                 </el-table-column>
+                   </template>
+                </template>
+                    <!-- <template v-for="item in tableItems"> -->
+                    
+                    <el-table-column v-for="item in attrDictionaryData" :key="item.id" min-width="140" :prop="item.description" :label="$store.getters[item.description] || item.fullName" />
                     <!-- </template> -->
                 </JNPF-table>
                 <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
@@ -121,7 +136,9 @@
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-
+import {
+    productAttributesCodeList, delProductAttributesCode, addProductAttributeCodeRelated, getbimProductAttributesListMap
+} from '@/api/masterDataManagement'
 export default {
     name: 'inboundAndOutboundLine',
     components: { SuperQuery, ExportForm },
@@ -237,12 +254,33 @@ export default {
             ],
             basicQuery: {},
             superQuery: {},
-            orderDate:[]
+            orderDate:[],
+            bimProductAttributesList:[],
+            attrDictionaryData:[],
         }
     },
-
+   async mounted () {
+           console.log("this.listRequestObj",this.listRequestObj);
+           const res = await getbimProductAttributesListMap()
+        this.bimProductAttributesList = res.data
+        const productAttribute = await this.$store.dispatch('base/getDictionaryData', { sort: 'productAttributes'})
+        this.attrDictionaryData = productAttribute.filter(item=>!['pa014','pa017','pa018','pa021','pa022'].includes(item.enCode)).map(item=>{
+            return {
+                ...item,
+                list:this.bimProductAttributesList[item.enCode].map(item=>{
+                    return {
+                        label:item.name,
+                        value:item.name,
+                    }
+                })
+            }
+        })
+        this.$nextTick(()=>{
+          this.$refs.dataTables.doLayout()
+        })
+    },
     created() {
-      console.log("this.listRequestObj",this.listRequestObj);
+ 
         this.getData()
     },
     methods: {

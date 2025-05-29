@@ -55,7 +55,7 @@ export default {
   methods: {
 
     init(id, type) {
-      if (type == "product") {
+      if (type == "produce") {
         this.pageTitle = "生产需求——查看子件"
       }
 

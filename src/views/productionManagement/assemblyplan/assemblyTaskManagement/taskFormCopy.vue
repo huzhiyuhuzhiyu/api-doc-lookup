@@ -148,7 +148,7 @@
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                   <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                  <el-table-column prop="receivedQuantity" label="已投数量">
+                  <el-table-column prop="receivedQuantity" label="已领数量">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
                         scope.row.receivedQuantity

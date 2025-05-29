@@ -385,8 +385,8 @@ export default {
         state: ''
       }
       this.searchList = [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'code', fieldValue: '', label: '产线编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '产线名称', symbol: 'like', searchType: 1, width: 120 },
 
       ]
       this.$refs.SuperQuery.conditionList = []

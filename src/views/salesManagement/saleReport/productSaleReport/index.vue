@@ -73,14 +73,14 @@
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="total" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" > 
+              <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize" @pagination="initData" > 
                 <span>总发货数量:{{ totalSaleNum }}</span>
               <span style="margin-left: 10px;">总销售金额:{{ sumAmount }}</span>
               </pagination>
             </div>
            
             <!-- 高级查询 -->
-            <SuperQuery :partentOrChild="activeName" :show="superQueryInboundVisible" ref="SuperQuery" :columnOptions="superQueryInbound" @superQuery="superQuerySearchInbound" @close="superQueryInboundVisible = false" />
+            <SuperQuery   :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
 
           </div>
@@ -108,8 +108,11 @@ export default {
       inboundDate:[],
       inboundData:[],
       inboundTotal:0,
-      superInboundForm: {},
-      inboundForm:{},
+         superForm: {},
+      superQuery: {},
+      basicQuery: {},
+      superForm: {},
+      orderForm:{},
       inboundFormList:{
         businessType:"outbound_sale_send",
         orderDateStart: "",
@@ -135,22 +138,28 @@ export default {
         }
       }, 
       searchList2:[
-        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+               { field: 'productsName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
       ], 
-      superQueryInbound: [
+      superQueryJson: [
           {
           prop: 'productsName',
           label: "产品名称",
           type: 'input'
         },
-     
-           {
-          prop: 'partnerName',
-          label: "客户名称",
+            {
+          prop: 'productsCode',
+          label: "产品编码",
           type: 'input'
         },
+            {
+          prop: 'productDrawingNo',
+          label: "品名规格",
+          type: 'input'
+        },
+
+        
       ],
-      superQueryInboundVisible: false,
+      superQueryVisible: false,
 
 
     
@@ -174,7 +183,7 @@ export default {
   },
   async created() { 
  
-    this.superInboundForm=this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList))
+    this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.inboundFormList))
    
    this.search()
   },
@@ -190,10 +199,10 @@ export default {
     },
    
  
-       superQuerySearchInbound(query) {
-      this.superInboundForm = query
-      this.superQueryInboundVisible = false
-      this.search()
+       superQuerySearch(query) {
+      this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
     },
      
     //排序
@@ -204,8 +213,8 @@ export default {
         } else {
           newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
         }
-        this.inboundForm.orderItems[0].asc = order !== "descending"
-        this.inboundForm.orderItems[0].column = order === null ? "" : newProp
+        this.orderForm.orderItems[0].asc = order !== "descending"
+        this.orderForm.orderItems[0].column = order === null ? "" : newProp
  
       this.initData()
     },
@@ -215,7 +224,7 @@ export default {
     initData() {
       this.listLoading = true
 
-         saleProductReport(this.inboundForm).then(res => {
+         saleProductReport(this.orderForm).then(res => {
           this.tableData = res.data.page.records||[]
         this.total = res.data.page.total||0
         this.totalSaleNum=res.data.total.sumNum||0
@@ -232,19 +241,19 @@ export default {
     search(type) {
     
         if (this.inboundDate && this.inboundDate.length > 0) {
-          this.inboundForm.orderDateStart = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
-          this.inboundForm.orderDateEnd = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
+          this.orderForm.orderDateStart = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
+          this.orderForm.orderDateEnd = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
         } else {
-          this.inboundForm.orderDateStart = ''
-          this.inboundForm.orderDateEnd = ''
+          this.orderForm.orderDateStart = ''
+          this.orderForm.orderDateEnd = ''
         }
-        Object.keys(this.inboundForm).forEach(key => { // 清除搜索条件两端空格
-          let item = this.inboundForm[key]
-          this.inboundForm[key] = typeof item === 'string' ? item.trim() : item
+        Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+          let item = this.orderForm[key]
+          this.orderForm[key] = typeof item === 'string' ? item.trim() : item
         })
-        this.inboundForm.pageNum = 1 // 重置页码
+        this.orderForm.pageNum = 1 // 重置页码
          if (type === 'basic') {
-          this.superInboundForm.superQuery  = {
+          this.basicQuery =   {
             matchLogic: 'AND',
             condition: this.searchList2
               .filter((item) => item.fieldValue)
@@ -255,9 +264,10 @@ export default {
                 }
               })
           } 
+        this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
-          this.superInboundForm.superQuery = this.superQuery
+          this.superForm.superQuery = this.superQuery
         }
       
       
@@ -267,10 +277,9 @@ export default {
     reset() {
         this.$refs['dataTableInbound'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.inboundDate = []
-        this.superInboundForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
+        this.superForm= this.orderForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
         this.searchList2=[
            { field: 'productsName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
       ]
   
       this.search('basic')
@@ -291,11 +300,11 @@ export default {
       }
       
       let _data = {
-        ...this.inboundForm,
+        ...this.orderForm,
         exportType: '1259',
         exportName: "产品销售报表",
         includeFieldMap,
-        pageSize: data.dataType == 0 ? this.inboundForm.pageSize : -1
+        pageSize: data.dataType == 0 ? this.orderForm.pageSize : -1
       }
       excelExport(_data).then(res => {
         this.exportFormVisible = false

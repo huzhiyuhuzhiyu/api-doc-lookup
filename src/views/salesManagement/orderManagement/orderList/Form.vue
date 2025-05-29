@@ -3222,6 +3222,7 @@ export default {
             }
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
+              item.outboundQuantity=' '
               if (!item.productsId) {
                 submitFlag = false
                 this.$message({

@@ -715,6 +715,7 @@ export default {
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+      this.$refs.treeBox.setCurrentKey(null);
       this.listQuery = {
         orderItems: [
           {

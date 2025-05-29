@@ -60,7 +60,7 @@
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="加工车间" prop="workshopId">
-                        <el-select v-model="dataForm.workshopId" style="width:100%" :disabled="type == 'look'">
+                        <el-select v-model="dataForm.workshopId" style="width:100%" :disabled="type == 'look'" :placeholder="type=='look'&&!dataForm.workshopId?'':'请选择加工车间'">
                           <el-option v-for="item in workshopIdOptions" :key="item.value" :label="item.fullName"
                             :value="item.id"></el-option>
                         </el-select>
@@ -109,7 +109,7 @@
 
                     <el-col :span="24">
                       <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
+                        <el-input v-model="dataForm.remark" :placeholder="type=='look'&&!dataForm.remark?'':'请输入备注'" clearable type="textarea"
                           maxlength="200" :disabled="type == 'look'"></el-input>
                       </el-form-item>
                     </el-col>

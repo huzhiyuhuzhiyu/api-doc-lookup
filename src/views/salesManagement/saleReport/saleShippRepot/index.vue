@@ -177,13 +177,13 @@ export default {
         },
 
         {
-          prop: '通知单号',
-          label: "saleDeliveryNo",
+          prop: 'saleDeliveryNo',
+          label: "通知单号",
           type: 'input'
         },
           {
-          prop: '客户名称',
-          label: "partnerName",
+          prop: 'partnerName',
+          label: "客户名称",
           type: 'input'
         },
 

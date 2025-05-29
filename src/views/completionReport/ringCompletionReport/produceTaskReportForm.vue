@@ -523,7 +523,7 @@ export default {
         this.currentProcess.qualifiedQuantity=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.plateNumber,this.currentProcess.plates]), 4)
       }else{
       let  cases=this.jnpf.numberFormat(this.jnpf.math('multiply', [2,this.currentProcess.cases]), 6) //箱数*2
-      let complaReult=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.bagNumber,0.25]), 6)//袋子个数*袋子重量（车加工0.25 磨加工0.5）
+      let complaReult=this.jnpf.numberFormat(this.jnpf.math('multiply', [this.currentProcess.bagNumber,0.5]), 6)//袋子个数*袋子重量（车加工0.25 磨加工0.5）
       
       let numtotal= this.jnpf.numberFormat(this.jnpf.math('subtract', [this.currentProcess.totalWeight,this.currentProcess.trayTotalWeight,cases,complaReult]), 6)
         this.currentProcess.qualifiedQuantity=this.jnpf.numberFormat(this.jnpf.math('multiply', [numtotal,this.currentProcess.productWeight,1000]), 4)
@@ -715,7 +715,7 @@ export default {
           if (matchingItem) {
             this.currentProcessId = matchingItem.processId
             this.currentProcess = matchingItem
-            this.$set(this.currentProcess,'bagWeight',0.25)
+            this.$set(this.currentProcess,'bagWeight',0.5)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
             this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
@@ -728,7 +728,7 @@ export default {
           this.currentProcess =  res.data.workOrderList.find(item=>+item.waitReportNum && item.reportFlag) || res.data.workOrderList[0]
           this.currentProcessId = this.currentProcess.processId
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
-            this.$set(this.currentProcess,'bagWeight',0.25)
+            this.$set(this.currentProcess,'bagWeight',0.5)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
           this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
           this.processInfo = JSON.parse(JSON.stringify(this.currentProcess))
@@ -755,7 +755,7 @@ export default {
     getProcessFun(item) {
       this.currentProcess = item
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
-            this.$set(this.currentProcess,'bagWeight',0.25)
+            this.$set(this.currentProcess,'bagWeight',0.5)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
       this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
 

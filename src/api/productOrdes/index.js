@@ -414,3 +414,11 @@ export function prodOrderUpdateSort(data) {
     data
   })
 }
+
+export function batchCopyTask(data) {
+  return request({
+    url: `/api/mrp/prod/order/batchCopy`,
+    method: 'POST',
+    data
+  })
+}

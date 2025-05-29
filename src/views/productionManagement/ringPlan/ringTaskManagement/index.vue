@@ -185,8 +185,11 @@
                     <el-dropdown-item @click.native="viewDetailFun(scope.row.id)">
                       查看详情
                     </el-dropdown-item>
-                      <el-dropdown-item  @click.native="addTaskFun('copy',scope.row)">
+                    <el-dropdown-item  @click.native="addTaskFun('copy',scope.row)">
                           <el-button v-has="'btn_copy'"  size="mini" type="text" >复制</el-button>
+                    </el-dropdown-item>
+                    <el-dropdown-item  @click.native="batchAddTask(scope.row)">
+                          <el-button  v-has="'btn_copy'" size="mini" type="text" >批量复制</el-button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -365,6 +368,7 @@
       <div id="qrcode" ref="qrCode" style="text-align: center;"></div>
     </el-dialog>
     <BatchSortForm v-if="batchSortVisible" ref="batchSortForm" @close="closeForm" />
+    <BatchAddTaskForm v-if="batchAddTaskVisible" ref="batchAddTaskForm" @close="closeForm" />
   </div>
 </template>
 <script>
@@ -397,12 +401,14 @@ import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrde
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 import BatchSortForm from '@/views/productionManagement/ringPlan/ringTaskManagement/batchSortForm.vue'
+import BatchAddTaskForm from '@/views/productionManagement/ringPlan/ringTaskManagement/batchAddTaskForm.vue'
 export default {
   name: 'assemblyTaskManagement',
-  components: { BatchSortForm, SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2,ProcessOutForm,OutSouringForm },
+  components: { BatchAddTaskForm, BatchSortForm, SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2,ProcessOutForm,OutSouringForm },
   mixins: [getProjectList],
   data() {
     return {
+      batchAddTaskVisible:false,
       batchSortVisible:false,
       dialogVisible:false,
       qrCode:"",
@@ -1170,6 +1176,7 @@ export default {
       this.processOutFormVisible = false
       this.outSouringFormVisible = false
       this.batchSortVisible = false
+      this.batchAddTaskVisible = false
       this.search()
     },
     handleProcessOut(id) {
@@ -1354,6 +1361,13 @@ export default {
         this.batchSortVisible = true
         this.$nextTick(() => {
             this.$refs.batchSortForm.init(this.selectArr)
+        })
+    },
+    batchAddTask(row){
+        const batchTask = Array.from({length:10}, () => ({...row,orderNo:''}))
+        this.batchAddTaskVisible = true
+        this.$nextTick(() => {
+            this.$refs.batchAddTaskForm.init(batchTask)
         })
     },
   }

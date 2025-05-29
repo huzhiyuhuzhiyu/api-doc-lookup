@@ -34,7 +34,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun()">新建任务</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addTaskFun('add')">新建任务</el-button>
               <el-button v-has="'reworkTask'" size="mini" type="primary" icon="el-icon-plus" @click.native="addReworkTaskFun('', 'add')">返工任务</el-button>
               <el-button size="mini" v-has="'btn_split'" type="primary"  @click="splitHander()">拆分</el-button>
               <el-button size="mini" v-has="'btn_redesignate'" type="primary"  @click="redesignateHander()">改制</el-button>
@@ -99,7 +99,7 @@
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
             <el-table-column prop="splitQuantity" label="已拆分数量" min-width="140" sortable="custom" v-has="'btn_split'" />
-            <template v-if="$store.getters.configData.produce.steelballtask">
+            <template v-if="$store.getters.configData.produce.steelBallTask">
               <el-table-column prop="productionWeight" label="生产重量" min-width="140" sortable="custom" />
               <el-table-column prop="productionBarrels" label="生产桶数" min-width="140" sortable="custom" />
             </template>
@@ -184,6 +184,9 @@
                     </el-dropdown-item> -->
                     <el-dropdown-item @click.native="viewDetailFun(scope.row.id)">
                       查看详情
+                    </el-dropdown-item>
+                      <el-dropdown-item  @click.native="addTaskFun('copy',scope.row)">
+                          <el-button v-has="'btn_copy'"  size="mini" type="text" >复制</el-button>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -1064,10 +1067,10 @@ export default {
       })
     },
     // 新建任务
-    addTaskFun() {
+    addTaskFun(btnType,row) {
       this.addTaskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.addTaskForm.init('add')
+        this.$refs.addTaskForm.init(btnType,row)
       })
     },
     reassignmentFun2() {

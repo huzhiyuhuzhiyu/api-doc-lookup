@@ -1117,7 +1117,7 @@ export default {
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
-        item.num = item.requiredReceivedQuantity || item.waitReceiptNum
+        item.num = item.waitReceiptNum
         item.taxRates = item.taxRate + "%"
 
 
@@ -1314,7 +1314,6 @@ export default {
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
     init(data, btnType, businessType, classAttributeList, warehouseCode) {
-        console.log('勇豪傻逼')
       console.log("11", data, btnType, businessType, warehouseCode);
       this.dataForm.businessType = businessType
       this.classAttributeList = classAttributeList
@@ -1367,7 +1366,7 @@ export default {
         setTimeout(() => {
           data.forEach((item, index) => {
             item.productDrawingNo = item.drawingNo
-            item.num = item.requiredReceivedQuantity
+            item.num = item.waitReceiptNum
             item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
             item.costPrice = item.price
             item.taxRates = item.taxRate + "%"

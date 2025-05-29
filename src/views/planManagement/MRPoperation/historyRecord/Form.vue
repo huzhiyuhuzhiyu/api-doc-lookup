@@ -102,6 +102,7 @@ export default {
 
     },
     init(id, type) {
+      console.log(type);
       if (type == "produce") {
         this.pageTitle = "生产需求——追溯"
       }
@@ -111,7 +112,7 @@ export default {
       if (type == 'out') {
         this.pageTitle = "外协需求——追溯"
       }
-      
+      console.log("this.pageTitle",this.pageTitle);
       this.orderForm.materialDemandId = id
       this.listLoading = true
       demandSourceReport(this.orderForm).then(res => {

@@ -74,7 +74,7 @@
           </div>
           <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="isProjectSwitchFlag"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            @selection-change="handleSelectionChange" hasC customKey="JNPFTableKey_190481">
+            @selection-change="handleSelectionChange" :hasC="orderForm.planStatus=='not_generated'" customKey="JNPFTableKey_190481">
             <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"> </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />

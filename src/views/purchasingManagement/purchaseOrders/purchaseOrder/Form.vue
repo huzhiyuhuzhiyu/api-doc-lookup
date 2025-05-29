@@ -43,7 +43,7 @@
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
                       :data="dataFormTwo.data" id="table" :height="customStyleData" ref="tableForm">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <el-table-column type="index" width="60" label="序号" align="center" />
                       <el-table-column prop="costProjectName" label="成本核算归属" width="160" v-if="abProjectSwitchVisible"
                     show-overflow-tooltip></el-table-column>
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"
@@ -352,7 +352,7 @@
                 <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
                   :data="dataFormTwo.data" id="table" :height="customStyleData" ref="tableForm">
                   <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
-                  <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                  <el-table-column type="index" width="60" label="序号" align="center"  />
                   <el-table-column prop="costProjectName" label="成本核算归属" width="160" v-if="abProjectSwitchVisible"
                     show-overflow-tooltip></el-table-column>
                     <el-table-column prop="projectName" label="所属项目" width="120" v-if="abProjectSwitchVisible"

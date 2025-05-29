@@ -31,7 +31,7 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_120075">
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" customKey="JNPFTableKey_120075" @sort-change="sortChange" ref="dataTable">
             <el-table-column prop="productCode" label="产品编码" sortable="custom" ></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" sortable="custom" ></el-table-column>
             <el-table-column prop="orderNo" label="领料单号" sortable="custom" ></el-table-column>
@@ -42,7 +42,7 @@
                 <div>{{ scope.row.receiveType=='order'?'任务物料':"工序物料" }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="personId" label="领料人" sortable="custom" ></el-table-column>
+            <el-table-column prop="personName" label="领料人" sortable="custom" ></el-table-column>
            
           </JNPF-table>
           <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
@@ -91,7 +91,21 @@ export default {
       this.search()
     },
  
-
+        sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'partnerCode' ||prop=='productionLineNmae'|| prop == 'pairingModeName' || prop == 'productName' || prop == 'projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'productDrawingNo' || prop == 'productCode' || prop == 'routingName' || prop == 'routingCode') {
+        if (prop === 'createByName') {
+          newProp = 'create_by'
+        } else {
+          newProp = prop
+        }
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order !== "descending"
+      this.form.orderItems[0].column = order === null ? "" : newProp
+      this.search()
+    },
 
     search() { 
       WithdrawalmxList(this.form).then(res=>{
@@ -101,6 +115,7 @@ export default {
     },
     
     reset() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.form = {
         productCode:"",
         productDrawingNo:"",

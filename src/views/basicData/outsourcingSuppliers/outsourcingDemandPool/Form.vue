@@ -718,7 +718,7 @@ export default {
       }
       // 通过需求池id 获取明细的数据
       getShipmentList(obj).then((res) => {
-        this.sourceData = res.data
+        this.sourceData = res.data.length?res.data:this.sourceData
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
             this.sourceData[ind].demandQuantity1 = item.demandQuantity1
@@ -743,9 +743,14 @@ export default {
         // }
 
         this.$nextTick(() => {
-          this.$refs['sourceRef'].init(this.sourceData, '')
+          this.$refs['sourceRef'].init(this.sourceData, this.dataFormTwo.data[index]) 
         })
       })
+    },
+        handlerConfirm(data){
+      console.log("data",data);
+      this.sourceData=data
+      this.dataFormTwo.data[this.index].outShipmentList=data
     },
     listDataFormatting(res) {
       console.log(res)

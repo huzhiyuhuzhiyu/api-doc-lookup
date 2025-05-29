@@ -616,6 +616,7 @@ import TableFormProduct from '@/components/no_mount/TableForm-product/index.vue'
 import { getBimProcessList } from '@/api/bimProcess'
 import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 import tenantMinix from "@/mixins/generator/TenantMinix";
+import { deepClone } from '@/utils'
 export default {
   mixins: [getProjectList,tenantMinix],
   components: {
@@ -826,10 +827,10 @@ export default {
             if (this.weight && this.quantity) {
               this.$set(this.dataForm,'productionQuantity',  Math.floor((Number(newVal) / Number(this.weight) *Number(this.quantity)) * 10000) / 10000)
             } else {
-              this.$set(this.dataForm,'productionQuantity',0)
+              this.$set(this.dataForm,'productionQuantity',this.dataForm.productionQuantity || 0)
             }
           } else {
-            this.$set(this.dataForm,'productionQuantity',0)
+            this.$set(this.dataForm,'productionQuantity',this.dataForm.productionQuantity || 0)
           }
 
         }
@@ -1473,9 +1474,33 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
         res.data.routingLineList.sort((a, b) => a.sort - b.sort);
         this.dataFormTwo.data = res.data.routingLineList
         this.processList = JSON.parse(JSON.stringify(res.data.routingLineList))
+          console.log(this.dataForm,'dataForm')
       })
     },
-    init() {
+    init(btnType,row) {
+      if (btnType === 'copy'){
+          delete row.id
+          let _data = {
+              ...row,
+              id:row.productsId,
+              planDate: this.dataForm.planDate,
+              productsDrawingNo:row.productDrawingNo,
+              productsName:row.productName,
+              productionBarrels:1,
+              productionQuantity:row.productionQuantity
+          }
+          this.dataForm = deepClone(_data)
+          if (this.$store.getters.configData.produce.steelBallTask) {
+              let obj = {
+                  productsId: this.dataForm.productsId
+              }
+              getProductsWeightQuantityList(obj).then(res=>{
+                  this.weight = res.data.records.length ? res.data.records[0].weight : 0
+                  this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
+              })
+          }
+          this.getRoutingDetail(this.dataForm.routingId)
+      }
       this.getProductionLineListFun()
       this.fetchData("PROD")
       this.creaFun()

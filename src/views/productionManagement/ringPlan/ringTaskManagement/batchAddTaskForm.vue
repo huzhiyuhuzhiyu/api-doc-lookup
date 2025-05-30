@@ -82,6 +82,7 @@ export default {
             ],
             linesList:[],
             maxTaskLength:10,
+            tempList:[]
         }
     },
     created() {
@@ -90,9 +91,10 @@ export default {
     methods: {
         init(data){
             this.linesList = deepClone(data)
+            this.tempList.push({...this.linesList[0],orderNo:''})
         },
         addLine(){
-            this.linesList.push({...this.linesList[0],orderNo:''})
+            this.linesList.push({...this.tempList[0],orderNo:''})
         },
         addOrDelLinesItem(data) {
             let type = Array.isArray(data) ? 'Array' : 'Object'
@@ -111,9 +113,7 @@ export default {
             if (val*1 > 10){
                return  this.$message.error('最大只能复制10条')
             }
-            let tempList = []
-            tempList.push({...this.linesList[0],orderNo:''})
-            this.linesList = Array.from({length:val}, () => ({...tempList[0],orderNo:''}))
+            this.linesList = Array.from({length:val}, () => ({...this.tempList[0],orderNo:''}))
         },
         async handleConfirm(){
             this.btnLoading = true

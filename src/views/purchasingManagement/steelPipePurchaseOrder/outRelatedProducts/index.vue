@@ -101,8 +101,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="产品名称" prop="outProductName">
-              <el-input v-model="dataForm.outProductName" placeholder="产品名称" :disabled="btnType === 'look'"  readonly @focus="addProduct"/>
+            <el-form-item label="品名规格" prop="outProductDrawingNo">
+              <el-input v-model="dataForm.outProductDrawingNo" placeholder="品名规格" :disabled="btnType === 'look'"  readonly @focus="addProduct"/>
             </el-form-item>
           </el-col>
      
@@ -212,16 +212,16 @@
       </el-form>
     </el-row>
     <div class="JNPF-common-layout-main JNPF-flex-main">
-      <JNPF-table v-loading="listLoading" :data="allproductData" hasC @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_903180">
+      <JNPF-table v-loading="listLoading" :data="allproductData"  ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_903180">
         <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" label="产品名称" width="160"  show-overflow-tooltip></el-table-column>
         <el-table-column prop="drawingNo" label="品名规格" />
         <el-table-column prop="productCategoryName" label="所属分类" />
         <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch == 1" />
         <el-table-column prop="mainUnit" label="单位" />
         <el-table-column prop="inventoryQuantity" label="库存数量">
           <template slot-scope="scope">
-            <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+            <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
               {{ scope.row.inventoryQuantity }}
             </el-link>
           </template>
@@ -245,6 +245,8 @@
         <!-- 高级查询 -->
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <Form v-if="productVisible" ref="Form"></Form>
+
   </div>
 </template>
 <script>
@@ -271,12 +273,13 @@ import { getPrintList } from '@/api/system/printDev'
 import { excelExport, getOrderFiledMap,getProductionLineList } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'outRelatedProducts',
-  components: { SuperQuery},
+  components: { SuperQuery,Form},
   mixins: [getProjectList],
   data() {
     return {
@@ -450,7 +453,7 @@ export default {
       dataRule: {
         outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
         purchasePartnerName: [{ required: true, message: '请选择采购供应商', trigger: ['change'] }],
-        outProductName: [{ required: true, message: '请选择产品', trigger: ['change'] }],
+        outProductDrawingNo: [{ required: true, message: '请选择产品', trigger: ['change'] }],
         // buyBackRate: [{ required: true, message: '请选择回购税率', trigger: ['change'] }],
         warehouseName: [{ required: true, message: '请选择仓库', trigger: ['change'] }],
         yieldRate: [{ required: true, message: '请输入成材率', trigger: ['blur'] }],
@@ -462,7 +465,7 @@ export default {
       },
       
       workOrderData: [],
-   
+   productVisible:false,
    
  
     }
@@ -478,6 +481,14 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+        // 查看库存明细
+    viewFun(row) {
+      this.productVisible = true
+      this.$set(row,'productsId',row.id)
+      this.$nextTick(() => {
+        this.$refs.Form.init(row, 'inventoryFlag', "", row.projectId)
+      })
+    },
     selectFun(row) {
       this.allProVisible = false
       this.dataForm.outProductCode=row.code
@@ -670,7 +681,9 @@ export default {
         this.dataForm.warehouseCode=''
         this.dataForm.remark=''
         this.dataForm.id=''
-        this.$refs['diaForm'].resetFields()
+      this.$nextTick(()=>{
+          this.$refs['diaForm'].resetFields()
+      })
     },
     editFun(row,type){
       this.btnType='edit'

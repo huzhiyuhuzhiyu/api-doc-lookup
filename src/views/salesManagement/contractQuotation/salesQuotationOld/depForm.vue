@@ -739,7 +739,7 @@
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom">
                   <template slot-scope="scope">
-                    <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+                    <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
                       {{ scope.row.inventoryQuantity }}
                     </el-link>
                   </template>
@@ -758,7 +758,9 @@
         </span>
       </el-dialog>
       <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    </div>
+       <Form v-if="formVisible" ref="Form"></Form>
+    </div>     
+
   </transition>
 </template>
 <script>
@@ -782,9 +784,10 @@ import recordList from '@/views/workFlow/components/RecordList.vue'
 import flowMixin from '@/mixins/generator/flowMixin'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 export default {
-  components: { ExportForm, Process, recordList },
-  mixins: [busFlow, flowMixin, getProjectList],
+  components: { ExportForm, Process, recordList,Form },
+  mixins: [busFlow, flowMixin, getProjectList,],
   data() {
     return {
       highlightCurrentFlag:false,
@@ -1010,6 +1013,7 @@ export default {
       specialRequireFlag: "",
       vibrationLevelFlag: "",
       bimProductAttributesList: [],
+      formVisible: false,
     }
   },
   watch: {
@@ -1050,6 +1054,14 @@ export default {
     await this.getProductNameSwitch('product', 'enable_productName')
   },
   methods: {
+        // 查看库存明细
+    viewFun(row) {
+      this.formVisible = true
+      this.$set(row,'productsId',row.id)
+      this.$nextTick(() => {
+        this.$refs.Form.init(row, 'inventoryFlag', "", row.projectId)
+      })
+    },
       //多选
     handleRowClick(row) {
       this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)

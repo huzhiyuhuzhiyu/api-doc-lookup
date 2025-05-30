@@ -977,9 +977,9 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
           })
       }
       this.getWarehouseListFun()
-      if (!this.dataForm.bomId) {
-        this.$message.error("该产品没有BOM，请配置BOM后再试")
-      }
+      // if (!this.dataForm.bomId) {
+      //   this.$message.error("该产品没有BOM，请配置BOM后再试")
+      // }
       this.creaFun()
       console.log("this.$store.getters.configData.produce.task_process_selection",this.$store.getters.configData.produce.task_process_selection);
       if (!data.routingId) return this.dataFormTwo.data=[]
@@ -1438,7 +1438,7 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
                 console.log("materialList", this.materialList);
               })
             } else {
-              this.$message.error("该产品没有BOM，请配置BOM后再试")
+              // this.$message.error("该产品没有BOM，请配置BOM后再试")
             }
           } else {
             // 产品+该道工序作为料
@@ -1573,8 +1573,8 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
     },
     checkFun() {
       let submitFlag = null;
-      if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
-
+      // if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
+if(!this.materialList.length&&this.dataForm.bomId&&this.dataForm.pickingWay!=='none') return this.$message.error("领料信息不能为空")
       this.dataForm.planStartDate = this.dataForm.planDate[0]
       this.dataForm.planEndDate = this.dataForm.planDate[1]
       if (this.naturalResourcesFlag) {
@@ -1613,7 +1613,7 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
           item.workGroupId = ""
         });
       }
-      if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
+      // if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
       if (this.allocationFlag) {
         this.dataForm.materialFlag = true
       } else {

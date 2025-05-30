@@ -134,7 +134,7 @@
                         <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                         </el-table-column>
                         <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
-                        <el-table-column prop="pairingModeName" label="配对方式" min-width="120" v-if="isPairingModeSwitch === '1'">
+                        <el-table-column prop="pairingModeName" label="配对方式" min-width="180" v-if="isPairingModeSwitch === '1'">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                               :disabled="btnType == 'look' || isattachmentswitch === '1' ? true : false"
@@ -543,7 +543,7 @@
 
                 <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
                   <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                    :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                    highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                     class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                     <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                       <i
@@ -925,8 +925,7 @@ export default {
       list10: [],
       pairingModeList: [],
       bimProductAttributesList  :[],
-      isPairingModeSwitch: '', // 配对方式显示隐藏
-      highlightCurrentFlag:false,
+      isPairingModeSwitch: '', // 配对方式显示隐藏 
     }
   },
   computed: {
@@ -1642,7 +1641,7 @@ sortChange2({ prop, order }) {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.highlightCurrentFlag=false
+            this.$refs.treeBox.setCurrentKey(null);
       this.orderDateArr = []
       this.ProductListRequestObj = {
         // neOrderState: 'finish',

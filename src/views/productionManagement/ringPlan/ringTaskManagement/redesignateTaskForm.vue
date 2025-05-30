@@ -221,6 +221,7 @@ export default {
       dataRule: {
         productionQuantity: [{ required: true, message: '万粒数不能为空', trigger: 'blur' },
         { validator: this.formValidate('positiveNumber', '万粒数必须大于0', (errMsg, index) => { this.$message.error(`万粒数：${errMsg}`) }), trigger: 'blur' },
+        { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg, index) => { this.$message.error(`万粒数${errMsg}`) }] }), trigger: 'blur' },
         ],
 
       },

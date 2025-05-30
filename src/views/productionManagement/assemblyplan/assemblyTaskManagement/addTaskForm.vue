@@ -1066,6 +1066,7 @@ export default {
         this.$message.error("该产品没有BOM，请配置BOM后再试")
       }
       await this.selectProductSymbol(this.dataForm.id)
+        this.$refs.dataForm.clearValidate('routingName');
       this.getWarehouseListFun()
      
       if (!data.routingId) return
@@ -1075,7 +1076,6 @@ export default {
         this.dataForm.routingName = ''
           this.$nextTick(()=>{
       //  this.$refs.dataForm.clearValidate('productsDrawingNo');
-        this.$refs.dataForm.clearValidate('routingName');
       })
       
         return

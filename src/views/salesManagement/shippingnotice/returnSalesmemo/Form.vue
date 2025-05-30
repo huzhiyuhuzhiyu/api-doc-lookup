@@ -753,7 +753,7 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
               <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                :highlight-current='highlightCurrentFlag' :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                 class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                 <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                   <i
@@ -1138,8 +1138,7 @@ export default {
       list10: [],
       pairingModeList: [],
       pageType:"",
-      isPairingModeSwitch: '', // 配对方式显示隐藏
-      highlightCurrentFlag:false,
+      isPairingModeSwitch: '', // 配对方式显示隐藏 
     }
   },
   computed: {
@@ -1903,6 +1902,7 @@ export default {
     resetAllProduct() {
       this.orderDateArr = []
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+            this.$refs.treeBox.setCurrentKey(null);
       this.ProductListRequestObj = {
         // neOrderState: 'finish',
         orderNo: "",
@@ -2047,8 +2047,7 @@ export default {
         pageSize: 20,
         partnerCategoryId: "",
         type: "customer",
-      }
-      this.highlightCurrentFlag=false
+      } 
       this.getcategoryTree()
     },
     initData() {

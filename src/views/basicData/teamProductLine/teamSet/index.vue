@@ -342,6 +342,19 @@ export default {
         },
         reset() {
             this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+            this.superForm=this.tableQuery= {
+                pageNum: 1,
+                pageSize: 20,
+                orderItems: [
+                    {
+                        asc: false,
+                        column: 'create_time'
+                    }
+                ],
+                state: 'enable',
+                code: '',
+                name: ''
+            }
             this.searchList = [
                 { field: 'code', fieldValue: '', label: '班组编码', symbol: 'like', searchType: 1, width: 120 },
                 { field: 'name', fieldValue: '', label: '班组名称', symbol: 'like', searchType: 1, width: 120 },

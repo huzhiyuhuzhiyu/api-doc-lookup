@@ -17,7 +17,14 @@
                         <div class="JNPF-common-layout">
                             <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
                                 <div class="JNPF-common-layout-main JNPF-flex-main">
-                                    <div style="height: 100%">
+                                    <div>
+                                        <el-row :gutter="30" class="custom-row">
+                                            <el-col :sm="6" :xs="24">
+                                                <el-input v-model="copyLength" @change="changeLineList" placeholder="请输入复制条数"></el-input>
+                                            </el-col>
+                                        </el-row>
+                                    </div>
+                                    <div style="height: 100%;overflow: auto">
                                         <div v-if="btnType !== 'look'">
                                             <el-button :disabled="linesList.length >= maxTaskLength" type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus"
                                                        @click="addLine">新增一行</el-button>
@@ -43,6 +50,7 @@ export default {
     name: 'batchAddTaskForm',
     data(){
         return {
+            copyLength:10,
             formLoading:false,
             btnType:'add',
             btnLoading:false,
@@ -98,6 +106,14 @@ export default {
                     this.$refs.tableForm.setDefaultValue()
                 })
             }
+        },
+        changeLineList(val){
+            if (val*1 > 10){
+               return  this.$message.error('最大只能复制10条')
+            }
+            let tempList = []
+            tempList.push({...this.linesList[0],orderNo:''})
+            this.linesList = Array.from({length:val}, () => ({...tempList[0],orderNo:''}))
         },
         async handleConfirm(){
             this.btnLoading = true

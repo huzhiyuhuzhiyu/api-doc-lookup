@@ -94,7 +94,7 @@ export default {
             this.tempList.push({...this.linesList[0],orderNo:''})
         },
         addLine(){
-            this.linesList.push({...this.linesList[0],orderNo:''})
+            this.linesList.push({...this.tempList[0],orderNo:''})
         },
         addOrDelLinesItem(data) {
             let type = Array.isArray(data) ? 'Array' : 'Object'

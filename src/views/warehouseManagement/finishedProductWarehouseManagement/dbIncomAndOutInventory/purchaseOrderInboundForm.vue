@@ -165,8 +165,11 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="525"
+                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="525"
                           v-if="btnType != 'look'">
+                        </el-table-column>
+                        <el-table-column prop="overchargeNum" label="可超收数量" width="140" key="overchargeNum"
+                          v-if="btnType !== 'look' && $store.getters.configData.purchase.allow_exceed_receiving">
                         </el-table-column>
 
                         <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
@@ -446,7 +449,9 @@
                         <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="525"
                           v-if="btnType != 'look'">
                         </el-table-column>
-
+                        <el-table-column prop="overchargeNum" label="可超收数量" width="140" key="overchargeNum"
+                                           v-if="btnType !== 'look' && $store.getters.configData.purchase.allow_exceed_receiving">
+                        </el-table-column>
                         <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
                           v-if="dataForm.weightFlag == true">
                           <!-- <template slot="header">
@@ -888,16 +893,14 @@ export default {
         diffBatchList:[
             {label:'产品生成同批次号',value:0},
             {label:'产品生成不同批次号',value:1},
-        ]
+        ],
+      overCharge:{}
     }
   },
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-    let objs = { "pageSize": -1, "businessCode": "product" }
-    getBimBusinessSwitchConfigList(objs).then(res => {
-      this.productNameFlag = res.data.product[1].configValue1
-    })
+    this.productNameFlag = this.$store.getters.configData.product.enable_productName ? '1' : '0'
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -1049,7 +1052,10 @@ export default {
       detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("采购明细",);
         res.data.records.forEach(item => {
-          item.num = item.waitReceiptNum
+          item.num = item.waitReceiptNum || 0
+            //   可超收数量
+          const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
+          item.overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceiptNum, overchargeNum]), 6) : ''
           if (this.mainUnitFlag == 1) {
             if (item.calculationDirection == 'multiplication') {
               this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
@@ -1117,9 +1123,11 @@ export default {
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
-        item.num = item.waitReceiptNum
+        item.num = item.waitReceiptNum || 0
         item.taxRates = item.taxRate + "%"
-
+        //   可超收数量
+        const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
+        item.overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceiptNum, overchargeNum]), 6) : ''
 
 
 
@@ -1313,7 +1321,13 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttributeList, warehouseCode) {
+    async init(data, btnType, businessType, classAttributeList, warehouseCode) {
+      //   获取超收比例
+      const overCharge =  await getBimBusinessSwitchConfigList({"pageSize": -1, "businessCode": "purchase"})
+      this.overCharge = overCharge.data.purchase.find(item=>item.configKey === 'allow_exceed_receiving') || {
+          configValue2:''
+      }
+      console.log(this.overCharge,'overCharge')
       console.log("11", data, btnType, businessType, warehouseCode);
       this.dataForm.businessType = businessType
       this.classAttributeList = classAttributeList
@@ -1363,10 +1377,15 @@ export default {
         this.dataForm.partnerName = data[0].cooperativePartnerName
 
         // this.refeshDataFormItems()
-        setTimeout(() => {
           data.forEach((item, index) => {
             item.productDrawingNo = item.drawingNo
-            item.num = item.waitReceiptNum
+            item.num = item.waitReceiptNum || 0
+            //   可超收数量
+            const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
+              console.log(overchargeNum,'overchargeNum', overchargeNum)
+              console.log(this.overCharge.configValue2,'this.overCharge.configValue2', this.overCharge.configValue2)
+
+            item.overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceiptNum, overchargeNum]), 6) : ''
             item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
             item.costPrice = item.price
             item.taxRates = item.taxRate + "%"
@@ -1389,7 +1408,6 @@ export default {
             }
           });
           this.productData = data
-        }, 600);
       }
     },
 
@@ -1477,15 +1495,23 @@ export default {
               //     break
               //   }
               // }
-
+            if (this.$store.getters.configData.purchase.allow_exceed_receiving){
+                const limitNum = this.jnpf.math('add',[item.waitReceiptNum,item.overchargeNum])
+                if (Number(item.num) > Number(limitNum)){
+                    submitFlag = false
+                    this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量加可超发数量")
+                    break
+                }
+            } else{
               if (Number(item.num) > Number(item.waitReceiptNum)) {
 
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过待收货数量")
                 break
               }
+            }
 
-              if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
+              if (this.dataForm.businessType === 'outbound_sale_send' && item.num > item.availableBatchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
                 break

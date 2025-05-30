@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div v-if="userInfo.userId === 'admin'" class="tag-group JNPF-common-search-box treeBox_bot" 
+      <div v-if="userInfo.userId === 'admin'" class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
         <el-button type="primary" size="mini" @click="addSet">新建设置</el-button>
       </div>
@@ -70,7 +70,8 @@
                     <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
                     <el-input style="width: 150px;margin-left: 10px;" v-if="
                       (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
-                      (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
+                      (scope.row.state && scope.row.configKey == 'collect_exceed_picking') ||
+                      (scope.row.state && scope.row.configKey == 'allow_exceed_receiving')
                     " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
                       <template slot="append">
                         %
@@ -152,7 +153,7 @@
               <el-input v-model="quickForm.configValue3" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
-         
+
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -225,7 +226,7 @@ export default {
       let width = 60
       let flag = true
       this.tableData.forEach((item) => {
-        if (item.configKey == 'work_exceed_report' || item.configKey == 'collect_exceed_picking') {
+        if (item.configKey == 'work_exceed_report' || item.configKey == 'collect_exceed_picking' || item.configKey == 'allow_exceed_receiving') {
           // if (item.state) {
           //   width = 200
           //   flag = false
@@ -524,7 +525,7 @@ export default {
               item.radioOff = '按工艺列表'
               item.radioOn = '按工艺设置'
             }
-            
+
             const configKeyObj = ConfigKey[item.configKey]
             console.log(configKeyObj, 'obj')
             console.log(notEmpty(configKeyObj), 'notEmpty(configKeyObj)')

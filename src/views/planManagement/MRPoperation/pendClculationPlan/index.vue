@@ -26,7 +26,7 @@
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                  style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                  style="width: 100%;" start-placeholder="计划开始日期" end-placeholder="计划结束日期" clearable>
                 </el-date-picker>
               </el-form-item>
             </el-col>

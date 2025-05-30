@@ -436,7 +436,7 @@
                     </el-col>
                     <el-col :span="6">
                       <el-form-item>
-                        <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="客户料号" clearable />
+                        <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductNo" placeholder="客户料号" clearable />
                       </el-form-item>
                     </el-col>
 
@@ -654,7 +654,7 @@ export default {
       provinces: [],
       orderForm: {
         cooperativePartnerId: "",
-        customerProductDrawingNo: "",
+        customerProductNo: "",
         returnQueryFlag: 1,
         partnerName: "",        // customerProductNo: "",
         deliveryStartTime: "",
@@ -1418,7 +1418,7 @@ sortChange2({ prop, order }) {
       this.deliveryDateArr = []
       this.orderForm = {
         cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: "",
+        customerProductNo: "",
         returnQueryFlag: 1,
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",

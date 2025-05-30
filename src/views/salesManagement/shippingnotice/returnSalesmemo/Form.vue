@@ -86,7 +86,7 @@
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
 
-                    <el-table-column prop="customerProductDrawingNo" label="客户料号" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="customerProductNo" label="客户料号" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
@@ -359,7 +359,7 @@
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
 
-                <el-table-column prop="customerProductDrawingNo" label="客户料号" min-width="160" show-overflow-tooltip>
+                <el-table-column prop="customerProductNo" label="客户料号" min-width="160" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                 </el-table-column>
@@ -644,7 +644,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -877,7 +877,7 @@ export default {
       provinces: [],
       orderForm: {
         cooperativePartnerId: "",
-        customerProductDrawingNo: "",
+        customerProductNo: "",
         returnQueryFlag: 1,
         partnerName: "",        // customerProductNo: "",
         deliveryStartTime: "",
@@ -1669,7 +1669,7 @@ export default {
       this.deliveryDateArr = []
       this.orderForm = {
         cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: "",
+        customerProductNo: "",
         returnQueryFlag: 1,
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
@@ -2009,7 +2009,7 @@ export default {
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
           this.dataForm = {
-            exchangeGoodsFlag: this.dateForm.exchangeGoodsFlag,
+            exchangeGoodsFlag: this.dataForm.exchangeGoodsFlag,
             // orderCategory: "assembly",
             returnDeliveryType: 'back',
             notifyType: 'sale',

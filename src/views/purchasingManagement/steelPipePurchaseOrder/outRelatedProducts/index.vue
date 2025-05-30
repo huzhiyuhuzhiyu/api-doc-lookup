@@ -145,8 +145,8 @@
     </el-dialog>
     <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
 
-  <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-  <div class="JNPF-common-layout-left">
+      <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+      <div class="JNPF-common-layout-left">
     <div class="JNPF-common-title">
       <h2>产品分类</h2>
       <span class="options">
@@ -169,11 +169,11 @@
         </span>
       </el-tree>
     </el-scrollbar>
-  </div>
-  <div class="JNPF-common-layout-center JNPF-flex-main">
+      </div>
+      <div class="JNPF-common-layout-center JNPF-flex-main">
     <el-row class="JNPF-common-search-box" :gutter="16">
       <el-form @submit.native.prevent>
-        <el-col :span="6">
+        <el-col :span="6" v-if="abProjectSwitchVisible">
           <el-form-item>
             <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
        >
@@ -187,16 +187,16 @@
             <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
           </el-form-item>
         </el-col>
-        <el-col :span="6" v-if="isProductNameSwitch == 1">
+        <!-- <el-col :span="6" >
           <el-form-item>
-            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.drawingNo" placeholder="请输入品名规格" clearable />
           </el-form-item>
-        </el-col>
-        <!-- <el-col :span="6">
+        </el-col> -->
+        <el-col :span="6">
           <el-form-item>
             <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
           </el-form-item>
-        </el-col> -->
+        </el-col>
 
         <el-col :span="6">
           <el-form-item>
@@ -234,14 +234,10 @@
       </JNPF-table>
       <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum" :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
     </div>
-  </div>
-  </div>
-<!-- <span slot="footer" class="dialog-footer">
-  <el-button @click="allProVisible = false">{{ $t('common.cancelButton') }}</el-button>
-  <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
-    确定</el-button>
-</span> -->
-</el-dialog>
+      </div>
+      </div>
+    
+    </el-dialog>
         <!-- 高级查询 -->
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -274,13 +270,14 @@ import { excelExport, getOrderFiledMap,getProductionLineList } from '@/api/basic
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'outRelatedProducts',
   components: { SuperQuery,Form},
-  mixins: [getProjectList],
+  mixins: [getProjectList,AbProjectMixin],
   data() {
     return {
       allProVisible:false,

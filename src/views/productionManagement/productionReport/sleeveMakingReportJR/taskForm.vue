@@ -170,6 +170,7 @@ export default {
         rawStockMill: row.rawStockMill,
         pageNum: 1,
         pageSize: 20,
+        workReportFlag:1,
         superQuery: {
           condition: [],
           matchLogic: ""

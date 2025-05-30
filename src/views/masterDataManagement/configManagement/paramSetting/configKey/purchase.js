@@ -16,4 +16,8 @@ export default {
         configKeyLabel: '是否开启单价必填',
         description: '开启单价必填后，将在采购需求池生成采购订单和采购订单列表新建时，产品信息中，单价为必填项；如果不开启，则为非必填'
     },
+    related_out_select: {
+        configKeyLabel: '钢管采购订单配置',
+        description: '如果勾选，则在创建钢管采购订单时，需要先维护委外关联产品；取消勾选，在创建钢管采购订单时，可以直接选择相关信息'
+    },
 }

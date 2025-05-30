@@ -168,6 +168,7 @@ export default {
         accuracyLevel: row.accuracyLevel,
         wireHeatNumber: row.wireHeatNumber,
         rawStockMill: row.rawStockMill,
+        workReportFlag:1,
         pageNum: 1,
         pageSize: 20,
         superQuery: {

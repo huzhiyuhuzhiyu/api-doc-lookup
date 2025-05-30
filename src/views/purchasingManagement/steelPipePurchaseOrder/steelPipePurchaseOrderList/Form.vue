@@ -1445,7 +1445,7 @@ export default {
         })
       }
     },
-selectOutPartner(id,data){
+selectSupplier(id,data){
  
       if (data.length === 0) {
         this.dataForm.outPartnerName = ''

@@ -93,14 +93,14 @@
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
-                        <el-form-item label="回购单价" prop="buyBackPrice" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.buyBackPrice" placeholder="请输入回购单价" :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select"   />
+                        <el-form-item :label="!this.isXL?'回购单价':'毛坯加工单价'" prop="buyBackPrice" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.buyBackPrice" :placeholder="!this.isXL?'请输入回购单价':'请输入毛坯加工单价' " :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select"   />
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
-                        <el-form-item label="回购税率" prop="buyBackRate" v-if="dataForm.outType=='out'">
+                        <el-form-item :label="!this.isXL?'回购税率':'毛坯加工税率'" prop="buyBackRate" v-if="dataForm.outType=='out'">
                           <!-- <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率"  :disabled="btnType === 'look'?true:false"  /> -->
-                          <el-select v-model="dataForm.buyBackRate" placeholder="请选择回购税率" style="width: 100%;" :disabled="btnType === 'look'||$store.getters.configData.purchase.related_out_select">
+                          <el-select v-model="dataForm.buyBackRate" :placeholder="!this.isXL?'请选择回购税率':'请选择毛坯加工税率'" style="width: 100%;" :disabled="btnType === 'look'||$store.getters.configData.purchase.related_out_select">
                             <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
                               :value="item.taxRate"></el-option>
                           </el-select>
@@ -618,7 +618,8 @@ import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
- 
+ import tenantMinix from "@/mixins/generator/TenantMinix"
+
 import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
   components: { 
@@ -626,7 +627,7 @@ export default {
     outPartnerDia,
     selectOutProductForm
   },
-  mixins: [AbProjectMixin],
+  mixins: [AbProjectMixin,tenantMinix],
 
   data() {
     return {
@@ -703,6 +704,7 @@ export default {
       // 客户产品查询条件
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
 
       ],
       getcooperativeProduct,
@@ -1166,6 +1168,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{

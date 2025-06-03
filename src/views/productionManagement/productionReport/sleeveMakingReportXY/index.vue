@@ -39,33 +39,33 @@
           <el-table-column prop="coldHeading" label="冷镦" width="130" sortable="custom" >
             <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.coldHeading }}
+                  {{ scope.row.coldHeading>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.coldHeading:scope.row.coldHeading }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '冷镦')">
-                  {{ scope.row.coldHeading }}
+                  {{ scope.row.coldHeading>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.coldHeading:scope.row.coldHeading }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="lightBallOne" label="光球一" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.lightBallOne }}
+                  {{ scope.row.lightBallOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.lightBallOne:scope.row.lightBallOne }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '光球一')">
-                  {{ scope.row.lightBallOne }}
+                  {{ scope.row.lightBallOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.lightBallOne:scope.row.lightBallOne }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="lightBallTwo" label="光球二" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.lightBallTwo }}
+                  {{ scope.row.lightBallTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.lightBallTwo:scope.row.lightBallTwo }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '光球二')">
-                  {{ scope.row.lightBallTwo }}
+                  {{ scope.row.lightBallTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.lightBallTwo:scope.row.lightBallTwo }}
                 </el-link>
               </template>
             </el-table-column>
@@ -73,143 +73,143 @@
             <el-table-column prop="quench" label="淬火" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.quench }}
+                  {{ scope.row.quench>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.quench:scope.row.quench }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '淬火')">
-                  {{ scope.row.quench }}
+                  {{ scope.row.quench>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.quench:scope.row.quench }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="temper" label="回火" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.temper }}
+                  {{ scope.row.temper>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.temper:scope.row.temper }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '回火')">
-                  {{ scope.row.temper }}
+                  {{ scope.row.temper>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.temper:scope.row.temper }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="hardGrindOne" label="硬磨一" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.hardGrindOne }}
+                  {{ scope.row.hardGrindOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.hardGrindOne:scope.row.hardGrindOne }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '硬磨一')">
-                  {{ scope.row.hardGrindOne }}
+                  {{ scope.row.hardGrindOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.hardGrindOne:scope.row.hardGrindOne }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="intensify" label="强化" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.intensify }}
+                  {{ scope.row.intensify>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.intensify:scope.row.intensify }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '强化')">
-                  {{ scope.row.intensify }}
+                  {{ scope.row.intensify>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.intensify:scope.row.intensify }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="temperTwo" label="二次回火" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.temperTwo }}
+                  {{ scope.row.temperTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.temperTwo:scope.row.temperTwo }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '二次回火')">
-                  {{ scope.row.temperTwo }}
+                  {{ scope.row.temperTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.temperTwo:scope.row.temperTwo }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="hardGrindTwo" label="硬磨二" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.hardGrindTwo }}
+                  {{ scope.row.hardGrindTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.hardGrindTwo:scope.row.hardGrindTwo }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '硬磨二')">
-                  {{ scope.row.hardGrindTwo }}
+                  {{ scope.row.hardGrindTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.hardGrindTwo:scope.row.hardGrindTwo }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="initialGrindOne" label="初研一" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.initialGrindOne }}
+                  {{ scope.row.initialGrindOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.initialGrindOne:scope.row.initialGrindOne }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '初研一')">
-                  {{ scope.row.initialGrindOne }}
+                  {{ scope.row.initialGrindOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.initialGrindOne:scope.row.initialGrindOne }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="initialGrindTwo" label="初研二" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.initialGrindTwo }}
+                  {{ scope.row.initialGrindTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.initialGrindTwo:scope.row.initialGrindTwo }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '初研二')">
-                  {{ scope.row.initialGrindTwo }}
+                  {{ scope.row.initialGrindTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.initialGrindTwo:scope.row.initialGrindTwo }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="fineGrindOne" label="精研一" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.fineGrindOne }}
+                  {{ scope.row.fineGrindOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.fineGrindOne:scope.row.fineGrindOne }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '精研一')">
-                  {{ scope.row.fineGrindOne }}
+                  {{ scope.row.fineGrindOne>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.fineGrindOne:scope.row.fineGrindOne }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="fineGrindTwo" label="精研二" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.fineGrindTwo }}
+                  {{ scope.row.fineGrindTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.fineGrindTwo:scope.row.fineGrindTwo }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '精研二')">
-                  {{ scope.row.fineGrindTwo }}
+                  {{ scope.row.fineGrindTwo>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.fineGrindTwo:scope.row.fineGrindTwo }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="clean" label="清洗" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.clean }}
+                  {{ scope.row.clean>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.clean:scope.row.clean }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '清洗')">
-                  {{ scope.row.clean }}
+                  {{ scope.row.clean>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.clean:scope.row.clean }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="optoelectronicAppearance" label="光电外观" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.optoelectronicAppearance }}
+                  {{ scope.row.optoelectronicAppearance>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.optoelectronicAppearance:scope.row.optoelectronicAppearance }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '光电外观')">
-                  {{ scope.row.optoelectronicAppearance }}
+                  {{ scope.row.optoelectronicAppearance>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.optoelectronicAppearance:scope.row.optoelectronicAppearance }}
                 </el-link>
               </template>
           </el-table-column>
             <el-table-column prop="pack" label="成品包装" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
-                  {{ scope.row.pack }}
+                  {{ scope.row.pack>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.pack:scope.row.pack }}
                 </template>
                 <el-link v-else type="primary"
                   @click.native="viewTask(scope.row, 'inventoryFlag', '成品包装')">
-                  {{ scope.row.pack }}
+                  {{ scope.row.pack>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.pack:scope.row.pack }}
                 </el-link>
               </template>
           </el-table-column>

@@ -113,7 +113,7 @@
           </el-col>
 
           <el-col :span="24">
-            <el-form-item label="回购单价" prop="buyBackPrice">
+            <el-form-item :label="this.isXL?'毛坯加工单价':'回购单价'" prop="buyBackPrice">
               <el-input v-model="dataForm.buyBackPrice" placeholder="回购单价" clearable :disabled="btnType === 'look'"/>
             </el-form-item>
           </el-col>
@@ -271,13 +271,14 @@ import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
 import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+import tenantMinix from "@/mixins/generator/TenantMinix"
 
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'outRelatedProducts',
   components: { SuperQuery,Form},
-  mixins: [getProjectList,AbProjectMixin],
+  mixins: [getProjectList,AbProjectMixin,tenantMinix],
   data() {
     return {
       allProVisible:false,

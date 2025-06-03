@@ -6,13 +6,13 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
 
-            <el-col :span="6">
+            <!-- <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="reportDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
                   :picker-options="pickerOptions" start-placeholder="报工开始日期" end-placeholder="报工结束日期">
                 </el-date-picker>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 3">
                 <el-form-item>
@@ -104,6 +104,7 @@
                 <div v-else-if="scope.row.orderStatus == 'closed'"><el-tag type="danger">已关闭</el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column label="操作" width="200" fixed="right">
 
@@ -204,6 +205,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
@@ -536,13 +538,13 @@ export default {
     initData() {
       this.listLoading = true
 
-      if (this.reportDate && this.reportDate.length) {
-        this.orderForm.reportStartDate = this.reportDate[0]
-        this.orderForm.reportEndDate = this.reportDate[1]
-      } else {
-        this.orderForm.reportStartDate = ""
-        this.orderForm.reportEndDate = ""
-      }
+      // if (this.reportDate && this.reportDate.length) {
+      //   this.orderForm.reportStartDate = this.reportDate[0]
+      //   this.orderForm.reportEndDate = this.reportDate[1]
+      // } else {
+      //   this.orderForm.reportStartDate = ""
+      //   this.orderForm.reportEndDate = ""
+      // }
      this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
      getSalaryDetailList(this.orderForm).then(res => {
         console.log("报工记录", res);
@@ -592,6 +594,7 @@ export default {
 
       this.searchList=[
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '报工单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },

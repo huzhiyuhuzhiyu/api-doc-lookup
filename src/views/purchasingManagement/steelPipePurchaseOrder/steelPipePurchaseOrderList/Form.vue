@@ -60,9 +60,25 @@
                         </el-form-item>
                       </el-col>
             
-                      <el-col  :span="6" >
+                      <el-col  :span="6" v-if="$store.getters.configData.purchase.related_out_select">
                         <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
+                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select" />
+                        
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" v-else>
+                        <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
+                            <ComSelect-page clearable :isdisabled="btnType=='look'||$store.getters.configData.purchase.related_out_select" :treeNodeClick="treeNodeClick"
+                            v-model="dataForm.outPartnerName"  ref="ComSelect-page"
+                            @change="selectSupplier" :tableItems="PartnerTableItems" :placeholder="'请选择外协供应商'"
+                            title="选择外协供应商" treeTitle="外协供应商分类" :methodArr="outPartnerMethodArr"
+                            :listMethod="getCooperativeData" :listRequestObj="outPartnerListRequestObj"
+                            :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col  :span="6" >
+                        <el-form-item label="委外品名规格" prop="outProductDrawingNo" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.outProductDrawingNo" readonly placeholder="选择委外品名规格"  @focus="addProduct" :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select"  />
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
@@ -70,20 +86,21 @@
                           <el-input v-model="dataForm.outProductName" placeholder="选择委外产品名称" disabled  />
                         </el-form-item>
                       </el-col>
+ 
                       <el-col  :span="6" >
                         <el-form-item label="委外产品编码" prop="outProductCode" v-if="dataForm.outType=='out'">
                           <el-input v-model="dataForm.outProductCode" placeholder="选择委外产品编码" disabled  />
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
-                        <el-form-item label="回购单价" prop="buyBackPrice" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.buyBackPrice" placeholder="选择回购单价" disabled  />
+                        <el-form-item :label="!this.isXL?'回购单价':'毛坯加工单价'" prop="buyBackPrice" v-if="dataForm.outType=='out'">
+                          <el-input v-model="dataForm.buyBackPrice" :placeholder="!this.isXL?'请输入回购单价':'请输入毛坯加工单价' " :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select"   />
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
-                        <el-form-item label="回购税率" prop="buyBackRate" v-if="dataForm.outType=='out'">
+                        <el-form-item :label="!this.isXL?'回购税率':'毛坯加工税率'" prop="buyBackRate" v-if="dataForm.outType=='out'">
                           <!-- <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率"  :disabled="btnType === 'look'?true:false"  /> -->
-                          <el-select v-model="dataForm.buyBackRate" placeholder="请选择" style="width: 100%;" :disabled="btnType === 'look'">
+                          <el-select v-model="dataForm.buyBackRate" :placeholder="!this.isXL?'请选择回购税率':'请选择毛坯加工税率'" style="width: 100%;" :disabled="btnType === 'look'||$store.getters.configData.purchase.related_out_select">
                             <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
                               :value="item.taxRate"></el-option>
                           </el-select>
@@ -91,12 +108,13 @@
                       </el-col>
                       <el-col  :span="6" >
                         <el-form-item label="成材率" prop="yieldRate" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.yieldRate" placeholder="选择成材率" disabled  />
+                          <el-input v-model="dataForm.yieldRate" placeholder="请输入成材率" :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select"   />
                         </el-form-item>
                       </el-col>
                       <el-col  :span="6" >
                         <el-form-item label="中转仓库" prop="warehouseName" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.warehouseName" placeholder="选择中转仓库" disabled  />
+                          <ComSelect-list v-model="dataForm.warehouseName" :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select":requestObj="{ type: 'normal', state: 'enable',  }" :dialogTitle="'选择仓库'"  :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -466,9 +484,10 @@
             </el-tab-pane>
           </el-tabs>
         </div>
+      
       </div>
-    </transition>
-    <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
+      
+    </transition> 
     <!-- <ComSelect-page v-if="purchasingType == 'pool'" ref="comSelect-page" @change="submitCustomerProduct"
       :tableItems="ProductPoolTableItems" dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList"
       :listRequestObj="ProductPoolListRequestObj" :listDataFormatting="listDataFormatting"
@@ -477,22 +496,111 @@
       dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="false" :renderTree="false" />
-    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
-      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" append-to-body />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"
-      @closePrintPage="closePrintPage" />
+ <!-- <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body> -->
+
+      <!-- <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+      <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-title">
+      <h2>产品分类</h2>
+      <span class="options">
+        <el-dropdown>
+          <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+            <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+            <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </span>
+    </div>
+
+    <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+      <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
+        <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+          <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+          <span class="text" :title="data.name">{{ data.name }}</span>
+        </span>
+      </el-tree>
+    </el-scrollbar>
+      </div>
+      <div class="JNPF-common-layout-center JNPF-flex-main">
+    <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-form @submit.native.prevent>
+        <el-col :span="6" v-if="abProjectSwitchVisible">
+          <el-form-item>
+            <el-select v-model="outProductObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
+       >
+        <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
+          :value="item.id"></el-option>
+      </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item>
+            <el-input @keyup.native.enter="searchAllProduct()"  v-model="outProductObj.productCode" placeholder="请输入产品编码" clearable />
+          </el-form-item>
+        </el-col>
+    
+        <el-col :span="6">
+          <el-form-item>
+            <el-input @keyup.native.enter="searchAllProduct()"  v-model="outProductObj.productDrawingNo" placeholder="请输入品名规格" clearable />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="6">
+          <el-form-item>
+            <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
+              {{ $t('common.search') }}</el-button>
+            <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
+              $t('common.reset')
+            }}
+            </el-button>
+          </el-form-item>
+        </el-col>
+
+      </el-form>
+    </el-row>
+    <div class="JNPF-common-layout-main JNPF-flex-main">
+      <JNPF-table v-loading="listLoading" :data="allproductData"  ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_9031478680">
+        <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" label="产品名称" width="160"  show-overflow-tooltip></el-table-column>
+        <el-table-column prop="drawingNo" label="品名规格" />
+        <el-table-column prop="productCategoryName" label="所属分类" />
+        <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="abProjectSwitchVisible" />
+        <el-table-column prop="mainUnit" label="单位" />
+        <el-table-column prop="inventoryQuantity" label="库存数量">
+          <template slot-scope="scope">
+            <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
+              {{ scope.row.inventoryQuantity }}
+            </el-link>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100" >
+              <template slot-scope="scope" >
+                <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
+              </template>
+            </el-table-column>
+      </JNPF-table>
+      <pagination :total="allProductTotal" :page.sync="outProductObj.pageNum" :limit.sync="outProductObj.pageSize" @pagination="initData2" />
+    </div>
+      </div>
+      </div> -->
+    
+    <!-- </el-dialog> -->
       <outPartnerDia :visible.sync="outVisible"  ref="outForm" @close="closeFun" @selectOut="changeOutPartner"/>
+      <selectOutProductForm ref="outProductForm" v-if="productOutVisible" @selectFun="selectFun"></selectOutProductForm>
   </div>
 </template>
 <script>
-import {  purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
-import sourceForm from '../../purchasingDemand/purchasingDemandPool/source.vue'
+import {  purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index' 
 import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree, getBimBusinessDetail } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import { purProcurementDemandPoolList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import outPartnerDia from './outPartnerDia.vue'
+import selectOutProductForm from './selectOutProductForm.vue'
+import { getWarehouseList } from '@/api/basicData/index'
 import {
   getOrderDetail,
   addOrders,
@@ -509,21 +617,23 @@ import { getBimProcessList } from '@/api/bimProcess/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
-import PrintBrowse from '@/components/PrintBrowse'
-import PrintDialog from '@/components/no_mount/printDialog'
+import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+ import tenantMinix from "@/mixins/generator/TenantMinix"
+
 import { getPrintBusInfo } from '@/api/system/printDev'
 export default {
-  components: {
-    sourceForm,
-    Process,
-    PrintBrowse,
-    PrintDialog,
-    outPartnerDia
+  components: { 
+    Process, 
+    outPartnerDia,
+    selectOutProductForm
   },
-  mixins: [AbProjectMixin],
+  mixins: [AbProjectMixin,tenantMinix],
 
   data() {
     return {
+ productOutVisible:false,
+
+      getWarehouseList,
       purchOrderTitle:"",
       outVisible:false,
       printVisible: false,
@@ -594,11 +704,11 @@ export default {
       // 客户产品查询条件
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
 
       ],
       getcooperativeProduct,
-      productVisible: false,
-      sourceFormVisible: false,
+      productVisible: false, 
       activeName: 'jcInfo',
       classAttributeFlag: '',
       dialogTitle: '',
@@ -637,6 +747,7 @@ export default {
         partnerCategoryId: '',
         type: 'supplier'
       },
+   
        // 供应商请求参数
        outPartnerListRequestObj: {
         code: '',
@@ -690,6 +801,15 @@ export default {
         outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
         deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }],
         buyBackRate:[{ required: true, message: '请选择回购税率', trigger: ['change'] }],
+         outProductDrawingNo: [{ required: true, message: '请选择产品', trigger: ['change'] }],
+        // buyBackRate: [{ required: true, message: '请选择回购税率', trigger: ['change'] }],
+        warehouseName: [{ required: true, message: '请选择仓库', trigger: ['change'] }],
+        yieldRate: [{ required: true, message: '请输入成材率', trigger: ['blur'] }],
+        buyBackPrice: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["回购单价不能为空", (errMsg, index) => { this.$message.error(`回购单价：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal', params: [20, 12, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
+        ],
       },
       productRules: {
         drawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
@@ -921,7 +1041,39 @@ export default {
       deep: true
     }
   },
+ 
   methods: {
+     selectFun(row) {
+      console.log("row",row);
+      this.dataForm.outProductCode=row.code
+      this.dataForm.outProductId=row.id
+      this.dataForm.outProductName=row.name
+      this.dataForm.outProductDrawingNo=row.drawingNo
+      this.$nextTick(()=>{
+        this.$refs.elForm.clearValidate('outProductDrawingNo');
+      })
+    },
+    addProduct(){
+      this.productOutVisible=true
+      this.$nextTick(()=>{
+        this.$refs.outProductForm.init()
+      })
+    },
+    changeWarehousex(val, data) {
+      console.log("data", data);
+      if (!val && !data.length) {
+        this.dataForm.warehouseId = ''
+        this.dataForm.warehouseName = ''
+        this.dataForm.warehouseType = ""
+        this.dataForm.warehouseCode = ""
+        return
+      } 
+
+      this.dataForm.warehouseId = data[0].id
+      this.dataForm.warehouseName = data[0].name
+      this.dataForm.warehouseType = data[0].all.type
+      this.dataForm.warehouseCode = data[0].all.code
+    },
     // 选择外协供应商及关联产品
     changeOutPartner(data){
       console.log("data",data);
@@ -943,11 +1095,13 @@ export default {
       this.outVisible=false
     },
     openSelectOutPartner(){
-      if(!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择采购供应商")
-      this.outVisible=true
-      this.$nextTick(()=>{
-        this.$refs.outForm.init(this.dataForm.cooperativePartnerId)
-      })
+      if(this.$store.getters.configData.purchase.related_out_select){
+        if(!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择采购供应商")
+        this.outVisible=true
+        this.$nextTick(()=>{
+          this.$refs.outForm.init(this.dataForm.cooperativePartnerId)
+        })
+      }
     },
 
     deliveryDateChange(val) {
@@ -1014,6 +1168,7 @@ export default {
     openSeleceProductDialog() {
       this.ProductTableSearchList = [
         { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
       ]
       if (this.$store.getters.configData.product.enable_productName) {
       this.ProductTableItems.forEach(tc=>{
@@ -1293,7 +1448,24 @@ export default {
         })
       }
     },
-
+selectSupplier(id,data){
+ 
+      if (data.length === 0) {
+        this.dataForm.outPartnerName = ''
+        this.dataForm.outPartnerCode = ''
+        this.dataForm.outPartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+         this.dataForm.outPartnerName = data[0].all.name
+        this.dataForm.outPartnerCode = data[0].all.code
+        this.dataForm.outPartnerId = data[0].all.id
+    
+      }
+},
     // 去除系数后两位的小数位
     numberFormat(number) {
       var formatted = parseFloat(number)
@@ -1441,58 +1613,11 @@ export default {
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
-      }
-      // 明细中最大的交货日期
-      // this.demandDelivery = maxDate.toISOString().split('T')[0];
-      // this.demandDelivery2 = demandDelivery
-      // 取明细第一条数据的产品id，自动带下其第一条供应商设为主表供应商
-      // priceList(this.dataFormTwo.data[0].productsId).then(res => {
-      //   if (!res.data.length) return
-      //   const data = [{
-      //     all: {
-      //       ...res.data[0],
-      //       id: res.data[0].cooperativePartnerId,
-      //       code: res.data[0].cooperativePartnerIdCode,
-      //       name: res.data[0].cooperativePartnerIdName,
-      //     }
-      //   }]
-      //   this.supplierdata('', data)
-      // })
-      // 审批
-      // this.$nextTick(() => { this.getApproverData() })
+      } 
       this.getBusInfo()
     },
-    // 侧边拉出产品信息
-    async openSource(id) {
-      // const form_1 = this.$refs.elForm
-      // let flag = await form_1.validate().catch(err => false)
-      // if (!flag) {
-      //   this.jnpf.focusErrValidItem(form_1.fields)
-      //   return
-      // }
-      priceList(id).then((res) => {
-        this.sourceFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.sourceForm.init(res.data, this.dataForm.deliveryDate)
-        })
-      })
-    },
-    // 侧边栏提交
-    sourceFormConfirm(selectData) {
-      const data = [
-        {
-          all: {
-            ...selectData,
-            fixedPrice: selectData.price,
-            id: selectData.cooperativePartnerId,
-            code: selectData.cooperativePartnerIdCode,
-            name: selectData.cooperativePartnerIdName
-          }
-        }
-      ]
-      this.supplierdata('', data)
-      this.sourceFormVisible = false
-    },
+ 
+  
 
     // 表单提交
     async dataFormSubmit(type, printType) {
@@ -1582,28 +1707,7 @@ export default {
         this.btnLoading = false
       }
     },
-    printWarehouse(enCode) {
-      getPrintBusInfo(enCode).then(res => {
-        if (res.data) {
-          // this.printVisible = false
-          this.prindId = res.data.id
-          this.printBrowseVisible = true
-        } else {
-          this.$message.warning('未找到相应打印模版')
-        }
-      }).catch(() => {
-        this.printBrowseVisible = false
-      });
-    },
-    closePrint() {
-      this.btnLoading =false
-      this.printVisible = false
-      this.$message.warning("取消打印")
-      this.$emit('close', true)
-    },
-    closePrintPage() {
-      this.$emit('close', true)
-    },
+ 
     // 删除项
     delequipment_process_relList(index) {
       this.dataFormTwo.data.splice(index, 1)
@@ -1665,10 +1769,13 @@ export default {
       })
     }
     window.addEventListener('resize', this.clientResize)
+    console.log(111,this.$store.getters.configData.purchase.related_out_select);
+
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.clientResize)
-  }
+  },
+  
 }
 </script>
 <style scoped>

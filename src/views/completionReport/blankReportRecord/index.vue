@@ -91,7 +91,7 @@
             <el-table-column prop="actualMaterialQuantity" label="实际料废数量" min-width="170" sortable="custom" />
             <el-table-column prop="actualReworkQuantity" label="实际返工数量" min-width="170" sortable="custom" />
             <el-table-column prop="productionWeight" label="生产重量" min-width="170" sortable="custom" />
-            <el-table-column prop="aperture" label="板数" min-width="120" sortable="custom" />
+            <el-table-column prop="aperture" label="板数" min-width="120" sortable="custom" v-if="this.isBOOS"/>
             <el-table-column prop="plateNumber" label="每板个数" min-width="120"   v-if="this.isBOOS" sortable="custom" />
             <el-table-column prop="totalWeight" label="总重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
             <el-table-column prop="trayTotalWeight" label="托盘重量" min-width="120" v-if="this.isBOOS" sortable="custom" />
@@ -118,6 +118,7 @@
                 <div v-else-if="scope.row.inspectionStatus == 'unInspect'"><el-tag type="info">待检验 </el-tag></div>
               </template>
             </el-table-column>
+            <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column label="操作" width="200" fixed="right">
 

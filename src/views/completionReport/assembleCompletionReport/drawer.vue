@@ -887,7 +887,7 @@ export default {
       })
     },
     materialWasteData(data, totalNums) {
-      console.log("设置的料废金额", data, totalNums);
+      console.log("设置的设置料废原因", data, totalNums);
       this.materialWasteDataList = data
       if (totalNums) {
         this.form.materialWasteQuantity = totalNums

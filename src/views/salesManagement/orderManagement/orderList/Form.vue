@@ -182,7 +182,7 @@
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       </el-table-column>
-                      <el-table-column prop="pairingModeName" label="配对方式" min-width="160"
+                      <el-table-column prop="pairingModeName" label="配对方式" min-width="180"
                         v-if="isPairingModeSwitch === '1'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
@@ -333,7 +333,7 @@
                         </el-input> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="pairingModeName" label="配对方式" min-width="160"
+                    <el-table-column prop="pairingModeName" label="配对方式" min-width="180"
                       v-if="isPairingModeSwitch === '1'">
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
@@ -747,7 +747,7 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   </el-table-column>
-                  <el-table-column prop="pairingModeName" label="配对方式" min-width="160"
+                  <el-table-column prop="pairingModeName" label="配对方式" min-width="180"
                     v-if="isPairingModeSwitch === '1'">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
@@ -865,7 +865,7 @@
                       :disabled="status"></el-autocomplete>
                   </template>
                 </el-table-column>
-                <el-table-column prop="pairingModeName" label="配对方式" min-width="160" v-if="isPairingModeSwitch === '1'">
+                <el-table-column prop="pairingModeName" label="配对方式" min-width="180" v-if="isPairingModeSwitch === '1'">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"
                       :disabled="(btnType == 'look'||scope.row.cooperativePartnerProductId)  ? true : false" @change="(value) => changePairingMode(value, scope)">
@@ -1272,8 +1272,7 @@
           </el-upload>
           <span slot="footer" class="dialog-footer">
             <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-            <el-button type="primary" @click="submit()">
-              提交</el-button>
+            <el-button type="primary" @click="submit()"  :loading="btnLoading" :disabled="btnLoading"> 提交</el-button>
           </span>
         </el-dialog>
         <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
@@ -1652,6 +1651,7 @@ export default {
       pairingModeList: [],
       pageType: "",
       highlightCurrentFlag:false,
+      file:null,
     }
   },
   computed: {
@@ -2059,10 +2059,9 @@ export default {
       })
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      this.file=null
     },
     handlePreview(file) {
-      console.log(file);
     },
     //多选
     handleRowClick(row) {
@@ -2132,16 +2131,25 @@ export default {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       // 导入产品，获取数据渲染
       if (this.productData.length) {
+    let hasIdValue = this.productData.some(item => item.id);
+    if(hasIdValue){
         this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
           this.uploadVisib = true
           // this.$refs.UploadProduct.$el.querySelector('input').click()
         }).catch(() => { })
+    }else{
+          this.uploadVisib = true
+      
+    }
+      
       } else {
         this.uploadVisib = true
       }
     },
     submit() {
-      console.log(this.fileList);
+      console.log(this.file);
+      
+      if(!this.file.length) return this.$message.error('上传文件不能为空')
       this.UploadProduct(this.file)
     },
     handleFileChange(file) {
@@ -2471,6 +2479,7 @@ export default {
         if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
 
       });
+      
       if (this.productData.length) {
         let index = this.productData.findIndex(item =>
           item.drawingNo === "" &&

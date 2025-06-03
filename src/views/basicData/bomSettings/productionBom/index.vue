@@ -335,7 +335,7 @@ export default {
       columnList: ['pickingWay', 'createByName', 'createTime'],
       showAppCodeFlag: true,
       uploadVisib: false,
-      file:[],
+      file:null,
     }
   },
   watch: {
@@ -387,10 +387,11 @@ export default {
 
     },
     handleRemove(file, fileList) {
-      this.file=[]
+      this.file=null
      },
     handlePreview(file) { },
     handleFileChange(file) {
+      console.log(file);
       this.file = file.raw
     },
     // 下载模板
@@ -457,7 +458,8 @@ export default {
       if (this.isProjectSwitch === '1') {
         if (!this.importProjectId) return this.$message.error('请选择所属项目');
       }
-      if (!this.file.length) return this.$message.error('请上传文件');
+      console.log(this.file);
+      if (!this.file) return this.$message.error('请上传文件');
       this.UploadProduct(this.file)
     },
     // 提示

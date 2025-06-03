@@ -1560,6 +1560,7 @@ export default {
     init(id, btnType, approvalFlag, data) {
       this.approvalFlag = approvalFlag
       console.log("传递数据", data);
+      this.formLoading = true
       if (data && data.length && Array.isArray(data)) {
         // this.seleceCustomer(data[0])
         data.forEach(item => {
@@ -1580,7 +1581,6 @@ export default {
           this.customerData = res.data.cooperativePartner
         })
       }
-      this.formLoading = true
       // this.getProvinceList()
       this.dataForm.id = id || ''
       this.btnType = btnType
@@ -1650,7 +1650,9 @@ export default {
         this.fetchData("SSDH", true)
         this.getBusInfo()
       }
-      this.formLoading = false
+      setTimeout(() => {
+        this.formLoading = false
+      }, 1500);
     },
     async fetchData(code, flag) {
       try {

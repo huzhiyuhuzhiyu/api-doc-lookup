@@ -86,7 +86,7 @@
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
 
-                    <el-table-column prop="customerProductDrawingNo" label="客户料号" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="customerProductNo" label="客户料号" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
@@ -359,7 +359,7 @@
                 <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                 <!-- </el-table-column> -->
 
-                <el-table-column prop="customerProductDrawingNo" label="客户料号" min-width="160" show-overflow-tooltip>
+                <el-table-column prop="customerProductNo" label="客户料号" min-width="160" show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                 </el-table-column>
@@ -644,7 +644,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    <el-input @keyup.native.enter="searchProductFun()"  v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -753,7 +753,7 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
               <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                :highlight-current='highlightCurrentFlag' :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                 class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                 <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                   <i
@@ -877,7 +877,7 @@ export default {
       provinces: [],
       orderForm: {
         cooperativePartnerId: "",
-        customerProductDrawingNo: "",
+        customerProductNo: "",
         returnQueryFlag: 1,
         partnerName: "",        // customerProductNo: "",
         deliveryStartTime: "",
@@ -1138,8 +1138,7 @@ export default {
       list10: [],
       pairingModeList: [],
       pageType:"",
-      isPairingModeSwitch: '', // 配对方式显示隐藏
-      highlightCurrentFlag:false,
+      isPairingModeSwitch: '', // 配对方式显示隐藏 
     }
   },
   computed: {
@@ -1669,7 +1668,7 @@ export default {
       this.deliveryDateArr = []
       this.orderForm = {
         cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: "",
+        customerProductNo: "",
         returnQueryFlag: 1,
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
@@ -1903,6 +1902,7 @@ export default {
     resetAllProduct() {
       this.orderDateArr = []
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+            this.$refs.treeBox.setCurrentKey(null);
       this.ProductListRequestObj = {
         // neOrderState: 'finish',
         orderNo: "",
@@ -2009,7 +2009,7 @@ export default {
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
           this.dataForm = {
-            exchangeGoodsFlag: this.dateForm.exchangeGoodsFlag,
+            exchangeGoodsFlag: this.dataForm.exchangeGoodsFlag,
             // orderCategory: "assembly",
             returnDeliveryType: 'back',
             notifyType: 'sale',
@@ -2047,8 +2047,7 @@ export default {
         pageSize: 20,
         partnerCategoryId: "",
         type: "customer",
-      }
-      this.highlightCurrentFlag=false
+      } 
       this.getcategoryTree()
     },
     initData() {

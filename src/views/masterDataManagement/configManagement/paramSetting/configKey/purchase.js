@@ -20,4 +20,9 @@ export default {
         configKeyLabel: '允许采购超收',
         description: '允许超收后，采购收货总数量将大于待收货数量。'
     },
+
+      related_out_select: {
+        configKeyLabel: '钢管采购订单配置',
+        description: '如果勾选，则在创建钢管采购订单时，需要先维护委外关联产品；取消勾选，在创建钢管采购订单时，可以直接选择相关信息'
+    },
 }

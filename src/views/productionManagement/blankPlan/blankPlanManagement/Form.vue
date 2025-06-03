@@ -108,7 +108,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px;">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" >
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -1386,7 +1386,7 @@ export default {
                 });
               })
             }else {
-              this.$message.error("该产品没有BOM，请配置BOM后再试")
+              // this.$message.error("该产品没有BOM，请配置BOM后再试")
 
             }
             //               console.log(false);
@@ -1470,7 +1470,8 @@ export default {
       this.$emit('close', true)
     },
     checkFun() {
-      if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
+      // if (!this.dataForm.bomId) return this.$message.error("提交失败:该产品无BOM，请配置BOM后重试")
+      if(!this.materialList.length&&this.dataForm.bomId&&this.dataForm.pickingWay!=='none') return this.$message.error("领料信息不能为空")
       // if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
       let submitFlag = null;
       if (this.naturalResourcesFlag) {

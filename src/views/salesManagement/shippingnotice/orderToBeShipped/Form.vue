@@ -1261,6 +1261,7 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       if (this.dataForm.id) {
+        this.formLoading=true
         getQuotationsendlist(this.dataForm.id).then(res => {
           console.log("res===>",res);
           this.dataForm = res.data.notice
@@ -1277,6 +1278,7 @@ export default {
               )
             })
           }
+          this.formLoading=false
           if (this.btnType == 'copy') {
             this.dataForm.inspectionStatus = ''
             this.dataForm.id = ''
@@ -1312,6 +1314,8 @@ export default {
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
           }
+        }).catch(()=>{
+          this.formLoading=false
         })
       }
     },

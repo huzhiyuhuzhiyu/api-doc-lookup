@@ -64,7 +64,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" v-if="tableDataFlag"
+          <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" 
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column customKey="JNPFTableKey_473980">
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
@@ -433,7 +433,6 @@ export default {
     await this.getpairingModeListFun()
     await this.getProjectSwitch()
     this.advancedQueryFun()
-    this.tableDataFlag = true
     let arr=[]
     console.log("this.abProjectList",this.abProjectList);
     this.abProjectList.forEach((item) => {
@@ -656,7 +655,7 @@ if (classAttributeObj) {
       this.listLoading = true
       try {
         this.mainUnitFlag = await this.jnpf.getMainUnitFun(code, type);
-        this.listLoading = false
+       
 
 
       } catch (error) {
@@ -774,6 +773,7 @@ if (classAttributeObj) {
               }
             }
           });
+         this.listLoading = false
           this.tableData = res.data.records
         }, 600);
         this.total = res.data.total

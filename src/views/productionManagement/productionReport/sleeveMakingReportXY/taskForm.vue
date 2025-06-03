@@ -32,9 +32,9 @@
               <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
               <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
               <el-table-column prop="mainUnit" label="单位" min-width="80" />
+              <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
               <el-table-column v-if="isXY || isJR" prop="productionWeight" label="生产重量" min-width="120"  />
               <el-table-column v-if="isXY || isJR" prop="productionBarrels" label="生产桶数" min-width="120"  />
-              <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
               <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
               <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
               <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
@@ -168,6 +168,7 @@ export default {
         accuracyLevel: row.accuracyLevel,
         wireHeatNumber: row.wireHeatNumber,
         rawStockMill: row.rawStockMill,
+        workReportFlag:1,
         pageNum: 1,
         pageSize: 20,
         superQuery: {

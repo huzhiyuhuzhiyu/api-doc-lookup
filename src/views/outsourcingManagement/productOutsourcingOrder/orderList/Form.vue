@@ -1362,30 +1362,7 @@ export default {
                   insertOutOrder(_data)
                     .then((res) => {
                       if (res.msg === 'Success') res.msg = '新建成功'
-                      if (!this.dialogTitle) {
-                        this.$message({
-                          message: msg,
-                          type: 'success',
-                          duration: 1000,
-                          onClose: () => {
-                            this.btnLoading = false
-                            this.datafilelist = []
-                            this.dataFormTwo.data = []
-                            this.dataForm = {
-                              remark: '',
-                              approvalCompletionDate: '',
-                              // approvalStatus: "",
-                              documentStatus: '',
-                              id: '',
-                              orderNo: '',
-                              reasonRejection: '',
-                              submitDate: ''
-                            }
-                            this.workVisible = false
-                          }
-                        })
-                        return
-                      }
+            
                       this.$message({
                         message: msg,
                         type: 'success',

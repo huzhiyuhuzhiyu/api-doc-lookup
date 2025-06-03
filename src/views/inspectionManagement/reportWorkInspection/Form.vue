@@ -340,7 +340,7 @@ export default {
       })
     },
     materialWasteData(data, totalNums) {
-      console.log('设置的料废金额', data, totalNums)
+      console.log('设置的设置料废原因', data, totalNums)
       this.materialWasteDataList = data
       if (totalNums) {
         this.dataForm.actualMaterialQuantity = totalNums
@@ -509,7 +509,12 @@ export default {
         console.log('actualQualifiedQuantity',this.dataForm.actualQualifiedQuantity);
         // 实际不合格数量 = 实际责废数量 + 实际料废数量
         this.dataForm.actualUnqualifiedQuantity = Number(this.dataForm.actualResponsibilityWasteQuantity) + Number(this.dataForm.actualMaterialQuantity)
-        
+        this.workReport.actualConcessionQuantity=this.dataForm.actualConcessionQuantity
+        this.workReport.actualMaterialQuantity=this.dataForm.actualMaterialQuantity
+        this.workReport.actualQualifiedQuantity=this.dataForm.actualQualifiedQuantity
+        this.workReport.actualResponsibilityWasteQuantity=this.dataForm.actualResponsibilityWasteQuantity
+        this.workReport.actualReworkQuantity=this.dataForm.actualReworkQuantity
+        this.workReport.actualUnqualifiedQuantity=this.dataForm.actualUnqualifiedQuantity
         if (
           Number(this.dataForm.actualQualifiedQuantity) +
           Number(this.dataForm.actualUnqualifiedQuantity) +
@@ -522,8 +527,8 @@ export default {
         this.dataForm.inspectionStatus = 'inspected'
         let obj = {
           attachmentList: this.datafilelist,
-          inspection: this.workReport,
-          workReport: this.dataForm,
+          inspection:this.dataForm,  
+          workReport: this.workReport,
           lines: [],
           flowData: this.flowData
         }
@@ -531,7 +536,6 @@ export default {
         this.btnLoading = true
 
         console.log(obj, 'obj')
-
         addReportWorkInspectionData(obj)
           .then((res) => {
             let msg = res.msg

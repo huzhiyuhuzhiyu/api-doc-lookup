@@ -54,7 +54,7 @@
           </JNPF-table>
           <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
             <span style="font-weight:500;margin-right:10px">返工数量合计：{{ totalNum }}</span>
-            <!-- <span style="font-weight:500;margin-right:10px">料废金额合计：{{ totalAmount }}</span> -->
+            <!-- <span style="font-weight:500;margin-right:10px">设置料废原因合计：{{ totalAmount }}</span> -->
           </div>
         </div>
       </div>

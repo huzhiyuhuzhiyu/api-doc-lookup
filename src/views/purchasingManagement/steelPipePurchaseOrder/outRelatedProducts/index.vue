@@ -101,8 +101,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="产品名称" prop="outProductName">
-              <el-input v-model="dataForm.outProductName" placeholder="产品名称" :disabled="btnType === 'look'"  readonly @focus="addProduct"/>
+            <el-form-item label="品名规格" prop="outProductDrawingNo">
+              <el-input v-model="dataForm.outProductDrawingNo" placeholder="品名规格" :disabled="btnType === 'look'"  readonly @focus="addProduct"/>
             </el-form-item>
           </el-col>
      
@@ -113,7 +113,7 @@
           </el-col>
 
           <el-col :span="24">
-            <el-form-item label="回购单价" prop="buyBackPrice">
+            <el-form-item :label="this.isXL?'毛坯加工单价':'回购单价'" prop="buyBackPrice">
               <el-input v-model="dataForm.buyBackPrice" placeholder="回购单价" clearable :disabled="btnType === 'look'"/>
             </el-form-item>
           </el-col>
@@ -145,8 +145,8 @@
     </el-dialog>
     <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
 
-  <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-  <div class="JNPF-common-layout-left">
+      <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+      <div class="JNPF-common-layout-left">
     <div class="JNPF-common-title">
       <h2>产品分类</h2>
       <span class="options">
@@ -169,11 +169,11 @@
         </span>
       </el-tree>
     </el-scrollbar>
-  </div>
-  <div class="JNPF-common-layout-center JNPF-flex-main">
+      </div>
+      <div class="JNPF-common-layout-center JNPF-flex-main">
     <el-row class="JNPF-common-search-box" :gutter="16">
       <el-form @submit.native.prevent>
-        <el-col :span="6">
+        <el-col :span="6" v-if="abProjectSwitchVisible">
           <el-form-item>
             <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
        >
@@ -187,16 +187,16 @@
             <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
           </el-form-item>
         </el-col>
-        <el-col :span="6" v-if="isProductNameSwitch == 1">
+        <!-- <el-col :span="6" >
           <el-form-item>
-            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+            <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.drawingNo" placeholder="请输入品名规格" clearable />
           </el-form-item>
-        </el-col>
-        <!-- <el-col :span="6">
+        </el-col> -->
+        <el-col :span="6">
           <el-form-item>
             <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
           </el-form-item>
-        </el-col> -->
+        </el-col>
 
         <el-col :span="6">
           <el-form-item>
@@ -212,16 +212,16 @@
       </el-form>
     </el-row>
     <div class="JNPF-common-layout-main JNPF-flex-main">
-      <JNPF-table v-loading="listLoading" :data="allproductData" hasC @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_903180">
+      <JNPF-table v-loading="listLoading" :data="allproductData"  ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_903180">
         <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" label="产品名称" width="160"  show-overflow-tooltip></el-table-column>
         <el-table-column prop="drawingNo" label="品名规格" />
         <el-table-column prop="productCategoryName" label="所属分类" />
         <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" v-if="isProjectSwitch == 1" />
         <el-table-column prop="mainUnit" label="单位" />
         <el-table-column prop="inventoryQuantity" label="库存数量">
           <template slot-scope="scope">
-            <el-link type="primary" @click.native="viewFun(scope.row.id, 'inventoryFlag')">
+            <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
               {{ scope.row.inventoryQuantity }}
             </el-link>
           </template>
@@ -234,17 +234,15 @@
       </JNPF-table>
       <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum" :limit.sync="ProductListRequestObj.pageSize" @pagination="initData2" />
     </div>
-  </div>
-  </div>
-<!-- <span slot="footer" class="dialog-footer">
-  <el-button @click="allProVisible = false">{{ $t('common.cancelButton') }}</el-button>
-  <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
-    确定</el-button>
-</span> -->
-</el-dialog>
+      </div>
+      </div>
+    
+    </el-dialog>
         <!-- 高级查询 -->
         <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      <Form v-if="productVisible" ref="Form"></Form>
+
   </div>
 </template>
 <script>
@@ -271,13 +269,16 @@ import { getPrintList } from '@/api/system/printDev'
 import { excelExport, getOrderFiledMap,getProductionLineList } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
+import Form from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
+import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+import tenantMinix from "@/mixins/generator/TenantMinix"
 
 // import TaskForm from './taskForm.vue'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'outRelatedProducts',
-  components: { SuperQuery},
-  mixins: [getProjectList],
+  components: { SuperQuery,Form},
+  mixins: [getProjectList,AbProjectMixin,tenantMinix],
   data() {
     return {
       allProVisible:false,
@@ -450,7 +451,7 @@ export default {
       dataRule: {
         outPartnerName: [{ required: true, message: '请选择外协供应商', trigger: ['change'] }],
         purchasePartnerName: [{ required: true, message: '请选择采购供应商', trigger: ['change'] }],
-        outProductName: [{ required: true, message: '请选择产品', trigger: ['change'] }],
+        outProductDrawingNo: [{ required: true, message: '请选择产品', trigger: ['change'] }],
         // buyBackRate: [{ required: true, message: '请选择回购税率', trigger: ['change'] }],
         warehouseName: [{ required: true, message: '请选择仓库', trigger: ['change'] }],
         yieldRate: [{ required: true, message: '请输入成材率', trigger: ['blur'] }],
@@ -462,7 +463,7 @@ export default {
       },
       
       workOrderData: [],
-   
+   productVisible:false,
    
  
     }
@@ -478,6 +479,14 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+        // 查看库存明细
+    viewFun(row) {
+      this.productVisible = true
+      this.$set(row,'productsId',row.id)
+      this.$nextTick(() => {
+        this.$refs.Form.init(row, 'inventoryFlag', "", row.projectId)
+      })
+    },
     selectFun(row) {
       this.allProVisible = false
       this.dataForm.outProductCode=row.code
@@ -670,7 +679,9 @@ export default {
         this.dataForm.warehouseCode=''
         this.dataForm.remark=''
         this.dataForm.id=''
-        this.$refs['diaForm'].resetFields()
+      this.$nextTick(()=>{
+          this.$refs['diaForm'].resetFields()
+      })
     },
     editFun(row,type){
       this.btnType='edit'

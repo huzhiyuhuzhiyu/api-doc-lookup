@@ -183,6 +183,7 @@
                       </el-form-item>
                     </el-col>
                   </template>
+                 
               <el-col :sm="24" :xs="24">
                 <el-form-item label="合格数量" prop="qualifiedQuantity" class="iptLabel">
                   <el-input v-model="form.qualifiedQuantity" placeholder="合格数量" class="ipt"
@@ -394,6 +395,10 @@ export default {
         remark: "",
         workOrderNo: "",
         aperture: "",
+         productionBarrels:"",
+        productionWeight:"",
+        standardValue:"",
+        accuracyLevel:"",
       },
       selectArr: [],
       listLoading: false,
@@ -638,6 +643,10 @@ export default {
           obj.reportingType = "normal"
           obj.unqualifiedQuantity = this.form.unqualifiedQuantity
           obj.aperture = this.form.aperture
+          obj.productionBarrels=this.form.productionBarrels
+          obj.productionWeight=this.form.productionWeight
+          obj.standardValue=this.form.standardValue
+          obj.accuracyLevel=this.form.accuracyLevel
           obj.workOrderId = this.form.id
           obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList] 
           

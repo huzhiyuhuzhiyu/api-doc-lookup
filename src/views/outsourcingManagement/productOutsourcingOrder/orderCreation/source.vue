@@ -111,9 +111,11 @@ import formValidate from '@/utils/formValidate'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import tenantMinix from "@/mixins/generator/TenantMinix";
+
 export default {
   components: {},
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
 
   data() {
     return {
@@ -142,7 +144,7 @@ export default {
           }
         ],
         productStatus: 'enable',
-        productSource: 'out',
+        productSource: '',
         pageNum: 1,
         pageSize: 20
         // queryType: 3
@@ -277,8 +279,8 @@ export default {
         })
         this.ProductTableSearchList.unshift({ prop: 'projectId', label: '所属项目', type: 'select',options:this.abProjectNoCommonList })
         this.ProductListRequestObj.projectId = this.abIsCommonUser ? '' : this.abProjectId
-        this.ProductListRequestObj.productSource = this.isXBN ? '' : 'out'
       }
+      console.log("this.isXBN",this.isXBN);
       this.$refs['ComSelect-page'].openDialog()
       // this.productVisibled = true
       // this.$nextTick(() => {

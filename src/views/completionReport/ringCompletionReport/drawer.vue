@@ -10,9 +10,40 @@
   <!-- </el-drawer> -->
   <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     @close="customerVisible = false" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1400px" append-to-body>
+    
+        <el-collapse v-model="activeNames">
+          <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
+            <div class="stoclInfo">
+              <el-descriptions :column="1" class="box">
+                <el-descriptions-item label="品名规格" class="drawingNo">{{ dataForm.productDrawingNo
+                  }}</el-descriptions-item>
+              </el-descriptions>
+                <el-descriptions class="margin-top" :column="4">
+                <el-descriptions-item label="任务单号" class="orderNo">
+                  {{ dataForm.orderNo }}</el-descriptions-item>
+
+                <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
+                <el-descriptions-item label="产品名称">{{ dataForm.productName }}</el-descriptions-item>
+                <el-descriptions-item label="产品分类">{{ dataForm.productCategoryName }}</el-descriptions-item>
+                <el-descriptions-item label="总生产数量">{{ dataForm.productionQuantity }}{{ isXY?'万粒':'' }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="生产桶数">{{ dataForm.productionBarrels }}{{ isXY?'桶':'' }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="生产重量">{{ dataForm.productionWeight }}{{ isXY?'kg':'' }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="规值">{{ dataForm.standardValue }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="精度等级">{{ dataForm.accuracyLevel }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="钢丝炉号">{{ dataForm.wireHeatNumber }}</el-descriptions-item>
+                <el-descriptions-item v-if="isXY||isJR" label="原材料厂家">{{ dataForm.rawStockMill }}</el-descriptions-item>
+                <el-descriptions-item label="工艺名称">{{ dataForm.routingName }}</el-descriptions-item>
+                <el-descriptions-item label="领料方式">{{ dataForm.pickingWay == 'production_order' ? '生产订单领料' : "工单领料"
+                  }}</el-descriptions-item>
+              </el-descriptions>
+            </div>
+
+          </el-collapse-item>
+        </el-collapse>
     <div style="padding:10px">
+          
       <el-col :span="11" class="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
-        style="width: 48%!important;">
+        style="width: 44%!important;">
         <el-row>
           <el-col :sm="24" :xs="24">
 
@@ -120,7 +151,7 @@
 
         </el-row>
       </el-col>
-      <el-col :span="12" class="rightInfo" ref="mycol" :style="{ height: targetHeight + 'px!important' }">
+      <el-col :span="12" class="rightInfo" ref="mycol" :style="{ height: targetHeight + 'px!important' }" style="width: 54%;">
         <el-form ref="reportRef" :model="form" :rules="dataRule" label-width="160px" label-position="left">
           <el-row>
             <div style="margin-bottom: 10px; background: #f2f2f2; padding: 20px 16px;">
@@ -138,13 +169,45 @@
             <div style="padding: 0 20px;">
 
 
-
+              <template v-if="$store.getters.configData.produce.steelBallTask && form.processType !== 'boxing'">
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="生产桶数" prop="productionBarrels" class="iptLabel"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="form.productionBarrels" placeholder="生产桶数" class="ipt" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="生产重量" prop="productionWeight" class="iptLabel"
+                        :style="{ marginBottom: iptLabelMargin }">
+                        <el-input v-model="form.productionWeight" placeholder="生产重量" class="ipt" @blur="productionWeightFun"/>
+                      </el-form-item>
+                    </el-col>
+                  </template>
+                 
               <el-col :sm="24" :xs="24">
                 <el-form-item label="合格数量" prop="qualifiedQuantity" class="iptLabel">
                   <el-input v-model="form.qualifiedQuantity" placeholder="合格数量" class="ipt"
                     @blur="handleBlur(form.qualifiedQuantity)" />
                 </el-form-item>
               </el-col>
+               <el-col :sm="24" :xs="24" v-if="isXY||isJR">
+                    <el-form-item label="规值:" prop="standardValue" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-select v-model="form.standardValue" placeholder="请选择" clearable style="width: 100%;" class="ipt">
+                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
+                              :value="item.name"></el-option>
+                          </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" v-if="isXY||isJR">
+                    <el-form-item label="精度等级:" prop="accuracyLevel" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-select v-model="form.accuracyLevel" placeholder="请选择" clearable style="width: 100%;" class="ipt">
+                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
+                                :label="item.name" :value="item.name"></el-option>
+                            </el-select>
+                    </el-form-item>
+                  </el-col>
               <!-- <el-col :sm="24" :xs="24">
                 <el-form-item label="责废数量" class="iptLabel">
                   <el-input v-model="form.responsibilityWasteQuantity" placeholder="责废数量" @blur="handleBlur2"
@@ -218,8 +281,8 @@
                 </el-form-item>
               </el-col>
               <el-col :sm="24" :xs="24">
-              <el-form-item label="备注" prop="remark">
-                <el-input v-model="form.remark" placeholder="请输入备注" type="textarea" maxlength="200" :rows="2" />
+              <el-form-item label="备注" prop="remark" class="iptLabel">
+                <el-input v-model="form.remark" placeholder="请输入备注"  maxlength="200" :rows="2"  class="ipt " />
               </el-form-item>
             </el-col>
             </div>
@@ -255,15 +318,23 @@ import { producePersonList } from "@/api/warehouseManagement/packingList.js"
 import MaterialWasteForm from './materialWasteForm.vue';
 import responsWaste from './responsWaste.vue'
 import {
-  getbimProductAttributesList, getbimProductAttributes
+  getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
+ 
+import { ordershengchanList, addOrderNum, getscanResultData } from '@/api/productOrdes/index.js'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   
+  mixins: [tenantMinix],
   components: {
     MaterialWasteForm,responsWaste
   },
   data() {
     return {
+      activeNames: ['basicInfo', 'productInfo'],
+      bimProductAttributesList:{},
+      dataForm:{},
       responsWasteFormVisible:false,
       materialWasteFormVisible: false,
       materialWasteDataList: [],
@@ -282,8 +353,9 @@ export default {
         ],
         qualifiedQuantity: [
           { required: true, message: '合格数量不能为空', trigger: 'blur' },
-          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
-          { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
+          // { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          { validator: this.formValidate({ type: "decimal", params: [20, 4, "请输入正确的数量(最多保留4位小数,整数16位)"], }), trigger: "blur", },
+          // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ]
       },
 
@@ -323,6 +395,10 @@ export default {
         remark: "",
         workOrderNo: "",
         aperture: "",
+         productionBarrels:"",
+        productionWeight:"",
+        standardValue:"",
+        accuracyLevel:"",
       },
       selectArr: [],
       listLoading: false,
@@ -336,10 +412,34 @@ export default {
       apertureList: [], 
     }
   },
+    watch: {
+    'form.productionWeight': {
+      handler: function (newVal, oldVal) {
+        if (this.$store.getters.configData.produce.steelBallTask) {
+          if (newVal) {
+            this.form.qualifiedQuantity = Number(newVal) / Number(this.weight) *Number(this.quantity) ? Number(newVal) / Number(this.weight) *Number(this.quantity) : this.form.qualifiedQuantity?this.form.qualifiedQuantity:this.form.waitReportNum
+
+          } else {
+            // this.form.qualifiedQuantity = 0
+          }
+          this.form.reportingQuantity = this.form.qualifiedQuantity
+          this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.qualifiedQuantity, this.form.unqualifiedQuantity]), 6)
+        }
+      },
+      deep: true
+    },
+  },
   mounted() {
+    this.getProductClassFun()
 
   },
   methods: {
+    getProductClassFun() {
+      // 产品属性
+      getbimProductAttributesListMap().then((res) => {
+        this.bimProductAttributesList = res.data
+      })
+    },
     setMaterialWasteM() {
       console.log("this.materialWasteDataList", this.materialWasteDataList);
       this.materialWasteFormVisible = true
@@ -398,11 +498,29 @@ export default {
       this.customerVisible = true
 
       this.getDetailWorkDataFun(workData.id)
+      this.getProduceOrderFun(workData.productionOrderId)
+      if (this.$store.getters.configData.produce.steelBallTask) {
+          let obj = {
+            productsId: this.dataForm.productsId
+          }
+          getProductsWeightQuantityList(obj).then(res=>{
+            this.weight = res.data.records.length ? res.data.records[0].weight : 0
+            this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
+          })
+        }
+       
       this.$nextTick(() => {
         const height = this.$refs.mycol.$el.clientHeight
         console.log('el-col的高度是1：', height);
         this.targetHeight = height + 23;
       });
+    },
+    // 获取生产任务信息
+    getProduceOrderFun(id){
+      detailordershengchan(id).then(res=>{
+        console.log(res);
+        this.dataForm=res.data.prodOrder
+      })
     },
     handleBlur2() {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
@@ -450,6 +568,10 @@ export default {
         res.data.reportingQuantity = 0
         res.data.qualifiedQuantity = 0
         this.form = res.data
+         if (this.$store.getters.configData.produce.reporting_auto_recode) {
+          this.form.qualifiedQuantity = this.form.waitReportNum
+          this.form.reportingQuantity = this.form.waitReportNum
+        }
         this.$set(this.form, 'workOrderNo', this.form.orderNo)
         this.$set(this.form, 'item', {})
         console.log("form", this.form);
@@ -521,6 +643,10 @@ export default {
           obj.reportingType = "normal"
           obj.unqualifiedQuantity = this.form.unqualifiedQuantity
           obj.aperture = this.form.aperture
+          obj.productionBarrels=this.form.productionBarrels
+          obj.productionWeight=this.form.productionWeight
+          obj.standardValue=this.form.standardValue
+          obj.accuracyLevel=this.form.accuracyLevel
           obj.workOrderId = this.form.id
           obj.causesList = [...this.materialWasteDataList,...this.responsWasteDataList] 
           
@@ -626,5 +752,374 @@ export default {
 }
 .materialWaste {
   width: 70%;
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  height: calc(100% - 48px);
+
+}
+
+::v-deep .el-collapse-item__content {
+  height: 100%;
+}
+
+.reportInfo ::v-deep .el-collapse-item__wrap {
+  padding: 0;
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
+}
+
+.orderInfo {
+  height: 100%;
+}
+
+.eol {
+  height: 100%;
+  border-right: 1px solid #dcdfe6;
+  background: #f5f7fa;
+  padding-left: 10px;
+}
+
+.options {
+  display: inline-block;
+  float: right;
+}
+
+.pageTitle {
+  display: inline-block;
+  font-size: 18px;
+  color: #303133;
+  height: 100%;
+  line-height: 36px;
+  font-weight: 700;
+}
+
+.setipImg {
+  width: 60px;
+  height: 60px;
+}
+
+.reportBox_left {
+  /* padding-right: 10px; */
+  /* margin-right: 15px; */
+  background: #fff;
+  /* margin-right: 5px; */
+  padding-right: 10px;
+  box-sizing: border-box;
+  border-right: 5px solid #ebeef5;
+  padding: 10px 0 0px 0;
+  width: 220px;
+  height: 640px;
+  display: inline-block;
+  overflow-y: auto;
+}
+
+.reportBox_left::-webkit-scrollbar {
+  display: none;
+  /* 对于 Chrome, Safari 和 Opera 的写法 */
+}
+
+.processInfoBox {
+  background-image: url('../../../assets/images/success2.png');
+  /* width: 90%; */
+  /* height: 80px; */
+  width: 160px;
+  height: 50px;
+  background-size: 100% 100%;
+  margin: 0 auto;
+  /* line-height: 80px; */
+  /* border-radius: 2px; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 20px;
+  box-sizing: border-box;
+  font-size: 16px;
+  padding-right: 20px;
+  padding-top: 6px;
+  line-height: 19px;
+}
+
+.processInfo {
+  background-image: url('../../../assets/images/NotStarted3.png');
+  margin: 0 auto;
+  border-radius: 2px;
+  color: #fff;
+  white-space: nowrap;
+  /* 不换行 */
+  overflow: hidden;
+  /* 隐藏超出的内容 */
+  text-overflow: ellipsis;
+}
+
+.info {
+  display: inline-block;
+  vertical-align: top;
+  overflow-y: auto;
+
+}
+
+.info ::v-deep .el-form {
+  padding-left: 10px;
+  padding-right: 10px;
+  background: #ffa07a;
+}
+
+.information ::v-deep.el-form {
+  padding-left: 10px;
+  padding-right: 10px;
+  background: #add8e6;
+}
+
+.reportBtn {
+  margin-top: 20px;
+}
+
+.tit {
+  background: #fafafa;
+  height: 48px;
+  line-height: 48px;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 10px;
+}
+
+.info::-webkit-scrollbar {
+  display: none;
+  /* 对于 Chrome, Safari 和 Opera 的写法 */
+}
+
+.el-card {
+  border: 0;
+  border-top: 1px solid #EBEEF5;
+}
+
+box-card:nth-child(n+3) {
+  margin-top: 10px
+}
+
+.workInfo:nth-child(n+2) {
+  margin-left: -8px;
+}
+
+.taskInfo ::v-deep.el-form-item {
+  margin-bottom: 0;
+}
+
+.taskInfo::v-deep .el-form-item__content {
+  line-height: 40px !important;
+}
+
+.taskInfo::v-deep .el-form-item__label {
+  line-height: 40px !important;
+
+}
+
+.taskInfo ::v-deep.el-form-item__content div {
+  width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+::v-deep .el-col .el-form-item--small .el-form-item__content {
+  line-height: 32px;
+}
+
+.stoclInfo {
+  background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
+  padding: 5px;
+}
+
+.stoclInfo .margin-top {
+  background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
+
+}
+
+.orderInfo::v-deep .el-descriptions-item__label {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.orderInfo::v-deep .el-descriptions-item__content {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block !important;
+}
+
+.orderInfo ::v-deep .el-descriptions__table {
+  background: linear-gradient(0deg, #11B481 0%, #6ADE7D 100%);
+}
+
+.box ::v-deep .el-descriptions__table {
+  background: #6ADE7D;
+}
+
+.info {
+  margin-top: 18px;
+}
+
+.fixedInfo {
+  background: linear-gradient(0deg, #11B481 0.00%, #6ADE7D 100.00%);
+  padding: 20px;
+  color: #fff;
+  padding: 20px;
+  color: #fff;
+  padding-top: 0;
+  border-bottom: 1px solid #ebeef5;
+  border-left: 1px solid #ebeef5;
+}
+
+.rightInfo {
+  width: 62%;
+  /* border: 1px solid; */
+  border-radius: 4px;
+  float: right;
+  box-shadow: beige;
+  border-bottom: 1px solid #ebeef5;
+  border-right: 1px solid #ebeef5;
+}
+
+.ipt ::v-deep.el-input__inner {
+  height: 50px;
+  line-height: 50px;
+  font-size: 20px !important;
+  font-weight: bold;
+  padding-right: 0;
+  border: 0;
+}
+
+.iptLabel ::v-deep.el-form-item__label {
+  height: 50px;
+  line-height: 50px;
+  font-size: 20px !important;
+  font-weight: bold;
+  padding-left: 10px;
+  padding-right: 0;
+}
+
+.rightInfo ::v-deep .el-form-item--small.el-form-item {
+  border: 1px solid #ebeef5;
+}
+
+.JNPF-common-drawer ::v-deep.el-drawer__body {
+  overflow-y: auto;
+}
+
+.ts {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.JNPF-dialog.JNPF-dialog_center ::v-deep.el-dialog .el-dialog__body {
+  padding: 10px !important;
+}
+
+.left-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.reportBtn ::v-deep .el-button {
+
+  line-height: 40px;
+  background: #fff;
+  color: #3fb9f8;
+}
+
+.reportBtn ::v-deep .el-button span {
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+.reportBtn_right .el-button {
+
+  line-height: 40px;
+
+}
+
+.reportBtn_right ::v-deep .el-button span {
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+.process {
+  padding-top: 5px;
+  padding: 0px 10px;
+  border: 1px solid #dcdfe6;
+  padding-top: 5px;
+  background: #f2f2f2;
+}
+
+.extend {
+  width: 150px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.external_text ::v-deep .el-descriptions-item__content,
+.external_text ::v-deep .el-descriptions-item__label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+::v-deep .el-form-item__error {
+  font-size: 16px !important;
+  margin: 8px 0;
+  padding-top: 0px;
+}
+
+.materialWaste {
+  width: 50%;
+}
+.responsibility ::v-deep .el-form-item__label{
+  width: 110px!important;
+}
+.responsibility ::v-deep .el-form-item__content{
+  margin-left: 110px!important;
+}
+::v-deep .el-collapse-item__wrap {
+  padding: 0;
 }
 </style>

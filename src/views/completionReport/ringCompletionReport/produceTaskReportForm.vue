@@ -467,17 +467,17 @@ export default {
         ],
         qualifiedQuantity: [
           { required: true, message: '合格数量不能为空', trigger: 'blur' },
-          { validator: this.formValidate({ type: "decimal", params: [20, 4, "请输入正确的数量(最多保留4位小数,整数8位)"], }), trigger: "blur", },
+          { validator: this.formValidate({ type: "decimal", params: [20, 4, "请输入正确的数量(最多保留4位小数,整数1+位)"], }), trigger: "blur", },
           // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ],
         productionBarrels: [
           { required: true, message: '生产桶数不能为空', trigger: 'blur' },
-          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数18位)"], }), trigger: "blur", },
           // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ],
         productionWeight: [
           { required: true, message: '生产重量不能为空', trigger: 'blur' },
-          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数18位)"], }), trigger: "blur", },
           // { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
         ]
       },

@@ -63,6 +63,7 @@
                       <span class="orderNo">单号：{{ item.orderNo }}</span>
                     </div>
                     <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
+                    <div class="label_title" v-if="$store.getters.configData.product.enable_productName&&item.productName"> 产品名称:{{ item.productName }}</div>
                     <div class="label_title"> 品名规格:{{ item.productDrawingNo }}</div>
                     <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
                     }}</span></div>

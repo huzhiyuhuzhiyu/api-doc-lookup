@@ -196,11 +196,10 @@ export default {
           type: 'input'
         },
 
-        {
-          prop: 'classAttribute',
+           {
+          prop: 'productCategoryName',
           label: "产品分类",
-          type: 'select',
-          options: [{ label: "成品", value: "finish_product", }, { label: "原材料", value: "raw_material", }, { label: "半成品", value: "semi_finished", }, { label: "配件", value: "accessories", }]
+          type: 'input',
         },
 
         {

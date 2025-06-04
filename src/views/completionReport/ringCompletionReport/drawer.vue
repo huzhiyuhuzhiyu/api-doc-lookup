@@ -422,8 +422,8 @@ export default {
           } else {
             // this.form.qualifiedQuantity = 0
           }
-          this.form.reportingQuantity = this.form.qualifiedQuantity
           this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.qualifiedQuantity, this.form.unqualifiedQuantity]), 6)
+          this.form.reportingQuantity = this.totalReportNum
         }
       },
       deep: true
@@ -434,6 +434,15 @@ export default {
 
   },
   methods: {
+     productionWeightFun(){
+      let num=this.currentProcess.productionWeight?this.jnpf.numberFormat(this.jnpf.math('subtract', [this.dataForm.productionWeight, this.currentProcess.productionWeight]), 6):0
+      if(num<0){
+        this.currentProcess.productionWeight=0
+        this.$message.error("当前生产重量不可超过任务的生产重量")
+      }else{
+        this.currentProcess.materialWasteQuantity=num
+      }
+    },
     getProductClassFun() {
       // 产品属性
       getbimProductAttributesListMap().then((res) => {
@@ -486,7 +495,7 @@ export default {
       this.$forceUpdate()
     },
     handleBlur(item, data) {
-
+      console.log(555);
       this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [item, this.form.unqualifiedQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },
@@ -524,7 +533,8 @@ export default {
     },
     handleBlur2() {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
-
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.qualifiedQuantity, this.form.unqualifiedQuantity]), 6)
+      this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },
     handleBlur3() {
       this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
@@ -566,14 +576,16 @@ export default {
         console.log("工单详情", res);
         res.data.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [res.data.materialWasteQuantity, res.data.responsibilityWasteQuantity]), 6)
         res.data.reportingQuantity = 0
-        res.data.qualifiedQuantity = 0
+        // res.data.qualifiedQuantity = 0
         this.form = res.data
+        this.handleBlur(this.form.qualifiedQuantity)
          if (this.$store.getters.configData.produce.reporting_auto_recode) {
           this.form.qualifiedQuantity = this.form.waitReportNum
           this.form.reportingQuantity = this.form.waitReportNum
         }
         this.$set(this.form, 'workOrderNo', this.form.orderNo)
         this.$set(this.form, 'item', {})
+
         console.log("form", this.form);
         this.getvibrationLevelFun()
         this.producePersonListFun(res.data.id)

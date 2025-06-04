@@ -466,6 +466,8 @@ export default {
             { label: "形态转换出库", value: "outbound_shift" }
           ],
         },
+        
+    
         {
           prop: 'partnerName',
           label: "客户/供应商",
@@ -484,6 +486,11 @@ export default {
         {
           prop: 'drawingNo',
           label: "品名规格",
+          type: 'input'
+        },
+        {
+          prop: 'productCategoryName',
+          label: "产品分类",
           type: 'input'
         },
         {

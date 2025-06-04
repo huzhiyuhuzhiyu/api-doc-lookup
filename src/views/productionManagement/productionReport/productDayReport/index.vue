@@ -58,7 +58,7 @@
                 </div>
               </div>
  
-              <JNPF-table ref="dataTableProduce" v-loading="listLoading" :data=" produceData" :fixedNO="true" @sort-change="sortChange" custom-column>
+              <JNPF-table ref="dataTableProduce" v-loading="listLoading" :data=" produceData" :fixedNO="true" @sort-change="sortChange" custom-column  :setColumnDisplayList="columnList">
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="productionOrderNo" label="生产任务单号" width="180" sortable="custom"></el-table-column>
                 <el-table-column prop="workNo" label="工单单号" min-width="180" />
@@ -104,6 +104,7 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+                columnList:['equipmentName','equipmentCode'],
       productionDate:[],
       produceData:[],
       produceTotal:0,

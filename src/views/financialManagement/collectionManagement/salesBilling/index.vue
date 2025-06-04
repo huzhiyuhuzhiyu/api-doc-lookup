@@ -52,7 +52,7 @@ export default {
         { prop: 'cooperativePartnerName', label: '客户名称', minWidth: '160' },
         { prop: 'reconciliationDate', label: '对账日期', minWidth: '180' },
         { prop: 'includingTaxAmount', label: '出入库金额', minWidth: '160' },
-        { prop: 'totalReconciliationAmount', label: '应付金额', minWidth: '160' },
+        { prop: 'totalReconciliationAmount', label: '应收金额', minWidth: '160' },
         { prop: 'totalPaymentAmount', label: '已收款金额', minWidth: '160' },
         { prop: 'totalUnpaidAmount', label: '未收款金额', minWidth: '160' },
         // { prop: 'totalInvoicingAmount', label: '已开票金额' },

@@ -71,8 +71,8 @@
             <JNPF-table :partentOrChild="'child'" ref="dataTable" v-loading="listLoading" :data="tableData"
               :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="setColumnDisplayList"
               partentOrChild="Form">
-              <el-table-column prop="producerJobNumber" label="生产人工号" min-width="180" />
-              <el-table-column prop="producerName" label="生产人名称" min-width="120" />
+              <!-- <el-table-column prop="producerJobNumber" label="生产人工号" min-width="180" /> -->
+              <el-table-column prop="producerName" label="生产人" min-width="120" />
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="250" sortable="custom" />
               <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
               <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />

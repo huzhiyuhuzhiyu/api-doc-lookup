@@ -555,6 +555,7 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo, getPrintDeliveryNote } from '@/api/system/printDev'
 
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
 
   components: {
@@ -563,6 +564,8 @@ export default {
   },
   data() {
     return {
+        overChargeNum:0,
+      overCharge:{},
       isregrindingFlagList:[
         {label:"是",value:true},
         {label:"否",value:false},
@@ -942,11 +945,19 @@ export default {
     closeForm(flag) {
       if (flag) this.getRoutingDetailFun(this.dataForm.routingId)
     },
-    init(id) {
+   async init(id) {
       this.id = id
+          const overCharge =  await getBimBusinessSwitchConfigList({"pageSize": -1, "businessCode": "produce"})
+          this.overCharge = overCharge.data.produce.find(item=>item.configKey === 'work_exceed_report') || {
+              configValue2:''
+          }
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
         this.workList = res.data.workOrderList
+        let num= this.$store.getters.configData.produce.work_exceed_report ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
+               console.log("num",num);
+          this.overChargeNum=this.$store.getters.configData.produce.work_exceed_report ? this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, num]), 6) : ''
+          console.log("overChargeNum",this.overChargeNum);
         if (Object.keys(this.copyCurrentProcess).length !== 0) {
           const matchingItem = res.data.workOrderList.find(item => item.processId === this.copyCurrentProcess.processId);
           if (matchingItem) {
@@ -1364,11 +1375,26 @@ export default {
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null
-          if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
-            submitFlag = false
-            this.$message.error("合格数量加上不合格数量不能超过可报工数量")
-            return
-          }
+           if(this.currentProcess.firstFlag&&this.currentProcess.pickingWay=='production_order'&&this.$store.getters.configData.produce.work_exceed_report){
+     
+                 let totalNum=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.waitReportNum, this.overChargeNum]), 6)
+              if (this.totalReportNum > totalNum) {
+                this.submitFlag = false
+                this.$message.error("合格数量+不合格数量不能超过最大可报工数量("+totalNum+")")
+                return
+              }
+            }else{
+              if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
+                this.submitFlag = false
+                this.$message.error("合格数量+不合格数量不能超过可报工数量")
+                return
+              }
+            }
+          // if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
+          //   submitFlag = false
+          //   this.$message.error("合格数量加上不合格数量不能超过可报工数量")
+          //   return
+          // }
           if (this.currentProcess.reportFlag) {
             if (!this.totalReportNum) {
               submitFlag = false

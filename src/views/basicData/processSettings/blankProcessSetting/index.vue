@@ -113,6 +113,7 @@
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品来源" min-width="160" sortable="custom" />
           <el-table-column prop="name" label="工艺路线名称" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
@@ -307,7 +308,8 @@ export default {
         pageNum: 1,
         pageSize: 20,
         endTime: '',
-        startTime: ''
+        startTime: '',
+        productSource:"produce",
       },
       total: 0,
       loadingText: '',
@@ -733,6 +735,7 @@ export default {
         classAttribute: 'raw_material',
         routingFlag: 0,
         routeType: 'productProcess',
+        productSource:"produce",
         productCode: '',
         productName: '',
         productDrawingNo: '',

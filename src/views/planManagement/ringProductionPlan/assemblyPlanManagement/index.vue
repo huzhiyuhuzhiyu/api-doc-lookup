@@ -324,7 +324,6 @@ export default {
   },
 
   mounted () {
-    this.search('basic')
     
   },
   async created() {

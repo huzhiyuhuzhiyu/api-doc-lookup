@@ -125,7 +125,7 @@
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="withdrawFun(scope.row)"  :disabled="scope.row.orderStatus!='normal'">撤回</el-button>
                 <!-- <el-button size="mini" type="text" @click="editHandle(scope.row)" :disabled="scope.row.lastFlag">修改</el-button> -->
-                <el-button size="mini"  v-if="$store.getters.configData.inspect.work_report_inspect" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'"
+                <el-button size="mini"  v-if="$store.getters.configData.inspect.work_report_inspect" type="text" @click="viewFun(scope.row.inspectionId)"  :disabled="scope.row.inspectionStatus!='inspected'||!scope.row.inspectionId" 
                  >查看检验记录</el-button>
 
               </template>

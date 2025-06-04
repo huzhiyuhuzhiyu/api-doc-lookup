@@ -448,7 +448,7 @@ export default {
           { required: true, message: '请选择工艺路线', trigger: 'change' },
         ],
       },
-      columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
+      columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",'productionPlanNo'],
       superQueryVisible: false,
       btnLoading: false,
       title: "更多查询",

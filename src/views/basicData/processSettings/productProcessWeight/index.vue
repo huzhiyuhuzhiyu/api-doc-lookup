@@ -114,6 +114,7 @@ export default {
             tableData: [],
             tableItems:[
                 { prop: 'productsCode', label: '产品编码', minWidth: '160', sortable: 'custom' },
+                { prop: 'productsName', label: '产品名称', minWidth: '160', sortable: 'custom' },
                 { prop: 'drawingNo', label: '品名规格', minWidth: '160', sortable: 'custom' },
                 { prop: 'processName', label: '工序名称', minWidth: '140', sortable: 'custom' },
                 { prop: 'processCode', label: '工序编码', minWidth: '140', sortable: 'custom' },

@@ -89,7 +89,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="totalPaymentAmount" label="已收款金额" width="130" sortable="custom">
+          <el-table-column prop="totalPaymentAmount" label="已付款金额" width="130" sortable="custom">
             <template slot-scope="scope">
               <div :class="scope.row.totalPaymentAmount > 0 ? 'green' : 'red'">
                 {{
@@ -98,7 +98,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="totalInvoicingAmount" label="已开票金额" width="130" sortable="custom">
+          <el-table-column prop="totalInvoicingAmount" label="已收票金额" width="130" sortable="custom">
             <template slot-scope="scope">
               <div :class="scope.row.totalInvoicingAmount > 0 ? 'green' : 'red'">
                 {{

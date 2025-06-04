@@ -98,13 +98,13 @@
                   scope.row.totalReconciliationAmount }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="totalPaymentAmount" label="已收款金额" min-width="180">
+          <el-table-column prop="totalPaymentAmount" label="已付款金额" min-width="180">
             <template slot-scope="scope">
               <div :class="scope.row.totalPaymentAmount > 0 ? 'green' : 'red'">{{ scope.row.totalPaymentAmount > 0 ? '+'
                 + scope.row.totalPaymentAmount : scope.row.totalPaymentAmount }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="totalInvoicingAmount" label="已开票金额" min-width="180">
+          <el-table-column prop="totalInvoicingAmount" label="已收票金额" min-width="180">
             <template slot-scope="scope">
               <div :class="scope.row.totalInvoicingAmount > 0 ? 'green' : 'red'">{{ scope.row.totalInvoicingAmount > 0 ?
                 '+' + scope.row.totalInvoicingAmount : scope.row.totalInvoicingAmount }}</div>

@@ -360,7 +360,7 @@ export default {
       },
       reworkVisible: false,
       addOrderVisible: false,
-      columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
+      columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",'productionPlanNo'],
       superQueryVisible: false,
       btnLoading: false,
       title: "更多查询",

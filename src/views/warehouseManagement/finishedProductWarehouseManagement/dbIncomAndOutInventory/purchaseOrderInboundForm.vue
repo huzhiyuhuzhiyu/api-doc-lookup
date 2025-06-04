@@ -1467,7 +1467,6 @@ export default {
           }
 
           if (this.productData.length) {
-            console.log(this.productData);
             let totals = {};
             let totalNum = {};
             for (let index = 0; index < this.productData.length; index++) {
@@ -1541,10 +1540,12 @@ export default {
             const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
 
-            this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
-            this.copyLinesData.forEach(element => {
-              element.warehouseType = this.dataForm.warehouseType
+            this.productData.forEach(item => {
+              item.warehouseType = this.dataForm.warehouseType
+              item.warehouseId = this.dataForm.warehouseId
+              item.warehouseName = this.dataForm.warehouNamwarehouseNamepe
             });
+            this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
             this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'
             if (this.datafilelist.length) {

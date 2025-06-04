@@ -221,11 +221,24 @@
                         <el-input v-model="currentProcess.productWeight" :placeholder="currentProcess.productWeight?currentProcess.productWeight:''" class="ipt" disabled/>
                       </el-form-item>
                     </el-col>
-                  <el-col :sm="24" :xs="24">
+                       <el-col :sm="24" :xs="24"  v-if="!isBOOS">
+                    <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"  @blur="handleBlur(item)" />
+                    </el-form-item>
+                  </el-col>
+                    <el-col :sm="12" :xs="24"  v-if="isBOOS">
                     <el-form-item label="合格数量:" prop="qualifiedQuantity" class="iptLabel"
                       :style="{ marginBottom: iptLabelMargin }">
                       <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" class="ipt"
                         @blur="handleBlur(item)" />
+                    </el-form-item>
+                  </el-col>
+                   <el-col :sm="12" :xs="24"  v-if="isBOOS">
+                    <el-form-item label="加工次数:" prop="processingTimes" class="iptLabel"
+                      :style="{ marginBottom: iptLabelMargin }">
+                      <el-input v-model="currentProcess.processingTimes" placeholder="合格数量" class="ipt"
+                        />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="24" :xs="24" v-if="isXY||isJR">
@@ -399,6 +412,7 @@ import TransitionRemakeRecord from "@/views/completionReport/ringCompletionRepor
 import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderCreation/index.vue';
 import { detailProductionToOutSouring } from '@/api/productOrdes/index.js'
 import tenantMinix from "@/mixins/generator/TenantMinix";
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 
 export default {
   mixins: [tenantMinix],
@@ -408,7 +422,9 @@ export default {
     PrintDialog, TransitionRemake, TransitionRemakeRecord,OutSouringForm
   },
   data() {
-    return {
+    return { 
+      overChargeNum:0,
+      overCharge:{},
       forceCompleteFlagList:[
         {label:"是",value:true},
         {label:"否",value:false},
@@ -687,8 +703,13 @@ export default {
       this.outSouringFormVisible = false
       this.getProcessFun(this.currentProcess)
     },
-    init(id) {
+    async init(id) {
       this.id = id
+          const overCharge =  await getBimBusinessSwitchConfigList({"pageSize": -1, "businessCode": "produce"})
+          this.overCharge = overCharge.data.produce.find(item=>item.configKey === 'work_exceed_report') || {
+              configValue2:''
+          }
+   
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
         this.workList = res.data.workOrderList.map(item=>{
@@ -698,6 +719,10 @@ export default {
           }
 
         })
+               let num= this.$store.getters.configData.produce.work_exceed_report ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
+               console.log("num",num);
+          this.overChargeNum=this.$store.getters.configData.produce.work_exceed_report ? this.jnpf.numberFormat(this.jnpf.math('multiply', [this.dataForm.productionQuantity, num]), 6) : ''
+          console.log("overChargeNum",this.overChargeNum);
         this.remakeUnqualifiedQuantity = this.workList[0].autoUnqualifiedQuantity
         this.materialList = res.data.materialList
         if (this.$store.getters.configData.produce.steelBallTask) {
@@ -715,6 +740,7 @@ export default {
           if (matchingItem) {
             this.currentProcessId = matchingItem.processId
             this.currentProcess = matchingItem
+            this.$set(this.currentProcess,'processingTimes',1)
             this.$set(this.currentProcess,'bagWeight',0.25)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
@@ -728,6 +754,7 @@ export default {
           this.currentProcess =  res.data.workOrderList.find(item=>+item.waitReportNum && item.reportFlag) || res.data.workOrderList[0]
           this.currentProcessId = this.currentProcess.processId
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
+            this.$set(this.currentProcess,'processingTimes',1)
             this.$set(this.currentProcess,'bagWeight',0.25)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
           this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
@@ -755,6 +782,7 @@ export default {
     getProcessFun(item) {
       this.currentProcess = item
             // this.$set(this.currentProcess,'forceCompleteFlag',false)
+            this.$set(this.currentProcess,'processingTimes',1)
             this.$set(this.currentProcess,'bagWeight',0.25)
             this.$set(this.currentProcess,'productionBarrels',this.dataForm.productionBarrels)
       this.$set(this.currentProcess,'productionWeight',this.dataForm.productionWeight)
@@ -903,11 +931,22 @@ export default {
           let submitFlag = null
           console.log(this.totalReportNum)
           if (this.currentProcess.processType !== 'boxing') {
-          if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
-            this.submitFlag = false
-            this.$message.error("合格数量+不合格数量不能超过可报工数量")
-            return
-          }
+
+            if(this.currentProcess.firstFlag&&this.currentProcess.pickingWay=='production_order'&&this.$store.getters.configData.produce.work_exceed_report){
+     
+                 let totalNum=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.waitReportNum, this.overChargeNum]), 6)
+              if (this.totalReportNum > totalNum) {
+                this.submitFlag = false
+                this.$message.error("合格数量+不合格数量不能超过最大可报工数量("+totalNum+")")
+                return
+              }
+            }else{
+              if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
+                this.submitFlag = false
+                this.$message.error("合格数量+不合格数量不能超过可报工数量")
+                return
+              }
+            }
           } else {
             if (!this.totalReportNum) {
               submitFlag = false
@@ -961,6 +1000,7 @@ export default {
           obj.productionBarrels = this.currentProcess.productionBarrels
           obj.productionWeight = this.currentProcess.productionWeight
           obj.workOrderId = this.currentProcess.id
+          obj.processingTimes = this.currentProcess.processingTimes
 
 
           

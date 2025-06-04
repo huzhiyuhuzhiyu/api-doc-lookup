@@ -67,8 +67,8 @@
             :checkSelectable="(row) => row.state != '0'" @sort-change="sortChange"
             @selection-change="handeleProductInfoData" custom-column :show-summary="false"
             :summary-method="getSummaries" customKey="JNPFTableKey_274788">
-            <el-table-column prop="producerJobNumber" label="生产人工号" sortable="custom" />
-            <el-table-column prop="producerName" label="生产人名称" sortable="custom">
+            <!-- <el-table-column prop="producerJobNumber" label="生产人工号" sortable="custom" /> -->
+            <el-table-column prop="producerName" label="生产人" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.producerId, listQuery.month)">{{
                   scope.row.producerName

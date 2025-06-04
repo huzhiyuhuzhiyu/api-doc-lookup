@@ -324,7 +324,7 @@
         <el-form ref="dateForm" :model="dateForm" :rules="dateRule" label-width="120px" label-position="left">
           <el-col :span="24">
             <el-form-item label="生产任务单号" prop="orderNo">
-              <el-input v-model="dateForm.orderNo" placeholder="生产任务单号" disabled />
+              <el-input v-model="dateForm.orderNo" placeholder="生产任务单号" :disabled="!isJROrXY" />
             </el-form-item>
           </el-col>
 
@@ -402,10 +402,11 @@ import OutSouringForm from '@/views/outsourcingManagement/processOutsourcingOrde
 import QRCode from 'qrcodejs2'
 import BatchSortForm from '@/views/productionManagement/ringPlan/ringTaskManagement/batchSortForm.vue'
 import BatchAddTaskForm from '@/views/productionManagement/ringPlan/ringTaskManagement/batchAddTaskForm.vue'
+import TenantMinix from '@/mixins/generator/TenantMinix'
 export default {
   name: 'assemblyTaskManagement',
   components: { BatchAddTaskForm, BatchSortForm, SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog, TaskForm, AddTaskForm, SplitTaskForm,RedesignateTaskForm, PrintDialog2, PrintBrowse2,ProcessOutForm,OutSouringForm },
-  mixins: [getProjectList],
+  mixins: [getProjectList,TenantMinix],
   data() {
     return {
       batchAddTaskVisible:false,

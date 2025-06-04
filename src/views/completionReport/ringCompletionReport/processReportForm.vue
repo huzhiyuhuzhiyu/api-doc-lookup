@@ -39,6 +39,7 @@
                           <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
                             $t('common.reset') }}
                           </el-button>
+                          <el-button  v-has="'batchReport'" size="mini" icon="el-icon-plus" type="primary" @click="batchReport">批量报工</el-button>
                         </el-form-item>
                       </el-col>
 
@@ -54,7 +55,7 @@
 
                 </div>
               </div>
-              <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
+              <JNPF-table :hasC="['batchReport']" ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
                 :setColumnDisplayList="columnList" custom-column :height="customStyleData2" @sort-change="sortChange">
                 <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
                 <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
@@ -96,7 +97,7 @@
                     <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">查看报工记录</el-button>
                   </template>
                 </el-table-column>
-              </JNPF-table> 
+              </JNPF-table>
             </el-collapse-item>
           </el-collapse>
 
@@ -109,27 +110,26 @@
     <!-- <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm> -->
     <recordForm v-if="recordFormVisible" ref="recordForm"></recordForm>
     <Drawer v-if="vibrateFormVisible" ref="drawerForm" @close="closeForm"></Drawer>
+    <BatchReportProcessForm v-if="batchReportVisible" ref="batchReportProcessForm" @close="closeForm" />
   </div>
 </template>
 
 <script>
 
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
-import { detailProcess, } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
-import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import recordForm from './recordForm.vue'
 import Drawer from './drawer.vue'
+import BatchReportProcessForm from '@/views/completionReport/ringCompletionReport/batchReportProcessForm.vue'
 export default {
 
   components: {
+      BatchReportProcessForm,
     NormalForm, recordForm, Drawer
   },
   data() {
     return {
+      batchReportVisible:false,
       recordFormVisible: false,
       columnList: ["processCode"],
       normalFormVisible: false,
@@ -224,16 +224,16 @@ export default {
       console.log("供需信息", row);
       this.processData = row
       this.processId=this.form.processId = row.id
-      
+
       this.getWorkListFun()
     },
     search() {
       this.getWorkListFun()
     },
-    reset() { 
+    reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.form={
-        
+
         productionOrderNo: "",
         productDrawingNo: "",
         processId: this.processId,
@@ -271,6 +271,7 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
     closeForm(flag) {
+      this.batchReportVisible = false
       if (flag) this.getWorkListFun()
     },
     // 点击报工
@@ -290,6 +291,13 @@ export default {
     },
     goBack() {
       this.$emit('close')
+    },
+    batchReport(){
+        if (!this.$refs.dataTable.selection.length) return this.$message.warning('请先选择批量报工的工序')
+        this.batchReportVisible = true
+        this.$nextTick(() => {
+            this.$refs.batchReportProcessForm.init(this.$refs.dataTable.selection)
+        })
     },
   }
 }

@@ -1,6 +1,6 @@
 <!--  参数  -->
 <!-- value 绑定的对象(使用v-model绑定) 示例：[] -->
-<!-- tableItems 渲染的列表字段 
+<!-- tableItems 渲染的列表字段
   完整参数：
   prop 绑定变量 - 必传
   label 显示内容 - 必传
@@ -44,7 +44,7 @@
           </template>
           <template slot-scope="scope">
             <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
-             
+
               :value="JNPFColTableData.data[scope.$index][scope.column.property]"
               @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
               :openMode="realOpenMode" :scope="scope" :paramsObj="{ scope }" />
@@ -55,13 +55,12 @@
           </template>
         </el-table-column>
       </template>
-
-      <el-table-column label="操作" width="90" v-if="realOpenMode !== '只读' && delMethod" fixed="right">
+      <el-table-column label="操作" width="90" v-if="realOpenMode !== '只读' && delMethod" fixed="right"  key="actionBar">
         <template slot-scope="scope">
           <el-button @click="deleteth(scope)" type="text" style="color:rgb(245,108,108)">删除</el-button>
         </template>
       </el-table-column>
-
+      <slot name="actions"></slot>
     </el-table>
     <div class="table-actions" @click="addth" v-if="realOpenMode != '只读' && addMethod">
       <el-button type="text" icon="el-icon-plus">添加</el-button>

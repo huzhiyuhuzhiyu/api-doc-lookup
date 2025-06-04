@@ -979,6 +979,8 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
           getProductsWeightQuantityList(obj).then(res=>{
             this.weight = res.data.records.length ? res.data.records[0].weight : 0
             this.quantity = res.data.records.length ? res.data.records[0].quantity : 0
+            this.$set(this.dataForm, 'productionWeight', this.weight)
+            this.$set(this.dataForm, 'productionQuantity', this.quantity)
           })
       }
       this.getWarehouseListFun()

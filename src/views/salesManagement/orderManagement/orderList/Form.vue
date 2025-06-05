@@ -48,7 +48,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                      <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'||saleContractNoSwitch === '2'">
                         <el-form-item label="客户合同号" prop="contractNo">
                           <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
                             maxlength="20" clearable />
@@ -169,7 +169,7 @@
                       <el-table-column prop="application" label="应用" width="160" key="application">
                       </el-table-column>
                       <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                        v-if="saleContractNoSwitch === '0'">
+                        v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                             :disabled="btnType === 'look'"></el-input>
@@ -305,7 +305,7 @@
                     <el-table-column prop="application" label="应用" width="160" key="application">
                     </el-table-column>
                     <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                      v-if="saleContractNoSwitch === '0'">
+                      v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                           :disabled="btnType === 'look'"></el-input>
@@ -626,7 +626,7 @@
                       </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'||saleContractNoSwitch === '2'">
                     <el-form-item label="客户合同号" prop="contractNo">
                       <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
                         maxlength="20" clearable />
@@ -734,7 +734,7 @@
                   <el-table-column prop="application" label="应用" width="160" key="application">
                   </el-table-column>
                   <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                    v-if="saleContractNoSwitch === '0'">
+                    v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                         :disabled="btnType === 'look'"></el-input>
@@ -842,7 +842,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                  v-if="saleContractNoSwitch === '0'">
+                  v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
                   <template slot-scope="scope"> 
                     <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                       :disabled="btnType === 'look'"></el-input>

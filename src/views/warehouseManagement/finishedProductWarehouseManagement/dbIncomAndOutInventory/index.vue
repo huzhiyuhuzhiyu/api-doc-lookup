@@ -1760,6 +1760,7 @@ export default {
       searchList9: [
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },
       ],
       searchList10: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
@@ -4942,6 +4943,7 @@ export default {
           this.searchList9 = [
             { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
             { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+            { field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },
           ]
         } else {
           this.fhDateArr = []

@@ -1605,6 +1605,7 @@ selectSupplier(id,data){
             this.dataForm.outProductName=res.data.relatedOut.outProductName
             this.dataForm.outProductId=res.data.relatedOut.outProductId
             this.dataForm.outProductCode=res.data.relatedOut.outProductCode
+            this.dataForm.outProductDrawingNo=res.data.relatedOut.outProductDrawingNo
             this.dataForm.buyBackPrice=res.data.relatedOut.buyBackPrice
             this.dataForm.buyBackRate=res.data.relatedOut.buyBackRate
             this.dataForm.yieldRate=res.data.relatedOut.yieldRate

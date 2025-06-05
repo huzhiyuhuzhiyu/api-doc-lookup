@@ -31,7 +31,14 @@
                 </el-form-item>
               </el-col>
             </template>
-
+            <el-col :span="2" v-if="isZY">
+            <el-form-item>
+              <el-select v-model="orderForm.orderState" placeholder="订单状态" style="width: 100%;" clearable>
+                <el-option v-for="(item, index) in orderStateList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
 
             <el-col :span="6">
               <el-form-item>
@@ -75,6 +82,7 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
+            <el-table-column prop="contractNo" label="客户合同号" width="120"></el-table-column>
             <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
             <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
             <el-table-column prop="customerProductNo" label=" 客户料号" width="160" sortable="custom" />
@@ -91,14 +99,13 @@
             <el-table-column prop="num" :label="mainUnitFlag == 1 ? '数量(主)' : '数量'" min-width="120">
             </el-table-column>
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-            <el-table-column prop="assistantNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+          
             <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="taxRate" label="税率" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="totalAmount" label="金额(含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" sortable="custom"></el-table-column>
             <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" sortable="custom"></el-table-column>
-            <el-table-column prop="contractNo" label="客户合同号" width="120"></el-table-column>
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" min-width="150" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="120" sortable="custom"
@@ -119,6 +126,14 @@
             <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
 
             <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
+              <el-table-column prop="assistantNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+              <el-table-column prop="orderState" label="订单状态" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.orderState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
+                <div v-else-if="scope.row.orderState == 'finish'"><el-tag type="success">已完成</el-tag></div>
+                <div v-else-if="scope.row.orderState == 'part_finish'"><el-tag type="warning">部分完成</el-tag></div>
+              </template>
+            </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
@@ -197,14 +212,15 @@ import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters, mapState } from 'vuex'
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
+import tenantMinix from "@/mixins/generator/TenantMinix"
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 
 export default {
   name: 'orderDetails',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
-  mixins: [AbProjectMixin],
+  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery }, 
+  mixins: [AbProjectMixin,tenantMinix],
   data() {
     return { 
       superQuery: {},
@@ -217,7 +233,12 @@ export default {
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
 
       ],
-
+      orderStateList: [
+        { label: "未完成", value: "not_finish" },
+        { label: "已完成", value: "finish" },
+        { label: "部分完成", value: "part_finish" },
+        { label: "所有", value: "" },
+      ],
 
 
       totalNum: 0,
@@ -236,6 +257,7 @@ export default {
         cooperativePartnerName: "",
         customerProductDrawingNo: "",
         // customerProductNo: "",
+        orderState:"",
         orderType: "",
         drawingNo: "",
         orderNo: "",
@@ -332,6 +354,16 @@ export default {
           type: 'input'
         },
         {
+          prop: 'orderState',
+          label: "订单状态",
+          type: 'select',
+          options: [
+            { label: "未完成", value: "not_finish" },
+            { label: "已完成", value: "finish" },
+            { label: "部分完成", value: "part_finish" },
+          ]
+        },
+        {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
@@ -408,7 +440,9 @@ export default {
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
-  
+    this.orderForm.orderState=this.isZY?'not_finish':''
+        
+    if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -815,7 +849,7 @@ if (classAttributeObj) {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
-      this.superForm = this.orderForm = {
+     this.orderForm = {
         cooperativePartnerName: "",
         customerProductDrawingNo: "",
 
@@ -835,12 +869,15 @@ if (classAttributeObj) {
           matchLogic: ""
         },
       }
+    this.orderForm.orderState=this.isZY?'not_finish':''
+this.superForm = this.orderForm
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
 
       ]
+    if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')

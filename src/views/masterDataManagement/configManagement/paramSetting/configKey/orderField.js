@@ -21,7 +21,7 @@ export default {
     },
     gobal_customerContractNo: {
         configKeyLabel: '启用客户合同号',
-        description: '启用后，在销售订单、订单进度、订单变更、仓库管理会显示客户合同号；关闭则在销售订单详情中明细列表展示客户合同号。',
+        description: '1、在销售订单、订单进度、订单变更、仓库管理会显示客户合同号；2、关闭则在销售订单详情中明细列表展示客户合同号；3、都显示',
         mainModule: '全局'
     },
     gobal_specSize: {

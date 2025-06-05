@@ -268,6 +268,16 @@ export default {
             { label: '审批撤回', value: 'withdrawn' }
           ]
         },
+          {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' },
+            { label: '撤回', value: 'back' },
+          ]
+        }, 
         {
           prop: 'createTime',
           label: '创建时间',

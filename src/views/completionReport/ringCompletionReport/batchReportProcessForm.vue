@@ -18,7 +18,23 @@
                     <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
                         <div class="JNPF-common-layout-main JNPF-flex-main">
                             <div style="height: 100%">
-                                <JNPF-col-table v-keyboard-focus :value="linesList" ref="tableForm" :tableItems="linesListItems" :btnType="btnType">
+                                <JNPF-col-table :tableProps="{
+                                  is:'JNPF-table',
+                                  customKey:'batchReportProcessForm',
+                                  customColumn: true,
+                                }" v-keyboard-focus :value="linesList" ref="tableForm" :tableItems="linesListItems" :btnType="btnType">
+                                  <template slot="top">
+                                    <div class="tableTopContainer" style="display: flex;justify-content: space-between;">
+                                      <div v-if="btnType !== 'look'" class="left">
+
+                                      </div>
+                                      <div class="right">
+                                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                                          <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="$refs.tableForm.$refs.tableRef.showDrawer()"/>
+                                        </el-tooltip>
+                                      </div>
+                                    </div>
+                                  </template>
                                     <template slot="actions">
                                         <el-table-column label="操作" width="220" v-if="btnType !== 'look'" fixed="right" key="actions">
                                             <template slot-scope="scope">
@@ -80,7 +96,8 @@ export default {
         setLinesListItems() {
             this.linesListItems = [
                 { prop: 'processName', label: '工序名称', value: '', type: 'view', minWidth: 160 },
-                { prop: 'orderNo', label: '生产任务单号', value: '', type: 'view', minWidth: 160 },
+                { prop: 'productionOrderNo', label: '生产任务单号', value: '', type: 'view', minWidth: 160 },
+                { prop: 'orderNo', label: '工单号', value: '', type: 'view', minWidth: 160 },
                 { prop: 'productDrawingNo', label: '品名规格', value: '', type: 'view', minWidth: 160 },
                 { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
                 { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160,render:this.$store.getters.configData.product.enable_productName },
@@ -262,8 +279,8 @@ export default {
                         reportingQuantity:this.jnpf.numberFormat(this.jnpf.math('add', [item.qualifiedQuantity, item.unqualifiedQuantity, item.reworkQuantity]), 6),
                         reportingType : "normal",
                         workOrderId:item.id,
-                        causesList:[...this.materialWasteDataList,...this.responsWasteDataList]
-
+                        causesList:[...this.materialWasteDataList,...this.responsWasteDataList],
+                        id:''
                     }
                 })
                 addWorkReport(_data).then(res => {

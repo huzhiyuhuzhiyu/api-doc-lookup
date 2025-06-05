@@ -2460,7 +2460,7 @@ export default {
               attachmentList: this.datafilelist,
               stockMove: this.dataForm,
               lines: this.productData,
-              spaceLines: this.copyLinesData,
+              spaceLines: this.btnType=='edit'?this.spaceLines:this.copyLinesData,
               flowData: this.flowData
             }
             formMethod(dataObj).then(res => {

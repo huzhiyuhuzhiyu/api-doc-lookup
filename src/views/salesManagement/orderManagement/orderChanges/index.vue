@@ -515,6 +515,7 @@ export default {
         pageSize: 20,
         deliveryEd: "",
         deliverySd: "",
+        salesPersonFlag:1,
         endTime: "",
         startTime: "",
         deliveryDateArr: [],
@@ -534,6 +535,7 @@ export default {
       initListQuery: {
         approvalStatus: "",
         orderNo: "",
+        salesPersonFlag:1,
         documentStatus: "",
         pageNum: 1,
         pageSize: 20,

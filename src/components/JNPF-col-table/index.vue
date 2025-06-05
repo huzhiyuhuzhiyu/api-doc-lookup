@@ -30,15 +30,17 @@
 <!-- addth 新增行 -->
 <!-- deleteth 删除行 -->
 <template>
+  <div class="TableForm_main" style="height: 100%">
+  <slot name="top"></slot>
   <el-form :model="JNPFColTableData" ref="main">
-    <el-table :data="JNPFColTableData.data" :key="JNPFColTableData.data.length" border @selection-change="handeleProductInfoData" height="100%">
-      <el-table-column type="selection" width="60" :fixed="fixedSelect" v-if="hasC" align="center"
+    <component ref="tableRef" v-bind="{...tableProps,...customStyleData}" is="el-table" :data="JNPFColTableData.data" :key="JNPFColTableData.data.length" border @selection-change="handeleProductInfoData" height="100%">
+      <el-table-column type="selection" width="60" :fixed="fixedSelect" v-if="hasC && !tableProps.is" align="center"
         :selectable="checkSelectable" />
-      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" v-if="!tableProps.is" />
 
       <template v-for="item in tableItems">
         <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop"
-          :label="item.label" :width="item.width" :min-width="item.minWidth" :fixed="item.fixed">
+          :label="item.label" :width="item.width" :min-width="item.minWidth" :fixed="item.fixed" :className="isRequire(item) ? 'LineRequired' : ''">
           <template slot="header" v-if="isRequire(item)">
             <span class="required">*</span>{{ item.label }}
           </template>
@@ -61,11 +63,12 @@
         </template>
       </el-table-column>
       <slot name="actions"></slot>
-    </el-table>
+    </component>
     <div class="table-actions" @click="addth" v-if="realOpenMode != '只读' && addMethod">
       <el-button type="text" icon="el-icon-plus">添加</el-button>
     </div>
   </el-form>
+  </div>
 </template>
 
 <script>
@@ -75,6 +78,9 @@ export default {
   name: 'JNPF-col-table',
   data() {
     return {
+      customStyleData: {
+          height: '100%',
+      },
       JNPFColTableData: {
         data: this.value
       }
@@ -110,7 +116,13 @@ export default {
     },
     btnType: {
       type: String
-    }
+    },
+      tableProps: {
+          type: Object,
+          default: () => {
+              return {}
+          }
+      }
   },
   watch: {
     value(newValue) {

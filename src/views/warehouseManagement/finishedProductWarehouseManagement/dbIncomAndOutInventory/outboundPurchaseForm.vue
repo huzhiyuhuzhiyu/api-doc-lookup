@@ -127,7 +127,7 @@
                         </el-table-column>
                         <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
-                        <el-table-column prop="receivedQuantity" label="待退货数量" width="140" v-if="btnType != 'look'"
+                        <el-table-column prop="awaitReceivedQuantity" label="待退货数量" width="140" v-if="btnType != 'look'"
                           :key="777">
                         </el-table-column>
                         <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
@@ -351,7 +351,7 @@
                         </el-table-column>
                         <el-table-column prop="availableBatchNumber" label="批次库存数量" width="160" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
-                        <el-table-column prop="receivedQuantity" label="待退货数量" width="140" v-if="btnType != 'look'"
+                        <el-table-column prop="awaitReceivedQuantity" label="待退货数量" width="140" v-if="btnType != 'look'"
                           :key="777">
                         </el-table-column>
                         <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
@@ -518,7 +518,7 @@
                 </el-table-column>
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                <el-table-column prop="receivedQuantity" label="待退货数量" width="130" sortable="custom" />
+                <!-- <el-table-column prop="receivedQuantity" label="待退货数量" width="130" sortable="custom" /> -->
                 <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
                 <el-table-column prop="colour" :label="$store.getters.colour"  width="80" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" />
@@ -925,7 +925,9 @@ export default {
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.taxRates = item.taxRate + "%"
-        item.num = item.receivedQuantity
+              this.$set(item,'awaitReceivedQuantity',0)
+                      item.num = item.awaitReceivedQuantity=this.jnpf.numberFormat(this.jnpf.math('subtract', [item.receivedQuantity, item.receiptQuantity]), 6)
+ 
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
         item.ordersId = item.purchaseOrderId
@@ -1183,7 +1185,8 @@ export default {
               item.taxRates = item.taxRate + "%"
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
-              item.num = item.receivedQuantity
+              this.$set(item,'awaitReceivedQuantity',0)
+              item.num = item.awaitReceivedQuantity=this.jnpf.numberFormat(this.jnpf.math('subtract', [item.receivedQuantity, item.receiptQuantity]), 6)
               item.ordersId = item.purchaseOrderId
               item.noticeId = item.purchaseReceiptReturnGoodsId
               item.noticeLineId = item.id
@@ -1280,7 +1283,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次库存数量")
                 break
               }
-              if (Number(item.num) > Number(item.receivedQuantity)) {
+              if (Number(item.num) > Number(item.awaitReceivedQuantity)) {
                 console.log(item.num);
                 console.log(item.ordersNum);
                 submitFlag = false

@@ -62,6 +62,7 @@
                 <el-table-column prop="productsName" label="产品名称" />
                 <el-table-column prop="productsCode" label="产品编码" />
                 <el-table-column prop="productDrawingNo" label="品名规格" />
+            <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
                 <el-table-column prop="unit" label="单位" />
                 <el-table-column prop="saleNum" label="累计销售发货次数" />
                 <el-table-column prop="sumNum" label="销售发货数量" />

@@ -61,6 +61,7 @@
               <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="tableData"  @sort-change="sortChange" custom-column customKey="JNPFTableKey_7668545512749">
                 <el-table-column prop="partnerName" label="客户名称"  ></el-table-column>
                 <el-table-column prop="productsName" label="产品名称"  />
+            <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
                 <el-table-column prop="sumNum" label="销售发货数量"  />
                 <el-table-column prop="sumAmount" label="销售金额"  ></el-table-column>
                 <el-table-column prop="amountPercent" label="销售额占比"   width="200">

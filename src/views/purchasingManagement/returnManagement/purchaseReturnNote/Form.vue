@@ -127,7 +127,7 @@
                       v-if="isReturnSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
                       v-if="isDeputyUnitSwitch && isReturnSwitch" />
-                    <el-table-column prop="receiptQuantity" label="库存数量" width="160" sortable="custom" />
+                    <el-table-column prop="receiptQuantitys" label="库存数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -355,7 +355,7 @@
                   v-if="isReturnSwitch" />
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="160" sortable="custom"
                   v-if="isDeputyUnitSwitch && isReturnSwitch" />
-                <el-table-column prop="receiptQuantity" label="库存数量" width="160" sortable="custom" />
+                <el-table-column prop="receiptQuantitys" label="库存数量" width="160" sortable="custom" />
                 <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -1038,7 +1038,7 @@ export default {
           let list = this.dataFormTwo.productData
 
           let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].receiptQuantity)
+          let num_2 = Number(list[index].receiptQuantitys)
           if (!(num_1 <= num_2)) {
             flag = true
           }
@@ -1111,16 +1111,16 @@ export default {
         if (this.isReturnSwitch) {
           list.forEach((item, index) => {
             item.ordersNum = item.num
-            item.taxRate = Number(item.taxRate)
-            item.receiptQuantity = item.purchaseQuantity
+            item.taxRate = Number(item.taxRate) 
+            item.receiptQuantitys = item.purchaseQuantity 
             item.productName = item.productName
             item.deliveryDate = this.dataForm.deliveryDate // 交期
             selectArr.push(item)
           })
         } else {
           list.forEach((item, index) => {
-            item.taxRate = Number(item.taxRate)
-            item.receiptQuantity = item.inventoryQuantity
+            item.taxRate = Number(item.taxRate) 
+            item.receiptQuantitys = item.inventoryQuantity 
             item.productsId = item.id
             item.productName = item.name
             item.deliveryDate = this.dataForm.deliveryDate // 交期
@@ -1620,8 +1620,7 @@ export default {
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '', 
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,
@@ -1648,8 +1647,7 @@ export default {
           let dep1 = {
             billStatus: item.billStatus ? item.billStatus : '',
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-            receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
+            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '', 
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,

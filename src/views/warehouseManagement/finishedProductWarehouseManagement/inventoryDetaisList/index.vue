@@ -113,6 +113,8 @@
           <el-table-column prop="productName" label="产品名称" v-if="productNameFlag == '1'" min-width="160"
             sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="300" />
+          <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
+
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 

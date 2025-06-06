@@ -61,6 +61,16 @@
               <JNPF-table ref="dataTableProduce" v-loading="listLoading" :data=" produceData" :fixedNO="true" @sort-change="sortChange" custom-column  :setColumnDisplayList="columnList">
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="productionOrderNo" label="生产任务单号" width="180" sortable="custom"></el-table-column>
+                <el-table-column prop="productionOrderType" label="任务类型" min-width="120" sortable="custom">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.productionOrderType == 'normal'">正常任务</div>
+                    <div v-if="scope.row.productionOrderType == 'rework'">返工任务</div>
+                    <div v-if="scope.row.productionOrderType == 'manually'">新建任务</div>
+                    <div v-if="scope.row.productionOrderType == 'flipping'">翻库任务</div>
+                    <div v-if="scope.row.productionOrderType == 'transit'">在制任务</div>
+                    <div v-if="scope.row.productionOrderType == 'regrinding'">修磨任务</div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="workNo" label="工单单号" min-width="180" />
                 <el-table-column prop="orderNo" label="报工单号" min-width="180" />
                 <el-table-column prop="reportingTime" label="报工时间" min-width="180" />

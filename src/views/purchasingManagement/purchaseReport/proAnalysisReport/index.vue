@@ -62,6 +62,7 @@
             <el-table-column prop="productsName" label="产品名称" sortable="custom"  show-overflow-tooltip></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" sortable="custom" />
             <el-table-column prop="productsDrawingNo" label="品名规格"  sortable="custom"></el-table-column>
+            <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
             <el-table-column prop="receiptQuantity" label="累计采购总量"  sortable="custom" />
             <el-table-column prop="returnQuantity" label="累计退货总量" sortable="custom" />
             <el-table-column prop="rate" label="有效采购百分比"  sortable="custom" >
@@ -220,7 +221,7 @@ export default {
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode'||prop=='projectName' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'workNo' || prop == 'productDrawingNo' || prop == 'productionOrderNo' || prop == 'productCode'
-        || prop == 'productCategoryName' || prop == 'processName' || prop == 'producerName'
+        || prop == 'productCategoryName'||prop=='productSourceName' || prop == 'processName' || prop == 'producerName'
       ) {
         if (prop === 'createByName') {
           newProp = 'create_by'

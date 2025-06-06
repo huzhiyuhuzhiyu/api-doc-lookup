@@ -1999,7 +1999,7 @@ sortChange2({ prop, order }) {
               classAttribute: item.classAttribute,
               productsId: item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              ordersLineId: item.ordersLineId ? item.ordersLineId : '',
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',

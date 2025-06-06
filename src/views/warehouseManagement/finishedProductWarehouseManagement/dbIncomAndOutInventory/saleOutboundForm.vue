@@ -85,21 +85,21 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="12" :xs="24">
+                            <el-col :sm="isZY ? 6 : 12" :xs="24">
                                 <el-form-item label="备注" prop="remark">
                                     <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
+                                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="isZY ? 1 : 2"
                                               maxlength="200" />
                                 </el-form-item>
                             </el-col>
-                            <template v-for="item in 1">
-                                <el-col :sm="12" :xs="24" :key="item" v-if="isZY">
-                                    <el-form-item :label="'备注'+item" :prop="'ordersRemark'+item">
-                                        <el-input v-model="dataForm['ordersRemark'+item]" :placeholder="'请输入备注'+item"
-                                                  disabled type="textarea" :rows="2" maxlength="200" />
+<!--                            <template v-for="item in 1">-->
+                                <el-col :sm="24" :xs="24"  v-if="isZY">
+                                    <el-form-item label="出货细节" prop="ordersRemark">
+                                        <el-input class="zyRemark1"  v-model="dataForm['ordersRemark']" placeholder="请输入出货细节"
+                                                  :disabled="btnType === 'look'" type="textarea" :rows="3" maxlength="200" />
                                     </el-form-item>
                                 </el-col>
-                            </template>
+<!--                            </template>-->
                         </el-row>
                       </el-form>
                     </el-collapse-item>
@@ -346,21 +346,21 @@
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="12" :xs="24">
+                            <el-col :sm="isZY ? 6 : 12" :xs="24">
                                 <el-form-item label="备注" prop="remark">
                                     <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2"
+                                              :disabled="btnType == 'look' ? true : false" type="textarea" :rows="isZY ? 1 : 2"
                                               maxlength="200" />
                                 </el-form-item>
                             </el-col>
-                            <template v-for="item in 1">
-                                <el-col :sm="12" :xs="24" :key="item" v-if="isZY">
-                                    <el-form-item :label="'备注'+item" :prop="'ordersRemark'+item">
-                                        <el-input v-model="dataForm['ordersRemark'+item]"
-                                                  disabled type="textarea" :rows="2" maxlength="200" />
-                                    </el-form-item>
-                                </el-col>
-                            </template>
+                            <!--                            <template v-for="item in 1">-->
+                            <el-col :sm="24" :xs="24"  v-if="isZY">
+                                <el-form-item label="出货细节" prop="ordersRemark">
+                                    <el-input class="zyRemark1"  v-model="dataForm['ordersRemark']" placeholder="请输入出货细节"
+                                              :disabled="btnType === 'look'" type="textarea" :rows="3" maxlength="200" />
+                                </el-form-item>
+                            </el-col>
+                            <!--                            </template>-->
                         </el-row>
                       </el-form>
                     </el-collapse-item>
@@ -740,6 +740,7 @@ export default {
         orderDate: this.jnpf.getToday(),
         projectId: "",
         totalStockOutboundFlag:false,
+        ordersRemark:''
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -1336,7 +1337,7 @@ export default {
               )
             })
           }
-          this.dataForm = res.data.stockMove
+          this.dataForm = {...res.data.stockMove,ordersRemark: res.data.stockMove.remark1}
           this.productData = res.data.spaceLines
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
@@ -1552,7 +1553,7 @@ export default {
             let dataObj = {
               attachmentList: this.datafilelist,
 
-              stockMove: this.dataForm,
+              stockMove: {...this.dataForm,remark1:this.dataForm.ordersRemark},
               lines: this.productData,
               spaceLines: this.copyLinesData,
               flowData: this.flowData
@@ -1728,5 +1729,8 @@ export default {
 
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
+}
+::v-deep .zyRemark1 .el-textarea__inner{
+    color:#3fb9f8 !important;
 }
 </style>

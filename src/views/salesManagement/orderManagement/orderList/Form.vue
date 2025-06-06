@@ -114,20 +114,20 @@
                             :disabled="btnType == 'look' ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="12" :xs="24">
+                      <el-col :sm="isZY ? 6 : 12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="isZY ? 1 : 2" maxlength="200" />
                         </el-form-item>
                       </el-col>
-                      <template v-for="item in 1">
-                          <el-col :sm="12" :xs="24" :key="item" v-if="isZY">
-                            <el-form-item :label="'备注'+item" :prop="'remark'+item">
-                              <el-input v-model="dataForm['remark'+item]" :placeholder="'请输入备注'+item"
-                                :disabled="btnType === 'look'" type="textarea" :rows="2" maxlength="200" />
+<!--                      <template v-for="item in 1">-->
+                          <el-col :sm="24" :xs="24" v-if="isZY">
+                            <el-form-item label="出货细节" prop="remark1">
+                              <el-input class="zyRemark1" v-model="dataForm['remark1']" :placeholder="'请输入出货细节'"
+                                :disabled="btnType === 'look'" type="textarea" :rows="3" maxlength="200" />
                             </el-form-item>
                           </el-col>
-                      </template>
+<!--                      </template>-->
                     </el-row>
                   </el-form>
                 </el-collapse-item>
@@ -843,7 +843,7 @@
                 </el-table-column>
                 <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                   v-if="saleContractNoSwitch === '0'">
-                  <template slot-scope="scope"> 
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                       :disabled="btnType === 'look'"></el-input>
                   </template>
@@ -1292,6 +1292,10 @@
       <productAttributesListForm v-if="attributesListVisible" ref="attributesListForm" @selectData="selectData">
       </productAttributesListForm>
       <productSymbolForm v-if="productSymbolVisible" ref="productSymbolForm" :productId="currentProductId" @selectProductSymbolData="selectProductSymbolData"></productSymbolForm>
+      <ComSelect-page ref="historyRemark" @change="addHistoryRemark" :tableItems="historyRemarkTableItems"
+                        dialogTitle="选择历史备注" :listMethod="getSaleHistoryRemark" :listRequestObj="historyRemarkRequestObjs"
+                        :searchList="historyRemarkTableSearchList" :elementShow="false"
+                        :renderTree="false"></ComSelect-page>
     </div>
   </transition>
 </template>
@@ -1343,6 +1347,41 @@ export default {
   },
   data() {
     return {
+      historyRemarkTableItems:[
+          { prop: 'cooperativePartnerName', label: '客户名称' },
+          { prop: 'cooperativePartnerCode', label: '客户编码' },
+          { prop: 'remark1', label: '备注' },
+      ],
+      historyRemarkTableSearchList:[
+          { prop: "cooperativePartnerName", label: "客户名称", type: 'input' },
+          // { prop: "cooperativePartnerCode", label: "客户编码", type: 'input' },
+          { prop: "remark1", label: "备注", type: 'input' },
+      ],
+      historyRemarkRequestObjs:{
+          "cooperativePartnerCode": "",
+          "cooperativePartnerId": '',
+          "cooperativePartnerName": "",
+          "createByName": "",
+          "endTime": "",
+          "endUpdateTime": "",
+          "keyword": "",
+          "orderEndDate": "",
+          "orderStartDate": "",
+          "pageNum": 1,
+          "pageSize": 20,
+          "projectId": '',
+          "remark1": "",
+          "startTime": "",
+          "startUpdateTime": "",
+          orderItems: [{
+              asc: false,
+              column: ""
+          }, {
+              asc: false,
+              column: "create_time"
+          }],
+          "totalRowFlag": false
+      },
       isProjectSwitch: '',
       projectIdData: [],
       attributesListVisible: false,
@@ -1742,6 +1781,7 @@ export default {
     },
 
   methods: {
+      getSaleHistoryRemark,
     columnSetFun() {
       this.$refs.product.showDrawer()
     },
@@ -2139,16 +2179,16 @@ export default {
         }).catch(() => { })
     }else{
           this.uploadVisib = true
-      
+
     }
-      
+
       } else {
         this.uploadVisib = true
       }
     },
     submit() {
       console.log(this.file);
-      
+
       if(!this.file.length) return this.$message.error('上传文件不能为空')
       this.UploadProduct(this.file)
     },
@@ -2479,7 +2519,7 @@ export default {
         if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)
 
       });
-      
+
       if (this.productData.length) {
         let index = this.productData.findIndex(item =>
           item.drawingNo === "" &&
@@ -2766,6 +2806,7 @@ export default {
       console.log("this.ProductListRequestObjs", this.ProductListRequestObjs);
       this.dataForm.cooperativePartnerName = e.name
       this.dataForm.cooperativePartnerCode = e.code
+      this.dataForm.remark1 = e.remark1
       this.dataForm.code = e.code
       this.customerVisible = false
       if (this.dataForm.orderType != 'normal' && this.dataForm.orderType != 'urgent') {
@@ -3023,7 +3064,7 @@ export default {
             this.defaultAddress = res.data.order.region.countryName + res.data.order.region.provinceName + res.data.order.region.cityName + res.data.order.region.areaName + res.data.order.address
             res.data.order.approvalStatus = ""
             res.data.order.shipmentStatus = ""
-            this.dataForm = res.data.order 
+            this.dataForm = res.data.order
             this.dataForm.orderNo = ""
             this.dataForm.distributeStatus = "undistributed"
             this.dataForm.planStatus = "not_generated"
@@ -3437,19 +3478,12 @@ export default {
       }
     },
     getHistoryRemark(){
-        this.btnLoading = true
-        getSaleHistoryRemark().then(res=>{
-            this.btnLoading = false
-            if (res.data){
-                delete res.data.id
-                delete res.data.createTime
-                for (let key in res.data){
-                    this.$set(this.dataForm,key,res.data[key])
-                }
-            }
-        }).catch(err=>{
-            this.btnLoading = false
-        })
+       this.$refs['historyRemark'].openDialog()
+    },
+    addHistoryRemark(id,data){
+        if (!data && !data.length) return
+        console.log(data,'data')
+        this.$set(this.dataForm, 'remark1', data[0].all.remark1)
     },
   }
 }
@@ -3571,5 +3605,8 @@ export default {
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
+}
+::v-deep .zyRemark1 .el-textarea__inner{
+    color:#3fb9f8 !important;
 }
 </style>

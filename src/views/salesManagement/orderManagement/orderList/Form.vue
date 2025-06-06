@@ -1296,10 +1296,19 @@
       <productAttributesListForm v-if="attributesListVisible" ref="attributesListForm" @selectData="selectData">
       </productAttributesListForm>
       <productSymbolForm v-if="productSymbolVisible" ref="productSymbolForm" :productId="currentProductId" @selectProductSymbolData="selectProductSymbolData"></productSymbolForm>
-      <ComSelect-page ref="historyRemark" @change="addHistoryRemark" :tableItems="historyRemarkTableItems"
+      <ComSelect-page ref="historyRemark" :tableItems="historyRemarkTableItems"
                         dialogTitle="选择历史备注" :listMethod="getSaleHistoryRemark" :listRequestObj="historyRemarkRequestObjs"
                         :searchList="historyRemarkTableSearchList" :elementShow="false"
-                        :renderTree="false"></ComSelect-page>
+                        :renderTree="false">
+          <template slot="table-action">
+              <el-table-column label="操作" width="120" fixed="right" ref="defaultTableActionRef">
+                  <template slot-scope="scope">
+                      <el-button type="text" @click="currentChange(scope.row)" size="mini">选择</el-button>
+                      <el-button type="text" class="JNPF-table-delBtn" @click="delChange(scope.row.id)" size="mini">删除</el-button>
+                  </template>
+              </el-table-column>
+          </template>>
+      </ComSelect-page>
     </div>
   </transition>
 </template>
@@ -1317,7 +1326,7 @@ import {
     getWorkOrderNo,
     uploadProduct,
     addBimProductAttributesRecord,
-    getSaleHistoryRemark
+    getSaleHistoryRemark, deleteOrders, delSaleHistoryRemark
 } from '@/api/salesManagement/assemblyOrders'
 import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
@@ -1627,6 +1636,7 @@ export default {
         // vehicleTypeCorrespondingName: "",
         changesCount: "",
         remark: "",
+        remark1: "",
         id: "",
         cooperativePartnerName: "",
         departmentName: "",
@@ -3528,10 +3538,22 @@ export default {
     getHistoryRemark(){
        this.$refs['historyRemark'].openDialog()
     },
-    addHistoryRemark(id,data){
-        if (!data && !data.length) return
-        console.log(data,'data')
-        this.$set(this.dataForm, 'remark1', data[0].all.remark1)
+    currentChange(row){
+        this.$set(this.dataForm, 'remark1', row.remark1)
+    },
+    delChange(id){
+        this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+            type: 'warning'
+        }).then(() => {
+            delSaleHistoryRemark(id).then(res => {
+                this.$refs['historyRemark'].getData()
+                this.$message({
+                    type: 'success',
+                    message: "删除成功",
+                    duration: 1500,
+                })
+            })
+        }).catch(() => { })
     },
   }
 }

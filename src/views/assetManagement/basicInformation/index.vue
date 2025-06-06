@@ -63,7 +63,7 @@
           <el-table-column prop="name" label="资产名称" min-width="120" sortable="custom" />
           <el-table-column prop="spec" label="资产规格" min-width="150" sortable="custom" />
           <el-table-column prop="purchaserName" label="采购人" min-width="150" sortable="custom" />
-          <el-table-column prop="cooperativePartnerName" label="供应商名称123" min-width="150" sortable="custom" />
+          <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom" />
           <!-- <el-table-column prop="code" label="关联设备工具编码" min-width="150" sortable="custom" /> -->
           <el-table-column prop="userTime" label="投入使用时间" min-width="130" sortable="custom" />

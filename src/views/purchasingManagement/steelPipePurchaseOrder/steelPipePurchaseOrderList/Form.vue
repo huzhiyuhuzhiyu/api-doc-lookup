@@ -62,7 +62,7 @@
             
                       <el-col  :span="6" v-if="$store.getters.configData.purchase.related_out_select">
                         <el-form-item label="外协供应商" prop="outPartnerName" v-if="dataForm.outType=='out'">
-                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select" />
+                          <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType=='look'" />
                         
                         </el-form-item>
                       </el-col>
@@ -100,7 +100,7 @@
                       <el-col  :span="6" >
                         <el-form-item :label="!this.isXL?'回购税率':'毛坯加工税率'" prop="buyBackRate" v-if="dataForm.outType=='out'">
                           <!-- <el-input v-model="dataForm.buyBackRate" placeholder="选择回购税率"  :disabled="btnType === 'look'?true:false"  /> -->
-                          <el-select v-model="dataForm.buyBackRate" :placeholder="!this.isXL?'请选择回购税率':'请选择毛坯加工税率'" style="width: 100%;" :disabled="btnType === 'look'||$store.getters.configData.purchase.related_out_select">
+                          <el-select v-model="dataForm.buyBackRate" :placeholder="!this.isXL?'请选择回购税率':'请选择毛坯加工税率'" style="width: 100%;" :disabled="btnType === 'look'">
                             <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
                               :value="item.taxRate"></el-option>
                           </el-select>
@@ -113,7 +113,7 @@
                       </el-col>
                       <el-col  :span="6" >
                         <el-form-item label="中转仓库" prop="warehouseName" v-if="dataForm.outType=='out'">
-                          <ComSelect-list v-model="dataForm.warehouseName" :disabled="btnType=='look'||$store.getters.configData.purchase.related_out_select":requestObj="{ type: 'normal', state: 'enable',  }" :dialogTitle="'选择仓库'"  :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
+                          <ComSelect-list v-model="dataForm.warehouseName" :isdisabled="btnType=='look'||$store.getters.configData.purchase.related_out_select" :requestObj="{ type: 'normal', state: 'enable',  }" :dialogTitle="'选择仓库'"  :method="getWarehouseList" placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
 
                         </el-form-item>
                       </el-col>
@@ -172,36 +172,7 @@
                         </el-table-column>
 
 
-                        <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" show-overflow-tooltip
-                          v-if="this.purchasingType === 'safe'" key="9">
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'availableQuantity'">
-                              <div class="viewData">
-                                <span>{{ scope.row.availableQuantity }}</span>
-                              </div>
-                            </el-form-item>
-                          </template>
-                        </el-table-column>
-                        <el-table-column prop="maxInventory" label="最高库存" width="100" show-overflow-tooltip
-                          v-if="this.purchasingType === 'safe'" :key="11">
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'maxInventory'">
-                              <div class="viewData">
-                                <span>{{ scope.row.maxInventory }}</span>
-                              </div>
-                            </el-form-item>
-                          </template>
-                        </el-table-column> -->
-                        <!-- <el-table-column prop="orderQuantity" label="可下单数量" min-width="120" show-overflow-tooltip
-                          v-if="this.purchasingType === 'pool'" :key="13">
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'orderQuantity'">
-                              <div class="viewData">
-                                <span>{{ scope.row.orderQuantity }}</span>
-                              </div>
-                            </el-form-item>
-                          </template>
-                        </el-table-column> -->
+                      
                         <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                           :min-width="isDeputyUnitSwitch ? 100 : 60" show-overflow-tooltip :key="15">
                           <template slot-scope="scope">
@@ -487,106 +458,14 @@
       
       </div>
       
-    </transition> 
-    <!-- <ComSelect-page v-if="purchasingType == 'pool'" ref="comSelect-page" @change="submitCustomerProduct"
-      :tableItems="ProductPoolTableItems" dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList"
-      :listRequestObj="ProductPoolListRequestObj" :listDataFormatting="listDataFormatting"
-      :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" /> -->
+    </transition>  
     <ComSelect-page  ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
       dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="false" :renderTree="false" />
- <!-- <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body> -->
+ 
 
-      <!-- <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-      <div class="JNPF-common-layout-left">
-    <div class="JNPF-common-title">
-      <h2>产品分类</h2>
-      <span class="options">
-        <el-dropdown>
-          <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-            <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-            <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </span>
-    </div>
-
-    <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-      <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
-        <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-          <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-          <span class="text" :title="data.name">{{ data.name }}</span>
-        </span>
-      </el-tree>
-    </el-scrollbar>
-      </div>
-      <div class="JNPF-common-layout-center JNPF-flex-main">
-    <el-row class="JNPF-common-search-box" :gutter="16">
-      <el-form @submit.native.prevent>
-        <el-col :span="6" v-if="abProjectSwitchVisible">
-          <el-form-item>
-            <el-select v-model="outProductObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable
-       >
-        <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
-          :value="item.id"></el-option>
-      </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item>
-            <el-input @keyup.native.enter="searchAllProduct()"  v-model="outProductObj.productCode" placeholder="请输入产品编码" clearable />
-          </el-form-item>
-        </el-col>
-    
-        <el-col :span="6">
-          <el-form-item>
-            <el-input @keyup.native.enter="searchAllProduct()"  v-model="outProductObj.productDrawingNo" placeholder="请输入品名规格" clearable />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="6">
-          <el-form-item>
-            <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
-              {{ $t('common.search') }}</el-button>
-            <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
-              $t('common.reset')
-            }}
-            </el-button>
-          </el-form-item>
-        </el-col>
-
-      </el-form>
-    </el-row>
-    <div class="JNPF-common-layout-main JNPF-flex-main">
-      <JNPF-table v-loading="listLoading" :data="allproductData"  ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_9031478680">
-        <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="name" label="产品名称" width="160"  show-overflow-tooltip></el-table-column>
-        <el-table-column prop="drawingNo" label="品名规格" />
-        <el-table-column prop="productCategoryName" label="所属分类" />
-        <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="abProjectSwitchVisible" />
-        <el-table-column prop="mainUnit" label="单位" />
-        <el-table-column prop="inventoryQuantity" label="库存数量">
-          <template slot-scope="scope">
-            <el-link type="primary" @click.native="viewFun(scope.row, 'inventoryFlag')">
-              {{ scope.row.inventoryQuantity }}
-            </el-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100" >
-              <template slot-scope="scope" >
-                <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
-              </template>
-            </el-table-column>
-      </JNPF-table>
-      <pagination :total="allProductTotal" :page.sync="outProductObj.pageNum" :limit.sync="outProductObj.pageSize" @pagination="initData2" />
-    </div>
-      </div>
-      </div> -->
-    
-    <!-- </el-dialog> -->
+ 
       <outPartnerDia :visible.sync="outVisible"  ref="outForm" @close="closeFun" @selectOut="changeOutPartner"/>
       <selectOutProductForm ref="outProductForm" v-if="productOutVisible" @selectFun="selectFun"></selectOutProductForm>
   </div>
@@ -777,8 +656,8 @@ export default {
         outProductCode:"",
         outProductName:"",
         productDrawingNo:"",
-        buyBackPrice:"",
-        buyBackRate:"",
+        buyBackPrice:"1",
+        buyBackRate:"13",
         warehouseName:"",
         warehouseId:"",
         outProductId:"",
@@ -1554,7 +1433,7 @@ selectSupplier(id,data){
         pageSize: 20
       }
       this.getProductClassFun()
-
+      if(!this.isXBN)this.getWarehouseFun()
 
 
 
@@ -1605,6 +1484,7 @@ selectSupplier(id,data){
             this.dataForm.outProductName=res.data.relatedOut.outProductName
             this.dataForm.outProductId=res.data.relatedOut.outProductId
             this.dataForm.outProductCode=res.data.relatedOut.outProductCode
+            this.dataForm.outProductDrawingNo=res.data.relatedOut.outProductDrawingNo
             this.dataForm.buyBackPrice=res.data.relatedOut.buyBackPrice
             this.dataForm.buyBackRate=res.data.relatedOut.buyBackRate
             this.dataForm.yieldRate=res.data.relatedOut.yieldRate
@@ -1616,7 +1496,18 @@ selectSupplier(id,data){
       } 
       this.getBusInfo()
     },
- 
+    getWarehouseFun(){
+      getWarehouseList({ type: 'normal', state: 'enable',  }).then(res=>{
+        console.log("仓库",res);
+        const result = res.data.find(item => item.code === 'raw_material');
+        if(result){
+            this.dataForm.warehouseId = result.id
+            this.dataForm.warehouseName = result.name
+            this.dataForm.warehouseType = result.type
+            this.dataForm.warehouseCode = result.code
+        }
+      })
+    },
   
 
     // 表单提交

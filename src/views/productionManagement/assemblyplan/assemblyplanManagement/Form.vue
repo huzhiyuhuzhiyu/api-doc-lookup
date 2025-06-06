@@ -1311,7 +1311,8 @@ export default {
         prodOrder: this.dataForm,
         workOrderList: this.dataFormTwo.data,
         collect: this.collectForm,
-        lineEdgeList: arr
+        lineEdgeList: arr,
+        materialList:this.materialList
       }
       addProdPlanArrange(obj).then(res => {
         this.btnLoading = false

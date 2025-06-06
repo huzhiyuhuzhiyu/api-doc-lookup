@@ -80,6 +80,7 @@
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom"
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
+            <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
             
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />

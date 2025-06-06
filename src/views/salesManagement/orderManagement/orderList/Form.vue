@@ -6,6 +6,10 @@
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售订单' : btnType == 'edit' ? '编辑销售订单' : btnType == 'look' ? '查看销售订单' : '新建销售订单'" />
           <div class="options">
+                 <el-button type="primary" v-if="isZY ? btnType == 'look' : false" size="mini"  :disabled="dataForm.documentStatus == 'draft' || dataForm.orderState == 'finish' ? true : false" :loading="btnLoading" @click="closeOrder()">
+                  关单</el-button>
+                       <el-button type="primary" v-if="isZY ? btnType == 'look' : false" size="mini" :disabled="dataForm.documentStatus == 'draft' || dataForm.orderState == 'finish' ? true : false" :loading="btnLoading" @click="closeSomeOrder()">
+                  部分关单</el-button>
             <el-button type="primary" v-if="isZY ? btnType !== 'look' : false" size="mini" :loading="btnLoading" @click="getHistoryRemark()">
                   历史备注</el-button>
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
@@ -48,7 +52,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                      <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'||saleContractNoSwitch === '2'">
                         <el-form-item label="客户合同号" prop="contractNo">
                           <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
                             maxlength="20" clearable />
@@ -159,7 +163,7 @@
                   </div>
                   </div>
                   <div ref="boxresiz" v-if="btnType == 'look'">
-                    <JNPF-table ref="product" :partent-or-child="'child'" :data="productData" custom-column :fixedNO="false" border key="191"
+                    <JNPF-table ref="product"  hasC  @selection-change="selectCloseData" :partent-or-child="'child'" :data="productData" custom-column :fixedNO="false" border key="191"
                        :height="customStyleData">
                       <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
@@ -169,7 +173,7 @@
                       <el-table-column prop="application" label="应用" width="160" key="application">
                       </el-table-column>
                       <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                        v-if="saleContractNoSwitch === '0'">
+                        v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                             :disabled="btnType === 'look'"></el-input>
@@ -305,7 +309,7 @@
                     <el-table-column prop="application" label="应用" width="160" key="application">
                     </el-table-column>
                     <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                      v-if="saleContractNoSwitch === '0'">
+                      v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                           :disabled="btnType === 'look'"></el-input>
@@ -626,7 +630,7 @@
                       </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'">
+                  <el-col :sm="6" :xs="24" v-if="saleContractNoSwitch === '1'||saleContractNoSwitch === '2'">
                     <el-form-item label="客户合同号" prop="contractNo">
                       <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号" :disabled="btnType == 'look'"
                         maxlength="20" clearable />
@@ -724,7 +728,7 @@
                 </el-tooltip>
               </div>
               <div ref="boxresiz" v-if="btnType == 'look'">
-                <JNPF-table ref="product" :partent-or-child="'child'" :data="productData" :fixedNO="false" border :key="191" custom-column
+                <JNPF-table ref="product" hasC  @selection-change="selectCloseData" :partent-or-child="'child'" :data="productData" :fixedNO="false" border :key="191" custom-column
                   :height="customStyleData">
                   <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
@@ -734,7 +738,7 @@
                   <el-table-column prop="application" label="应用" width="160" key="application">
                   </el-table-column>
                   <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                    v-if="saleContractNoSwitch === '0'">
+                    v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                         :disabled="btnType === 'look'"></el-input>
@@ -842,8 +846,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
-                  v-if="saleContractNoSwitch === '0'">
-                  <template slot-scope="scope">
+                  v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
+                  <template slot-scope="scope"> 
                     <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                       :disabled="btnType === 'look'"></el-input>
                   </template>
@@ -1320,7 +1324,7 @@ import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index
 import { getOrganization } from '@/api/permission/user'
 import { getDepartmentSelectorByAuth } from "@/api/permission/department";
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
+import { getbomOrderDetail,closeSaleOrderLine } from '@/api/salesManagement/assemblyOrders'
 import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
@@ -1336,6 +1340,7 @@ import productAttributesListForm from './productAttributesListForm.vue'
 import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList/productSymbol.vue'
 import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
 import tenantMinix from '@/mixins/generator/TenantMinix'
+import { closeOrders ,batchRevokeSaleOrder} from '@/api/salesManagement/assemblyOrders'
 export default {
   mixins: [busFlow, getProjectList,tenantMinix,ProductSymbolMixin],
   components: {
@@ -1382,6 +1387,7 @@ export default {
           }],
           "totalRowFlag": false
       },
+      closeData:[],
       isProjectSwitch: '',
       projectIdData: [],
       attributesListVisible: false,
@@ -1493,7 +1499,9 @@ export default {
       ProductMethodArr: [
         {
           label: "产品分类", classAttribute: "", method: productTree, requeseObj: {
-            classAttribute: "", type: "material",
+            classAttribute: "", 
+            type: "material",
+            classAttributeList: ["finish_product", "semi_finished"]
           }
         },
       ],
@@ -1501,7 +1509,7 @@ export default {
       allProductTotal: 0,
       ProductTreeData: [],
       ProductListRequestObj: {
-        classAttributeList: [],
+            classAttributeList: ["finish_product", "semi_finished"],
         classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",
@@ -1691,6 +1699,7 @@ export default {
       pageType: "",
       highlightCurrentFlag:false,
       file:null,
+      getSaleHistoryRemark,
     }
   },
   computed: {
@@ -1781,7 +1790,46 @@ export default {
     },
 
   methods: {
-      getSaleHistoryRemark,
+    // 关单
+    closeOrder(){
+         this.$confirm("您确定关闭该订单吗？", this.$t('提示'), {
+        type: 'warning'
+      }).then(() => {
+        closeOrders(this.dataForm.id).then(res => {
+          this.goBack()
+          this.$message({
+            type: 'success',
+            message: "关闭成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+    // 选择部分关单的数据
+    selectCloseData(val){ 
+      this.closeData=val
+    },
+    // 部分关单、
+    closeSomeOrder(){
+      if(!this.closeData.length) return this.$message.error("请选择您要部分关单的数据")
+      this.$confirm("您确定关闭所选的明细订单吗？", this.$t('提示'), {
+        type: 'warning'
+      }).then(() => {
+
+        
+      let idArray = this.closeData.map(item => item.id);
+      closeSaleOrderLine(idArray).then(res=>{
+        this.goBack()
+          this.$message({
+            type: 'success',
+            message: "关闭成功",
+            duration: 1500,
+          })
+      })
+       
+      }).catch(() => { })
+
+    },
     columnSetFun() {
       this.$refs.product.showDrawer()
     },
@@ -2566,7 +2614,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttributeList: [],
+        classAttributeList: ["finish_product", "semi_finished"],
         classAttribute: "",
         productDrawingNo: "",
         queryType: 2,
@@ -2641,7 +2689,7 @@ export default {
     resetAllProduct() {
       this.highlightCurrentFlag=false
       this.ProductListRequestObj = {
-        classAttributeList: [],
+        classAttributeList: ["finish_product", "semi_finished"], 
         classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",

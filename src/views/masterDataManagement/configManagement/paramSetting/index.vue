@@ -53,7 +53,24 @@
                     <el-radio :label="1">
                       {{ scope.row.radioOn }}
                     </el-radio>
+                 
                   </el-radio-group>
+                </div>
+                  <div v-else-if="scope.row.configKey == 'gobal_customerContractNo'">
+                  <template >
+                    <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
+                      <el-radio :label="0" style="margin-bottom: 7px;">
+                        {{ scope.row.radioOff }}
+                      </el-radio>
+                      <el-radio :label="1" style="margin-top: 7px;margin-bottom: 7px;">
+                        {{ scope.row.radioOn }}
+                      </el-radio>
+                      <el-radio :label="2" style="margin-top: 7px;">
+                        {{ scope.row.radioAll}}
+                      </el-radio>
+                    </el-radio-group>
+                  </template>
+                 
                 </div>
                 <div v-else>
                   <template v-if="scope.row.configKey == 'auto_material' || scope.row.configKey == 'web_cache_way'||scope.row.configKey == 'task_process_selection'">
@@ -223,7 +240,7 @@ export default {
       return this.activeName === 'attachment'
     },
     stateWidth() {
-      let width = 60
+      let width = 160
       let flag = true
       this.tableData.forEach((item) => {
         if (item.configKey == 'work_exceed_report' || item.configKey == 'collect_exceed_picking' || item.configKey == 'allow_exceed_receiving') {
@@ -261,6 +278,16 @@ export default {
       let flag = true
       this.tableData.forEach((item) => {
         if (item.configKey == 'work_exceed_report') {
+          // if (item.state) {
+          //   align = 'left'
+          //   flag = false
+          // } else {
+          //   align = 'center'
+          //   flag = true
+          // }
+          align = 'left'
+        }
+         if (item.configKey == 'gobal_customerContractNo') {
           // if (item.state) {
           //   align = 'left'
           //   flag = false
@@ -479,7 +506,10 @@ export default {
           } else if (this.activeName === 'orderField') {
             list = res.data.orderField
             list.forEach(item => {
-              item.configKey = `${item.configValue2}_${item.configKey}`
+            if(item.configKey!='gobal_customerContractNo'){
+
+                item.configKey = `${item.configValue2}_${item.configKey}`
+              }
             })
           } else if (this.activeName === 'price') {
             list = res.data.price
@@ -491,6 +521,9 @@ export default {
             if (item.configValue1 === '1') {
               item.state = true
               item.radio = 1
+            }if (item.configValue1 === '2') {
+              item.state = true
+              item.radio = 2
             } else {
               item.state = false
               item.radio = 0
@@ -524,6 +557,11 @@ export default {
             } else if (item.configKey === 'task_process_selection') {
               item.radioOff = '按工艺列表'
               item.radioOn = '按工艺设置'
+            }else if (item.configKey === 'gobal_customerContractNo') {
+              item.radioOff = '在明细列表显示'
+              item.radioOn = '在主表显示'
+              item.radioAll = '都显示'
+              console.log("item",item.radio);
             }
 
             const configKeyObj = ConfigKey[item.configKey]
@@ -600,7 +638,7 @@ export default {
 
       let _data = []
       if (data.radio) {
-        data.configValue1 = 1
+        data.configValue1 = data.radio
       } else {
         data.configValue1 = 0
       }

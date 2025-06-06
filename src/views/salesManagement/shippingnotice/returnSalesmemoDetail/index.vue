@@ -86,8 +86,8 @@
             <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
             <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" min-width="120">
             </el-table-column>
-            <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
-            <el-table-column prop="deputyNum" label="退货数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+            <!-- <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" /> -->
+            <!-- <el-table-column prop="deputyNum" label="退货数量(副)" min-width="120" v-if="mainUnitFlag == 1" /> -->
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
               v-if="sealingCoverTypingFlag == 1" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
@@ -104,16 +104,7 @@
             <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1"></el-table-column>
             <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1"></el-table-column>
             <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
-            <el-table-column prop="exchangeGoodsFlag" label="退货标识" width="120" sortable="custom">
-              <template slot-scope="scope">
-                <div v-if="scope.row.exchangeGoodsFlag">
-                  换货
-                </div>
-                <div v-else>
-                  退货
-                </div>
-              </template>
-            </el-table-column>
+         
             <el-table-column prop="deliveryStatus" label="退货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'not_finished'">
@@ -655,18 +646,8 @@ export default {
         this.orderForm.tenant = localStorage.getItem('loginTenant')
       }
       getQuotationdatasenddatalist(this.orderForm).then(res => {
-        setTimeout(() => {
-          res.data.records.forEach(item => {
-            if (this.mainUnitFlag == 1) {
-              if (item.calculationDirection == 'multiplication') {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.deliveryQuantity, item.ratio]), 6))
-              } else {
-                this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.deliveryQuantity, item.ratio]), 6))
-              }
-            }
-          });
+     
           this.tableData = res.data.records
-        }, 600);
         this.total = res.data.total
         this.visible = false
       }).catch(() => {

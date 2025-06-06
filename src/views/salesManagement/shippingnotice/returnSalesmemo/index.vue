@@ -352,10 +352,10 @@ export default {
       if (!this.selectArr.length) return this.$message.error("请先选择数据")
       let hasItemList = []
       this.selectArr.map(i => {
-        if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
+        if (i.inboundQuantity > 0) hasItemList.push(i.orderNo)
       })
-      if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
+      if (hasItemList.length) return this.$message.error(`已入库的订单：${hasItemList.join('、')}不能取消退货`)
+      this.$confirm('您确认取消选中的退货通知单吗？', this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
         let a = this.selectArr.map(item => {

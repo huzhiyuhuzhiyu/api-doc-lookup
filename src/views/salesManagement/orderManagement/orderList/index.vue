@@ -6,7 +6,7 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <template v-for="item in searchList">
-              <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-col :span="item.searchType === 3 ? 6 : 3">
                 <el-form-item>
                   <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                     @keyup.enter.native="search('basic')" />
@@ -24,7 +24,15 @@
               </el-col>
 
             </template>
-            <el-col :span="5">
+          <el-col :span="2" v-if="isZY">
+            <el-form-item>
+              <el-select v-model="orderForm.orderState" placeholder="订单状态" style="width: 100%;" clearable>
+                <el-option v-for="(item, index) in orderStateList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+            <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="deliveryDateArr" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable
                   type="daterange" value-format="yyyy-MM-dd"></el-date-picker>
@@ -81,7 +89,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column v-if="saleContractNoSwitch === '1'" prop="contractNo" label="客户合同号" min-width="200"></el-table-column>
+            <!-- <el-table-column v-if="saleContractNoSwitch === '1'" prop="contractNo" label="客户合同号" min-width="200"></el-table-column> -->
             <el-table-column prop="departmentName" label="所属部门" min-width="160" sortable="custom"></el-table-column>
             <el-table-column prop="salesName" label="所属销售 " min-width="140" sortable="custom" />
             <el-table-column prop="orderDate" label="订单日期" min-width="140" sortable="custom"></el-table-column>
@@ -184,9 +192,11 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import {getQueryConfirm} from '@/utils';
 import {batchRevokeOrder} from '@/api/purchasingAndOutsourcingOrders';
 import {ApprovalStatus, DocumentStatus} from '@/views/esop/fileUpload/workinginstruction/utils/constant';
+ import tenantMinix from "@/mixins/generator/TenantMinix"
 export default {
   name: 'orderList',
   components: { Form, ExportForm, SuperQuery,PrintBrowse,PrintDialog, },
+  mixins: [tenantMinix],
   data() {
     return {
       printVisible: false,
@@ -198,7 +208,6 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
 
       ],
 
@@ -225,6 +234,7 @@ export default {
         { label: "未完成", value: "not_finish" },
         { label: "已完成", value: "finish" },
         { label: "部分完成", value: "part_finish" },
+        { label: "所有", value: "" },
       ],
       partialList: [
         { label: "未完成", value: "not_finish" },
@@ -274,6 +284,7 @@ export default {
           condition: [],
           matchLogic: ""
         },
+        orderState:"",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -418,13 +429,22 @@ export default {
 
 
   },
+  mounted () {
+    if(!this.isZY){
+      this.searchList.push({ field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },)
+    }else{
+      this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
 
+    }
+    this.orderForm.orderState=this.isZY?'not_finish':''
+  },
   async created() {
     await Promise.all([
-      this.jnpf.getMainUnitFun('orderField', 'customerContractNo'),
+      this.jnpf.getMainUnitFun('orderField', 'gobal_customerContractNo'),
     ]).then(([
       saleContractNoSwitch,
     ]) => {
+      console.log("gobal_customerContractNo",saleContractNoSwitch);
       this.saleContractNoSwitch = saleContractNoSwitch
     }).catch(error => {
       console.error('请求失败:', error);
@@ -566,7 +586,6 @@ export default {
         this.orderForm.tenant = localStorage.getItem('loginTenant')
       }
 
-
       getsaleOrderList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -616,7 +635,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.deliveryDateArr = []
-      this.superForm = this.orderForm = {
+       this.orderForm = {
         orderNo: "",
         cooperativePartnerName: "",
         deliveryStartDate: "",
@@ -636,12 +655,21 @@ export default {
         }],
 
       }
+
+    this.orderForm.orderState=this.isZY?'not_finish':''
+this.superForm ==this.orderForm
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
+        // { field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },
 
       ]
+       if(!this.isZY){
+      this.searchList.push({ field: 'createByName', fieldValue: '', label: '创建人', symbol: 'like', searchType: 1, width: 120 },)
+    }else{
+      this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
+
+    }
       this.$refs.SuperQuery.conditionList = []
 
       this.search('basic')

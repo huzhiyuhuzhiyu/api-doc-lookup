@@ -27,14 +27,14 @@
                   style="width: 100%;" placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <!-- <el-col :span="6">
               <el-form-item>
                 <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
               </el-form-item>
-            </el-col>
+            </el-col> -->
 
             <el-col :span="4">
               <el-form-item>
@@ -336,10 +336,10 @@ export default {
     // 默认设置为近3天
     const end = new Date()
     const start = new Date()
-    end.setDate(end.getDate() + 3)
-    this.deliveryDateArr = ['', end]
-    this.orderForm.deliveryStartDate = ''
-    this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
+    // end.setDate(end.getDate() + 3)
+    // this.deliveryDateArr = ['', end]
+    // this.orderForm.deliveryStartDate = ''
+    // this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -395,7 +395,7 @@ export default {
       let start = new Date()
       this.deliveryDateArr = ['', end]
       this.orderForm.deliveryStartDate = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
+      // this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.dataFormSubmit()
     },
     // 为近3天
@@ -405,7 +405,7 @@ export default {
       end.setDate(end.getDate() + 3)
       this.deliveryDateArr = ['', end]
       this.orderForm.deliveryStartDate = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
+      // this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近7天
@@ -417,7 +417,7 @@ export default {
 
       this.deliveryDateArr = ['', end]
       this.orderForm.deliveryStartDate = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
+      // this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近30天
@@ -428,7 +428,7 @@ export default {
 
       this.deliveryDateArr = ['', end]
       this.orderForm.deliveryStartDate = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
+      // this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     superQuerySearch(query) {
@@ -531,7 +531,7 @@ export default {
         // orderState: 'not_finish',
         orderType: 'procure',
         receiptQueryFlag: 1,
-        deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
+        deliveryEndDate: "",
         deliveryStartDate: '',
         classAttribute: 'out',
         // extensionFlag: 1,

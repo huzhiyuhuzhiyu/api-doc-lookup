@@ -236,3 +236,10 @@ export const getSaleHistoryRemark = (data) => {
     data
   })
 }
+// 删除中亚备注
+export const delSaleHistoryRemark = (id) => {
+  return request({
+    url: `/api/erp/sale/orders/ordersRemark/remove/${id}`,
+    method: 'delete',
+  })
+}

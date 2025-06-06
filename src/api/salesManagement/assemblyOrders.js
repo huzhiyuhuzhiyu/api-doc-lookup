@@ -229,9 +229,10 @@ export const saleCustomerReport = (data) => {
   })
 }
 // 获取中亚备注
-export const getSaleHistoryRemark = () => {
+export const getSaleHistoryRemark = (data) => {
   return request({
     url: `/api/erp/sale/orders/ordersRemark`,
-    method: 'get'
+    method: 'post',
+    data
   })
 }

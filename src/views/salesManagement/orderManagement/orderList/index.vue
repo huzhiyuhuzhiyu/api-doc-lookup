@@ -440,7 +440,7 @@ export default {
   },
   async created() {
     await Promise.all([
-      this.jnpf.getMainUnitFun('orderField', 'customerContractNo'),
+      this.jnpf.getMainUnitFun('orderField', 'gobal_customerContractNo'),
     ]).then(([
       saleContractNoSwitch,
     ]) => {

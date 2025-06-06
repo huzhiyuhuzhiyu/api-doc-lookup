@@ -235,3 +235,13 @@ export const getSaleHistoryRemark = () => {
     method: 'get'
   })
 }
+
+
+// 部分关单
+export const closeSaleOrderLine = (data) => {
+  return request({
+    url: `/api/erp/sale/orders/line/close`,
+    method: 'put',
+    data
+  })
+}

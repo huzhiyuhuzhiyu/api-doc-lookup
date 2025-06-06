@@ -62,7 +62,7 @@
                       <el-radio :label="0" style="margin-bottom: 7px;">
                         {{ scope.row.radioOff }}
                       </el-radio>
-                      <el-radio :label="1" style="margin-top: 7px;">
+                      <el-radio :label="1" style="margin-top: 7px;margin-bottom: 7px;">
                         {{ scope.row.radioOn }}
                       </el-radio>
                       <el-radio :label="2" style="margin-top: 7px;">
@@ -521,6 +521,9 @@ export default {
             if (item.configValue1 === '1') {
               item.state = true
               item.radio = 1
+            }if (item.configValue1 === '2') {
+              item.state = true
+              item.radio = 2
             } else {
               item.state = false
               item.radio = 0

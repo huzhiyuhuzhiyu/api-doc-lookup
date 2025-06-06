@@ -54,7 +54,7 @@
                           </el-form-item>
                         </el-col>
                         <el-col :sm="6" :xs="24"
-                          v-if="dataForm.businessType === 'outbound_sale_send' && $store.getters.configGlobal.customerContractNo === '1'">
+                          v-if="dataForm.businessType === 'outbound_sale_send'">
                           <el-form-item label="客户合同号" prop="contractNo">
                             <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
                               :disabled="btnType === 'look'" />
@@ -180,7 +180,7 @@
                       <el-table-column prop="drawingNo" label="品名规格" min-width="300" key="drawingNo"
                         v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                       <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
-                        v-if="dataForm.businessType === 'outbound_sale_send' && $store.getters.configGlobal.customerContractNo === '0'">
+                        v-if="dataForm.businessType === 'outbound_sale_send'">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'"
                             placeholder="请输入客户合同号" />

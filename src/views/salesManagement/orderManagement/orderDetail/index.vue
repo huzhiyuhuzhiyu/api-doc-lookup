@@ -33,7 +33,7 @@
             </template>
             <el-col :span="2" v-if="isZY">
             <el-form-item>
-              <el-select v-model="orderForm.orderState" placeholder="订单状态" style="width: 100%;" clearable>
+              <el-select v-model="orderForm.shipmentStatus" placeholder="订单状态" style="width: 100%;" clearable>
                 <el-option v-for="(item, index) in orderStateList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -127,11 +127,11 @@
 
             <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
               <el-table-column prop="assistantNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-              <el-table-column prop="orderState" label="订单状态" min-width="120" sortable="custom">
+              <el-table-column prop="shipmentStatus" label="订单状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
-                <div v-else-if="scope.row.orderState == 'finish'"><el-tag type="success">已完成</el-tag></div>
-                <div v-else-if="scope.row.orderState == 'part_finish'"><el-tag type="warning">部分完成</el-tag></div>
+                <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
+                <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div> 
+                <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div> 
               </template>
             </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
@@ -235,8 +235,7 @@ export default {
       ],
       orderStateList: [
         { label: "未完成", value: "not_finish" },
-        { label: "已完成", value: "finish" },
-        { label: "部分完成", value: "part_finish" },
+        { label: "已完成", value: "finish" }, 
         { label: "所有", value: "" },
       ],
 
@@ -257,7 +256,7 @@ export default {
         cooperativePartnerName: "",
         customerProductDrawingNo: "",
         // customerProductNo: "",
-        orderState:"",
+        shipmentStatus:"",
         orderType: "",
         drawingNo: "",
         orderNo: "",
@@ -354,13 +353,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'orderState',
+          prop: 'shipmentStatus',
           label: "订单状态",
           type: 'select',
           options: [
             { label: "未完成", value: "not_finish" },
-            { label: "已完成", value: "finish" },
-            { label: "部分完成", value: "part_finish" },
+            { label: "已完成", value: "finish" }, 
+            { label: "已停止", value: "stopped" }, 
           ]
         },
         {
@@ -440,7 +439,7 @@ export default {
   },
   mounted() {
     this.getMainUnitFun('deputyUnit', 'saleDeputyUnit')
-    this.orderForm.orderState=this.isZY?'not_finish':''
+    this.orderForm.shipmentStatus=this.isZY?'not_finish':''
         
     if(this.isZY) this.searchList.push({ field: 'contractNo', fieldValue: '', label: '客户合同号', symbol: 'like', searchType: 1, width: 120 },)
   },
@@ -869,7 +868,7 @@ if (classAttributeObj) {
           matchLogic: ""
         },
       }
-    this.orderForm.orderState=this.isZY?'not_finish':''
+    this.orderForm.shipmentStatus=this.isZY?'not_finish':''
 this.superForm = this.orderForm
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },

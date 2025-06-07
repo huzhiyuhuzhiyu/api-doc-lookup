@@ -2683,8 +2683,8 @@ export default {
       this.selectArr.forEach(item => {
         item.productName = item.name
         item.productCode = item.code
-        item.productsId = item.id
-
+        item.productsId = JSON.parse(JSON.stringify(item.id))
+        item.id=""
         this.$set(item, 'pairingModeName', '')
         this.$set(item, 'price', item.salesPrice)
         if (this.dataForm.deliveryDate) this.$set(item, 'deliveryDate', this.dataForm.deliveryDate)

@@ -430,3 +430,39 @@ export function purProcurementDemandPoolRevoke(id) {
     method: 'post',
   })
 }
+
+
+// 外协工序价格 新增
+
+export function purOutProcessPriceAdd(data) {
+  return request({
+    url: `/api/zgt/purOutProcessPrice/add`,
+    method: 'post',
+    data
+  })
+}
+// 删除
+export function purOutProcessPriceDel(id) {
+  return request({
+    url: `/api/zgt/purOutProcessPrice/del/${id}`,
+    method: 'delete',
+  })
+}
+// 列表
+export function purOutProcessPriceList(data) {
+  return request({
+    url: `/api/zgt/purOutProcessPrice/page`,
+    method: 'post',
+    data,
+  })
+}
+
+// 修改 
+
+export function purOutProcessPriceUpdate(data) {
+  return request({
+    url: `/api/zgt/purOutProcessPrice/update`,
+    method: 'put',
+    data,
+  })
+}

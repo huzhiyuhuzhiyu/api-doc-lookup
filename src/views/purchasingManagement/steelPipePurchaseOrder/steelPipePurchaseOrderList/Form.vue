@@ -655,12 +655,14 @@ export default {
         outPartnerId:"",
         outProductCode:"",
         outProductName:"",
-        productDrawingNo:"",
+        outProductDrawingNo:"",
+        yieldRate:"",
         buyBackPrice:"1",
         buyBackRate:"13",
         warehouseName:"",
         warehouseId:"",
         outProductId:"",
+
       },
       dataPickerOptions2: {
         // 日期区间选择器通用选项
@@ -688,7 +690,7 @@ export default {
           { validator: this.formValidate({ type: 'noEmtry', params: ["回购单价不能为空", (errMsg, index) => { this.$message.error(`回购单价：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
           { validator: this.formValidate({ type: 'decimal', params: [20, 12, "", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' } 
-        ],
+        ], 
       },
       productRules: {
         drawingNo: [{ required: true, message: '请输入品名规格', trigger: ['blur'] }],
@@ -962,7 +964,7 @@ export default {
        this.dataForm.outPartnerId=data.outPartnerId
        this.dataForm.outProductCode=data.outProductCode
        this.dataForm.outProductName=data.outProductName
-       this.dataForm.productDrawingNo=data.productDrawingNo
+       this.dataForm.outProductDrawingNo=data.outProductDrawingNo
        this.dataForm.buyBackPrice=data.buyBackPrice 
        this.dataForm.warehouseName=data.warehouseName
        this.dataForm.warehouseId=data.warehouseId
@@ -1512,6 +1514,7 @@ selectSupplier(id,data){
 
     // 表单提交
     async dataFormSubmit(type, printType) {
+      console.log(333,this.dataForm);
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 
@@ -1549,6 +1552,7 @@ selectSupplier(id,data){
         }
         this.btnLoading = true
         let dataTwo = []
+        if(!this.dataFormTwo.data.length) return this.$message.error("产品信息不能为空")
         dataTwo = this.dataFormTwo.data.map((obj) => {
           return {
             ...obj,

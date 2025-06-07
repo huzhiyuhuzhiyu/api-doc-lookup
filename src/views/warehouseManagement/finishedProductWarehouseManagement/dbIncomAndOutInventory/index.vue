@@ -1745,6 +1745,7 @@ export default {
       ],
       searchList7: [
         { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       searchList20: [
@@ -1938,6 +1939,7 @@ export default {
         orderTypeList: ['normal', 'rework', 'manually'],
 
         productDrawingNo: "",
+        productName: "",
         stockFlag: true,
         orderItems: [{
           asc: false,
@@ -5202,6 +5204,7 @@ export default {
           orderNo: "",
           orderType: "",
           productDrawingNo: "",
+          productName: "",
           classAttributeList: this.classAttributeList,
           stockFlag: true,
           orderItems: [{
@@ -5218,6 +5221,7 @@ export default {
         this.$refs.SuperQuery.conditionList = []
         this.searchList7 = [
           { field: 'orderNo', fieldValue: '', label: '任务单号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
           { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         ]
 

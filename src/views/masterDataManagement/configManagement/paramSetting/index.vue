@@ -519,12 +519,14 @@ export default {
 
           list.forEach((item) => {
             if (item.configValue1 === '1') {
+              console.log("item==>",item);
               item.state = true
               item.radio = 1
-            }if (item.configValue1 === '2') {
+            }else if (item.configValue1 === '2') {
               item.state = true
               item.radio = 2
             } else {
+              console.log("zheli");
               item.state = false
               item.radio = 0
             }
@@ -565,8 +567,6 @@ export default {
             }
 
             const configKeyObj = ConfigKey[item.configKey]
-            console.log(configKeyObj, 'obj')
-            console.log(notEmpty(configKeyObj), 'notEmpty(configKeyObj)')
             if (notEmpty(configKeyObj)) {
               item.description = configKeyObj.description
               item.configKeyLabel = configKeyObj.configKeyLabel

@@ -44,6 +44,8 @@
           <div class="JNPF-common-head">
             <div>
               <topOpts @add="addSupplier('', 'add')">
+                <el-button    :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="iconfont-menu  icon-chehui" @click="withdrawFun">撤回</el-button>
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                   导出
                 </el-button>
@@ -63,9 +65,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" hasC
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" customKey="JNPFTableKey_223495">
+            @selection-change="handleSelectionChange" customKey="JNPFTableKey_223495">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -82,6 +84,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+              <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
@@ -157,7 +160,8 @@ import {
   getpurPurchaseReceiptReturnGoodsdetail,
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
-  deletepurPurchaseReceiptReturnGoods
+  deletepurPurchaseReceiptReturnGoods,
+  revokePurPurchaseReceiptReturnGoods
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 export default {
   name: 'foreigntradenotice',
@@ -318,7 +322,7 @@ export default {
           label: '单据状态',
           type: 'select',
 
-          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }, { label: '撤回', value: 'back' }]
         },
         {
           prop: 'createTime',
@@ -381,16 +385,30 @@ export default {
     closePrint() {
       this.printVisible = false
     },
-    //禁用复选框
-    checkSelectable(row) {
-      if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false
-      return true
-    },
+    
     // 选中得数据
     handleSelectionChange(val) {
       this.selectArr = val
     },
+    withdrawFun(){
+      if(!this.selectArr.length) return this.$message.error("请选择您要撤回的数据")
+      const ids = this.selectArr.map(item => item.id);
 
+      this.$confirm(this.$t('您确定撤回当前所选的数据吗'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          revokePurPurchaseReceiptReturnGoods(ids).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '撤回成功',
+              duration: 1500
+            })
+          })
+        })
+        .catch(() => { })
+    },
     handleClick(e) {
       this.activeName = e.name
     },

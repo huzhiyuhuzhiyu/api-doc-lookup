@@ -76,11 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="month" label="月份" />
-            <el-table-column prop="reportingWages" label="工资" sortable="custom" >
-              <template slot-scope="scope">
-                {{ scope.row.month=='2025-04'?scope.row.reportingWages:'' }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="wages" label="工资" sortable="custom" >  </el-table-column>
             <el-table-column prop="state" label="工资状态" sortable="custom">
               <template slot-scope="scope">
                 <div v-for="(item, index) in stateList" :key="index">
@@ -100,7 +96,7 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
             @pagination="initData">
-            工资总计：{{ totalData.reportingWages }}
+            工资总计：{{ totalData.wages }}
           </pagination>
         </div>
       </div>
@@ -216,8 +212,7 @@ export default {
     initData() {
       this.listLoading = true
       getMonthSalaryReportList(this.listQuery).then(res => {
-       const min = 8000;
-        const max = 12000;
+    
 
 
         this.tableData = res.data.page.records

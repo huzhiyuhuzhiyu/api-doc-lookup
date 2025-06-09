@@ -71,25 +71,13 @@
           <el-table-column prop="lower" label="下限" min-width="180" />
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-          <el-table-column prop="createByName" label="创建人" width="120" />
-          <el-table-column label="操作" width="200" fixed="right">
+          <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'"
                 :editDisabled="scope.row.documentStatus == 'submit' || scope.row.documentStatus == 'back'"
-                @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="viewFun(scope.row.id, 'look', scope.row)">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
+                @edit="addSupplier(scope.row, 'edit')" @del="handleDel(scope.row.id)">
+             
               </tableOpts>
             </template>
           </el-table-column>
@@ -119,7 +107,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="工序名称" prop="processName">
-              <el-input v-model="dataForm.processName" placeholder="工序名称" :disabled="btnType=='look'" readonly  @foucs="selectProcessFocus"/>
+              <el-input v-model="dataForm.processName" placeholder="工序名称" :disabled="btnType=='look'" readonly  @focus="selectProcessFocus"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -185,6 +173,7 @@ export default {
   },
   data() {
     return {
+      addOrderVisible:false,
       btnLoading:false,
       btnType:"",
       ProcessFormVisible:false,
@@ -217,7 +206,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
       ],
      
 
@@ -251,7 +240,7 @@ export default {
       selectData: [],
       totalList: [],
       superQueryJson: [{
-        prop: 'processName',
+        prop: 'cooperativePartnerName',
         label: "供应商名称",
         type: 'input'
       },
@@ -317,14 +306,14 @@ export default {
         processName: [{ required: true, message: '请选择工序名称', trigger: ['change'] }],
         calcType: [{ required: true, message: '请选择计算类型', trigger: ['change'] }],
         lower: [
+          { required: true, trigger: 'blur' },
           { validator: this.formValidate({ type: 'noEmtry', params: ["重量下限不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           { validator: this.formValidate({type: 'decimal', params: [20,4,'', (errMsg,index) => { this.$message.error(`重量下限：` + errMsg) }]}),  trigger: 'blur'},
-          { required: true, trigger: 'blur' },
         ],
         upper: [ 
+          { required: true, trigger: 'blur' },
            { validator: this.formValidate({ type: 'noEmtry', params: ["重量上限不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           { validator: this.formValidate({type: 'decimal', params: [20,4,'', (errMsg,index) => { this.$message.error(`重量上限：` + errMsg) }]}),  trigger: 'blur'},
-          { required: true, trigger: 'blur' },
         ],
         price: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["单价：不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
@@ -344,11 +333,11 @@ export default {
     this.search('basic')
   },
   methods: {
-    handleConfirm() {
+    submitFun () {
       this.$refs['diaForm'].validate((valid) => {
         if (valid) {
           this.btnLoading=true
-          purOutProcessPriceAdd().then(res=>{
+          purOutProcessPriceAdd(this.dataForm).then(res=>{
             this.btnLoading=false
             this.addOrderVisible=false
             this.search('basic')
@@ -419,12 +408,10 @@ export default {
       }
     },
   
-    addSupplier() {
-      this.btnType='add'
+    addSupplier(row,type) {
+      this.btnType=type
+      if(row) this.dataForm=row
       this.addOrderVisible = true
-      this.$nextTick(() => {
-        this.$refs.diaForm.init()
-      })
     },
  
   
@@ -440,6 +427,8 @@ export default {
 getOutProcessFun(){
   purOutProcessPriceList(this.listQuery).then(res=>{
     console.log("res=>",res);
+    this.tableData=res.data.records
+    this.total=res.data.total
   })
 },
     
@@ -504,7 +493,7 @@ getOutProcessFun(){
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteWarehouseData(id).then(res => {
+        purOutProcessPriceDel(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

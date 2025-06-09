@@ -33,8 +33,8 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true"  ref="processRef" customKey="JNPFTableKey_708993">
-            <el-table-column prop="processName" label="工序名称"></el-table-column>
-            <el-table-column prop="processCode" label="工序编码" />
+            <el-table-column prop="name" label="工序名称"></el-table-column>
+            <el-table-column prop="code" label="工序编码" />
             <el-table-column prop="processType" label="工序类型">
               <template slot-scope="scope">
                 <div v-if="scope.row.processType == 'normal'">正常工序</div>
@@ -141,7 +141,7 @@ export default {
     getProcessList(id) {
 
       this.listLoading = true
-      detailProcess(this.form).then(res => {
+      getBimProcessList(this.form).then(res => {
         this.listLoading = false
         this.tableDataList=res.data.records
       }).catch(() => {

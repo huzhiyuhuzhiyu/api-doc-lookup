@@ -466,3 +466,14 @@ export function purOutProcessPriceUpdate(data) {
     data,
   })
 }
+
+
+// 批量撤回退货通知单
+
+export function revokePurPurchaseReceiptReturnGoods(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/revoke`,
+    method: 'post',
+    data,
+  })
+}

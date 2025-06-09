@@ -1540,16 +1540,16 @@ sortChange2({ prop, order }) {
         item.taxRate = item.taxRate * 1
         this.dataFormTwo.productData.push(item)
       });
-      let uniqueArr = [];
-      let idSet = new Set();
+      // let uniqueArr = [];
+      // let idSet = new Set();
 
-      this.dataFormTwo.productData.forEach(item => {
-        if (!idSet.has(item.id)) {
-          uniqueArr.push(item);
-          idSet.add(item.id);
-        }
-      });
-      this.dataFormTwo.productData = uniqueArr
+      // this.dataFormTwo.productData.forEach(item => {
+      //   if (!idSet.has(item.id)) {
+      //     uniqueArr.push(item);
+      //     idSet.add(item.id);
+      //   }
+      // });
+      // this.dataFormTwo.productData = uniqueArr
       console.log("this.dataFormTwo", this.dataFormTwo.productData);
     },
     // },

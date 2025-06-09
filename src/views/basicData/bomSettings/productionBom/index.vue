@@ -97,22 +97,21 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
-          fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
-          :setColumnDisplayList="columnList" customKey="JNPFTableKey_129410">
-          <el-table-column prop="projectName" label="所属项目" width="120" v-if="isProjectSwitch === '1'"></el-table-column>
-          <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
+          fixedNO  :element-loading-text="loadingText"
+          :setColumnDisplayList="columnList">
+          <el-table-column prop="projectName" label="所属项目"   v-if="isProjectSwitch === '1'"></el-table-column>
+          <el-table-column prop="productCode" label="产品编码"  sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.productCode }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-            show-overflow-tooltip></el-table-column>
-          <el-table-column prop="drawNo" label="品名规格" min-width="160" sortable="custom" />
-          <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
+          <el-table-column prop="productName" label="产品名称"   v-if="isProductNameSwitch === '1'" ></el-table-column>
+          <el-table-column prop="drawNo" label="品名规格"  sortable="custom" />
+          <el-table-column prop="productCategoryName" label="产品分类"   sortable="custom" />
 
-          <el-table-column prop="pickingWay" label="领料方式" min-width="180">
+          <el-table-column prop="pickingWay" label="领料方式" >
             <template slot-scope="{ row }">
               <template v-if="row.pickingWay == 'production_order'">
                 按生产订单领料
@@ -122,14 +121,14 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
+          <el-table-column prop="createTime" label="创建时间"  sortable="custom" />
+          <el-table-column prop="documentStatus" label="单据状态"   sortable="custom" align="center">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+          <el-table-column prop="approvalStatus" label="审批状态"   sortable="custom" align="center"
             v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
@@ -146,7 +145,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="180" >
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
@@ -354,8 +353,8 @@ export default {
         type: 'input'
       })
     }
-    this.tableDataFlag = true
     this.getcategoryTree()
+    this.tableDataFlag = true
     if (localStorage.getItem("productionBomFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFlag'))
       this.expands = roleFlag

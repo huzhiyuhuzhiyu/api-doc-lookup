@@ -129,6 +129,7 @@ export default {
       this.getbatchNumList(this.id)
     },
     reset() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.form = {
         code:"",
         name:"",

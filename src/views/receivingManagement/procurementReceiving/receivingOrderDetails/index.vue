@@ -87,6 +87,15 @@
           <el-table-column prop="proportion" label="比重" min-width="120" />
           <el-table-column prop="discount" label="折扣" min-width="120" />
             <el-table-column prop="receivedQuantity" label="收货数量" width="120" sortable="custom" />
+            <el-table-column prop="receiptQuantity" label="入库数量" width="120" sortable="custom">
+              <template slot-scope="scope">
+                      <el-link type="primary" @click.native="viewFun(scope.row)">
+                        {{ scope.row.receiptQuantity }}
+                      </el-link>
+                    </template>
+            </el-table-column>
+            <el-table-column prop="qualifiedQuantity" label="检验合格数量" width="140" sortable="custom" />
+            <el-table-column prop="unqualifiedQuantity" label="检验不合格数量" width="150" sortable="custom" />
 
             <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" width="130" sortable="custom"
@@ -148,6 +157,7 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <InventQuityForm v-if="InventQuityFormVisible" ref="InventQuityFormRef"></InventQuityForm>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -174,15 +184,17 @@ import {
   editpurPurchaseReceiptReturnGoods,
   deletepurPurchaseReceiptReturnGoods
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import InventQuityForm from '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import { excelExport } from '@/api/basicData/index'
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
-  components: { Form, ExportForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery,InventQuityForm },
   mixins: [getProjectList],
   data() {
     return {
+      InventQuityFormVisible:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -393,6 +405,13 @@ export default {
     this.search('basic')
   },
   methods: {
+    // 查看库存明细
+    viewFun(row) {
+      this.InventQuityFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.InventQuityFormRef.init(row, 'inventoryFlag', "", row.projectId)
+      })
+    },
     getOrderFiledMap() {
       getOrderFiledMap('purchase').then((res) => {
         this.standardValueFlag = res.data.standardValue

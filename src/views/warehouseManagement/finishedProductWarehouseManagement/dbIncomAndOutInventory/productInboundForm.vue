@@ -1615,11 +1615,14 @@ export default {
               const item = this.productData[index];
               if (!item.num) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
+                this.$message.error("产品信息第" + (index + 1) + "行入库数量不能为空")
                 break
               }
-
-
+              if (Number(item.num)>Number(item.waitReceivedQuantity)) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行入库数量不能超过待入库数量")
+                break
+              }
 
             }
 

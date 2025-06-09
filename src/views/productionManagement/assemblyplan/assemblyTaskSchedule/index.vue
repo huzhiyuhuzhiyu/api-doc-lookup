@@ -89,7 +89,7 @@
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300" sortable="custom"></el-table-column>
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
+            <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="$store.getters.configData.product.enable_show_pairing_mode" />
 
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
@@ -108,23 +108,18 @@
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
+            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" v-if="$store.getters.configData.orderField.sealingCoverTyping"/>
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
-            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-              v-if="colourFlag == 1"></el-table-column>
+                 v-if="$store.getters.configData.orderField.accuracyLevel"/>
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" 
+              v-if="$store.getters.configData.orderField.vibrationLevel" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom"   v-if="$store.getters.configData.orderField.oil" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"  v-if="$store.getters.configData.orderField.oilQuantity" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"   v-if="$store.getters.configData.orderField.clearance" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"  v-if="$store.getters.configData.orderField.packagingMethod"/>
+            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom" v-if="$store.getters.configData.orderField.specialRequire"/>
+            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="$store.getters.configData.orderField.material"></el-table-column>
+            <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom" v-if="$store.getters.configData.orderField.colour"></el-table-column>
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -358,8 +353,9 @@ export default {
         this.tableDataFlag = true
       } catch (error) { }
     },
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
+    async getOrderFiledMap() {
+      await getOrderFiledMap('sale').then((res) => {
+        console.log("生产进度",res);
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
         this.accuracyLevelFlag = res.data.accuracyLevel
         this.vibrationLevelFlag = res.data.vibrationLevel
@@ -566,6 +562,7 @@ export default {
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
         this.showFlag = true
+        console.log("res.data.records.length",res.data.records.length);
         if (res.data.records.length) {
           res.data.records.forEach(item => {
             // 初始化 processInfoList 为一个空数组
@@ -599,6 +596,7 @@ export default {
           this.tableData = res.data.records
           this.total = res.data.total
         } else {
+          console.log(3434);
           this.showFlag = true
           this.tableData = []
           this.total = 0

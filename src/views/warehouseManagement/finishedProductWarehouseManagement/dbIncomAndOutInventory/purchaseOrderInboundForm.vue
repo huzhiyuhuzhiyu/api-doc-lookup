@@ -620,7 +620,7 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" :hasC="btnType != 'look'" :fixedNO="true"  @row-click="handleRowClick"
+              <JNPF-table v-loading="listLoading" @sort-change="sortChange" :data="productList" :hasC="btnType != 'look'" :fixedNO="true"  @row-click="handleRowClick"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form" customKey="JNPFTableKey_178651">
 
                 <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom"> </el-table-column>
@@ -1034,6 +1034,18 @@ export default {
       this.productVisible = true
       this.searchProductFun()
     },
+        sortChange({ prop, order }) {
+      let newProp;
+      if (prop == 'partnerName' || prop == 'partnerCode') {
+        newProp = prop
+      } else {
+
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.orderForm.orderItems[0].asc = order === 'ascending'
+      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.searchProductFun()
+    },
     // 选择产品——搜索
     searchProductFun() {
 
@@ -1088,6 +1100,8 @@ export default {
     },
     // 销售发货选择产品——重置
     resetProductFun() {
+            this.$refs['form'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
       this.deliveryDateArr = []
       this.orderForm = { //获取产品数据
         cooperativePartnerId: '',

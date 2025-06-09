@@ -344,23 +344,25 @@ export default {
       sums[1] = '合计'
       sums[2] =''
       sums[3] = ''
-      sums[4] = this.allTotal.coldHeading||0
-      sums[5] = this.allTotal.lightBallOne||0
-      sums[6] = this.allTotal.lightBallTwo||0
-      sums[7] = this.allTotal.quench||0
-      sums[8] = this.allTotal.temper||0
-      sums[9] = this.allTotal.hardGrindOne||0
-      sums[10] = this.allTotal.intensify||0
-      sums[11] = this.allTotal.temperTwo||0
-      sums[12] = this.allTotal.hardGrindTwo||0
-      sums[13] = this.allTotal.initialGrindOne||0
-      sums[14] = this.allTotal.initialGrindTwo||0
-      sums[15] = this.allTotal.fineGrindOne||0
-      sums[16] = this.allTotal.fineGrindTwo||0
-      sums[17] = this.allTotal.appearanceSelection||0
-      sums[18] = this.allTotal.clean||0
-      sums[19] = this.allTotal.optoelectronicAppearance||0
-      sums[20] = this.allTotal.pack||0
+      sums[4] = ''
+      sums[5] = ''
+      sums[6] = this.allTotal.coldHeading||0
+      sums[7] = this.allTotal.lightBallOne||0
+      sums[8] = this.allTotal.lightBallTwo||0
+      sums[9] = this.allTotal.quench||0
+      sums[10] = this.allTotal.temper||0
+      sums[11] = this.allTotal.hardGrindOne||0
+      sums[12] = this.allTotal.intensify||0
+      sums[13] = this.allTotal.temperTwo||0
+      sums[14] = this.allTotal.hardGrindTwo||0
+      sums[15] = this.allTotal.initialGrindOne||0
+      sums[16] = this.allTotal.initialGrindTwo||0
+      sums[17] = this.allTotal.fineGrindOne||0
+      sums[18] = this.allTotal.fineGrindTwo||0
+      sums[19] = this.allTotal.appearanceSelection||0
+      sums[20] = this.allTotal.clean||0
+      sums[21] = this.allTotal.optoelectronicAppearance||0
+      sums[22] = this.allTotal.pack||0
 
       return sums
     },

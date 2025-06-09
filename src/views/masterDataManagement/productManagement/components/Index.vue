@@ -707,7 +707,7 @@ export default {
       }
 
       this.fetchData('CPBM', true)
-      if (['spare_parts', 'accessories'].includes(this.listQuery.classAttribute)) {
+      if (['spare_parts', 'accessories','JCSB'].includes(this.listQuery.classAttribute)) {
         this.productSourceOptions = [{ label: '采购', value: 'purchase' }]
         this.quickForm.productSource = 'purchase'
       } else {

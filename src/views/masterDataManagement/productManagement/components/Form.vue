@@ -126,19 +126,19 @@ export default {
         if (!['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(this.classAttribute)) {
 
           if (tc.prop === 'productCategoryName') {
-            tc.label = `${this.productName.slice(0, 2)}分类`
-            tc.itemRules = [{ required: true, message: `请选择${this.productName.slice(0, 2)}分类`, trigger: 'no' }]
+            tc.label = `${this.productName.slice(0, 4)}分类`
+            tc.itemRules = [{ required: true, message: `请选择${this.productName.slice(0, 4)}分类`, trigger: 'no' }]
           } else if (tc.prop === 'code') {
-            tc.label = `${this.productName.slice(0, 2)}编码`
+            tc.label = `${this.productName.slice(0, 4)}编码`
           } else if (tc.prop === 'name') {
-            tc.label = `${this.productName.slice(0, 2)}名称`
+            tc.label = `${this.productName.slice(0, 4)}名称`
           } else if (tc.prop === 'productSource') {
-            tc.label = `${this.productName.slice(0, 2)}来源`
+            tc.label = `${this.productName.slice(0, 4)}来源`
             tc.options = [{ label: '采购', value: 'purchase' }]
             tc.value = 'purchase'
             tc.itemDisabled = true
           } else if (tc.prop === 'productStatus') {
-            tc.label = `${this.productName.slice(0, 2)}状态`
+            tc.label = `${this.productName.slice(0, 4)}状态`
           } else if (tc.prop === 'mainUnit') {
             tc.label = '单位'
           } else if (['deputyUnit', 'ratio', 'calculationDirection', 'brand'].includes(tc.prop)) {

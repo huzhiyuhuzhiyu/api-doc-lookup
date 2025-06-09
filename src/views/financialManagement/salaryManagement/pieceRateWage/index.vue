@@ -63,7 +63,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" hasC :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" v-loading="listLoading" hasC :data="tableData" 
             :checkSelectable="(row) => row.state != '0'" @sort-change="sortChange"
             @selection-change="handeleProductInfoData" custom-column :show-summary="false"
             :summary-method="getSummaries" customKey="JNPFTableKey_274788">
@@ -86,7 +86,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="120" fixed="right">
+            <el-table-column label="操作" width="120" >
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click="addOrUpdateHandle(scope.row.producerId, listQuery.month)">查看明细</el-button>

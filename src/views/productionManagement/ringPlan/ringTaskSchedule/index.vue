@@ -582,7 +582,8 @@ export default {
       this.orderForm.projectId = this.isProjectSwitch === '1' ? this.userInfo.projectId || '' : ''
       ordershengchanList(this.orderForm).then(res => {
         this.showFlag = true
-        res.data.records.forEach(item => {
+       if(res.data.records.length){
+         res.data.records.forEach(item => {
           // 初始化 processInfoList 为一个空数组
           item.processInfoList = [];
 
@@ -616,6 +617,11 @@ export default {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
+       }else{
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+       }
       }).catch(() => {
         this.listLoading = false
         this.showFlag = true

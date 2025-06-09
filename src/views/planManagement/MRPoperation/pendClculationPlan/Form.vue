@@ -1001,7 +1001,7 @@
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
-                <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" sortable="custom" />
+                <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="160" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
                   v-if="sealingCoverTypingFlag == 1" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
@@ -2014,8 +2014,8 @@ export default {
       if (prop == "createByName") {
         newProp = "create_by"
       }
-      this.orderForm.orderItems[0].asc = order === "ascending"
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.planForm.orderItems[0].asc = order === "ascending"
+      this.planForm.orderItems[0].column = order === null ? "" : newProp
       this.searchPlan()
     },
     searchPlan() {
@@ -2054,6 +2054,7 @@ export default {
           column: "create_time"
         }],
       }
+      this.searchPlan()
     },
     // 关闭新建编辑页面
     closeForm() {

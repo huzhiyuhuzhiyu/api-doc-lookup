@@ -1060,11 +1060,20 @@ export default {
                 }
               }
               if(!item.planQuantity){
-                this.$message.error("产品信息需求数量不能为空")
+                this.$message.error("产品信息计划数量不能为空")
                 return
               }
               if(!item.planStartDate) return this.$message.error("产品信息计划开始日期不能为空")
               if(!item.planEndDate) return this.$message.error("产品信息计划结束日期不能为空")
+               if (!item.bomId) {
+                  submitFlag = false
+                  this.$message({
+                    message: "第" + (index + 1) + "行产品无BOM，请配置BOM信息",
+                    type: 'error',
+                    duration: 1500,
+                  })
+                  return
+                }
               if (num > item.maxInventory) {
                 this.$confirm(this.$t('产品信息可用库存加计划数量大于最高库存,确认提交吗?'), this.$t('提示'), {
                   type: 'warning'
@@ -1092,6 +1101,40 @@ export default {
                   })
                 }).catch(() => { })
 
+              }else{
+                   this.productData.forEach(item => {
+                item.documentStatus = value
+                item.finalPlanQuantity = item.planQuantity
+                item.productionLineId = this.planForm.productionLineId
+              });
+              if (submitFlag === false) return
+              this.btnLoading = true
+              let methods = ""
+              let data = null
+              if (this.btnType == 'add') {
+                methods = batchAddPlan
+                data = this.productData
+              }
+              if (this.btnType == 'edit') {
+                methods = updatePlanList
+                data = {
+                  plan: this.productData[0]
+                }
+              }
+
+              methods(data).then(res => {
+                let msg = "";
+                if (value == "draft") {
+                  this.submitmethodsTitle = "保存成功"
+                } else {
+                  this.submitmethodsTitle = "提交成功"
+
+                }
+                this.tipsvisible = true
+
+              }).catch(() => {
+                this.btnLoading = false
+              })
               }
             } else {
 

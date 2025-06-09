@@ -1,7 +1,7 @@
 
 
 <template>
-    <ReportTypeTable :need-super-query="false" :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag" :treeTitle="treeTitle" renderTree :methodArr="methodArr" :list-request-obj="listRequestObj" :list-method="balanceQueryReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName"/>
+    <ReportTypeTable :need-super-query="false" :columnList="columnList"  :superQueryJson="superQueryJson" v-loading="!indexFlag" v-if="indexFlag" :treeTitle="treeTitle" renderTree :methodArr="methodArr" :list-request-obj="listRequestObj" :list-method="balanceQueryReport" :tableItems="tableItems" :searchList="searchList" :exportType="exportType" :export-name="exportName"/>
 </template>
 
 <script>

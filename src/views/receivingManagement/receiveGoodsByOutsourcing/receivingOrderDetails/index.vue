@@ -98,6 +98,9 @@
                 </el-link>
               </template>
             </el-table-column>
+       
+            <el-table-column prop="qualifiedQuantity" label="检验合格数量" width="140" sortable="custom" />
+            <el-table-column prop="unqualifiedQuantity" label="检验不合格数量" width="150" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
@@ -173,7 +176,7 @@ import Form from '../receivingAdvice/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
-import FormS from './Form.vue'
+import FormS from   '@/views/warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import {
   getpurPurchaseReceiptReturnGoodsdetail,
   addpurPurchaseReceiptReturnGoods,
@@ -409,9 +412,10 @@ export default {
       viewReceiptFun(row, type, warehouseId, projectId) {
       this.receiptFormVisible = true
       this.$nextTick(() => {
-        this.$refs.FormS.init(row, type, warehouseId, projectId)
+        this.$refs.FormS.init(row, 'inventoryFlag', "", row.projectId)
       })
     },
+   
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

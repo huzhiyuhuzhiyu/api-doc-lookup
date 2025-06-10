@@ -271,18 +271,22 @@
                     <el-table-column prop="mainUnit" label="单位" />
                     <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                     <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                    <el-table-column prop="receivedQuantity" label="已领数量">
-                      <template slot-scope='scope'>
-                        <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
-                          scope.row.receivedQuantity
-                        }}</el-link>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="inventoryQuantity" label="库存数量">
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
-                      </template>
-                    </el-table-column>
+                           <el-table-column prop="lineEdgeQuantity" label="线边仓库存" />
+                  <el-table-column prop="sugQuantity" label="本单建议补充库存" />
+                  <el-table-column prop="totalSugQuantity" label="全局建议补充库存" />
+                  <el-table-column prop="receivedQuantity" label="已领数量" v-if="dataForm.orderType=='flipping'" >
+                    <template slot-scope="scope">
+                      <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
+                        scope.row.receivedQuantity
+                      }}</el-link>
+                    </template>
+                  </el-table-column>
+               
+                  <el-table-column prop="inventoryQuantity" label="库存数量"  v-if="dataForm.orderType=='flipping'" >
+                    <template slot-scope="scope">
+                      <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
+                    </template>
+                  </el-table-column>
 
 
 

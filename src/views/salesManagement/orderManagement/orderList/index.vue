@@ -109,6 +109,8 @@
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
                 <div v-if="scope.row.documentStatus == 'back'"><el-tag type="danger">撤回</el-tag></div>
+                <div v-if="scope.row.documentStatus == 'normal'"><el-tag >正常</el-tag></div>
+                <div v-if="scope.row.documentStatus == 'close'"><el-tag type="danger">关单</el-tag></div>
               </template>
             </el-table-column>
 

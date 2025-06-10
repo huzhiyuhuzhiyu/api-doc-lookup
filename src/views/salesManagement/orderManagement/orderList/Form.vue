@@ -180,11 +180,17 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
-                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
-                        show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productCategoryName" label="产品分类" width="140"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+                      </el-table-column>
+                      <el-table-column prop="shipmentStatus" label="明细状态" width="160" v-if="isZY" show-overflow-tooltip>
+                          <template slot-scope="scope">
+                            <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
+                            <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div> 
+                            <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div> 
+                        </template>
                       </el-table-column>
                       <el-table-column prop="pairingModeName" label="配对方式" min-width="180"
                         v-if="isPairingModeSwitch === '1'">
@@ -337,6 +343,13 @@
                         </el-input> -->
                       </template>
                     </el-table-column>
+                      <el-table-column prop="shipmentStatus" label="明细状态" width="160" v-if="isZY" show-overflow-tooltip>
+                          <template slot-scope="scope">
+                            <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
+                            <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div> 
+                            <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div> 
+                        </template>
+                      </el-table-column>
                     <el-table-column prop="pairingModeName" label="配对方式" min-width="180"
                       v-if="isPairingModeSwitch === '1'">
                       <template slot-scope="scope">
@@ -751,6 +764,13 @@
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                   </el-table-column>
+                    <el-table-column prop="shipmentStatus" label="明细状态" width="160" v-if="isZY" show-overflow-tooltip>
+                          <template slot-scope="scope">
+                            <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
+                            <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div> 
+                            <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div> 
+                        </template>
+                      </el-table-column>
                   <el-table-column prop="pairingModeName" label="配对方式" min-width="180"
                     v-if="isPairingModeSwitch === '1'">
                     <template slot-scope="scope">
@@ -869,6 +889,13 @@
                       :disabled="status"></el-autocomplete>
                   </template>
                 </el-table-column>
+                  <el-table-column prop="shipmentStatus" label="明细状态" width="160" v-if="isZY" show-overflow-tooltip>
+                          <template slot-scope="scope">
+                            <div v-if="scope.row.shipmentStatus == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
+                            <div v-else-if="scope.row.shipmentStatus == 'finish'"><el-tag type="success">已完成</el-tag></div> 
+                            <div v-else-if="scope.row.shipmentStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div> 
+                        </template>
+                      </el-table-column>
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="180" v-if="isPairingModeSwitch === '1'">
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.pairingModeId" placeholder="请选择配对方式" style="width: 100%;"

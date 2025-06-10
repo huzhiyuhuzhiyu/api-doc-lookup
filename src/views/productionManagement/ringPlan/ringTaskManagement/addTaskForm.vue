@@ -1161,6 +1161,7 @@ console.log("this.$refs.dataForm",this.$refs.dataForm);
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
+      this.materialList=[]
       this.getRoutingDetail(this.dataForm.routingId)
     },
     // 选择班组

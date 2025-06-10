@@ -33,6 +33,18 @@
                   <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'rework'">
                     <el-tag style="vertical-align: super;" type="warning" effect="dark">返工任务</el-tag>
                   </el-descriptions-item>
+                  <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'manually'">
+                    <el-tag style="vertical-align: super;" type="warning" effect="dark">新建任务</el-tag>
+                  </el-descriptions-item>
+                    <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'flipping'">
+                    <el-tag style="vertical-align: super;" type="warning" effect="dark">翻库任务</el-tag>
+                  </el-descriptions-item>
+                    <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'transit'">
+                    <el-tag style="vertical-align: super;" type="warning" effect="dark">在制任务</el-tag>
+                  </el-descriptions-item>
+                    <el-descriptions-item label="任务类型" class="orderNo" v-if="dataForm.orderType == 'regrinding'">
+                    <el-tag style="vertical-align: super;" type="warning" effect="dark">修磨任务</el-tag>
+                  </el-descriptions-item>
                   <el-descriptions-item label="产品编码">{{ dataForm.productCode }}</el-descriptions-item>
                   <el-descriptions-item label="所属项目" v-if="isProjectSwitch == 1">{{ dataForm.projectName
                     }} </el-descriptions-item>
@@ -143,19 +155,23 @@
                   <el-table-column prop="productCode" label="用料编码" />
                   <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                   <el-table-column prop="processName" label="工序名称" />
-                  <el-table-column prop="material" label="保持架材质" width="130" v-if="materialFlag == 1"></el-table-column>
-                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1"></el-table-column>
+                  <!-- <el-table-column prop="material" label="保持架材质" width="130" v-if="materialFlag == 1"></el-table-column>
+                  <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1"></el-table-column> -->
                   <el-table-column prop="mainUnit" label="单位" />
                   <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                   <el-table-column prop="materialsUsedQuantity" label="计划用量" />
-                  <el-table-column prop="receivedQuantity" label="已领数量">
+                  <el-table-column prop="lineEdgeQuantity" label="线边仓库存" />
+                  <el-table-column prop="sugQuantity" label="本单建议补充库存" min-width="160"/>
+                  <el-table-column prop="totalSugQuantity" label="全局建议补充库存" min-width="160"/>
+                  <el-table-column prop="receivedQuantity" label="已领数量" v-if="dataForm.orderType=='flipping'" >
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewDetailFun(scope.row.id)">{{
                         scope.row.receivedQuantity
                       }}</el-link>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="inventoryQuantity" label="库存数量">
+               
+                  <el-table-column prop="inventoryQuantity" label="库存数量"  v-if="dataForm.orderType=='flipping'" >
                     <template slot-scope="scope">
                       <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
                     </template>

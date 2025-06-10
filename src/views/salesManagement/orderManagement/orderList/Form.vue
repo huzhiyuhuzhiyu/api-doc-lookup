@@ -847,7 +847,7 @@
                 </el-table-column>
                 <el-table-column prop="contractNo" label="客户合同号" width="180" key="contractNo"
                   v-if="saleContractNoSwitch === '0'||saleContractNoSwitch === '2'">
-                  <template slot-scope="scope"> 
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.contractNo" placeholder="请输入客户合同号" maxlength="20"
                       :disabled="btnType === 'look'"></el-input>
                   </template>
@@ -1508,7 +1508,7 @@ export default {
       ProductMethodArr: [
         {
           label: "产品分类", classAttribute: "", method: productTree, requeseObj: {
-            classAttribute: "", 
+            classAttribute: "",
             type: "material",
             classAttributeList: ["finish_product", "semi_finished"]
           }
@@ -1816,7 +1816,7 @@ export default {
       }).catch(() => { })
     },
     // 选择部分关单的数据
-    selectCloseData(val){ 
+    selectCloseData(val){
       this.closeData=val
     },
     // 部分关单、
@@ -1826,7 +1826,7 @@ export default {
         type: 'warning'
       }).then(() => {
 
-        
+
       let idArray = this.closeData.map(item => item.id);
       closeSaleOrderLine(idArray).then(res=>{
         this.goBack()
@@ -1836,7 +1836,7 @@ export default {
             duration: 1500,
           })
       })
-       
+
       }).catch(() => { })
 
     },
@@ -2699,7 +2699,7 @@ export default {
     resetAllProduct() {
       this.highlightCurrentFlag=false
       this.ProductListRequestObj = {
-        classAttributeList: ["finish_product", "semi_finished"], 
+        classAttributeList: ["finish_product", "semi_finished"],
         classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",
@@ -3539,6 +3539,7 @@ export default {
        this.$refs['historyRemark'].openDialog()
     },
     currentChange(row){
+        this.$refs['historyRemark'].visible = false
         this.$set(this.dataForm, 'remark1', row.remark1)
     },
     delChange(id){

@@ -35,7 +35,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <topOpts @add="addSupplier('', 'add')"></topOpts>
-
+    
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -76,7 +76,7 @@
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'"
                 :editDisabled="scope.row.documentStatus == 'submit' || scope.row.documentStatus == 'back'"
-                @edit="addSupplier(scope.row, 'edit')" @del="handleDel(scope.row.id)">
+                @edit="editFun(scope.row, 'edit')" @del="handleDel(scope.row.id)">
              
               </tableOpts>
             </template>
@@ -137,7 +137,7 @@
           </el-col>
            <el-col :span="24">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="dataForm.remark" type="textarea" :row="2"  placeholder="单价" :disabled="btnType=='look'" maxlength="200"/>
+              <el-input v-model="dataForm.remark" type="textarea" :row="2"  placeholder="备注" :disabled="btnType=='look'" maxlength="200"/>
             </el-form-item>
           </el-col>
         </el-form>
@@ -177,7 +177,7 @@ export default {
       btnLoading:false,
       btnType:"",
       ProcessFormVisible:false,
-      dataForm:{
+      dataFormLines:{
         cooperativePartnerCode:"",
         cooperativePartnerId:"",
         cooperativePartnerName:"",
@@ -190,6 +190,7 @@ export default {
         processCode:"",
         processId:"",
       },
+      dataForm:{},
       calcTypeList:[
         {label:"按数量计算",value:"number",},
         {label:"按重量计算",value:"weight",}
@@ -337,7 +338,10 @@ export default {
       this.$refs['diaForm'].validate((valid) => {
         if (valid) {
           this.btnLoading=true
-          purOutProcessPriceAdd(this.dataForm).then(res=>{
+          let methods=null
+          if(this.btnType=='add')methods=purOutProcessPriceAdd
+          if(this.btnType=='edit')methods=purOutProcessPriceUpdate
+          methods(this.dataForm).then(res=>{
             this.btnLoading=false
             this.addOrderVisible=false
             this.search('basic')
@@ -410,10 +414,22 @@ export default {
   
     addSupplier(row,type) {
       this.btnType=type
-      if(row) this.dataForm=row
       this.addOrderVisible = true
+      console.log(this.dataForm);
+      
+        this.title="新增外协工序价格"
+       this.$nextTick(()=>{
+        this.dataForm=this.dataFormLines
+            this.$forceUpdate();
+         this.$refs.diaForm.resetFields()
+       })
     },
- 
+    editFun(row,type){
+        this.title="编辑外协工序价格"
+      this.addOrderVisible = true
+      this.btnType=type
+      this.dataForm=row
+    },
   
 
 
@@ -481,8 +497,8 @@ getOutProcessFun(){
       this.superForm = this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
-        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'cooperativePartnerName', fieldValue: '', label: '客户/供应商', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
       ],
         this.initData()
     },

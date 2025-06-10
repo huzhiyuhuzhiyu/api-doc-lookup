@@ -415,8 +415,8 @@
                             </div>
                         </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;" custom-column>
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'" v-if="tableDataFlag"
+                        @selection-change="handeleProductInfoData" border  style="width: 100%;" custom-column customKey="JNPFTableKey_1786511" :setColumnDisplayList="columnList">
 
 
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -726,6 +726,7 @@ export default {
   mixins: [flowMixin, busFlow, getProjectList,tenantMinix],
   data() {
     return {
+      columnList:[],
       datafilelist: [],
       isattachmentswitch: '',
       attachmentData: {},

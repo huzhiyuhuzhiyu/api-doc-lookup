@@ -100,7 +100,11 @@
             </el-table-column>
        
             <el-table-column prop="qualifiedQuantity" label="检验合格数量" width="140" sortable="custom" />
-            <el-table-column prop="unqualifiedQuantity" label="检验不合格数量" width="150" sortable="custom" />
+            <el-table-column prop="unqualifiedQuantity" label="检验不合格数量" width="150" sortable="custom" >
+              <template slot-scope="scope">
+                {{ scope.row.unqualifiedQuantity?scope.row.unqualifiedQuantity:'0' }}
+              </template>
+            </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>

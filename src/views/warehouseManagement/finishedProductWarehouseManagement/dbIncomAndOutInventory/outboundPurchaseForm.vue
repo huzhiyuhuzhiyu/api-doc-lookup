@@ -846,6 +846,33 @@ export default {
       this.$set(this.productData[index], 'discount', "")
       this.$set(this.productData[index], 'proportion', "")
       this.$set(this.productData[index], 'weight', "")
+      
+      this.$set(this.productData[index], 'sealingCoverTyping', data.sealingCoverTyping)
+      this.$set(this.productData[index], 'accuracyLevel', data.accuracyLevel)
+      this.$set(this.productData[index], 'vibrationLevel', data.vibrationLevel)
+      this.$set(this.productData[index], 'oil', data.oil)
+      this.$set(this.productData[index], 'clearance', data.clearance)
+      this.$set(this.productData[index], 'packagingMethod', data.packagingMethod)
+      this.$set(this.productData[index], 'specialRequire', data.specialRequire)
+      this.$set(this.productData[index], 'material', data.material)
+      this.$set(this.productData[index], 'colour', data.colour)
+      this.$set(this.productData[index], 'protrusion', data.protrusion)
+      this.$set(this.productData[index], 'preload', data.preload)
+      this.$set(this.productData[index], 'centerDiameter', data.centerDiameter)
+      this.$set(this.productData[index], 'angle', data.angle)
+      this.$set(this.productData[index], 'pairingModeName', data.pairingModeName)
+      this.$set(this.productData[index], 'pairingModeId', data.pairingModeId)
+
+      this.$set(this.productData[index], 'oilQuantity', data.oilQuantity)
+      this.$set(this.productData[index], 'holder', data.holder)
+      this.$set(this.productData[index], 'specSize', data.specSize)
+      this.$set(this.productData[index], 'logo', data.logo)
+      this.$set(this.productData[index], 'aperture', data.aperture)
+      this.$set(this.productData[index], 'divideEqually', data.divideEqually)
+      this.$set(this.productData[index], 'brand', data.brand)
+      this.$set(this.productData[index], 'sealingCoverStructure', data.sealingCoverStructure)
+      this.$set(this.productData[index], 'structureType', data.structureType)
+      this.$set(this.productData[index], 'noise', data.noise)
     },
     // 产品信息列表复制功能
     copyFun(row, index) {

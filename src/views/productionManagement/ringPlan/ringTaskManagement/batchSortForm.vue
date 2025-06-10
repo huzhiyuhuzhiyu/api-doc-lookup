@@ -52,14 +52,40 @@ export default {
                 }
             ],
             linesList:[],
+            generatedMap:new Map(),
         }
     },
     created() {
 
     },
     methods: {
+        processString(input) {
+            // 提取前八位数字
+            const digits = input.match(/\d{8}/);
+            if (!digits) return input + '00'; // 如果没有八位数字，直接拼接 '00'
+
+            // 基础字符串：前八位数字 + '00'
+            const baseStr = digits[0] + '00';
+
+            // 检查是否已存在
+            if (!this.generatedMap.has(baseStr)) {
+                this.generatedMap.set(baseStr, 0);
+                return baseStr;
+            }
+
+            // 如果已存在，则获取计数并加 1
+            const count = this.generatedMap.get(baseStr) + 1;
+            this.generatedMap.set(baseStr, count);
+
+            return `${baseStr}${count}`;
+        },
         init(data){
-            this.linesList = deepClone(data)
+            this.linesList = data.map(item=>{
+                return {
+                    ...item,
+                    sort:this.processString(item.orderNo)
+                }
+            })
 
         },
         addOrDelLinesItem(data) {

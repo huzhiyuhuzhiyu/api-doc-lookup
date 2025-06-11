@@ -32,7 +32,7 @@
               </template> 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
@@ -81,7 +81,7 @@
               <pagination :total="workTotal" :page.sync="workForm.pageNum" :limit.sync="workForm.pageSize" @pagination="initData" />
             </div>
             <!-- 高级查询 -->
-            <SuperQuery :partentOrChild="activeName" :show="superQueryWorkVisible" ref="SuperQuery" :columnOptions="superQueryWork" @superQuery="superQuerySearchWork" @close="superQueryWorkVisible = false" />
+            <SuperQuery  :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
           </div>
      
@@ -101,19 +101,21 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
 
 
 
-
-      workForm:{},
-      superWorkForm: {},
+ 
+      workForm:{}, 
       workTotal:0,
       workData:[],
       workFormList:{
         orderDate: "",
         productName: "",
         processName: "",
-        orderNo: "",
+        workNo: "",
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -134,9 +136,9 @@ export default {
       searchList3:[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '工单单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'workNo', fieldValue: '', label: '工单单号', symbol: 'like', searchType: 1, width: 120 },
       ],
-      superQueryInbound: [
+      superQueryJson: [
         {
           prop: 'projectName',
           label: "所属项目",
@@ -148,7 +150,7 @@ export default {
           type: 'input'
         }, 
          {
-          prop: 'orderNo',
+          prop: 'workNo',
           label: "工单单号",
           type: 'input'
         }, 
@@ -201,7 +203,7 @@ export default {
           pickerOptions: this.global.timePickerOptions
         }, 
       ],
-      superQueryWorkVisible: false,
+      superQueryVisible: false,
 
 
 
@@ -212,7 +214,6 @@ export default {
       visible: false,
       tableData: [],
       listLoading: false,
-      activeName: "produce",
       reportCode:'',
     
     
@@ -222,14 +223,10 @@ export default {
     }
   },
   async created() { 
-    this.superWorkForm=this.workForm = JSON.parse(JSON.stringify(this.workFormList))
-   this.search()
+    this.superForm=this.workForm = JSON.parse(JSON.stringify(this.workFormList))
+   this.search('basic')
   },
-  watch: {
-    activeName() {
-      this.reset()
-    }
-  },
+
   methods: {
   
     columnSetFunWork(){
@@ -237,16 +234,12 @@ export default {
     },
    
  
-      superQuerySearchWork(query) {
-      this.superWorkForm = query
-      this.superQueryWorkVisible = false
-      this.search()
+      superQuerySearch(query) {
+      this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
     },
 
-    handleClick(e) {
-      this.activeName = e.name
-      // this.reset()
-    },
     //排序
     sortChange({ prop, order }) {
       let newProp;
@@ -283,7 +276,7 @@ export default {
         })
         this.workForm.pageNum = 1 // 重置页码
          if (type === 'basic') {
-          this.superWorkForm.superQuery  = {
+          this.basicQuery  = {
             matchLogic: 'AND',
             condition: this.searchList3
               .filter((item) => item.fieldValue)
@@ -294,9 +287,10 @@ export default {
                 }
               })
           } 
+          this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
-          this.superWorkForm.superQuery = this.superQuery
+          this.superForm.superQuery = this.superQuery
       } 
       
     
@@ -306,13 +300,13 @@ export default {
     
         this.$refs['dataTableWork'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
      
-        this.superWorkForm= this.workForm = JSON.parse(JSON.stringify(this.workFormList))
+        this.superForm= this.workForm = JSON.parse(JSON.stringify(this.workFormList))
           this.searchList3=[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'orderNo', fieldValue: '', label: '工单单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'workNo', fieldValue: '', label: '工单单号', symbol: 'like', searchType: 1, width: 120 },
       ]
-   
+      this.$refs.SuperQuery.conditionList = []
       this.search('basic')
     },
       // 导出

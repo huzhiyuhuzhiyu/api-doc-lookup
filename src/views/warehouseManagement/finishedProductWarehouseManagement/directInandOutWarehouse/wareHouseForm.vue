@@ -9,16 +9,17 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
+                <el-col :span="6">
+              <el-form-item>
+                <el-input @keyup.native.enter="search()"  v-model="tableQuery.name" placeholder="请输入库位名称" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-input v-model="tableQuery.code" placeholder="请输入库位编码" clearable  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="tableQuery.name" placeholder="请输入库位名称" clearable />
-              </el-form-item>
-            </el-col>
+        
 
             <el-col :span="6">
               <el-form-item>
@@ -124,6 +125,7 @@ export default {
       this.initData(this.tableQuery.warehouseId)
     },
     reset() {
+      this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.tableQuery = {
         category: 'location',
         code: '',

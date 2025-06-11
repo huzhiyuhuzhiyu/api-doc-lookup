@@ -476,9 +476,9 @@ export default {
     async init(id, btnType, approvalFlag, approvalStatus) {
       this.formLoading = true
       this.btnType = btnType
-      console.log(this.btnType)
+      console.log(2233,this.btnType)
       if (this.$store.getters.configData.produce.bom) {
-        
+        console.log(77777);
         if (this.btnType === 'add' || this.btnType === 'edit' || this.btnType === 'waitAdd') {
           this.dataFormItems.forEach((tc) => {
             if (tc.prop === 'pickingWay') {
@@ -496,11 +496,13 @@ export default {
           })
         }
       }else{
-        if(this.btnType === 'add'){
+        console.log(454545);
+        if(this.btnType === 'add'||this.btnType=='waitAdd'){
+          console.log(234234234);
               this.dataFormItems.forEach((tc) => {
             if (tc.prop === 'pickingWay') {
-            console.log(555555);
-              // this.dataForm.pickingWay = 'dispatch_list'
+            console.log(555555666666);
+              this.dataForm.pickingWay = 'production_order'
               tc.value = 'production_order'
               this.$set(tc,'itemDisabled',false)
             }

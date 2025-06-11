@@ -153,7 +153,7 @@
                   <div v-if="scope.row.productSource == 'purchase'">采购</div>
                   <div v-if="scope.row.productSource == 'out'">外协</div>
                   <div v-if="scope.row.productSource == 'produce'">生产</div>
-                  <div v-if="scope.row.productSource == 'assemble'">配件</div>
+                  <div v-if="scope.row.productSource == 'assemble'">组装</div>
                 </template>
               </el-table-column>
               <el-table-column prop="bomFlag" label="是否有BOM" min-width="160">

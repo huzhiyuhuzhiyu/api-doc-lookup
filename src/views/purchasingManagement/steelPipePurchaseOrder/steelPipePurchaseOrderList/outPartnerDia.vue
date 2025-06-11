@@ -108,6 +108,7 @@ export default {
      
       columnList:[],
       showflag:false,
+      purchasePartnerId:""
     }
   },
   async created () {
@@ -132,6 +133,7 @@ export default {
  
     init(id) {
       this.form.purchasePartnerId=id
+      this.purchasePartnerId=id
       this.customerVisible = true
       this.getbatchNumList()
     },
@@ -156,8 +158,9 @@ export default {
       this.getbatchNumList()
     },
     reset() {
+      console.log(3452345);
       this.form = {
-        purchasePartnerId:this.form.purchasePartnerId,
+        purchasePartnerId:this.purchasePartnerId,
         outProductName:"",
         outProductCode:"",
         outPartnerName:"",
@@ -175,7 +178,7 @@ export default {
           column: "create_time"
         }],
       }
-      this.init()
+      this.getbatchNumList()
     },
   }
 }

@@ -1149,14 +1149,14 @@ export default {
       }
       console.log("row.excludingTaxPrice", row.excludingTaxPrice);
       console.log("row.price", row.price);
-      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
+      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.calcType=='number'? row.num:row.weight, row.price]), 6)
 
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.calcType=='number'? row.num:row.weight, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
       console.log("productArr", productArr);
       let taxrate = 1 * 1 + (row.taxRate) / 100 * 1
       row.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, taxrate]), 6)
-      row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-      row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
+      row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.calcType=='number'? row.num:row.weight, row.price]), 6)
+      row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.calcType=='number'? row.num:row.weight, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
       row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6)
       if (this.mainUnitFlag == 1) {
         if (row.calculationDirection == 'multiplication') {
@@ -1339,8 +1339,8 @@ export default {
               item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
               item.totalAmount = ""
               item.taxAmount = ""
-              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
-              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+              item.totalAmount = item.calcType=='number'? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6):this.jnpf.numberFormat(this.jnpf.math('multiply', [item.weight, item.price]), 6)
+              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.calcType=='number'?item.num:item.weight, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
               item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
               // this.$set(item, 'discount', '')
               // this.$set(item, 'proportion', '')

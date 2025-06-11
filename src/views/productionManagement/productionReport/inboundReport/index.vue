@@ -85,7 +85,7 @@
             </div>
            
             <!-- 高级查询 -->
-            <SuperQuery :partentOrChild="activeName" :show="superQueryInboundVisible" ref="SuperQuery" :columnOptions="superQueryInbound" @superQuery="superQuerySearchInbound" @close="superQueryInboundVisible = false" />
+            <SuperQuery  :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
 
           </div>
@@ -106,7 +106,9 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
-
+   superQuery: {},
+      superForm: {},
+      basicQuery: {},
 
 
 
@@ -146,7 +148,7 @@ export default {
         { field: 'orderNo', fieldValue: '', label: '入库单号', symbol: 'like', searchType: 1, width: 120 },
       ],
       
-      superQueryInbound: [
+      superQueryJson: [
         {
           prop: 'projectName',
           label: "所属项目",
@@ -239,7 +241,7 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
       ],
-      superQueryInboundVisible: false,
+      superQueryVisible: false,
 
 
     
@@ -261,9 +263,9 @@ export default {
   },
   async created() { 
  
-    this.superInboundForm=this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList))
+    this.superForm=this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList))
    
-   this.search()
+   this.search('basic')
   },
   watch: {
     activeName() {
@@ -277,10 +279,10 @@ export default {
     },
    
  
-       superQuerySearchInbound(query) {
-      this.superInboundForm = query
-      this.superQueryInboundVisible = false
-      this.search()
+       superQuerySearch(query) {
+      this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
     },
      
     //排序
@@ -329,7 +331,7 @@ export default {
         })
         this.inboundForm.pageNum = 1 // 重置页码
          if (type === 'basic') {
-          this.superInboundForm.superQuery  = {
+          this.basicQuery  = {
             matchLogic: 'AND',
             condition: this.searchList2
               .filter((item) => item.fieldValue)
@@ -340,9 +342,10 @@ export default {
                 }
               })
           } 
+          this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
-          this.superInboundForm.superQuery = this.superQuery
+          this.superForm.superQuery = this.superQuery
         }
       
       
@@ -352,12 +355,13 @@ export default {
     reset() {
         this.$refs['dataTableInbound'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.inboundDate = []
-        this.superInboundForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
+        this.superForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
          this.searchList2=[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '入库单号', symbol: 'like', searchType: 1, width: 120 },
       ]
+      this.$refs.SuperQuery.conditionList = []
   
       this.search('basic')
     },

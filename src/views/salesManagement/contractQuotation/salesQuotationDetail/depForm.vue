@@ -109,17 +109,17 @@
               <h5>产品信息</h5>
             </div>
             <div v-if="btnType == 'add' || btnType == 'edit'">
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus"
                 :disabled="btnType == 'look'" @click="addtable()">添加产品</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus"
                 :disabled="btnType == 'look'" @click="addtable('product')">导入产品</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-plus"
                 :disabled="btnType == 'look'" @click="addtable('price')">导入获取牌价</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 icon="el-icon-download" :disabled="btnType == 'look'" @click="downLoadTemplate">下载模板</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                 :disabled="btnType == 'look'" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-download"
+              <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important" icon="el-icon-download"
                 :disabled="btnType == 'look'" @click="exportPrice()">导出无价格</el-button>|
             </div>
             <el-button v-else-if="btnType == 'custom'" type="text"

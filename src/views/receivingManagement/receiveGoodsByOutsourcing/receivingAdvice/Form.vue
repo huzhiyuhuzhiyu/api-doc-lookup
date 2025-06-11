@@ -840,7 +840,7 @@ export default {
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
           if (item.price && item.receivedQuantity) {
-            item.totalAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity,2)
+            item.totalAmount = item.calcType=='number'? this.jnpf.numberFormat(item.price * item.receivedQuantity,2):this.jnpf.numberFormat(item.weight * item.price,2)
           } else {
             item.totalAmount = ''
           }
@@ -850,12 +850,13 @@ export default {
             item.excludingTaxPrice = ''
           }
           if (item.receivedQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice,2)
+            // item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice,2)
+            item.totalAmount = item.calcType=='number'? this.jnpf.numberFormat(item.excludingTaxPrice * item.receivedQuantity,2):this.jnpf.numberFormat(item.weight * item.excludingTaxPrice,2)
           } else {
             item.excludingTaxAmount = ''
           }
           if (item.price && item.receivedQuantity && item.excludingTaxAmount) {
-            item.taxAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount)
+            item.totalAmount = item.calcType=='number'?  this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount): this.jnpf.numberFormat(item.price * item.weight - item.excludingTaxAmount)
           } else {
             item.taxAmount = ''
           }

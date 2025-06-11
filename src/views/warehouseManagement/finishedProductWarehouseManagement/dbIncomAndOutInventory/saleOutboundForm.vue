@@ -94,8 +94,8 @@
                             </el-col>
 <!--                            <template v-for="item in 1">-->
                                 <el-col :sm="24" :xs="24"  v-if="isZY">
-                                    <el-form-item label="出货细节" prop="ordersRemark">
-                                        <el-input class="zyRemark1"  v-model="dataForm['ordersRemark']" placeholder="请输入出货细节"
+                                    <el-form-item label="出货细节" prop="ordersRemark1">
+                                        <el-input class="zyRemark1"  v-model="dataForm['ordersRemark1']" placeholder="请输入出货细节"
                                                   :disabled="btnType === 'look'" type="textarea" :rows="3" maxlength="200" />
                                     </el-form-item>
                                 </el-col>
@@ -355,8 +355,8 @@
                             </el-col>
                             <!--                            <template v-for="item in 1">-->
                             <el-col :sm="24" :xs="24"  v-if="isZY">
-                                <el-form-item label="出货细节" prop="ordersRemark">
-                                    <el-input class="zyRemark1"  v-model="dataForm['ordersRemark']" placeholder="请输入出货细节"
+                                <el-form-item label="出货细节" prop="ordersRemark1">
+                                    <el-input class="zyRemark1"  v-model="dataForm['ordersRemark1']" placeholder="请输入出货细节"
                                               :disabled="btnType === 'look'" type="textarea" :rows="3" maxlength="200" />
                                 </el-form-item>
                             </el-col>
@@ -740,7 +740,7 @@ export default {
         orderDate: this.jnpf.getToday(),
         projectId: "",
         totalStockOutboundFlag:false,
-        ordersRemark:''
+        ordersRemark1:''
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -1337,7 +1337,7 @@ export default {
               )
             })
           }
-          this.dataForm = {...res.data.stockMove,ordersRemark: res.data.stockMove.remark1}
+          this.dataForm = {...res.data.stockMove,ordersRemark1: res.data.stockMove.remark1}
           this.productData = res.data.spaceLines
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
@@ -1345,6 +1345,7 @@ export default {
       } else {
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
         this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.ordersRemark1 = data[0].ordersRemark1
         // 获取订单客户合同号
         if (this.$store.getters.configGlobal.customerContractNo === '1') {
           getOrderDetail(data[0].ordersId).then(res => {
@@ -1553,7 +1554,7 @@ export default {
             let dataObj = {
               attachmentList: this.datafilelist,
 
-              stockMove: {...this.dataForm,remark1:this.dataForm.ordersRemark},
+              stockMove: {...this.dataForm,remark1:this.dataForm.ordersRemark1},
               lines: this.productData,
               spaceLines: this.copyLinesData,
               flowData: this.flowData

@@ -836,10 +836,11 @@ export default {
       this.$refs.treeBox.filter(val)
     },
     'dataFormTwo.productData': {
-      // immediate:true,
+      immediate:false,
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
           if (item.price && item.receivedQuantity) {
+            // item.totalAmount = this.jnpf.numberFormat(item.price * item.receivedQuantity,2)
             item.totalAmount = item.calcType=='number'? this.jnpf.numberFormat(item.price * item.receivedQuantity,2):this.jnpf.numberFormat(item.weight * item.price,2)
           } else {
             item.totalAmount = ''
@@ -851,12 +852,21 @@ export default {
           }
           if (item.receivedQuantity && item.excludingTaxPrice) {
             // item.excludingTaxAmount = this.jnpf.numberFormat(item.receivedQuantity * item.excludingTaxPrice,2)
-            item.totalAmount = item.calcType=='number'? this.jnpf.numberFormat(item.excludingTaxPrice * item.receivedQuantity,2):this.jnpf.numberFormat(item.weight * item.excludingTaxPrice,2)
+            item.excludingTaxAmount = item.calcType=='number'? this.jnpf.numberFormat(item.excludingTaxPrice * item.receivedQuantity,2):this.jnpf.numberFormat(item.weight * item.excludingTaxPrice,2)
           } else {
             item.excludingTaxAmount = ''
           }
           if (item.price && item.receivedQuantity && item.excludingTaxAmount) {
-            item.totalAmount = item.calcType=='number'?  this.jnpf.numberFormat(item.price * item.receivedQuantity - item.excludingTaxAmount): this.jnpf.numberFormat(item.price * item.weight - item.excludingTaxAmount)
+            // ;
+              let amount;
+              
+            if(item.calcType=='number'){
+            amount=this.jnpf.numberFormat(item.price * item.receivedQuantity)
+            }else{
+              amount=this.jnpf.numberFormat(item.price * item.weight)
+
+            }
+            item.taxAmount =amount-item.excludingTaxAmount
           } else {
             item.taxAmount = ''
           }
@@ -1487,25 +1497,22 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag, data,pageFlag,mergeFlag) {
-      console.log(111,id, btnType, approvalFlag, data,pageFlag,mergeFlag);
+   
+    init(id, btnType, approvalFlag, data,pageFlag,) {
+      console.log(111,id, btnType, approvalFlag, data,pageFlag,);
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
       console.log(data, 'kk')
-      this.mergeFlag=mergeFlag
 
         if (data && data.length !== 0) {
-          data.forEach((item) => {
-            item.ordersNo = item.orderNo
-            this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
-          })
+         
           this.oldData = data
-          this.dataFormTwo.productData = data
+           this.dataFormTwo.productData=data
           this.dataForm.partnerName = data[0].cooperativePartnerName
           this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+         
         }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {

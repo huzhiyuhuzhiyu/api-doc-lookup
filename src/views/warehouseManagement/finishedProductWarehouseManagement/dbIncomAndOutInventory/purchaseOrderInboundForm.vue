@@ -1065,7 +1065,7 @@ export default {
       detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("采购明细",);
         res.data.records.forEach(item => {
-          item.num = item.waitReceiptNum || 0
+          this.$set(item,'num',item.waitReceiptNum || 0)
             //   可超收数量
           const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
           item.overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceiptNum, overchargeNum]), 6) : ''
@@ -1138,7 +1138,7 @@ export default {
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
-        item.num = item.waitReceiptNum || 0
+        this.$set(item,'num',item.waitReceiptNum || 0)
         item.taxRates = item.taxRate + "%"
         //   可超收数量
         const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
@@ -1407,7 +1407,7 @@ export default {
         // this.refeshDataFormItems()
           data.forEach((item, index) => {
             item.productDrawingNo = item.drawingNo
-            item.num = item.waitReceiptNum || 0
+            this.$set(item,'num',item.waitReceiptNum || 0)
             //   可超收数量
             const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
               console.log(overchargeNum,'overchargeNum', overchargeNum)

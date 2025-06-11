@@ -2891,7 +2891,7 @@ export default {
       console.log("this.ProductListRequestObjs", this.ProductListRequestObjs);
       this.dataForm.cooperativePartnerName = e.name
       this.dataForm.cooperativePartnerCode = e.code
-      this.dataForm.remark1 = e.remark1
+      this.$set(this.dataForm,'remark1',e.remark1)
       this.dataForm.code = e.code
       this.customerVisible = false
       if (this.dataForm.orderType != 'normal' && this.dataForm.orderType != 'urgent') {

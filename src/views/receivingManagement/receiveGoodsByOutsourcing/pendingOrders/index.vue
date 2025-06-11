@@ -107,7 +107,7 @@
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="100" fixed="right" v-if="orderForm.mergeFlag!=1">
+            <el-table-column label="操作" width="100" fixed="right" >
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -129,7 +129,6 @@
     <Detail v-if="detailVisible" ref="Detail" @refreshDataList="initData" @close="closeForm" :customList="customList" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -139,19 +138,9 @@
 <script>
 import { UserListAll } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import {
-  getsaleOrderList,
-  getsaleOrderDetailList,
-  deleteOrders,
-  getAttributeline,
-  getSaleordersTotal,
-  getOrderLineReport
-} from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import Detail from '../../../outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
 import Form from '../receivingAdvice/Form.vue'
-import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
-import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -160,7 +149,7 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 export default {
   name: 'pendingOrders',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery, Detail },
+  components: { Form, ExportForm, SuperQuery, Detail },
   mixins: [getProjectList],
   data() {
     return {
@@ -560,17 +549,14 @@ export default {
       },
 
     search() {
-      this.orderForm.mergeFlag=this.orderForm.mergeFlag==1?1:0
       this.dataFormSubmit()
     },
     mergeOrdrFun(){
-      this.orderForm.mergeFlag=1
     this.$nextTick(() => { this.$refs.dataTable.doLayout() })
     this.dataFormSubmit()
     },
     reset() {
 
-      this.orderForm.mergeFlag=0
     this.$nextTick(() => { this.$refs.dataTable.doLayout() })
     this.$nextTick(()=>{
         this.$refs['dataTable'].$refs.JNPFTable.clearSort()
@@ -612,13 +598,7 @@ export default {
       this.search()
     },
 
-    // 订单跟踪
-    orderFollow(id) {
-      this.orderFollowVisible = true
-      this.$nextTick(() => {
-        this.$refs.orderFollow.init(id)
-      })
-    },
+   
     addSupplier(id, btntype) {
       if (!this.list.length) return this.$message.error('请选择您要新建的订单')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
@@ -626,9 +606,14 @@ export default {
       let orderTypeFlag = this.hasDifferentOrderType(this.list)
       if (orderTypeFlag) return this.$message.error('只能选择相同外协订单类型的明细订单')
       console.log(this.list)
+     this.list.forEach((item) => {
+            this.$set(item, 'ordersNo', item.orderNo)
+            this.$set(item, 'receivedQuantity', item.waitReceiptNum)
+            this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum))
+          })
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse',this.orderForm.mergeFlag)
+        this.$refs.Form.init(id, btntype, false, this.list, 'outInboundWarehouse',false)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {
@@ -649,22 +634,7 @@ export default {
 
       return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          deleteOrders(id).then((res) => {
-            this.initData()
-            this.$message({
-              type: 'success',
-              message: '删除成功',
-              duration: 1500
-            })
-          })
-        })
-        .catch(() => { })
-    },
+
     handleUserRelation(id, btnType) {
       this.detailVisible = true
       this.$nextTick(() => {

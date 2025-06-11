@@ -603,7 +603,7 @@ export default {
         productCategoryId: ''
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'code', label: '工序编码', fixed: 'left' },
+        { prop: 'code', label: '工序编码', fixed: 'left',sortable:'custom', },
         { prop: 'name', label: '工序名称', fixed: 'left' },
         { prop: 'processTypeName', label: '工序类型', fixed: 'left' },
 

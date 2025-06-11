@@ -132,6 +132,8 @@ export default {
             tc.label = `${this.productName.slice(0, 4)}编码`
           } else if (tc.prop === 'name') {
             tc.label = `${this.productName.slice(0, 4)}名称`
+          } else if (tc.prop === 'drawingNo') {
+            tc.label = `${this.productName.slice(0, 4)}品名规格`
           } else if (tc.prop === 'productSource') {
             tc.label = `${this.productName.slice(0, 4)}来源`
             tc.options = [{ label: '采购', value: 'purchase' }]

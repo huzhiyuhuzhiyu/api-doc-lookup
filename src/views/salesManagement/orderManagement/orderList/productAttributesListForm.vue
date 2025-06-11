@@ -4,7 +4,7 @@
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" customKey="JNPFTableKey_934407"> 
+          <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" customKey="JNPFTableKey_934407" @sort-change="sortChange"> 
             <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  sortable="custom" min-width="140" />
             <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  sortable="custom" min-width="120" />
             <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120" />
@@ -48,6 +48,13 @@ export default {
         pageNum: 1,
         pageSize: 20,
         userId:"",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
       }, 
       total: 0,
       index:"",
@@ -65,6 +72,20 @@ export default {
     init(index){
       this.visible = true
       this.index=index
+      this.getdataFun()
+    },
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'salesName' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.orderForm.orderItems[0].asc = order === "ascending"
+      this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.getdataFun()
     },
     getdataFun(){

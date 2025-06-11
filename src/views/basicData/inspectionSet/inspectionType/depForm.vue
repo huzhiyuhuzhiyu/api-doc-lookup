@@ -343,6 +343,7 @@ export default {
         productName: '',
         productCategoryName: '',
         inspectionType: '',
+        remark:"",
         inspectionTypes: {
           code: '',
           inspectionCategory: '',

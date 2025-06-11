@@ -819,7 +819,7 @@ export default {
             console.log("res,价格配置",res);
             if(res.data){
               this.calcType=res.data.calcType
-              this.dataFormTwo.data[index].forEach(item => {
+              this.dataFormTwo.data.forEach(item => {
                 item.price=res.data.price
               });
             }
@@ -1012,7 +1012,7 @@ export default {
               console.log("res,价格配置",res);
               if(res.data){
                 this.calcType=res.data.calcType
-                this.dataFormTwo.data[index].forEach(item => {
+                this.dataFormTwo.data.forEach(item => {
                   item.price=res.data.price
                 });
               }

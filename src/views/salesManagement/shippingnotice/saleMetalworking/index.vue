@@ -512,7 +512,7 @@ export default {
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
       if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
-      this.$confirm('您确认取消选中的发货通知单吗(已备货商品需手动处理)？', this.$t('common.tipTitle'), {
+      this.$confirm('您确认取消选中的发货通知单吗？', this.$t('common.tipTitle'), {
         type: 'warning',
         customClass: 'custom-confirm',
       }).then(() => {

@@ -706,6 +706,11 @@
                     <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
+                 <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
+                  </el-form-item>
+                </el-col>
                 <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
@@ -732,6 +737,7 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_612241">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip sortable="custom"></el-table-column>
+                <el-table-column prop="name" label="产品名称" show-overflow-tooltip sortable="custom"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom"/>
                 <el-table-column prop="productCategoryName" label="所属分类" sortable="custom"/>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"

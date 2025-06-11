@@ -53,7 +53,7 @@
                     <el-radio :label="1">
                       {{ scope.row.radioOn }}
                     </el-radio>
-                 
+
                   </el-radio-group>
                 </div>
                   <div v-else-if="scope.row.configKey == 'gobal_customerContractNo'">
@@ -70,7 +70,25 @@
                       </el-radio>
                     </el-radio-group>
                   </template>
-                 
+
+                </div>
+                <div v-else-if="scope.row.configKey === 'included_tax_flag'">
+                  <template >
+                    <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
+                        <el-radio :label="2" style="margin-bottom: 7px;">
+                            {{ scope.row.radioAll}}
+                        </el-radio>
+                        <el-radio :label="1" style="margin-bottom: 7px;">
+                            {{ scope.row.radioOn }}
+                        </el-radio>
+                      <el-radio :label="0" style="margin-bottom: 7px;">
+                        {{ scope.row.radioOff }}
+                      </el-radio>
+
+
+                    </el-radio-group>
+                  </template>
+
                 </div>
                 <div v-else>
                   <template v-if="scope.row.configKey == 'auto_material' || scope.row.configKey == 'web_cache_way'||scope.row.configKey == 'task_process_selection'">
@@ -257,6 +275,9 @@ export default {
           width = 290
         }
         if (['packaging'].includes(item.configKey)) {
+          width = 340
+        }
+        if (['included_tax_flag'].includes(item.configKey)) {
           width = 340
         }
         // if (flag) {
@@ -489,6 +510,12 @@ export default {
             list = res.data.return
           } else if (this.activeName === 'customersupplier') {
             list = res.data.customersupplier
+              list.forEach(item => {
+                  if(item.configKey !== 'included_tax_flag'){
+
+                      item.configKey = `${item.configValue2}_${item.configKey}`
+                  }
+              })
           } else if (this.activeName === 'deputyUnit') {
             list = res.data.deputyUnit
           } else if (this.activeName === 'maintenance') {
@@ -562,6 +589,11 @@ export default {
             }else if (item.configKey === 'gobal_customerContractNo') {
               item.radioOff = '在明细列表显示'
               item.radioOn = '在主表显示'
+              item.radioAll = '都显示'
+              console.log("item",item.radio);
+            }else if (item.configKey === 'included_tax_flag') {
+              item.radioOff = '显示不含税'
+              item.radioOn = '显示含税'
               item.radioAll = '都显示'
               console.log("item",item.radio);
             }

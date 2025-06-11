@@ -26,7 +26,7 @@
                       </el-form-item>
                     </el-col>
 
-                   
+
                   </el-row>
                 </el-form>
               </el-collapse-item>
@@ -55,7 +55,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="customerProductName" label=" 客户产品名称" min-width="160">
-                  
+
                       <template slot-scope="scope">
                         <el-form-item  >
                           <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType == 'look'">
@@ -95,7 +95,7 @@
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
 
-                    <el-table-column prop="price" label="单价(含税)" width="120">
+                    <el-table-column prop="price" label="单价(含税)" width="120"  v-if="btnType === 'look' ? ['2','1'].includes(includedTaxFlagConfig) : true">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
                       </template>
@@ -124,7 +124,7 @@
                       </template>
 
                     </el-table-column>
-                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
+                    <el-table-column  v-if="btnType === 'look' ? ['2','0'].includes(includedTaxFlagConfig) : true" prop="excludingTaxPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
                     <!-- <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                     </el-table-column> -->
@@ -312,7 +312,7 @@
                     <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick" :isdisabled="btnType === 'look'" />
                   </el-form-item>
                 </el-col>
-           
+
               </el-row>
             </el-form>
           </el-collapse-item>
@@ -341,7 +341,7 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="customerProductName" label=" 客户产品名称" min-width="160">
-                  
+
                   <template slot-scope="scope">
                     <el-form-item  >
                       <el-input   v-model="scope.row.customerProductName" placeholder="请输入" :disabled="btnType == 'look'">
@@ -397,7 +397,7 @@
                     </template>
                   </el-table-column> -->
 
-                <el-table-column prop="price" label="单价(含税)" width="120">
+                <el-table-column prop="price" label="单价(含税)" width="120" v-if="btnType === 'look' ? ['2','1'].includes(includedTaxFlagConfig) : true">
                   <template slot="header">
                     <span class="required">*</span>单价(含税)
                   </template>
@@ -428,7 +428,7 @@
                   </template>
 
                 </el-table-column>
-                <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
+                <el-table-column v-if="btnType === 'look' ? ['2','0'].includes(includedTaxFlagConfig) : true" prop="excludingTaxPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
                 </el-table-column>
                 <!-- <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                 </el-table-column> -->
@@ -863,7 +863,7 @@ export default {
       dataForm: {
         partnerType: "customer",
         cooperativePartnerId: '',
-        cooperativePartnerIdText: '', 
+        cooperativePartnerIdText: '',
       },
       taxRateList: [],
       pickerOptions: {
@@ -874,7 +874,7 @@ export default {
       selectRows: [],
       taxRate: '13', // 默认税率
       dataRule: {
-        cooperativePartnerIdText: [{ required: true, message: '客户不能为空', trigger: 'change' }], 
+        cooperativePartnerIdText: [{ required: true, message: '客户不能为空', trigger: 'change' }],
       },
       productRules: {
 
@@ -1011,6 +1011,7 @@ export default {
       row: null,
       switchlist: true,
       isPairingModeSwitch: '', // 配对方式显示隐藏
+      includedTaxFlagConfig:null
     }
   },
   computed: {
@@ -1029,7 +1030,14 @@ export default {
     window.onresize = null
   },
   async created() {
+      let obj = {
+          businessCode: 'customersupplier',
+          configKey: 'included_tax_flag'
+      }
+     const config = await getBimBusinessDetail(obj)
+     this.includedTaxFlagConfig = String(config.data.configValue1) || null
     await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
+     console.log(this.includedTaxFlagConfig,'config')
   },
   async mounted() {
     try {
@@ -1908,12 +1916,12 @@ export default {
       } catch (error) {
       }
     },
-  
-    formatDate(date) {  
-      const year = date.getFullYear();  
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始  
-      const day = String(date.getDate()).padStart(2, '0');  
-      return `${year}-${month}-${day}`;  
+
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     },
     init(row, btnType, approvalFlag) {
       console.log("btntyoe",btnType);
@@ -1921,7 +1929,7 @@ export default {
       this.row = row ? { ...row, productDrawingNo: row.drawingNo, cooperativePartnerIdText: row.partnerName,taxRate:row.taxRate*1 } || '' : ''
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
-      this.getProject() 
+      this.getProject()
       this.approvalFlag = approvalFlag
       this.btnType = btnType
 
@@ -1929,7 +1937,7 @@ export default {
       this.status = false
       if (this.btnType == 'add') {
         let obj = JSON.parse(JSON.stringify(this.createdData))
-        this.dataFormTwo.lines.push(obj) 
+        this.dataFormTwo.lines.push(obj)
 
       } else {
         getcooperativeproductInfo(row.id).then(res => {
@@ -1950,7 +1958,7 @@ export default {
             })
           }
         })
-        this.row.taxRate=this.row.taxRate*1 
+        this.row.taxRate=this.row.taxRate*1
         this.dataFormTwo.lines.push(this.row)
         console.log(this.dataFormTwo.lines,'this.dataFormTwo.lines12')
       }
@@ -2033,7 +2041,7 @@ export default {
         this.btnLoading = true
         this.dataForm.totalAmount = Number(this.dataForm.totalAmount = 0)
         this.dataForm.totalAmount = this.totalPrice
-     
+
         console.log(this.datafilelist,';this.datafilelist1')
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -2046,13 +2054,13 @@ export default {
           })
         }
         console.log(this.datafilelist,'this.datafilelist2')
-        
+
         let filteredArr = this.dataFormTwo.lines.filter(item => item.productDrawingNo && item.productsId);
         console.log(filteredArr,'filteredArr')
         let obj = {
           attachmentList: this.datafilelist,
           // sale: this.dataForm,
-          cooperativePartnerId: this.dataForm.cooperativePartnerId, 
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
           dateOrderStop: this.dataForm.dateOrderStop,
           list: filteredArr,
           // flowData: this.flowData
@@ -2063,7 +2071,7 @@ export default {
           attachmentList: this.datafilelist,
           // sale: this.dataForm,
           id: this.dataForm.id,
-          cooperativePartnerId: this.dataForm.cooperativePartnerId, 
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
           dateOrderStop: this.dataForm.dateOrderStop,
           // list: filteredArr,
           // flowData: this.flowData

@@ -232,7 +232,7 @@
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'"
-                :editDisabled="scope.row.documentStatus == 'submit' || scope.row.documentStatus == 'back'"
+                :editDisabled="scope.row.documentStatus == 'submit' "
                 @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
 
 
@@ -421,7 +421,7 @@ export default {
       saleOutboundFormVisible: false,
       externalInboundFormVisible: false,
 
-      columnList: ["partnerCode", "inspectionResults", "documentStatus", "remark", "createByName", 'sourceType'],
+      columnList: ["partnerCode", "inspectionResults",  "remark", "createByName", 'sourceType'],
 
       exportFormVisible: false,
       visible: false,

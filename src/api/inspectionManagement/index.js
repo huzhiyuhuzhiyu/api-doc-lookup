@@ -191,3 +191,14 @@ export function inspectorReport(data) {
     data
   })
 }
+
+
+// 检验单——撤回
+
+export function inspectionRevoke(data) {
+  return request({
+    url: `/api/wms/qc/inspection/revoke`,
+    method: 'POST',
+    data
+  })
+}

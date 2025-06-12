@@ -41,3 +41,17 @@ export function reportPackageWork(data){
         data
     })
 }
+
+// 关闭计划
+
+export function closeProducePlan(data){
+    return request({
+        url:'/api/zgt/prod/plan/close',
+        method:'post',
+        data
+    })
+}
+
+
+
+

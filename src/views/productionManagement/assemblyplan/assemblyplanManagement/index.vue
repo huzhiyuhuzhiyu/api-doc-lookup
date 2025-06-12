@@ -128,8 +128,8 @@
                   @click="addition(scope.row)">编排</el-button>
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="planSchedule(scope.row)">计划进度</el-button> -->
-                <el-button size="mini" type="text" 
-                  @click="viewDetailFun(scope.row)">查看详情</el-button>
+                <el-button size="mini" type="text" v-if="isBOOS"  @click="coseFun(scope.row.id)" class="JNPF-table-delBtn">关闭</el-button>
+                <el-button size="mini" type="text"  @click="viewDetailFun(scope.row)">查看详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -174,7 +174,7 @@
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getProductionPlanList,planImport } from '@/api/productionManagement/index'
+import { getProductionPlanList,planImport,closeProducePlan } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import PlanSchedule from './planSchedule.vue'
 import { excelExport, getOrderFiledMap, } from '@/api/basicData/index'
@@ -188,10 +188,11 @@ import {
   getbimProductAttributesList, getbimProductAttributes, getbimProductAttributesListMap
 } from "@/api/masterDataManagement/index";
 import TaskForm from './taskFormCopy.vue'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   name: 'assemblyplanManagementSS',
   components: { Form, SuperQuery, ExportForm,TaskForm, PlanSchedule,PrintDialog2,PrintBrowse2 },
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
   data() {
     return {
       superQuery: {},
@@ -236,6 +237,7 @@ export default {
           column: "create_time"
         }],
         classAttribute: "finish_product",
+        documentStatus:'submit',
       },
       urgentFlagList: [
         { label: "是", value: true },
@@ -384,6 +386,20 @@ export default {
   mounted() {
   },
   methods: {
+    coseFun(id){
+      let ids=[]
+      ids.push(id)
+      this.$confirm("您确定关闭当前计划吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        closeProducePlan(ids).then(res => {
+          this.$message.success('关闭成功')
+          this.search('basic')
+        })
+      }).catch(() => {
+
+      })
+    },
     // 配对方式显示隐藏
     async getPairingModeSwitch(code, type) {
       try {

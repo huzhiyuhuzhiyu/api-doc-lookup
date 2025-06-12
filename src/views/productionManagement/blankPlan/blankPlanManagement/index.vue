@@ -115,8 +115,8 @@
                   @click="addition(scope.row)">编排</el-button>
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="planSchedule(scope.row)">计划进度</el-button> -->
-                <el-button size="mini" type="text" 
-                  @click="viewDetailFun(scope.row)">查看详情</el-button>
+                <el-button size="mini" type="text"  @click="viewDetailFun(scope.row)">查看详情</el-button>
+                <el-button size="mini" type="text" v-if="isBOOS"  @click="coseFun(scope.row.id)" class="JNPF-table-delBtn">关闭</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -161,7 +161,7 @@
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getProductionPlanList, planImport } from '@/api/productionManagement/index'
+import { getProductionPlanList, planImport,closeProducePlan } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import PlanSchedule from './planSchedule.vue'
@@ -174,10 +174,11 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import TaskForm from '../../assemblyplan/assemblyplanManagement/taskFormCopy.vue'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   name: 'blankPlanManagement',
   components: { Form, SuperQuery, ExportForm,TaskForm, PlanSchedule,PrintDialog2,PrintBrowse2 },
-  mixins: [getProjectList],
+  mixins: [getProjectList,tenantMinix],
   data() {
     return {
       selectArr: [],
@@ -229,6 +230,8 @@ export default {
           column: "create_time"
         }],
         classAttribute: "raw_material",
+        documentStatus:'submit',
+
       },
       urgentFlagList: [
         { label: "是", value: true },
@@ -338,6 +341,20 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    coseFun(id){
+      let ids=[]
+      ids.push(id)
+      this.$confirm("您确定关闭当前计划吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        closeProducePlan(ids).then(res => {
+          this.$message.success('关闭成功')
+          this.search('basic')
+        })
+      }).catch(() => {
+
+      })
+    },
     printWarehouse2(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {

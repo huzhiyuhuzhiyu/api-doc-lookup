@@ -89,9 +89,9 @@
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
 
-                <el-table-column prop="price" min-width="140" label="销售单价(含税)" />
-                <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
-       
+                <el-table-column prop="price" min-width="140" label="销售单价(含税)" v-if="['2','1'].includes(includedTaxFlagConfig)" />
+                <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" v-if="['2','0'].includes(includedTaxFlagConfig)" />
+
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
                   v-if="sealingCoverTypingFlag == 1" />
                 <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
@@ -181,7 +181,13 @@
 
 <script>
 import { getQuotationLists, deleteQuotationData, getQuotationmxLists, exportSaleQuotation } from '@/api/salesManagement/index'
-import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData,delPartnerOrProductData } from '@/api/basicData/index'
+import {
+    getBimVehicleTypeData,
+    deleteBimVehicleType,
+    getPartnerOrProductData,
+    delPartnerOrProductData,
+    getBimBusinessDetail
+} from '@/api/basicData/index'
 import { excelExport, addPartnerOrProductData, importCustomerProduct, getOrderFiledMap } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -297,7 +303,7 @@ export default {
           type: 'custom',
         },
 
- 
+
 
 
         {
@@ -400,7 +406,7 @@ export default {
       enCode: "",
       printVisible: false,
       printBrowseVisible: false,
-
+      includedTaxFlagConfig:null
     }
   },
   computed: {
@@ -412,7 +418,12 @@ export default {
   async created() {
     await this.getProductClassFun()
     await this.getOrderFiledMap()
-
+      let obj = {
+          businessCode: 'customersupplier',
+          configKey: 'included_tax_flag'
+      }
+      const config = await getBimBusinessDetail(obj)
+      this.includedTaxFlagConfig = String(config.data.configValue1) || null
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
     await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
@@ -495,7 +506,7 @@ export default {
           type: 'input'
         })
       }
-    
+
       let classIndex = superQuery.findIndex((obj) => obj.prop === 'remark')
       console.log("clas", classIndex);
 
@@ -789,7 +800,7 @@ export default {
       this.jnpf.downloadFile(res.url, res.name)
     },
     seniorFun() {
-   
+
         console.log("this.superQueryJson1", this.superQueryJson1);
         this.advancedQueryFun(this.superQueryJson1, true)
         this.superQueryJson = this.superQueryJson1
@@ -863,7 +874,7 @@ export default {
         }).catch(() => { })
       }
     },
-   
+
     sortChange({ prop, order }) {
       console.log(prop);
       // let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -881,7 +892,7 @@ export default {
         this.listQuery.orderItems[0].asc = order !== 'descending'
         this.listQuery.orderItems[0].column = order === null ? "" : newProp
         this.superForm = this.listQuery
- 
+
 
 
       this.initData()
@@ -927,12 +938,12 @@ export default {
           let item = this.listQuery[key]
           this.listQuery[key] = typeof item === 'string' ? item.trim() : item
         })
-  
+
       // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
-          condition: this.searchList 
+          condition: this.searchList
             .filter((item) => item.fieldValue)
             .map((item) => {
               return {
@@ -990,7 +1001,7 @@ export default {
 
 
         }
- 
+
 
     },
     addSupplier(row, type) {

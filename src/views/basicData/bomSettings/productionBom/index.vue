@@ -97,7 +97,7 @@
           </div>
         </div>
         <JNPF-table v-if="tableDataFlag" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
-          fixedNO  :element-loading-text="loadingText"
+            :element-loading-text="loadingText"
           :setColumnDisplayList="columnList">
           <el-table-column prop="projectName" label="所属项目"   v-if="isProjectSwitch === '1'"></el-table-column>
           <el-table-column prop="productCode" label="产品编码"  sortable="custom">

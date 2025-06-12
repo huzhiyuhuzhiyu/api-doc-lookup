@@ -65,9 +65,9 @@
         @change="item.hasOwnProperty('change') ? item.change($event) : ''" />
 
       <!-- 日期区间选择器 -->
-      <el-date-picker v-else-if="item.type === 'date_interval'" type="daterange" value-format="yyyy-MM-dd" v-bind="$attrs"
+      <el-date-picker style="width: 100%;"  v-else-if="item.type === 'date_interval'" type="daterange" value-format="yyyy-MM-dd" v-bind="$attrs"
         :start-placeholder="item.startPlaceholder || '请选择开始日期'" :end-placeholder="item.endPlaceholder || '请选择结束日期'"
-        v-on="$listeners" :picker-options="data.dataPickerOptions" :disabled="readOnly"
+        v-on="$listeners"  :disabled="readOnly"
         :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
         @input="item.hasOwnProperty('input') ? item.input($event) : ''"
         @change="item.hasOwnProperty('change') ? item.change($event) : ''" />

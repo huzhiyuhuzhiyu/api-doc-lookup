@@ -42,6 +42,22 @@ export function reportPackageWork(data){
     })
 }
 
+export function addSteelPlan(data){
+    return request({
+        url:'/api/zgt/prod/plan/steelBall/add',
+        method:'post',
+        data
+    })
+}
+export function batchArrangeSteelPlan(data){
+    return request({
+        url:'/api/zgt/prod/plan/steelBall/arrange',
+        method:'post',
+        data
+    })
+}
+
+
 // 关闭计划
 
 export function closeProducePlan(data){

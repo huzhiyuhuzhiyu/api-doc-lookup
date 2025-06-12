@@ -85,7 +85,7 @@
                               </el-select>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="isZY ? 6 : 12" :xs="24">
+                            <el-col :sm="12" :xs="24">
                                 <el-form-item label="备注" prop="remark">
                                     <el-input v-model="dataForm.remark" placeholder="请输入备注"
                                               :disabled="btnType == 'look' ? true : false" type="textarea" :rows="isZY ? 1 : 2"
@@ -93,10 +93,10 @@
                                 </el-form-item>
                             </el-col>
 <!--                            <template v-for="item in 1">-->
-                                <el-col :sm="24" :xs="24"  v-if="isZY">
+                                <el-col :sm="12" :xs="24"  v-if="isZY">
                                     <el-form-item label="出货细节" prop="ordersRemark1">
                                         <el-input class="zyRemark1"  v-model="dataForm['ordersRemark1']" placeholder="请输入出货细节"
-                                                  :disabled="btnType === 'look'" type="textarea" :rows="3" maxlength="200" />
+                                                  :disabled="btnType === 'look'" type="textarea" :rows="4" maxlength="200" />
                                     </el-form-item>
                                 </el-col>
 <!--                            </template>-->
@@ -346,7 +346,7 @@
                                 style="width: 100%;" placeholder="请选择单据日期"></el-date-picker>
                             </el-form-item>
                           </el-col>
-                            <el-col :sm="isZY ? 6 : 12" :xs="24">
+                            <el-col :sm="12" :xs="24">
                                 <el-form-item label="备注" prop="remark">
                                     <el-input v-model="dataForm.remark" placeholder="请输入备注"
                                               :disabled="btnType == 'look' ? true : false" type="textarea" :rows="isZY ? 1 : 2"
@@ -354,10 +354,10 @@
                                 </el-form-item>
                             </el-col>
                             <!--                            <template v-for="item in 1">-->
-                            <el-col :sm="24" :xs="24"  v-if="isZY">
+                            <el-col :sm="12" :xs="24"  v-if="isZY">
                                 <el-form-item label="出货细节" prop="ordersRemark1">
                                     <el-input class="zyRemark1"  v-model="dataForm['ordersRemark1']" placeholder="请输入出货细节"
-                                              :disabled="btnType === 'look'" type="textarea" :rows="3" maxlength="200" />
+                                              :disabled="btnType === 'look'" type="textarea" :rows="4" maxlength="200" />
                                 </el-form-item>
                             </el-col>
                             <!--                            </template>-->

@@ -746,7 +746,7 @@ export default {
         // 明细列表
         inboundAndOutboundLine(type, id) {
             this.lineVisible = true
-            this.inboundAndOutboundQuery.documentType = type
+            this.inboundAndOutboundQuery.documentType = ""
             this.inboundAndOutboundQuery.balanceId = id 
             this.$nextTick(() => {
                 this.$refs.lineForm.getData()

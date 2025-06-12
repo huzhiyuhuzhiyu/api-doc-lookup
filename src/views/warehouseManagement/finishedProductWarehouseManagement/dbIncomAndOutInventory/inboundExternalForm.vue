@@ -888,9 +888,9 @@ export default {
       // this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
 
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
-      this.$set(this.productData[index], 'discount', data.discount)
-      this.$set(this.productData[index], 'proportion', data.proportion)
-      this.$set(this.productData[index], 'weight', data.weight)
+      this.$set(this.productData[index], 'discount',  this.productData[index].discount?this.productData[index].discount:data.discount)
+      this.$set(this.productData[index], 'proportion', this.productData[index].proportion?this.productData[index].proportion:data.proportion  )
+      this.$set(this.productData[index], 'weight', this.productData[index].weight?this.productData[index].weight:data.weight)
     },
     // 打开选择库位弹框
     openSeleceWareDialog(row, index, type) {
@@ -1333,6 +1333,7 @@ export default {
               item.ordersId = item.purchaseOrderId
               item.noticeId = item.purchaseReceiptReturnGoodsId
               item.noticeLineId = item.id
+           
               item.costPrice = item.price
               item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
@@ -1434,6 +1435,11 @@ export default {
             let totalNum = {};
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
+                  if (item.notificationType == "external") {
+              item.processId = ""
+              item.processName = ""
+              item.processCode = ""
+            }
               if (!item.num) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空或为0")

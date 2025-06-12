@@ -40,6 +40,8 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
+                <el-button    :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="iconfont-menu  icon-chehui" @click="withdrawFun" v-if="pageData.type=='procure'">撤回</el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
@@ -60,7 +62,7 @@
             </div>
           </div>
           <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_139872">
+            custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_139872" :hasC="pageData.type=='procure'" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -136,7 +138,7 @@
 </template>
 
 <script>
-import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
+import { getInspectionList, deleteInspectionData, getInspectionLinesList,inspectionRevoke } from '@/api/inspectionManagement/index' // 检验单
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import Form from './defectiveProductHandlingForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
@@ -300,7 +302,8 @@ export default {
       linesTableData: [],
       linesQuery: {},
       exportFormVisible: false,
-      linesTotal: 0
+      linesTotal: 0,
+      selectArr:[],
     }
   },
   async created() {
@@ -337,6 +340,24 @@ export default {
     }
   },
   methods: {
+    handleSelectionChange(val){
+      this.selectArr=val
+    },
+    withdrawFun(){
+      if(!this.selectArr.length) return this.$message.error("请选择你要撤回的数据")
+      // if(this.selectArr.length>1) return this.$message.error("只支持单条数据撤回")
+      const ids = this.selectArr.map(item => item.id);
+      this.$confirm("您确定撤回所选的数据吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        inspectionRevoke(ids).then(res => {
+          this.$message.success('撤回成功')
+          this.initData()
+        })
+      }).catch(() => {
+
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

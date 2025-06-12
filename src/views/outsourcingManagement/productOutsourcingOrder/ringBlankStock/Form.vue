@@ -779,7 +779,7 @@ export default {
             item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.calcType=='number'?this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice,2):this.jnpf.numberFormat(item.weight * item.price,2)
+            item.excludingTaxAmount = this.calcType=='number'?this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice,2):this.jnpf.numberFormat(item.weight * item.excludingTaxPrice,2)
           } else {
             item.excludingTaxAmount = ''
           }

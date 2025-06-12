@@ -51,6 +51,10 @@
               <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
                 编排
               </el-button> -->
+              <el-button v-has="'btn_steelPlan'" size="mini" type="primary" icon="el-icon-plus" @click.native="addSteelPlan()">
+                新建钢球计划
+              </el-button>
+
               <el-button type="primary" size="mini" icon="iconfont-menu  icon-piliangdayin" style="margin-left: 8px;"
               @click="batchPrint">批量打印</el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="importFun('dataTable')">
@@ -80,7 +84,7 @@
             @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList" hasC @selection-change="selectFun"  customKey="JNPFTableKey_274404">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom" 
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="120" sortable="custom"
               v-if="$store.getters.configData.produce.production_related_customers" />
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productsName" label="产品名称" sortable="custom" width="160"
@@ -115,7 +119,9 @@
                   @click="addition(scope.row)">编排</el-button>
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="planSchedule(scope.row)">计划进度</el-button> -->
-                <el-button size="mini" type="text" 
+                <el-button size="mini" type="text" v-has="'btn_batchArrange'"
+                  @click="batchAddArrange(scope.row)">批量编排</el-button>
+                <el-button size="mini" type="text"
                   @click="viewDetailFun(scope.row)">查看详情</el-button>
               </template>
             </el-table-column>
@@ -154,6 +160,8 @@
     <PrintDialog2 :visible.sync="printVisible2" @closePrint="closePrint2" @printSubmit="printWarehouse2"
       :printQuery="printQuery2" :enCode="enCode2" ref="printTemplate2" append-to-body />
     <print-browse2 :visible.sync="printBrowseVisible2" :id="prindId2" :formId="formId2" ref="printForm" />
+    <SteelForm v-if="steelFormVisible" ref="steelForm"  @close="closeForm" />
+    <BatchArrangeForm v-if="batchArrangeVisible" ref="batchArrangeForm" @close="closeForm" />
   </div>
 </template>
 
@@ -174,13 +182,16 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import TaskForm from '../../assemblyplan/assemblyplanManagement/taskFormCopy.vue'
+import SteelForm from '@/views/productionManagement/ringPlan/ringPlanManagement/steelForm.vue'
+import BatchArrangeForm from '@/views/productionManagement/ringPlan/ringPlanManagement/batchArrangeForm.vue'
 export default {
   name: 'assemblyplanManagement',
-  components: { Form, SuperQuery, ExportForm,TaskForm, PlanSchedule,PrintDialog2,PrintBrowse2 },
+  components: { BatchArrangeForm, SteelForm, Form, SuperQuery, ExportForm,TaskForm, PlanSchedule,PrintDialog2,PrintBrowse2 },
   mixins: [getProjectList],
   data() {
     return {
-      selectArr: [],
+      steelFormVisible:false,
+      batchArrangeVisible:false,
       prindId2: '',
       formId2: '',
       enCode2: "",
@@ -358,9 +369,9 @@ export default {
     },
     batchPrint() {
       if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
-      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项  
+      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项
 
-      this.fullName2 = "未排产单" // 筛选出 businessType 等于 type 的项  
+      this.fullName2 = "未排产单" // 筛选出 businessType 等于 type 的项
       this.printVisible2 = true
       this.$nextTick(() => {
         console.log(345345);
@@ -510,6 +521,8 @@ export default {
       this.formVisible = false
       this.planScheduleVisible = false
       this.taskFormVisible = false
+      this.steelFormVisible = false
+      this.batchArrangeVisible = false
       this.selectArr = []
       this.search('super')
 
@@ -604,7 +617,20 @@ export default {
         if (!res.data.url) return
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
-    }
+    },
+    addSteelPlan(){
+        this.steelFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.steelForm.init('', 'add')
+        })
+    },
+    batchAddArrange(row){
+        const batchArrange = Array.from({length:10}, () => ({...row,orderNo:''}))
+        this.batchArrangeVisible = true
+        this.$nextTick(() => {
+          this.$refs.batchArrangeForm.init(batchArrange)
+        })
+    },
   }
 }
 </script>

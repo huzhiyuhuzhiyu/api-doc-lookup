@@ -62,13 +62,15 @@ export default {
                         },
                         { required:true,trigger:'blur'},
                     ],
+                    input: (val, scope) => {
+                        this.handleOrderNoInput(val, scope);
+                    }
                 },
                 { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'productDrawingNo', label: '品名规格', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'productionBarrels', label: '生产桶数', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'productionWeight', label: '生产重量（kg）', value: '', type: 'view', minWidth: 160 ,},
-                { prop: 'productionQuantity', label: '生产数量（万粒）', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'productionQuantity', label: '生产数量（万粒）', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'taskMethod', label: '编排任务方式', value: '', type: 'select',disabled:true,options:[{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" }], minWidth: 160 ,},
                 { prop: 'planStartDate', label: '计划生产开始日期', value: '', type: 'view', minWidth: 180 ,},
@@ -145,6 +147,51 @@ export default {
                 }).catch((err)=>{this.btnLoading = false})
             }
 
+        },
+        // 处理生产任务单号输入，实现自动递增
+        handleOrderNoInput(val, scope) {
+            if (!val || !val.trim()) return;
+
+            const currentIndex = scope.$index;
+            const currentOrderNo = val.trim();
+
+            // 只有在第一行输入时才触发自动递增
+            if (currentIndex === 0) {
+                this.autoIncrementOrderNo(currentOrderNo);
+            }
+        },
+
+        // 自动递增任务单号
+        autoIncrementOrderNo(baseOrderNo) {
+            // 提取数字部分（假设任务单号末尾是数字）
+            const numberMatch = baseOrderNo.match(/(\d+)$/);
+
+            if (!numberMatch) {
+                console.warn('任务单号格式不正确，无法自动递增');
+                return;
+            }
+
+            const prefix = baseOrderNo.substring(0, numberMatch.index);
+            const startNumber = parseInt(numberMatch[1]);
+            const numberLength = numberMatch[1].length; // 保持原有的数字位数
+
+            // 为后续行生成递增的任务单号
+            this.linesList.forEach((item, index) => {
+                if (index === 0) {
+                    // 第一行保持用户输入的值
+                    item.orderNo = baseOrderNo;
+                } else {
+                    // 后续行自动递增
+                    const newNumber = startNumber + index;
+                    const paddedNumber = newNumber.toString().padStart(numberLength, '0');
+                    item.orderNo = prefix + paddedNumber;
+                }
+            });
+
+            // 强制更新表格显示
+            this.$nextTick(() => {
+                this.$refs.tableForm.setDefaultValue();
+            });
         },
     },
 };

@@ -1375,7 +1375,7 @@ export default {
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null
-           if(this.currentProcess.firstFlag&&this.currentProcess.pickingWay=='production_order'&&this.$store.getters.configData.produce.work_exceed_report){
+           if(this.currentProcess.pickingWay=='production_order'&&this.$store.getters.configData.produce.work_exceed_report){
      
                  let totalNum=this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.waitReportNum, this.overChargeNum]), 6)
               if (this.totalReportNum > totalNum) {

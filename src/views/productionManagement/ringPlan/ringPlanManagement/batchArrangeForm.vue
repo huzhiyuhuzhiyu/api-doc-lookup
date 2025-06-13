@@ -83,6 +83,26 @@ export default {
                         this.handleOrderNoInput(val, scope);
                     }
                 },
+                { prop: 'wireHeatNumber', label: '钢丝炉号', value: '', type: 'input', minWidth: 160 ,
+                    input: (val, scope) => {
+                        this.handleWireHeatNumberInput(val, scope);
+                    }
+                },
+                { prop: 'rawStockMill', label: '原材料厂家', value: '', type: 'select',options:this.bimProductAttributesList['pa027'].map(item=>{
+                        return {
+                            ...item,
+                            label:item.name,
+                            value:item.name,
+                        }
+                    }), minWidth: 160 ,
+                    change: (val, scope) => {
+                        if (scope.$index === 0){
+                            this.linesList.forEach(item=>{
+                                item.rawStockMill = val
+                            })
+                        }
+                    }
+                },
                 { prop: 'productsDrawingNo', label: '品名规格', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'productionBarrels', label: '生产桶数', value: '1', type: 'input', minWidth: 120 ,itemRules: [
@@ -144,26 +164,7 @@ export default {
                             value:item.name,
                         }
                     }), minWidth: 160 ,},
-                { prop: 'wireHeatNumber', label: '钢丝炉号', value: '', type: 'input', minWidth: 160 ,
-                    input: (val, scope) => {
-                        this.handleWireHeatNumberInput(val, scope);
-                    }
-                },
-                { prop: 'rawStockMill', label: '原材料厂家', value: '', type: 'select',options:this.bimProductAttributesList['pa027'].map(item=>{
-                        return {
-                            ...item,
-                            label:item.name,
-                            value:item.name,
-                        }
-                    }), minWidth: 160 ,
-                    change: (val, scope) => {
-                        if (scope.$index === 0){
-                            this.linesList.forEach(item=>{
-                                item.rawStockMill = val
-                            })
-                        }
-                    }
-                },
+
                 { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 160 ,maxlength:200 },
 
             ]

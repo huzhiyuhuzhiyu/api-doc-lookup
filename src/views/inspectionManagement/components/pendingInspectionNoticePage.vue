@@ -282,6 +282,7 @@ export default {
         businessCode: this.pageData.businessCode,
         inspectionResults: 'unqualified',
         processingStatus: 'untreated',
+        documentStatus:'submit',
         orderItems: [
           {
             asc: false,

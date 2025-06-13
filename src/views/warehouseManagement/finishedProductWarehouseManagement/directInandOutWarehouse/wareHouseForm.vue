@@ -136,7 +136,7 @@ export default {
             column: ''
           }
         ],
-        warehouseId: ''
+        warehouseId: this.tableQuery.warehouseId
       },
         this.initData(this.tableQuery.warehouseId)
     },

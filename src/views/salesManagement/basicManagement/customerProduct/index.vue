@@ -6,7 +6,7 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent ref="latestpriceRef">
                 <template v-for="item in searchList">
-                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                  <el-col :span="item.searchType === 3 ? 6 : 4" v-if="item.hasOwnProperty('render') ? item.render : true">
                     <el-form-item>
                       <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
                         clearable @keyup.enter.native="search('basic')" />
@@ -23,7 +23,14 @@
                     </el-form-item>
                   </el-col>
                 </template>
-
+                <el-col :span="4" v-if="isZY">
+                  <el-form-item>
+                      <el-select v-model="listQuery.zeroTaxFlag" placeholder="切换含税不含税">
+                          <el-option v-for="(item2, index2) in global.booleanOptions" :key="index2" :label="item2.label"
+                                     :value="item2.value"></el-option>
+                      </el-select>
+                  </el-form-item>
+                </el-col>
 
 
                 <el-col :span="6">
@@ -89,8 +96,8 @@
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
 
-                <el-table-column prop="price" min-width="140" label="销售单价(含税)" v-if="['2','1'].includes(includedTaxFlagConfig)" />
-                <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" v-if="['2','0'].includes(includedTaxFlagConfig)" />
+                <el-table-column prop="price" min-width="140" label="销售单价(含税)"  />
+                <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
 
                 <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
                   v-if="sealingCoverTypingFlag == 1" />
@@ -203,9 +210,11 @@ import {
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import { getPrintBusInfo } from '@/api/system/printDev'
+import global from '@/utils/global'
+import TenantMinix from '@/mixins/generator/TenantMinix'
 export default {
   name: 'customerProduct',
-  mixins: [getProjectList],
+  mixins: [getProjectList,TenantMinix],
 
   components: { ExportForm, SuperQuery, CustomerForm, Form, FinshForm, DepForm,PrintBrowse,
     PrintDialog, },
@@ -250,7 +259,7 @@ export default {
         drawingNo: "",
         partnerName: "",
           historyFlag: false,
-
+          zeroTaxFlag:false,
 
 
         pageNum: 1,
@@ -980,12 +989,12 @@ export default {
           pageSize: 20,
           code: "",
           name: "",
+          zeroTaxFlag:false,
         }
           this.searchList = [
             { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
             { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
             { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-
           ]
         if (this.isProductNameSwitch === '1') {
           this.superQueryJson.splice(4, 0, {

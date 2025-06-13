@@ -40,8 +40,8 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
-                <!-- <el-button    :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="iconfont-menu  icon-chehui" @click="withdrawFun" v-if="pageData.type=='procure'">撤回</el-button> -->
+                <el-button    :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="iconfont-menu  icon-chehui" @click="withdrawFun" v-if="pageData.type=='procure'">撤回</el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
@@ -62,7 +62,7 @@
             </div>
           </div>
           <!-- :hasC="pageData.type=='procure'"  -->
-          <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" :hasC="pageData.type=='procure'" :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_139872" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
               <template slot-scope="scope">

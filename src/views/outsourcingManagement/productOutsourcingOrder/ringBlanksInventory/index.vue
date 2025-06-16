@@ -207,6 +207,7 @@ export default {
         pageSize: 20,
         startTime: '',
         ringBlankQueryFlag: 1,
+        excludeProcessFlag:1,
         orderItems: [
           {
             asc: false,
@@ -424,6 +425,7 @@ export default {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
+        excludeProcessFlag:1,
         approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
         cooperativePartnerCode: '', //供应商编码
         cooperativePartnerName: '', // 	供应商名称

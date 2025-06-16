@@ -459,7 +459,7 @@
                   </el-form>
                 </el-row>
                 <div class="JNPF-common-layout-main JNPF-flex-main">
-                  <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC @sort-change="sortChange2"
+                  <JNPF-table v-loading="listLoading" :data="productList" @row-click="seleceCustomerProduct" hasC @sort-change="sortChange2"
                     @selection-change="handleSelectionChangeAllPruduct" customKey="JNPFTableKey_794783" ref="tableData">
                     <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
@@ -981,6 +981,9 @@ export default {
     },
      handleRowClick(row){
         this.$refs.dataTable.$refs.JNPFTable.toggleRowSelection(row);
+    },
+    seleceCustomerProduct(row){
+        this.$refs.tableData.$refs.JNPFTable.toggleRowSelection(row);
     },
        sortChange({ prop, order }) {
       let newProp;

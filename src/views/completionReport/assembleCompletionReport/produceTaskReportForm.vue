@@ -541,7 +541,7 @@ import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import { detailProcess, getvibrationList, getPairingModelList, getaccuracyList } from '@/api/basicData/processSettingss.js'
-import { detailordershengchan, getWorkList, addWorkReport,addRegrinding } from '@/api/productOrdes/index.js'
+import { detailordershengchan, getWorkList, addWorkReport,addRegrinding,detailWorkData } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
@@ -1083,55 +1083,60 @@ export default {
       })
     },
     async getProcessFun(item) {
+      this.responsWasteDataList=[]
+      this.materialWasteDataList=[]
       this.isregrindingFlag=false
-      this.$set(item,'matchedQuantity','')
-      this.currentProcess = item
-      this.copyCurrentProcess = JSON.parse(JSON.stringify(item))
-      if (this.currentProcess.processType == 'pairs') this.$set(this.currentProcess, 'pairsReportFlag', true)
-      console.log("当前点击的工序", item);
-      this.$nextTick(() => {
-        if (item.reportFlag) this.$refs['reportRef'].clearValidate()
-      })
+      detailWorkData(item.id).then(res=>{
 
-      this.setProcessType()
-      this.currentProcess.pairingModeId = ''
-      this.stockFlag = 0
-      //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
-      if (this.currentProcessType == 5) {
+        this.currentProcess = res.data
+      this.$set(res.data,'matchedQuantity','')
+        this.copyCurrentProcess = JSON.parse(JSON.stringify(res.data))
+        if (this.currentProcess.processType == 'pairs') this.$set(this.currentProcess, 'pairsReportFlag', true)
+        console.log("当前点击的工序", res.data);
+        this.$nextTick(() => {
+          if (res.data.reportFlag) this.$refs['reportRef'].clearValidate()
+        })
+  
+        this.setProcessType()
         this.currentProcess.pairingModeId = ''
-        this.getPrvePairingModelListFun()
-      }
-      if (this.currentProcessType == 4) {
-        await this.getpairingModeListFun()
-      }
-      if (this.currentProcess.lastFlag === true) {
-        this.stockFlag = 2
-
-      }
-      console.log("object,this", this.stockFlag, this.currentProcessType);
-      this.targetHeight = ""
-      this.targetHeight2 = ""
-      this.commonFun()
-      this.processInfo = JSON.parse(JSON.stringify(item))
-      if (item.vibrateReportFlag === true && item.processType !== 'vibrate') {
-        console.log("进来了");
-        this.getReprotNum('')
-      }
-      if (item.accuracyReportFlag === true && item.processType !== "accuracy") {
-        console.log("进来了2");
-        this.getReprotNumJD('')
-      }
-      console.log("配对方式", this.pairingModeList, item.pairingModeId);
-      if (this.currentProcess.pairingModeId && this.pairingModeList.length) this.pairingModeNum = this.pairingModeList.filter(items => items.id === item.pairingModeId)[0].quantity;
-      this.currentProcessId = item.processId
-      this.$set(this.currentProcess, 'reportingQuantity', 0)
-      this.$set(this.currentProcess, 'qualifiedQuantity', "")
-      this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
-      this.$set(this.currentProcess, 'materialWasteQuantity', 0)
-      this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
-      this.$set(this.currentProcess, 'reworkQuantity', 0)
-      // this.$set(this.currentProcess, 'vibrationLevel', "")
-      console.log("当前current", item);
+        this.stockFlag = 0
+        //1 为正常工序 2为测振工序  3为测振到配对之间的工序 4为配对工序 5为配对后工序 6为精度工序
+        if (this.currentProcessType == 5) {
+          this.currentProcess.pairingModeId = ''
+          this.getPrvePairingModelListFun()
+        }
+        if (this.currentProcessType == 4) {
+           this.getpairingModeListFun()
+        }
+        if (this.currentProcess.lastFlag === true) {
+          this.stockFlag = 2
+  
+        }
+        console.log("object,this", this.stockFlag, this.currentProcessType);
+        this.targetHeight = ""
+        this.targetHeight2 = ""
+        this.commonFun()
+        this.processInfo = JSON.parse(JSON.stringify(res.data))
+        if (res.data.vibrateReportFlag === true && res.data.processType !== 'vibrate') {
+          console.log("进来了");
+          this.getReprotNum('')
+        }
+        if (res.data.accuracyReportFlag === true && res.data.processType !== "accuracy") {
+          console.log("进来了2");
+          this.getReprotNumJD('')
+        }
+        console.log("配对方式", this.pairingModeList, res.data.pairingModeId);
+        if (this.currentProcess.pairingModeId && this.pairingModeList.length) this.pairingModeNum = this.pairingModeList.filter(items => items.id === res.data.pairingModeId)[0].quantity;
+        this.currentProcessId = res.data.processId
+        this.$set(this.currentProcess, 'reportingQuantity', 0)
+        this.$set(this.currentProcess, 'qualifiedQuantity', "")
+        this.$set(this.currentProcess, 'unqualifiedQuantity', 0)
+        this.$set(this.currentProcess, 'materialWasteQuantity', 0)
+        this.$set(this.currentProcess, 'responsibilityWasteQuantity', 0)
+        this.$set(this.currentProcess, 'reworkQuantity', 0)
+        // this.$set(this.currentProcess, 'vibrationLevel', "")
+        console.log("当前current", res.data);
+      })
 
 
     },

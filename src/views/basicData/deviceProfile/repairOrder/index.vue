@@ -110,7 +110,7 @@ export default {
   data() {
     return { 
       superQueryVisible: false,
-      columnList: [],
+      columnList:['reportInstructions','frontPic','repairInstructions','afterPic','startMaintenanceTime','confirmedInstructions'],
       superQuery: {},
       superForm: {}, 
         srcList: [

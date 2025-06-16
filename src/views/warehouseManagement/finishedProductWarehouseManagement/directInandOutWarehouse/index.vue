@@ -652,53 +652,67 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <el-row class="JNPF-common-search-box" :gutter="16">
             <el-form @submit.native.prevent>
-              <el-col :span="4" v-if="dataForm.documentType == 'outbound'">
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.partnerName" placeholder="请输入供应商"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4"  v-if="dataForm.documentType == 'outbound'">
+              <el-col :span="3"  v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.productCategoryName" placeholder="请输入产品分类"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-
-              <el-col :span="4" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
+                <el-form-item>
+                  <el-input v-model="orderForm.productCode" placeholder="请输入产品编码"
+                    @keyup.enter.native="searchProductFun" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
                 <el-form-item>
                   <el-input v-model="orderForm.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
                     clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4" v-if="dataForm.documentType == 'outbound'">
+              
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
                     @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-
-              <el-col :span="4" v-if="dataForm.documentType == 'inbound'">
+              
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
                   <el-input v-model="listQuery.partnerName" placeholder="请输入供应商"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
+                <el-form-item>
+                  <el-input v-model="listQuery.productCode" placeholder="请输入产品编码"
+                    @keyup.enter.native="searchProductFun" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
                 <el-form-item>
                   <el-input v-model="listQuery.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
                     clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4"  v-if="dataForm.documentType == 'inbound'">
+              
+              
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productCategoryName" placeholder="请输入产品分类"
+                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4" v-if="dataForm.documentType == 'inbound'">
+              <el-col :span="3"  v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
+                  <el-input v-model="listQuery.productCategoryName" placeholder="请输入产品分类"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
@@ -999,6 +1013,7 @@ export default {
       orderForm: { //获取产品数据
         productCategoryName:"",
         productDrawingNo: "",        // customerProductNo: "",
+        productCode: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",

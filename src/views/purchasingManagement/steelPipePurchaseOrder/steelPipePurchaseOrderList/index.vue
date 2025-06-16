@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="采购供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="采购供应商名称" min-width="180" sortable="custom" />
-            <el-table-column prop="outPartnerName" label="外协供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="outPartnerName" label="委外供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="110" sortable="custom" />
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="160" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" width="80" sortable="custom" />

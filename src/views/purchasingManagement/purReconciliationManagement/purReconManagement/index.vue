@@ -114,6 +114,12 @@
           <el-table-column prop="stockMoveOrderDate" label="单据日期" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
+              <el-table-column label="操作" width="240" fixed="right">
+              <template slot-scope="scope">
+              <el-button size="mini" type="text"   @click="orderDetailFun(scope.row.ordersId, 'look')">查看订单明细</el-button>
+              <el-button size="mini" type="text"  @click="deliveryNoteDetailFun(scope.row.noticeId,'look')">查看收货单明细</el-button>
+              </template>
+              </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" >
@@ -132,6 +138,8 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <orderDetailForm v-if="orderVisible" ref="orderRef" @close="closeFun"></orderDetailForm>
+    <deliveryNoteDetailForm v-if="deliveryNoteVisible" ref="deliveryNoteRef" @close="closeFun"></deliveryNoteDetailForm>
   </div>
 </template>
 
@@ -145,13 +153,16 @@ import moment from 'moment'
 import { excelExport } from '@/api/basicData/index'
 import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
-
+import orderDetailForm from '../../purchaseOrders/purchaseOrder/Form.vue'
+import deliveryNoteDetailForm from '@/views/receivingManagement/procurementReceiving/receivingAdvice/Form.vue'
 export default {
-  name: 'salefinAccount',
-  components: { JNPFForm, ExportForm, SuperQuery },
+  name: 'purReconManagement',
+  components: { JNPFForm, ExportForm, SuperQuery,orderDetailForm,deliveryNoteDetailForm },
   mixins: [getProjectList],
   data() {
     return {
+      orderVisible:false,
+      deliveryNoteVisible:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -328,6 +339,23 @@ export default {
     this.initData()
   },
   methods: {
+    closeFun(){
+      this.orderVisible = false
+      this.deliveryNoteVisible=false
+
+    },
+    orderDetailFun(id,type){
+      this.orderVisible = true
+      this.$nextTick(() => {
+        this.$refs.orderRef.init(id, type)
+      })
+    },
+    deliveryNoteDetailFun(id,type){
+      this.deliveryNoteVisible=true
+       this.$nextTick(() => {
+          this.$refs.deliveryNoteRef.init(id, type, false, [])
+        })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

@@ -887,6 +887,7 @@ export default {
       // this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
       // this.$set(this.productData[index], 'availableBatchNumber', data.inventoryQuantity)
 
+      this.$set(this.productData[index], 'inventoryLineId', data.id)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
       this.$set(this.productData[index], 'discount',  this.productData[index].discount?this.productData[index].discount:data.discount)
       this.$set(this.productData[index], 'proportion', this.productData[index].proportion?this.productData[index].proportion:data.proportion  )

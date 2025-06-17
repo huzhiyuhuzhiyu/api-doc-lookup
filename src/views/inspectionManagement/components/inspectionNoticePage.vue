@@ -106,6 +106,13 @@
                 <el-tag type="success" v-if="scope.row.processingStatus == 'processed'">已处理</el-tag>
               </template>
             </el-table-column>
+            <el-table-column prop="documentStatus" label="单据状态" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'"> 草稿</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
+                <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
+              </template>
+            </el-table-column>
             <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" /> -->
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -228,6 +235,16 @@ export default {
             { label: '不合格', value: 'unqualified' },
             { label: '审批拒绝', value: 'rebut' },
             { label: '审批撤回', value: 'withdrawn' }
+          ]
+        },
+           {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' },
+            { label: '撤回', value: 'back' },
           ]
         },
         {

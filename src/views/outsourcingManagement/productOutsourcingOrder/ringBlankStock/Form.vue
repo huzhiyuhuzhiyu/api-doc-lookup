@@ -156,7 +156,7 @@
                           <el-form-item>
                             <div class="viewData">
                               <span>
-                                {{ Number(scope.row.inventoryQuantity)  }}
+                                {{ Number(scope.row.inventoryQuantity) - Number(scope.row.outsourcingQuantity)  }}
                               </span>
                             </div>
                           </el-form-item>
@@ -1216,7 +1216,7 @@ export default {
           deliveryDate: item.deliveryDate,
           mainUnit: item.externalMainUnit,
           deputyUnit: item.externalDeputyUnit,
-          purchaseQuantity: Number(item.inventoryQuantity) ,
+          purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity) ,
           productsId: item.externalProductsId,
           classAttribute: item.externalClassAttribute,
           calculationDirection: item.externalCalculationDirection,
@@ -1394,7 +1394,7 @@ export default {
             deliveryDate: item.deliveryDate,
          
             deputyUnit: item.externalDeputyUnit,
-            purchaseQuantity: Number(item.inventoryQuantity),
+            purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity) ,
             productsId: item.externalProductsId,
             classAttribute: item.externalClassAttribute,
             calculationDirection: item.externalCalculationDirection,

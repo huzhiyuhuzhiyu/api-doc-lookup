@@ -34,7 +34,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
   
-          <JNPF-table ref="tabForm" v-loading="listLoading" v-if="flag" :data="tableDataList"  :fixedNO="true" :appendToBody="'child'"
+          <JNPF-table ref="tabForm" v-loading="listLoading" v-if="flag" :data="tableDataList" @row-dblclick="seleceWareHouseFun"  :fixedNO="true" :appendToBody="'child'"
             @sort-change="sortChange"   style="width: 100%;" customKey="JNPFTableKey_315633">
             <el-table-column prop="name" label="库位名称" min-width="180">
             </el-table-column>
@@ -92,7 +92,7 @@ export default {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
-      this.initData()
+      this.initData(this.tableQuery.warehouseId)
     },
     initData(id) {
       this.listLoading = true

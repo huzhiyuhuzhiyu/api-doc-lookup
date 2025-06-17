@@ -659,7 +659,7 @@ export default {
       }
 
     this.orderForm.orderState=this.isZY?'not_finish':''
-this.superForm ==this.orderForm
+this.superForm =this.orderForm
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },

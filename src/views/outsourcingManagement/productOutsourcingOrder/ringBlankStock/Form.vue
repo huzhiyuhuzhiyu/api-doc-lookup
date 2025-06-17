@@ -1074,30 +1074,7 @@ export default {
         return formatted
       }
     },
-    //主数量输入事件
-    changePlanQuantity(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity * this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity / this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+ 
     // 产品弹窗
     openSeleceProductDialog() {
 
@@ -1192,7 +1169,7 @@ export default {
       // getShipmentList(obj).then((res) => {
       //   this.dataFormTwo.data[index].outShipmentList = res.data
       // })
-      this.dataFormTwo.data[index].outShipmentList[0].demandQuantity1 =(this.dataFormTwo.data[index].purchaseQuantity*1) 
+      this.dataFormTwo.data[index].outShipmentList[0].demandQuantity=this.dataFormTwo.data[index].outShipmentList[0].demandQuantity1 =(this.dataFormTwo.data[index].purchaseQuantity*1) 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
@@ -1203,18 +1180,7 @@ export default {
         )
       }
     },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+  
     clearData() {
       this.dataForm.id = ''
       this.dataFormTwo.data = []

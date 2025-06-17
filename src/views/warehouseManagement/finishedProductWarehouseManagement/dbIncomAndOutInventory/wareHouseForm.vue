@@ -33,7 +33,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
 
-          <JNPF-table :partentOrChild="'thtabForm'"  ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"  custom-column>
+          <JNPF-table :partentOrChild="'thtabForm'"  ref="tabForm" v-loading="listLoading" @row-dblclick="seleceWareHouseFun" :data="tableDataList" row-key="id" :fixedNO="true"  custom-column>
             <el-table-column prop="name" label="库位名称" min-width="120">
             </el-table-column>
             <el-table-column prop="code" label="库位编码" min-width="120" >

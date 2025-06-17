@@ -156,14 +156,7 @@
                               placeholder="原产品批次号"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="standardValue" label="规值" width="120" :key="211"
-                          v-if="this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase'"></el-table-column>
-                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" :key="2121"></el-table-column>
-                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123"></el-table-column>
-                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
-                        <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
-                        <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column> -->
-                        <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
+                        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <!-- <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column> -->
                         <!-- <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="1011"
                           v-if="allocationFlag || !jyFlag">
@@ -333,14 +326,7 @@
                               placeholder="原产品批次号"></el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="standardValue" label="规值" width="120" :key="211"
-                          v-if="this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase'"></el-table-column>
-                        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="120" :key="2121"></el-table-column>
-                        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" :key="123"></el-table-column>
-                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
-                        <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
-                        <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column> -->
-                        <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
+                        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
                           <template slot-scope="scope">
@@ -421,25 +407,7 @@
                 <el-table-column prop="requiredReceivedQuantity" label="待入库数量" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' " />
                 <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom"  />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <!-- { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" }, -->
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
-                  v-if="dataForm.businessType != 'outbound_sale_send' || dataForm.businessType != 'inbound_sale_return'" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"
-                  v-if="dataForm.businessType != 'outbound_sale_send' || dataForm.businessType != 'inbound_sale_return'" />
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>

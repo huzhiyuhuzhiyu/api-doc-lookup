@@ -268,26 +268,7 @@
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                    <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" 
-                      v-if="sealingCoverTypingFlag == 1" />
-                    <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom"
-                      v-if="accuracyLevelFlag == 1" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom"
-                      v-if="vibrationLevelFlag == 1" />
-                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" v-if="oilFlag == 1" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
-                      v-if="oilQuantityFlag == 1" />
-                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom"
-                      v-if="clearanceFlag == 1" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"
-                      v-if="packagingMethodFlag == 1" />
-                    <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-                      v-if="specialRequireFlag === '1'" />
-                    <el-table-column prop="material" label="材质" width="130" :key="1015"
-                      v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
-                      v-if="colourFlag == 1"></el-table-column>
+                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
 
                     <el-table-column prop="remark" label="备注" min-width="200">

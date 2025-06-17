@@ -140,10 +140,7 @@
               <div v-if="scope.row.demandStatus == 'revoke'"><el-tag type="danger">已撤回</el-tag></div>
             </template>
           </el-table-column>
-          <el-table-column prop="material" label="材质" width="130" sortable="custom"
-            v-if="materialFlag == 1"></el-table-column>
-          <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-            v-if="colourFlag == 1"></el-table-column>
+          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
           <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />

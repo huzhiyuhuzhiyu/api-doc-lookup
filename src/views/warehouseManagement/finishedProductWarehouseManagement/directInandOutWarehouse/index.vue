@@ -323,41 +323,7 @@
                               <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
                           </template>
                       </el-table-column>
-                      <el-table-column prop="standardValue"
-                      v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','outbound_pick_out','outbound_other','inbound_other'].includes(dataForm.businessType)"
-                        label="规值" width="120" key="211">
-                        <template slot-scope="scope">
-                          <el-select @change="changeStandardValue(scope.row.standardValue,scope)" v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="sealingCoverTyping" v-if="sealingCoverTypingFlag == 1"
-                        :label="$store.getters.sealingCoverTyping" width="140" key="2111">
-                        <!-- <template slot="header">
-                            <span class="required">*</span>打字内容
-                          </template> -->
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                            :disabled="btnType == 'look'" style="width: 100%;">
-                            <el-option v-for="(item, index) in list1" key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="accuracyLevel" v-if="accuracyLevelFlag == 1" :label="$store.getters.accuracyLevel" width="120"
-                        key="123">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list2" key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
+                      <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                       <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
                         key="123">
                         <template slot-scope="scope">
@@ -378,223 +344,12 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="vibrationLevel" v-if="vibrationLevelFlag == 1" label="振动等级" width="120"
-                        key="17">
-                        <!-- <template slot="header">
-                            <span class="required">*</span>振动等级
-                          </template> -->
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                            :disabled="btnType == 'look'" style="width: 100%;">
-                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
-
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="oilQuantity" label="油脂量" v-if="oilQuantityFlag == 1" width="120" key="61">
-
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list13" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="holder" label="保持架" v-if="$store.getters.configData.orderField.holder" width="120" key="61">
-
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.holder" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa004" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="clearance" label="游隙" v-if="clearanceFlag == 1" width="120" key="1055">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="aperture" label="孔径" v-if="apertureFlag == 1" width="120" key="106">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="packagingMethod" label="包装方式" v-if="packagingMethodFlag == 1" width="120"
-                        key="101">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                            :disabled="btnType == 'look'" style="width: 100%;">
-                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"
-                        v-if="specialRequireFlag == 1" width="160" key="202">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable
-                            :disabled="btnType == 'look'" style="width: 100%;">
-                            <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <!-- <el-table-column prop="material" label="保持架材质" width="120" key="2118">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list12" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column> -->
-                      <el-table-column prop="colour" :label="$store.getters.colour" width="120" key="210">
-                        <!-- <template slot="header">
-                            <span class="required">*</span>打字内容
-                          </template> -->
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list11" key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
                       <el-table-column prop="processName" label="工序" width="160" key="103">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
                             <el-option v-for="(item, index) in processList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <template v-if="['inbound_purchase', 'outbound_sale_send', 'inbound_sale_return','outbound_purchase','inbound_other','outbound_other','inbound_order_production'].includes(dataForm.businessType)">
-                      <el-table-column prop="specSize" label="规格/尺寸" width="120" key="2115" v-if="$store.getters.configData.orderField.specSize">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.specSize" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa017" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="logo" label="Logo" width="120" key="2116" v-if="$store.getters.configData.orderField.logo">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.logo" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa019" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="divideEqually" :label="$store.getters.divideEqually"  min-width="120" key="2117" v-if="$store.getters.configData.orderField.divideEqually">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.divideEqually" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa020" :key="index"
-                              :label="item.name" :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="material" label="材质" min-width="120" key="2118" v-if="$store.getters.configData.orderField.material">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa021" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="brand" label="品牌" min-width="120" key="2118" v-if="$store.getters.configData.orderField.brand">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.brand" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa011" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="sealingCoverStructure" label="密封盖" min-width="120" key="2118" v-if="$store.getters.configData.orderField.sealingCoverStructure">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.sealingCoverStructure" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa012" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                       <el-table-column prop="structureType" label="结构类型" min-width="120" key="2118" v-if="$store.getters.configData.orderField.structureType">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.structureType" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa013" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="noise" label="噪音" min-width="120" key="2118" v-if="$store.getters.configData.orderField.noise">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.noise" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa014" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="aperture" label="孔径" min-width="120" key="2118" v-if="$store.getters.configData.orderField.aperture">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa009" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      </template>
-                      <el-table-column prop="protrusion" :label="$store.getters.protrusion"  width="120" :key="103"
-                        v-if="$store.getters.configData.orderField.protrusion">
-                      <template slot-scope="scope">
-                        <el-select :disabled="btnType === 'look'" v-model="scope.row.protrusion" placeholder="请选择" filterable allow-create clearable style="width: 100%;">
-                          <el-option v-for="(item, index) in bimProductAttributesList.pa023" :key="index" :label="item.name" :value="item.name"></el-option>
-                        </el-select>
-                      </template>
-                    </el-table-column>
-                      <el-table-column prop="preload" label="预负荷" min-width="120" key="2118" v-if="$store.getters.configData.orderField.preload">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.preload" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa024" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="angle" label="角度" min-width="120" key="2118" v-if="$store.getters.configData.orderField.angle">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.angle" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa025" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
                           </el-select>
                         </template>
                       </el-table-column>
@@ -762,31 +517,11 @@
                 v-if="dataForm.documentType == 'outbound'" key="shelfSpaceName" />
               <el-table-column prop="productSymbol" label="代号" width="180"
                 v-if="dataForm.documentType === 'outbound' && isZY" key="productSymbol" />
-              <el-table-column prop="standardValue" label="规值" width="80" sortable="custom"
-                v-if="standardValueFlag == 1" key="standardValue" />
-              <el-table-column prop="colour" :label="$store.getters.colour" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && colourFlag == 1" key="colour" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping" width="140"
-                sortable="custom" v-if="dataForm.documentType == 'outbound' && sealingCoverTypingFlag == 1"
-                key="sealingCoverTyping" />
-              <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom"
-                v-if=" accuracyLevelFlag == 1" key="accuracyLevel" />
+              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
                 <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
 
-              <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && vibrationLevelFlag == 1" key="vibrationLevel" />
-              <el-table-column prop="oil" label="油脂" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && oilFlag == 1" key="oil" />
-              <el-table-column prop="clearance" label="游隙" width="80" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && clearanceFlag == 1" key="clearance" />
-              <el-table-column prop="aperture" label="孔径" width="80" :key="102" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && apertureFlag == 1" key="aperture"></el-table-column>
-              <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom"
-                v-if="dataForm.documentType == 'outbound' && packagingMethodFlag == 1" key="packagingMethod" />
-              <el-table-column prop="specialRequire" :label="$store.getters.specialRequire" width="110"
-                sortable="custom" v-if="dataForm.documentType == 'outbound' && specialRequireFlag == 1"
-                key="specialRequire" />
+              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="remark" label="备注" width="100"
                 v-if="dataForm.documentType == 'outbound'" key="remark" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"

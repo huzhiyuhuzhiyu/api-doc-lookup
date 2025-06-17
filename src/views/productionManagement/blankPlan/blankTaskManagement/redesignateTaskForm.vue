@@ -68,23 +68,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="规值">
-                          <el-select v-model="dataForm.standardValue" placeholder="请选择"
-                            :disabled="type == 'look' ? true : false" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item :label="$store.getters.accuracyLevel" >
-                          <el-select v-model="dataForm.accuracyLevel" placeholder="请选择" clearable style="width: 100%;">
-                              <el-option v-for="(item, index) in bimProductAttributesList.pa006" :key="index"
-                                :label="item.name" :value="item.name"></el-option>
-                            </el-select>
-                        </el-form-item>
-                      </el-col>
+                      <AttributeDictionaryMain :sm="6" :formData.sync="dataForm" :btnType="btnType"  :moduleConfig="'produce'" />
                       <el-col :sm="6" :xs="24" v-if="isXY || isJR">
                         <el-form-item  label="钢丝炉号" >
                             <el-input v-model="dataForm.wireHeatNumber" placeholder="请输入钢丝炉号" maxlength="50" ></el-input>

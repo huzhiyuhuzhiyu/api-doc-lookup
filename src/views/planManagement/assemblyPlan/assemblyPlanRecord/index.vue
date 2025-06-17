@@ -72,7 +72,7 @@
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="330" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" v-if="isPairingModeSwitch === '1'" /> 
+            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" v-if="isPairingModeSwitch === '1'" />
             <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
               v-if="isProjectSwitch == 1" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
@@ -82,23 +82,7 @@
             <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="150" sortable="custom" />
             <el-table-column prop="relaxQuantity" label="宽放需求数量" min-width="150" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-              v-if="sealingCoverTypingFlag == 1" />
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-              v-if="accuracyLevelFlag == 1" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-              v-if="vibrationLevelFlag == 1" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-              v-if="packagingMethodFlag == 1" />
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-              v-if="specialRequireFlag == 1" />
-            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-              v-if="colourFlag == 1"></el-table-column>
+            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="planState" label="计划状态" width="120">
               <template slot-scope="scope">
@@ -131,7 +115,7 @@
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+    <SuperQuery :table-ref="'dataTable'" :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
@@ -270,18 +254,6 @@ export default {
       isProjectSwitchFlag: false,
       isProjectSwitch: '',
       isProductNameSwitch: "",
-      // 属性字段  控制属性字段显示隐藏
-      accuracyLevelFlag: "",
-      clearanceFlag: "",
-      oilFlag: "",
-      oilQuantityFlag: "",
-      packagingMethodFlag: "",
-      sealingCoverTypingFlag: "",
-      specialRequireFlag: "",
-      vibrationLevelFlag: "",
-      materialFlag: '',
-      colourFlag: '',
-      bimProductAttributesList: [],
       isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
@@ -298,11 +270,9 @@ export default {
 
   async created() {
     await this.getProductClassFun()
-    await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
     await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     await this.getProductNameSwitch('product', 'enable_productName')
-    this.advancedQueryFun()
     if (this.isProductNameSwitch == 1) {
       this.superQueryJson.splice(2, 0, {
         prop: 'productName',
@@ -325,10 +295,7 @@ export default {
       } catch (error) { }
     },
     getProductClassFun() {
-      // 产品属性
-      getbimProductAttributesListMap().then((res) => {
-        this.bimProductAttributesList = res.data
-      })
+
 
 
 
@@ -350,171 +317,13 @@ export default {
         let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
 
     },
-    advancedQueryFun() {
-      // sealingCoverTyping //打字内容
-      //     accuracyLevel //精度等级
-      //     vibrationLevel //振动等级
-      //     oil //油脂
-      //     oilQuantity //油脂量
-      //     clearance //游隙
-      //     packagingMethod //包装方式          
-      //     specialRequire //特殊要求
-      //     material //保持架材质          
-      //     colour //颜色
-      let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'contractNo')
-      if (this.colourFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'colour',
-          label: '颜色',
-          type: 'select',
-          options: this.bimProductAttributesList.pa010.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.materialFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'material',
-          label: '保持架材质',
-          type: 'select',
-          options: this.bimProductAttributesList.pa021.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.specialRequireFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'specialRequire',
-          label: '特殊要求',
-          type: 'select',
-          options: this.bimProductAttributesList.pa016.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.packagingMethodFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: this.bimProductAttributesList.pa015.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.clearanceFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: this.bimProductAttributesList.pa001.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.oilQuantityFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: this.bimProductAttributesList.pa003.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.oilFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: this.bimProductAttributesList.pa002.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
 
-      if (this.vibrationLevelFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: this.bimProductAttributesList.pa005.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.accuracyLevelFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: this.bimProductAttributesList.pa006.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-      if (this.sealingCoverTypingFlag === '1') {
-        this.superQueryJson.splice(classIndex + 1, 0, {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: this.bimProductAttributesList.pa007.map((item) => {
-            return {
-              label: item.name,
-              value: item.name
-            }
-          })
-        })
-      }
-
-    },
-    getOrderFiledMap() {
-      getOrderFiledMap('sale').then((res) => {
-        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-        this.accuracyLevelFlag = res.data.accuracyLevel
-        this.vibrationLevelFlag = res.data.vibrationLevel
-        this.oilFlag = res.data.oil
-        this.oilQuantityFlag = res.data.oilQuantity
-        this.clearanceFlag = res.data.clearance
-        this.packagingMethodFlag = res.data.packagingMethod
-        this.specialRequireFlag = res.data.specialRequire
-        this.materialFlag = res.data.material
-        this.colourFlag = res.data.colour
-      })
-    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -617,7 +426,7 @@ export default {
     },
 
     reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮 
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.superForm = this.orderForm = {
         classAttribute: "finish_product",
         productName: "",

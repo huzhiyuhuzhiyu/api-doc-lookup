@@ -233,29 +233,7 @@
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="batchNumber" label="批次号" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="colour" :label="$store.getters.colour"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="oil" label="油脂" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-
-              <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="clearance" label="游隙" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="aperture" label="孔径" width="120" :key="102"
-                v-if="dataForm.documentType == 'outbound'"></el-table-column>
-              <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
-              <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="160" sortable="custom"
-                v-if="dataForm.documentType == 'outbound'" />
+              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="remark" label="备注" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"

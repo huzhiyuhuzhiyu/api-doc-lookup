@@ -241,101 +241,7 @@
                           <div v-else>{{ scope.row.planQuantity }}</div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140"
-                        v-if="sealingCoverTypingFlag == 1" :key="211">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                            :disabled='btnType == "look"' style="width: 100%;">
-                            <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" v-if="accuracyLevelFlag == 1"
-                        :key="123">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" v-if="vibrationLevelFlag == 1"
-                        :key="17">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="oil" label="油脂" width="120" v-if="oilFlag == 1" :key="61">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="oilQuantity" label="油脂量" width="120" v-if="oilQuantityFlag == 1" :key="51">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="clearance" label="游隙" width="120" v-if="clearanceFlag == 1" :key="100">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="packagingMethod" label="包装方式" width="120" v-if="packagingMethodFlag == 1"
-                        :key="101">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                            style="width: 100%;" :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" v-if="specialRequireFlag == 1"
-                        :key="101">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="material" label="保持架材质" width="120" v-if="materialFlag == 1" :key="105">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list9" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="colourFlag == 1" :key="110">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled='btnType == "look"'>
-                            <el-option v-for="(item, index) in list10" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
+                      <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>
@@ -500,18 +406,7 @@ export default {
       isProductNameSwitch: '',
 
       originalData: [],
-      // 属性字段  控制属性字段显示隐藏
-      accuracyLevelFlag: "",
-      clearanceFlag: "",
-      oilFlag: "",
-      oilQuantityFlag: "",
-      packagingMethodFlag: "",
-      sealingCoverTypingFlag: "",
-      specialRequireFlag: "",
-      vibrationLevelFlag: "",
-      materialFlag: '',
-      colourFlag: '',
-      bimProductAttributesList: {},
+
       dataFalg: false,
       pairingModeList: [],
       pairingModeNum: 1,
@@ -528,8 +423,6 @@ export default {
 
   async created() {
     await this.getpairingModeListFun()
-    await this.getProductClassFun()
-    await this.getProductAttributeFun()
     await this.getProjectList()
     await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
@@ -551,133 +444,7 @@ export default {
         this.tableDataFlag = true
       } catch (error) { }
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    async getProductClassFun() {
-      // 产品属性
-      const res = await getbimProductAttributesListMap()
-      this.bimProductAttributesList = res.data
 
-
-    },
-    // 获取业务参数中 属性字段动态显示
-    getProductAttributeFun() {
-      getOrderFiledMap('sale').then(res => {
-        console.log("产品属性", res);
-        // sealingCoverTypingFlag list1  pa007
-        // accuracyLevelFlag list2  pa006
-        // vibrationLevelFlag list3 pa005
-        // oilFlag list4 pa002
-        // oilQuantityFlag list5 pa003
-        // clearanceFlag list6 pa001
-        // packagingMethodFlag list7 pa015
-        // specialRequireFlag list8 pa016
-
-        this.accuracyLevelFlag = res.data.accuracyLevel //list1
-        if (this.accuracyLevelFlag == 1) {
-          console.log(this.bimProductAttributesList, 'bimProductAttributesList')
-          this.list2 = this.bimProductAttributesList.pa006.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        this.clearanceFlag = res.data.clearance
-        if (this.clearanceFlag == 1) {
-          this.list6 = this.bimProductAttributesList.pa001.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        console.log("this.list6", this.list6);
-        this.oilFlag = res.data.oil
-        if (this.oilFlag == 1) {
-          this.list4 = this.bimProductAttributesList.pa002.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        this.oilQuantityFlag = res.data.oilQuantity
-        if (this.oilQuantityFlag == 1) {
-          this.list5 = this.bimProductAttributesList.pa003.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        this.packagingMethodFlag = res.data.packagingMethod
-        if (this.packagingMethodFlag == 1) {
-          this.list7 = this.bimProductAttributesList.pa015.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        this.sealingCoverTypingFlag = res.data.sealingCoverTyping
-        if (this.sealingCoverTypingFlag == 1) {
-          this.list1 = this.bimProductAttributesList.pa007.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        this.specialRequireFlag = res.data.specialRequire
-        if (this.specialRequireFlag == 1) {
-          this.list8 = this.bimProductAttributesList.pa016.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        // 保持架材质
-        this.materialFlag = res.data.material
-        if (this.materialFlag == 1) {
-          this.list9 = this.bimProductAttributesList.pa021.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        // 颜色
-        this.colourFlag = res.data.colour
-        if (this.colourFlag == 1) {
-          this.list10 = this.bimProductAttributesList.pa010.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-        }
-        this.vibrationLevelFlag = res.data.vibrationLevel
-        if (this.vibrationLevelFlag == 1) {
-          this.list3 = this.bimProductAttributesList.pa005.map((item) => {
-            return {
-              label: item.name,
-              name: item.name
-            }
-          })
-          console.log(this.list3);
-        }
-
-
-        if (this.sealingCoverTypingFlag != 1 && this.accuracyLevelFlag != 1 && this.vibrationLevelFlag != 1 && this.oilFlag != 1 && this.oilQuantityFlag != 1
-          && this.clearanceFlag != 1 && this.packagingMethodFlag != 1 && this.specialRequireFlag != 1) {
-          this.selectProductClassFlag = true
-        } else {
-          this.selectProductClassFlag = false
-
-        }
-      })
-    },
     // 获取配对方式
     async getpairingModeListFun() {
       try {
@@ -727,7 +494,7 @@ export default {
       this.planForm.finalPlanQuantity = this.planForm.productionQuantity
     },
     // 合格率
-    // relaxQuantity 宽放 
+    // relaxQuantity 宽放
     // purchaseQuantity 采购
     // utilizationQuantity 利用
     // finalPlanQuantity 最终
@@ -1033,12 +800,12 @@ export default {
 
 
     validateInput(value) {
-      // 使用正则表达式来匹配正整数  
-      const reg = /^\d*$/; // 或者用 /^\d+$/ 来匹配至少一位数字  
+      // 使用正则表达式来匹配正整数
+      const reg = /^\d*$/; // 或者用 /^\d+$/ 来匹配至少一位数字
       if (value === '' || reg.test(value)) {
-        this.inputValue = value; // 只有当输入符合条件时才更新  
+        this.inputValue = value; // 只有当输入符合条件时才更新
       } else {
-        this.inputValue = this.inputValue; // 保持原值不变  
+        this.inputValue = this.inputValue; // 保持原值不变
       }
     },
 
@@ -1124,7 +891,7 @@ export default {
         }
 
         this.planForm.planQuantity = productData.reduce((acc, item) => {
-          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字
         }, 0);
 
         this.planForm.productDrawingNo = productData[0].drawingNo
@@ -1135,11 +902,11 @@ export default {
         this.planForm.productSource = productData[0].productSource
         this.planForm.pairingModeId = productData[0].pairingModeId
         setTimeout(() => {
-          // 查找与id相同的对象  
+          // 查找与id相同的对象
           let result = this.pairingModeList.find(item => item.id === this.planForm.pairingModeId);
           console.log("基本数量", this.pairingModeList, this.planForm.pairingModeId);
 
-          // 提取num值，如果没有找到则返回null  
+          // 提取num值，如果没有找到则返回null
           this.pairingModeNum = result ? result.quantity : null;
           console.log("基本数量", this.pairingModeNum);
           productData.forEach(item => {
@@ -1172,7 +939,7 @@ export default {
 
         if (planType == 'order_plan') {
           this.planForm.planQuantity = productData.planLineList.reduce((acc, item) => {
-            return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+            return acc + Number(item.num); // 使用 Number() 将字符串转换为数字
           }, 0);
         } else {
           this.planForm.planQuantity = productData.plan.planQuantity
@@ -1272,7 +1039,7 @@ export default {
             let objs = {
               cooperativePartnerId: item.cooperativePartnerId,
               ordersId: item.ordersId,
-              ordersLineId: item.ordersLineId || item.id, 
+              ordersLineId: item.ordersLineId || item.id,
               productsId: item.productsId,
               planId: item.planId || null,
 

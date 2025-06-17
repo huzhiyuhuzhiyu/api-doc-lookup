@@ -71,15 +71,7 @@
             <el-table-column prop="costPrice" label="单价(含税)" width="160" sortable="custom" />
             <el-table-column prop="taxRate" label="税率" min-width="180" sortable="custom" />
             <el-table-column prop="totalAmount" label="金额" min-width="120" sortable="custom" />
-            <el-table-column prop="material" label="保持架材质" min-width="160" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="170" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="170" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="specialRequire" label="特殊要求" min-width="170" sortable="custom" />
-            <el-table-column prop="colour" label="颜色" min-width="170" sortable="custom" />
+            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="remark" label="备注" min-width="120" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"

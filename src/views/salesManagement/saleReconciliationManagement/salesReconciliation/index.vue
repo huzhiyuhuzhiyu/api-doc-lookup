@@ -116,23 +116,7 @@
               }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-            v-if="sealingCoverTypingFlag == 1" />
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-            v-if="accuracyLevelFlag == 1" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-            v-if="vibrationLevelFlag == 1" />
-          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-          <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" /> -->
-          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-            v-if="packagingMethodFlag == 1" />
-          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-            v-if="specialRequireFlag == 1" />
-          <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-            v-if="materialFlag == 1"></el-table-column>
-          <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-            v-if="colourFlag == 1"></el-table-column>
+          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
 

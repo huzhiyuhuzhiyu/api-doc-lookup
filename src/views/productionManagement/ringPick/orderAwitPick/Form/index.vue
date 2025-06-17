@@ -85,10 +85,7 @@
                       <el-table-column prop="productName" label="用料名称" min-width="130"></el-table-column>
                       <el-table-column prop="productCode" label="用料编码" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
-                      <el-table-column prop="material" label="保持架材质" width="130" 
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120"
-                        v-if="colourFlag == 1"></el-table-column>
+                      <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
@@ -199,10 +196,7 @@
                   <el-table-column prop="productDrawingNo" label="用料规格" min-width="130"></el-table-column>
                   <el-table-column prop="productCode" label="用料编码" min-width="130"></el-table-column>
                   <el-table-column prop="processName" label="工序名称" min-width="130" />
-                  <el-table-column prop="material" label="保持架材质" width="130" 
-                        v-if="materialFlag == 1"></el-table-column>
-                        <el-table-column prop="colour" :label="$store.getters.colour"  width="120" 
-                        v-if="colourFlag == 1"></el-table-column>
+                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                   <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                   <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                     v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>

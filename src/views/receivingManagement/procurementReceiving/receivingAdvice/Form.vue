@@ -250,20 +250,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="material" label="材质" width="130" :key="1015"
-                      v-if="materialFlag == 1"></el-table-column>
-                    <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
-                      v-if="colourFlag == 1"></el-table-column>
-                    <el-table-column prop="standardValue" label="规值"  min-width="130" key="standardValue"
-                      v-if="standardValueFlag == 1">
-                      <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" style="width: 100%;"
-                            :disabled="type == 'look' ? true : false" clearable >
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                    </el-table-column>
+                    <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                     <el-table-column prop="processName" label="工序" width="110" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" v-if="isMS">
                       <template slot-scope="scope">
@@ -534,20 +521,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="material" label="材质" width="130" :key="1015"
-                  v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour"  width="130" :key="1015"
-                  v-if="colourFlag == 1"></el-table-column>
-                  <el-table-column prop="standardValue" label="规值"  min-width="130" key="standardValue"
-                      v-if="standardValueFlag == 1">
-                      <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" style="width: 100%;"
-                            :disabled="type == 'look' ? true : false" clearable>
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa008" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                    </el-table-column>
+                <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="processName" label="工序" width="110" />
                 <el-table-column prop="batchNumber" label="批次号" width="200" v-if="isMS">
                   <template slot-scope="scope">

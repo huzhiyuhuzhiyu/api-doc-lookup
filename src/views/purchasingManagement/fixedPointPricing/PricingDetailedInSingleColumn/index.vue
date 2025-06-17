@@ -83,8 +83,7 @@
             </el-table-column>
             <el-table-column prop="effectiveTimeStart" label="有效时间起" width="150" sortable="custom" />
             <el-table-column prop="effectiveTimeEnd" label="有效时间止" width="150" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="80" sortable="custom" />
+            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
             <el-table-column prop="remark" label="备注" width="150" />
             <el-table-column prop="documentStatus" label="单据状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">

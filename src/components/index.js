@@ -17,6 +17,8 @@ import UserSelect from '@/components/JNPF-userSelect'
 import uploadBtn from '@/components/JNPF-uploadBtn'
 import UploadWj from "@/components/upload-wj";
 import UploadDataButton  from "@/components/UploadDataButton";
+import AttributeDictionaryLine from '@/components/no_mount/AttributeDictionaryLine'
+import AttributeDictionaryMain from '@/components/no_mount/AttributeDictionaryMain'
 // 代码生成器专供
 import JNPFText from '@/components/Generator/components/JNPFText'
 import JNPFTableText from '@/components/Generator/components/JNPFTableText'
@@ -109,5 +111,7 @@ export default {
     Vue.component('ColumnSettings', ColumnSettings)
     Vue.component('nodeWrap', nodeWrap)//审批流添加2023.6.11
     Vue.component('addNode', addNode)//审批流添加2023.6.11
+    Vue.component('AttributeDictionaryLine', AttributeDictionaryLine)// 产品属性组件
+    Vue.component('AttributeDictionaryMain', AttributeDictionaryMain)// 产品属性组件
   }
 }

@@ -84,12 +84,11 @@
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" />
                 <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" />
                 <el-table-column prop="actualQualifiedQuantity" label="实际合格数量" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"></el-table-column>
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="pairingModeName" label="配对方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="greaseMethod" label="注脂方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom"></el-table-column>
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="mainUnit" label="单位" width="100" sortable="custom"></el-table-column>
               </JNPF-table>
               <pagination :total="produceTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize" @pagination="initData" />

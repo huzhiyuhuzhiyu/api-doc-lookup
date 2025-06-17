@@ -152,15 +152,7 @@ export default {
             <el-form ref="reportRef" :model="reportForm" :rules="reportFormProps" label-width="120px"
                      label-position="top">
                 <el-row :gutter="20">
-                    <el-col :span="24">
-                        <el-form-item label="包装方式" prop="packagingMethod">
-                            <el-select :disabled="packagingMethodDisabled" v-model="reportForm.packagingMethod"
-                                       placeholder="包装方式" style="width: 100%;">
-                                <el-option v-for="(item, index) in packagingMethodList" :key="index" :label="item.label"
-                                           :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
+                    <AttributeDictionaryMain :sm="undefined" :formData.sync="dataForm" :btnType="btnType"  :moduleConfig="'produce'" />
                     <el-col :span="24">
                         <el-form-item label="包装人" prop="producerId">
                             <user-select v-model="reportForm.producerId" placeholder="请选择包装人" clearable

@@ -81,16 +81,7 @@
                 </el-table-column>
   
 
-                <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" width="140" :label="$store.getters.sealingCoverTyping" sortable="custom" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel" width="110" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="110" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="80" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="100" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="80" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="110" sortable="custom" />
-                <el-table-column prop="specialRequire" width="140" :label="$store.getters.specialRequire"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour" width="60" />
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                   <el-table-column label="操作" width="180" fixed="right">
                       <template slot-scope="scope">

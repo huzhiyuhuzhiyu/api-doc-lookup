@@ -130,7 +130,7 @@
             <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" />
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" />
             <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
           </JNPF-table>
         </div>

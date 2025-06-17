@@ -4,14 +4,8 @@
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" customKey="JNPFTableKey_934407"> 
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  sortable="custom" min-width="140" />
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  sortable="custom" min-width="120" />
-            <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120" />
-            <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120" />
-            <el-table-column prop="clearance" label="游隙" sortable="custom" min-width="120" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"></el-table-column>
+          <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" customKey="JNPFTableKey_934407">
+            <AttributeDictionaryLine :isSlot="false"  :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column label="操作" width="160" fixed="right">
               <template slot-scope="scope">
                 <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
@@ -23,13 +17,13 @@
             @pagination="getdataFun" />
         </div>
       </div>
-    </div> 
+    </div>
 
   </el-dialog>
 </template>
 
 <script>
-import { getCooperativeInfo } from '@/api/basicData/index' 
+import { getCooperativeInfo } from '@/api/basicData/index'
 import { getBimProductAttributesRecordList,delBimProductAttributesRecord } from '@/api/salesManagement/assemblyOrders'
 import addressForm from './addressForm.vue'
 import { mapGetters, mapState } from 'vuex'
@@ -48,10 +42,10 @@ export default {
         pageNum: 1,
         pageSize: 20,
         userId:"",
-      }, 
+      },
       total: 0,
       index:"",
-  
+
     }
   },
   computed: {
@@ -77,7 +71,7 @@ export default {
     this.visible=false
     this.$emit('selectData', row,this.index)
   },
-  
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'

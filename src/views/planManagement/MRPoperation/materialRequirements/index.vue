@@ -97,24 +97,7 @@
                 <el-table-column prop="noIssuedQuantity" label="未下达数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-                  v-if="sealingCoverTypingFlag == 1" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-                  v-if="accuracyLevelFlag == 1" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-                  v-if="vibrationLevelFlag == 1" />
-                <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"
-                  v-if="oilQuantityFlag == 1" />
-                <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-                  v-if="packagingMethodFlag == 1" />
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-                  v-if="specialRequireFlag == 1" />
-                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-                  v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-                  v-if="colourFlag == 1"></el-table-column>
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column label="操作" width="140" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
@@ -349,10 +332,7 @@
                   v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
-                <el-table-column prop="material" label="保持架材质" width="130" sortable="custom"
-                  v-if="materialFlag == 1"></el-table-column>
-                <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom"
-                  v-if="colourFlag == 1"></el-table-column>
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -612,21 +592,7 @@
             <el-checkbox v-model="scope.row.urgentFlag"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140"
-          v-if="activeName == 'assemble' && sealingCoverTypingFlag == 1" />
-        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120"
-          v-if="activeName == 'assemble' && accuracyLevelFlag == 1" />
-        <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"
-          v-if="activeName == 'assemble' && vibrationLevelFlag == 1" />
-        <el-table-column prop="oil" label="油脂" min-width="100" v-if="activeName == 'assemble' && oilFlag == 1" />
-        <el-table-column prop="oilQuantity" label="油脂量" min-width="120"
-          v-if="activeName == 'assemble' && oilQuantityFlag == 1" />
-        <el-table-column prop="clearance" label="游隙" min-width="100"
-          v-if="activeName == 'assemble' && clearanceFlag == 1" />
-        <el-table-column prop="packagingMethod" label="包装方式" min-width="120"
-          v-if="activeName == 'assemble' && packagingMethodFlag == 1" />
-        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120"
-          v-if="activeName == 'assemble' && specialRequireFlag == 1" />
+        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
 
         <el-table-column prop="deliveryDate" label="交货日期" width="180" key="deliveryDate"
           v-if="activeName == 'purchase' || activeName == 'out'">
@@ -639,9 +605,7 @@
             </el-date-picker>
           </template>
         </el-table-column>
-        <el-table-column prop="standardValue" label="规值" width="120" v-if="activeName == 'purchase'"
-          key="standardValue" />
-        <el-table-column prop="colour" :label="$store.getters.colour"  width="120" v-if="activeName == 'purchase'" key="colour" />
+        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
 
         <el-table-column label="操作" width="80" fixed="right">
           <template slot-scope="scope">

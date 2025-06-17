@@ -119,7 +119,7 @@
               <el-table-column prop="inventoryQuantity" v-if="fieldFlag" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
               <el-table-column prop="occupancyQuantity" v-if="fieldFlag" label="占用数量" width="120" sortable="custom" />
-     
+
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
 
               <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
@@ -134,31 +134,9 @@
               <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
               <el-table-column prop="stockGoodsShelvesName" label="库位名称" min-width="120" sortable="custom" />
               <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-              <el-table-column prop="specSize" label="规格/尺寸" width="120" sortable="custom" :key="601"></el-table-column>
-              <el-table-column prop="logo" label="logo" width="120" sortable="custom" :key="602"></el-table-column>
-              <el-table-column prop="divideEqually" :label="$store.getters.divideEqually" width="120" sortable="custom"
-                :key="603"></el-table-column>
-              <el-table-column prop="material" label="材质" width="120" sortable="custom" :key="604"></el-table-column>
-              <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
-              <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
-                sortable="custom"></el-table-column>
+              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
                 <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
-              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="specialRequireFlag == 1"
-                sortable="custom"></el-table-column>
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>
@@ -463,7 +441,7 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
-      
+
         projectId: this.projectId,
         // excludeProcessFlag:!flag,
         pairingModeId:row.pairingModeId||'',
@@ -479,8 +457,8 @@ export default {
         clearance:row.clearance||'',
         aperture:row.aperture||'',
         packagingMethod:row.packagingMethod||'',
-        specialRequire:row.specialRequire||'', 
-        processId:row.processId||'', 
+        specialRequire:row.specialRequire||'',
+        processId:row.processId||'',
       }
       console.log("object", tempListQuery);
       tempListQuery[type] = 1

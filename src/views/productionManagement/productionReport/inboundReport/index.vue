@@ -70,12 +70,7 @@
                 <el-table-column prop="warehouseName" label="仓库" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" min-width="120" />
                 <el-table-column prop="pairingModeName" label="配对方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="oil" label="油脂" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="clearance" label="游隙" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="mainUnit" label="单位" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="orderDate" label="单据日期" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>

@@ -88,19 +88,7 @@
           <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="140" sortable="custom" />
           <el-table-column prop="amounts" label="金额(含税)" width="140" sortable="custom" />
           <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="140" sortable="custom" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom"
-            v-if="sealingCoverTypingFlag == 1" />
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-            v-if="accuracyLevelFlag == 1" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom"
-            v-if="vibrationLevelFlag == 1" />
-          <el-table-column prop="oil" label="油脂" width="100" sortable="custom" v-if="oilFlag == 1" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" v-if="oilQuantityFlag == 1" />
-          <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" v-if="clearanceFlag == 1" />
-          <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"
-            v-if="packagingMethodFlag == 1" />
-          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom"
-            v-if="specialRequireFlag == 1" />
+          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
           <el-table-column prop="remark" label="备注" width="180" sortable="custom" />
           <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
             <template slot-scope="scope">

@@ -98,18 +98,9 @@
           <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
           <el-table-column prop="costPrice" label="单价" sortable="custom" min-width="140" />
           <el-table-column prop="totalAmount" label="金额" sortable="custom" min-width="140" />
-          <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
+          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="warehouseName" label="仓库" width="160" sortable="custom" />
-          <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" />
-          <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140"></el-table-column>
-          <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120"></el-table-column>
-          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"></el-table-column>
-          <el-table-column prop="oil" label="油脂" min-width="120"></el-table-column>
-          <el-table-column prop="oilQuantity" label="油脂量" min-width="120"> </el-table-column>
-          <el-table-column prop="clearance" label="游隙" min-width="120"></el-table-column>
-          <el-table-column prop="aperture" label="孔径" min-width="120"></el-table-column>
-          <el-table-column prop="packagingMethod" label="包装方式" min-width="120"></el-table-column>
-          <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120"></el-table-column>
+          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="processName" label="工序" min-width="120"></el-table-column>
           <el-table-column prop="documentStatus" label="单据状态" min-width="120">
             <template slot-scope="scope">

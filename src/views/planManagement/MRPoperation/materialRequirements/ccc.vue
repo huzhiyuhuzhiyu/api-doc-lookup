@@ -83,14 +83,7 @@
                 <el-table-column prop="outputQuantity" label="需组装数量" min-width="160" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" sortable="custom" />
-                <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-                <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" sortable="custom" />
+                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column label="操作" width="200" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
@@ -562,14 +555,7 @@
             <el-checkbox v-model="scope.row.urgentFlag"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="activeName == 'assemble'" />
-        <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="activeName == 'assemble'" />
-        <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="activeName == 'assemble'" />
-        <el-table-column prop="oil" label="油脂" min-width="100" v-if="activeName == 'assemble'" />
-        <el-table-column prop="oilQuantity" label="油脂量" min-width="120" v-if="activeName == 'assemble'" />
-        <el-table-column prop="clearance" label="游隙" min-width="100" v-if="activeName == 'assemble'" />
-        <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="activeName == 'assemble'" />
-        <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="activeName == 'assemble'" />
+        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
         <el-table-column prop="deliveryDate" label="交货日期" width="180"
           v-if="activeName == 'purchase' || activeName == 'out'">
           <template slot="header">
@@ -581,8 +567,7 @@
             </el-date-picker>
           </template>
         </el-table-column>
-        <el-table-column prop="standardValue" label="规值" width="160" v-if="activeName == 'purchase'" />
-        <el-table-column prop="colour" :label="$store.getters.colour"  width="160" v-if="activeName == 'purchase'" />
+        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
 
         <el-table-column label="操作" width="80" fixed="right">
           <template slot-scope="scope">

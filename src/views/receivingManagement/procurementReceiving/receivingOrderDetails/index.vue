@@ -98,12 +98,7 @@
             <el-table-column prop="unqualifiedQuantity" label="检验不合格数量" width="150" sortable="custom" />
 
             <el-table-column prop="ordersNo" label="订单号" width="190" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="130" sortable="custom"
-              v-if="standardValueFlag == 1"></el-table-column>
-            <el-table-column prop="material" label="材质" width="130" sortable="custom"
-              v-if="materialFlag == 1"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="130" sortable="custom"
-              v-if="colourFlag == 1"></el-table-column>
+            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>

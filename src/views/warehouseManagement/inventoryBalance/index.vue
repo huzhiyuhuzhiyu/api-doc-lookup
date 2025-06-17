@@ -101,7 +101,7 @@
                     <el-table-column prop="productsName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160" sortable="custom"/>
                     <el-table-column prop="productsCode" label="产品编码" min-width="160" sortable="custom"/>
                     <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"/>
-                    <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" key="standardValue" />
+                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                     <el-table-column prop="warehouseName" label="仓库名称" min-width="160" sortable="custom"/>
                     <el-table-column prop="warehouseCode" label="仓库编码" min-width="160" sortable="custom"/>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"/>

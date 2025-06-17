@@ -108,18 +108,7 @@
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  width="140" sortable="custom" v-if="$store.getters.configData.orderField.sealingCoverTyping"/>
-            <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  width="120" sortable="custom"
-                 v-if="$store.getters.configData.orderField.accuracyLevel"/>
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" 
-              v-if="$store.getters.configData.orderField.vibrationLevel" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom"   v-if="$store.getters.configData.orderField.oil" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom"  v-if="$store.getters.configData.orderField.oilQuantity" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom"   v-if="$store.getters.configData.orderField.clearance" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"  v-if="$store.getters.configData.orderField.packagingMethod"/>
-            <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  width="120" sortable="custom" v-if="$store.getters.configData.orderField.specialRequire"/>
-            <el-table-column prop="material" label="保持架材质" width="130" sortable="custom" v-if="$store.getters.configData.orderField.material"></el-table-column>
-            <el-table-column prop="colour" :label="$store.getters.colour"  width="120" sortable="custom" v-if="$store.getters.configData.orderField.colour"></el-table-column>
+            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
               <template slot-scope="scope">

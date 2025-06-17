@@ -65,7 +65,7 @@
                     <el-table-column sortable="custom" prop="processCode" label="工序编码" min-width="120"/>
                     <el-table-column sortable="custom" prop="planStartDate" label="计划开始日期" min-width="160"/>
                     <el-table-column sortable="custom" prop="planEndDate" label="计划结束日期" min-width="160"/>
-                    <el-table-column sortable="custom" prop="vibrationLevel" label="振动等级" min-width="120"/>
+                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                     <el-table-column sortable="custom" prop="pairingModeName" label="配对方式" min-width="120"  v-if="isPairingModeSwitch === '1'"/>
                     <template v-if="mainUnitFlag">
                         <el-table-column sortable="custom" prop="mainUnit" label="单位（主）" width="140"/>
@@ -78,8 +78,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column sortable="custom" prop="packagingQuantity" label="已包装数量" width="120"/>
-                    <el-table-column sortable="custom" prop="packagingMethod" label="包装方式" v-if="isHistory"
-                                     width="120"/>
+                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                     <el-table-column sortable="custom" prop="productionOrderNo" label="生产任务单号" width="180"/>
                     <el-table-column sortable="custom" prop="drawingNo" label="品名规格" width="120"/>
                     <el-table-column sortable="custom" prop="productName" label="产品名称" width="120"

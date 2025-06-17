@@ -58,25 +58,7 @@
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-              <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120"
-                v-if="standardValueFlag == 1" />
-              <el-table-column prop="colour" :label="$store.getters.colour"  sortable="custom" min-width="120" v-if="colourFlag == 1" />
-              <el-table-column prop="sealingCoverTyping" :label="$store.getters.sealingCoverTyping"  min-width="140" v-if="sealingCoverTypingFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="accuracyLevel" :label="$store.getters.accuracyLevel"  min-width="120" v-if="accuracyLevelFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="vibrationLevelFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="oil" label="油脂" min-width="120" v-if="oilFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="clearance" label="游隙" min-width="120" v-if="clearanceFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="aperture" label="孔径" min-width="120" v-if="apertureFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="packagingMethodFlag == 1"
-                sortable="custom"></el-table-column>
-              <el-table-column prop="specialRequire" :label="$store.getters.specialRequire"  min-width="120" v-if="specialRequireFlag == 1"
-                sortable="custom"></el-table-column>
+              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
                 <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">

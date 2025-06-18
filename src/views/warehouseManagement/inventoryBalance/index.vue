@@ -53,7 +53,7 @@
                 <div class="JNPF-common-head" style="padding:10px">
                   <div >
                       <el-button type="primary" size="mini" icon="el-icon-plus"
-                        @click="addOrUpdateHandle(listQuery.accountPeriod, 'normal')" :disabled="!tableData.length || listQuery.accountPeriod !== accountPeriod[0]" 
+                        @click="addOrUpdateHandle(listQuery.accountPeriod, 'normal')" :disabled=" listQuery.accountPeriod !== accountPeriod[0]" 
                         >结存
                         </el-button>
                         <el-button type="primary" size="mini" icon="el-icon-refresh-left"

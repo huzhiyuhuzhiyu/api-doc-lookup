@@ -12,7 +12,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
+                <el-input v-model.trim="listsQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>

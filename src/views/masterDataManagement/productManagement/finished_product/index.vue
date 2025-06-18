@@ -1445,4 +1445,7 @@ export default {
   font-size: 14px;
   word-break: break-all;
 }
+.el-button [class*=icon-ym-]+span {
+  margin-left: 5px;
+}
 </style>

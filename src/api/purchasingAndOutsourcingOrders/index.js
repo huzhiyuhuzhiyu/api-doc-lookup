@@ -252,10 +252,21 @@ export function insertOutOrder(data) {
 
       // 获取外协工序价格配置的价格
       
-        export const searchPurOutProcessPrice = (data) => {
+  export const searchPurOutProcessPrice = (data) => {
     return request({
       url: `/api/zgt/purOutProcessPrice/search`,
       method: 'post',
+      data
+    })
+  }
+
+
+  // 修改明细列表单价
+  
+ export const editPrice = (data) => {
+    return request({
+      url: `/api/erp/purPurchaseOrderLine/update/price`,
+      method: 'put',
       data
     })
   }

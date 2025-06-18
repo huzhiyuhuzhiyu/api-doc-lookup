@@ -143,6 +143,9 @@
             <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
             <el-table-column label="操作" width="90" fixed="right">
               <template slot-scope="scope">
+                <!-- <el-button size="mini" type="text"
+                      @click.native="editPriceFun(scope.row)">修改单价</el-button> -->
+
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -182,6 +185,39 @@
     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
       :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
     <Form v-if="receiptFormVisible" ref="Form" @refreshDataList="initData" />
+     <el-dialog title="修改单价" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="editPriceVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="采购单号" prop="orderNo">
+              <el-input v-model="form.orderNo" placeholder="采购单号" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="含税单价" prop="price">
+              <el-input v-model="form.price" placeholder="含税单价"  @blur="handleCountFun()"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="税率" prop="taxRates">
+              <el-input v-model="form.taxRates" placeholder="税率" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="不含税单价" prop="excludingTaxPrice">
+              <el-input v-model="form.excludingTaxPrice" placeholder="不含税单价" disabled />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+     
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editPriceVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -192,7 +228,8 @@ import {
   purPurchaseOrderExport,
   purPurchaseOrderdetail,
   purPurchaseBatch,
-  purPurchaseBatchLine
+  purPurchaseBatchLine,
+  editPrice
 } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from '../purchaseOrder/Form.vue'
 import moment from 'moment'
@@ -220,6 +257,20 @@ export default {
 
   data() {
     return {
+      dataRule:{
+         price: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["含税单价：不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({type: 'decimal', params: [20,4,'', (errMsg,index) => { this.$message.error(`单价：` + errMsg) }]}),  trigger: 'blur'},
+          { required: true, trigger: 'blur' },
+        ]
+      },
+       form:{
+        orderNo:"",
+        price:"",
+        taxRates:"",
+        excludingTaxPrice:"",
+      },
+      editPriceVisible:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -548,6 +599,31 @@ export default {
     this.detailData()
   },
   methods: {
+    editPriceFun(row){
+      this.editPriceVisible=true
+      this.form=row
+    },
+    handleCountFun(){
+      let taxrate = 1 * 1 + (this.form.taxRate) / 100 * 1
+      this.form.excludingTaxPrice=this.jnpf.numberFormat(this.jnpf.math('divide', [this.form.price, taxrate]), 6)
+    },
+     submitFun() {
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          this.btnLoading = true
+          let  arr=[]
+          arr.push(this.form)
+          editPrice(arr).then(res => {
+            this.addOrderVisible = false
+            this.btnLoading = false
+            this.$message.success("修改单价成功")
+            this.search('basic')
+          }).catch(error => {
+            this.btnLoading = false
+          })
+        }
+      })
+    },
      // 查看已入库数量
      viewReceiptFun(row, type, warehouseId, projectId) {
       this.receiptFormVisible = true
@@ -773,6 +849,7 @@ export default {
 
           console.log(this.detailTableData)
           this.detailTableData.forEach((item) => {
+            this.$set(item,'taxRates',item.taxRate)
             item.disabled = item.receivingStatus == 'not_finished' && item.approvalStatus == 'ok' ? false : true
           })
           this.total = res.data.total

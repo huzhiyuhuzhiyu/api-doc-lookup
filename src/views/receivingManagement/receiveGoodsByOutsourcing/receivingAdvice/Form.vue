@@ -1699,7 +1699,7 @@ export default {
             deputyUnit: item.deputyUnit,
             drawingNo: item.drawingNo,
             // id: 0,
-            notificationType: 'external',
+            notificationType: item.orderType,
             inspectionResults: item.inspectionResults,
             mainUnit: item.mainUnit,
             // notificationType: item.notificationType,

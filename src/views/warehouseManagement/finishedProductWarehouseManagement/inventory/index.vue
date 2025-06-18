@@ -194,6 +194,7 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         // { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ],
@@ -253,6 +254,11 @@ export default {
           label: "产品编码",
           type: 'input'
         },
+        {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          },
         {
           prop: 'productDrawingNo',
           label: "品名规格",
@@ -382,15 +388,7 @@ export default {
         this.productNameFlag = res.data.product[1].configValue1
         console.log(this.productNameFlag);
         this.tableDataFlag = true
-        if (this.productNameFlag == '1') {
-
-          this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
-          this.superQueryJson.splice(1, 0, {
-            prop: 'productsName',
-            label: '产品名称',
-            type: 'input'
-          })
-        }
+        
       }).catch(error => {
         this.tableFlag = true
       })
@@ -506,10 +504,9 @@ export default {
       this.initData()
     },
     reset() {
-      if (this.treeData.length > 1) {
-        this.selectedNodeKey = this.tableQuery.warehouseId
-        this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
-      }
+      this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+     
+
       this.superForm = this.tableQuery = {
         orderItems: [
           {
@@ -533,6 +530,7 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         // { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]

@@ -287,8 +287,7 @@
             <source-area v-if="sourceVisibled" :transferOutFlag="transferOutFlag" ref="sourceRef" @confirm="handlerConfirm"></source-area>
           </div>
         </div>
-      </div>
-      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+         <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
         width="500px">
         <div>
@@ -303,6 +302,8 @@
           <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
         </span>
       </el-dialog>
+      </div>
+     
   </transition>
 </template>
 <script>
@@ -1432,6 +1433,10 @@ export default {
           }
           
         }
+        if (!ele.taxRate) {
+          submitFlag = false
+          this.$message.error(`产品信息第${i + 1}行：税率不能为空`)
+        }
       })
       if (submitFlag) {
         this.request(type)
@@ -1537,7 +1542,6 @@ export default {
                       }
                       this.tipsvisible = true
                       console.log(this.preData)
-                      if (this.preData) {
                         this.$message({
                           message: '新建成功',
                           type: 'success',
@@ -1547,7 +1551,6 @@ export default {
                             this.$emit('close', true)
                           }
                         })
-                      }
                       
                       this.btnLoading = false
                     })

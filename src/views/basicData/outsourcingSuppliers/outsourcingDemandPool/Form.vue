@@ -510,12 +510,12 @@ export default {
             }),
             trigger: ['blur']
           },
-          {
-            validator: this.formValidate('noZero', '', (errMsg, index) => {
-              this.$message.error(`产品信息第${index + 1}行：税率${errMsg}`)
-            }),
-            trigger: 'blur'
-          },
+          // {
+          //   validator: this.formValidate('noZero', '', (errMsg, index) => {
+          //     this.$message.error(`产品信息第${index + 1}行：税率${errMsg}`)
+          //   }),
+          //   trigger: 'blur'
+          // },
           { required: true, trigger: ['blur'] }
         ],
         price: [

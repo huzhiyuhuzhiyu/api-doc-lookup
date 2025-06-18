@@ -25,6 +25,7 @@
 
 import { getProducts } from '@/api/masterDataManagement'
 import { addSteelPlan } from '@/api/productionManagement'
+import { getProductsWeightQuantityList } from '@/api/basicData/productsWeightQuantity'
 
 export default {
     name: 'steelForm',
@@ -61,6 +62,7 @@ export default {
                 { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
                 { prop: 'productCode', label: '产品编码', type: 'input' }
             ],
+            productWeightQuantity:null,
         }
     },
     computed: {
@@ -81,7 +83,7 @@ export default {
                     listRequestObj : this.ProductListRequestObj,
                     tableItems : this.ProductTableItems,
                     searchList : this.ProductTableSearchList,
-                    change : (val,data)=>{
+                    change :async (val,data)=>{
                         // dom更新后重新校验此元素
                         this.$nextTick(() => {
                             console.log(this.$refs['dataForm'])
@@ -89,11 +91,53 @@ export default {
                         })
                         if (!val && data.length) return
                         if (!data || !data.length) return
+                        if (this.$store.getters.configData.produce.steelBallTask) {
+                            let obj = {
+                                productsId: data[0].id
+                            }
+                            try {
+                                this.productWeightQuantity = await getProductsWeightQuantityList(obj)
+                            } catch (error) {}
+                        }
                         this.dataForm['productsId'] = data[0].id
                         this.dataForm['productDrawingNo'] = data[0].all.drawingNo
                         this.dataForm['bomId'] = data[0].all.bomId
                         this.dataForm['mainUnit'] = data[0].all.mainUnit
+                        this.dataForm['productionWeight'] = this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].weight : 0
+                        this.dataForm['planProductionQuantity'] = this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].quantity : 0
+                        this.dataForm.weight = this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].weight : 0
+                        this.dataForm.quantity = this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].quantity : 0
                     },
+                },
+                { prop: 'productionBarrels', label: '计划桶数', value: '1', type: 'input', minWidth: 120 ,itemRules: [
+                        {
+                            validator: this.formValidate({ type: 'noEmtry', params: ['不能为空', (msg, rowIndex) => this.$message.error(`计划桶数：${msg}`)] }),
+                            trigger: 'blur'
+                        },
+                        { required: true, trigger: 'blur' },
+                        {
+                            validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (msg, rowIndex) => this.$message.error(`计划桶数：${msg}`)] }),
+                            trigger: 'blur'
+                        },
+                    ]
+
+                },
+                { prop: 'productionWeight', label: '计划重量（kg）', value: '', type: 'input', minWidth: 160 ,itemRules: [
+                        {
+                            validator: this.formValidate({ type: 'noEmtry', params: [null, (msg, rowIndex) => this.$message.error(`计划重量（kg）${msg}`)] }),
+                            trigger: 'blur'
+                        },
+                        { required: true, trigger: 'blur' },
+                        {
+                            validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (msg, rowIndex) =>this.$message.error(`计划重量（kg）${msg}`) ] }),
+                            trigger: 'blur'
+                        },
+                    ],
+                    input:(val, scope)=>{
+                        if (this.productWeightQuantity){
+                            this.dataForm.planProductionQuantity = Math.floor((Number(val) / Number(this.dataForm.weight) *Number(this.dataForm.quantity)) * 10000) / 10000
+                        }
+                    }
                 },
                 { prop:'planProductionQuantity',label:'计划生产数量',value:'',type:'input',itemRules: [{ required: true,message:'计划生产数量不能为空', trigger: "blur" }], },
                 { prop: 'planDate', label: '计划开始日期', value: '', type: 'date_interval', minWidth: 180 ,width:'100%',sm:8},
@@ -120,7 +164,8 @@ export default {
                 planStartDate: this.dataForm.planDate[0],
                 planEndDate: this.dataForm.planDate[1],
                 classAttribute: 'semi_finished',
-                planType:'steel_ball_plan'
+                planType:'steel_ball_plan',
+                documentStatus:'submit'
             }
             if (submitFlag){
                 addSteelPlan(_data).then(res=>{

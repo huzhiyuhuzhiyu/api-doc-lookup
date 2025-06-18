@@ -76,6 +76,7 @@ export default {
     async created() {
         try {
             this.bimProductAttributesList = this.$store.getters.bimProductAttributesList
+            console.log(this.bimProductAttributesList,'this.bimProductAttributesList')
             const productAttribute = await this.$store.dispatch('base/getDictionaryData', { sort: 'productAttributes'})
 
             this.attrDictionaryData = productAttribute

@@ -149,6 +149,7 @@ import {
 import Form from './Form'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import store from '@/store'
 
 export default {
   name: 'supplierProfile',
@@ -273,7 +274,7 @@ export default {
           console.log(err,'err')
           this.uploadVisib = false
           // this.$message.error(`导入数据超过最大限制：500`)
-       
+
           this.formLoading = false
           this.loadingText = ''
         })
@@ -375,9 +376,10 @@ export default {
       return data.fullName.indexOf(value) !== -1
     },
 
-    initData() {
+    async initData() {
       console.log(this.form)
       this.listLoading = true
+      await store.dispatch('base/getAttribute')
       getbimProductAttributesList(this.form)
         .then((res) => {
           console.log('res++', res)

@@ -53,7 +53,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-if="tableDataFlag == true" :data="tableData" custom-column row-key="id"
+        <JNPF-table ref="tabForm"  :data="tableData" custom-column row-key="id"
           :fixedNo="true" @sort-change="sortChange" :header-cell-class-name="handleHeaderCellClass" customKey="JNPFTableKey_263873">
 
 
@@ -506,7 +506,13 @@ export default {
     reset() {
       this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
      
-
+ // 排序数组
+      this.sortArr= [{
+        asc: false,
+        column: "create_time"
+      }]
+      this.sortField= {} // 存储每个字段的排序方式 ascending/descending
+      this.sortStack= [] // 记录排序字段点击顺序
       this.superForm = this.tableQuery = {
         orderItems: [
           {

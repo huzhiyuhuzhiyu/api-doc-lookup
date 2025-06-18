@@ -103,8 +103,8 @@
             </el-dropdown>
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+            <el-button class="imporBtn" size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+            <el-button class="imporBtns" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
             </el-button>
@@ -1448,4 +1448,9 @@ export default {
 .el-button [class*=icon-ym-]+span {
   margin-left: 5px;
 }
+.imporBtn ::v-deep span{
+  margin-left: 8px!important;
+}
+
+
 </style>

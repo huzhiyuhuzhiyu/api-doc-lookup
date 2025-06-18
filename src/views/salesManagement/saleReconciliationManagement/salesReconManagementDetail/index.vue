@@ -126,7 +126,7 @@
           <el-table-column prop="totalExcludingTaxAmount" label="金额(不含税)" width="120" />
           <el-table-column prop="price" label="单价(含税)" width="100" />
           <el-table-column prop="totalIncludingTaxAmount" label="金额(含税)" width="130" sortable="custom" />
-          <el-table-column prop="stockMoveDate" label="出入库日期" sortable="custom" width="180" />
+          <el-table-column prop="stockMoveDate" label="出入库时间" sortable="custom" width="180" />
 
           <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
@@ -226,7 +226,7 @@ export default {
         },
         {
           prop: 'stockMoveDate',
-          label: '出入库日期',
+          label: '出入库时间',
           type: 'datetimerange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '创建开始时间',

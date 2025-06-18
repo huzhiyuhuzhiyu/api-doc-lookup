@@ -451,6 +451,7 @@ export default {
     cancelFun() {
       console.log(666);
       this.uploadVisib = false
+      this.file=null
       this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {

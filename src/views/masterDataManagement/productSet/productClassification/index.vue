@@ -89,7 +89,7 @@
           <el-table-column prop="sort" label="排序" width="100" align="center">
             <template slot-scope="scope">
               <el-input @change="switchShow(scope.row, 'sort')" @blur="sortCodeBlur(scope.row)"
-                v-model="scope.row.sort"></el-input>
+                v-model="scope.row.sort" maxlength="10"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200" />

@@ -66,6 +66,20 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" customKey="JNPFTableKey_503406">
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
+           <el-table-column prop="purchaseOrderNo" label="外协订单号" min-width="240" sortable="custom" >
+             <template slot-scope="scope">
+              <el-link type="primary" @click.native="orderDetailFun(scope.row.ordersId, 'look')">
+                {{ scope.row.purchaseOrderNo }}
+              </el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="purchaseNoticeNo" label="外协通知单号" min-width="240" sortable="custom" >
+             <template slot-scope="scope">
+              <el-link type="primary" @click.native="deliveryNoteDetailFun(scope.row.noticeId,'look')">
+                {{ scope.row.purchaseNoticeNo }}
+              </el-link>
+            </template>
+          </el-table-column>
           <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
           <template v-if="$store.getters.configData.warehouse.proportion">
@@ -146,13 +160,16 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+        <orderDetailForm v-if="orderVisible" ref="orderRef" @close="closeFun"></orderDetailForm>
+    <deliveryNoteDetailForm v-if="deliveryNoteVisible" ref="deliveryNoteRef" @close="closeFun"></deliveryNoteDetailForm>
   </div>
 </template>
 
 <script>
 import { getsalefinAccountList } from '@/api/ReconciliaRePayments/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-
+import orderDetailForm from '@/views/outsourcingManagement/productOutsourcingOrder/orderList/Form.vue'
+import deliveryNoteDetailForm from '@/views/receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
 import moment from 'moment'
@@ -162,11 +179,13 @@ import getProjectList from '@/mixins/generator/getProjectList'
 
 export default {
   name: 'salefinAccount',
-  components: { JNPFForm, ExportForm, SuperQuery },
+  components: { JNPFForm, ExportForm, SuperQuery,orderDetailForm,deliveryNoteDetailForm },
   mixins: [getProjectList],
 
   data() {
     return {
+      orderVisible:false,
+      deliveryNoteVisible:false,
       isProjectSwitch: '',
       isProductNameSwitch: '',
       tableDataFlag: false,
@@ -195,6 +214,7 @@ export default {
       tableDataList: [],
       formVisible: false,
       listLoading: false,
+ 
       listQuery: {
         orderItems: [
           {
@@ -329,6 +349,23 @@ export default {
     this.initData()
   },
   methods: {
+        closeFun(){
+      this.orderVisible = false
+      this.deliveryNoteVisible=false
+
+    },
+    orderDetailFun(id,type){
+      this.orderVisible = true
+      this.$nextTick(() => {
+        this.$refs.orderRef.init(id, type)
+      })
+    },
+    deliveryNoteDetailFun(id,type){
+      this.deliveryNoteVisible=true
+       this.$nextTick(() => {
+          this.$refs.deliveryNoteRef.init(id, type, false, [])
+        })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

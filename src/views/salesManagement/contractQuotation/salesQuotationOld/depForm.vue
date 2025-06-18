@@ -332,14 +332,14 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="报价时间" prop="quotationTime">
+                  <el-form-item label="报价日期" prop="quotationTime">
                     <el-date-picker v-model="dataForm.quotationTime" type="date" value-format="yyyy-MM-dd"
                       style="width: 100%;" placeholder="请选择报价时间" :disabled="status">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="有效时间止" prop="validEnd">
+                  <el-form-item label="有效日期止" prop="validEnd">
                     <el-date-picker v-model="dataForm.validEnd" placeholder="请选择有效时间" type="date" :disabled="status"
                       value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="pickerOptions">
                     </el-date-picker>
@@ -688,7 +688,7 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
               <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                 class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                 <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                   <i
@@ -1162,6 +1162,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.$refs.dataTable.$refs.JNPFTable.clearSort()
+        this.$refs.treeBox.setCurrentKey(null)
       this.highlightCurrentFlag=false
       this.ProductListRequestObj = {
         classAttributeList: [],

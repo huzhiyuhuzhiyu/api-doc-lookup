@@ -69,6 +69,20 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" customKey="JNPFTableKey_472519">
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
+          <el-table-column prop="purchaseOrderNo" label="采购订单号" min-width="240" sortable="custom" >
+             <template slot-scope="scope">
+              <el-link type="primary" @click.native="orderDetailFun(scope.row.ordersId, 'look')">
+                {{ scope.row.purchaseOrderNo }}
+              </el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="purchaseNoticeNo" label="采购通知单号" min-width="240" sortable="custom" >
+             <template slot-scope="scope">
+              <el-link type="primary" @click.native="deliveryNoteDetailFun(scope.row.noticeId,'look')">
+                {{ scope.row.purchaseNoticeNo }}
+              </el-link>
+            </template>
+          </el-table-column>
           <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
           <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom" v-if="isProjectSwitch === '1'"></el-table-column>
@@ -113,13 +127,13 @@
           </el-table-column>
           <el-table-column prop="stockMoveOrderDate" label="单据日期" min-width="180" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
+          <!-- <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
               <el-table-column label="操作" width="240" fixed="right">
               <template slot-scope="scope">
               <el-button size="mini" type="text"   @click="orderDetailFun(scope.row.ordersId, 'look')">查看订单明细</el-button>
               <el-button size="mini" type="text"  @click="deliveryNoteDetailFun(scope.row.noticeId,'look')">查看收货单明细</el-button>
               </template>
-              </el-table-column>
+              </el-table-column> -->
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" >

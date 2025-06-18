@@ -69,8 +69,8 @@
           <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" width="200" />
           <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
           <el-table-column prop="bidder" label="报价人" sortable="custom" width="100" />
-          <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
-          <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
+          <el-table-column prop="quotationTime" label="报价日期" width="130" sortable="custom" />
+          <el-table-column prop="validEnd" label="有效日期止" width="130" sortable="custom" />
           <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" sortable="custom" width="160"
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>

@@ -118,9 +118,10 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
-            <!-- <div class="text">
-              <span>合计数量:{{ totalNum }}</span>
-            </div> -->
+               <div class="text" >
+            <span style="margin-left: 10px">总数量:{{ purchaseQuantity }}</span>
+            <span style="margin-left: 10px">待收货:{{ waitReceiptNum }}</span>
+          </div>
           </pagination>
         </div>
       </div>
@@ -153,6 +154,8 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
+      purchaseQuantity:0,
+      waitReceiptNum:0,
       isProductNameSwitch: '',
       isProjectSwitch: '',
       isProportionSwitch: '',
@@ -537,9 +540,12 @@ export default {
       }
       purchaseOrderReport(this.orderForm)
         .then((res) => {
-          this.tableData = res.data.page.records
+          this.tableData = res.data.page.records||[]
 
-          this.total = res.data.page.total
+          this.total = res.data.page.total||0
+          this.waitReceiptNum = res.data.total.waitReceiptNum||0
+          this.purchaseQuantity = res.data.total.purchaseQuantity||0
+          this.total = res.data.page.total||0
           this.listLoading = false
         })
         .catch(() => {

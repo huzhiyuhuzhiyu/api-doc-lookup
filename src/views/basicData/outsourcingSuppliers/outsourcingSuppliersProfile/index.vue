@@ -176,9 +176,9 @@
           @pagination="initData" />
       </div>
     </div>
-    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" @close="cancelFun"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
-      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
+      <el-upload cass="upload-demo" action="#" :on-remove="handleRemove"  accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false"
         :limit="1" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
@@ -230,7 +230,7 @@ export default {
   data() {
     return {
       loadingText: '',
-      file: {},
+      file: null,
       uploadVisib: false,
       filterText: '',
       basicQuery: {},
@@ -495,11 +495,16 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+     handleRemove(file, fileList) {
+      this.file=null
+     },
     submit() {
+      if(!this.file) return this.$message.error("请先选择您要上传的文件")
       this.UploadProduct(this.file)
     },
     cancelFun() {
       this.uploadVisib = false
+      this.file=null
       this.$refs['uploadRef'].clearFiles();
     },
     handleFileChange(file) {
@@ -535,8 +540,10 @@ export default {
           this.$message.success(`导入成功`)
           this.listLoading = false
           this.loadingText = ''
+          this.file=null
         } else {
           this.handleMessage(res.data)
+          this.file=null
         }
         this.uploadVisib = false
         this.initData()

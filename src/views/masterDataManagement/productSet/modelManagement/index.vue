@@ -173,7 +173,7 @@ export default {
         pageSize: 20,
         model: ''
       },
-      file:[],
+      file:null,
       total: 0,
       formVisible: false,
       selectList: [],
@@ -275,7 +275,7 @@ export default {
     },
     handleRemove(file, fileList) {
       console.log(file, fileList)
-      this.file=[]
+      this.file=null
     },
     handlePreview(file) {
       console.log(file)
@@ -285,7 +285,7 @@ export default {
       this.file = file.raw
     },
     saveSubmit() {
-      if(!this.file.length) return this.$message.error("请选择你要上传的文件")
+      if(!this.file) return this.$message.error("请选择你要上传的文件")
       this.UploadProduct(this.file)
     },
     download(data) {
@@ -345,7 +345,11 @@ export default {
             this.formLoading = false
             this.btnLoading = false
             this.loadingText = ''
+            this.file=null
           } else {
+            this.file=null
+
+            this.btnLoading = false
             this.handleMessage(res.data)
           }
         })
@@ -401,7 +405,7 @@ export default {
     cancelFun() {
       this.uploadVisib = false
       this.btnLoading = false
-      this.file=[]
+      this.file=null
       this.$refs['uploadRef'].clearFiles()
     },
     // 导入产品  下载导入错误数据

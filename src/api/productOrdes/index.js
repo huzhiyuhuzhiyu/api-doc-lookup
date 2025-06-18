@@ -422,3 +422,13 @@ export function batchCopyTask(data) {
     data
   })
 }
+
+// 产量报表
+
+export function throughputReportAPI(data) {
+  return request({
+    url: `/api/zgt/ZgtReport/production/report`,
+    method: 'POST',
+    data
+  })
+}

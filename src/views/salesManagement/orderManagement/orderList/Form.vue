@@ -1208,7 +1208,7 @@
               </div>
               <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
                 <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                  :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                  highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                   class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                   <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                     <i
@@ -2274,7 +2274,7 @@ export default {
     submit() {
       console.log(this.file);
 
-      if(!this.file.length) return this.$message.error('上传文件不能为空')
+      if(!this.file) return this.$message.error('上传文件不能为空')
       this.UploadProduct(this.file)
     },
     handleFileChange(file) {
@@ -2289,6 +2289,7 @@ export default {
       formData.append("file", data)
       formData.append("partnerId", this.dataForm.cooperativePartnerId)
       //调用上传文件接口
+      this.btnLoading=true
       uploadProduct(formData).then(res => {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
@@ -2303,10 +2304,14 @@ export default {
             });
           }
           this.productData = res.data.list
+          this.btnLoading = false
           this.formLoading = false
           this.loadingText = ''
           this.uploadVisib = false
+          this.file=null
         } else {
+          this.btnLoading = false
+          this.formLoading = false
           this.handleMessage(res.data)
           this.$refs['uploadRef'].clearFiles();
         }
@@ -2314,6 +2319,7 @@ export default {
         this.$refs['uploadRef'].clearFiles();
       }).catch(err => {
         this.$message.error(`文件上传失败`)
+          this.btnLoading = false
         this.formLoading = false
         this.loadingText = ''
       })
@@ -2740,7 +2746,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.highlightCurrentFlag=false
+        this.$refs.treeBox.setCurrentKey(null)
       this.ProductListRequestObj = {
         classAttributeList: ["finish_product", "semi_finished"],
         classAttribute: "",

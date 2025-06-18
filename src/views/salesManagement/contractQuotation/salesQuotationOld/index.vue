@@ -71,8 +71,8 @@
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="120" />
             <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" min-width="160" />
             <el-table-column prop="bidder" label="报价人" sortable="custom" width="100" />
-            <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
-            <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
+            <el-table-column prop="quotationTime" label="报价日期" width="130" sortable="custom" />
+            <el-table-column prop="validEnd" label="有效日期止" width="130" sortable="custom" />
             <el-table-column prop="address" label="地址" min-width="300" />
             <el-table-column prop="phone" label="电话" width="120" sortable="custom" />
             <el-table-column prop="fax" label="传真" width="120" sortable="custom" />

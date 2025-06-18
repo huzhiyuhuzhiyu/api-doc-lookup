@@ -105,6 +105,7 @@ export default {
                 },
                 { prop: 'productsDrawingNo', label: '品名规格', value: '', type: 'view', minWidth: 160 ,},
                 { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 ,},
+                { prop: 'availableArrangeQuantity', label: '可编排数量', value: '', type: 'view', minWidth: 120 ,},
                 { prop: 'productionBarrels', label: '生产桶数', value: '1', type: 'input', minWidth: 120 ,itemRules: [
                         {
                             validator: this.formValidate({ type: 'noEmtry', params: ['不能为空', (msg, rowIndex) => this.$message.error(`生产桶数第${rowIndex + 1}行：${msg}`)] }),
@@ -142,6 +143,7 @@ export default {
                             trigger: 'blur'
                         },
                         { required: true, trigger: 'blur' },
+                        { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => this.linesList[rowIndex].availableArrangeQuantity >= this.linesList[rowIndex].productionQuantity, `不能超过可编排数量`, (errMsg, rowIndex) => { this.$message.error(`第${rowIndex + 1}行：生产数量（万粒）：` + errMsg) }] }), trigger: 'blur' },
                         {
                             validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (msg, rowIndex) => this.$message.error(`第${rowIndex + 1}行：生产数量（万粒）${msg}`)] }),
                             trigger: 'blur'
@@ -192,7 +194,7 @@ export default {
                     pickingWay:'none',
                     planDate:[item.planStartDate,item.planEndDate],
                     productionWeight: this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].weight : 0,
-                    productionQuantity: this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].quantity : 0,
+                    productionQuantity: this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].quantity : item.availableArrangeQuantity,
                     weight:this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].weight : 0,
                     quantity:this.productWeightQuantity.data.records.length ? this.productWeightQuantity.data.records[0].quantity : 0,
                 }

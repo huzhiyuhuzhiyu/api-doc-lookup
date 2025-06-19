@@ -18,6 +18,7 @@ export default () => [
       { prop: "code", label: "产品编码", value: "",maxlength: 100, type: 'input', itemRules: [{ required: true, trigger: "blur" }], render: true, itemDisabled: false },
       { prop: "drawingNo", label: "品名规格", value: "", type: 'input', maxlength: 1000, itemRules: [{ required: true, trigger: "blur" },], itemDisabled: false },
       { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, itemDisabled: false },
+      { prop: "material", label: "材质", value: "",typeCode: 'pa021', type: 'select', options: [],  filterable: true },
       { prop: "mainUnit", label: "主单位", value: "", type: 'select', options: [], itemRules: [{ required: true, trigger: "blur" }], filterable: true },
       { prop: "deputyUnit", label: "副单位", value: "", type: 'select', options: [], itemRules: [{ required: true, trigger: "blur" }], filterable: true },
       { prop: "ratio", label: "转换系数", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate({ type: 'decimal', params: [12, 6] }), trigger: 'blur' }, { validator: formValidate('positiveNumber'), trigger: "blur" }] },

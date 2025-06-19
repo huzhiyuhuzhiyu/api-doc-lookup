@@ -22,12 +22,7 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model.trim="listQuery.warehouseName" placeholder="仓库名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+            
         
             <el-col :span="6">
               <el-form-item>
@@ -108,11 +103,7 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
-            <div style="display: flex;">
-              <div class="text" style="margin-right: 10px;"><span>库存数量:{{ inventoryQuantityNum }}</span></div>
-              <div class="text" style="margin-right: 10px;"><span>可用数量:{{ availableQuantityNum }}</span></div>
-              <div class="text"><span>占用数量:{{  occupancyQuantityNum }}</span></div>
-            </div>
+            
 
           </pagination>
         </div>
@@ -127,23 +118,18 @@
   </div>
 </template>
 
-<script>
-import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
+<script> 
 import moment from 'moment'
 import Form from './Form.vue'
-import { excelExport,getOrderFiledMap } from '@/api/basicData/index'
+import { excelExport,getOrderFiledMap,getInventoryLineReport,getBimBusinessDetail,getBatchNumber } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getInventoryLineReport } from '@/api/basicData/index' // 仓库 
-import { getBimBusinessDetail } from '@/api/basicData/index'
-import getProjectList from '@/mixins/generator/getProjectList'
 import { getbimProductAttributesListMap } from "@/api/masterDataManagement/index";
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'heatTreatmentInventory',
   components: { ExportForm, Form, SuperQuery },
-  mixins: [getProjectList],
   data() {
     return {
       isProjectSwitch: '',
@@ -237,27 +223,23 @@ export default {
         { label: '审批撤回', value: 'withdrawn' }
       ],
       listQuery: {
-        productName:"",
-        productDrawingNo:"",
-        warehouseName:"",
-        batchNumber:"",
-        classAttribute:"finish_product",
-        flipFlag:true,
-        availableBatch:true,
-        excludeProcessFlag:true,
-        // orderType: 'external', //	订单类型 采购 procure、外协 external
-        pageNum: 1,
-        pageSize: 20,
-        startTime: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'latest_storage_time'
-          }
+        "productName": "",
+        "productDrawingNo": "",
+        "batchNumber": "",
+        "classAttribute": "semi_finished",
+        "processType": "heat_treatment",
+        "excludeProcessFlag": 0,
+        "pageNum": 1,
+        "pageSize": 20,
+        "orderItems": [
+            {
+                "asc": false,
+                "column": ""
+            },
+            {
+                "asc": false,
+                "column": "latest_storage_time"
+            }
         ]
         // receivingStatus: 'receiving'
       },
@@ -295,9 +277,7 @@ export default {
   },
   async created() {
     await this.getDeputyUnit()
-    await this.getProjectSwitch('system', 'project')
     await this.getProductNameSwitch('product', 'enable_productName')
-    await this.getPairingModeSwitch('product', 'enable_show_pairing_mode') // 配对方式显示隐藏
     if (this.isDeputyUnitSwitch === '1') {
       this.superQueryJson.forEach(item => {
         if (item.prop === 'mainUnit') {
@@ -326,13 +306,7 @@ export default {
   },
 
   methods: {
-     // 配对方式显示隐藏
-     async getPairingModeSwitch(code, type) {
-      try {
-        this.isPairingModeSwitch = await this.jnpf.getMainUnitFun(code, type)
-        this.tableDataFlag = true
-      } catch (error) { }
-    },
+ 
     async getOrderFiledMap() {
       await getOrderFiledMap('sale').then((res) => {
         this.sealingCoverTypingFlag = res.data.sealingCoverTyping
@@ -579,27 +553,14 @@ export default {
 
     initData() {
       this.listLoading = true
-      if (this.time && this.time.length > 0) {
-        this.listQuery.lsSd = this.time[0] + ' 00:00:00'
-        this.listQuery.lsEd = this.time[1] + ' 23:59:59'
-      } else {
-        this.listQuery.lsSd = ''
-        this.listQuery.lsEd = ''
-      }
-      if (this.isProjectSwitch === '1') {
-        console.log("this.userInfo",this.userInfo);
-        this.listQuery.projectId = this.userInfo.projectId
-      }
-      getInventoryLineReport(this.listQuery)
+ 
+      getBatchNumber(this.listQuery)
         .then((res) => {
           console.log(res, '外协订单列表')
-          this.tableDataList = res.data.page.records
+          this.tableDataList = res.data.records
           this.tableFlag = true
 
-          this.total = res.data.page.total
-          this.inventoryQuantityNum = res.data.total ? res.data.total.inventoryQuantity : 0
-          this.occupancyQuantityNum = res.data.total ? res.data.total.occupancyQuantity : 0
-          this.availableQuantityNum = res.data.total ? res.data.total.availableQuantity : 0
+          this.total = res.data.total
           this.listLoading = false
           this.visible = false
         })
@@ -620,27 +581,23 @@ export default {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
-        productName:"",
-        productDrawingNo:"",
-        warehouseName:"",
-        batchNumber:"",
-        classAttribute:"finish_product",
-        flipFlag:true,
-        availableBatch:true,
-        excludeProcessFlag:true,
-        // orderType: 'external', //	订单类型 采购 procure、外协 external
-        pageNum: 1,
-        pageSize: 20,
-        startTime: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'latest_storage_time'
-          }
+       "productName": "",
+        "productDrawingNo": "",
+        "batchNumber": "",
+        "classAttribute": "semi_finished",
+        "processType": "heat_treatment",
+        "excludeProcessFlag": 0,
+        "pageNum": 1,
+        "pageSize": 20,
+        "orderItems": [
+            {
+                "asc": false,
+                "column": ""
+            },
+            {
+                "asc": false,
+                "column": "latest_storage_time"
+            }
         ]
         // receivingStatus: 'receiving'
       }

@@ -121,7 +121,7 @@
                   @click="planSchedule(scope.row)">计划进度</el-button> -->
                 <el-button size="mini" type="text" v-has="'btn_batchArrange'"
                   @click="batchAddArrange(scope.row)">批量编排</el-button>
-                <el-button size="mini" type="text" v-if="isBOOS"  @click="coseFun(scope.row.id)" class="JNPF-table-delBtn">关闭</el-button>
+                <el-button size="mini" type="text" v-if="isBOOS||isXY||isJR"  @click="coseFun(scope.row.id)" class="JNPF-table-delBtn">关闭</el-button>
 
                 <el-button size="mini" type="text"
                   @click="viewDetailFun(scope.row)">查看详情</el-button>

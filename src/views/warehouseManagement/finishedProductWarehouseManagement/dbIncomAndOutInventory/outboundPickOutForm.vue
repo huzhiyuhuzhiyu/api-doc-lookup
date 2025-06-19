@@ -148,7 +148,12 @@
                             :key="10112"  v-if="dataForm.pickingWay !== 'dispatch_list'"></el-table-column>
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
-
+                          <el-table-column prop="productionWeight" label="重量" min-width="160">
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.productionWeight" placeholder="重量" :disabled="btnType == 'look'">
+                              </el-input>
+                            </template>
+                          </el-table-column>
 
                           <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
                             v-if="btnType != 'look'">
@@ -376,7 +381,12 @@
                           <el-table-column prop="batchAvailableQuantity" label="批次库存数量" width="160"
                             v-if="btnType != 'look'" :key="7"></el-table-column>
 
-
+                          <el-table-column prop="productionWeight" label="重量" min-width="160">
+                            <template slot-scope="scope">
+                              <el-input v-model="scope.row.productionWeight" placeholder="重量" :disabled="btnType == 'look'">
+                              </el-input>
+                            </template>
+                          </el-table-column>
                           <el-table-column prop="unReceiveQuantity" label="待领料数量" width="140" :key="777"
                             v-if="btnType != 'look'">
                           </el-table-column>
@@ -530,6 +540,7 @@
                 </el-table-column>
                 <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                 <el-table-column prop="deputyNum" label="领料数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
+                <el-table-column prop="productionWeight" label="重量" min-width="160"></el-table-column>
                 <el-table-column prop="unReceiveQuantity" label="待领料数量" width="130" sortable="custom" />
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },

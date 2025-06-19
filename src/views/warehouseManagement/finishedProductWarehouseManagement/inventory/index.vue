@@ -24,6 +24,14 @@
               </el-form-item>
             </el-col>
           </template>
+          <el-col :span="4" v-if="isMS">
+            <el-form-item>
+              <el-select v-model="tableQuery.inventoryFlag"  style="width: 100%;" >
+                <el-option v-for="(item, index) in inventoryFlagList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search('basic')" class="commonBox">
@@ -175,7 +183,11 @@ export default {
 
   data() {
     return {
-          accuracyLevelFlag: "",
+      inventoryFlagList:[
+        {label:"库存大于0",value:1},
+        {label:"全部库存",value:0},
+      ],
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -195,8 +207,7 @@ export default {
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        // { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }, 
       ],
       exportFormVisible: false,
       superQueryVisible: false,
@@ -344,7 +355,7 @@ export default {
     await this.getWarehouseListFun()
     this.superForm = this.tableQuery
     this.getConfig()
-
+    
 
   },
   computed: {
@@ -353,7 +364,7 @@ export default {
 
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
-
+   
   },
   methods: {
     getOrderFiledMap() {

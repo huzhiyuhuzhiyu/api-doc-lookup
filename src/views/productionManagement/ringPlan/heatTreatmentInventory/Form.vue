@@ -1102,7 +1102,7 @@ export default {
       this.$set(data, 'orderNo', this.dataForm.orderNo)
       console.log("所选返工产品", data);
       this.dataForm = data
-      this.$set(this.dataForm, 'orderType', 'flipping')
+      this.$set(this.dataForm, 'orderType', 'manually')
       this.$set(this.dataForm, 'taskMethod', 'appoint')
       this.$set(this.dataForm, 'productsDrawingNo', data.drawingNo)
       this.$set(this.dataForm, 'planDate', [])
@@ -1520,7 +1520,7 @@ export default {
       // if (pageType == 'finish') this.dataForm.stockInventoryLineId = data[0].id
       // if (pageType == 'sale') this.dataForm.stockInventoryLineId = data[0].stockInventoryLineId
 
-      this.$set(this.dataForm, 'orderType', 'flipping')
+      this.$set(this.dataForm, 'orderType', 'manually')
       this.fetchData("PROD")
     },
     async fetchData(code) {

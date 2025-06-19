@@ -624,3 +624,12 @@ export function checkProductAttributesCode(data) {
     })
 }
 
+// 子件BOM查询父级
+
+export function bomTopTree(data) {
+    return request({
+        url: `/api/erp/bom/top/tree`,
+        method: 'get',
+        data
+    })
+}

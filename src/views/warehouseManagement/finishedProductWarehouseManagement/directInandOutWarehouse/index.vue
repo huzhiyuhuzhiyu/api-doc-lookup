@@ -1757,6 +1757,8 @@ export default {
     },
     // 销售发货选择产品——重置
     resetProductFun() {
+      this.sortField = {} // 存储每个字段的排序方式 ascending/descending
+      this.sortStack = [] // 记录排序字段点击顺序
       this.orderForm = { //获取产品数据
         productDrawingNo: "",        // customerProductNo: "",
         productName: "",
@@ -1860,6 +1862,8 @@ export default {
     handleHeaderCellClass({ column }) {
       if (this.sortField[column.property]) {
         column.order = this.sortField[column.property]
+      } else {
+        column.order = null
       }
     },
     // 选完产品后  渲染在产品信息列表

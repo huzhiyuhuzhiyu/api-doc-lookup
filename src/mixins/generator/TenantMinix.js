@@ -1,3 +1,5 @@
+import {deepClone} from "@/utils";
+import Vue from "vue";
 
 export const tenant = {
   mosheng: ['mosheng'], // 示例：配置别名到实际租户标识
@@ -12,7 +14,7 @@ export const tenant = {
 }
 const tenantSymbol = Symbol('tenant')
 
-export default {
+const minix = {
   beforeCreate(){
     this[tenantSymbol] = localStorage.getItem('sys')
   },
@@ -52,3 +54,31 @@ export default {
     },
   }
 }
+
+export function getTenantMinix() {
+    const cloneMinix = deepClone(minix)
+    const newVue = new Vue(cloneMinix)
+    return Object.keys(cloneMinix.computed).reduce((acc, key) => {
+        acc[key] = newVue[key]
+        return acc
+    }, {})
+}
+
+const injectSymbol = Symbol('injectSymbol')
+
+export function injectTenantMinix() {
+    if (injectSymbol in Vue.prototype) {
+        return
+    }
+    Vue.prototype[injectSymbol] = true
+    const tenants = getTenantMinix()
+    Object.keys(tenants).forEach(key => {
+        Vue.prototype[key] = tenants[key]
+    })
+}
+
+export function removeTenantMinix() {
+    delete Vue.prototype[injectSymbol]
+}
+
+export default minix

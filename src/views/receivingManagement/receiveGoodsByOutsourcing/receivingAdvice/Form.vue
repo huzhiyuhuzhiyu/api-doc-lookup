@@ -1502,6 +1502,7 @@ export default {
       console.log(111,id, btnType, approvalFlag, data,pageFlag,);
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
+      this.mergeFlag=pageFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
       console.log(data, 'kk')

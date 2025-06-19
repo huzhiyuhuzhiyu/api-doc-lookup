@@ -49,7 +49,7 @@
               <el-button v-has="'batchSort'" size="mini" type="primary" icon="el-icon-edit" @click="batchSort()">批量排序</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p035')">打印装配单</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer"
-                @click="printFlowCard('p020')">打印流转卡</el-button>
+                @click="printFlowCard('p023')">打印流转卡</el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
               </el-button>
             </div>
@@ -68,7 +68,7 @@
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag"
             :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" :row-class-name="tableRowClassName">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
@@ -196,6 +196,7 @@
               </template>
             </el-table-column>
           </JNPF-table>
+        
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" />
         </div>
@@ -659,6 +660,13 @@ export default {
   mounted() {
   },
   methods: {
+    tableRowClassName({ row }) {
+     if (row.urgentFlag) {
+      return 'urgent-row';       // 紧急，背景红色
+    } else {
+      return 'non-urgent-row';   // 非紧急，背景绿色
+    }
+  },
      //数量验证
     calcValidate() {
       console.log(12332222)
@@ -1389,4 +1397,8 @@ export default {
 ::v-deep #qrcode img{
   margin: 0 auto;
 }
+::v-deep .urgent-row {
+  background-color: red!important; /* 红色背景 */
+}
+
 </style>

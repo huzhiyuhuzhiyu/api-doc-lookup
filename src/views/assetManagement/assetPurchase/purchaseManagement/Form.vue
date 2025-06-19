@@ -537,7 +537,7 @@ export default {
         this.dataForm=res.data
         if(this.operateType=='approve') this.$set(this.dataForm,'state',true)
         this.autoCode=res.data.code
-        thiis.copyForm=JSON.parse(JSON.stringify(res.data))
+        this.copyForm=JSON.parse(JSON.stringify(res.data))
           if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push(
@@ -550,6 +550,7 @@ export default {
                   }
                 )
               })
+              console.log(this.datafilelist);
             }
       })
     },

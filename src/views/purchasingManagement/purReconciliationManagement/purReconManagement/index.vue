@@ -78,7 +78,7 @@
           </el-table-column>
           <el-table-column prop="purchaseNoticeNo" label="采购通知单号" min-width="240" sortable="custom" >
              <template slot-scope="scope">
-              <el-link type="primary" @click.native="deliveryNoteDetailFun(scope.row.noticeId,'look')">
+              <el-link type="primary" @click.native="deliveryNoteDetailFun(scope.row,'look')">
                 {{ scope.row.purchaseNoticeNo }}
               </el-link>
             </template>
@@ -154,6 +154,7 @@
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <orderDetailForm v-if="orderVisible" ref="orderRef" @close="closeFun"></orderDetailForm>
     <deliveryNoteDetailForm v-if="deliveryNoteVisible" ref="deliveryNoteRef" @close="closeFun"></deliveryNoteDetailForm>
+    <purchaseTH v-if="purchaseTHVisible" ref="purchaseTHRef" @close="closeFun"></purchaseTH>
   </div>
 </template>
 
@@ -169,12 +170,17 @@ import { getBimBusinessDetail } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import orderDetailForm from '../../purchaseOrders/purchaseOrder/Form.vue'
 import deliveryNoteDetailForm from '@/views/receivingManagement/procurementReceiving/receivingAdvice/Form.vue'
+import purchaseTH from '@/views/purchasingManagement/returnManagement/purchaseReturnNote/Form.vue'
+
+
+
 export default {
   name: 'purReconManagement',
-  components: { JNPFForm, ExportForm, SuperQuery,orderDetailForm,deliveryNoteDetailForm },
+  components: { JNPFForm, ExportForm, SuperQuery,orderDetailForm,deliveryNoteDetailForm,purchaseTH },
   mixins: [getProjectList],
   data() {
     return {
+      purchaseTHVisible:false,
       orderVisible:false,
       deliveryNoteVisible:false,
       isProjectSwitch: '',
@@ -356,7 +362,7 @@ export default {
     closeFun(){
       this.orderVisible = false
       this.deliveryNoteVisible=false
-
+      this.purchaseTHVisible=false
     },
     orderDetailFun(id,type){
       this.orderVisible = true
@@ -364,11 +370,19 @@ export default {
         this.$refs.orderRef.init(id, type)
       })
     },
-    deliveryNoteDetailFun(id,type){
-      this.deliveryNoteVisible=true
-       this.$nextTick(() => {
-          this.$refs.deliveryNoteRef.init(id, type, false, [])
-        })
+    deliveryNoteDetailFun(row,type){
+      if(row.documentType=='inbound'){
+        
+        this.deliveryNoteVisible=true
+         this.$nextTick(() => {
+            this.$refs.deliveryNoteRef.init(row.noticeId, type, false, [])
+          })
+      }else{
+        this.purchaseTHVisible=true
+        this.$nextTick(() => {
+            this.$refs.purchaseTHRef.init(row.noticeId, type, false, 'outInboundWarehouse')
+        })  
+      }
     },
     async getProductNameSwitch(code, type) {
       try {

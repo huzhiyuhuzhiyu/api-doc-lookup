@@ -84,6 +84,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+              <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>

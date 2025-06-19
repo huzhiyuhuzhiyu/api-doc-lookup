@@ -119,7 +119,16 @@ export default {
                             validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (msg, rowIndex) => this.$message.error(`计划桶数：${msg}`)] }),
                             trigger: 'blur'
                         },
-                    ]
+                    ],
+                    change:(val,data)=>{
+                        if (val){
+                            this.dataForm['productionWeight'] = this.dataForm['weight'] ? this.jnpf.numberFormat(this.jnpf.math('multiply',[this.dataForm['weight'],val]),6)   : this.dataForm['weight']
+                            this.dataForm['planProductionQuantity'] = this.dataForm['quantity'] ? this.jnpf.numberFormat(this.jnpf.math('multiply',[this.dataForm['quantity'],val]),6)  : this.dataForm['quantity']
+                        }else{
+                            this.dataForm['productionWeight'] = this.dataForm.weight
+                            this.dataForm['planProductionQuantity'] = this.dataForm.quantity
+                        }
+                    },
 
                 },
                 { prop: 'productionWeight', label: '计划重量（kg）', value: '', type: 'input', minWidth: 160 ,itemRules: [
@@ -134,7 +143,7 @@ export default {
                         },
                     ],
                     input:(val, scope)=>{
-                        if (this.productWeightQuantity){
+                        if (this.productWeightQuantity && val){
                             this.dataForm.planProductionQuantity = Math.floor((Number(val) / Number(this.dataForm.weight) *Number(this.dataForm.quantity)) * 10000) / 10000
                         }
                     }

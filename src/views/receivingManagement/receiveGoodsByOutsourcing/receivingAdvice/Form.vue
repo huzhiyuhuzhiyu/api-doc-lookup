@@ -1648,7 +1648,7 @@ export default {
             })
             return
           }
-        if (Number(item.receivedQuantity)>Number(waitReceiptNum)) {
+        if (Number(item.receivedQuantity)>Number(item.waitReceiptNum)) {
             submitFlag = false
             this.btnLoading = false
             this.$message({

@@ -382,7 +382,15 @@
                         <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
                       </template>
                     </el-table-column>
-                    <AttributeDictionaryLine :productData="productData" :isSlot="true" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                      <!-- 属性字典列组件 -->
+                      <AttributeColumns
+                          :btnType="btnType"
+                          :moduleConfig="'sale'"
+                          :productData="productData"
+
+                          :isSlot="true"
+                      />
+<!--                    <AttributeDictionaryLine :productData="productData" :isSlot="true" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />-->
                     <el-table-column prop="receivingAddress" label="收货地址" width="200" :key="1288">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.receivingAddress" placeholder="请输入" maxlength="200" />
@@ -755,7 +763,15 @@
                     <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
                   </template>
                 </el-table-column> -->
-                <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                  <!-- 属性字典列组件 -->
+                  <AttributeColumns
+                      :btnType="btnType"
+                      :moduleConfig="'sale'"
+                      :productData="productData"
+
+                      :isSlot="true"
+                  />
+<!--                <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />-->
                 <el-table-column prop="receivingAddress" label="收货地址" width="200" :key="1288">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.receivingAddress" placeholder="请输入" maxlength="200" />
@@ -1047,9 +1063,11 @@ import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList
 import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
 import tenantMinix from '@/mixins/generator/TenantMinix'
 import { closeOrders ,batchRevokeSaleOrder} from '@/api/salesManagement/assemblyOrders'
+import AttributeColumns from '@/components/no_mount/AttributeColumns'
 export default {
   mixins: [busFlow, getProjectList,tenantMinix,ProductSymbolMixin],
   components: {
+      AttributeColumns,
       ProductSymbolForm,
     ExportForm, Process, recordList, Form, productAttributesListForm
   },

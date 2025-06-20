@@ -1,6 +1,7 @@
 import moment from "moment";
 import {deleteBimFileUpload} from "@/api/esop/fileUpload/workinginstruction";
 import {Message, MessageBox} from "element-ui";
+import store from '@/store'
 /**
  *
  * @returns {{resolve, reject, promise: Promise<unknown>}}
@@ -25,7 +26,13 @@ export const elFullScreen = ((() => {
         el[fullScreenFnName] && el[fullScreenFnName]()
     };
 })());
-
+export const getDictDataSync = (dictType) => {
+    const dict = store.getters.dictionaryList.length ? store.getters.dictionaryList.filter(o => o.enCode === dictType) : []
+    if (!dict || !dict.length) {
+        return [];
+    }
+    return (dict[0].dictionaryList || []).map((dict) => ({...dict, label: dict.fullName, value: dict.enCode}))
+}
 
 /**
  * Parse the time to string

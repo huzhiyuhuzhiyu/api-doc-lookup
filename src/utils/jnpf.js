@@ -634,5 +634,21 @@ const jnpf = {
         return planTime = time
     }
   },
+    /**
+     * 防抖函数
+     * @param {Function} fn - 需要防抖的函数
+     * @param {number} delay - 防抖时间间隔（毫秒）
+     * @returns {Function} 防抖后的函数
+     */
+    debounce(fn, delay) {
+        let lastCall = 0;
+        return function (...args) {
+            const now = Date.now();
+            if (now - lastCall >= delay) {
+                lastCall = now;
+                fn.apply(this, args);
+            }
+        };
+    },
 }
 export default jnpf

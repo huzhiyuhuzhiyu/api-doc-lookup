@@ -67,9 +67,11 @@ Vue.use(Element, {
 })
 // 批量引入组件
 import components from './components'
+import { getDictDataSync } from '@/utils'
 Vue.use(components)
 // 添加实例属性
 Object.assign(Vue.prototype, {
+  getDictDataSync:getDictDataSync,
   define: require('./utils/define'), // 开发环境接口配置常量
   global: require('./utils/global').default, // 全局常量
   jnpf, // 公共方法

@@ -25,8 +25,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24" v-if="isProductNameSwitch == 1">
-                        <el-form-item label="产品名称" prop="productsName">
-                          <el-input v-model="dataForm.productsName" placeholder="产品名称" disabled>
+                        <el-form-item label="产品名称" prop="productName">
+                          <el-input v-model="dataForm.productName" placeholder="产品名称" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -35,8 +35,8 @@
                           <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                           </el-input>
                         </el-form-item> -->
-                        <el-form-item label="品名规格" prop="productsDrawingNo">
-                          <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" readonly
+                        <el-form-item label="品名规格" prop="productDrawingNo">
+                          <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" readonly
                             @focus="openSelectProductFun">
                           </el-input>
                         </el-form-item>
@@ -77,7 +77,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate" style="margin-bottom: 20px;">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
@@ -668,7 +668,7 @@ export default {
         // routingName: [
         //   { required: true, message: '工艺路线不能为空', trigger: 'change' }
         // ],
-        productsDrawingNo: [
+        productDrawingNo: [
           { required: true, message: '品名规格不能为空', trigger: 'blur' }
         ]
       },
@@ -1459,6 +1459,7 @@ export default {
     // 获取工艺详情
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
+        console.log(6666,res);
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         res.data.routingLineList.forEach((item) => {
           if (item.routingProResMap) {
@@ -1486,14 +1487,15 @@ export default {
     init(data, btnType, pageType) {
       this.getProductionLineListFun()
       this.creaFun()
-      // this.dataForm = data[0]
+      this.$set(data[0], 'productionQuantity', data[0].availableQuantity)
+      this.dataForm = data[0]
       this.$set(this.dataForm, 'orderNo', '')
-      // this.$set(data[0], 'productionQuantity', this.jnpf.numberFormat(this.jnpf.math('subtract', [data[0].inventoryQuantity, data[0].flippingQuantity]), 6))
       this.$set(this.dataForm, 'planDate', [])
-      this.$set(this.dataForm, 'routingId', "")
-      this.$set(this.dataForm, 'routingName', "")
+      this.$set(this.dataForm, 'routingId', data[0].routingId)
+      this.$set(this.dataForm, 'routingName', data[0].routingName)
       this.$refs.dataForm.clearValidate('planDate');
       this.$refs.dataForm.clearValidate('routingName');
+      if(this.dataForm.routingId)this.getRoutingDetail(this.dataForm.routingId)
       data.forEach(item => {
         let obj = {
           materialsUsedQuantity: this.dataForm.productionQuantity,

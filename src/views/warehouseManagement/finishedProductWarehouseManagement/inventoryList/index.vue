@@ -232,33 +232,18 @@
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'"
-                :editDisabled="scope.row.documentStatus == 'submit' "
+                :editDisabled="scope.row.documentStatus == 'submit'||scope.row.documentStatus=='back' "
                 @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
-
-
-
                 <el-dropdown hide-on-click>
-
                   <span class="el-dropdown-link">
-
                     <el-button type="text" size="mini">
-
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-
                     </el-button>
-
                   </span>
-
                   <el-dropdown-menu slot="dropdown">
-
                     <el-dropdown-item @click.native="viewFun(scope.row.id, 'look', scope.row)">
-
                       查看详情
-
                     </el-dropdown-item>
-
-
-
                     <el-dropdown-item type="text"
                       :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') || (scope.row.businessType == 'outbound_pick_out' && isMS) && scope.row.documentStatus == 'submit')"
                       @click.native="PrintFun(scope.row)">打印</el-dropdown-item>
@@ -266,7 +251,6 @@
                       :disabled="!((scope.row.businessType == 'inbound_purchase' || scope.row.businessType == 'inbound_sale_return' || scope.row.businessType == 'outbound_sale_send' || scope.row.businessType == 'inbound_external' || scope.row.businessType == 'outbound_external_send' || scope.row.businessType == 'outbound_purchase') || scope.row.businessType == 'outbound_pick_out' && scope.row.documentStatus == 'submit')"
                       @click.native="nbwPrintFun(scope.row)">能博旺打印</el-dropdown-item>
                   </el-dropdown-menu>
-
                 </el-dropdown>
 
               </tableOpts>

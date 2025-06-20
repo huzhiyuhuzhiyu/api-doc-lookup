@@ -138,8 +138,7 @@
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110"
                       v-if="isDeputyUnitSwitch" />
-                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"/>
-                    <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"/> 
                     <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -353,7 +352,6 @@
                 <el-table-column prop="purchaseQuantity2" label="数量(副)" width="110" v-if="isDeputyUnitSwitch" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                    />
-                <el-table-column v-if="btnType !== 'look'" prop="maxReceiptNum" label="最大可收货数量" width="160" />
                 <el-table-column prop="receivedQuantity" label="收货数量" min-width="170" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -647,7 +645,6 @@ export default {
             }),
             trigger: ['blur']
           },
-          { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
         ]
       },
@@ -1038,33 +1035,7 @@ export default {
         }
       }
     },
-    //数量验证
-    // list 中 a 不能 operator b 的校验规则
-    calcValidate() {
-      return (rule, value, callback) => {
-        console.log(value, 'ooo')
-        let index = Number(rule.field.match(/\d+/)[0])
-        let msg = this.dataForm.exchangeGoodsFlag ? `换货数量超过最大可换货数量` : `收货数量超过最大可收货数量`
-        if (!value || value == 0) {
-          callback()
-        } else {
-          let flag = false
-          let list = this.dataFormTwo.productData
-          let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].maxReceiptNum)
-
-          if (!(num_1 <= num_2)) {
-            flag = true
-          }
-          if (flag) {
-            this.$message.error(`第${index + 1}行${msg}`)
-            callback(new Error(msg))
-          } else {
-            callback()
-          }
-        }
-      }
-    },
+ 
 
     dateFormat(dateData) {
       var date = new Date(dateData)
@@ -1238,7 +1209,6 @@ export default {
             orderNo: item.orderNo,
             id: item.id,
             deliveryDate: '', // 交期
-            maxReceiptNum: Number(item.purchaseQuantity)*0.2 + Number(item.waitReceiptNum),
           })
         })
         let orderTypeFlag = this.hasDifferentOrderType(list)
@@ -1548,7 +1518,6 @@ export default {
             this.dataFormTwo.productData.forEach((item) => {
               console.log(item, 'item')
               item.drawingNo = item.productDrawingNo
-              this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
             })
             if (this.btnType === 'edit') {
               this.getBusInfo()
@@ -1560,6 +1529,7 @@ export default {
         })
       } else {
         this.fetchData('WXSH')
+      
         this.dataForm.salesman = this.userInfo.userName
         this.dataForm.deliverDate = this.jnpf.getToday()
         this.getBusInfo()
@@ -1678,17 +1648,17 @@ export default {
             })
             return
           }
-          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
-            console.log(123)
+        if (Number(item.receivedQuantity)>Number(waitReceiptNum)) {
             submitFlag = false
             this.btnLoading = false
             this.$message({
-              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
+              message: '第' + (index + 1) + '行产品的收货数量不能超过待收货数量',
               type: 'error',
               duration: 1500
             })
             return
           }
+       
         })
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {

@@ -1,6 +1,7 @@
 <template>
   <el-drawer title="列表显示设置" :visible.sync="drawerVisible" :wrapperClosable="false" size="320px" append-to-body
-    class="JNPF-common-drawer columnSettings-drawer">
+    class="JNPF-common-drawer columnSettings-drawer"
+  >
     <div class="JNPF-flex-main" :class="classObj">
       <!-- <div class="columnSetting-head">
         <div></div>
@@ -10,10 +11,13 @@
         <template v-if="list.length">
           <draggable :list="list" :animation="340" handle=".column-item-icon">
             <div class="column-item" v-for="item in list" :key="item.prop"
-              @click.self="item.columnVisible = !item.columnVisible">
+              @click.self="item.columnVisible = !item.columnVisible"
+            >
               <div class="column-item-left">
                 <i class="icon-ym icon-ym-darg column-item-icon"></i>
-                <el-checkbox class="check-box" v-model="item.columnVisible" :disabled="item.className === 'LineRequired'" />
+                <el-checkbox class="check-box" v-model="item.columnVisible"
+                  :disabled="item.className === 'LineRequired'"
+                />
                 <div class="column-item-label" @click="item.columnVisible = !item.columnVisible">
                   <span>{{ item.label }}</span>
                 </div>
@@ -21,13 +25,19 @@
               <div class="column-item-right">
                 <el-tooltip content="固定到左侧" placement="top"
                   :class="['system-icon', item.fixed === '' || item.fixed === 'left' ? 'active' : '']"
-                  :enterable="false">
-                  <i class="ym-custom ym-custom-format-horizontal-align-left" @click="handleFixed(item, 'left')"></i>
+                  :enterable="false"
+                >
+                  <i class="ym-custom ym-custom-format-horizontal-align-left"
+                    @click.stop="handleFixed(item, 'left')"
+                  ></i>
                 </el-tooltip>
                 <span class="line"></span>
                 <el-tooltip content="固定到右侧" placement="top"
-                  :class="['system-icon', item.fixed === 'right' ? 'active' : '']" :enterable="false">
-                  <i class="ym-custom ym-custom-format-horizontal-align-right" @click="handleFixed(item, 'right')"></i>
+                  :class="['system-icon', item.fixed === 'right' ? 'active' : '']" :enterable="false"
+                >
+                  <i class="ym-custom ym-custom-format-horizontal-align-right"
+                    @click.stop="handleFixed(item, 'right')"
+                  ></i>
                 </el-tooltip>
               </div>
             </div>
@@ -46,7 +56,9 @@
 
 <script>
 import draggable from 'vuedraggable'
-import { mapState } from "vuex";
+import { mapState } from 'vuex'
+import { deepClone } from '@/utils'
+
 export default {
   name: 'ColumnSettings',
   components: { draggable },
@@ -62,51 +74,56 @@ export default {
     setColumnDisplayList: {
       type: Array,
       default: () => []
-    },
+    }
   },
   data() {
     return {
       loading: false,
       drawerVisible: false,
-      list: []
+      list: [],
+      saveSettingsDebounced: null
     }
+  },
+  created() {
+    this.saveSettingsDebounced = this.jnpf.debounce(this._saveSettings, 300)
   },
   computed: {
     menuId() {
       return this.$route.meta.modelId || ''
     },
     ...mapState({
-      themeClass: state => state.settings.themeClass,
+      themeClass: state => state.settings.themeClass
     }),
     classObj() {
       return {
-        [this.themeClass]: true,
-      };
+        [this.themeClass]: true
+      }
     }
   },
   methods: {
     init() {
       this.drawerVisible = true
-      // this.list = [...this.columnList]
-      console.log(this.columnList,'this.columnList')
       this.list = JSON.parse(JSON.stringify(this.columnList))
     },
     reset() {
-      console.log(123, this.defaultColumns, this.setColumnDisplayList);
-      this.defaultColumns.forEach(item => {
-        if (this.setColumnDisplayList.includes(item.prop)) {
-          this.$set(item, 'columnVisible', false)
-        } else {
-          this.$set(item, 'columnVisible', true)
-        }
-      });
-      this.list = this.defaultColumns
-
+      this.loading = true
+      try {
+        const newList = this.defaultColumns.map(item => ({
+          ...item,
+          columnVisible: !this.setColumnDisplayList.includes(item.prop)
+        }))
+        this.list = newList
+      } finally {
+        this.loading = false
+      }
     },
     saveSettings() {
+      this.saveSettingsDebounced()
+    },
+    _saveSettings() {
       let flag = this.list.some(item => !!item.columnVisible)
       if (!flag) {
-        this.$message.error("请至少拥有一个展示字段")
+        this.$message.error('请至少拥有一个展示字段')
       } else {
         this.$emit('setColumn', this.list)
         this.drawerVisible = false
@@ -203,7 +220,8 @@ $lighterBlue: #1890ff;
         display: flex;
         align-items: center;
         width: 160px;
-        span{
+
+        span {
           display: inline-block;
           width: 160px;
           overflow: hidden;

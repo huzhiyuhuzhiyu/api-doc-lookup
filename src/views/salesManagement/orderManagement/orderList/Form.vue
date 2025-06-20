@@ -1063,6 +1063,8 @@ import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList
 import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
 import tenantMinix from '@/mixins/generator/TenantMinix'
 import { closeOrders ,batchRevokeSaleOrder} from '@/api/salesManagement/assemblyOrders'
+import store from '@/store'
+import { getDictDataSync } from '@/utils'
 export default {
   mixins: [busFlow, getProjectList,tenantMinix,ProductSymbolMixin],
   components: {
@@ -1173,14 +1175,7 @@ export default {
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'pairingModeName', label: '配对方式' },
-        { prop: 'accuracyLevel', label: this.$store.getters.accuracyLevel },
-        { prop: 'vibrationLevel', label: '振动等级' },
-        { prop: 'oil', label: '油脂' },
-        { prop: 'oilQuantity', label: '油脂量' },
-        { prop: 'clearance', label: '游隙' },
-        { prop: 'packagingMethod', label: '包装方式' },
-        { prop: 'material', label: '保持架材质' },
-        { prop: 'specialRequire', label: '特殊要求' },
+
       ],
       // 选择客户产品参数
       ProductListRequestObjs: {
@@ -1459,6 +1454,25 @@ export default {
     this.isProjectSwitchFlag = true
     if (this.isProjectSwitch === '1') this.ProductTableItems.splice(3, 0, { prop: 'projectName', label: '所属项目' },);
     if (this.isProductNameSwitch == 1) this.ProductTableItems.splice(2, 0, { prop: 'productName', label: '产品名称' },);
+    const bimProductAttributesList = this.$store.getters.bimProductAttributesList
+    const dictData = getDictDataSync('productAttributes') || [];
+    // 获取属性数据
+    const attrDictionaryData = dictData.filter(item=>![].includes(item.enCode)).map(item=>{
+      return {
+        ...item,
+        prop:item.description,
+        label:this.$store.getters[item.description] || item.fullName,
+        options:item.list,
+        render:store.getters.configData['sale'][item.description],
+        list:bimProductAttributesList[item.enCode].map(item=>{
+          return {
+            label:item.name,
+            value:item.name,
+          }
+        })
+      }
+    })
+    this.ProductTableItems = [...this.ProductTableItems,...attrDictionaryData]
     this.$nextTick(() => { this.$refs.product.doLayout() })
     this.formLoading = false
   },
@@ -3108,22 +3122,9 @@ export default {
 
               let newArray = obj.orderLineList.map(item => {
                 return {
-                  accuracyLevel: item.accuracyLevel,
-                  clearance: item.clearance,
-                  oil: item.oil,
-                  oilQuantity: item.oilQuantity,
-                  packagingMethod: item.packagingMethod,
-                  sealingCoverTyping: item.sealingCoverTyping,
-                  specialRequire: item.specialRequire,
-                  vibrationLevel: item.vibrationLevel,
-                  material: item.material,
-                  colour: item.colour
+                  ...item,
                 };
               });
-              let filteredArray = newArray.filter(item => {
-                return Object.values(item).some(value => value !== "");
-              });
-              if (!filteredArray.length) return
               addBimProductAttributesRecord(newArray).then(res => {
 
               })

@@ -175,6 +175,7 @@
           <el-table-column prop="orderDate" label="单据日期" sortable="custom" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
           <el-table-column prop="createByName" label="创建人" min-width="120" />
+          <el-table-column prop="personName" label="领料人" min-width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"

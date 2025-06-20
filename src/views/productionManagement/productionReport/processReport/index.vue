@@ -25,7 +25,7 @@
               </template> 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
@@ -64,7 +64,7 @@
               <pagination :total="processTotal" :page.sync="processForm.pageNum" :limit.sync="processForm.pageSize" @pagination="initData" />
             </div>
             <!-- 高级查询 -->
-            <SuperQuery :partentOrChild="activeName" :show="superQueryProcessVisible" ref="SuperQuery" :columnOptions="superQueryProcess" @superQuery="superQuerySearchProcess" @close="superQueryProcessVisible = false" />
+            <SuperQuery   :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
           </div>
     </div>
@@ -83,15 +83,16 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
- 
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
 
  
 
     
 
 
-
-      superProcessForm: {},
+ 
       processForm:{},
       processData:[],
       processTotal:0,
@@ -121,7 +122,7 @@ export default {
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '线边仓名称', symbol: 'like', searchType: 1, width: 120 },
       ],
-      superQueryProcess: [
+      superQueryJson: [
          {
           prop: 'projectName',
           label: "所属项目",
@@ -158,7 +159,7 @@ export default {
           type: 'input'
         },    
       ],
-      superQueryProcessVisible: false,
+      superQueryVisible: false,
  
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
@@ -177,8 +178,8 @@ export default {
   async created() { 
  
  
-    this.superProcessForm=this.processForm = JSON.parse(JSON.stringify(this.processFormList))
-   this.search()
+    this.superForm=this.processForm = JSON.parse(JSON.stringify(this.processFormList))
+   this.search('basic')
   },
   watch: {
     activeName() {
@@ -191,10 +192,10 @@ export default {
       this.$refs['dataTableProcess'].showDrawer()
     },
  
-      superQuerySearchProcess(query) {
-      this.superProcessForm = query
-      this.superQueryProcessVisible = false
-      this.search()
+      superQuerySearch(query) {
+      this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
     },
     handleClick(e) {
       this.activeName = e.name
@@ -239,7 +240,7 @@ export default {
         })
         this.processForm.pageNum = 1 // 重置页码
          if (type === 'basic') {
-          this.superProcessForm.superQuery  = {
+          this.basicQuery  = {
             matchLogic: 'AND',
             condition: this.searchList4
               .filter((item) => item.fieldValue)
@@ -249,10 +250,11 @@ export default {
                   fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                 }
               })
-          } 
+            } 
+            this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
-          this.superProcessForm.superQuery = this.superQuery
+          this.superForm.superQuery = this.superQuery
         }
       
     
@@ -261,12 +263,13 @@ export default {
     reset() {
 
         this.$refs['dataTableProcess'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-        this.superProcessForm= this.processForm = JSON.parse(JSON.stringify(this.processFormList))
+        this.superForm= this.processForm = JSON.parse(JSON.stringify(this.processFormList))
          this.searchList4=[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'warehouseName', fieldValue: '', label: '线边仓名称', symbol: 'like', searchType: 1, width: 120 },
       ]
+      this.$refs.SuperQuery.conditionList = []
       this.search('basic')
     },
       // 导出

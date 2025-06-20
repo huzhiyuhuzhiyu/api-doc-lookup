@@ -54,7 +54,7 @@
             :fixedNO="true"  
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="purchasePartnerName" label="采购供应商名称" min-width="180" sortable="custom" />
-            <el-table-column prop="outPartnerName" label="外协供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="outPartnerName" label="委外供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="outProductName" label="产品名称" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductCode" label="产品编码" min-width="120" sortable="custom"> </el-table-column>
             <el-table-column prop="outProductDrawingNo" label="品名规格" min-width="120" sortable="custom"> </el-table-column>

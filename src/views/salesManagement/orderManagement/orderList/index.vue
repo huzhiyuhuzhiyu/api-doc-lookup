@@ -235,7 +235,7 @@ export default {
       orderStateList: [
         { label: "未完成", value: "not_finish" },
         { label: "已完成", value: "finish" },
-        { label: "部分完成", value: "part_finish" },
+        // { label: "部分完成", value: "part_finish" },
         { label: "所有", value: "" },
       ],
       partialList: [
@@ -442,7 +442,7 @@ export default {
   },
   async created() {
     await Promise.all([
-      this.jnpf.getMainUnitFun('orderField', 'gobal_customerContractNo'),
+      this.jnpf.getMainUnitFun('orderField', 'customerContractNo'),
     ]).then(([
       saleContractNoSwitch,
     ]) => {
@@ -473,7 +473,7 @@ export default {
               return
           }
           await getQueryConfirm(this,'是否确认撤回')
-         
+
           console.log(arr);
           const res =await batchRevokeSaleOrder(arr.map(item=>item.id))
           if(res.code === 200){
@@ -569,7 +569,7 @@ export default {
     },
     // 关闭新建编辑页面
     closeForm(isRefresh) {
-      
+
       this.formVisible = false
       this.listLoading=true
       if (isRefresh) {
@@ -592,7 +592,7 @@ export default {
         this.tableData = res.data.records
         this.total = res.data.total
           this.listLoading = false
-         
+
       }).catch(() => {
         this.listLoading = false
       })
@@ -659,7 +659,7 @@ export default {
       }
 
     this.orderForm.orderState=this.isZY?'not_finish':''
-this.superForm ==this.orderForm
+this.superForm =this.orderForm
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },

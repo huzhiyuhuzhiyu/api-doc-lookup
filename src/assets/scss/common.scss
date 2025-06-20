@@ -1929,6 +1929,7 @@
 
 .el-button+.el-popconfirm,
 .el-button+.el-dropdown,
+.el-button+.export-button>.el-button,
 .el-popconfirm+.el-button,
 .el-popconfirm+.el-dropdown {
   margin-left: 10px;

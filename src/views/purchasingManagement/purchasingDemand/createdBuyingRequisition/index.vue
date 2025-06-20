@@ -130,7 +130,7 @@
                               </el-form-item>
                             </template>
                           </el-table-column>
-
+                          <el-table-column prop="material" label="材质" width="120" ></el-table-column>
                           <el-table-column prop="deliveryDate" label="交货日期" min-width="240" key="deliveryDate">
                             <template slot="header">
                               <span class="required">*</span>
@@ -520,7 +520,8 @@ export default {
         { prop: 'name', label: '产品名称',render:false },
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'productCategoryName', label: '产品分类' },
-        { prop: "mainUnit", label: "单位" }
+        { prop: "mainUnit", label: "单位" },
+        { prop: "material", label: "材质" }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'productCode', label: '产品编码', type: 'input' },
@@ -634,6 +635,7 @@ export default {
             planQuantity: '', //计划数量主
             planQuantity2: '', //计划数量副
             remark: item.remark,
+            material: item.material,
             productCategoryName:item.productCategoryName,
             deliveryDate: this.dataForm.deliveryDate?this.dataForm.deliveryDate:"" // 交期
           })

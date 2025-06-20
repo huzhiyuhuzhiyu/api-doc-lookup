@@ -173,7 +173,7 @@
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
                       <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"
                         v-if="productNameFlag == '1'" />
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCategoryName"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" key="productDrawingNo"
                         v-if="dataForm.documentType == 'outbound'" />
@@ -185,8 +185,7 @@
                           <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'"
                             placeholder="请输入客户合同号" />
                         </template>
-                      </el-table-column>
-                      <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
+                      </el-table-column> 
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
                         v-if="dataForm.documentType == 'inbound' && !dataForm.totalStockOutboundFlag">
@@ -224,21 +223,21 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                      <el-table-column prop="weight" label="重量(kg)" width="140" key="737"
                         v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.weight" placeholder="重量"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                      <el-table-column prop="proportion" label="比重" width="140" key="727"
                         v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.proportion" placeholder="比重"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                      <el-table-column prop="discount" label="折扣(0~1)" width="140" key="717"
                         v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
@@ -316,8 +315,7 @@
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
                             placeholder="原批次号"></el-input>
                         </template>
-                      </el-table-column> -->
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                      </el-table-column> --> 
                       <el-table-column key="productSymbol" v-if="['inbound_purchase','inbound_other'].includes(dataForm.businessType) && isZY" prop="productSymbol" label="代号" width="160">
                           <template slot-scope="scope">
                               <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
@@ -325,7 +323,7 @@
                       </el-table-column>
                       <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                       <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
-                        key="123">
+                        key="1233">
                         <template slot-scope="scope">
                           <el-select default-first-option filterable allow-create v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -335,7 +333,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="rawStockMill" v-if="isXY || isJR" label="原材料厂家" width="120"
-                        key="123">
+                        key="1243">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -365,7 +363,7 @@
                             placeholder="备注"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" key="128">
+                      <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" key="1228">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.remark3"
                             placeholder="备注"></el-input>
@@ -407,53 +405,67 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <el-row class="JNPF-common-search-box" :gutter="16">
             <el-form @submit.native.prevent>
-              <el-col :span="4" v-if="dataForm.documentType == 'outbound'">
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.partnerName" placeholder="请输入供应商"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4"  v-if="dataForm.documentType == 'outbound'">
+              <el-col :span="3"  v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.productCategoryName" placeholder="请输入产品分类"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-
-              <el-col :span="4" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
+                <el-form-item>
+                  <el-input v-model="orderForm.productCode" placeholder="请输入产品编码"
+                    @keyup.enter.native="searchProductFun" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound' && productNameFlag == '1'">
                 <el-form-item>
                   <el-input v-model="orderForm.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
                     clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4" v-if="dataForm.documentType == 'outbound'">
+              
+              <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
                     @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-
-              <el-col :span="4" v-if="dataForm.documentType == 'inbound'">
+              
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
                   <el-input v-model="listQuery.partnerName" placeholder="请输入供应商"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
+                <el-form-item>
+                  <el-input v-model="listQuery.productCode" placeholder="请输入产品编码"
+                    @keyup.enter.native="searchProductFun" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound' && productNameFlag == '1'">
                 <el-form-item>
                   <el-input v-model="listQuery.productName" placeholder="请输入产品名称" @keyup.enter.native="searchProductFun"
                     clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4"  v-if="dataForm.documentType == 'inbound'">
+              
+              
+              <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productCategoryName" placeholder="请输入产品分类"
+                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="4" v-if="dataForm.documentType == 'inbound'">
+              <el-col :span="3"  v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
+                  <el-input v-model="listQuery.productCategoryName" placeholder="请输入产品分类"
                   @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
@@ -734,6 +746,7 @@ export default {
       orderForm: { //获取产品数据
         productCategoryName:"",
         productDrawingNo: "",        // customerProductNo: "",
+        productCode: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -1477,6 +1490,8 @@ export default {
     },
     // 销售发货选择产品——重置
     resetProductFun() {
+      this.sortField = {} // 存储每个字段的排序方式 ascending/descending
+      this.sortStack = [] // 记录排序字段点击顺序
       this.orderForm = { //获取产品数据
         productDrawingNo: "",        // customerProductNo: "",
         productName: "",
@@ -1580,6 +1595,8 @@ export default {
     handleHeaderCellClass({ column }) {
       if (this.sortField[column.property]) {
         column.order = this.sortField[column.property]
+      } else {
+        column.order = null
       }
     },
     // 选完产品后  渲染在产品信息列表

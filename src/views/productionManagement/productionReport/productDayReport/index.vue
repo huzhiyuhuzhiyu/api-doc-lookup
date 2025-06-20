@@ -94,7 +94,7 @@
               <pagination :total="produceTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize" @pagination="initData" />
             </div>
             <!-- 高级查询 -->
-            <SuperQuery :partentOrChild="activeName" :show="superQueryProduceVisible" ref="SuperQuery" :columnOptions="superQueryProduct" @superQuery="superQuerySearchProduce" @close="superQueryProduceVisible = false" />
+            <SuperQuery  :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
           </div>
     </div>
@@ -113,11 +113,15 @@ export default {
   mixins: [getProjectList],
   data() {
     return {
-                columnList:['equipmentName','equipmentCode'],
+        superQuery: {},
+      superForm: {},
+      basicQuery: {},
+
+      columnList:['equipmentName','equipmentCode'],
       productionDate:[],
       produceData:[],
       produceTotal:0,
-      superProductForm: {},
+      superForm: {},
       productForm:{},
       productFormList:{
         produceStartDate: "",
@@ -255,7 +259,7 @@ export default {
           type: 'input'
         },  
       ],
-      superQueryProduceVisible: false,
+      superQueryVisible: false,
 
 
 
@@ -282,9 +286,9 @@ export default {
   },
   async created() { 
  
-    this.superProductForm=this.productForm = JSON.parse(JSON.stringify(this.productFormList))
+    this.superForm=this.productForm = JSON.parse(JSON.stringify(this.productFormList))
     
-   this.search()
+   this.search('basic')
   },
   watch: {
     activeName() {
@@ -296,10 +300,10 @@ export default {
       this.$refs['dataTableProduce'].showDrawer()
     },
 
-    superQuerySearchProduce(query) {
-      this.superProductForm = query
-      this.superQueryProduceVisible = false
-      this.search()
+    superQuerySearch(query) {
+       this.superQuery = query
+      this.superQueryVisible = false
+      this.search('super')
     },
 
     //排序
@@ -345,7 +349,7 @@ export default {
         })
         this.productForm.pageNum = 1 // 重置页码
         if (type === 'basic') {
-          this.superProductForm.superQuery  = {
+          this.basicQuery  = {
             matchLogic: 'AND',
             condition: this.searchList1
               .filter((item) => item.fieldValue)
@@ -356,9 +360,10 @@ export default {
                 }
               })
           } 
+          this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
-          this.superProductForm.superQuery = this.superQuery
+          this.superForm.superQuery = this.superQuery
         }
    
       
@@ -368,13 +373,14 @@ export default {
     reset() {
         this.$refs['dataTableProduce'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.productionDate = []
-       this.superProductForm= this.productForm = JSON.parse(JSON.stringify(this.productFormList))
+       this.superForm= this.productForm = JSON.parse(JSON.stringify(this.productFormList))
         this.searchList1=[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'processName', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'producerName', fieldValue: '', label: '生产人', symbol: 'like', searchType: 1, width: 120 },
         { field: 'equipmentName', fieldValue: '', label: '设备名称', symbol: 'like', searchType: 1, width: 120 },
       ]
+      this.$refs.SuperQuery.conditionList = []
      
       this.search('basic')
     },

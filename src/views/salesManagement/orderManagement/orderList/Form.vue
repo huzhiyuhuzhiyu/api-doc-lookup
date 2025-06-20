@@ -163,7 +163,7 @@
                   </div>
                   </div>
                   <div ref="boxresiz" v-if="btnType == 'look'">
-                    <JNPF-table ref="product"  hasC  @selection-change="selectCloseData" :partent-or-child="'child'" :data="productData" custom-column :fixedNO="false" border key="191"
+                    <JNPF-table ref="product"  :hasC="isZY"  @selection-change="selectCloseData" :partent-or-child="'child'" :data="productData" custom-column :fixedNO="false" border key="191"
                        :height="customStyleData">
                       <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                       <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
@@ -561,7 +561,7 @@
                 </el-tooltip>
               </div>
               <div ref="boxresiz" v-if="btnType == 'look'">
-                <JNPF-table ref="product" hasC  @selection-change="selectCloseData" :partent-or-child="'child'" :data="productData" :fixedNO="false" border :key="191" custom-column
+                <JNPF-table ref="product" :hasC="isZY"  @selection-change="selectCloseData" :partent-or-child="'child'" :data="productData" :fixedNO="false" border :key="191" custom-column
                   :height="customStyleData">
                   <!-- <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column> -->
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
@@ -894,7 +894,7 @@
               </div>
               <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
                 <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                  :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                  highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                   class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                   <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                     <i
@@ -907,7 +907,7 @@
             <div class="JNPF-common-layout-center JNPF-flex-main">
               <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-                  <el-col :span="6" v-if="isProjectSwitch === '1'" >
+                  <el-col :span="3" v-if="isProjectSwitch === '1'" >
                     <el-form-item>
                       <el-select v-model="ProductListRequestObj.projectId" placeholder="请选择所属项目" style="width: 100%;" filterable>
                         <el-option v-for="item in projectIdData" :key="item.id" :label="item.name"
@@ -915,13 +915,13 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6">
+                  <el-col :span="4">
                     <el-form-item>
                       <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productCode"
                         placeholder="请输入产品编码" clearable />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6" v-if="isProductNameSwitch == 1">
+                  <el-col :span="4" v-if="isProductNameSwitch == 1">
                     <el-form-item>
                       <el-input @keyup.native.enter="searchAllProduct()" v-model="ProductListRequestObj.productName"
                         placeholder="请输入产品名称" clearable />
@@ -945,17 +945,17 @@
                 </el-form>
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
-                <JNPF-table v-loading="listLoading" :data="allproductData" hasC
+                <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                   @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_330618">
-                  <el-table-column prop="code" label="产品编码" min-width="120" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                  <el-table-column prop="code" label="产品编码" min-width="120" show-overflow-tooltip sortable="custom"></el-table-column>
+                  <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'" sortable="custom"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="330" />
-                  <el-table-column prop="productCategoryName" label="所属分类" min-width="330" />
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="330" sortable="custom"/>
+                  <el-table-column prop="productCategoryName" label="所属分类" min-width="330" sortable="custom"/>
                   <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                     v-if="isProjectSwitch === '1'" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
-                  <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120">
+                  <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom"> 
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewFun(scope.row)">
                         {{ scope.row.inventoryQuantity }}
@@ -1899,7 +1899,7 @@ export default {
     submit() {
       console.log(this.file);
 
-      if(!this.file.length) return this.$message.error('上传文件不能为空')
+      if(!this.file) return this.$message.error('上传文件不能为空')
       this.UploadProduct(this.file)
     },
     handleFileChange(file) {
@@ -1914,6 +1914,7 @@ export default {
       formData.append("file", data)
       formData.append("partnerId", this.dataForm.cooperativePartnerId)
       //调用上传文件接口
+      this.btnLoading=true
       uploadProduct(formData).then(res => {
         if (!res.data.url) {
           this.$message.success(`导入成功`)
@@ -1928,10 +1929,14 @@ export default {
             });
           }
           this.productData = res.data.list
+          this.btnLoading = false
           this.formLoading = false
           this.loadingText = ''
           this.uploadVisib = false
+          this.file=null
         } else {
+          this.btnLoading = false
+          this.formLoading = false
           this.handleMessage(res.data)
           this.$refs['uploadRef'].clearFiles();
         }
@@ -1939,6 +1944,7 @@ export default {
         this.$refs['uploadRef'].clearFiles();
       }).catch(err => {
         this.$message.error(`文件上传失败`)
+          this.btnLoading = false
         this.formLoading = false
         this.loadingText = ''
       })
@@ -2327,6 +2333,21 @@ export default {
         })
       });
     },
+    
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'salesName' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.ProductListRequestObj.orderItems[0].asc = order === "ascending"
+      this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
+      this.initData2()
+    },
     // 获取所有产品列表数据
     initData2() {
       this.listLoading = true
@@ -2349,7 +2370,8 @@ export default {
     },
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
-      this.highlightCurrentFlag=false
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+        this.$refs.treeBox.setCurrentKey(null)
       this.ProductListRequestObj = {
         classAttributeList: ["finish_product", "semi_finished"],
         classAttribute: "",

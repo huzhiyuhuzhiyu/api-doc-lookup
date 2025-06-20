@@ -110,7 +110,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="190" show-overflow-tooltip :key="5"
-                        v-if="orderType === 'external_process'">
+                       >
                         <template slot="header">
                           <span class="required">*</span>
                           工序名称
@@ -130,7 +130,7 @@
                       </el-table-column>
                       <el-table-column prop="weight" label="重量(kg)" width="90" >
                           <template slot-scope="scope">
-                           <el-input v-model="scope.row.weight" maxlength="20" placeholder="重量(kg)" ></el-input>
+                           <el-input v-model="scope.row.weight" maxlength="20" placeholder="重量(kg)" @blur="compuntedTotalWeight"></el-input>
                           </template>
                       </el-table-column>
                       <el-table-column prop="proportion" label="比重" width="80" >
@@ -156,7 +156,7 @@
                           <el-form-item>
                             <div class="viewData">
                               <span>
-                                {{ Number(scope.row.inventoryQuantity)  }}
+                                {{ Number(scope.row.inventoryQuantity) - Number(scope.row.outsourcingQuantity)  }}
                               </span>
                             </div>
                           </el-form-item>
@@ -328,7 +328,7 @@ import {
   editpurProcurementRequire,
   purProcurementRequirementsList
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
+import { insertOutOrder,searchPurOutProcessPrice } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getBimBusinessDetail } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import {
@@ -343,12 +343,13 @@ import Process from '@/components/Process/Preview'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import { mapGetters, mapState } from 'vuex'
+import tenantMinix from "@/mixins/generator/TenantMinix";
 export default {
   components: {
     SourceArea,
     Process
   },
-  mixins: [AbProjectMixin],
+  mixins: [AbProjectMixin,tenantMinix],
   data() {
     return {
       sourceData:[],
@@ -410,7 +411,7 @@ export default {
       ProcessListRequestObj: {
         code: '',
         name: '',
-        processType: 'heat_treatment',
+        processingType: 'external_production', 
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -719,7 +720,14 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       customStyleData: 0,
-      formLoading: true
+      formLoading: true,
+      requestPriceForm:{
+        cooperativePartnerId:"",
+        processId:"",
+        weight:"",
+      },
+      totalWeight:0,
+      calcType:"number",//计算金额的类型
     }
   },
   computed: {
@@ -761,7 +769,7 @@ export default {
       handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
           if (item.price && item.purchaseQuantity) {
-            item.totalAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity,2)
+            item.totalAmount =this.calcType=='number'? this.jnpf.numberFormat(item.price * item.purchaseQuantity,2): this.jnpf.numberFormat(item.weight * item.price,2)
           } else {
             item.totalAmount = ''
           }
@@ -771,12 +779,12 @@ export default {
             item.excludingTaxPrice = ''
           }
           if (item.purchaseQuantity && item.excludingTaxPrice) {
-            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice,2)
+            item.excludingTaxAmount = this.calcType=='number'?this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice,2):this.jnpf.numberFormat(item.weight * item.excludingTaxPrice,2)
           } else {
             item.excludingTaxAmount = ''
           }
           if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
-            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+            item.taxAmount = this.jnpf.numberFormat(this.calcType=='number'?item.price * item.purchaseQuantity - item.excludingTaxAmount:item.weight * item.price - item.excludingTaxAmount)
           } else {
             item.taxAmount = ''
           }
@@ -801,6 +809,23 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    compuntedTotalWeight(){
+      this.totalWeight=  this.numberFormat(this.dataFormTwo.data.reduce((total, item) => total + item.weight, 0));
+      if(this.dataForm.cooperativePartnerId&&this.isXBN&&this.dataFormTwo.data.length&&this.dataFormTwo.data[0].processId){
+          this.requestPriceForm.cooperativePartnerId=this.dataForm.cooperativePartnerId
+          this.requestPriceForm.processId=this.dataFormTwo.data[0].processId
+          this.requestPriceForm.weight=this.totalWeight
+          searchPurOutProcessPrice(this.requestPriceForm).then(res=>{
+            console.log("res,价格配置",res);
+            if(res.data){
+              this.calcType=res.data.calcType
+              this.dataFormTwo.data.forEach(item => {
+                item.price=res.data.price
+              });
+            }
+          })
+      }
+    },
     switchStyleheight() {
       const mainRegion1 = this.$refs.main // 表单页面区域
       const mainHeight1 = mainRegion1.clientHeight
@@ -978,6 +1003,21 @@ export default {
             })
           }
         })
+
+         if(this.dataForm.cooperativePartnerId&&this.isXBN&&this.dataFormTwo.data.length&&this.dataFormTwo.data[0].processId){
+            this.requestPriceForm.cooperativePartnerId=this.dataForm.cooperativePartnerId
+            this.requestPriceForm.processId=this.dataFormTwo.data[0].processId
+            this.requestPriceForm.weight=this.totalWeight
+            searchPurOutProcessPrice(this.requestPriceForm).then(res=>{
+              console.log("res,价格配置",res);
+              if(res.data){
+                this.calcType=res.data.calcType
+                this.dataFormTwo.data.forEach(item => {
+                  item.price=res.data.price
+                });
+              }
+            })
+        }
         let _data = {
           cooperativePartnerId: this.dataForm.cooperativePartnerId,
           productIdList
@@ -993,21 +1033,32 @@ export default {
       listQuery.classAttribute = data.classAttribute
       return listQuery
     },
-    // 选择产品名称的弹框
+    // 选择工序
     onOrganizeChangeTwo(val, data, paramsObj) {
       if (!data || !data.length) return
 
       let index = paramsObj.scope.$index
 
       if (data.length) {
-        if (this.orderType === 'external') {
-          this.dataFormTwo.data[index].processName = ''
-          this.dataFormTwo.data[index].processId = ''
-        } else {
-          this.dataFormTwo.data[index].processName = data[0].name
-          this.dataFormTwo.data[index].processId = data[0].id
-        }
+        this.dataFormTwo.data.forEach(item => {
+          item.processName = data[0].name
+          item.processId = data[0].id
+        });
         
+        if(this.dataForm.cooperativePartnerId&&this.isXBN){
+            this.requestPriceForm.cooperativePartnerId=this.dataForm.cooperativePartnerId
+            this.requestPriceForm.processId=this.dataFormTwo.data[0].processId
+            this.requestPriceForm.weight=this.totalWeight
+            searchPurOutProcessPrice(this.requestPriceForm).then(res=>{
+              console.log("res,价格配置",res);
+              if(res.data){
+                this.calcType=res.data.calcType
+                this.dataFormTwo.data.forEach(item => {
+                  item.price=res.data.price
+                });
+              }
+            })
+        }
       }
     },
 
@@ -1023,30 +1074,7 @@ export default {
         return formatted
       }
     },
-    //主数量输入事件
-    changePlanQuantity(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity * this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity / this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].planQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].planQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+ 
     // 产品弹窗
     openSeleceProductDialog() {
 
@@ -1141,7 +1169,7 @@ export default {
       // getShipmentList(obj).then((res) => {
       //   this.dataFormTwo.data[index].outShipmentList = res.data
       // })
-      this.dataFormTwo.data[index].outShipmentList[0].demandQuantity1 =(this.dataFormTwo.data[index].purchaseQuantity*1) 
+      this.dataFormTwo.data[index].outShipmentList[0].demandQuantity=this.dataFormTwo.data[index].outShipmentList[0].demandQuantity1 =(this.dataFormTwo.data[index].purchaseQuantity*1) 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
@@ -1152,18 +1180,7 @@ export default {
         )
       }
     },
-    // 副数量输入事件
-    changePlanQuantity2(index, val) {
-      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 / this.dataFormTwo.data[index].ratio
-        )
-      } else {
-        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
-          this.dataFormTwo.data[index].purchaseQuantity2 * this.dataFormTwo.data[index].ratio
-        )
-      }
-    },
+  
     clearData() {
       this.dataForm.id = ''
       this.dataFormTwo.data = []
@@ -1191,7 +1208,7 @@ export default {
           projectId: item.projectId,
           productDrawingNo: item.externalProductDrawingNo,
           productCode: item.externalProductCode,
-          productName: item.externalProductName,
+          productName: item.productName,
           weight: item.weight,
           proportion: item.proportion,
           discount: item.discount,
@@ -1199,7 +1216,7 @@ export default {
           deliveryDate: item.deliveryDate,
           mainUnit: item.externalMainUnit,
           deputyUnit: item.externalDeputyUnit,
-          purchaseQuantity: Number(item.inventoryQuantity) ,
+          purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity) ,
           productsId: item.externalProductsId,
           classAttribute: item.externalClassAttribute,
           calculationDirection: item.externalCalculationDirection,
@@ -1241,7 +1258,7 @@ export default {
       this.ProcessListRequestObj = {
         code: '',
         name: '',
-        processType: 'heat_treatment',
+        processingType: 'external_production',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -1292,7 +1309,7 @@ export default {
           ProcessListRequestObj = {
             code: '',
             name: '',
-            processType: 'heat_treatment',
+        processingType: 'external_production', 
             projectId: item.projectId,
             pageNum: 1,
             pageSize: 20,
@@ -1307,7 +1324,7 @@ export default {
           ProcessListRequestObj = {
             code: '',
             name: '',
-            processType: 'heat_treatment',
+        processingType: 'external_production', 
             pageNum: 1,
             pageSize: 20,
             orderItems: [
@@ -1377,7 +1394,7 @@ export default {
             deliveryDate: item.deliveryDate,
          
             deputyUnit: item.externalDeputyUnit,
-            purchaseQuantity: Number(item.inventoryQuantity),
+            purchaseQuantity: Number(item.inventoryQuantity) - Number(item.outsourcingQuantity) ,
             productsId: item.externalProductsId,
             classAttribute: item.externalClassAttribute,
             calculationDirection: item.externalCalculationDirection,
@@ -1438,7 +1455,7 @@ export default {
           let ProcessListRequestObj = {
             code: '',
             name: '',
-            processType: 'heat_treatment',
+        processingType: 'external_production', 
             pageNum: 1,
             pageSize: 20,
             orderItems: [
@@ -1583,11 +1600,11 @@ export default {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
         count += item.taxAmount * 1
-        if (Number(item.purchaseQuantity) + Number(item.outsourcingQuantity) > Number(item.inventoryQuantity)) {
-          this.$message.error('毛坯已全部外协完成，提交失败！')
-          this.btnLoading = false
-          throw Error()
-        }
+        // if (Number(item.purchaseQuantity) + Number(item.outsourcingQuantity) > Number(item.inventoryQuantity)) {
+        //   this.$message.error('毛坯已全部外协完成，提交失败！')
+        //   this.btnLoading = false
+        //   throw Error()
+        // }
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
       if (this.type == 'add') {

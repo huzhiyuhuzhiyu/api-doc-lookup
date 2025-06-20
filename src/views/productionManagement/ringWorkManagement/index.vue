@@ -45,7 +45,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <!-- <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
+              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </div>
@@ -63,7 +63,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag" hasC @selection-change="handleSelectionChange" 
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag" :checkSelectable="checkSelectable" hasC @selection-change="handleSelectionChange" 
             :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" min-width="120" sortable="custom" />

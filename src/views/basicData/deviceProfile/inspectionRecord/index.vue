@@ -98,7 +98,7 @@ export default {
   data() {
     return {
       superQueryVisible: false,
-      columnList: [],
+      columnList:['position','pic','remark','createTime',],
       superQuery: {},
       superForm: {},
       taskSetTitle:"",  

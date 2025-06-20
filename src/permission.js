@@ -5,6 +5,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken, removeToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
+import {injectTenantMinix, removeTenantMinix} from "@/mixins/generator/TenantMinix";
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -32,6 +33,7 @@ router.beforeEach(async (to, from, next) => {
   const hasToken = getToken()
 
   if (hasToken) {
+    injectTenantMinix()
     if (store.getters.isLock && to.path !== '/lockScreen' && to.path !== '/login') {
       next({
         path: '/lockScreen'
@@ -78,6 +80,7 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   } else {
+    removeTenantMinix()
     /* has no token*/
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly

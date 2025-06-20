@@ -1578,6 +1578,7 @@ export default {
       })
     },
     resetAssembleData() {
+      this.$refs['assembleRef'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.planDateArr = []
       this.superForm1 = this.assembleForm = {
         demandType: "assemble",
@@ -1680,6 +1681,8 @@ export default {
       })
     },
     resetProduceData() {
+            this.$refs['produceRef'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
       this.planDateArr = []
       this.superForm2 = this.produceForm = {
         demandType: "produce",
@@ -1772,6 +1775,8 @@ export default {
       })
     },
     resetPurchaseData() {
+            this.$refs['purchaseRef'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
       this.superForm3 = this.purchaseForm = {
         productDrawingNo: "",
         planNo: "",
@@ -1869,6 +1874,8 @@ export default {
       })
     },
     resetOuData() {
+            this.$refs['outRef'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+
       this.planDateArr = []
       this.superForm4 = this.outForm = {
         demandType: "out",

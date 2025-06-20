@@ -42,7 +42,7 @@
                       </el-form-item>
                     </el-col>
 
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
                         <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
@@ -50,7 +50,7 @@
                             :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')
                       && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                       <el-form-item label="采购供应商" prop="partnerName">
@@ -69,7 +69,7 @@
                       </el-col>
             
                       <el-col  :span="6" >
-                        <el-form-item label="外协供应商" prop="outPartnerName" >
+                        <el-form-item label="委外供应商" prop="outPartnerName" >
                           <el-input v-model="dataForm.outPartnerName" placeholder="选择外协供应商" readonly @focus="openSelectOutPartner" :disabled="btnType === 'look'?true:false" />
                         </el-form-item>
                       </el-col>
@@ -343,7 +343,7 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :sm="6" :xs="24">
+                <!-- <el-col :sm="6" :xs="24">
                   <el-form-item label="仓库" prop="warehouseId">
                     <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
                       :disabled="btnType == 'look' ? true : false" clearable @change="warehouseIdChange">
@@ -351,7 +351,7 @@
                         :value="item.id"></el-option>
                     </el-select>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_procure_data')
                 && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                   <el-form-item label="采购供应商" prop="partnerName">

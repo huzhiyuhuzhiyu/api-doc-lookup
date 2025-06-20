@@ -593,6 +593,7 @@ export default {
 						productsId: item.productsId,
 						ratio: item.ratio,
 						remark: item.remark,
+            approvalStatus:'ok',
 						// unqualifiedQuantity: this.inspectionResults === 'qualified' ?
 						// 	0 : Number(item.qualifiedQuantity) + Number(item
 						// 		.unqualifiedQuantity)

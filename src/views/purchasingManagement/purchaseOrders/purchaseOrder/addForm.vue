@@ -985,6 +985,7 @@ export default {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           }
         } else {
+          this.$set(item,'price',1)
           // this.$set(item, 'purchaseQuantity', Number(item.maxInventory) - Number(item.availableQuantity))
           item.productDrawingNo = item.drawingNo
           item.productName = item.name

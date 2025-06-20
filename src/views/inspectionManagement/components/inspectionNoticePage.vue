@@ -40,6 +40,8 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
+                <el-button    :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="iconfont-menu  icon-chehui" @click="withdrawFun" v-if="pageData.type=='procure'">撤回</el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
@@ -59,8 +61,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table v-if="tableDataFlag" ref="dataTable" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_139872">
+          <!-- :hasC="pageData.type=='procure'"  -->
+          <JNPF-table v-if="tableDataFlag" ref="dataTable" :hasC="pageData.type=='procure'" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+            custom-column :setColumnDisplayList="columnList" customKey="JNPFTableKey_139872" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -103,6 +106,13 @@
                 <el-tag type="success" v-if="scope.row.processingStatus == 'processed'">已处理</el-tag>
               </template>
             </el-table-column>
+            <el-table-column prop="documentStatus" label="单据状态" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'"> 草稿</el-tag>
+                <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
+                <el-tag type="danger" v-else-if="scope.row.documentStatus == 'back'">撤回</el-tag>
+              </template>
+            </el-table-column>
             <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" /> -->
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
@@ -136,7 +146,7 @@
 </template>
 
 <script>
-import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
+import { getInspectionList, deleteInspectionData, getInspectionLinesList,inspectionRevoke } from '@/api/inspectionManagement/index' // 检验单
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import Form from './defectiveProductHandlingForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
@@ -227,6 +237,16 @@ export default {
             { label: '审批撤回', value: 'withdrawn' }
           ]
         },
+           {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' },
+            { label: '撤回', value: 'back' },
+          ]
+        },
         {
           prop: 'inspectionResults',
           label: '处理状态',
@@ -300,7 +320,8 @@ export default {
       linesTableData: [],
       linesQuery: {},
       exportFormVisible: false,
-      linesTotal: 0
+      linesTotal: 0,
+      selectArr:[],
     }
   },
   async created() {
@@ -337,6 +358,24 @@ export default {
     }
   },
   methods: {
+    handleSelectionChange(val){
+      this.selectArr=val
+    },
+    withdrawFun(){
+      if(!this.selectArr.length) return this.$message.error("请选择你要撤回的数据")
+      // if(this.selectArr.length>1) return this.$message.error("只支持单条数据撤回")
+      const ids = this.selectArr.map(item => item.id);
+      this.$confirm("您确定撤回所选的数据吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        inspectionRevoke(ids).then(res => {
+          this.$message.success('撤回成功')
+          this.initData()
+        })
+      }).catch(() => {
+
+      })
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)

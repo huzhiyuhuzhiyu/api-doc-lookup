@@ -3,23 +3,49 @@ export default {
   name: 'jnpf-table-column',
   functional: true,
   render(createElement, context) {
-    const list = context.props && context.props.columns || []
-    const list2 = context.props && context.props.columnList || []
-    let slots = []
-    for (let i = 0; i < list2.length; i++) {
-      inner: for (let j = 0; j < list.length; j++) {
-        if (list[j].componentOptions && list[j].componentOptions.propsData && list2[i].prop === list[j].componentOptions.propsData.prop && list2[i].columnVisible) {
-          let column = list[j]
-          column.componentOptions.propsData.fixed = list2[i].fixed
-          slots.push(column)
-          break inner
+    const columns = context.props.columns || []
+    const columnList = context.props.columnList || []
+
+    // 建立 prop 到 vnode 的映射
+    const propToVNode = {}
+    columns.forEach(vnode => {
+      const prop = vnode.componentOptions?.propsData?.prop
+      if (prop) propToVNode[prop] = vnode
+    })
+
+    // 按 columnList 顺序渲染
+    const renderVNodes = columnList
+      .filter(item => item.columnVisible)
+      .map(item => {
+        const vnode = propToVNode[item.prop]
+        if (vnode) {
+          if (vnode.componentOptions && vnode.componentOptions.propsData) {
+            if (!vnode.componentOptions.propsData.key) {
+              vnode.componentOptions.propsData.key = item.prop
+            }
+          }
+          vnode.key = item.prop
+        }
+        return vnode
+      })
+      .filter(Boolean)
+
+    // 处理无prop的列（如操作列/插槽列）
+    const noPropVNodes = columns.filter(
+      vnode => !vnode.componentOptions?.propsData?.prop
+    )
+      .map((vnode, index) => {
+      const uniqueKey = `no-prop-${index}`
+      if (vnode.componentOptions && vnode.componentOptions.propsData) {
+        if (!vnode.componentOptions.propsData.key) {
+          vnode.componentOptions.propsData.key = uniqueKey
         }
       }
-    }
-    let noPropList = list.filter(item => item.componentOptions && item.componentOptions.propsData && !item.componentOptions.propsData.prop)
-    let noPropList1 = noPropList.filter(item => item.componentOptions.propsData.label !== '操作')
-    let noPropList2 = noPropList.filter(item => item.componentOptions.propsData.label === '操作')
-    return [...noPropList1, ...slots, ...noPropList2]
+      vnode.key = uniqueKey
+      return vnode
+    })
+
+    return [...renderVNodes, ...noPropVNodes]
   }
 }
 </script>

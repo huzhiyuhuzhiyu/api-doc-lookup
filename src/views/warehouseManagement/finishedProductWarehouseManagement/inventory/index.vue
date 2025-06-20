@@ -24,6 +24,14 @@
               </el-form-item>
             </el-col>
           </template>
+          <el-col :span="4" v-if="isMS">
+            <el-form-item>
+              <el-select v-model="tableQuery.inventoryFlag"  style="width: 100%;" >
+                <el-option v-for="(item, index) in inventoryFlagList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search('basic')" class="commonBox">
@@ -53,7 +61,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-if="tableDataFlag == true" :data="tableData" custom-column row-key="id"
+        <JNPF-table ref="tabForm"  :data="tableData" custom-column row-key="id"
           :fixedNo="true" @sort-change="sortChange" :header-cell-class-name="handleHeaderCellClass" customKey="JNPFTableKey_263873">
 
 
@@ -154,7 +162,11 @@ export default {
 
   data() {
     return {
-          accuracyLevelFlag: "",
+      inventoryFlagList:[
+        {label:"库存大于0",value:1},
+        {label:"全部库存",value:0},
+      ],
+      accuracyLevelFlag: "",
       clearanceFlag: "",
       oilFlag: "",
       oilQuantityFlag: "",
@@ -173,8 +185,8 @@ export default {
       basicQuery: {},
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
-        // { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }, 
       ],
       exportFormVisible: false,
       superQueryVisible: false,
@@ -232,6 +244,11 @@ export default {
           label: "产品编码",
           type: 'input'
         },
+        {
+            prop: 'productName',
+            label: '产品名称',
+            type: 'input'
+          },
         {
           prop: 'productDrawingNo',
           label: "品名规格",
@@ -317,7 +334,7 @@ export default {
     await this.getWarehouseListFun()
     this.superForm = this.tableQuery
     this.getConfig()
-
+    
 
   },
   computed: {
@@ -326,7 +343,7 @@ export default {
 
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
-
+   
   },
   methods: {
     getOrderFiledMap() {
@@ -361,15 +378,7 @@ export default {
         this.productNameFlag = res.data.product[1].configValue1
         console.log(this.productNameFlag);
         this.tableDataFlag = true
-        if (this.productNameFlag == '1') {
-
-          this.searchList.splice(1, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 })
-          this.superQueryJson.splice(1, 0, {
-            prop: 'productsName',
-            label: '产品名称',
-            type: 'input'
-          })
-        }
+        
       }).catch(error => {
         this.tableFlag = true
       })
@@ -485,10 +494,15 @@ export default {
       this.initData()
     },
     reset() {
-      if (this.treeData.length > 1) {
-        this.selectedNodeKey = this.tableQuery.warehouseId
-        this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
-      }
+      this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+     
+ // 排序数组
+      this.sortArr= [{
+        asc: false,
+        column: "create_time"
+      }]
+      this.sortField= {} // 存储每个字段的排序方式 ascending/descending
+      this.sortStack= [] // 记录排序字段点击顺序
       this.superForm = this.tableQuery = {
         orderItems: [
           {
@@ -512,6 +526,7 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.searchList = [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         // { field: 'warehouseName', fieldValue: '', label: '仓库名称', symbol: 'like', searchType: 1, width: 120 },
       ]

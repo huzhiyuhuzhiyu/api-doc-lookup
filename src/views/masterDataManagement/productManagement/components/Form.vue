@@ -51,6 +51,7 @@ import { getByCode } from '@/api/basicData/index'
 import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import { getProjectList } from '@/api/system/projectManagement'
+import {  getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import tabs from './params'
 import { mapGetters } from "vuex"
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
@@ -72,6 +73,7 @@ export default {
   mixins: [AbProjectMixin],
   data() {
     return {
+      materList: [],
       getbimProductAttributesList, // 产品类别属性列表请求api
       datafilelist: [],
       activeName: 'basicInfo',
@@ -114,7 +116,7 @@ export default {
       unitRelList: []
     }
   },
-  created() {
+   created() {
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
@@ -123,8 +125,13 @@ export default {
             tc.render = false
           }
         }
+         if (this.classAttribute !== 'raw_material') {
+          if (tc.prop === 'material' ) {
+            tc.render = false
+          }
+        }
         if (!['finish_product', 'semi_finished', 'raw_material', 'accessories'].includes(this.classAttribute)) {
-
+          console.log(33333);
           if (tc.prop === 'productCategoryName') {
             tc.label = `${this.productName.slice(0, 4)}分类`
             tc.itemRules = [{ required: true, message: `请选择${this.productName.slice(0, 4)}分类`, trigger: 'no' }]
@@ -132,6 +139,8 @@ export default {
             tc.label = `${this.productName.slice(0, 4)}编码`
           } else if (tc.prop === 'name') {
             tc.label = `${this.productName.slice(0, 4)}名称`
+          } else if (tc.prop === 'drawingNo') {
+            tc.label = `${this.productName.slice(0, 4)}品名规格`
           } else if (tc.prop === 'productSource') {
             tc.label = `${this.productName.slice(0, 4)}来源`
             tc.options = [{ label: '采购', value: 'purchase' }]
@@ -144,6 +153,7 @@ export default {
           } else if (['deputyUnit', 'ratio', 'calculationDirection', 'brand'].includes(tc.prop)) {
             tc.render = false
           }
+         
         }
         if (['spare_parts', 'accessories'].includes(this.classAttribute)) {
 
@@ -175,7 +185,7 @@ export default {
           }
         }
         // 若干需要选择的产品
-        if (tc.prop === 'brand') {
+        if (tc.prop === 'brand'||tc.prop=='material') {
           let data = []
           getbimProductAttributesList({ typeCode: tc.typeCode }).then((res) => {
             data = res.data.records.map((item) => {
@@ -382,6 +392,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+   
     async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)

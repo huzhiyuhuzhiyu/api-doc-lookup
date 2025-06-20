@@ -1734,7 +1734,7 @@ export default {
               specialRequire: item.specialRequire ? item.specialRequire : '',
               material: item.material ? item.material : '',
               colour: item.colour ? item.colour : '',
-
+              outboundQuantity:"",
 
             }
             obj1.receiptLineList.push(dep1)
@@ -1749,6 +1749,7 @@ export default {
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
+              outboundQuantity:"",
                 classAttribute: item.classAttribute,
                 productsId: item.productsId,
                 ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
@@ -1798,6 +1799,7 @@ export default {
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
+                outboundQuantity:"",
                 classAttribute: item.classAttribute,
                 productsId: item.productsId,
                 ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,

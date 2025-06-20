@@ -250,21 +250,28 @@ export default {
           label: "品名规格",
           type: 'input'
         },
+            {
+          prop: 'productCategoryName',
+          label: "产品分类",
+          type: 'input'
+        },
+        {
+          prop: 'orderStatus',
+          label: "任务状态",
+          type: 'select',
+          options: [
+            { label: "正常", value: "normal" },
+            { label: "暂停", value: "suspend" },
+            { label: "关闭", value: "closed" },
+            { label: "已完成", value: "finish" }, 
+          ]
+        },
         {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'productionQuantity',
-          label: "总生产数量",
-          type: 'input'
-        },
-        {
-          prop: 'completedQuantity',
-          label: "已完成数量",
-          type: 'input'
-        },
+      
         {
           prop: 'routingName',
           label: "工艺路线名称",

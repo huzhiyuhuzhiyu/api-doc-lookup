@@ -61,6 +61,20 @@ export default {
       this.index=index
       this.getdataFun()
     },
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'salesName' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.orderForm.orderItems[0].asc = order === "ascending"
+      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.getdataFun()
+    },
     getdataFun(){
       getBimProductAttributesRecordList(this.orderForm).then(res=>{
         this.tableData=res.data.records

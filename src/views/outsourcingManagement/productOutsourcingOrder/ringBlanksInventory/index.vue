@@ -51,7 +51,7 @@
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                  @click="superQueryFun" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
@@ -207,6 +207,7 @@ export default {
         pageSize: 20,
         startTime: '',
         ringBlankQueryFlag: 1,
+        excludeProcessFlag:1,
         orderItems: [
           {
             asc: false,
@@ -307,6 +308,9 @@ export default {
   },
 
   methods: {
+    superQueryFun(){
+      this.superQueryVisible=true
+    },
     async getProductNameSwitch(code, type) {
       try {
         this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
@@ -424,6 +428,7 @@ export default {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
+        excludeProcessFlag:1,
         approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
         cooperativePartnerCode: '', //供应商编码
         cooperativePartnerName: '', // 	供应商名称

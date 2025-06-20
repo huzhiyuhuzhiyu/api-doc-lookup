@@ -979,7 +979,7 @@ export default {
       detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("采购明细",);
         res.data.records.forEach(item => {
-          item.num = item.waitReceiptNum || 0
+          this.$set(item,'num',item.waitReceiptNum || 0)
             //   可超收数量
           const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
           item.overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.waitReceiptNum, overchargeNum]), 6) : ''
@@ -1052,7 +1052,7 @@ export default {
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
         item.costPrice = item.price
-        item.num = item.waitReceiptNum || 0
+        this.$set(item,'num',item.waitReceiptNum || 0)
         item.taxRates = item.taxRate + "%"
         //   可超收数量
         const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
@@ -1135,78 +1135,91 @@ export default {
       }
     },
     // 监听主数量输入
+    // 监听主数量输入
     watchNum(row, index) {
       // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
       // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
       // 如果计算方向是除 则副数量等于主数量*套数/转换系数
-      // 使用正则表达式验证输入内容
-      row.num = row.num.replace(/[^\d.]/g, '');
-      let productArr = [...this.productData]
 
-      if (row.num.length == 1 && row.num == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.num = '';
-      } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
-      } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
-        row.num = row.num.substring(1, row.num.length)
-      }
+      // 数字格式化处理
+      const formatNumber = (numStr) => {
+        // 使用正则表达式验证输入内容，只保留数字和小数点
+        let formatted = numStr.replace(/[^\d.]/g, '');
 
+        if (formatted.length == 1 && formatted == '.') {
+          // 如果第一位是小数点，则清空输入框
+          return '';
+        } else if (formatted.length == 2 && formatted[0] == '0' && formatted[1] != '.') {
+          // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+          return formatted.slice(0, 1) + '.' + formatted.slice(1);
+        } else if (formatted.length > 2 && formatted[0] == '0' && formatted[1] != '.') {
+          formatted = formatted.substring(1, formatted.length)
+        }
 
-      if (row.num.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
+        // 处理多个小数点的情况
+        if (formatted.includes('.')) {
+          let dotCount = 0;
+          let result = '';
 
-        for (let i = 0; i < row.num.length; i++) {
-          const char = row.num[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
+          for (let i = 0; i < formatted.length; i++) {
+            const char = formatted[i];
+            if (char === '.') {
+              if (dotCount === 0) {
+                result += char;
+                dotCount++;
+              }
+            } else {
               result += char;
-              dotCount++;
             }
-          } else {
-            result += char;
+          }
+
+          formatted = result;
+          let arr = formatted.split('.')
+          if (arr[0].length > 8) {
+            arr[0] = arr[0].substring(0, 8)
+          }
+          if (arr[1] && arr[1].length > 4) {
+            arr[1] = arr[1].substring(0, 4)
+          }
+          formatted = arr[0] + '.' + (arr[1] || '')
+        } else {
+          if (formatted.length > 8) {
+            formatted = formatted.substring(0, 8);
           }
         }
 
-        row.num = result;
-        let arr = row.num.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 4) {
-          arr[1] = arr[1].substring(0, 4)
-        }
-        row.num = arr[0] + '.' + arr[1]
-      } else {
-        if (row.num.length > 8) {
-          row.num = row.num.substring(0, 8);
-        }
+        return formatted;
       }
+
+      // 格式化数量输入
+      const formattedNum = formatNumber(row.num);
+
+      // 使用 $set 确保响应性
+      this.$set(row, 'num', formattedNum);
+
       console.log("row.excludingTaxPrice", row.excludingTaxPrice);
       console.log("row.price", row.price);
-      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
 
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
-      console.log("productArr", productArr);
-      let taxrate = 1 * 1 + (row.taxRate) / 100 * 1
-      row.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, taxrate]), 6)
-      row.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-      row.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6)
-      row.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6)
+      // 计算税率
+      let taxrate = 1 + (row.taxRate || 0) / 100;
+
+      // 使用 $set 更新所有计算字段，保持响应性
+      this.$set(row, 'excludingTaxCostPrice', this.jnpf.numberFormat(this.jnpf.math('divide', [row.price, taxrate]), 6));
+      this.$set(row, 'totalAmount', this.jnpf.numberFormat(this.jnpf.math('multiply', [formattedNum, row.price]), 6));
+      this.$set(row, 'taxAmount', this.jnpf.numberFormat(this.jnpf.math('multiply', [formattedNum, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxCostPrice]), 6)]), 6));
+      this.$set(row, 'excludingTaxTotalAmount', this.jnpf.numberFormat(this.jnpf.math('subtract', [row.totalAmount, row.taxAmount]), 6));
+
+      // 计算副数量
       if (this.mainUnitFlag == 1) {
         if (row.calculationDirection == 'multiplication') {
-          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.ratio]), 6))
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [formattedNum, row.ratio]), 6));
         } else {
-          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [row.num, row.ratio]), 6))
+          this.$set(row, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [formattedNum, row.ratio]), 6));
         }
       }
-      this.productData = productArr
+
       console.log(this.productData);
     },
-
 
 
 
@@ -1308,7 +1321,7 @@ export default {
         // this.refeshDataFormItems()
           data.forEach((item, index) => {
             item.productDrawingNo = item.drawingNo
-            item.num = item.waitReceiptNum || 0
+            this.$set(item,'num',item.waitReceiptNum || 0)
             //   可超收数量
             const  overchargeNum = this.$store.getters.configData.purchase.allow_exceed_receiving ? this.jnpf.numberFormat(this.jnpf.math('divide', [this.overCharge.configValue2, 100]), 6) : 1
               console.log(overchargeNum,'overchargeNum', overchargeNum)

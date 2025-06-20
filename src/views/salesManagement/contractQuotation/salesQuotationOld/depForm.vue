@@ -123,7 +123,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                    <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                       show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="330">
@@ -263,14 +263,14 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="报价时间" prop="quotationTime">
+                  <el-form-item label="报价日期" prop="quotationTime">
                     <el-date-picker v-model="dataForm.quotationTime" type="date" value-format="yyyy-MM-dd"
                       style="width: 100%;" placeholder="请选择报价时间" :disabled="status">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
-                  <el-form-item label="有效时间止" prop="validEnd">
+                  <el-form-item label="有效日期止" prop="validEnd">
                     <el-date-picker v-model="dataForm.validEnd" placeholder="请选择有效时间" type="date" :disabled="status"
                       value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="pickerOptions">
                     </el-date-picker>
@@ -341,7 +341,7 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
-                <el-table-column prop="name" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
+                <el-table-column prop="productName" label="产品名称" width="160" v-if="isProductNameSwitch === '1'"
                   show-overflow-tooltip></el-table-column>
                   <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="400">
@@ -558,7 +558,7 @@
 
             <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
               <el-tree ref="treeBox" :data="ProductTreeData" :props="defaultProps" :default-expand-all="expands"
-                :highlight-current="highlightCurrentFlag" :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
+                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeAllProduct"
                 class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNodeAllProduct">
                 <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
                   <i
@@ -574,6 +574,11 @@
                  <el-col :span="6">
                   <el-form-item>
                     <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
+                  </el-form-item>
+                </el-col>
+                 <el-col :span="6">
+                  <el-form-item>
+                    <el-input @keyup.native.enter="searchAllProduct()"  v-model="ProductListRequestObj.productName" placeholder="请输入产品名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -602,6 +607,7 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick" customKey="JNPFTableKey_612241">
                 <el-table-column prop="code" label="产品编码" show-overflow-tooltip sortable="custom"></el-table-column>
+                <el-table-column prop="name" label="产品名称" show-overflow-tooltip sortable="custom"></el-table-column>
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom"/>
                 <el-table-column prop="productCategoryName" label="所属分类" sortable="custom"/>
                 <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
@@ -1016,6 +1022,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.$refs.dataTable.$refs.JNPFTable.clearSort()
+        this.$refs.treeBox.setCurrentKey(null)
       this.highlightCurrentFlag=false
       this.ProductListRequestObj = {
         classAttributeList: [],

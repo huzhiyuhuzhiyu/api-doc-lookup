@@ -42,7 +42,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
-              <!-- <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button> -->
+              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </div>
@@ -61,7 +61,7 @@
             </div>
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" :data="tableData" v-if="isProjectSwitchFlag"
-            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom"></el-table-column>
             <el-table-column prop="processCode" label="工序编码" min-width="120" sortable="custom" />
             <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
@@ -69,6 +69,12 @@
                 <div>{{ scope.row.processingType == 'self_produced' ? '自制' : '外协' }}</div>
               </template>
             </el-table-column>
+            <el-table-column prop="taskMethod" label="编排方式" min-width="120" sortable="custom">
+              <template slot-scope="scope">
+                <div>{{ scope.row.taskMethod == 'appoint' ? '指定加工对象' : '不指定加工对象' }}</div>
+              </template>
+            </el-table-column>
+
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom" />
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />

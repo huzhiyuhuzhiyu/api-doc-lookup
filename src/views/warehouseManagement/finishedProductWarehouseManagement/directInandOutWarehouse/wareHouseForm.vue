@@ -9,16 +9,17 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
+                <el-col :span="6">
+              <el-form-item>
+                <el-input @keyup.native.enter="search()"  v-model="tableQuery.name" placeholder="请输入库位名称" clearable />
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-input v-model="tableQuery.code" placeholder="请输入库位编码" clearable  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-input @keyup.native.enter="search()"  v-model="tableQuery.name" placeholder="请输入库位名称" clearable />
-              </el-form-item>
-            </el-col>
+        
 
             <el-col :span="6">
               <el-form-item>
@@ -33,7 +34,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
   
-          <JNPF-table ref="tabForm" v-loading="listLoading" v-if="flag" :data="tableDataList"  :fixedNO="true" :appendToBody="'child'"
+          <JNPF-table ref="tabForm" v-loading="listLoading" v-if="flag" :data="tableDataList" @row-dblclick="seleceWareHouseFun"  :fixedNO="true" :appendToBody="'child'"
             @sort-change="sortChange"   style="width: 100%;" customKey="JNPFTableKey_315633">
             <el-table-column prop="name" label="库位名称" min-width="180">
             </el-table-column>
@@ -91,7 +92,7 @@ export default {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
-      this.initData()
+      this.initData(this.tableQuery.warehouseId)
     },
     initData(id) {
       this.listLoading = true
@@ -124,6 +125,7 @@ export default {
       this.initData(this.tableQuery.warehouseId)
     },
     reset() {
+      this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.tableQuery = {
         category: 'location',
         code: '',
@@ -134,7 +136,7 @@ export default {
             column: ''
           }
         ],
-        warehouseId: ''
+        warehouseId: this.tableQuery.warehouseId
       },
         this.initData(this.tableQuery.warehouseId)
     },

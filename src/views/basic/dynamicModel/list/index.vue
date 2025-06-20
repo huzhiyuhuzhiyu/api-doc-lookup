@@ -916,7 +916,7 @@
             },
             addOrUpdateHandle(id) {
                 console.log(this.config,'config');
-                
+
                 if (this.config.webType == 3) {
                     let data = {
                         id: id || '',

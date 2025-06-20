@@ -510,12 +510,7 @@ export default {
             list = res.data.return
           } else if (this.activeName === 'customersupplier') {
             list = res.data.customersupplier
-              list.forEach(item => {
-                  if(item.configKey !== 'included_tax_flag'){
-
-                      item.configKey = `${item.configValue2}_${item.configKey}`
-                  }
-              })
+             
           } else if (this.activeName === 'deputyUnit') {
             list = res.data.deputyUnit
           } else if (this.activeName === 'maintenance') {

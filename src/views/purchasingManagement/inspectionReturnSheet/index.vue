@@ -86,7 +86,7 @@ export default {
           options: [{ label: '未处理', value: 'not_finished' }, { label: '已处理', value: 'finished' }]
         },
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'processName', label: '供应商名称', type: 'input' },
+        { prop: 'partnerName', label: '供应商名称', type: 'input' },
       ],
       superQueryJson: [
         {

@@ -1620,7 +1620,7 @@ export default {
         this.dataFormTwo.productData.forEach((item, index) => {
           let dep = {
             calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '', 
+            // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '', 
             deputyUnit: item.deputyUnit ? item.deputyUnit : '',
             mainUnit: item.mainUnit ? item.mainUnit : '',
             ordersId: item.ordersId,
@@ -1660,7 +1660,7 @@ export default {
             purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
             pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             remark: item.remark ? item.remark : '',
             purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
             receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',

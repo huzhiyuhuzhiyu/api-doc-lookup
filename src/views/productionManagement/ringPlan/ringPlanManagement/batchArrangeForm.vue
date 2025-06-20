@@ -143,7 +143,7 @@ export default {
                             trigger: 'blur'
                         },
                         { required: true, trigger: 'blur' },
-                        { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => this.linesList[rowIndex].availableArrangeQuantity >= this.linesList[rowIndex].productionQuantity, `不能超过可编排数量`, (errMsg, rowIndex) => { this.$message.error(`第${rowIndex + 1}行：生产数量（万粒）：` + errMsg) }] }), trigger: 'blur' },
+                        { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => Number(this.linesList[rowIndex].availableArrangeQuantity) >= Number(this.linesList[rowIndex].productionQuantity), `不能超过可编排数量`, (errMsg, rowIndex) => { this.$message.error(`第${rowIndex + 1}行：生产数量（万粒）：` + errMsg) }] }), trigger: 'blur' },
                         {
                             validator: this.formValidate({ type: 'decimal', params: [20, 4, null, (msg, rowIndex) => this.$message.error(`第${rowIndex + 1}行：生产数量（万粒）${msg}`)] }),
                             trigger: 'blur'

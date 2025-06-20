@@ -128,6 +128,7 @@
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
             </template>
           </el-table-column>
+          <el-table-column prop="createByName" label="创建人"  sortable="custom" />
           <el-table-column prop="approvalStatus" label="审批状态"   sortable="custom" align="center"
             v-if="showAppCodeFlag">
             <template slot-scope="scope">
@@ -331,7 +332,7 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['pickingWay', 'createByName', 'createTime'],
+      columnList: ['pickingWay', 'createTime'],
       showAppCodeFlag: true,
       uploadVisib: false,
       file:null,

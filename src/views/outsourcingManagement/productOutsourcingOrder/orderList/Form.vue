@@ -103,13 +103,13 @@
                       </el-table-column>
 
                       <el-table-column prop="deliveryDate" label="交货日期" width="175">
-                        <template slot="header">
+                        <template slot="header" v-if="!isBOOS">
                           <span class="required">*</span>
                           交货日期
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
-                            :rules="productRules.deliveryDate">
+                            :rules="!isBOOS? productRules.deliveryDate:{}">
                             <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
                               style="width: 100%;" placeholder="交货日期" :disabled="type === 'look'"></el-date-picker>
                           </el-form-item>
@@ -122,7 +122,7 @@
                       <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                         :width="isDeputyUnitSwitch ? 85 : 60" />
                       <el-table-column prop="purchaseQuantity" label="数量" :width="isDeputyUnitSwitch ? 110 : 100">
-                        <template slot="header">
+                        <template slot="header" >
                           <span class="required">*</span>
                           {{ isDeputyUnitSwitch ? '数量(主)' : '数量' }}
                         </template>
@@ -140,12 +140,12 @@
                       <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                         v-if="isDeputyUnitSwitch" />
                       <el-table-column prop="price" label="含税单价" width="120" v-if="userInfo.roleCode.split(',').includes('show_external_data')">
-                        <template slot="header">
+                        <template slot="header"  v-if="!isBOOS">
                           <span class="required">*</span>
                           单价(含税)
                         </template>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                          <el-form-item :prop="!isBOOS?'data.' + scope.$index + '.' + 'price':'price'" :rules="!isBOOS? productRules.price:{}">
                             <el-input v-model="scope.row.price" placeholder="含税单价" :disabled="type === 'look'" />
                           </el-form-item>
                         </template>
@@ -165,7 +165,7 @@
                           税率
                         </template>
                         <template slot-scope="scope">
-                          <el-form-item :rules="productRules.taxRate">
+                          <el-form-item :rules="!isBOOS? productRules.taxRate:{}">
 
                             <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
                               :disabled="type === 'look'">
@@ -691,7 +691,7 @@ export default {
       dataFormArr: [],
       rules: {
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate:this.isBOOS?[]: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
       productRules: {},
       productArr: [],
@@ -905,7 +905,7 @@ export default {
             }
             purPurchaseOrderLineLast(priceObj).then((res) => {
               this.$set(item, 'price',res.data ? res.data.price :'')
-              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate)?Number(res.data.taxRate):13 :13)
             })
           }
         })
@@ -1020,7 +1020,7 @@ export default {
             }
             purPurchaseOrderLineLast(priceObj).then((res) => {
               this.$set(item, 'price',res.data ? res.data.price :'')
-              this.$set(item, 'taxRate',res.data? Number(res.data.taxRate) :'')
+              this.$set(item, 'taxRate',res.data? (Number(res.data.taxRate)?Number(res.data.taxRate):13) :13)
             })
           }
           if (item.calculationDirection === 'multiplication') {

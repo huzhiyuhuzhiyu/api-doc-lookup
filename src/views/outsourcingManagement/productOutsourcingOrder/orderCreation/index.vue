@@ -103,7 +103,7 @@
                           </el-table-column>
 
                           <el-table-column prop="deliveryDate" label="交货日期" width="175">
-                            <template slot="header">
+                            <template slot="header" v-if="!isBOOS">
                               <span class="required">*</span>
                               交货日期
                             </template>
@@ -137,7 +137,7 @@
                           <el-table-column prop="purchaseQuantity2" label="数量(副)" width="85"
                             v-if="isDeputyUnitSwitch === '1'" />
                           <el-table-column prop="price" label="含税单价" width="140">
-                            <template slot="header">
+                            <template slot="header"  v-if="!isBOOS">
                               <span class="required">*</span>
                               单价(含税)
                             </template>
@@ -148,7 +148,7 @@
                             </template>
                           </el-table-column>
                           <el-table-column prop="totalAmount" label="金额" width="120">
-                            <template slot="header">
+                            <template slot="header"  v-if="!isBOOS">
                               <span class="required">*</span>
                               金额(含税)
                             </template>
@@ -186,7 +186,7 @@
                           </el-table-column>
 
                           <el-table-column prop="taxAmount" label="税额" width="100">
-                            <template slot="header">
+                            <template slot="header"  v-if="!isBOOS">
                               <span class="required">*</span>
                               税额
                             </template>
@@ -199,7 +199,7 @@
                             </template>
                           </el-table-column>
                           <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140">
-                            <template slot="header">
+                            <template slot="header"  v-if="!isBOOS">
                               <span class="required">*</span>
                               金额(不含税)
                             </template>
@@ -303,14 +303,13 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 import AbProjectMixin from "@/mixins/generator/AbProjectMixin";
 import { mapGetters, mapState } from 'vuex'
-import TenantMinix from '@/mixins/generator/TenantMinix'
 
 export default {
   components: {
     SourceArea,
     Process
   },
-  mixins: [AbProjectMixin,TenantMinix],
+  mixins: [AbProjectMixin],
   name: 'orderCreation',
   data() {
     return {
@@ -433,7 +432,7 @@ export default {
       rules: {
         // applicationReason: [{ required: true, message: '请输入备注', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
-        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+        deliveryDate:this.isBOOS?[]: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
       productRules: {
         productDrawingNo: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
@@ -497,7 +496,7 @@ export default {
           },
           { required: true, trigger: ['blur'] }
         ],
-        price: [
+        price: this.isBOOS?[]:[
           // 含税单价
           {
             validator: this.formValidate({
@@ -525,23 +524,10 @@ export default {
             }),
             trigger: 'blur'
           },
-          // {
-          //   validator: this.formValidate({
-          //     type: 'calc',
-          //     params: [
-          //       (rowIndex, value) =>
-          //         Number(this.dataFormTwo.data[rowIndex].price) <= Number(this.dataFormTwo.data[rowIndex].fixedPrice),
-          //       '不能超过对应定价',
-          //       (errMsg, index) => {
-          //         this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
-          //       }
-          //     ]
-          //   }),
-          //   trigger: 'blur'
-          // },
+           
           { required: true, trigger: ['blur'] }
         ],
-        deliveryDate: [
+        deliveryDate:this.isBOOS?[]: [
           {
             validator: this.formValidate({
               type: 'noEmtry',

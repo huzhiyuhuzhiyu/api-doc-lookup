@@ -1954,7 +1954,6 @@ export default {
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
       console.log(data, 'ddd')
-      if (data != 'outInboundWarehouse') {
 
         if (data && data.length) {
           this.dataFormTwo.productData = data
@@ -1968,7 +1967,6 @@ export default {
             this.$set(item, 'maxReceiptNum', Number(item.purchaseQuantity) * 0.2 + Number(item.waitReceiptNum))
           })
         }
-      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -2167,17 +2165,7 @@ export default {
               }
             }
           }
-          if (Number(item.receivedQuantity) > Number(item.maxReceiptNum)) {
-            console.log(123)
-            submitFlag = false
-            this.btnLoading = false
-            this.$message({
-              message: '第' + (index + 1) + '行产品的收货数量不能大于最大可收货数量',
-              type: 'error',
-              duration: 1500
-            })
-            return
-          }
+       
         }
 
 

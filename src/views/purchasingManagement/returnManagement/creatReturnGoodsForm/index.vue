@@ -1326,7 +1326,7 @@ export default {
             purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
             pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
             ratio: item.ratio ? item.ratio : '',
-            receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+            // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
             remark: item.remark ? item.remark : '',
             returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
             receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',

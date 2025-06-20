@@ -45,10 +45,12 @@
         <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
+              <el-button size="mini" type="primary" icon="el-icon-printer"
+                @click="printFlowCard('p020')">打印流转卡</el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
                 导出
               </el-button>
-
+               
 
             </div>
             <div class="JNPF-common-head-right">
@@ -66,7 +68,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  v-if="isProjectSwitchFlag"
-            header-cell-class-name="all-select" @sort-change="sortChange" custom-column
+             @sort-change="sortChange" custom-column @selection-change="handleSelectionChange" hasC
             :setColumnDisplayList="columnList" customKey="JNPFTableKey_620215">
             <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="220" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="220" sortable="custom"></el-table-column>
@@ -176,12 +178,59 @@
       </span>
     </el-dialog>
     <InspectionDetail v-if="inspectionDetailVisible" ref="inspectionDetailRef" @close="closeFun"></InspectionDetail>
+       <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      :fullName="fullName" ref="printForm" />
+         <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
+       <!-- 打印流转卡弹窗选择工单数据 -->
+    <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="workOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
+      <el-row :gutter="20">
+        <el-form ref="workOrderForm" :rules='workOrderRule' :model="workOrderForm" label-width="120px"
+          label-position="left">
+          <el-col :span="12">
+            <el-form-item label="生产数量：" prop="productionQuantity">
+              <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="打印模版：" prop="enCode">
+              <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
+                <el-option :key="item.id" :label="item.fullName" :value="item.id" v-for="item in printList" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo
+        v-loading="tableloading" border :checkSelectable="row => !row.selectFlag" customKey="JNPFTableKey_643502">
+        <el-table-column prop="orderNo" label="工单号" min-width="160" />
+        <el-table-column prop="processName" label="工序名称" min-width="120" />
+        <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
+        <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
+        <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
+        <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
+        <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
+        <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
+        <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
+      </JNPF-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="workOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="printSubmit()">
+          打 印</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getWorkReportList, revokeReport, updateReport } from "@/api/productOrdes/index.js"
+import { getWorkReportList, revokeReport, updateReport,detailordershengchan } from "@/api/productOrdes/index.js"
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintList } from '@/api/system/printDev'
+import { getPrintBusInfo } from '@/api/system/printDev'
 
 import  InspectionDetail from '../../inspectionManagement/reportWorkInspection/inspectionFormManagementDetail.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -195,10 +244,28 @@ import { getSalaryDetailList} from '@/api/salaryManagement'
 import userTransfer from '@/components/JNPF-userTransfer'
 export default {
   name: 'assemblyplanManagement',
-  components: { SuperQuery, ExportForm,userTransfer,InspectionDetail},
+  components: { SuperQuery, ExportForm,userTransfer,InspectionDetail,PrintBrowse,PrintDialog},
   mixins: [getProjectList],
   data() {
     return {
+      workOrderData: [],
+      printList: [],
+      selectArr: [],
+      printVisible: false,
+      workOrderVisible:false,
+      printBrowseVisible: false,
+       workOrderRule: {
+        productionQuantity: [{ required: true, message: '请输入生产数量', trigger: 'blur' }],
+        enCode: [{ required: true, message: '请选择打印模版', trigger: 'change' }]
+      },
+       workOrderForm: {
+        productionQuantity: '',
+        enCode: ''
+      },
+      printQuery: {
+        category: 'Productionmanage'
+      },
+
       inspectionDetailVisible:false,
       superQuery: {},
       superForm: {},
@@ -394,6 +461,81 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    
+        handleSelectWork(val) {
+      if (val.length) {
+        this.workOrderData.forEach(item => {
+          if (item.id != val[0].id) {
+            item.selectFlag = true
+          }
+        });
+        this.selectWorkOrder = val
+      } else {
+        this.workOrderData.forEach(item => {
+          item.selectFlag = false
+        });
+      }
+    },
+     // 多选
+    handleSelectionChange(val) {
+      this.selectArr = val
+    },
+      closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      this.enCode = enCode
+      this.fullName = '装配单'
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+      // 打印 流转卡
+    printFlowCard(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      this.workOrderVisible = true
+      // this.workOrderForm.enCode = enCode
+      this.fullName = '装配流转卡'
+      this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
+      detailordershengchan(this.selectArr[0].productionOrderId).then(res => {
+        res.data.workOrderList.forEach(item => {
+          item.selectFlag = false
+        })
+        this.workOrderData = res.data.workOrderList
+      })
+      getPrintList(this.printQuery).then(res => {
+        if (res.data) {
+          if (res.data.hasOwnProperty(enCode)) {
+            this.printList = res.data[enCode]
+            this.printList && this.printList.forEach(item => {
+              if (item.enabledMark) {
+                this.workOrderForm.enCode = item.id
+              }
+            })
+          }
+        }
+      }).catch(() => { })
+    },
+      printSubmit() {
+      if (!this.selectWorkOrder.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectWorkOrder.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      getPrintBusInfo(this.workOrderForm.enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectWorkOrder[0].id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
     closeFun(){
       this.inspectionDetailVisible=false
       this.initData()

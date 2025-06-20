@@ -88,9 +88,9 @@
             </el-table-column>
             <!-- <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" /> -->
             <!-- <el-table-column prop="deputyNum" label="退货数量(副)" min-width="120" v-if="mainUnitFlag == 1" /> -->
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
-         
+
             <el-table-column prop="deliveryStatus" label="退货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'not_finished'">
@@ -397,7 +397,7 @@ export default {
         })
         let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -409,7 +409,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
       if (this.colourFlag === '1') {
@@ -632,7 +632,7 @@ export default {
         this.orderForm.tenant = localStorage.getItem('loginTenant')
       }
       getQuotationdatasenddatalist(this.orderForm).then(res => {
-     
+
           this.tableData = res.data.records
         this.total = res.data.total
         this.visible = false
@@ -669,7 +669,7 @@ export default {
       this.initData()
     },
     reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮 
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.superForm = this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },

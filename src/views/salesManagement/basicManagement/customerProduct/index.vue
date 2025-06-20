@@ -99,7 +99,7 @@
                 <el-table-column prop="price" min-width="140" label="销售单价(含税)"  />
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
 
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200"
                   v-if="centerDiameterFlag === '1'" />
                 <el-table-column prop="remark" min-width="200" label="备注" />

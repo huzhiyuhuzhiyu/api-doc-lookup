@@ -65,7 +65,7 @@
                     <el-table-column prop="warehouseName"
                       :label="dataForm.businessType == 'inbound_transfer' ? '入库仓库' : '出库仓库'" width="160"
                       :key="889"></el-table-column>
-                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                     <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
 
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
@@ -108,7 +108,7 @@ export default {
         { label: "调拨入库", value: "inbound_transfer" },
         { label: "直接领料入库", value: "inbound_receive_material" },
         { label: "直接领料出库", value: "outbound_receive_material" },
-      ],      
+      ],
     }
   },
   created() {

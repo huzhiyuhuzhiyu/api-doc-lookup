@@ -195,12 +195,12 @@
                     </el-table-column>
                     <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
                     </el-table-column>
-                    <AttributeDictionaryLine
+                    <AttributeColumns
                       :btnType="btnType"
                       :dataType="'line'"
                       :moduleConfig="'sale'"
                       :productData="dataFormTwo.lines"
-                      ref="attributeDictionaryLine"
+                      ref="AttributeColumns"
                     />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -416,12 +416,12 @@
                 </el-table-column>
                 <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
                 </el-table-column>
-                <AttributeDictionaryLine
+                <AttributeColumns
                   :btnType="btnType"
                   :dataType="'line'"
                   :moduleConfig="'sale'"
                   :productData="dataFormTwo.lines"
-                  ref="attributeDictionaryLine2"
+                  ref="AttributeColumns2"
                 />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
@@ -1557,13 +1557,13 @@ export default {
 
     // 为新增的产品行设置属性字段
     initializeNewProductRow(row) {
-      // 调用 AttributeDictionaryLine 组件的方法为新行设置字段
+      // 调用 AttributeColumns 组件的方法为新行设置字段
       this.$nextTick(() => {
-        if (this.$refs.attributeDictionaryLine) {
-          this.$refs.attributeDictionaryLine.setFieldsForNewRow(row);
+        if (this.$refs.AttributeColumns) {
+          this.$refs.AttributeColumns.setFieldsForNewRow(row);
         }
-        if (this.$refs.attributeDictionaryLine2) {
-          this.$refs.attributeDictionaryLine2.setFieldsForNewRow(row);
+        if (this.$refs.AttributeColumns2) {
+          this.$refs.AttributeColumns2.setFieldsForNewRow(row);
         }
       });
     },
@@ -1571,11 +1571,11 @@ export default {
     // 刷新所有产品行的属性字段
     refreshAllProductFields() {
       this.$nextTick(() => {
-        if (this.$refs.attributeDictionaryLine) {
-          this.$refs.attributeDictionaryLine.refreshFields();
+        if (this.$refs.AttributeColumns) {
+          this.$refs.AttributeColumns.refreshFields();
         }
-        if (this.$refs.attributeDictionaryLine2) {
-          this.$refs.attributeDictionaryLine2.refreshFields();
+        if (this.$refs.AttributeColumns2) {
+          this.$refs.AttributeColumns2.refreshFields();
         }
       });
     },

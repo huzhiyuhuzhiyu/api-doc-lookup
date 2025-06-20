@@ -169,7 +169,7 @@
               <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" />
               <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="120" />
               <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" />
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
               <el-table-column prop="createTime" label="创建时间" min-width="180" />
 
 
@@ -229,7 +229,7 @@
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
@@ -588,7 +588,7 @@
                   <el-table-column prop="outputQuantity" label="需组装数量" min-width="140" sortable="custom" />
                   <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                   <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                   <el-table-column label="操作" width="120" fixed="right" :key="15">
                     <template slot-scope="scope">
                       <el-button type="text" :disabled="!scope.row.bomFlag"
@@ -967,7 +967,7 @@
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="160" sortable="custom" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="total" :page.sync="planForm.pageNum" :limit.sync="planForm.pageSize"

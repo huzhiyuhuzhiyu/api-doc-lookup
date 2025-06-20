@@ -188,7 +188,7 @@
                       <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                       </el-table-column> -->
                       <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                      <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                      <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                       <el-table-column prop="ordersNo" label="订单号" width="160" />
                       <el-table-column prop="receivingAddress" label="收货地址" min-width="120"
                         :key="10201"></el-table-column>
@@ -385,7 +385,7 @@
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deputyNum" label="发货数量(副)" min-width="150" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                   <el-table-column prop="ordersNo" label="订单号" width="160" />
                   <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
@@ -538,7 +538,7 @@
                   <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                   <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" />
                   <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                   <el-table-column prop="remark" label="备注" width="160" />
                   <el-table-column prop="createTime" label="创建时间" width="180" />
                 </JNPF-table>
@@ -1901,7 +1901,7 @@ export default {
           //     })
           //   })
           // } else {
-         
+
           // }
         }
       })

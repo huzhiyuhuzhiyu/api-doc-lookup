@@ -70,7 +70,7 @@
             <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button type="text" @click="selectBatchNum(scope.row)">选择</el-button>

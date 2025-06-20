@@ -145,7 +145,7 @@
                         </template>
                       </el-table-column>
 
-                      <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                      <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                       <el-table-column prop="remark" label="备注" width="200" :key="128">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200"

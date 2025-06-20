@@ -32,11 +32,11 @@
         <JNPF-table v-loading="listLoading" highlight-current-row fixedNO ref="tableForm" :data="tableData"
           @sort-change="sortChange" show-summary :summary-method="getSummaries" customKey="JNPFTableKey_167103">
           <el-table-column prop="drawingNo" label="型号" width="180" sortable="custom" fixed="left"></el-table-column>
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
           <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="130" sortable="custom" fixed="left"></el-table-column>
           <el-table-column prop="rawStockMill" label="原材料厂家" width="130" sortable="custom" fixed="left"></el-table-column>
           <el-table-column prop="coldHeading" label="冷镦" width="130" sortable="custom"  >
-            <template slot-scope="scope">   
+            <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
                   {{ scope.row.coldHeading>0?scope.row.productionBarrels+'/'+scope.row.productionWeight+'/'+scope.row.coldHeading:scope.row.coldHeading }}
                 </template>
@@ -68,7 +68,7 @@
                 </el-link>
               </template>
           </el-table-column>
- 
+
             <el-table-column prop="quench" label="淬火" width="120" align="center">
               <template slot-scope="scope">
                 <template v-if="scope.row.classType === 'inner_ring'">
@@ -222,10 +222,10 @@
                 </el-link>
               </template>
           </el-table-column>
-      
 
 
- 
+
+
           <el-table-column prop="total" label="合计" align="center"></el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
@@ -239,7 +239,7 @@
   </div>
 </template>
 <script>
-import { inventoryWarehouseReportJR, inventoryWarehouseExportJR } from '@/api/warehouseManagement/inventory' 
+import { inventoryWarehouseReportJR, inventoryWarehouseExportJR } from '@/api/warehouseManagement/inventory'
 import Form from '../../../warehouseManagement/finishedProductWarehouseManagement/inventory/Form.vue'
 import TaskForm from './taskForm.vue'
 import MaterForm from '../../../warehouseManagement/inventoryInquiry/productionProgressReport/materForm.vue'
@@ -285,7 +285,7 @@ export default {
         this.$refs.Form.init(id, type, warehouseId, projectId)
       })
     },
-    // 
+    //
     viewDetailFun(id) {
       if (!id) id = 0
       this.materFormVisible = true

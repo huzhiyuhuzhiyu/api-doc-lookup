@@ -88,7 +88,7 @@
           <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="140" sortable="custom" />
           <el-table-column prop="amounts" label="金额(含税)" width="140" sortable="custom" />
           <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="140" sortable="custom" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
           <el-table-column prop="remark" label="备注" width="180" sortable="custom" />
           <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
             <template slot-scope="scope">
@@ -369,7 +369,7 @@ export default {
     this.superForm = this.form
     if (this.isProductNameSwitch == 1) {
       this.searchList.splice(2, 0, { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },)
-      
+
     }
     if (this.$store.getters.configData.sale.salePersonFlag) {
       this.form.salesPersonFlag = 1

@@ -766,7 +766,7 @@
           <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="waitDeliverNum" label="待发货数量" min-width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
 
           <el-table-column prop="remark" label="备注" min-width="160" />
@@ -913,7 +913,7 @@
           <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
           <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="160" sortable="custom" />
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="processName" label="工序" min-width="160" sortable="custom" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="120" />
@@ -1188,7 +1188,7 @@
           <el-table-column prop="productionQuantity" label="生产数量" width="120" />
           <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
           <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column v-if="classAttribute == 'finish_product'" prop="createTime" label="创建时间" width="180" />
           <el-table-column v-if="classAttribute == 'semi_finished'" prop="createByName" label="创建人" width="180" />
 
@@ -1221,7 +1221,7 @@
           <el-table-column prop="productionQuantity" label="生产数量" width="120" />
           <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
           <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column v-if="classAttribute == 'finish_product'" prop="createTime" label="创建时间" width="180" />
           <el-table-column v-if="classAttribute == 'semi_finished'" prop="createByName" label="创建人" width="180" />
 

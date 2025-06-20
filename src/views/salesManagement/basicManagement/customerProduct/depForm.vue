@@ -129,7 +129,7 @@
                     <!-- <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
                     </el-table-column> -->
 
-                    <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                    <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                     <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />
@@ -346,7 +346,7 @@
                   </el-table-column>
                   <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="150" show-overflow-tooltip>
                   </el-table-column> -->
-                <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200" v-if="centerDiameterFlag === '1'">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.centerDiameter" placeholder="请输入钢球/中心径/倒角" :disabled="btnType === 'look'" />

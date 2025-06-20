@@ -241,7 +241,7 @@
                           <div v-else>{{ scope.row.planQuantity }}</div>
                         </template>
                       </el-table-column>
-                      <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                      <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>

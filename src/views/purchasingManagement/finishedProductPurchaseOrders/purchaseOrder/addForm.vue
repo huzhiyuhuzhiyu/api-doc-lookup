@@ -299,7 +299,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <AttributeDictionaryLine :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="processId" label="工序" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>

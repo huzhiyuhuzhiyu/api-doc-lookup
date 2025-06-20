@@ -107,7 +107,7 @@
 
             </el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
             <el-table-column prop="receivingAddress" label="收货地址" min-width="120" :key="10201"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />

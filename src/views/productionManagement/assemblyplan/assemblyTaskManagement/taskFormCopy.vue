@@ -170,7 +170,7 @@
                       }}</el-link>
                     </template>
                   </el-table-column>
-               
+
                   <el-table-column prop="inventoryQuantity" label="库存数量"  v-if="dataForm.orderType=='flipping'" >
                     <template slot-scope="scope">
                       <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
@@ -191,7 +191,7 @@
                   <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" />
                   <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" />
                   <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" />
-                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                   <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
                 </JNPF-table>
                 <JNPF-table ref="inspect" v-if="categoryType == 'inspect'" :data="inspectData" fixedNO :height="height"
@@ -500,7 +500,7 @@ export default {
   watch: {
     'categoryType': function (newVal) {
       this.getTabdataList()
-      
+
     },
   },
   mounted() {
@@ -606,11 +606,11 @@ export default {
         }
         // 检验
         getInspectionList(obj).then(res => {
-    
+
           this.inspectData = res.data.records
         })
       } else if (this.categoryType == 'guidebook') {
-  
+
         let obj = {
           applicationType: this.ApplicationType.WORK,
           approvalStatus: "ok",
@@ -688,7 +688,7 @@ export default {
         getBimFileUpload(obj).then(res => {
           this.customerProductData = res.data.records
         })
-      } 
+      }
     },
     goBack() {
       this.$emit('close')

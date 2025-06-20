@@ -147,7 +147,7 @@
                         </el-table-column>
 
                         <el-table-column prop="mainUnit" :label="mainUnitFlag == 1 ? '单位(主)' : '单位'" min-width="120" />
-                        
+
                          <el-table-column prop="deliveryQuantity" :label="mainUnitFlag == 1 ? '退货数量(主)' : '退货数量'" width="170"  key="789">
                       <template slot="header">
                         <span class="required">*</span>{{ dataForm.exchangeGoodsFlag? (mainUnitFlag === '1' ? '换货数量(主)' : '换货数量'):(mainUnitFlag === '1' ? '退货数量(主)' : '退货数量') }}
@@ -163,7 +163,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" /> 
+                        <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" :label="dataForm.exchangeGoodsFlag?'换货数量(副)':'退货数量(副)'" min-width="150" v-if="mainUnitFlag == 1" />
 
                         <el-table-column prop="price" label="单价(含税)" width="120" :key="110"
@@ -208,7 +208,7 @@
                         <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
                         <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
                         </el-table-column>
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                         <el-table-column prop="remark" label="备注" min-width="200">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -374,7 +374,7 @@
                     </el-table-column>
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
-                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                     <el-table-column prop="remark" label="备注" width="160" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                   </JNPF-table>
@@ -805,7 +805,7 @@ export default {
       list10: [],
       pairingModeList: [],
       bimProductAttributesList  :[],
-      isPairingModeSwitch: '', // 配对方式显示隐藏 
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   computed: {
@@ -842,7 +842,7 @@ export default {
     await this.switchStyleheight()
     setTimeout(() => {
     this.formLoading=false
-      
+
     }, 800);
   },
   mounted() {
@@ -904,7 +904,7 @@ sortChange2({ prop, order }) {
     // 选择配对方式  将单位改为所选配对方式对应的单位
     changePairingMode(value, scope) {
       if (value) {
- 
+
          this.dataFormTwo.productData[scope.$index].deputyUnit= this.dataFormTwo.productData[scope.$index].mainUnit = this.pairingModeList.filter(items => items.id === value)[0].unit;
       }
     },
@@ -1190,7 +1190,7 @@ sortChange2({ prop, order }) {
     },
 
 
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },

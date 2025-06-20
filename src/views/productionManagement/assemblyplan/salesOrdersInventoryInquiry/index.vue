@@ -83,7 +83,7 @@
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="warehouseName" label="仓库" width="120" sortable="custom" />
             <el-table-column prop="shelfSpaceName" label="库位" width="120" sortable="custom" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="latestStorageTime" label="最新入库时间" width="220" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"

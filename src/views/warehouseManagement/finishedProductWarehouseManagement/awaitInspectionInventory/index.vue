@@ -78,7 +78,7 @@
           </el-table-column>
           <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
           <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
@@ -115,7 +115,7 @@
 
 <script>
 import { getbimProductAttributesList, getbimProductAttributes,getbimProductAttributesListMap  } from "@/api/masterDataManagement/index";
-import { getWarehouseList, getInventoryLineReport,getOrderFiledMap } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList, getInventoryLineReport,getOrderFiledMap } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList, batchInspect } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -236,7 +236,7 @@ export default {
           type: 'input'
 
         },
-        
+
         {
           prop: 'latestStorageTime',
           label: '最新入库时间',
@@ -251,7 +251,7 @@ export default {
       ],
       classAttributeList: [],
       selectList: [],
-     
+
       mainUnitFlag: null,
       tableDataFlag: null,
       isProjectSwitch: '',
@@ -324,7 +324,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'shelfSpaceName')
       if (this.colourFlag === '1') {
@@ -490,7 +490,7 @@ export default {
         }
       })
     },
- 
+
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);

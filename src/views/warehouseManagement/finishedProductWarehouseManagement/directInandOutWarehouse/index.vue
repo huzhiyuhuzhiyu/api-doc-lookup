@@ -185,7 +185,7 @@
                           <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'"
                             placeholder="请输入客户合同号" />
                         </template>
-                      </el-table-column> 
+                      </el-table-column>
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
                         v-if="dataForm.documentType == 'inbound' && !dataForm.totalStockOutboundFlag">
@@ -315,13 +315,13 @@
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
                             placeholder="原批次号"></el-input>
                         </template>
-                      </el-table-column> --> 
+                      </el-table-column> -->
                       <el-table-column key="productSymbol" v-if="['inbound_purchase','inbound_other'].includes(dataForm.businessType) && isZY" prop="productSymbol" label="代号" width="160">
                           <template slot-scope="scope">
                               <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
                           </template>
                       </el-table-column>
-                      <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                      <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                       <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
                         key="1233">
                         <template slot-scope="scope">
@@ -429,14 +429,14 @@
                     clearable />
                 </el-form-item>
               </el-col>
-              
+
               <el-col :span="3" v-if="dataForm.documentType == 'outbound'">
                 <el-form-item>
                   <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格"
                     @keyup.enter.native="searchProductFun" clearable />
                 </el-form-item>
               </el-col>
-              
+
               <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
                   <el-input v-model="listQuery.partnerName" placeholder="请输入供应商"
@@ -455,8 +455,8 @@
                     clearable />
                 </el-form-item>
               </el-col>
-              
-              
+
+
               <el-col :span="3" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
                   <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格"
@@ -529,11 +529,11 @@
                 v-if="dataForm.documentType == 'outbound'" key="shelfSpaceName" />
               <el-table-column prop="productSymbol" label="代号" width="180"
                 v-if="dataForm.documentType === 'outbound' && isZY" key="productSymbol" />
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
                 <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
 
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="remark" label="备注" width="100"
                 v-if="dataForm.documentType == 'outbound'" key="remark" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"

@@ -6,7 +6,7 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
 
-         
+
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 3">
                 <el-form-item>
@@ -36,7 +36,7 @@
 
           </el-form>
         </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading"> 
+        <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="listLoading">
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
@@ -57,7 +57,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable"   :data="tableData" :fixedNO="true"  
+          <JNPF-table ref="dataTable"   :data="tableData" :fixedNO="true"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
             :setColumnDisplayList="columnList">
             <el-table-column prop="moveOutNo" label="出库单号" min-width="220" sortable="custom" />
@@ -71,7 +71,7 @@
             <el-table-column prop="costPrice" label="单价(含税)" width="160" sortable="custom" />
             <el-table-column prop="taxRate" label="税率" min-width="180" sortable="custom" />
             <el-table-column prop="totalAmount" label="金额" min-width="120" sortable="custom" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="remark" label="备注" min-width="120" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -88,7 +88,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> 
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
@@ -99,7 +99,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import getProjectList from '@/mixins/generator/getProjectList'
 import { mapGetters, mapState } from 'vuex'
- 
+
 import userTransfer from '@/components/JNPF-userTransfer'
 export default {
   name: 'saleShippRepot',
@@ -138,14 +138,14 @@ export default {
         { field: 'saleDeliveryNo', fieldValue: '', label: '通知单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productsName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
-      ], 
+      ],
       columnList: [],
 
       superQueryVisible: false,
       exportFormVisible: false,
-  
-       
-   
+
+
+
       btnLoading: false,
       title: "更多查询",
       visible: false,
@@ -154,7 +154,7 @@ export default {
       selectData: [], // 选中的数据 带到form页
       totalQualifiedQuantity: 0,
       orderForm: {},
-      
+
 
 
       totalData:{},
@@ -203,48 +203,48 @@ export default {
           prop: 'material',
           label: "保持架材质",
           type: 'input'
-        }, 
+        },
          {
           prop: 'sealingCoverTyping',
           label: "打字内容",
           type: 'input'
-        }, 
+        },
          {
           prop: 'accuracyLevel',
           label: "精度等级",
           type: 'input'
-        }, 
+        },
          {
           prop: 'vibrationLevel',
           label: "振动等级",
           type: 'input'
-        },  
+        },
 
          {
           prop: 'oil',
           label: "油脂",
           type: 'input'
-        }, 
+        },
           {
           prop: 'clearance',
           label: "游隙",
           type: 'input'
-        }, 
+        },
           {
           prop: 'packagingMethod',
           label: "包装方式",
           type: 'input'
-        },    
+        },
          {
           prop: 'specialRequire',
           label: "特殊要求",
           type: 'input'
-        }, 
+        },
             {
           prop: 'colour',
           label: "颜色",
           type: 'input'
-        },  
+        },
 
       ],
       requestArr: [
@@ -258,27 +258,27 @@ export default {
       isProjectSwitch: '',
     }
   },
-  
+
   computed: {
     ...mapGetters(['userInfo'])
   },
 
   async created() {
- 
+
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search('basic')
   },
   mounted() {
   },
   methods: {
- 
- 
-    
- 
- 
-    
-  
- 
+
+
+
+
+
+
+
+
 
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -359,7 +359,7 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.search('basic')
     },
- 
+
 
 
 

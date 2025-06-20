@@ -126,7 +126,7 @@
                   </el-table-column>
                   <el-table-column prop="inventoryQuantity" label="批次库存数量" min-width="160" />
                   <el-table-column prop="mainUnit" label="单位"></el-table-column>
-                  <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                  <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                   <el-table-column prop="materialsUsedQuantity" label="投料数量" width="160">
                     <template slot="header">
                       <span class="required">*</span>

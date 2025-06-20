@@ -128,7 +128,7 @@
                                             <el-table-column prop="productCode" label="用料编码"
                                                              min-width="130"></el-table-column>
                                             <el-table-column prop="processName" label="工序名称" min-width="130"/>
-                                            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                                            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                                             <el-table-column prop="mainUnit" label="单位"
                                                              min-width="130"></el-table-column>
                                             <el-table-column prop="materialsUsedQuantity" label="投料数量"
@@ -294,7 +294,7 @@
                                     <el-table-column prop="productCode" label="用料编码"
                                                      min-width="130"></el-table-column>
                                     <el-table-column prop="processName" label="工序名称" min-width="130"/>
-                                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                                     <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                                     <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                                                      v-if="notView  && isBomPick"></el-table-column>

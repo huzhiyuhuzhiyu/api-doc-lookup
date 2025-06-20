@@ -111,7 +111,7 @@
                         </el-table-column>
                         <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
                         <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
-                        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <!-- <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column> -->
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
@@ -230,7 +230,7 @@
                     </el-table-column>
                     <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
                     <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
-                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
 
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
@@ -328,7 +328,7 @@
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
                 <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
 
 
               </JNPF-table>

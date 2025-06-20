@@ -81,7 +81,7 @@
               v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="300" sortable="custom" />
             <el-table-column prop="productSourceName" label="产品来源"  ></el-table-column>
-            
+
             <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
             <el-table-column prop="pairingModeName" label="配对方式" width="160" sortable="custom" v-if="isPairingModeSwitch === '1'" />
 
@@ -95,7 +95,7 @@
             <el-table-column prop="deputyNum" label="数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
             <el-table-column prop="outboundQuantity" label="已发出库数量" min-width="150" />
 
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
             <!-- <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
               <template slot-scope="scope">
@@ -366,7 +366,7 @@ export default {
           prop: 'ordersNo',
           label: "订单号",
           type: 'input',
-        }, 
+        },
         // {
         //   prop: 'exchangeGoodsFlag',
         //   label: "发货标识",
@@ -468,7 +468,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'mainUnit')
       if (this.colourFlag === '1') {
@@ -620,7 +620,7 @@ export default {
         })
         let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })
@@ -878,7 +878,7 @@ export default {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.filter(item => item.prop !== "deputyNum"); 
+      columnList = columnList.filter(item => item.prop !== "deputyNum");
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
       delete columnList.deputyNum
       console.log("columnList1",columnList);

@@ -90,7 +90,7 @@
                         <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="deputyNum" label="调拨数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
                         <el-table-column prop="pairingModeName" label="配对方式" min-width="120"   />
-                        
+
 
                         <el-table-column prop="inWarehouseName" label="目标仓库" width="160" :key="1888">
                           <template slot="header">
@@ -117,7 +117,7 @@
                         </el-table-column>
                         <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
                         <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
-                        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
 
                         <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
@@ -185,7 +185,7 @@
                     v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                    <el-table-column prop="projectName" label="所属项目" min-width="120" 
+                    <el-table-column prop="projectName" label="所属项目" min-width="120"
                     v-if="isProjectSwitch == 1" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
@@ -229,7 +229,7 @@
                     </el-table-column>
                     <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
                     <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
-                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                     <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
 
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
@@ -318,7 +318,7 @@
                 <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
                 <el-table-column prop="pairingModeName" label="配对方式" min-width="120"   />
 
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" min-width="160"
                   :key="1100"></el-table-column>
               </JNPF-table>
@@ -380,7 +380,7 @@ import WareHouseForm from './wareHouseForm.vue'
 export default {
   components: { WareHouseForm, Process, recordList },
   mixins: [flowMixin, busFlow,getProjectList],
-  
+
   data() {
     return {
       scanDialog: false,
@@ -544,7 +544,7 @@ export default {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
-        classAttributeList: this.classAttributeList, 
+        classAttributeList: this.classAttributeList,
         orderItems: [
           {
             asc: false,
@@ -611,7 +611,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttributeList: [], 
+        classAttributeList: [],
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -662,7 +662,7 @@ export default {
     resetAllProduct() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.ProductListRequestObj = {
-        classAttributeList: [], 
+        classAttributeList: [],
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",

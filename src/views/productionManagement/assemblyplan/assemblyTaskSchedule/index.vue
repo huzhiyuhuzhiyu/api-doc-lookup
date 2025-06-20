@@ -108,7 +108,7 @@
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
               <template slot-scope="scope">
@@ -244,14 +244,14 @@ export default {
             { label: "正常", value: "normal" },
             { label: "暂停", value: "suspend" },
             { label: "关闭", value: "closed" },
-            { label: "已完成", value: "finish" }, 
+            { label: "已完成", value: "finish" },
           ]
         },
         {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
-        }, 
+        },
         {
           prop: 'routingName',
           label: "工艺路线名称",

@@ -103,7 +103,7 @@
 
         <JNPF-table v-if="isProjectSwitchFlag" v-loading="listLoading" custom-column :data="tableData" hasNO fixedNO
           @sort-change="sortChange" ref="tabForm" customKey="JNPFTableKey_451973">
- 
+
           <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
@@ -118,7 +118,7 @@
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
           <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
           <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
                 <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList, getInventoryLineReport } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -177,7 +177,7 @@ export default {
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-      
+
         { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
@@ -313,7 +313,7 @@ export default {
     this.isProjectSwitchFlag = true
     this.superForm = this.tableQuery
     this.getWarehouseTree(true)
-  
+
   },
   methods: {
     getProductClassFun() {
@@ -335,7 +335,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'batchNumber')
       if (this.colourFlag === '1') {

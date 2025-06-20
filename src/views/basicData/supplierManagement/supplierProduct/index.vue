@@ -79,9 +79,9 @@
                     {{ scope.row.taxRate }}%
                   </template>
                 </el-table-column>
-  
 
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                   <el-table-column label="操作" width="180" fixed="right">
                       <template slot-scope="scope">
@@ -274,7 +274,7 @@ export default {
         ]
       },
       total: 0,
-      formVisible: false, 
+      formVisible: false,
       lastColumnList: [
         'partnerCode',
         'productCode',
@@ -317,7 +317,7 @@ export default {
           type: 'select',
           options: []
         },
- 
+
 
         {
           prop: 'standardValue',
@@ -398,8 +398,8 @@ export default {
           label: '创建人',
           type: 'input'
         }
-      ], 
-   
+      ],
+
     }
   },
   async created() {
@@ -434,7 +434,7 @@ export default {
     this.initData()
   },
   watch: {
- 
+
   },
   methods: {
     async getProductNameSwitch(code, type) {
@@ -444,14 +444,14 @@ export default {
     },
     columnList() {
       this.$refs.tableForm.showDrawer()
-    
+
     },
     lastSuperQuerySearch(query) {
       this.superQuery = query
       this.lastSuperQueryVisible = false
       this.search('super')
     },
- 
+
     // 导入
     importProductFun() {
       // this.$refs.UploadProduct.$el.querySelector('input').click()
@@ -584,7 +584,7 @@ export default {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
         console.log(includeFieldMap)
-        let name = '' 
+        let name = ''
           name = '最新价格'
           let _data = {
             ...this.superForm,
@@ -600,10 +600,10 @@ export default {
               this.jnpf.downloadFile(res.data.url)
             })
             .catch(() => { })
-        
+
       }
     },
- 
+
     sortChange({ prop, order }) {
       if (prop === 'createTime') {
         prop = 'create_Time'
@@ -635,7 +635,7 @@ export default {
 
     initData() {
       this.listLoading = true
-      console.log(this.superForm, 'this.superForm') 
+      console.log(this.superForm, 'this.superForm')
         this.superForm = this.lastListQuery
         getPartnerOrProductData(this.superForm)
           .then((res) => {
@@ -648,7 +648,7 @@ export default {
           .catch(() => {
             this.listLoading = false
           })
-      
+
     },
     search(type) {
       Object.keys(this.lastListQuery).forEach((key) => {
@@ -656,9 +656,9 @@ export default {
         this.lastListQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.lastListQuery.pageNum = 1
-      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询 
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
         this.searchList = this.lastSearchList
-     
+
       console.log(this.searchList, 'this.searchList')
       if (type === 'basic') {
         this.basicQuery = {
@@ -703,12 +703,12 @@ export default {
         code: '',
         name: ''
       }
-      
+
       this.lastSearchList = [
         { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
         { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 }
       ]
-  
+
       if (this.isProductNameSwitch === '1') {
         this.lastSearchList.unshift({
           field: 'productName',
@@ -718,7 +718,7 @@ export default {
           searchType: 1,
           width: 120
         })
-  
+
       }
       this.search()
     },

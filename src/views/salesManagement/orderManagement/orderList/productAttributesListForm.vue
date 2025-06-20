@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" customKey="JNPFTableKey_934407">
-            <AttributeDictionaryLine :isSlot="false"  :dataType="'line'" :moduleConfig="'sale'" />
+            <AttributeColumns :isSlot="false"  :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column label="操作" width="160" fixed="right">
               <template slot-scope="scope">
                 <el-button type="text" @click="selectFun(scope.row)">选择</el-button>

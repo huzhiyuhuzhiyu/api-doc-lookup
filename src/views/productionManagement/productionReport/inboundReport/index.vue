@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
- 
+
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -17,7 +17,7 @@
                   <el-form-item>
                     <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                       @keyup.enter.native="search('basic')" />
-                  
+
                     <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
                       clearable>
                       <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
@@ -29,7 +29,7 @@
                       :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
                   </el-form-item>
                 </el-col>
-              </template> 
+              </template>
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
@@ -37,7 +37,7 @@
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -57,7 +57,7 @@
                   </el-tooltip>
                 </div>
               </div>
-            
+
               <JNPF-table ref="dataTableInbound" v-loading="listLoading" :data="inboundData" :fixedNO="true" @sort-change="sortChange" custom-column>
                 <el-table-column prop="projectName" label="所属项目" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="productionOrderNo" label="生产任务单号" width="180" sortable="custom"></el-table-column>
@@ -70,7 +70,7 @@
                 <el-table-column prop="warehouseName" label="仓库" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" min-width="120" />
                 <el-table-column prop="pairingModeName" label="配对方式" width="120" sortable="custom"></el-table-column>
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="mainUnit" label="单位" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="orderDate" label="单据日期" width="120" sortable="custom"></el-table-column>
                 <el-table-column prop="createByName" label="创建人" width="120" sortable="custom"></el-table-column>
@@ -78,13 +78,13 @@
               </JNPF-table>
               <pagination :total="inboundTotal" :page.sync="inboundForm.pageNum" :limit.sync="inboundForm.pageSize" @pagination="initData" />
             </div>
-           
+
             <!-- 高级查询 -->
             <SuperQuery  :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
            <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
 
           </div>
- 
+
     </div>
   </div>
 </template>
@@ -136,13 +136,13 @@ export default {
             matchLogic: "AND",
             condition: []
         }
-      }, 
+      },
       searchList2:[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '入库单号', symbol: 'like', searchType: 1, width: 120 },
       ],
-      
+
       superQueryJson: [
         {
           prop: 'projectName',
@@ -153,33 +153,33 @@ export default {
           prop: 'productionOrderNo',
           label: "生产任务单号",
           type: 'input'
-        }, 
+        },
           {
           prop: 'orderNo',
           label: "入库单号",
           type: 'input'
-        }, 
+        },
         {
           prop: 'batchNumber',
           label: "批次号",
           type: 'input'
-        }, 
+        },
        {
           prop: 'productName',
           label: "产品名称",
           type: 'input'
-        },   
+        },
           {
           prop: 'productCode',
           label: "产品编码",
           type: 'input'
-        }, 
+        },
         {
           prop: 'productDrawingNo',
           label: "品名规格",
           type: 'input'
-        }, 
-       
+        },
+
         {
           prop: 'warehouseName',
           label: "仓库",
@@ -226,7 +226,7 @@ export default {
           label: "单位",
           type: 'input'
         },
-    { 
+    {
           prop: 'reportingTime',
           label: '单据日期',
           type: 'daterange',
@@ -239,9 +239,9 @@ export default {
       superQueryVisible: false,
 
 
-    
 
- 
+
+
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
@@ -249,17 +249,17 @@ export default {
       listLoading: false,
       activeName: "produce",
       reportCode:'',
-    
-    
+
+
       total: 0,
       formVisible: false,
       exportFormVisible:false,
     }
   },
-  async created() { 
- 
+  async created() {
+
     this.superForm=this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList))
-   
+
    this.search('basic')
   },
   watch: {
@@ -268,18 +268,18 @@ export default {
     }
   },
   methods: {
-   
+
     columnSetFunInbound(){
       this.$refs['dataTableInbound'].showDrawer()
     },
-   
- 
+
+
        superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
       this.search('super')
     },
-     
+
     //排序
     sortChange({ prop, order }) {
       let newProp;
@@ -290,7 +290,7 @@ export default {
         }
         this.inboundForm.orderItems[0].asc = order !== "descending"
         this.inboundForm.orderItems[0].column = order === null ? "" : newProp
- 
+
       this.initData()
     },
     moreQueries() {
@@ -307,12 +307,12 @@ export default {
         }).catch(() => {
           this.listLoading = false
         })
-    
-       
-    }, 
-  
+
+
+    },
+
     search(type) {
-    
+
         if (this.inboundDate && this.inboundDate.length > 0) {
           this.inboundForm.produceStartDate = this.inboundDate[0].replace(/ 0(?!0)/g, " ")
           this.inboundForm.produceEndDate = this.inboundDate[1].replace(/ 0(?!0)/g, " ")
@@ -336,28 +336,28 @@ export default {
                   fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
                 }
               })
-          } 
+          }
           this.superForm.superQuery = this.basicQuery
         }
         if (type === 'super') {
           this.superForm.superQuery = this.superQuery
         }
-      
-      
-    
+
+
+
       this.initData()
     },
     reset() {
         this.$refs['dataTableInbound'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
         this.inboundDate = []
-        this.superForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList)) 
+        this.superForm= this.inboundForm = JSON.parse(JSON.stringify(this.inboundFormList))
          this.searchList2=[
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productionOrderNo', fieldValue: '', label: '生产任务单号', symbol: 'like', searchType: 1, width: 120 },
         { field: 'orderNo', fieldValue: '', label: '入库单号', symbol: 'like', searchType: 1, width: 120 },
       ]
       this.$refs.SuperQuery.conditionList = []
-  
+
       this.search('basic')
     },
       // 导出
@@ -376,7 +376,7 @@ export default {
         includeFieldMap[data.selectKey[i]] = data.selectVal[i];
       }
       let targetListQuery={},exportName="";
- 
+
        if(this.reportCode=='1251'){
         targetListQuery=this.inboundForm
         exportName='每日生产入库'

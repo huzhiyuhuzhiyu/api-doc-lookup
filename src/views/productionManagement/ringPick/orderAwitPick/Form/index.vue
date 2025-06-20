@@ -59,7 +59,7 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                     
+
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -85,7 +85,7 @@
                       <el-table-column prop="productName" label="用料名称" min-width="130"></el-table-column>
                       <el-table-column prop="productCode" label="用料编码" min-width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="130" />
-                      <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                      <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
@@ -196,7 +196,7 @@
                   <el-table-column prop="productDrawingNo" label="用料规格" min-width="130"></el-table-column>
                   <el-table-column prop="productCode" label="用料编码" min-width="130"></el-table-column>
                   <el-table-column prop="processName" label="工序名称" min-width="130" />
-                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                   <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                   <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                     v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
@@ -342,7 +342,7 @@ export default {
 
       detailDataList: [],
       detailDiaFlag: false,
-      previousReceiveType: null,  // 存储上一次选择的领料类型  
+      previousReceiveType: null,  // 存储上一次选择的领料类型
       isSame: false,
       flowTemplateJson: {},
       flowData: {},
@@ -382,7 +382,7 @@ export default {
       })
     },
     checkSelection() {
-      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同  
+      this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同
       this.previousReceiveType = this.dataForm.receiveType; // 更新上一次选择
       console.log(9999);
       if (!this.isSame && this.dataForm.productionOrderNo) {
@@ -552,7 +552,7 @@ export default {
       var year = date.getFullYear();
       var month = (date.getMonth() + 1).toString().padStart(2, "0");
       var day = date.getDate().toString().padStart(2, "0");
-     
+
       const formattedDate = `${year}-${month}-${day}`;
       return formattedDate
     },

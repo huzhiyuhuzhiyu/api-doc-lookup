@@ -234,7 +234,7 @@
                           </template>
                         </el-table-column>
 
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="processId" label="工序" min-width="120"
                           v-if="this.dataForm.classAttribute !== 'finish_product'">
                           <template slot-scope="scope">
@@ -247,7 +247,7 @@
                           </template>
                         </el-table-column>
 
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
 
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                           <template slot-scope="scope">
@@ -1211,7 +1211,7 @@ export default {
           }
           this.customStyleData = 389
         } else {
-        
+
           if (item.calculationDirection === 'multiplication') {
             item.purchaseQuantity2 = this.numberFormat(item.purchaseQuantity * item.ratio)
           } else {

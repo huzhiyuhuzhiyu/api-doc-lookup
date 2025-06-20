@@ -234,7 +234,7 @@
                       }}</el-link>
                     </template>
                   </el-table-column>
-               
+
                   <el-table-column prop="inventoryQuantity" label="库存数量"  v-if="dataForm.orderType=='flipping'" >
                     <template slot-scope="scope">
                       <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : "0" }}</div>
@@ -314,7 +314,7 @@
                 <el-table-column prop="productCode" label="用料编码" />
                 <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                 <el-table-column prop="processName" label="工序名称" width="120"  />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="mainUnit" label="单位" />
                 <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
                 <el-table-column prop="materialsUsedQuantity" label="计划用量" />
@@ -353,7 +353,7 @@
                 <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" />
                 <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" />
                 <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
                 <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
 
 

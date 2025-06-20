@@ -84,7 +84,7 @@
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" width="130" />
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" width="130" />
 
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
               </JNPF-table>
               <pagination :total="total" :page.sync="lastListQuery.pageNum" :background="background"
@@ -172,7 +172,7 @@
                 </el-table-column>
                 <el-table-column prop="effectiveTimeStart" label="有效日期起" width="130" sortable="custom" />
                 <el-table-column prop="effectiveTimeEnd" label="有效日期止" width="130" sortable="custom" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                 <el-table-column prop="remark" label="备注" width="150" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
                 <el-table-column prop="createByName" label="创建人" sortable="custom" width="180" />

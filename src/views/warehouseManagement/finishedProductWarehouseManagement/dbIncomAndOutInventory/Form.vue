@@ -193,7 +193,7 @@
                           </template>
                         </el-table-column>
 
-                        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="remark" label="备注" width="200" :key="128">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" placeholder="备注"></el-input>
@@ -423,7 +423,7 @@
 
 
 
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
@@ -665,7 +665,7 @@ export default {
 
     },
 
-    // 点击选择产品 销售发货 
+    // 点击选择产品 销售发货
     openSeleceProductDialog() {
       if (this.dataForm.businessType != 'inbound_return_materials' && this.dataForm.businessType != 'outbound_pick_out') {
         if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
@@ -766,7 +766,7 @@ export default {
       //   { label: "外协发料", value: "outbound_external_send" },
       //   { label: "外协退料", value: "inbound_external_return" },
       //   { label: "外协收货", value: "inbound_external" },
-      //   { label: "外协退货", value: "outbound_external" },  
+      //   { label: "外协退货", value: "outbound_external" },
       if (this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'inbound_return_materials') {
         this.orderForm = {
 
@@ -1152,7 +1152,7 @@ export default {
                 item.num = item.deliveryQuantity
                 item.ordersLineId = item.outShipmentListId
               }
-              
+
             });
           }
           this.productData = filteredArray

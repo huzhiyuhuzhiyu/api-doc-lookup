@@ -294,7 +294,7 @@
                                   <el-input placeholder="请输入代号" v-model="scope.row.productSymbol" :disabled="type === 'look'"></el-input>
                               </template>
                           </el-table-column>
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
                           v-if="isXY || isJR">
                           <template slot-scope="scope">
@@ -331,7 +331,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="processId" label="工序" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>
@@ -342,7 +342,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip key="1">
                           <template slot-scope="scope">
                             <el-form-item>

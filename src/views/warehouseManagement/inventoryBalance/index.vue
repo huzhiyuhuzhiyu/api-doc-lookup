@@ -53,7 +53,7 @@
                 <div class="JNPF-common-head" style="padding:10px">
                   <div >
                       <el-button type="primary" size="mini" icon="el-icon-plus"
-                        @click="addOrUpdateHandle(listQuery.accountPeriod, 'normal')" :disabled=" listQuery.accountPeriod !== accountPeriod[0]" 
+                        @click="addOrUpdateHandle(listQuery.accountPeriod, 'normal')" :disabled=" listQuery.accountPeriod !== accountPeriod[0]"
                         >结存
                         </el-button>
                         <el-button type="primary" size="mini" icon="el-icon-refresh-left"
@@ -64,9 +64,9 @@
                 || isInCurrentOrLastMonth(tableData[0].accountPeriod)"
                         >反结存
                         </el-button>
-                       
+
                   </div>
-                  
+
                     <div class="JNPF-common-head-right">
                         <el-tooltip content="高级查询" placement="top" v-if="true">
                             <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -101,7 +101,7 @@
                     <el-table-column prop="productsName" label="产品名称" v-if="isProductNameSwitch === '1'" min-width="160" sortable="custom"/>
                     <el-table-column prop="productsCode" label="产品编码" min-width="160" sortable="custom"/>
                     <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"/>
-                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                     <el-table-column prop="warehouseName" label="仓库名称" min-width="160" sortable="custom"/>
                     <el-table-column prop="warehouseCode" label="仓库编码" min-width="160" sortable="custom"/>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"/>
@@ -324,7 +324,7 @@ export default {
                 startUpdateTime: '',
                 totalRowFlag: false,
                 warehouseCode: '',
-                warehouseName: '', 
+                warehouseName: '',
                 moveOrderNo:"",
             },
             tableItems: [
@@ -338,8 +338,8 @@ export default {
                 { prop: 'num', label: '数量',custom:'custom' },
                 { prop: 'beforeInventory', label: '变动前库存', custom:'custom'},
                 { prop: 'afterInventory', label: '变动后库存',custom:'custom' },
-                
-                
+
+
                 // { prop: 'costPrice', label: '单价(含税)' },
                 // { prop: 'excludingTaxCostPrice', label: '单价(不含税)' },
                 // { prop: 'taxRate', label: '税率' },
@@ -468,7 +468,7 @@ export default {
         this.initData()
     },
     methods: {
-       
+
       async changeDateFun(){
             const res = await canStockBalance(this.defaultProjectId)
         this.accountPeriod = res.data
@@ -477,7 +477,7 @@ export default {
       },
         setSearchList(){
             this.searchList = [
-            
+
                 {
                     fieldValue: '',
                     field: 'accountPeriod',
@@ -690,7 +690,7 @@ export default {
             this.accountPeriod = res.data
             this.setSearchList()
             this.listQuery.accountPeriod = this.accountPeriod.length ? this.accountPeriod[this.accountPeriod.length - 1] : this.listQuery.accountPeriod
-            
+
             this.search()
         },
 
@@ -747,7 +747,7 @@ export default {
         inboundAndOutboundLine(type, id) {
             this.lineVisible = true
             this.inboundAndOutboundQuery.documentType = ""
-            this.inboundAndOutboundQuery.balanceId = id 
+            this.inboundAndOutboundQuery.balanceId = id
             this.$nextTick(() => {
                 this.$refs.lineForm.getData()
             })

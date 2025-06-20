@@ -143,7 +143,7 @@
                         </el-table-column>
 
                         <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="diffAmount" label="差值金额" width="120" :key="88" />
 
                       </JNPF-table>
@@ -303,7 +303,7 @@
                     </el-table-column>
 
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                    <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                    <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                   </JNPF-table>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                     <span style="font-weight:500;margin-right:10px">当前库存总数：{{ totalStock }}</span>

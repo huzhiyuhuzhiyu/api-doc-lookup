@@ -483,7 +483,7 @@
                       :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                   </template>
                 </el-table-column>
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
 
 
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -978,7 +978,7 @@ export default {
   async created() {
     await this.getOrderFiledMap()
     await this.getProjectSwitch('system', 'project')
-    
+
     await this.switchStyleheight()
     this.getProductClassFun()
     this.isDeputyUnitSwitch = this.$store.getters.configData.deputyUnit.procureDeputyUnit
@@ -1124,7 +1124,7 @@ export default {
             selectArr.push(item)
           })
         }
-       
+
         if (this.dataFormTwo.productData && this.dataFormTwo.productData.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
@@ -1304,9 +1304,9 @@ export default {
           { prop: 'processName', label: '工序', sortable: 'custom' },
           { prop: 'remark', label: '备注', sortable: 'custom' },
           { prop: 'createTime', label: '创建时间', sortable: 'custom' },
-         
+
         ]// 产品选择弹出框表单展示字段
-        
+
       } else {
         this.listMethod = getProducts
         this.ProductListRequestObj = {
@@ -1344,11 +1344,11 @@ export default {
           { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
           { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
-        
+
         ]// 产品选择弹出框表单展示字段
       }
       this.$refs['ComSelect-page'].openDialog()
-    
+
     },
     // 监听主数量输入
     watchnums(row, index) {

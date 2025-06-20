@@ -117,7 +117,7 @@
             <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" sortable="custom" />
             <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="160" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column prop="replaceStatus" label="替换状态" sortable="custom" width="120" align="center">

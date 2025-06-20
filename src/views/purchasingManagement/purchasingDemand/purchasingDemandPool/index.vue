@@ -31,7 +31,7 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col> -->
-      
+
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="deliveryDateArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
@@ -140,7 +140,7 @@
               <div v-if="scope.row.demandStatus == 'revoke'"><el-tag type="danger">已撤回</el-tag></div>
             </template>
           </el-table-column>
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
           <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
@@ -197,7 +197,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getclassAttributeList,getbimProductAttributesListMap } from '@/api/masterDataManagement/index'
 import { getBimBusinessDetail, getOrderFiledMap } from '@/api/basicData/index'
 import { getLabel } from '@/utils/index'
-Vue.prototype.$getLabel = getLabel 
+Vue.prototype.$getLabel = getLabel
 import AbProjectMixin from '@/mixins/generator/AbProjectMixin'
 import tenantMinix from "@/mixins/generator/TenantMinix";
 
@@ -554,7 +554,7 @@ if (classAttributeObj) {
         let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
 
         if (oilObj) {
-          // 将options赋值为5  
+          // 将options赋值为5
           oilObj.options = arr;
         }
       })

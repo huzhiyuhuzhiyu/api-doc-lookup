@@ -50,7 +50,7 @@
               <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
               <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
               <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
             </JNPF-table>
             <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
               @pagination="initData">
@@ -381,7 +381,7 @@ export default {
 
         this.tableData = res.data.records
         this.total = res.data.total
-       
+
 
 
       }).catch(err => {

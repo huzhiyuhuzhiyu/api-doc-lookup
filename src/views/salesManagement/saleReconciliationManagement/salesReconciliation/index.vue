@@ -116,7 +116,7 @@
               }}</div>
             </template>
           </el-table-column>
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
 
@@ -240,7 +240,7 @@ export default {
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-        
+
         {
           prop: 'partnerName',
           label: "客户名称",
@@ -330,7 +330,7 @@ export default {
      await getbimProductAttributesListMap().then((res) => {
         this.bimProductAttributesList = res.data
       })
- 
+
     },
     getOrderFiledMap() {
 
@@ -354,9 +354,9 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
-      //     material //保持架材质          
+      //     material //保持架材质
       //     colour //颜色
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'contractNo')
       if (this.colourFlag === '1') {
@@ -557,13 +557,13 @@ export default {
       this.selectData = val
       function calculateTotalValue(arr) {
         return arr.reduce((sum, item) => {
-          const value = Number(item.totalAmount); // 将 value 转换为数字  
+          const value = Number(item.totalAmount); // 将 value 转换为数字
           if (item.businessType === 'outbound_sale_send') {
-            return sum + value;  // 对于 '正', 加上 value  
+            return sum + value;  // 对于 '正', 加上 value
           } else if (item.businessType === 'inbound_sale_return') {
-            return sum - value;   // 对于 '负', 减去 value  
+            return sum - value;   // 对于 '负', 减去 value
           }
-          return sum;  // 默认情况，无需改变 sum  
+          return sum;  // 默认情况，无需改变 sum
         }, 0);
       }
       function calculateSum(data, type) {
@@ -622,8 +622,8 @@ export default {
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.deliverStartDate = this.createRequirementDate[0] 
-        this.listQuery.deliverEndDate = this.createRequirementDate[1] 
+        this.listQuery.deliverStartDate = this.createRequirementDate[0]
+        this.listQuery.deliverEndDate = this.createRequirementDate[1]
 
       } else {
         this.listQuery.deliverStartDate = ''

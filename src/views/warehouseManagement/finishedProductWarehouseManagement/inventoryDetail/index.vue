@@ -96,7 +96,7 @@
           <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
           <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right" sortable="custom" />
 
         </JNPF-table>
@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/basicData/index' // 仓库 
+import { getWarehouseList } from '@/api/basicData/index' // 仓库
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -318,7 +318,7 @@ export default {
       })
     },
 
-    
+
     // 获取仓库
     getWarehouseListFun() {
       getWarehouseTree({ code: this.warehouseCode }).then(res => {

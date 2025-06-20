@@ -25,8 +25,8 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-         
-            
+
+
 
             <el-col :span="6">
               <el-form-item>
@@ -47,7 +47,7 @@
             v-if="isProductNameSwitch === '1'" show-overflow-tooltip></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="140"></el-table-column>
             <el-table-column prop="processName" label="工序名称" min-width="140" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="mainUnit" label="单位" min-width="140" />
             <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="140" />
             <el-table-column prop="waitReceiveQuantity" label="待领料数量" min-width="140" />
@@ -104,7 +104,7 @@ export default {
   },
  async created () {
     await this.getProductNameSwitch('product', 'enable_productName')
-   
+
   },
   methods: {
     getOrderFiledMap() {
@@ -115,7 +115,7 @@ export default {
     },
     async getProductNameSwitch(code, type) {
       try {
-        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type) 
+        this.isProductNameSwitch = await this.jnpf.getMainUnitFun(code, type)
       } catch (error) { }
     },
   async init(id) {
@@ -128,15 +128,15 @@ export default {
       this.selectArr = val
 
     },
-     
+
     submitFun () {
-     
+
      this.$emit('selectOrderMaterial',this.selectArr)
      this.customerVisible = false
 
       // this.productData=[...this.productData,...this.selectArr]
     },
- 
+
     getMaterialListFun() {
       this.listLoading = true
       ordermaterialList(this.orderForm).then(res => {

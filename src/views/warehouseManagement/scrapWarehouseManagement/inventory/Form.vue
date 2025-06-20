@@ -43,12 +43,12 @@
 
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" />
               <el-table-column prop="productCode" label="产品编码" width="120" />
-              <el-table-column prop="projectName" label="所属项目" min-width="120" 
+              <el-table-column prop="projectName" label="所属项目" min-width="120"
               v-if="isProjectSwitch == 1" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom" >
                 <!-- <template slot-scope="scope">
                   <div>{{ scope.row.warehouseName+'/'+scope.row.shelfSpaceName }}</div>
@@ -130,8 +130,8 @@ export default {
 
   async created() {
     await this.getProjectSwitch('system', 'project')
-   
-  }, 
+
+  },
   methods: {
     // 导出
     exportForm(exportTableRef) {
@@ -251,7 +251,7 @@ export default {
         totalAvailable:0,
         totalOccupancy:0,
       }
-        
+
       }).catch(err => {
         this.treeLoading = false
         this.listLoading = false

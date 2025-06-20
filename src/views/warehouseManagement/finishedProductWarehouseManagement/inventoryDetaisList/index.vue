@@ -144,7 +144,7 @@
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
           <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" sortable="custom" min-width="180" v-if="userInfo.roleCode.split(',').includes('show_warehouse_data')" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
             <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
             <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
 

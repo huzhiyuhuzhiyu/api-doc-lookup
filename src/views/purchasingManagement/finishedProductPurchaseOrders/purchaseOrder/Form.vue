@@ -142,7 +142,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                      <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                       <el-table-column prop="processId" label="工序" width="120" :key="102"
                         v-if="dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
                         <template slot-scope="scope">
@@ -153,7 +153,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                      <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"
@@ -345,7 +345,7 @@
                     </template>
                   </el-table-column>
 
-                  <AttributeDictionaryLine v-if="dataForm.classAttribute === 'finish_product'" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                  <AttributeColumns v-if="dataForm.classAttribute === 'finish_product'" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                   <el-table-column prop="processId" label="工序" width="120" :key="102"
                     v-if="dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
                     <template slot-scope="scope">
@@ -356,7 +356,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                  <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                   <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input :title="scope.row.remark" disabled v-model="scope.row.remark" maxlength="20"

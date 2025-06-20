@@ -200,7 +200,7 @@
                           </template>
                         </el-table-column> -->
 
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="forceCompleteFlag" label="是否强制完成"  width="120" :key="1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成"
@@ -435,7 +435,7 @@
                         <el-table-column prop="deputyNum" label="入库数量(副)" min-width="120" v-if="mainUnitFlag == 1" />
 
 
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="forceCompleteFlag" label="是否强制完成"  width="120" :key="1">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.forceCompleteFlag" placeholder="是否强制完成"
@@ -465,7 +465,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="remark" label="备注" width="200">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" placeholder="备注"
@@ -547,12 +547,12 @@
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
                 <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="130" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="productionPlanNo" label="计划单号" width="160" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
                 <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="createTime" label="创建时间" width="180" />
                 <el-table-column prop="createByName" label="创建人" width="180" />
               </JNPF-table>

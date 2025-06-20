@@ -4,7 +4,7 @@
     @close="customerVisible = false">
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
       <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="listLoading">
-   
+
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div></div>
@@ -35,7 +35,7 @@
             <el-table-column prop="productionQuantity" label="生产数量" width="120" />
             <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
             <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
             <el-table-column v-if="classAttribute == 'finish_product'" prop="createTime" label="创建时间" width="180" />
             <el-table-column v-if="classAttribute == 'semi_finished'" prop="createByName" label="创建人" width="180" />
           </JNPF-table>

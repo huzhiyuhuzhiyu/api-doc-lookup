@@ -145,7 +145,7 @@
                         </template>
                       </el-table-column>
 
-                      <AttributeDictionaryLine :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
+                      <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                       <el-table-column prop="processId" label="工序" width="120" :key="102"
                         v-if="this.dataForm.classAttribute !== 'finish_product' && processFlag === '1'">
                         <template slot-scope="scope">
@@ -370,7 +370,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                  <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                   <el-table-column prop="processId" label="工序" width="120" :key="102"
                     v-if="this.dataForm.classAttribute !== 'finish_product' && $store.getters.configData.orderField.purchase_process">
                     <template slot-scope="scope">
@@ -381,7 +381,7 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                  <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                     <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
                                      v-if="isXY || isJR">
                         <template slot-scope="scope">

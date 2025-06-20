@@ -37,7 +37,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-  
+
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
                         <ComSelect-list
@@ -67,7 +67,7 @@
                     @click="batchDelete">批量删除</el-button>
                 </div>
 
-                <el-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData" 
+                <el-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData"
                   border :key="165" style="width: 100%;"  :height="customStyleData">
                   <el-table-column type="selection" width="55" fixed="left" :key="2" v-if="btnType!='look'">
                   </el-table-column>
@@ -233,7 +233,7 @@
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="batchNumber" label="批次号" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="remark" label="备注" width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
@@ -256,11 +256,11 @@
           {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
 
 
-      <span slot="footer" class="dialog-footer"> 
+      <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
       </span>
     </el-dialog>
- 
+
     <!-- 选库位 -->
     <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
     </WareHouseForm>
@@ -281,7 +281,7 @@ import {
 } from "@/api/masterDataManagement/index";
 import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
 // import { addInboundOutbound} from '@/api/warehouseManagement/inboundAndOutbounds.js'
-import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表 
+import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表
 import WareHouseForm from './wareHouseForm.vue'
 import CustomerForm from './customerForm.vue'
 import BatchNumberForm from './batchNumberForm.vue'
@@ -297,7 +297,7 @@ export default {
     return {
       isProjectSwitch: '',
       customStyleData:0,
-   
+
       list: [
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
@@ -350,7 +350,7 @@ export default {
           { required: true, message: '仓库不能为空', trigger: 'change' }
         ],
       },
-      orderForm: { //获取产品数据 
+      orderForm: { //获取产品数据
         drawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
@@ -473,7 +473,7 @@ export default {
         this.tableDataFlag = true
       } catch (error) { }
     },
-  
+
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
@@ -522,7 +522,7 @@ export default {
 
     },
 
-    // 点击选择产品 
+    // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.documentType) return this.$message.error("请先选择单据类型")
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
@@ -744,7 +744,7 @@ export default {
 
       }
       this.$forceUpdate()
- 
+
 
     },
 
@@ -901,7 +901,7 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-          
+
             this.dataForm.documentStatus = submitModel
             this.productData.forEach(item => item.id = "")
             // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound

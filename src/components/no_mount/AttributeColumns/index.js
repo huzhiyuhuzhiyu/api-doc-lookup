@@ -53,11 +53,9 @@ export default {
             })
         }
     })
-      console.log(attrDictionaryData,'121')
     if (!attrDictionaryData.length) {
       return [];
     }
-    console.log(parent,'parent')
     const isView = props.btnType === 'look';
 
     // 生成 el-table-column 数组

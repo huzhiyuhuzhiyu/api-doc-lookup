@@ -117,7 +117,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
@@ -177,7 +177,7 @@
               </template>
             </el-table-column>
           </JNPF-table>
-        
+
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" />
         </div>

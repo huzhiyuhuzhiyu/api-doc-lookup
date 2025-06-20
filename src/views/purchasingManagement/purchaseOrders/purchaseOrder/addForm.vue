@@ -288,7 +288,7 @@
                           </template>
                         </el-table-column>
 
-                        <AttributeDictionaryLine :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column
                           v-if=" sealingCoverTypingFlag === '1'"
                           prop="pairingModeName" label="配对方式" min-width="120">
@@ -300,7 +300,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <AttributeDictionaryLine :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="wireHeatNumber" label="钢丝炉号" width="120"
                           v-if="isXY || isJR">
                           <template slot-scope="scope">
@@ -325,7 +325,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <AttributeDictionaryLine :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
+                        <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
                         <el-table-column prop="processId" label="工序" min-width="120">
                           <template slot-scope="scope">
                             <el-form-item>

@@ -131,7 +131,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" >
-                      
+
                           <template slot-scope="scope" v-if="scope.row.allocationFlag">
                             <el-input v-model="scope.row.shelfSpaceName" readonly :disabled="btnType == 'look'"
                               @focus="openSeleceWareDialog(scope.row, scope.$index, 'table')" placeholder="库位">
@@ -162,7 +162,7 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                        <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
                           fixed="right">
                           <template slot-scope="scope">
@@ -324,7 +324,7 @@
                     </el-table-column>
 
                     <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                    <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                    <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                     <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
                       fixed="right">
                       <template slot-scope="scope">
@@ -410,7 +410,7 @@
                 <el-table-column prop="shelfSpaceName" label="库位名称" v-if="type == 'invent'"
                   min-width="120"></el-table-column>
                 <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
 
 
               </JNPF-table>
@@ -756,7 +756,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
 
       if (this.colourFlag === '1') {
@@ -1147,7 +1147,7 @@ export default {
 
     },
 
-    // 点击选择产品 
+    // 点击选择产品
     openSeleceProductDialog() {
       this.productVisible = true
       this.productForm.productName = ''

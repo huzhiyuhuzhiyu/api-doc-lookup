@@ -49,7 +49,7 @@
               <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
                 <!-- <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
                   <template slot-scope="scope">
@@ -151,8 +151,8 @@ export default {
     await this.getOrderFiledMap()
 
     await this.getProjectSwitch('system', 'project')
-    
-    
+
+
   },
   methods: {
     getOrderFiledMap() {
@@ -290,7 +290,7 @@ export default {
         totalAvailable:0,
         totalOccupancy:0,
         }
-        
+
       }).catch(err => {
         this.treeLoading = false
         this.listLoading = false

@@ -94,7 +94,7 @@
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" min-width="160" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="centerDiameter" label="钢球/中心径/倒角" min-width="200"
                   v-if="centerDiameterFlag === '1'" />
                 <el-table-column prop="remark" min-width="200" label="备注" />
@@ -212,7 +212,7 @@
                 <el-table-column prop="excludingTaxUnitPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="validEnd" label="有效日期止" sortable="custom" min-width="160" />
                 <el-table-column prop="ask" label="要求" sortable="custom" min-width="160" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <!--                  <el-table-column prop="protrusion" label="钢球名称" width="120" sortable="custom"  v-if="protrusionFlag==1"/>-->
                 <!--                  <el-table-column prop="preload" label="预负荷" width="120" sortable="custom"  v-if="preloadFlag==1"/>-->
                 <el-table-column prop="remark" min-width="200" label="备注" />
@@ -552,9 +552,9 @@ export default {
     },
     // 打印
     printFun(id) {
-      this.enCode = 'p059' // 筛选出 businessType 等于 type 的项  
+      this.enCode = 'p059' // 筛选出 businessType 等于 type 的项
       this.formId = id
-      this.fullName = "客户产品备货工艺" // 筛选出 businessType 等于 type 的项  
+      this.fullName = "客户产品备货工艺" // 筛选出 businessType 等于 type 的项
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(this.enCode)

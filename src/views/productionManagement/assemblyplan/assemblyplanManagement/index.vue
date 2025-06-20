@@ -101,7 +101,7 @@
             </el-table-column>
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom"></el-table-column>
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'produce'" />
             <el-table-column prop="arithmeticNo" label="运算单号" min-width="160" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
@@ -411,9 +411,9 @@ export default {
     },
     batchPrint() {
       if (!this.selectArr.length) return this.$message.error("请选择你要打印的数据")
-      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项  
+      this.enCode2 = 'p020' // 筛选出 businessType 等于 type 的项
 
-      this.fullName2 = "未排产单" // 筛选出 businessType 等于 type 的项  
+      this.fullName2 = "未排产单" // 筛选出 businessType 等于 type 的项
       this.printVisible2 = true
       this.$nextTick(() => {
         console.log(345345);
@@ -511,7 +511,7 @@ export default {
       //     oil //油脂
       //     oilQuantity //油脂量
       //     clearance //游隙
-      //     packagingMethod //包装方式          
+      //     packagingMethod //包装方式
       //     specialRequire //特殊要求
       let classIndex = this.superQueryJson.findIndex((obj) => obj.prop === 'planEndDate')
       if (this.colourFlag === '1') {
@@ -660,7 +660,7 @@ export default {
         this.$refs.planScheduleForm.init(row)
       })
     },
-   
+
     addition(data) {
       this.formVisible = true
       this.$nextTick(() => {

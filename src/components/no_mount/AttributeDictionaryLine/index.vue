@@ -34,7 +34,7 @@
 <script>
 
 export default {
-    name: 'AttributeDictionaryLine',
+    name: 'AttributeColumns',
     props:{
         isSlot:{
             type:Boolean,
@@ -107,7 +107,7 @@ export default {
                 this.initializeProductDataFields();
             });
         } catch (error) {
-            console.error('AttributeDictionaryLine 数据加载失败:', error);
+            console.error('AttributeColumns 数据加载失败:', error);
             this.dataLoaded = true; // 即使失败也要设置为 true，避免阻塞渲染
         }
     },
@@ -132,7 +132,7 @@ export default {
                 });
             });
 
-            console.log('AttributeDictionaryLine: 已为 productData 设置响应性字段', attributeProps);
+            console.log('AttributeColumns: 已为 productData 设置响应性字段', attributeProps);
         },
 
         // 为新增的行设置响应性字段

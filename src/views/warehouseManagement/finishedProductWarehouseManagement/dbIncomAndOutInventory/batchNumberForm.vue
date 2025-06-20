@@ -68,10 +68,10 @@
             </el-table-column>
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
               <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
-              <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+              <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
               <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
               <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
-            <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+            <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button type="text" @click="selectBatchNum(scope.row)">选择</el-button>

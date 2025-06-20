@@ -127,7 +127,7 @@
                         </template>
                       </el-table-column>
 
-                      <AttributeDictionaryLine :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
+                      <AttributeColumns :btnType="type" :dataType="'line'" :moduleConfig="'purchase'" />
 
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">

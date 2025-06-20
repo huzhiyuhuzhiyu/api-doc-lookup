@@ -113,7 +113,7 @@
           <el-table-column prop="processName" label="工序名称" min-width="180" sortable="custom" />
 
           <el-table-column prop="pairingModeName" label="配对方式" width="160" v-if="isXBN" sortable="custom" />
-          <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+          <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
             <el-table-column prop="wireHeatNumber" v-if="isXY||isJR" label="钢丝炉号" width="120" />
             <el-table-column prop="rawStockMill" v-if="isXY||isJR" label="原材料厂家" width="120" />
         </JNPF-table>
@@ -186,7 +186,7 @@ export default {
       searchList: [
         { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'productName', fieldValue: '', label: '产品名称', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }, 
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
       ],
       exportFormVisible: false,
       superQueryVisible: false,
@@ -334,7 +334,7 @@ export default {
     await this.getWarehouseListFun()
     this.superForm = this.tableQuery
     this.getConfig()
-    
+
 
   },
   computed: {
@@ -343,7 +343,7 @@ export default {
 
   mounted() {
     this.getMainUnitFun('deputyUnit', 'warehouseDeputyUnit')
-   
+
   },
   methods: {
     getOrderFiledMap() {
@@ -378,7 +378,7 @@ export default {
         this.productNameFlag = res.data.product[1].configValue1
         console.log(this.productNameFlag);
         this.tableDataFlag = true
-        
+
       }).catch(error => {
         this.tableFlag = true
       })
@@ -495,7 +495,7 @@ export default {
     },
     reset() {
       this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-     
+
  // 排序数组
       this.sortArr= [{
         asc: false,

@@ -238,7 +238,7 @@
                                 <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
                             </template>
                         </el-table-column>
-                      <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                      <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
 
                       <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
 
@@ -390,7 +390,7 @@
 
                           :isSlot="true"
                       />
-<!--                    <AttributeDictionaryLine :productData="productData" :isSlot="true" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />-->
+<!--                    <AttributeColumns :productData="productData" :isSlot="true" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />-->
                     <el-table-column prop="receivingAddress" label="收货地址" width="200" :key="1288">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.receivingAddress" placeholder="请输入" maxlength="200" />
@@ -632,7 +632,7 @@
                   </el-table-column>
                   <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
                   <!-- <el-table-column prop="contractNo" label="客户单号" width="180" :key="132"></el-table-column> -->
-                  <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                  <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                   <el-table-column prop="receivingAddress" label="收货地址" width="120" :key="10201"></el-table-column>
 
                       <el-table-column prop="remark2" label="客户产品备注" width="200" :key="1228"> </el-table-column>
@@ -771,7 +771,7 @@
 
                       :isSlot="true"
                   />
-<!--                <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />-->
+<!--                <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />-->
                 <el-table-column prop="receivingAddress" label="收货地址" width="200" :key="1288">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.receivingAddress" placeholder="请输入" maxlength="200" />
@@ -955,7 +955,7 @@
                   <el-table-column prop="projectName" label="所属项目" min-width="120" sortable="custom"
                     v-if="isProjectSwitch === '1'" />
                   <el-table-column prop="mainUnit" label="单位" width="80" />
-                  <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom"> 
+                  <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
                     <template slot-scope="scope">
                       <el-link type="primary" @click.native="viewFun(scope.row)">
                         {{ scope.row.inventoryQuantity }}
@@ -1063,11 +1063,9 @@ import ProductSymbolForm from '@/views/salesManagement/orderManagement/orderList
 import ProductSymbolMixin from '@/mixins/generator/ProductSymbolMixin'
 import tenantMinix from '@/mixins/generator/TenantMinix'
 import { closeOrders ,batchRevokeSaleOrder} from '@/api/salesManagement/assemblyOrders'
-import AttributeColumns from '@/components/no_mount/AttributeColumns'
 export default {
   mixins: [busFlow, getProjectList,tenantMinix,ProductSymbolMixin],
   components: {
-      AttributeColumns,
       ProductSymbolForm,
     ExportForm, Process, recordList, Form, productAttributesListForm
   },
@@ -2333,7 +2331,7 @@ export default {
         })
       });
     },
-    
+
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'salesName' || prop == 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {

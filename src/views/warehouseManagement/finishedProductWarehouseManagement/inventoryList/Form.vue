@@ -68,7 +68,7 @@
 
                             </el-form-item>
                           </el-col>
-                        
+
 
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
@@ -156,7 +156,7 @@
                               placeholder="原产品批次号"></el-input>
                           </template>
                         </el-table-column>
-                        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <!-- <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column> -->
                         <!-- <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="1011"
                           v-if="allocationFlag || !jyFlag">
@@ -238,7 +238,7 @@
 
                             </el-form-item>
                           </el-col>
-                        
+
 
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
@@ -326,7 +326,7 @@
                               placeholder="原产品批次号"></el-input>
                           </template>
                         </el-table-column>
-                        <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                        <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                         <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                         <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
                           <template slot-scope="scope">
@@ -407,7 +407,7 @@
                 <el-table-column prop="requiredReceivedQuantity" label="待入库数量" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' " />
                 <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom"  />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'warehouse'" />
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -649,7 +649,7 @@ export default {
 
     },
 
-    // 点击选择产品 销售发货 
+    // 点击选择产品 销售发货
     openSeleceProductDialog() {
       let msg = ""
       if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return') {
@@ -729,8 +729,8 @@ export default {
         }
         this.orderForm.cooperativePartnerId=this.dataForm.cooperativePartnerId
         this.orderForm.deliverDateEnd = ""
-        this.orderForm.deliverDateStart = "" 
-        this.orderForm.productDrawingNo = "" 
+        this.orderForm.deliverDateStart = ""
+        this.orderForm.productDrawingNo = ""
         this.orderForm.orderNo = ""
         if (this.deliveryDateArr.length) {
           this.orderForm.deliverDateStart = this.deliveryDateArr[0]
@@ -761,7 +761,7 @@ export default {
       //   { label: "外协发料", value: "outbound_external_send" },
       //   { label: "外协退料", value: "inbound_external_return" },
       //   { label: "外协收货", value: "inbound_external" },
-      //   { label: "外协退货", value: "outbound_external" },  
+      //   { label: "外协退货", value: "outbound_external" },
 
 
     },
@@ -965,22 +965,22 @@ export default {
         this.dataForm.businessType == 'inbound_external') {
         this.jyFlag = true
         if(this.btnType=='edit'){
-        this.fetchData("RKDH",false) 
+        this.fetchData("RKDH",false)
 
         }
         if(this.btnType=='add'){
-        this.fetchData("RKDH",true) 
+        this.fetchData("RKDH",true)
 
         }
       }
       if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send') {
         this.jyFlag = false
         if(this.btnType=='edit'){
-        this.fetchData("CKDH",false) 
+        this.fetchData("CKDH",false)
 
         }
         if(this.btnType=='add'){
-        this.fetchData("CKDH",true) 
+        this.fetchData("CKDH",true)
 
         }
 
@@ -1146,7 +1146,7 @@ export default {
             submitFlag = false
             this.$message.error('请至少选择一个产品')
           }
-     
+
           if (this.productData.length) {
             let totals = {};
             let totalNum = {};

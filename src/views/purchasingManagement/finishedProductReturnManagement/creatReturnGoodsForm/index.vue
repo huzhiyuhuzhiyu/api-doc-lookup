@@ -163,7 +163,7 @@
                     <el-table-column prop="mainUnit" :label="isDeputyUnitSwitch ? '单位(主)' : '单位'"
                       :width="isDeputyUnitSwitch ? 85 : 60" />
                     <el-table-column prop="deputyUnit" label="单位(副)" width="85" v-if="isDeputyUnitSwitch" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" 
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160"
                       v-if="isReturnSwitch" />
                     <el-table-column prop="purchaseQuantity2" label="订单数量(副)" width="160"
                       v-if="isDeputyUnitSwitch && isReturnSwitch" />
@@ -268,7 +268,7 @@
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
-                    <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
+                    <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'purchase'" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
 
                     <el-table-column prop="remark" label="备注" min-width="200">
@@ -920,7 +920,7 @@ export default {
             selectArr.push(item)
           })
         }
-       
+
         if (this.dataFormTwo.productData && this.dataFormTwo.productData.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
@@ -961,7 +961,7 @@ export default {
         this.taxRateList = res.data.list
       })
     },
- 
+
     goLine() {
       this.$router.push({
         path: '/purchasingManagement/finishedProductReturnManagement/purchaseReturnNote'
@@ -1113,9 +1113,9 @@ export default {
           { prop: 'processName', label: '工序', sortable: 'custom' },
           { prop: 'remark', label: '备注', sortable: 'custom' },
           { prop: 'createTime', label: '创建时间', sortable: 'custom' },
-         
+
         ]// 产品选择弹出框表单展示字段
-        
+
       } else {
         this.listMethod = getProducts
         this.ProductListRequestObj = {
@@ -1153,11 +1153,11 @@ export default {
           { prop: 'mainUnit', label: this.isDeputyUnitSwitch ? '主单位' :'单位' , sortable: 'custom' },
           { prop: 'deputyUnit', label: '副单位', sortable: 'custom',render: this.isDeputyUnitSwitch ? true : false },
           { prop: 'inventoryQuantity', label: '库存数量', sortable: 'custom' },
-        
+
         ]// 产品选择弹出框表单展示字段
       }
       this.$refs['ComSelect-page'].openDialog()
-    
+
     },
     // 监听主数量输入
     watchnums(row, index) {
@@ -1385,9 +1385,9 @@ export default {
             excludingTaxPrice: item.excludingTaxPrice ? item.excludingTaxPrice : '',
             taxAmount: item.taxAmount ? item.taxAmount : '',
             excludingTaxAmount: item.excludingTaxAmount ? item.excludingTaxAmount : '',
-          }       
+          }
           obj.lines.push(dep)
-           
+
         })
         this.btnLoading = true
         let formMethod = null

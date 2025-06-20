@@ -125,7 +125,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    
+
                     <el-table-column prop="deputyUnit" label="单位(副)" min-width="120" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="deputyNum" :label="dataForm.exchangeGoodsFlag?'换货数量(副)':'退货数量(副)'" min-width="150" v-if="mainUnitFlag == 1" />
                     <el-table-column prop="price" label="单价(含税)" width="120" :key="110" v-if="noticeswitch !== '1'||!pageType">
@@ -167,7 +167,7 @@
                     <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125" v-if="userInfo.roleCode.split(',').includes('show_sale_data')"></el-table-column>
                     <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126" v-if="userInfo.roleCode.split(',').includes('show_sale_data')">
                     </el-table-column>
-                    <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                    <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -221,7 +221,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data') 
+                <el-col :sm="6" :xs="24" v-if="userInfo.roleCode.split(',').includes('show_sale_data')
                         && userInfo.roleCode.split(',').includes('show_cooperativePartnerIdName_data')">
                   <el-form-item label="客户名称" prop="partnerName">
                     <el-input v-model="dataForm.partnerName" placeholder="请选择客户" readonly @focus="openDialog"
@@ -345,7 +345,7 @@
                   </template>
 
                 </el-table-column>
-                <AttributeDictionaryLine :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                <AttributeColumns :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
 
 
                 <el-table-column prop="remark" label="备注" min-width="200">
@@ -504,7 +504,7 @@
                   v-if="isProjectSwitch == 1" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                <AttributeDictionaryLine :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
+                <AttributeColumns :isSlot="false" :btnType="btnType" :dataType="'line'" :moduleConfig="'sale'" />
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -938,7 +938,7 @@ export default {
       list10: [],
       pairingModeList: [],
       pageType:"",
-      isPairingModeSwitch: '', // 配对方式显示隐藏 
+      isPairingModeSwitch: '', // 配对方式显示隐藏
     }
   },
   computed: {
@@ -1259,7 +1259,7 @@ export default {
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].excludingTaxAmount]), 2)
       this.dataFormTwo.productData = productArr
     },
-    
+
     // 查看库存明细
     viewFun(row, type, warehouseId) {
       this.formVisible = true
@@ -1367,7 +1367,7 @@ export default {
         this.refreshTable = true
       })
     },
-    // 产品列表选中 
+    // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -1465,7 +1465,7 @@ export default {
     },
     // 选择产品——重置
     resetProductFun() {
-      
+
             this.$refs['tableDataForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
       this.deliveryDateArr = []
@@ -1570,10 +1570,10 @@ export default {
         if (item.calculationDirection) {
           if (item.calculationDirection == 'multiplication') {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6))
-           
+
           } else {
             this.$set(item, 'deputyNum', this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6))
-         
+
           }
         }
         item.taxRate = item.taxRate * 1
@@ -1684,7 +1684,7 @@ export default {
 
       console.log("index", index);
       console.log("row.deliveryQuantity", row.deliveryQuantity);
-      if (row.calculationDirection == 'multiplication') { 
+      if (row.calculationDirection == 'multiplication') {
         productArr[index].deputyNum = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.ratio]), 6)
         productArr[index].assistantNum = this.jnpf.numberFormat(row.deliveryQuantity * row.ratio, 2)
         productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.deliveryQuantity, row.price]), 2)
@@ -1850,7 +1850,7 @@ export default {
         pageSize: 20,
         partnerCategoryId: "",
         type: "customer",
-      } 
+      }
       this.getcategoryTree()
     },
     initData() {

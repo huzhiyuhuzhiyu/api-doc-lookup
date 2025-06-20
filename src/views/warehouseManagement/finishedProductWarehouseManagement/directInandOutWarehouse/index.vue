@@ -173,7 +173,7 @@
                       <el-table-column prop="productCode" label="产品编码" width="140" key="productCode" />
                       <el-table-column prop="productName" label="产品名称" min-width="160" key="productName"
                         v-if="productNameFlag == '1'" />
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140"
+                      <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCategoryName"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" key="productDrawingNo"
                         v-if="dataForm.documentType == 'outbound'" />
@@ -185,8 +185,7 @@
                           <el-input v-model="scope.row.contractNo" :disabled="btnType == 'look'"
                             placeholder="请输入客户合同号" />
                         </template>
-                      </el-table-column>
-                      <!-- <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" /> -->
+                      </el-table-column> 
                       <el-table-column prop="projectName" label="所属项目" min-width="120" v-if="isProjectSwitch == 1" />
                       <el-table-column prop="batchNumber" label="批次号" min-width="200" :key="101132"
                         v-if="dataForm.documentType == 'inbound' && !dataForm.totalStockOutboundFlag">
@@ -224,21 +223,21 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="weight" label="重量(kg)" width="140" :key="737"
+                      <el-table-column prop="weight" label="重量(kg)" width="140" key="737"
                         v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.weight" placeholder="重量"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="proportion" label="比重" width="140" :key="727"
+                      <el-table-column prop="proportion" label="比重" width="140" key="727"
                         v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
                             v-model="scope.row.proportion" placeholder="比重"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="discount" label="折扣(0~1)" width="140" :key="717"
+                      <el-table-column prop="discount" label="折扣(0~1)" width="140" key="717"
                         v-if="dataForm.weightFlag === true">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" @blur="computedNumFun(scope.row, scope.$index)"
@@ -316,8 +315,7 @@
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
                             placeholder="原批次号"></el-input>
                         </template>
-                      </el-table-column> -->
-                      <el-table-column prop="productCategoryName" label="产品分类" width="140" key="productCode" />
+                      </el-table-column> --> 
                       <el-table-column key="productSymbol" v-if="['inbound_purchase','inbound_other'].includes(dataForm.businessType) && isZY" prop="productSymbol" label="代号" width="160">
                           <template slot-scope="scope">
                               <el-input placeholder="请输入代号"  v-model="scope.row.productSymbol" :disabled="btnType === 'look'"></el-input>
@@ -359,7 +357,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
-                        key="123">
+                        key="1233">
                         <template slot-scope="scope">
                           <el-select default-first-option filterable allow-create v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -369,7 +367,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="rawStockMill" v-if="isXY || isJR" label="原材料厂家" width="120"
-                        key="123">
+                        key="1243">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.rawStockMill" placeholder="请选择" clearable
                             :disabled="btnType == 'look'">
@@ -391,7 +389,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="61">
+                      <el-table-column prop="oil" label="油脂" v-if="oilFlag == 1" width="120" key="612">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
@@ -401,7 +399,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="oilQuantity" label="油脂量" v-if="oilQuantityFlag == 1" width="120" key="61">
+                      <el-table-column prop="oilQuantity" label="油脂量" v-if="oilQuantityFlag == 1" width="120" key="613">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
@@ -459,19 +457,8 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <!-- <el-table-column prop="material" label="保持架材质" width="120" key="2118">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in list12" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column> -->
+                     
                       <el-table-column prop="colour" :label="$store.getters.colour" width="120" key="210">
-                        <!-- <template slot="header">
-                            <span class="required">*</span>打字内容
-                          </template> -->
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.colour" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -517,7 +504,16 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="material" label="材质" min-width="120" key="2118" v-if="$store.getters.configData.orderField.material">
+
+
+
+
+
+
+
+
+
+                      <el-table-column prop="material" label="材质" min-width="120" key="211218" v-if="$store.getters.configData.orderField.material">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.material" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -526,7 +522,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="brand" label="品牌" min-width="120" key="2118" v-if="$store.getters.configData.orderField.brand">
+                      <el-table-column prop="brand" label="品牌" min-width="120" key="21138" v-if="$store.getters.configData.orderField.brand">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.brand" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -535,7 +531,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="sealingCoverStructure" label="密封盖" min-width="120" key="2118" v-if="$store.getters.configData.orderField.sealingCoverStructure">
+                      <el-table-column prop="sealingCoverStructure" label="密封盖" min-width="120" key="21118" v-if="$store.getters.configData.orderField.sealingCoverStructure">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.sealingCoverStructure" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -544,7 +540,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                       <el-table-column prop="structureType" label="结构类型" min-width="120" key="2118" v-if="$store.getters.configData.orderField.structureType">
+                       <el-table-column prop="structureType" label="结构类型" min-width="120" key="2123418" v-if="$store.getters.configData.orderField.structureType">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.structureType" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -553,7 +549,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="noise" label="噪音" min-width="120" key="2118" v-if="$store.getters.configData.orderField.noise">
+                      <el-table-column prop="noise" label="噪音" min-width="120" key="21143568" v-if="$store.getters.configData.orderField.noise">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.noise" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -562,7 +558,10 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="aperture" label="孔径" min-width="120" key="2118" v-if="$store.getters.configData.orderField.aperture">
+
+
+
+                      <el-table-column prop="aperture" label="孔径" min-width="120" key="2114358" v-if="$store.getters.configData.orderField.aperture">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.aperture" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -580,7 +579,7 @@
                         </el-select>
                       </template>
                     </el-table-column>
-                      <el-table-column prop="preload" label="预负荷" min-width="120" key="2118" v-if="$store.getters.configData.orderField.preload">
+                      <el-table-column prop="preload" label="预负荷" min-width="120" key="2111138" v-if="$store.getters.configData.orderField.preload">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.preload" placeholder="请选择" clearable style="width: 100%;"
                             :disabled="btnType == 'look'">
@@ -598,7 +597,7 @@
                           </el-select>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="remark" label="备注" width="200" key="128">
+                      <el-table-column prop="remark" label="备注" width="200" key="1238">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.remark"
                             placeholder="备注"></el-input>
@@ -610,7 +609,7 @@
                             placeholder="备注"></el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" key="128">
+                      <el-table-column prop="remark3" label="备注3（客户批次号）" width="200" key="1228">
                         <template slot-scope="scope">
                           <el-input :disabled="btnType == 'look'" v-model="scope.row.remark3"
                             placeholder="备注"></el-input>

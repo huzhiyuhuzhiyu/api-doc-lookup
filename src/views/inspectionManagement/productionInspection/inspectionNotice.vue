@@ -98,7 +98,22 @@
           <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130" sortable="custom" />
 
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
-          <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
+          <el-table-column v-if="isBOOS"  prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
+          <el-table-column v-if="isBOOS"  prop="totalWeight" label="总重量" min-width="120" sortable="custom" >
+            <template slot-scope="scope">
+              {{ scope.row.totalWeight?scope.row.totalWeight:'0' }}
+            </template>
+          </el-table-column>
+          <el-table-column v-if="isBOOS"  prop="cases" label="箱数" min-width="120" sortable="custom" >
+            <template slot-scope="scope">
+              {{ scope.row.cases?scope.row.cases:'0' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="reportProductWeight" label="产品单重" min-width="120" sortable="custom" >
+            <template slot-scope="scope">
+              {{ scope.row.reportProductWeight?scope.row.reportProductWeight:'0' }}
+            </template>
+          </el-table-column>
           <el-table-column prop="utilizeQuantity" label="利用数量" min-width="120" sortable="custom" />
           <!-- <el-table-column prop="completedNum" label="返工数量" min-width="120" /> -->
           <el-table-column prop="planStartDate" label="计划开始日期" width="150" sortable="custom" />

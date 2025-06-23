@@ -561,6 +561,7 @@ export default {
         { prop: 'code', label: '产品编码', sortable: 'custom'},
         { prop: 'name', label: '产品名称', sortable: 'custom',render:false },
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'material', label: '材质', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         // { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', width: 150 },

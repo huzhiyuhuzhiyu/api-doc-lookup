@@ -56,7 +56,7 @@
 
                   </el-radio-group>
                 </div>
-                  <div v-else-if="scope.row.configKey == 'gobal_customerContractNo'">
+                  <div v-else-if="scope.row.configKey == 'customerContractNo'">
                   <template >
                     <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
                       <el-radio :label="0" style="margin-bottom: 7px;">
@@ -308,7 +308,7 @@ export default {
           // }
           align = 'left'
         }
-         if (item.configKey == 'gobal_customerContractNo') {
+         if (item.configKey == 'customerContractNo') {
           // if (item.state) {
           //   align = 'left'
           //   flag = false
@@ -528,7 +528,7 @@ export default {
           } else if (this.activeName === 'orderField') {
             list = res.data.orderField
             list.forEach(item => {
-            if(item.configKey!='gobal_customerContractNo'){
+            if(item.configKey!='customerContractNo'){
 
                 item.configKey = `${item.configValue2}_${item.configKey}`
               }
@@ -581,7 +581,7 @@ export default {
             } else if (item.configKey === 'task_process_selection') {
               item.radioOff = '按工艺列表'
               item.radioOn = '按工艺设置'
-            }else if (item.configKey === 'gobal_customerContractNo') {
+            }else if (item.configKey === 'customerContractNo') {
               item.radioOff = '在明细列表显示'
               item.radioOn = '在主表显示'
               item.radioAll = '都显示'

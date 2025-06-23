@@ -100,6 +100,7 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+                <div v-if="scope.row.documentStatus == 'back'"><el-tag type="danger">撤回</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
@@ -107,7 +108,7 @@
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus !== 'draft' "
                   @click="addOrUpdateHandle(scope.row.purchaseReceiptReturnGoodsId, 'edit')">
                   编辑
                 </el-button>

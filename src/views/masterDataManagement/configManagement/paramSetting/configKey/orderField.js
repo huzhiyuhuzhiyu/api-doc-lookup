@@ -19,7 +19,7 @@ export default {
         description: '启用全局钢球/中心径/倒角后，将会显示钢球/中心径/倒角输入字段。',
         mainModule: '全局'
     },
-    gobal_customerContractNo: {
+    customerContractNo: {
         configKeyLabel: '启用客户合同号',
         description: '1、在销售订单、订单进度、订单变更、仓库管理会显示客户合同号；2、关闭则在销售订单详情中明细列表展示客户合同号；3、都显示',
         mainModule: '全局'

@@ -359,11 +359,7 @@
                       <el-table-column prop="wireHeatNumber" v-if="isXY || isJR" label="钢丝炉号" width="120"
                         key="1233">
                         <template slot-scope="scope">
-                          <el-select default-first-option filterable allow-create v-model="scope.row.wireHeatNumber" placeholder="请选择" clearable
-                            :disabled="btnType == 'look'">
-                            <el-option v-for="(item, index) in bimProductAttributesList.pa026" key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
+                          <el-input v-model="scope.row.wireHeatNumber" placeholder="请输入钢丝炉号" maxlength="50" ></el-input>
                         </template>
                       </el-table-column>
                       <el-table-column prop="rawStockMill" v-if="isXY || isJR" label="原材料厂家" width="120"

@@ -33,7 +33,7 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                          <el-col :sm="6" :xs="24" v-if="['1', '2'].includes($store.getters.configGlobal.customerContractNo)">
                             <el-form-item label="客户合同号" prop="contractNo">
                               <el-input v-model="dataForm.contractNo" placeholder="" disabled />
                             </el-form-item>
@@ -262,7 +262,7 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
-                          <el-col :sm="6" :xs="24" v-if="$store.getters.configGlobal.customerContractNo === '1'">
+                          <el-col :sm="6" :xs="24" v-if="['1', '2'].includes($store.getters.configGlobal.customerContractNo)">
                             <el-form-item label="客户合同号" prop="contractNo">
                               <el-input v-model="dataForm.contractNo" placeholder="" disabled />
                             </el-form-item>
@@ -346,7 +346,7 @@
                         <el-table-column prop="customerProductNo" label="客户料号" width="160"
                           :key="1212"></el-table-column>
                         <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
-                          v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                          v-if="['0', '2'].includes($store.getters.configGlobal.customerContractNo)">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
                           </template>
@@ -530,7 +530,7 @@
                 <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="contractNo" label="客户合同号" width="160" key="contractNo"
-                  v-if="$store.getters.configGlobal.customerContractNo === '0'">
+                  v-if="['0', '2'].includes($store.getters.configGlobal.customerContractNo)">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.contractNo" disabled placeholder="请输入客户合同号" />
                   </template>

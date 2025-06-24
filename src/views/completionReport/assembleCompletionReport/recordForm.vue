@@ -65,6 +65,8 @@
             <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" sortable="custom" />
             <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+            <el-table-column prop="pairingModeName" label="配对方式" min-width="120" sortable="custom" v-if="isXBN"/>
+            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" v-if="isXBN"/>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
 

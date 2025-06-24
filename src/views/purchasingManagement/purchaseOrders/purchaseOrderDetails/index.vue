@@ -419,7 +419,7 @@ export default {
         orderNo: '',
         classAttribute: 'other',
         orderType: 'procure',
-        documentStatus:'submit',
+        documentStatus:'',
         orderItems: [
           {
             asc: false,
@@ -882,7 +882,7 @@ export default {
         deliveryStartDate: '',
         endTime: '',
         orderNo: '',
-        documentStatus:'submit',
+        documentStatus:'',
         orderType: 'procure',
         classAttribute: 'other',
         receivingStatus: '',

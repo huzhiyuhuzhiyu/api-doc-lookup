@@ -114,9 +114,7 @@
             </el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
-                <el-tag type="warning" v-if="scope.row.documentStatus === DocumentStatus.DRAFT">草稿</el-tag>
-                <el-tag type="success" v-else-if="scope.row.documentStatus === DocumentStatus.SUBMIT">提交</el-tag>
-                <el-tag type="danger" v-else-if="scope.row.documentStatus === DocumentStatus.BACK">撤回</el-tag>
+                <el-tag :type="global.getDictLabelGlobal('documentStatusList', scope.row['documentStatus'], { withType: true }).type">{{ global.getDictLabelGlobal('documentStatusList', scope.row['documentStatus']) }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column prop="remark" min-width="140" label="备注" />
@@ -277,7 +275,7 @@ export default {
             { label: '提交', value: 'submit' },
             { label: '撤回', value: 'back' },
           ]
-        }, 
+        },
         {
           prop: 'createTime',
           label: '创建时间',
